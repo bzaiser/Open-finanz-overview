@@ -1,0 +1,252 @@
+{% extends 'base.html' %}
+{% load i18n humanize %}
+
+{% block title %}
+{% trans "Dashboard" %}
+{% endblock %}
+
+{% block content %}
+<div class="row" x-data="{ showSimulation: false }">
+    <div :class="showSimulation ? 'col-md-9' : 'col-md-12'" class="transition-all duration-300">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h1>{% trans "Dashboard" %}</h1>
+            <div>
+                <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#configModal">
+                    <i class="bi bi-layout-text-window-reverse"></i>
+                    {% trans "Configure Layout" %}
+                </button>
+                <button class="btn btn-primary" @click="showSimulation = !showSimulation">
+                    <i class="bi bi-gear"></i>
+                    {% trans "Simulation" %}
+                </button>
+            </div>
+        </div>
+
+        {% include 'finance/partials/dashboard_summary.html' %}
+
+        <div id="dashboard-charts" hx-include="#simulation-form">
+            {% include 'finance/partials/dashboard_charts.html' %}
+        </div>
+    </div>
+
+    <div class="col-md-3" x-show="showSimulation" x-transition.duration.300ms>
+        <div class="card shadow-sm sticky-top" style="top: 20px; background-color: {{ simulation_config.bg_color|default:'#ffffff' }}; color: {{ simulation_config.text_color|default:'#212529' }};">
+            <div class="card-header" style="background-color: {{ simulation_config.header_bg_color|default:'#ffc107' }}; color: {{ simulation_config.header_text_color|default:'#212529' }};">
+                <h5 class="mb-0"><i class="bi bi-magic"></i> {% trans "Simulation" %}</h5>
+            </div>
+            <div class="card-body">
+                <form id="simulation-form" hx-post="{% url 'dashboard' %}" hx-target="#dashboard-charts"
+                    hx-trigger="submit" hx-indicator="#sim-loading">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">{% trans "Inflation Rate (%)" %}</label>
+                        <input type="number" step="0.1" name="inflation_rate"
+                            value="{{ simulation_params.inflation_rate|stringformat:'.2f' }}" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">{% trans "Salary Increase (%)" %}</label>
+                        <input type="number" step="0.1" name="salary_increase"
+                            value="{{ simulation_params.salary_increase|stringformat:'.2f' }}" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">{% trans "Inv. Return Offset (%)" %}</label>
+                        <input type="number" step="0.1" name="investment_return_offset"
+                            value="{{ simulation_params.investment_return_offset|stringformat:'.2f' }}" class="form-control">
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary d-flex align-items-center justify-content-center gap-2">
+                            <span id="sim-loading" class="spinner-border spinner-border-sm htmx-indicator" role="status"></span>
+                            {% trans "Update Simulation" %}
+                        </button>
+                        <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary btn-sm">{% trans "Reset" %}</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="configModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="background-color: #ffffff !important; color: #212529 !important; opacity: 1 !important;">
+            <div class="modal-header" style="background-color: #f8f9fa;">
+                <h5 class="modal-title">{% trans "Configure Dashboard" %}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="config-form" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="config_update" value="1">
+                    <input type="hidden" name="layout_json" id="layout_json">
+                    <input type="hidden" name="summary_layout_json" id="summary_layout_json">
+                    <input type="hidden" name="simulation_panel_json" id="simulation_panel_json">
+                    
+                    <div class="alert alert-info py-2 mb-3">
+                        <small><i class="bi bi-info-circle"></i> {% trans "Customize colors and visibility for all dashboard components." %}</small>
+                    </div>
+
+                    <h6 class="mb-2 fw-bold text-primary">{% trans "Simulation Panel" %}</h6>
+                    <div class="row g-3 mb-4 p-2 border rounded bg-light mx-0">
+                        <div class="col-md-6">
+                            <label class="form-label small mb-1">{% trans "Header Background & Text" %}</label>
+                            <div class="d-flex gap-2">
+                                <input type="color" id="sim-header-bg" class="form-control form-control-color" value="{{ simulation_config.header_bg_color }}">
+                                <input type="color" id="sim-header-text" class="form-control form-control-color" value="{{ simulation_config.header_text_color }}">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small mb-1">{% trans "Panel Background & Text" %}</label>
+                            <div class="d-flex gap-2">
+                                <input type="color" id="sim-panel-bg" class="form-control form-control-color" value="{{ simulation_config.bg_color }}">
+                                <input type="color" id="sim-panel-text" class="form-control form-control-color" value="{{ simulation_config.text_color }}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <h6 class="mb-3">{% trans "Summary Cards" %}</h6>
+                    <table class="table table-sm align-middle mb-4">
+                        <thead>
+                            <tr>
+                                <th style="width: 40px;"></th>
+                                <th>{% trans "Widget" %}</th>
+                                <th>{% trans "Visible" %}</th>
+                                <th>{% trans "Colors" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody id="summary-table-body">
+                            {% for item in summary_layout %}
+                            <tr data-id="{{ item.id }}" data-bg="{{ item.bg_color }}" data-text="{{ item.text_color }}"
+                                data-visible="{{ item.visible|yesno:'true,false' }}" data-order="{{ item.order }}">
+                                <td><i class="bi bi-grip-vertical drag-handle" style="cursor: move; font-size: 1.2em;"></i></td>
+                                <td>
+                                    {% for k,v in summary_widgets.items %}
+                                    {% if k == item.id %}{{ v.title }}{% endif %}
+                                    {% endfor %}
+                                </td>
+                                <td><input type="checkbox" class="form-check-input summary-visible" {{ item.visible|yesno:"checked," }}></td>
+                                <td>
+                                    <div class="d-flex gap-1">
+                                        <input type="color" class="form-control form-control-color form-control-sm summary-bg" value="{{ item.bg_color }}">
+                                        <input type="color" class="form-control form-control-color form-control-sm summary-text" value="{{ item.text_color }}">
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                    <h6 class="mb-3">{% trans "Charts & Widgets" %}</h6>
+                    <table class="table table-sm align-middle">
+                        <thead>
+                            <tr>
+                                <th style="width: 40px;"></th>
+                                <th>{% trans "Chart" %}</th>
+                                <th>{% trans "Visible" %}</th>
+                                <th>{% trans "Width" %}</th>
+                                <th>{% trans "Height" %}</th>
+                                <th>{% trans "Colors" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody id="layout-table-body">
+                            {% for item in layout %}
+                            <tr data-id="{{ item.id }}" data-width="{{ item.width }}" data-height="{{ item.height }}"
+                                data-bg="{{ item.bg_color }}" data-text="{{ item.text_color }}"
+                                data-visible="{{ item.visible|yesno:'true,false' }}" data-order="{{ item.order }}">
+                                <td><i class="bi bi-grip-vertical drag-handle" style="cursor: move; font-size: 1.2em;"></i></td>
+                                <td>
+                                    {% for k,v in available_charts.items %}
+                                    {% if k == item.id %}{{ v.title }}{% endif %}
+                                    {% endfor %}
+                                </td>
+                                <td><input type="checkbox" class="form-check-input layout-visible" {{ item.visible|yesno:"checked," }}></td>
+                                <td>
+                                    <select class="form-select form-select-sm layout-width">
+                                        <option value="4" {% if item.width == 4 %}selected{% endif %}>1/3</option>
+                                        <option value="6" {% if item.width == 6 %}selected{% endif %}>1/2</option>
+                                        <option value="12" {% if item.width == 12 %}selected{% endif %}>Full</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-select form-select-sm layout-height">
+                                        <option value="small" {% if item.height == 'small' %}selected{% endif %}>{% trans "Small" %}</option>
+                                        <option value="medium" {% if item.height == 'medium' %}selected{% endif %}>{% trans "Medium" %}</option>
+                                        <option value="large" {% if item.height == 'large' %}selected{% endif %}>{% trans "Large" %}</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-1">
+                                        <input type="color" class="form-control form-control-color form-control-sm layout-bg" value="{{ item.bg_color }}">
+                                        <input type="color" class="form-control form-control-color form-control-sm layout-text" value="{{ item.text_color }}">
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+            <div class="modal-footer" style="background-color: #f8f9fa;">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Close" %}</button>
+                <button type="button" class="btn btn-primary" id="save-config-btn">{% trans "Save Changes" %}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var summaryBody = document.getElementById('summary-table-body');
+        if (summaryBody) {
+            new Sortable(summaryBody, {
+                animation: 150,
+                handle: '.drag-handle',
+                ghostClass: 'table-primary'
+            });
+        }
+        var layoutBody = document.getElementById('layout-table-body');
+        if (layoutBody) {
+            new Sortable(layoutBody, {
+                animation: 150,
+                handle: '.drag-handle',
+                ghostClass: 'table-primary'
+            });
+        }
+        document.getElementById('save-config-btn').addEventListener('click', function () {
+            var summaryRows = document.querySelectorAll('#summary-table-body tr');
+            var summaryLayout = [];
+            summaryRows.forEach(function (row, index) {
+                summaryLayout.push({
+                    id: row.dataset.id,
+                    visible: row.querySelector('.summary-visible').checked,
+                    bg_color: row.querySelector('.summary-bg').value,
+                    text_color: row.querySelector('.summary-text').value,
+                    order: index + 1
+                });
+            });
+            var layoutRows = document.querySelectorAll('#layout-table-body tr');
+            var layout = [];
+            layoutRows.forEach(function (row, index) {
+                layout.push({
+                    id: row.dataset.id,
+                    visible: row.querySelector('.layout-visible').checked,
+                    width: parseInt(row.querySelector('.layout-width').value),
+                    height: row.querySelector('.layout-height').value,
+                    bg_color: row.querySelector('.layout-bg').value,
+                    text_color: row.querySelector('.layout-text').value,
+                    order: index + 1
+                });
+            });
+            var simConfig = {
+                bg_color: document.getElementById('sim-panel-bg').value,
+                text_color: document.getElementById('sim-panel-text').value,
+                header_bg_color: document.getElementById('sim-header-bg').value,
+                header_text_color: document.getElementById('sim-header-text').value
+            };
+            document.getElementById('layout_json').value = JSON.stringify(layout);
+            document.getElementById('summary_layout_json').value = JSON.stringify(summaryLayout);
+            document.getElementById('simulation_panel_json').value = JSON.stringify(simConfig);
+            document.getElementById('config-form').submit();
+        });
+    });
+</script>
+{% endblock %}

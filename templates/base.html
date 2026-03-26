@@ -1,0 +1,100 @@
+{% load i18n static %}
+<html lang="{{ request.LANGUAGE_CODE }}" data-bs-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Finanzplan{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+    {% if user.is_authenticated and user.profile.theme %}
+    <style>
+        :root {
+            --bs-primary: {{ user.profile.theme.primary_color }};
+            --bs-secondary: {{ user.profile.theme.secondary_color }};
+            --bs-body-bg: {{ user.profile.theme.background_color }};
+            --bs-body-color: {{ user.profile.theme.text_color }};
+            --bs-modal-bg: {{ user.profile.theme.background_color|default:"#ffffff" }};
+            --bs-modal-color: {{ user.profile.theme.text_color|default:"#212529" }};
+            --bs-tertiary-bg: {{ user.profile.theme.background_color }};
+            --sidebar-bg: {{ user.profile.theme.sidebar_bg_color|default:"#f8f9fa" }};
+        }
+    </style>
+    {% endif %}
+    <style>
+        body {
+            background-color: var(--bs-body-bg, #ffffff);
+            color: var(--bs-body-color, #212529);
+        }
+
+        .modal-content {
+            background-color: #ffffff !important;
+            color: #212529 !important;
+            opacity: 1 !important;
+        }
+
+        .sidebar {
+            display: none;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'dashboard' %}">Finanzplan</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}">{% trans 'Dashboard' %}</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            {% if user.profile.avatar %}<img src="{{ user.profile.avatar.url }}" class="rounded-circle"
+                                height="30" width="30">{% else %}<i class="bi bi-person-circle"></i>{% endif %}
+                            {{ user.username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end bg-white" style="z-index: 1050;">
+                            <li><a class="dropdown-item" href="{% url 'profile' %}">{% trans 'Profile' %}</a></li>
+                            <li><a class="dropdown-item" href="{% url 'admin:index' %}">{% trans 'Admin' %}</a></li>
+
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li>
+                                <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button type="submit"
+                                        class="dropdown-item">{% trans 'Logout' %}</button></form>
+                            </li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">{% trans 'Login' %}</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'signup' %}">{% trans 'Sign Up' %}</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <main class="container-fluid px-md-4">
+        {% if messages %}{% for message in messages %}<div
+            class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">{{ message }}<button
+                type="button" class="btn-close" data-bs-dismiss="alert"></button></div>{% endfor %}{% endif %}
+        {% block content %}{% endblock %}
+    </main>
+    <script>document.body.addEventListener('htmx:configRequest', (e) => { e.detail.headers['X-CSRFToken'] = '{{csrf_token}}'; });</script>
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

@@ -1,0 +1,110 @@
+{% load i18n humanize %}
+{% if request.headers.HX_Request %}
+{% include 'finance/partials/dashboard_summary.html' %}
+{% endif %}
+<div class="row">
+    {% for item in layout %}
+    {% if item.visible %}
+    <div class="col-md-{{ item.width }} mb-4" style="order: {{ item.order }};">
+        <div class="card shadow h-100"
+            style="background-color: {{ item.bg_color|default:'#ffffff' }}; color: {{ item.text_color|default:'#212529' }};">
+            <div class="card-header d-flex justify-content-between align-items-center"
+                style="background: rgba(0,0,0,0.03); border-bottom: 1px solid rgba(0,0,0,0.125); color: inherit;">
+                <span class="fw-bold">
+                    {% for k,v in available_charts.items %}
+                    {% if k == item.id %}
+                    {{ v.title }}
+                    {% endif %}
+                    {% endfor %}
+                </span>
+                {% if item.id in affected_charts %}
+                <i class="bi bi-sliders {% if is_simulation_active %}text-warning{% else %}text-secondary{% endif %}"
+                    style="cursor:help;" data-bs-toggle="tooltip" data-bs-html="true"
+                    data-bs-title="{% trans 'Simulation Parameters' %}:&lt;br&gt;{% trans 'Inflation' %}: {{ simulation_params.inflation_rate }}%&lt;br&gt;{% trans 'Salary' %}: {{ simulation_params.salary_increase }}%&lt;br&gt;{% trans 'Return Offset' %}: {{ simulation_params.investment_return_offset }}%"></i>
+                {% endif %}
+            </div>
+            <div class="card-body d-flex flex-column justify-content-center">
+                <div
+                    style="position:relative;{% if item.height == 'small' %}height:250px;{% elif item.height == 'medium' %}height:400px;{% else %}height:600px;{% endif %}">
+                    <canvas id="{{ item.id }}"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+</div>
+{{ chart_datasets|json_script:"chart-data" }}
+<script>
+    (function () {
+        const dataElement = document.getElementById('chart-data');
+        if (!dataElement) {
+            console.error('Chart data element missing!');
+            return;
+        }
+        const chartData = JSON.parse(dataElement.textContent);
+        console.log('Initializing charts with data:', chartData);
+        {% for item in layout %}
+        {% if item.visible %}
+        if (chartData['{{ item.id }}']) {
+            const ctx = document.getElementById('{{ item.id }}');
+            if (ctx) {
+                const data = chartData['{{ item.id }}'];
+                let config = {
+                    type: 'line',
+                    data: { labels: data.labels, datasets: data.datasets },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            tooltip: { mode: 'index', intersect: false }
+                        }
+                    }
+                };
+                {% if item.id == 'cashflow_chart' %}
+                config.type = 'bar';
+                {% elif item.id == 'budget_pie_chart' %}
+                config.type = 'pie';
+                config.options.scales = { x: { display: false }, y: { display: false } };
+                {% elif item.id == 'expense_evolution_chart' %}
+                config.type = 'line';
+                config.options.scales = { y: { stacked: true } };
+                {% elif item.id == 'income_evolution_chart' %}
+                config.type = 'bar';
+                config.options.scales = {
+                    x: { stacked: true },
+                    y: { stacked: true, beginAtZero: true }
+                };
+                // Custom tooltip for one-time events
+                const evtDatasetIdx = data.datasets.length - 1;
+                const evtDataset = data.datasets[evtDatasetIdx];
+                const tooltipMeta = evtDataset.tooltipData || [];
+                config.options.plugins.tooltip = {
+                    callbacks: {
+                        label: function (context) {
+                            if (context.datasetIndex === evtDatasetIdx && tooltipMeta[context.dataIndex] && tooltipMeta[context.dataIndex].length > 0) {
+                                const events = tooltipMeta[context.dataIndex];
+                                let lines = [context.dataset.label + ': ' + context.formattedValue];
+                                events.forEach(function (e) {
+                                    lines.push('  \u2022 ' + e.name + ' (' + e.date + ')');
+                                    if (e.description) { lines.push('    ' + e.description); }
+                                    lines.push('    ' + e.value.toLocaleString() + ' {{ profile.currency }}');
+                                });
+                                return lines;
+                            }
+                            return context.dataset.label + ': ' + context.formattedValue;
+                        }
+                    }
+                };
+                {% endif %}
+                new Chart(ctx, config);
+            }
+        }
+        {% endif %}
+        {% endfor %}
+        if (typeof bootstrap !== 'undefined') {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (t) { return new bootstrap.Tooltip(t); });
+        }
+    })();
+</script>

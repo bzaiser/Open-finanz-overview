@@ -1,0 +1,17 @@
+# Virtuelle Umgebung
+venv/
+.venv/
+env/
+
+# Statische Dateien & Media (verursachen oft Lag)
+staticfiles/
+media/
+static/
+
+# Datenbanken
+*.sqlite3
+
+# Cache
+__pycache__/
+*.py[cod]
+

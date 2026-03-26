@@ -1,0 +1,31 @@
+{% load i18n humanize %}
+<div id="dashboard-summary" class="row mb-4" {% if request.headers.HX_Request %}hx-swap-oob="true"{% endif %}>
+    {% for item in summary_layout %}
+    {% if item.visible %}
+    <div class="col-md-3" style="order: {{ item.order }};">
+        <div class="card shadow-sm h-100"
+            style="background-color: {{ item.bg_color|default:'#ffffff' }}; color: {{ item.text_color|default:'#212529' }};">
+            <div class="card-body py-2">
+                <small class="text-uppercase opacity-75">
+                    {% for k,v in summary_widgets.items %}
+                    {% if k == item.id %}{{ v.title }}{% endif %}
+                    {% endfor %}
+                </small>
+                <h4 class="mb-0">
+                    {% if item.id == 'current_assets' %}
+                    {{ current_assets_total|intcomma }}
+                    {% elif item.id == 'monthly_income' %}
+                    {{ current_monthly_income|intcomma }}
+                    {% elif item.id == 'monthly_expenses' %}
+                    {{ current_monthly_expenses|intcomma }}
+                    {% elif item.id == 'total_pensions' %}
+                    {{ current_pensions_total|intcomma }}
+                    {% endif %}
+                    <span class="ms-1"></span>{{ profile.currency }}</span>
+                </h4>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+</div>
