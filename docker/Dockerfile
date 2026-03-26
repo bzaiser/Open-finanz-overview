@@ -5,8 +5,14 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 ENV RUNNING_IN_DOCKER 1
 
+# Create a non-root user early to maximize caching
+RUN addgroup --system app && adduser --system --group app
+
 # Set work directory
 WORKDIR /app
+
+# Ensure the persistent data directory exists
+RUN mkdir -p /app/data && chown -R app:app /app
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -18,17 +24,14 @@ RUN apt-get update && apt-get install -y \
 COPY requirements.txt /app/
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
-# Copy project
-COPY . /app/
+# Copy python code (only this and below runs on code change)
+COPY --chown=app:app . /app/
 
-# Ensure the persistent data directory exists and static files can be collected
-RUN mkdir -p /app/data
-RUN python manage.py collectstatic --noinput
-
-# Create a non-root user
-RUN addgroup --system app && adduser --system --group app
-RUN chown -R app:app /app
+# Switch to the non-root user
 USER app
+
+# Collect static files with proper permissions
+RUN python manage.py collectstatic --noinput
 
 EXPOSE 8000
 
