@@ -68,6 +68,7 @@ class YearListFilter(admin.SimpleListFilter):
 @admin.register(CashFlowSource)
 class CashFlowSourceAdmin(admin.ModelAdmin):
     list_display = ('name', 'user', 'value', 'category', 'is_income', 'frequency', 'start_date', 'end_date')
+    list_editable = ('value', 'category', 'is_income', 'frequency', 'start_date', 'end_date')
     list_filter = (YearListFilter, 'is_income', 'frequency', 'user', 'category')
     search_fields = ('name',)
     actions = [duplicate_and_increment_cashflow]
