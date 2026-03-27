@@ -34,6 +34,15 @@ class SimulationEngine:
         cash_flows = list(self.user.cash_flows.all())
         one_time_events = list(self.user.events.all())
 
+        pensions_state = []
+        for p in pensions:
+            pensions_state.append({'pension': p, 'balance': p.current_value})
+            
+        assets_state = []
+        for a in assets:
+            assets_state.append({'asset': a, 'balance': a.value})
+            
+        # Accumulated cash covers generic monthly savings
         accumulated_cash = Decimal('0.00')
 
         # Pre-calculate monthly pension contributions to deduct from cashflow
@@ -43,29 +52,34 @@ class SimulationEngine:
             current_date = start_date + relativedelta(months=i)
             year_passed = i / 12.0
             
-            # 1. Apply Asset Growth (Simple monthly compound)
+            # 1. Apply Asset Growth & Withdrawals
             asset_total = Decimal('0.00')
-            for asset in assets:
+            for item in assets_state:
+                asset = item['asset']
                 rate = (asset.growth_rate / 100) + self.investment_return_offset
                 monthly_rate = rate / 12
-                growth_factor = (1 + monthly_rate) ** i 
-                asset_future_value = asset.value * Decimal(growth_factor)
-                asset_total += asset_future_value
+                
+                # Apply growth
+                item['balance'] *= (1 + monthly_rate)
+                
+                # Apply withdrawal
+                if asset.withdrawal_start_date and current_date >= asset.withdrawal_start_date:
+                    withdrawal = asset.withdrawal_amount
+                    item['balance'] = max(Decimal('0'), item['balance'] - withdrawal)
+                
+                asset_total += item['balance']
             
             # 2. Apply Pension Growth
             pension_total = Decimal('0.00')
-            for pension in pensions:
+            for item in pensions_state:
+                pension = item['pension']
                 rate = (pension.growth_rate / 100)
                 monthly_rate = rate / 12
                 
-                if monthly_rate > 0:
-                    fv_initial = pension.current_value * Decimal((1 + monthly_rate) ** i)
-                    fv_contributions = pension.monthly_contribution * (Decimal(((1 + monthly_rate) ** i) - 1) / Decimal(monthly_rate))
-                else:
-                    fv_initial = pension.current_value
-                    fv_contributions = pension.monthly_contribution * i
-                
-                pension_total += (fv_initial + fv_contributions)
+                # Apply growth to current balance + add contribution
+                # (Assuming contribution happens at start of month for growth)
+                item['balance'] = (item['balance'] + pension.monthly_contribution) * (1 + monthly_rate)
+                pension_total += item['balance']
 
             # 3. Process Cash Flows (Income/Expenses)
             monthly_income = Decimal('0.00')

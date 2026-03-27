@@ -45,6 +45,10 @@ class Asset(models.Model):
     value = models.DecimalField(_("Current Value"), max_digits=12, decimal_places=2)
     growth_rate = models.DecimalField(_("Annual Growth Rate (%)"), max_digits=5, decimal_places=2, default=0.0)
     
+    # Withdrawal / Decumulation
+    withdrawal_amount = models.DecimalField(_("Monthly Withdrawal"), max_digits=12, decimal_places=2, default=0.0, help_text=_("Amount to take out of this asset each month"))
+    withdrawal_start_date = models.DateField(_("Withdrawal Start Date"), null=True, blank=True)
+    
     class Meta:
         verbose_name = _("Asset")
         verbose_name_plural = _("Assets")

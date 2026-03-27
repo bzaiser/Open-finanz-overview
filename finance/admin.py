@@ -73,7 +73,7 @@ class CashFlowSourceInline(admin.TabularInline):
 class AssetInline(admin.TabularInline):
     model = Asset
     extra = 1
-    fields = ('name', 'value', 'growth_rate')
+    fields = ('name', 'value', 'growth_rate', 'withdrawal_amount', 'withdrawal_start_date')
 
 class OneTimeEventInline(admin.TabularInline):
     model = OneTimeEvent
