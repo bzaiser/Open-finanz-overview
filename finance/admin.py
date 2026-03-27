@@ -65,6 +65,11 @@ class YearListFilter(admin.SimpleListFilter):
             return queryset.filter(start_date__year=self.value())
         return queryset
 
+class CashFlowSourceInline(admin.TabularInline):
+    model = CashFlowSource
+    extra = 3  # Zeige 3 leere Zeilen für neue Einträge an
+    fields = ('name', 'value', 'category', 'is_income', 'frequency', 'start_date', 'end_date')
+
 @admin.register(CashFlowSource)
 class CashFlowSourceAdmin(admin.ModelAdmin):
     list_display = ('name', 'user', 'value', 'category', 'is_income', 'frequency', 'start_date', 'end_date')

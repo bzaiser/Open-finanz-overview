@@ -1,10 +1,13 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import CustomUser, Theme, UserProfile
+from finance.admin import CashFlowSourceInline
+
 
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
-    pass
+    inlines = [CashFlowSourceInline]
+
 
 @admin.register(Theme)
 class ThemeAdmin(admin.ModelAdmin):
