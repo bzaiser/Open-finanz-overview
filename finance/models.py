@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
+from core.models import CustomUser
+
 
 class Category(models.Model):
     name = models.CharField(_("Name"), max_length=100)
@@ -79,3 +81,10 @@ class Pension(models.Model):
 
     def __str__(self):
         return self.provider
+
+class FinancialStatusProxy(CustomUser):
+    class Meta:
+        proxy = True
+        verbose_name = _("Mein Finanzstatus (Vorausgefüllt)")
+        verbose_name_plural = _("Meine Finanzen (Schnelleingabe)")
+
