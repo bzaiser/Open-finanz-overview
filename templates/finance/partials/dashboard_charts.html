@@ -96,6 +96,23 @@
                         }
                     }
                 };
+                {% elif item.id == 'inflation_monitor_chart' %}
+                config.options.plugins.tooltip = {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) { label += ': '; }
+                            if (context.parsed.y !== null) {
+                                label += new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ profile.currency }}' }).format(context.parsed.y);
+                            }
+                            if (context.dataset.percentData) {
+                                const percent = context.dataset.percentData[context.dataIndex];
+                                label += ' (-' + percent.toFixed(1) + '%)';
+                            }
+                            return label;
+                        }
+                    }
+                };
                 {% endif %}
                 new Chart(ctx, config);
             }

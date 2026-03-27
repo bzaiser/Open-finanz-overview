@@ -179,12 +179,25 @@ def dashboard_view(request):
         })
 
     # 5. Inflation Monitor (Real vs Nominal Gap + Lines)
-    inflation_loss = [float(d['nominal_net_worth'] - d['real_net_worth']) for d in forecast_data[::12]]
+    inflation_loss = []
+    inflation_loss_percent = []
+    for d in forecast_data[::12]:
+        nom = float(d['nominal_net_worth'])
+        real = float(d['real_net_worth'])
+        loss = nom - real
+        inflation_loss.append(loss)
+        if nom > 0:
+            percent = (loss / nom) * 100
+        else:
+            percent = 0.0
+        inflation_loss_percent.append(percent)
+
     inflation_data = {
         'labels': labels_yearly,
         'nominal': net_worth_nominal,
         'real': net_worth_real,
-        'loss': inflation_loss
+        'loss': inflation_loss,
+        'loss_percent': inflation_loss_percent
     }
 
     # 6. Income Evolution + One-Time Events (NEW)
@@ -270,7 +283,13 @@ def dashboard_view(request):
         'datasets': [
             {'label': str(_('Nominal Value')), 'data': inflation_data['nominal'], 'borderColor': '#0d6efd', 'fill': False},
             {'label': str(_('Real Value (Purchasing Power)')), 'data': inflation_data['real'], 'borderColor': '#198754', 'fill': False},
-            {'label': str(_('Purchasing Power Loss')), 'data': inflation_data['loss'], 'backgroundColor': 'rgba(220, 53, 69, 0.5)', 'type': 'bar'}
+            {
+                'label': str(_('Purchasing Power Loss')), 
+                'data': inflation_data['loss'], 
+                'backgroundColor': 'rgba(220, 53, 69, 0.5)', 
+                'type': 'bar',
+                'percentData': inflation_data['loss_percent']
+            }
         ]
     }
 
