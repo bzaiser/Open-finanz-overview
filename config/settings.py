@@ -148,7 +148,7 @@ AUTH_USER_MODEL = 'core.CustomUser'
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']
+STATICFILES_DIRS = [BASE_DIR / 'static'] if (BASE_DIR / 'static').exists() else []
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Whitenoise static files compression
