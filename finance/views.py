@@ -426,6 +426,8 @@ def dashboard_view(request):
         'simulated_end_age': simulated_end_age,
         'current_assets_total': current_assets_total,
         'current_monthly_income': current_monthly_income,
+        'current_monthly_expenses': current_monthly_expenses,
+        'current_pensions_total': current_pensions_total,
         'simulation_config': simulation_config,
         'table_datasets': table_datasets,
     }
