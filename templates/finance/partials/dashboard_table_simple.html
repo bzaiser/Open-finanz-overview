@@ -79,7 +79,7 @@
                     <th class="border-0 cursor-pointer" @click="sortCol = 'name'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'">
                         <div class="d-flex align-items-center justify-content-between">
                             <span>{% trans 'Name' %}</span>
-                            <i class="bi" :class="sortCol === 'name' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up' text-muted opacity-50"></i>
+                            <i class="bi" :class="sortCol === 'name' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up text-muted opacity-50'"></i>
                         </div>
                     </th>
                     <th class="border-0 cursor-pointer" @click="sortCol = (items.some(i => i.date) ? 'date' : 'category'); sortDir = sortDir === 'asc' ? 'desc' : 'asc'">
@@ -90,13 +90,13 @@
                             <template x-if="!items.some(i => i.date)">
                                 <span>{% trans 'Category' %}</span>
                             </template>
-                            <i class="bi" :class="(sortCol === 'category' || sortCol === 'date') ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up' text-muted opacity-50"></i>
+                            <i class="bi" :class="(sortCol === 'category' || sortCol === 'date') ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up text-muted opacity-50'"></i>
                         </div>
                     </th>
                     <th class="border-0 text-end cursor-pointer" @click="sortCol = 'amount'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'">
                         <div class="d-flex align-items-center justify-content-end">
                             <span class="me-1">{% trans 'Amount' %}</span>
-                            <i class="bi" :class="sortCol === 'amount' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up' text-muted opacity-50"></i>
+                            <i class="bi" :class="sortCol === 'amount' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up text-muted opacity-50'"></i>
                         </div>
                     </th>
                 </tr>
