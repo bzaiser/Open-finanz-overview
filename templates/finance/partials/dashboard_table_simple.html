@@ -79,10 +79,10 @@
                     <th class="border-0 cursor-pointer" @click="sortCol = 'name'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'">
                         <div class="d-flex align-items-center justify-content-between">
                             <span>{% trans 'Name' %}</span>
-                            <i class="bi" :class="sortCol === 'name' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-hash'"></i>
+                            <i class="bi" :class="sortCol === 'name' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up' text-muted opacity-50"></i>
                         </div>
                     </th>
-                    <th class="border-0 cursor-pointer" @click="sortCol = 'date'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'">
+                    <th class="border-0 cursor-pointer" @click="sortCol = (items.some(i => i.date) ? 'date' : 'category'); sortDir = sortDir === 'asc' ? 'desc' : 'asc'">
                          <div class="d-flex align-items-center justify-content-between">
                             <template x-if="items.some(i => i.date)">
                                 <span>{% trans 'Date' %}</span>
@@ -90,13 +90,13 @@
                             <template x-if="!items.some(i => i.date)">
                                 <span>{% trans 'Category' %}</span>
                             </template>
-                            <i class="bi" :class="(sortCol === 'category' || sortCol === 'date') ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-hash'"></i>
+                            <i class="bi" :class="(sortCol === 'category' || sortCol === 'date') ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up' text-muted opacity-50"></i>
                         </div>
                     </th>
                     <th class="border-0 text-end cursor-pointer" @click="sortCol = 'amount'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'">
                         <div class="d-flex align-items-center justify-content-end">
                             <span class="me-1">{% trans 'Amount' %}</span>
-                            <i class="bi" :class="sortCol === 'amount' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-hash'"></i>
+                            <i class="bi" :class="sortCol === 'amount' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up' text-muted opacity-50"></i>
                         </div>
                     </th>
                 </tr>
@@ -115,22 +115,23 @@
             <tbody>
                 <template x-for="group in groupedItems" :key="group.year">
                     <template x-if="group.items.length > 0">
+                        <tr class="bg-light border-top border-bottom">
+                            <td class="p-2" colspan="2">
+                                <span class="badge bg-secondary" style="font-size: 0.75rem;" x-text="group.year"></span>
+                            </td>
+                            <td class="text-end p-2">
+                                <div class="small text-muted text-uppercase" style="font-size: 0.6rem;">{% trans 'Group Sum' %}</div>
+                                <div class="fw-bold text-dark h6 mb-0" x-text="new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ currency }}' }).format(group.subtotal)"></div>
+                            </td>
+                        </tr>
                         <template x-for="(item, index) in group.items" :key="index + item.name + item.amount">
-                            <tr :class="index === 0 ? 'border-top' : ''" :style="index === 0 ? 'background-color: rgba(0,0,0,0.02)' : ''">
-                                <td class="fw-medium text-truncate" style="max-width: 150px;">
-                                    <template x-if="index === 0">
-                                        <div class="d-flex align-items-center mb-1">
-                                            <span class="badge bg-secondary me-2" style="font-size: 0.65rem;" x-text="group.year"></span>
-                                            <span class="text-muted" style="font-size: 0.65rem;">{% trans 'Group Sum' %}: <span class="fw-bold" x-text="new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ currency }}' }).format(group.subtotal)"></span></span>
-                                        </div>
-                                    </template>
-                                    <span :title="item.name" x-text="item.name"></span>
-                                </td>
+                            <tr>
+                                <td class="fw-medium text-truncate" style="max-width: 150px;" :title="item.name" x-text="item.name"></td>
                                 <td>
                                     <div class="d-flex flex-wrap gap-1">
                                         <span x-show="item.date" class="text-muted small" x-text="item.date"></span>
                                         <span x-show="!item.date" class="badge bg-light text-dark border" x-text="item.category"></span>
-                                        <span x-show="item.type && item.type !== '{% trans 'Manual' %}''" class="badge bg-info-subtle text-info border-info-subtle" style="font-size: 0.6rem;" x-text="item.type"></span>
+                                        <span x-show="item.type && item.type !== '{% trans 'Manual' %}'" class="badge bg-info-subtle text-info border-info-subtle" style="font-size: 0.6rem;" x-text="item.type"></span>
                                     </div>
                                 </td>
                                 <td class="text-end fw-bold" x-text="new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ currency }}' }).format(item.amount)"></td>
