@@ -1,6 +1,6 @@
 {% load i18n humanize %}
 <div x-data="{ 
-    colFilters: { name: '', cat: '', amount: '' },
+    colFilters: { name: '', cat: '', year: '', amount: '' },
     sortCol: 'amount', 
     sortDir: 'desc',
     items: [],
@@ -26,6 +26,10 @@
             const c = (i.date || i.category || '').toLowerCase();
             const f_c = (this.colFilters.cat || '').toLowerCase();
             if (f_c && !c.includes(f_c)) return false;
+
+            const y = (i.year || '').toString().toLowerCase();
+            const f_y = (this.colFilters.year || '').toString().toLowerCase();
+            if (f_y && !y.includes(f_y)) return false;
 
             const a = (i.amount || 0).toString();
             const f_a = (this.colFilters.amount || '').toString();
@@ -103,6 +107,12 @@
                             <i class="bi" :class="(sortCol === 'category' || sortCol === 'date') ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up text-white-50'"></i>
                         </div>
                     </th>
+                    <th class="py-2 px-3 border-0 cursor-pointer" @click="sortCol = 'year'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <span>{% trans 'Year' %}</span>
+                            <i class="bi" :class="sortCol === 'year' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up text-white-50'"></i>
+                        </div>
+                    </th>
                     <th class="py-2 px-3 border-0 text-end cursor-pointer" @click="sortCol = 'amount'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'">
                         <div class="d-flex align-items-center justify-content-end">
                             <span class="me-1">{% trans 'Amount' %}</span>
@@ -118,6 +128,9 @@
                         <input type="text" x-model="colFilters.cat" class="form-control form-control-xs py-0 border-secondary-subtle shadow-sm" style="font-size: 0.7rem; background-color: #ffffff;" placeholder="{% trans 'Filter...' %}">
                     </td>
                     <td class="p-1 border-0">
+                        <input type="text" x-model="colFilters.year" class="form-control form-control-xs py-0 border-secondary-subtle shadow-sm text-center" style="font-size: 0.7rem; background-color: #ffffff;" placeholder="{% trans 'Filter...' %}">
+                    </td>
+                    <td class="p-1 border-0">
                         <input type="text" x-model="colFilters.amount" class="form-control form-control-xs py-0 text-end border-secondary-subtle shadow-sm" style="font-size: 0.7rem; background-color: #ffffff;" placeholder="{% trans 'Filter...' %}">
                     </td>
                 </tr>
@@ -125,25 +138,23 @@
             <tbody>
                 <template x-for="(row, idx) in displayRows" :key="'row-' + idx">
                     <tr :class="row.isGroupHeader ? 'bg-light border-top border-bottom' : ''">
-                        <!-- Case 1: Group Header -->
                         <template x-if="row.isGroupHeader">
-                           <td class="p-2" colspan="2">
-                               <span class="badge bg-secondary" style="font-size: 0.75rem;" x-text="row.year"></span>
-                           </td>
+                            <td class="p-2 border-0" colspan="3">
+                                <span class="badge bg-secondary" style="font-size: 0.75rem;" x-text="row.year"></span>
+                            </td>
                         </template>
                         <template x-if="row.isGroupHeader">
-                           <td class="text-end p-2">
-                               <div class="small text-muted text-uppercase" style="font-size: 0.6rem;">{% trans 'Group Sum' %}</div>
-                               <div class="fw-bold text-dark h6 mb-0" x-text="new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ currency }}' }).format(row.subtotal)"></div>
-                           </td>
+                            <td class="text-end p-2 border-0">
+                                <div class="small text-muted text-uppercase" style="font-size: 0.6rem;">{% trans 'Group Sum' %}</div>
+                                <div class="fw-bold text-dark h6 mb-0" x-text="new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ currency }}' }).format(row.subtotal)"></div>
+                            </td>
                         </template>
 
-                        <!-- Case 2: Data Row -->
                         <template x-if="!row.isGroupHeader">
-                            <td class="fw-medium text-truncate" style="max-width: 150px;" :title="row.name" x-text="row.name"></td>
+                            <td class="fw-medium text-truncate border-0" style="max-width: 150px;" :title="row.name" x-text="row.name"></td>
                         </template>
                         <template x-if="!row.isGroupHeader">
-                            <td>
+                            <td class="border-0">
                                 <div class="d-flex flex-wrap gap-1">
                                     <span x-show="row.date" class="text-muted small" x-text="row.date"></span>
                                     <span x-show="!row.date" class="badge bg-light text-dark border" x-text="row.category"></span>
@@ -152,12 +163,15 @@
                             </td>
                         </template>
                         <template x-if="!row.isGroupHeader">
-                            <td class="text-end fw-bold" x-text="new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ currency }}' }).format(row.amount)"></td>
+                            <td class="text-center text-muted border-0" style="font-size: 0.75rem" x-text="row.year"></td>
+                        </template>
+                        <template x-if="!row.isGroupHeader">
+                            <td class="text-end fw-bold border-0" x-text="new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ currency }}' }).format(row.amount)"></td>
                         </template>
                     </tr>
                 </template>
                 <tr x-show="filteredItems.length === 0">
-                    <td colspan="3" class="text-center text-muted py-4">{% trans 'No items found' %}</td>
+                    <td colspan="4" class="text-center text-muted py-4">{% trans 'No items found' %}</td>
                 </tr>
             </tbody>
         </table>
