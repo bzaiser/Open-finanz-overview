@@ -320,14 +320,42 @@ def dashboard_view(request):
     
     # 7. Table Gadget Data (Monthly Normalized)
     table_data_income = []
+    # Direct income
     for cf in user.cash_flows.filter(is_income=True):
         amt = cf.value if cf.frequency == 'monthly' else cf.value / 12
-        table_data_income.append({'name': cf.name, 'amount': float(amt), 'category': cf.category.name if cf.category else _('Uncategorized')})
+        table_data_income.append({
+            'name': cf.name, 
+            'amount': float(amt), 
+            'category': cf.category.name if cf.category else _('Uncategorized'),
+            'type': _('Manual')
+        })
+    # Asset withdrawals (Income)
+    for a in user.assets.filter(withdrawal_amount__gt=0):
+        table_data_income.append({
+            'name': f"{_('Withdrawal')}: {a.name}", 
+            'amount': float(a.withdrawal_amount), 
+            'category': _('Asset'),
+            'type': _('Asset')
+        })
 
     table_data_expense = []
+    # Direct expenses
     for cf in user.cash_flows.filter(is_income=False):
         amt = cf.value if cf.frequency == 'monthly' else cf.value / 12
-        table_data_expense.append({'name': cf.name, 'amount': float(amt), 'category': cf.category.name if cf.category else _('Uncategorized')})
+        table_data_expense.append({
+            'name': cf.name, 
+            'amount': float(amt), 
+            'category': cf.category.name if cf.category else _('Uncategorized'),
+            'type': _('Manual')
+        })
+    # Pension contributions (Expense)
+    for p in user.pensions.filter(monthly_contribution__gt=0):
+        table_data_expense.append({
+            'name': f"{_('Contribution')}: {p.provider}", 
+            'amount': float(p.monthly_contribution), 
+            'category': _('Pension'),
+            'type': _('Pension')
+        })
 
     table_data_asset = []
     for a in user.assets.all():
