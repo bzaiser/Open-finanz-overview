@@ -7,18 +7,32 @@
     init() {
         const scriptTag = document.getElementById('{{ widget_id }}');
         if (scriptTag) {
-            this.items = JSON.parse(scriptTag.textContent);
+            try {
+                const data = JSON.parse(scriptTag.textContent);
+                this.items = Array.isArray(data) ? data : [];
+            } catch (e) {
+                console.error('Error parsing table data:', e);
+                this.items = [];
+            }
         }
     },
     get filteredItems() {
-        let filtered = this.items.filter(i => {
-            const nameMatch = i.name.toLowerCase().includes(this.colFilters.name.toLowerCase());
-            const catField = i.date || i.category || '';
-            const catMatch = catField.toLowerCase().includes(this.colFilters.cat.toLowerCase());
-            const amountMatch = i.amount.toString().includes(this.colFilters.amount);
-            return nameMatch && catMatch && amountMatch;
-        });
-        return filtered.sort((a, b) => {
+        if (!this.items) return [];
+        return this.items.filter(i => {
+            const n = (i.name || '').toLowerCase();
+            const f_n = (this.colFilters.name || '').toLowerCase();
+            if (f_n && !n.includes(f_n)) return false;
+
+            const c = (i.date || i.category || '').toLowerCase();
+            const f_c = (this.colFilters.cat || '').toLowerCase();
+            if (f_c && !c.includes(f_c)) return false;
+
+            const a = (i.amount || 0).toString();
+            const f_a = (this.colFilters.amount || '').toString();
+            if (f_a && !a.includes(f_a)) return false;
+
+            return true;
+        }).sort((a, b) => {
             let va = a[this.sortCol];
             let vb = b[this.sortCol];
             if (typeof va === 'string') {
@@ -31,9 +45,9 @@
         });
     },
     get total() {
-        return this.filteredItems.reduce((sum, i) => sum + i.amount, 0);
+        return this.filteredItems.reduce((sum, i) => sum + (parseFloat(i.amount) || 0), 0);
     }
-}" class="h-100 d-flex flex-column">
+}" class="h-100 d-flex flex-column" x-init="init()">
     
     <div class="flex-grow-1 overflow-auto px-2" style="max-height: 100%;">
         <table class="table table-sm table-hover align-middle mb-0" style="font-size: 0.85rem; color: inherit;">
@@ -53,7 +67,7 @@
                             <template x-if="!items.some(i => i.date)">
                                 <span>{% trans 'Category' %}</span>
                             </template>
-                            <i class="bi" :class="sortCol === 'category' || sortCol === 'date' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-hash'"></i>
+                            <i class="bi" :class="(sortCol === 'category' || sortCol === 'date') ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-hash'"></i>
                         </div>
                     </th>
                     <th class="border-0 text-end cursor-pointer" @click="sortCol = 'amount'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'">
@@ -76,7 +90,7 @@
                 </tr>
             </thead>
             <tbody>
-                <template x-for="item in filteredItems" :key="item.name + item.amount">
+                <template x-for="(item, index) in filteredItems" :key="index + item.name + item.amount">
                     <tr>
                         <td class="fw-medium text-truncate" style="max-width: 150px;" :title="item.name" x-text="item.name"></td>
                         <td>
