@@ -17,7 +17,7 @@ AVAILABLE_CHARTS = {
     'budget_pie_chart': {'title': _('Monthly Budget'), 'type': 'pie', 'default_width': 6, 'default_height': 'small'},
     'income_table_widget': {'title': _('Income Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small'},
     'expense_table_widget': {'title': _('Expense Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small'},
-    'asset_table_widget': {'title': _('Asset Withdrawal Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small'},
+    'asset_table_widget': {'title': _('Asset Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small'},
     'pension_table_widget': {'title': _('Pension Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small'},
     'event_table_widget': {'title': _('One-Time Event Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small'},
 }
@@ -330,12 +330,22 @@ def dashboard_view(request):
         table_data_expense.append({'name': cf.name, 'amount': float(amt), 'category': cf.category.name if cf.category else _('Uncategorized')})
 
     table_data_asset = []
-    for a in user.assets.filter(withdrawal_amount__gt=0):
-        table_data_asset.append({'name': a.name, 'amount': float(a.withdrawal_amount), 'category': _('Withdrawal')})
+    for a in user.assets.all():
+        table_data_asset.append({
+            'name': a.name, 
+            'amount': float(a.value), 
+            'category': _('Asset'),
+            'rate': f"{a.growth_rate}%"
+        })
 
     table_data_pension = []
-    for p in user.pensions.filter(monthly_contribution__gt=0):
-        table_data_pension.append({'name': p.provider, 'amount': float(p.monthly_contribution), 'category': _('Contribution')})
+    for p in user.pensions.all():
+        table_data_pension.append({
+            'name': p.provider, 
+            'amount': float(p.current_value), 
+            'category': _('Pension'),
+            'contribution': float(p.monthly_contribution)
+        })
 
     table_data_event = []
     for e in user.events.all():
