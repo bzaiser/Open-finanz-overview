@@ -53,19 +53,32 @@
             return 0;
         });
     },
-    get groupedItems() {
+    get displayRows() {
         const sorted = this.filteredItems;
-        const groups = [];
-        sorted.forEach(item => {
-            let group = groups.find(g => g.year === item.year);
-            if (!group) {
-                group = { year: item.year, items: [], subtotal: 0 };
-                groups.push(group);
-            }
-            group.items.push(item);
-            group.subtotal += parseFloat(item.amount) || 0;
+        const rows = [];
+        let currentYear = null;
+        
+        // Pre-calculate sums for current filtered set
+        const yearSums = {};
+        sorted.forEach(i => {
+            yearSums[i.year] = (yearSums[i.year] || 0) + (parseFloat(i.amount) || 0);
         });
-        return groups;
+
+        sorted.forEach(item => {
+            if (item.year !== currentYear) {
+                currentYear = item.year;
+                rows.push({
+                    isGroupHeader: true,
+                    year: currentYear,
+                    subtotal: yearSums[currentYear]
+                });
+            }
+            rows.push({
+                isGroupHeader: false,
+                ...item
+            });
+        });
+        return rows;
     },
     get total() {
         return this.filteredItems.reduce((sum, i) => sum + (parseFloat(i.amount) || 0), 0);
@@ -113,31 +126,27 @@
                 </tr>
             </thead>
             <tbody>
-                <template x-for="group in groupedItems" :key="group.year">
-                    <template x-if="group.items.length > 0">
-                        <tr class="bg-light border-top border-bottom">
-                            <td class="p-2" colspan="2">
-                                <span class="badge bg-secondary" style="font-size: 0.75rem;" x-text="group.year"></span>
-                            </td>
-                            <td class="text-end p-2">
-                                <div class="small text-muted text-uppercase" style="font-size: 0.6rem;">{% trans 'Group Sum' %}</div>
-                                <div class="fw-bold text-dark h6 mb-0" x-text="new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ currency }}' }).format(group.subtotal)"></div>
-                            </td>
-                        </tr>
-                        <template x-for="(item, index) in group.items" :key="index + item.name + item.amount">
-                            <tr>
-                                <td class="fw-medium text-truncate" style="max-width: 150px;" :title="item.name" x-text="item.name"></td>
-                                <td>
-                                    <div class="d-flex flex-wrap gap-1">
-                                        <span x-show="item.date" class="text-muted small" x-text="item.date"></span>
-                                        <span x-show="!item.date" class="badge bg-light text-dark border" x-text="item.category"></span>
-                                        <span x-show="item.type && item.type !== '{% trans 'Manual' %}'" class="badge bg-info-subtle text-info border-info-subtle" style="font-size: 0.6rem;" x-text="item.type"></span>
-                                    </div>
-                                </td>
-                                <td class="text-end fw-bold" x-text="new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ currency }}' }).format(item.amount)"></td>
-                            </tr>
-                        </template>
-                    </template>
+                <template x-for="(row, idx) in displayRows" :key="'row-' + idx">
+                    <tr x-show="row.isGroupHeader" class="bg-light border-top border-bottom">
+                        <td class="p-2" colspan="2">
+                            <span class="badge bg-secondary" style="font-size: 0.75rem;" x-text="row.year"></span>
+                        </td>
+                        <td class="text-end p-2">
+                            <div class="small text-muted text-uppercase" style="font-size: 0.6rem;">{% trans 'Group Sum' %}</div>
+                            <div class="fw-bold text-dark h6 mb-0" x-text="new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ currency }}' }).format(row.subtotal)"></div>
+                        </td>
+                    </tr>
+                    <tr x-show="!row.isGroupHeader">
+                        <td class="fw-medium text-truncate" style="max-width: 150px;" :title="row.name" x-text="row.name"></td>
+                        <td>
+                            <div class="d-flex flex-wrap gap-1">
+                                <span x-show="row.date" class="text-muted small" x-text="row.date"></span>
+                                <span x-show="!row.date" class="badge bg-light text-dark border" x-text="row.category"></span>
+                                <span x-show="row.type && row.type !== '{% trans 'Manual' %}'" class="badge bg-info-subtle text-info border-info-subtle" style="font-size: 0.6rem;" x-text="row.type"></span>
+                            </div>
+                        </td>
+                        <td class="text-end fw-bold" x-text="new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ currency }}' }).format(row.amount)"></td>
+                    </tr>
                 </template>
                 <tr x-show="filteredItems.length === 0">
                     <td colspan="3" class="text-center text-muted py-4">{% trans 'No items found' %}</td>
