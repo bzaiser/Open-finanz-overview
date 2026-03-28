@@ -89,36 +89,36 @@
     
     <div class="flex-grow-1 overflow-auto px-2" style="max-height: 100%;">
         <table class="table table-sm table-hover align-middle mb-0" style="font-size: 0.85rem; color: inherit;">
-            <thead class="sticky-top bg-white" style="z-index: 10;">
-                <tr class="text-muted text-uppercase" style="font-size: 0.7rem;">
-                    <th class="border-0 cursor-pointer" @click="sortCol = 'name'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'">
+            <thead class="sticky-top" style="z-index: 10;">
+                <tr class="text-uppercase bg-dark text-white" style="font-size: 0.70rem;">
+                    <th class="py-2 px-3 border-0 cursor-pointer" @click="sortCol = 'name'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'">
                         <div class="d-flex align-items-center justify-content-between">
                             <span>{% trans 'Name' %}</span>
-                            <i class="bi" :class="sortCol === 'name' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up text-muted opacity-50'"></i>
+                            <i class="bi" :class="sortCol === 'name' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up text-white-50'"></i>
                         </div>
                     </th>
-                    <th class="border-0 cursor-pointer" @click="sortCol = (hasDate ? 'date' : 'category'); sortDir = sortDir === 'asc' ? 'desc' : 'asc'">
+                    <th class="py-2 px-3 border-0 cursor-pointer" @click="sortCol = (hasDate ? 'date' : 'category'); sortDir = sortDir === 'asc' ? 'desc' : 'asc'">
                          <div class="d-flex align-items-center justify-content-between">
                             <span x-text="hasDate ? '{% trans 'Date' %}' : '{% trans 'Category' %}'"></span>
-                            <i class="bi" :class="(sortCol === 'category' || sortCol === 'date') ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up text-muted opacity-50'"></i>
+                            <i class="bi" :class="(sortCol === 'category' || sortCol === 'date') ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up text-white-50'"></i>
                         </div>
                     </th>
-                    <th class="border-0 text-end cursor-pointer" @click="sortCol = 'amount'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'">
+                    <th class="py-2 px-3 border-0 text-end cursor-pointer" @click="sortCol = 'amount'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'">
                         <div class="d-flex align-items-center justify-content-end">
                             <span class="me-1">{% trans 'Amount' %}</span>
-                            <i class="bi" :class="sortCol === 'amount' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up text-muted opacity-50'"></i>
+                            <i class="bi" :class="sortCol === 'amount' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up text-white-50'"></i>
                         </div>
                     </th>
                 </tr>
-                <tr class="bg-light">
+                <tr style="background-color: #f1f3f5;">
                     <td class="p-1 border-0">
-                        <input type="text" x-model="colFilters.name" class="form-control form-control-xs py-0" style="font-size: 0.7rem;" placeholder="{% trans 'Filter...' %}">
+                        <input type="text" x-model="colFilters.name" class="form-control form-control-xs py-0 border-secondary-subtle shadow-sm" style="font-size: 0.7rem; background-color: #ffffff;" placeholder="{% trans 'Filter...' %}">
                     </td>
                     <td class="p-1 border-0">
-                        <input type="text" x-model="colFilters.cat" class="form-control form-control-xs py-0" style="font-size: 0.7rem;" placeholder="{% trans 'Filter...' %}">
+                        <input type="text" x-model="colFilters.cat" class="form-control form-control-xs py-0 border-secondary-subtle shadow-sm" style="font-size: 0.7rem; background-color: #ffffff;" placeholder="{% trans 'Filter...' %}">
                     </td>
                     <td class="p-1 border-0">
-                        <input type="text" x-model="colFilters.amount" class="form-control form-control-xs py-0 text-end" style="font-size: 0.7rem;" placeholder="{% trans 'Filter...' %}">
+                        <input type="text" x-model="colFilters.amount" class="form-control form-control-xs py-0 text-end border-secondary-subtle shadow-sm" style="font-size: 0.7rem; background-color: #ffffff;" placeholder="{% trans 'Filter...' %}">
                     </td>
                 </tr>
             </thead>
