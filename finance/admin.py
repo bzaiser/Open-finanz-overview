@@ -69,21 +69,25 @@ class CashFlowSourceInline(admin.TabularInline):
     model = CashFlowSource
     extra = 3  # Zeige 3 leere Zeilen für neue Einträge an
     fields = ('name', 'value', 'category', 'is_income', 'frequency', 'start_date', 'end_date')
+    classes = ['collapse']
 
 class AssetInline(admin.TabularInline):
     model = Asset
     extra = 1
     fields = ('name', 'value', 'growth_rate', 'withdrawal_amount', 'withdrawal_start_date')
+    classes = ['collapse']
 
 class OneTimeEventInline(admin.TabularInline):
     model = OneTimeEvent
     extra = 1
     fields = ('name', 'value', 'date', 'description')
+    classes = ['collapse']
 
 class PensionInline(admin.TabularInline):
     model = Pension
     extra = 1
     fields = ('provider', 'current_value', 'monthly_contribution', 'growth_rate', 'start_payout_date')
+    classes = ['collapse']
 
 @admin.register(FinancialStatusProxy)
 class FinancialStatusAdmin(admin.ModelAdmin):
@@ -92,9 +96,6 @@ class FinancialStatusAdmin(admin.ModelAdmin):
         (None, {'fields': ('username',)}),
     )
     list_display = ('username', 'email', 'is_staff')
-    
-    class Media:
-        js = ('admin/js/collapsible_inlines.js',)
     
     def get_queryset(self, request):
         # Zeige nur den eigenen User an (außer für Superuser, die alles sehen können)
