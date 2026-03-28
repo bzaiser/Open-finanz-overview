@@ -88,7 +88,13 @@ class PensionInline(admin.TabularInline):
 @admin.register(FinancialStatusProxy)
 class FinancialStatusAdmin(admin.ModelAdmin):
     inlines = [CashFlowSourceInline, AssetInline, OneTimeEventInline, PensionInline]
+    fieldsets = (
+        (None, {'fields': ('username',)}),
+    )
     list_display = ('username', 'email', 'is_staff')
+    
+    class Media:
+        js = ('admin/js/collapsible_inlines.js',)
     
     def get_queryset(self, request):
         # Zeige nur den eigenen User an (außer für Superuser, die alles sehen können)

@@ -23,11 +23,23 @@
                     data-bs-title="{% trans 'Simulation Parameters' %}:&lt;br&gt;{% trans 'Inflation' %}: {{ simulation_params.inflation_rate }}%&lt;br&gt;{% trans 'Salary' %}: {{ simulation_params.salary_increase }}%&lt;br&gt;{% trans 'Return Offset' %}: {{ simulation_params.investment_return_offset }}%"></i>
                 {% endif %}
             </div>
-            <div class="card-body d-flex flex-column justify-content-center">
+            <div class="card-body d-flex flex-column">
+                {% if item.id == 'income_table_widget' %}
+                    {% include 'finance/partials/dashboard_table_simple.html' with data=table_datasets.income_table_widget|safe %}
+                {% elif item.id == 'expense_table_widget' %}
+                    {% include 'finance/partials/dashboard_table_simple.html' with data=table_datasets.expense_table_widget|safe %}
+                {% elif item.id == 'asset_table_widget' %}
+                    {% include 'finance/partials/dashboard_table_simple.html' with data=table_datasets.asset_table_widget|safe %}
+                {% elif item.id == 'pension_table_widget' %}
+                    {% include 'finance/partials/dashboard_table_simple.html' with data=table_datasets.pension_table_widget|safe %}
+                {% elif item.id == 'event_table_widget' %}
+                    {% include 'finance/partials/dashboard_table_simple.html' with data=table_datasets.event_table_widget|safe %}
+                {% else %}
                 <div
                     style="position:relative;{% if item.height == 'small' %}height:250px;{% elif item.height == 'medium' %}height:400px;{% else %}height:600px;{% endif %}">
                     <canvas id="{{ item.id }}"></canvas>
                 </div>
+                {% endif %}
             </div>
         </div>
     </div>

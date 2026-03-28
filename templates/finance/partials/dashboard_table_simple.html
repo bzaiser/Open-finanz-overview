@@ -1,0 +1,72 @@
+{% load i18n humanize %}
+<div x-data="{ 
+    search: '', 
+    sortCol: 'amount', 
+    sortDir: 'desc',
+    items: {{ data|safe }},
+    get filteredItems() {
+        let filtered = this.items.filter(i => 
+            i.name.toLowerCase().includes(this.search.toLowerCase()) || 
+            i.category.toLowerCase().includes(this.search.toLowerCase())
+        );
+        return filtered.sort((a, b) => {
+            let va = a[this.sortCol];
+            let vb = b[this.sortCol];
+            if (typeof va === 'string') {
+                va = va.toLowerCase();
+                vb = vb.toLowerCase();
+            }
+            if (va < vb) return this.sortDir === 'asc' ? -1 : 1;
+            if (va > vb) return this.sortDir === 'asc' ? 1 : -1;
+            return 0;
+        });
+    },
+    get total() {
+        return this.filteredItems.reduce((sum, i) => sum + i.amount, 0);
+    }
+}" class="h-100 d-flex flex-column">
+    <div class="mb-2 px-2">
+        <div class="input-group input-group-sm">
+            <span class="input-group-text bg-light border-end-0"><i class="bi bi-search"></i></span>
+            <input type="text" x-model="search" class="form-control form-control-sm border-start-0" placeholder="{% trans 'Filter...' %}">
+        </div>
+    </div>
+    
+    <div class="flex-grow-1 overflow-auto px-2" style="max-height: 100%;">
+        <table class="table table-sm table-hover align-middle mb-0" style="font-size: 0.85rem; color: inherit;">
+            <thead class="sticky-top bg-white" style="z-index: 10;">
+                <tr class="text-muted text-uppercase" style="font-size: 0.7rem;">
+                    <th class="border-0 cursor-pointer" @click="sortCol = 'name'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'">
+                        {% trans 'Name' %}
+                        <i class="bi" :class="sortCol === 'name' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-hash'"></i>
+                    </th>
+                    <th class="border-0 cursor-pointer" @click="sortCol = 'category'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'">
+                        {% trans 'Category' %}
+                        <i class="bi" :class="sortCol === 'category' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-hash'"></i>
+                    </th>
+                    <th class="border-0 text-end cursor-pointer" @click="sortCol = 'amount'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'">
+                        {% trans 'Monthly' %}
+                        <i class="bi" :class="sortCol === 'amount' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-hash'"></i>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <template x-for="item in filteredItems" :key="item.name + item.amount">
+                    <tr>
+                        <td class="fw-medium" x-text="item.name"></td>
+                        <td><span class="badge bg-light text-dark border" x-text="item.category"></span></td>
+                        <td class="text-end fw-bold" x-text="new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ currency }}' }).format(item.amount)"></td>
+                    </tr>
+                </template>
+                <tr x-show="filteredItems.length === 0">
+                    <td colspan="3" class="text-center text-muted py-4">{% trans 'No items found' %}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="mt-auto border-top p-2 bg-light rounded-bottom d-flex justify-content-between align-items-center">
+        <span class="small fw-bold text-muted text-uppercase">{% trans 'Total' %}</span>
+        <span class="fw-bold text-primary" x-text="new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ currency }}' }).format(total)"></span>
+    </div>
+</div>

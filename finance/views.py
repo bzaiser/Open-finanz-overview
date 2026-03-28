@@ -15,6 +15,11 @@ AVAILABLE_CHARTS = {
     'expense_evolution_chart': {'title': _('Expense Evolution'), 'type': 'line', 'default_width': 6, 'default_height': 'small'},
     'inflation_monitor_chart': {'title': _('Inflation Monitor'), 'type': 'line', 'default_width': 6, 'default_height': 'small'},
     'budget_pie_chart': {'title': _('Monthly Budget'), 'type': 'pie', 'default_width': 6, 'default_height': 'small'},
+    'income_table_widget': {'title': _('Income Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small'},
+    'expense_table_widget': {'title': _('Expense Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small'},
+    'asset_table_widget': {'title': _('Asset Withdrawal Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small'},
+    'pension_table_widget': {'title': _('Pension Contribution Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small'},
+    'event_table_widget': {'title': _('One-Time Event Table (Prorated)'), 'type': 'table', 'default_width': 6, 'default_height': 'small'},
 }
 
 SUMMARY_WIDGETS = {
@@ -313,9 +318,39 @@ def dashboard_view(request):
     
     simulated_end_age = int(profile.simulation_max_age)
     
-    # Extra "Initial Figures" for consistency check
-    current_assets_total = sum(float(a.value) for a in user.assets.all())
-    current_pensions_total = sum(float(p.current_value) for p in user.pensions.all())
+    # 7. Table Gadget Data (Monthly Normalized)
+    table_data_income = []
+    for cf in user.cash_flows.filter(is_income=True):
+        amt = cf.value if cf.frequency == 'monthly' else cf.value / 12
+        table_data_income.append({'name': cf.name, 'amount': float(amt), 'category': cf.category.name if cf.category else _('Uncategorized')})
+
+    table_data_expense = []
+    for cf in user.cash_flows.filter(is_income=False):
+        amt = cf.value if cf.frequency == 'monthly' else cf.value / 12
+        table_data_expense.append({'name': cf.name, 'amount': float(amt), 'category': cf.category.name if cf.category else _('Uncategorized')})
+
+    table_data_asset = []
+    for a in user.assets.filter(withdrawal_amount__gt=0):
+        table_data_asset.append({'name': a.name, 'amount': float(a.withdrawal_amount), 'category': _('Withdrawal')})
+
+    table_data_pension = []
+    for p in user.pensions.filter(monthly_contribution__gt=0):
+        table_data_pension.append({'name': p.provider, 'amount': float(p.monthly_contribution), 'category': _('Contribution')})
+
+    table_data_event = []
+    for e in user.events.all():
+        amt = e.value / 12 # Prorated monthly
+        table_data_event.append({'name': e.name, 'amount': float(amt), 'category': _('One-Time')})
+
+    table_datasets = {
+        'income_table_widget': table_data_income,
+        'expense_table_widget': table_data_expense,
+        'asset_table_widget': table_data_asset,
+        'pension_table_widget': table_data_pension,
+        'event_table_widget': table_data_event,
+    }
+
+    # Key Metrics for Summary Panels
 
     context = {
         'profile': profile,
@@ -338,6 +373,7 @@ def dashboard_view(request):
         'current_monthly_expenses': current_monthly_expenses,
         'current_pensions_total': current_pensions_total,
         'simulation_config': simulation_config,
+        'table_datasets': table_datasets,
     }
     
     if request.headers.get('HX-Request') and 'config_update' not in request.POST:
