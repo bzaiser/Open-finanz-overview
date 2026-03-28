@@ -359,7 +359,7 @@ def dashboard_view(request):
 
     context = {
         'profile': profile,
-        'currency': profile.currency,
+        'currency': profile.currency or 'EUR',
         'layout': layout,
         'summary_layout': summary_layout,
         'layout_json': json.dumps(layout, cls=DjangoJSONEncoder),
@@ -376,7 +376,7 @@ def dashboard_view(request):
         'current_assets_total': current_assets_total,
         'current_monthly_income': current_monthly_income,
         'simulation_config': simulation_config,
-        'table_datasets': table_json,
+        'table_datasets': table_datasets,
     }
     
     if request.headers.get('HX-Request') and 'config_update' not in request.POST:

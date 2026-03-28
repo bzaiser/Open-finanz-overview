@@ -25,15 +25,20 @@
             </div>
             <div class="card-body d-flex flex-column">
                 {% if item.id == 'income_table_widget' %}
-                    {% include 'finance/partials/dashboard_table_simple.html' with data=table_datasets.income_table_widget|safe %}
+                    {{ table_datasets.income_table_widget|json_script:item.id }}
+                    {% include 'finance/partials/dashboard_table_simple.html' with widget_id=item.id %}
                 {% elif item.id == 'expense_table_widget' %}
-                    {% include 'finance/partials/dashboard_table_simple.html' with data=table_datasets.expense_table_widget|safe %}
+                    {{ table_datasets.expense_table_widget|json_script:item.id }}
+                    {% include 'finance/partials/dashboard_table_simple.html' with widget_id=item.id %}
                 {% elif item.id == 'asset_table_widget' %}
-                    {% include 'finance/partials/dashboard_table_simple.html' with data=table_datasets.asset_table_widget|safe %}
+                    {{ table_datasets.asset_table_widget|json_script:item.id }}
+                    {% include 'finance/partials/dashboard_table_simple.html' with widget_id=item.id %}
                 {% elif item.id == 'pension_table_widget' %}
-                    {% include 'finance/partials/dashboard_table_simple.html' with data=table_datasets.pension_table_widget|safe %}
+                    {{ table_datasets.pension_table_widget|json_script:item.id }}
+                    {% include 'finance/partials/dashboard_table_simple.html' with widget_id=item.id %}
                 {% elif item.id == 'event_table_widget' %}
-                    {% include 'finance/partials/dashboard_table_simple.html' with data=table_datasets.event_table_widget|safe %}
+                    {{ table_datasets.event_table_widget|json_script:item.id }}
+                    {% include 'finance/partials/dashboard_table_simple.html' with widget_id=item.id %}
                 {% else %}
                 <div
                     style="position:relative;{% if item.height == 'small' %}height:250px;{% elif item.height == 'medium' %}height:400px;{% else %}height:600px;{% endif %}">
