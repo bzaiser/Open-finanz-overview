@@ -58,6 +58,12 @@ def dashboard_view(request):
         'header_text_color': '#212529'
     })
     
+    table_config = dashboard_config.get('table_style', {
+        'header_bg_color': '#212529',
+        'header_text_color': '#ffffff',
+        'filter_bg_color': '#f1f3f5',
+    })
+    
     # Remove old widgets that no longer exist
     layout = [item for item in layout if item['id'] not in ('net_worth_widget', 'projected_wealth_widget')]
     
@@ -106,6 +112,11 @@ def dashboard_view(request):
                 if simulation_panel_json:
                     new_sim_config = json.loads(simulation_panel_json)
                     dashboard_config['simulation_panel'] = new_sim_config
+                
+                table_style_json = request.POST.get('table_style_json')
+                if table_style_json:
+                    new_table_config = json.loads(table_style_json)
+                    dashboard_config['table_style'] = new_table_config
                 
                 profile.dashboard_config = dashboard_config
                 profile.save()
@@ -429,6 +440,7 @@ def dashboard_view(request):
         'current_monthly_expenses': current_monthly_expenses,
         'current_pensions_total': current_pensions_total,
         'simulation_config': simulation_config,
+        'table_config': table_config,
         'table_datasets': table_datasets,
     }
     

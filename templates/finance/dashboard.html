@@ -89,9 +89,26 @@
                     <input type="hidden" name="layout_json" id="layout_json">
                     <input type="hidden" name="summary_layout_json" id="summary_layout_json">
                     <input type="hidden" name="simulation_panel_json" id="simulation_panel_json">
+                    <input type="hidden" name="table_style_json" id="table_style_json">
                     
                     <div class="alert alert-info py-2 mb-3">
                         <small><i class="bi bi-info-circle"></i> {% trans "Customize colors and visibility for all dashboard components." %}</small>
+                    </div>
+
+                    <h6 class="mb-2 fw-bold text-primary">{% trans "Table Headers" %}</h6>
+                    <div class="row g-3 mb-4 p-2 border rounded bg-light mx-0">
+                        <div class="col-md-4">
+                            <label class="form-label small mb-1">{% trans "Header Background" %}</label>
+                            <input type="color" id="table-header-bg" class="form-control form-control-color w-100" value="{{ table_config.header_bg_color }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small mb-1">{% trans "Header Text Color" %}</label>
+                            <input type="color" id="table-header-text" class="form-control form-control-color w-100" value="{{ table_config.header_text_color }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small mb-1">{% trans "Filter Row Background" %}</label>
+                            <input type="color" id="table-filter-bg" class="form-control form-control-color w-100" value="{{ table_config.filter_bg_color }}">
+                        </div>
                     </div>
 
                     <h6 class="mb-2 fw-bold text-primary">{% trans "Simulation Panel" %}</h6>
@@ -251,9 +268,15 @@
                 header_bg_color: document.getElementById('sim-header-bg').value,
                 header_text_color: document.getElementById('sim-header-text').value
             };
+            var tableStyle = {
+                header_bg_color: document.getElementById('table-header-bg').value,
+                header_text_color: document.getElementById('table-header-text').value,
+                filter_bg_color: document.getElementById('table-filter-bg').value
+            };
             document.getElementById('layout_json').value = JSON.stringify(layout);
             document.getElementById('summary_layout_json').value = JSON.stringify(summaryLayout);
             document.getElementById('simulation_panel_json').value = JSON.stringify(simConfig);
+            document.getElementById('table_style_json').value = JSON.stringify(tableStyle);
             document.getElementById('config-form').submit();
         });
     });
