@@ -319,42 +319,51 @@ def dashboard_view(request):
     simulated_end_age = int(profile.simulation_max_age)
     
     # 7. Table Gadget Data (Monthly Normalized)
+    continuous_label = _('Continuous')
     table_data_income = []
     # Direct income
     for cf in user.cash_flows.filter(is_income=True):
         amt = cf.value if cf.frequency == 'monthly' else cf.value / 12
+        year = str(cf.start_date.year) if cf.start_date else continuous_label
         table_data_income.append({
             'name': cf.name, 
             'amount': float(amt), 
             'category': cf.category.name if cf.category else _('Uncategorized'),
-            'type': _('Manual')
+            'type': _('Manual'),
+            'year': year
         })
     # Asset withdrawals (Income)
     for a in user.assets.filter(withdrawal_amount__gt=0):
+        year = str(a.withdrawal_start_date.year) if a.withdrawal_start_date else continuous_label
         table_data_income.append({
             'name': f"{_('Withdrawal')}: {a.name}", 
             'amount': float(a.withdrawal_amount), 
             'category': _('Asset'),
-            'type': _('Asset')
+            'type': _('Asset'),
+            'year': year
         })
 
     table_data_expense = []
     # Direct expenses
     for cf in user.cash_flows.filter(is_income=False):
         amt = cf.value if cf.frequency == 'monthly' else cf.value / 12
+        year = str(cf.start_date.year) if cf.start_date else continuous_label
         table_data_expense.append({
             'name': cf.name, 
             'amount': float(amt), 
             'category': cf.category.name if cf.category else _('Uncategorized'),
-            'type': _('Manual')
+            'type': _('Manual'),
+            'year': year
         })
     # Pension contributions (Expense)
     for p in user.pensions.filter(monthly_contribution__gt=0):
+        # Pensions are usually continuous until retirement
         table_data_expense.append({
             'name': f"{_('Contribution')}: {p.provider}", 
             'amount': float(p.monthly_contribution), 
             'category': _('Pension'),
-            'type': _('Pension')
+            'type': _('Pension'),
+            'year': continuous_label
         })
 
     table_data_asset = []
@@ -363,16 +372,19 @@ def dashboard_view(request):
             'name': a.name, 
             'amount': float(a.value), 
             'category': _('Asset'),
-            'rate': f"{a.growth_rate}%"
+            'rate': f"{a.growth_rate}%",
+            'year': continuous_label
         })
 
     table_data_pension = []
     for p in user.pensions.all():
+        year = str(p.start_payout_date.year) if p.start_payout_date else continuous_label
         table_data_pension.append({
             'name': p.provider, 
             'amount': float(p.current_value), 
             'category': _('Pension'),
-            'contribution': float(p.monthly_contribution)
+            'contribution': float(p.monthly_contribution),
+            'year': year
         })
 
     table_data_event = []
@@ -381,7 +393,8 @@ def dashboard_view(request):
             'name': e.name, 
             'amount': float(e.value), 
             'category': _('One-Time'),
-            'date': e.date.strftime('%d.%m.%Y')
+            'date': e.date.strftime('%d.%m.%Y'),
+            'year': str(e.date.year)
         })
 
     table_datasets = {
