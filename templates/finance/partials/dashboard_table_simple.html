@@ -40,12 +40,17 @@
                         {% trans 'Name' %}
                         <i class="bi" :class="sortCol === 'name' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-hash'"></i>
                     </th>
-                    <th class="border-0 cursor-pointer" @click="sortCol = 'category'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'">
-                        {% trans 'Category' %}
-                        <i class="bi" :class="sortCol === 'category' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-hash'"></i>
+                    <th class="border-0 cursor-pointer" @click="sortCol = 'date'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'">
+                        <template x-if="items.some(i => i.date)">
+                            <span>{% trans 'Date' %}</span>
+                        </template>
+                        <template x-if="!items.some(i => i.date)">
+                            <span>{% trans 'Category' %}</span>
+                        </template>
+                        <i class="bi" :class="sortCol === 'category' || sortCol === 'date' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-hash'"></i>
                     </th>
                     <th class="border-0 text-end cursor-pointer" @click="sortCol = 'amount'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'">
-                        {% trans 'Monthly' %}
+                        {% trans 'Amount' %}
                         <i class="bi" :class="sortCol === 'amount' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-hash'"></i>
                     </th>
                 </tr>
@@ -54,7 +59,10 @@
                 <template x-for="item in filteredItems" :key="item.name + item.amount">
                     <tr>
                         <td class="fw-medium" x-text="item.name"></td>
-                        <td><span class="badge bg-light text-dark border" x-text="item.category"></span></td>
+                        <td>
+                            <span x-show="item.date" class="text-muted small" x-text="item.date"></span>
+                            <span x-show="!item.date" class="badge bg-light text-dark border" x-text="item.category"></span>
+                        </td>
                         <td class="text-end fw-bold" x-text="new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ currency }}' }).format(item.amount)"></td>
                     </tr>
                 </template>

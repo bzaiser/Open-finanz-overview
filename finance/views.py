@@ -18,8 +18,8 @@ AVAILABLE_CHARTS = {
     'income_table_widget': {'title': _('Income Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small'},
     'expense_table_widget': {'title': _('Expense Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small'},
     'asset_table_widget': {'title': _('Asset Withdrawal Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small'},
-    'pension_table_widget': {'title': _('Pension Contribution Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small'},
-    'event_table_widget': {'title': _('One-Time Event Table (Prorated)'), 'type': 'table', 'default_width': 6, 'default_height': 'small'},
+    'pension_table_widget': {'title': _('Pension Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small'},
+    'event_table_widget': {'title': _('One-Time Event Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small'},
 }
 
 SUMMARY_WIDGETS = {
@@ -339,8 +339,12 @@ def dashboard_view(request):
 
     table_data_event = []
     for e in user.events.all():
-        amt = e.value / 12 # Prorated monthly
-        table_data_event.append({'name': e.name, 'amount': float(amt), 'category': _('One-Time')})
+        table_data_event.append({
+            'name': e.name, 
+            'amount': float(e.value), 
+            'category': _('One-Time'),
+            'date': e.date.strftime('%d.%m.%Y')
+        })
 
     table_datasets = {
         'income_table_widget': table_data_income,
@@ -349,6 +353,7 @@ def dashboard_view(request):
         'pension_table_widget': table_data_pension,
         'event_table_widget': table_data_event,
     }
+    table_json = {k: json.dumps(v, cls=DjangoJSONEncoder) for k, v in table_datasets.items()}
 
     # Key Metrics for Summary Panels
 
@@ -364,16 +369,14 @@ def dashboard_view(request):
         'chart_datasets': chart_datasets,
         'simulation_params': simulation_params,
         'is_simulation_active': is_simulation_active,
-        'affected_charts': affected_charts,
+        'affected_charts': json.dumps(affected_charts),
         'current_net_worth': current_net_worth,
         'projected_net_worth': projected_net_worth,
         'simulated_end_age': simulated_end_age,
         'current_assets_total': current_assets_total,
         'current_monthly_income': current_monthly_income,
-        'current_monthly_expenses': current_monthly_expenses,
-        'current_pensions_total': current_pensions_total,
         'simulation_config': simulation_config,
-        'table_datasets': table_datasets,
+        'table_datasets': table_json,
     }
     
     if request.headers.get('HX-Request') and 'config_update' not in request.POST:

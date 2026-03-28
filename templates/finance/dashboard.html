@@ -6,8 +6,8 @@
 {% endblock %}
 
 {% block content %}
-<div class="row" x-data="{ showSimulation: false }">
-    <div :class="showSimulation ? 'col-md-9' : 'col-md-12'" class="transition-all duration-300">
+<div class="row">
+    <div class="col-md-12">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h1>{% trans "Dashboard" %}</h1>
             <div>
@@ -15,7 +15,7 @@
                     <i class="bi bi-layout-text-window-reverse"></i>
                     {% trans "Configure Layout" %}
                 </button>
-                <button class="btn btn-primary" @click="showSimulation = !showSimulation">
+                <button class="btn btn-primary" data-bs-toggle="offcanvas" data-bs-target="#simulationOffcanvas">
                     <i class="bi bi-gear"></i>
                     {% trans "Simulation" %}
                 </button>
@@ -28,41 +28,50 @@
             {% include 'finance/partials/dashboard_charts.html' %}
         </div>
     </div>
+</div>
 
-    <div class="col-md-3" x-show="showSimulation" x-transition.duration.300ms>
-        <div class="card shadow-sm sticky-top" style="top: 20px; background-color: {{ simulation_config.bg_color|default:'#ffffff' }}; color: {{ simulation_config.text_color|default:'#212529' }};">
-            <div class="card-header" style="background-color: {{ simulation_config.header_bg_color|default:'#ffc107' }}; color: {{ simulation_config.header_text_color|default:'#212529' }};">
-                <h5 class="mb-0"><i class="bi bi-magic"></i> {% trans "Simulation" %}</h5>
-            </div>
-            <div class="card-body">
-                <form id="simulation-form" hx-post="{% url 'dashboard' %}" hx-target="#dashboard-charts"
-                    hx-trigger="submit" hx-indicator="#sim-loading">
-                    {% csrf_token %}
-                    <div class="mb-3">
-                        <label class="form-label">{% trans "Inflation Rate (%)" %}</label>
-                        <input type="number" step="0.1" name="inflation_rate"
-                            value="{{ simulation_params.inflation_rate|stringformat:'.2f' }}" class="form-control">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">{% trans "Salary Increase (%)" %}</label>
-                        <input type="number" step="0.1" name="salary_increase"
-                            value="{{ simulation_params.salary_increase|stringformat:'.2f' }}" class="form-control">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">{% trans "Inv. Return Offset (%)" %}</label>
-                        <input type="number" step="0.1" name="investment_return_offset"
-                            value="{{ simulation_params.investment_return_offset|stringformat:'.2f' }}" class="form-control">
-                    </div>
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary d-flex align-items-center justify-content-center gap-2">
-                            <span id="sim-loading" class="spinner-border spinner-border-sm htmx-indicator" role="status"></span>
-                            {% trans "Update Simulation" %}
-                        </button>
-                        <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary btn-sm">{% trans "Reset" %}</a>
-                    </div>
-                </form>
-            </div>
+<!-- Simulation Offcanvas -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="simulationOffcanvas" aria-labelledby="simulationOffcanvasLabel" 
+     style="background-color: {{ simulation_config.bg_color|default:'#ffffff' }}; color: {{ simulation_config.text_color|default:'#212529' }}; border-left: 1px solid rgba(0,0,0,.125); z-index: 1100;">
+    <div class="offcanvas-header shadow-sm" style="background-color: {{ simulation_config.header_bg_color|default:'#ffc107' }}; color: {{ simulation_config.header_text_color|default:'#212529' }};">
+        <h5 class="offcanvas-title" id="simulationOffcanvasLabel">
+            <i class="bi bi-magic"></i> {% trans "Simulation" %}
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="alert alert-info py-2 small mb-3 shadow-sm" style="font-size: 0.8rem; border-left: 4px solid #0dcaf0;">
+            <i class="bi bi-info-circle"></i> {% trans "Changes here are temporary. Update your profile for permanent settings." %}
         </div>
+        <form id="simulation-form" hx-post="{% url 'dashboard' %}" hx-target="#dashboard-charts"
+            hx-trigger="submit" hx-indicator="#sim-loading">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label fw-bold small text-muted text-uppercase" style="font-size: 0.7rem;">{% trans "Inflation Rate (%)" %}</label>
+                <input type="number" step="0.1" name="inflation_rate"
+                    value="{{ simulation_params.inflation_rate|stringformat:'.2f' }}" class="form-control form-control-sm border-0 bg-light">
+            </div>
+            <div class="mb-4">
+                <label class="form-label fw-bold small text-muted text-uppercase" style="font-size: 0.7rem;">{% trans "Salary Increase (%)" %}</label>
+                <input type="number" step="0.1" name="salary_increase"
+                    value="{{ simulation_params.salary_increase|stringformat:'.2f' }}" class="form-control form-control-sm border-0 bg-light">
+            </div>
+            <div class="mb-4">
+                <label class="form-label fw-bold small text-muted text-uppercase" style="font-size: 0.7rem;">{% trans "Inv. Return Offset (%)" %}</label>
+                <input type="number" step="0.1" name="investment_return_offset"
+                    value="{{ simulation_params.investment_return_offset|stringformat:'.2f' }}" class="form-control form-control-sm border-0 bg-light">
+            </div>
+            <div class="d-grid gap-2 mb-3">
+                <button type="submit" class="btn btn-primary d-flex align-items-center justify-content-center gap-2 shadow-sm rounded-pill py-2">
+                    <span id="sim-loading" class="spinner-border spinner-border-sm htmx-indicator" role="status"></span>
+                    <i class="bi bi-arrow-repeat"></i>
+                    {% trans "Update Simulation" %}
+                </button>
+                <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary btn-sm border-0 py-2">
+                    <i class="bi bi-x-circle"></i> {% trans "Reset to Defaults" %}
+                </a>
+            </div>
+        </form>
     </div>
 </div>
 

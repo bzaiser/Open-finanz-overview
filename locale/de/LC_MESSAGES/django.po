@@ -1644,3 +1644,18 @@ msgstr ""
 
 #~ msgid "Age"
 #~ msgstr "Alter"
+
+msgid "Income Table"
+msgstr "Einnahmen-Tabelle"
+
+msgid "Expense Table"
+msgstr "Ausgaben-Tabelle"
+
+msgid "Asset Withdrawal Table"
+msgstr "Entnahme-Tabelle"
+
+msgid "Pension Table"
+msgstr "Renten-Tabelle"
+
+msgid "One-Time Event Table"
+msgstr "Einmalige Ereignisse"
