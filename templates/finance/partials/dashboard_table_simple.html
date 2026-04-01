@@ -94,40 +94,41 @@
     <div class="flex-grow-1 overflow-auto px-2" style="max-height: 100%;">
         <table class="table table-sm table-hover align-middle mb-0" style="font-size: 0.85rem; color: inherit;">
             <thead class="sticky-top" style="z-index: 10;">
-                <tr class="text-uppercase" 
-                    style="font-size: 0.70rem; 
-                           background-color: {{ table_config.header_bg_color }} !important; 
-                           color: {{ table_config.header_text_color }} !important;">
-                    <th class="py-2 px-3 border-0 cursor-pointer" @click="sortCol = 'name'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'">
+                <tr class="text-uppercase" style="font-size: 0.70rem;">
+                    <th class="py-2 px-3 border-0 cursor-pointer" @click="sortCol = 'name'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
+                        style="background-color: {{ table_config.header_bg_color }} !important; color: {{ table_config.header_text_color }} !important;">
                         <div class="d-flex align-items-center justify-content-between">
                             <span>{% trans 'Name' %}</span>
                             <i class="bi" :class="sortCol === 'name' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
                         </div>
                     </th>
-                    <th class="py-2 px-3 border-0 cursor-pointer" @click="sortCol = (hasDate ? 'date' : 'category'); sortDir = sortDir === 'asc' ? 'desc' : 'asc'">
+                    <th class="py-2 px-3 border-0 cursor-pointer" @click="sortCol = (hasDate ? 'date' : 'category'); sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
+                        style="background-color: {{ table_config.header_bg_color }} !important; color: {{ table_config.header_text_color }} !important;">
                          <div class="d-flex align-items-center justify-content-between">
                             <span x-text="hasDate ? '{% trans 'Date' %}' : '{% trans 'Category' %}'"></span>
                             <i class="bi" :class="(sortCol === 'category' || sortCol === 'date') ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
                         </div>
                     </th>
-                    <th class="py-2 px-3 border-0 cursor-pointer" @click="sortCol = 'year'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'">
+                    <th class="py-2 px-3 border-0 cursor-pointer" @click="sortCol = 'year'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
+                        style="background-color: {{ table_config.header_bg_color }} !important; color: {{ table_config.header_text_color }} !important;">
                         <div class="d-flex align-items-center justify-content-between">
                             <span>{% trans 'Year' %}</span>
                             <i class="bi" :class="sortCol === 'year' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
                         </div>
                     </th>
-                    <th class="py-2 px-3 border-0 text-end cursor-pointer" @click="sortCol = 'amount'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'">
+                    <th class="py-2 px-3 border-0 text-end cursor-pointer" @click="sortCol = 'amount'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
+                        style="background-color: {{ table_config.header_bg_color }} !important; color: {{ table_config.header_text_color }} !important;">
                         <div class="d-flex align-items-center justify-content-end">
                             <span class="me-1">{% trans 'Amount' %}</span>
                             <i class="bi" :class="sortCol === 'amount' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
                         </div>
                     </th>
                 </tr>
-                <tr style="background-color: {{ table_config.filter_bg_color }} !important;">
-                    <td class="p-1 border-0">
+                <tr>
+                    <td class="p-1 border-0" style="background-color: {{ table_config.filter_bg_color }} !important;">
                         <input type="text" x-model="colFilters.name" class="form-control form-control-xs py-0 border-secondary-subtle shadow-sm" style="font-size: 0.7rem; background-color: #ffffff;" placeholder="{% trans 'Filter...' %}">
                     </td>
-                    <td class="p-1 border-0">
+                    <td class="p-1 border-0" style="background-color: {{ table_config.filter_bg_color }} !important;">
                         <input type="text" x-model="colFilters.cat" class="form-control form-control-xs py-0 border-secondary-subtle shadow-sm" style="font-size: 0.7rem; background-color: #ffffff;" placeholder="{% trans 'Filter...' %}">
                     </td>
                     <td class="p-1 border-0">
