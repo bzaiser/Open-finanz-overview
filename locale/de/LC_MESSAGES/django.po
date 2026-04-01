@@ -3,12 +3,11 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-15 20:43+0100\n"
+"POT-Creation-Date: 2026-04-01 19:54+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,12 +17,13 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: core/forms.py:16 core/models.py:26
+#: core/forms.py:16 core/models.py:31
 msgid "Birth Date"
 msgstr "Geburtsdatum"
 
-#: core/models.py:9 finance/models.py:6 finance/models.py:24
-#: finance/models.py:42 finance/models.py:55
+#: core/models.py:9 finance/models.py:8 finance/models.py:26
+#: finance/models.py:44 finance/models.py:61
+#: templates/finance/partials/dashboard_table_simple.html:104
 msgid "Name"
 msgstr ""
 
@@ -47,275 +47,553 @@ msgstr ""
 msgid "Sidebar Background"
 msgstr ""
 
-#: core/models.py:17 core/models.py:42
+#: core/models.py:17
+msgid "Table Header Background"
+msgstr ""
+
+#: core/models.py:18
+msgid "Table Header Text"
+msgstr ""
+
+#: core/models.py:19
+msgid "Table Filter Background"
+msgstr ""
+
+#: core/models.py:22 core/models.py:67
 msgid "Theme"
 msgstr "Design"
 
-#: core/models.py:18
+#: core/models.py:23
 msgid "Themes"
 msgstr "Designs"
 
-#: core/models.py:25
+#: core/models.py:30
 msgid "Avatar"
 msgstr "Profilbild"
 
-#: core/models.py:27
+#: core/models.py:52
 msgid "Currency"
 msgstr "Währung"
 
-#: core/models.py:28 templates/base.html:74
+#: core/models.py:53
 msgid "Language"
 msgstr "Sprache"
 
-#: core/models.py:35
+#: core/models.py:60
 msgid "Simulation Max Age"
 msgstr "Max. Simulationsalter"
 
-#: core/models.py:38
+#: core/models.py:63
 msgid "Default Inflation Rate (%)"
 msgstr ""
 
-#: core/models.py:39
+#: core/models.py:64
 msgid "Default Salary Increase (%)"
 msgstr ""
 
-#: core/models.py:40
-#, fuzzy
+#: core/models.py:65
 #| msgid "Return Offset"
 msgid "Investment Return Offset (%)"
 msgstr "Rendite-Offset"
 
-#: core/models.py:43
+#: core/models.py:68
 msgid "Dashboard Configuration"
 msgstr "Dashboard-Konfiguration"
 
-#: core/models.py:46 templates/core/profile.html:4
+#: core/models.py:71 templates/core/profile.html:4
 msgid "User Profile"
 msgstr "Benutzerprofil"
 
-#: core/models.py:47
+#: core/models.py:72
 msgid "User Profiles"
 msgstr "Benutzerprofile"
 
-#: finance/models.py:7
+#: finance/admin.py:29
+msgid "Auswahl duplizieren & Datum hochzählen"
+msgstr ""
+
+#: finance/admin.py:64
+msgid "Jahr"
+msgstr ""
+
+#: finance/models.py:9
 msgid "Slug"
 msgstr "Bezeichnung (System)"
 
-#: finance/models.py:8
+#: finance/models.py:10
 msgid "Color"
 msgstr "Farbe"
 
-#: finance/models.py:8
+#: finance/models.py:10
 msgid "Hex color code, e.g. #FF0000"
 msgstr "Hex-Farbcode, z.B. #FF0000"
 
-#: finance/models.py:11 finance/models.py:30
+#: finance/models.py:13 finance/models.py:32
+#: templates/finance/partials/dashboard_table_simple.html:111
 msgid "Category"
 msgstr "Kategorie"
 
-#: finance/models.py:12
+#: finance/models.py:14
 msgid "Categories"
 msgstr "Kategorien"
 
-#: finance/models.py:19
+#: finance/models.py:21
 msgid "Monthly"
 msgstr "Monatlich"
 
-#: finance/models.py:20
+#: finance/models.py:22
 msgid "Yearly"
 msgstr "Jährlich"
 
-#: finance/models.py:25 finance/models.py:56
+#: finance/models.py:27 finance/models.py:62
+#: templates/finance/partials/dashboard_table_simple.html:125
 msgid "Amount"
 msgstr "Betrag"
 
-#: finance/models.py:26
+#: finance/models.py:28
 msgid "Start Date"
 msgstr "Startdatum"
 
-#: finance/models.py:27
+#: finance/models.py:29
 msgid "End Date"
 msgstr "Enddatum"
 
-#: finance/models.py:28
+#: finance/models.py:30
 msgid "Is Income"
 msgstr "Ist Einkommen"
 
-#: finance/models.py:29
+#: finance/models.py:31
 msgid "Inflation Adjusted"
 msgstr "Inflationsangepasst"
 
-#: finance/models.py:31
+#: finance/models.py:33
 msgid "Frequency"
 msgstr "Häufigkeit"
 
-#: finance/models.py:34
+#: finance/models.py:36
 msgid "Cash Flow Source"
 msgstr "Einnahme-/Ausgabequelle"
 
-#: finance/models.py:35
+#: finance/models.py:37
 msgid "Cash Flow Sources"
 msgstr "Einnahmen & Ausgaben"
 
-#: finance/models.py:43 finance/models.py:70
+#: finance/models.py:45 finance/models.py:76
 msgid "Current Value"
 msgstr "Aktueller Wert"
 
-#: finance/models.py:44 finance/models.py:72
+#: finance/models.py:46 finance/models.py:78
 msgid "Annual Growth Rate (%)"
 msgstr "Jährliche Wachstumsrate (%)"
 
-#: finance/models.py:47
+#: finance/models.py:49
+msgid "Monthly Withdrawal"
+msgstr ""
+
+#: finance/models.py:49
+msgid "Amount to take out of this asset each month"
+msgstr ""
+
+#: finance/models.py:50
+#| msgid "Start Date"
+msgid "Withdrawal Start Date"
+msgstr "Startdatum"
+
+#: finance/models.py:53 finance/views.py:355 finance/views.py:356
+#: finance/views.py:388
 msgid "Asset"
 msgstr "Vermögenswert"
 
-#: finance/models.py:48
+#: finance/models.py:54
 msgid "Assets"
 msgstr "Vermögenswerte"
 
-#: finance/models.py:56
+#: finance/models.py:62
 msgid "Positive for income, negative for expense"
 msgstr "Positiv für Einnahmen, negativ für Ausgaben"
 
-#: finance/models.py:57
+#: finance/models.py:63
+#: templates/finance/partials/dashboard_table_simple.html:111
 msgid "Date"
 msgstr "Datum"
 
-#: finance/models.py:58
+#: finance/models.py:64
 msgid "Description"
 msgstr "Beschreibung"
 
-#: finance/models.py:61
+#: finance/models.py:67
 msgid "One Time Event"
 msgstr "Einmaliges Ereignis"
 
-#: finance/models.py:62
+#: finance/models.py:68
 msgid "One Time Events"
 msgstr "Einmalige Ereignisse"
 
-#: finance/models.py:69
+#: finance/models.py:75
 msgid "Provider/Name"
 msgstr "Anbieter/Name"
 
-#: finance/models.py:71
+#: finance/models.py:77
 msgid "Monthly Contribution"
 msgstr "Monatlicher Beitrag"
 
-#: finance/models.py:73
+#: finance/models.py:79
 msgid "Expected Monthly Payout"
 msgstr "Erwartete monatliche Auszahlung"
 
-#: finance/models.py:74
+#: finance/models.py:80
 msgid "Payout Start Date"
 msgstr "Auszahlungsbeginn"
 
-#: finance/models.py:74
+#: finance/models.py:80
 msgid "Approximate date when pension payout starts"
 msgstr "Ungefähres Datum, wann die Rentenzahlung beginnt"
 
-#: finance/models.py:77
+#: finance/models.py:83 finance/views.py:378 finance/views.py:379
+#: finance/views.py:399
 msgid "Pension"
 msgstr "Rente/Vorsorge"
 
-#: finance/models.py:78
+#: finance/models.py:84
 msgid "Pensions"
 msgstr "Renten & Vorsorge"
 
-#: finance/views.py:12
+#: finance/models.py:92
+msgid "Mein Finanzstatus (Vorausgefüllt)"
+msgstr ""
+
+#: finance/models.py:93
+msgid "Meine Finanzen (Schnelleingabe)"
+msgstr ""
+
+#: finance/views.py:13 templates/core/help.html:141
 msgid "Net Worth Forecast"
 msgstr "Vermögensprognose"
 
-#: finance/views.py:13
+#: finance/views.py:14
 msgid "Cash Flow Analysis"
 msgstr "Cashflow-Analyse"
 
-#: finance/views.py:14
+#: finance/views.py:15
 msgid "Income & One-Time Effects"
 msgstr "Entwicklung der Einnahmen und Einmaleffekte"
 
-#: finance/views.py:15
+#: finance/views.py:16
 msgid "Expense Evolution"
 msgstr "Ausgaben-Evolution"
 
-#: finance/views.py:16
+#: finance/views.py:17
 msgid "Inflation Monitor"
 msgstr "Inflations-Monitor"
 
-#: finance/views.py:17
+#: finance/views.py:18
 msgid "Monthly Budget"
 msgstr "Monatliches Budget"
 
+#: finance/views.py:19
+msgid "Income Table"
+msgstr "Einnahmen-Tabelle"
+
+#: finance/views.py:20
+msgid "Expense Table"
+msgstr "Ausgaben-Tabelle"
+
 #: finance/views.py:21
+msgid "Asset Table"
+msgstr "Vermögenswerte-Tabelle"
+
+#: finance/views.py:22
+msgid "Pension Table"
+msgstr "Renten-Tabelle"
+
+#: finance/views.py:23
+msgid "One-Time Event Table"
+msgstr "Einmalige Ereignisse"
+
+#: finance/views.py:27
 msgid "Current Assets"
 msgstr "Aktuelles Vermögen"
 
-#: finance/views.py:22
+#: finance/views.py:28
 msgid "Monthly Income"
 msgstr "Monatliches Einkommen"
 
-#: finance/views.py:23
+#: finance/views.py:29
 msgid "Monthly Expenses"
 msgstr "Monatliche Ausgaben"
 
-#: finance/views.py:24
+#: finance/views.py:30
 msgid "Total Pensions"
 msgstr "Gesamtrenten"
 
-#: finance/views.py:218
+#: finance/views.py:261
 msgid "One-Time Events"
 msgstr "Einmalige Ereignisse"
 
-#: finance/views.py:238
+#: finance/views.py:281
 msgid "Income"
 msgstr "Einnahmen"
 
-#: finance/views.py:239
+#: finance/views.py:282
 msgid "Expenses"
 msgstr "Ausgaben"
 
-#: finance/views.py:240
+#: finance/views.py:283
 msgid "Net Savings"
 msgstr "Nettoersparnis"
 
-#: finance/views.py:260
+#: finance/views.py:303
 msgid "Nominal Value"
 msgstr "Nominalwert"
 
-#: finance/views.py:261
+#: finance/views.py:304
 msgid "Real Value (Purchasing Power)"
 msgstr "Realwert (Kaufkraft)"
 
-#: finance/views.py:262
+#: finance/views.py:306
 msgid "Purchasing Power Loss"
 msgstr "Kaufkraftverlust"
 
-#: templates/base.html:55 templates/finance/dashboard.html:4
-#: templates/finance/dashboard.html:10
+#: finance/views.py:336
+msgid "Continuous"
+msgstr ""
+
+#: finance/views.py:345 finance/views.py:368
+#| msgid "Categories"
+msgid "Uncategorized"
+msgstr "Kategorien"
+
+#: finance/views.py:346 finance/views.py:369
+#: templates/finance/partials/dashboard_table_simple.html:170
+msgid "Manual"
+msgstr ""
+
+#: finance/views.py:409
+#| msgid "One-Time Events"
+msgid "One-Time"
+msgstr "Einmalige Ereignisse"
+
+#: templates/base.html:59 templates/finance/dashboard.html:5
+#: templates/finance/dashboard.html:12
 msgid "Dashboard"
 msgstr "Übersicht"
 
-#: templates/base.html:68
-#, fuzzy
+#: templates/base.html:64 templates/core/help.html:4
+msgid "Help"
+msgstr "Hilfe"
+
+#: templates/base.html:69 templates/core/about.html:4
+msgid "About"
+msgstr "Über uns"
+
+#: templates/base.html:83
 #| msgid "User Profile"
 msgid "Profile"
 msgstr "Benutzerprofil"
 
-#: templates/base.html:69
+#: templates/base.html:84
 msgid "Admin"
 msgstr ""
 
-#: templates/base.html:95
+#: templates/base.html:91
 msgid "Logout"
 msgstr "Abmelden"
 
-#: templates/base.html:100 templates/core/login.html:4
+#: templates/base.html:96 templates/core/login.html:4
 #: templates/core/login.html:11 templates/core/login.html:17
 msgid "Login"
 msgstr ""
 
-#: templates/base.html:101 templates/core/signup.html:4
+#: templates/base.html:97 templates/core/signup.html:4
 #: templates/core/signup.html:11 templates/core/signup.html:17
 msgid "Sign Up"
+msgstr ""
+
+#: templates/core/about.html:10
+msgid "About the Project"
+msgstr "Über das Projekt"
+
+#: templates/core/about.html:12
+msgid ""
+"Welcome to your personal financial cockpit. This platform is designed to "
+"give you a clear and realistic look at your long-term financial future."
+msgstr ""
+
+#: templates/core/about.html:15
+msgid ""
+"Our goal is to demystify complex financial planning by offering simple, "
+"visual, and highly customizable tools to help you reach your goals."
+msgstr ""
+
+#: templates/core/about.html:23
+msgid "Personal Data Security"
+msgstr ""
+
+#: templates/core/about.html:24
+msgid ""
+"Your data is only stored in your personal database and is not shared with "
+"third parties."
+msgstr ""
+
+#: templates/core/about.html:33
+#| msgid "Update Simulation"
+msgid "Advanced Simulation"
+msgstr "Simulation aktualisieren"
+
+#: templates/core/about.html:34
+msgid ""
+"We use high-precision calculations for inflation and compound interest over "
+"a 30-year period."
+msgstr ""
+
+#: templates/core/about.html:47
+msgid "Lead Developer & Architect"
+msgstr "Hauptentwickler & Architekt"
+
+#: templates/core/about.html:50
+msgid ""
+"Financial Independence is a goal for many, but for most it remains just a "
+"dream. My passion is to create tools that turn those dreams into actionable "
+"plans."
+msgstr ""
+
+#: templates/core/help.html:10
+msgid "How can we help you?"
+msgstr "Wie können wir Ihnen helfen?"
+
+#: templates/core/help.html:11
+msgid "Find answers and tips to get the most out of your financial planning."
+msgstr "Finden Sie Antworten und Tipps, um Ihre Finanzplanung optimal zu nutzen."
+
+#: templates/core/help.html:23
+msgid "Quick Start"
+msgstr "Schnellstart"
+
+#: templates/core/help.html:24
+msgid ""
+"New here? Learn the basics of how to set up your profile and your first cash "
+"flow sources."
+msgstr "Neu hier? Lernen Sie die Grundlagen zur Einrichtung Ihres Profils und Ihrer ersten Cashflow-Quellen."
+
+#: templates/core/help.html:25 templates/core/help.html:39
+#: templates/core/help.html:53
+msgid "Learn More"
+msgstr "Mehr erfahren"
+
+#: templates/core/help.html:37
+#| msgid "Dashboard"
+msgid "Personal Dashboard"
+msgstr "Übersicht"
+
+#: templates/core/help.html:38
+msgid ""
+"Rearrange charts, change colors, and hide widgets to suit your personal "
+"financial overview."
+msgstr "Ordnen Sie Diagramme neu an, ändern Sie die Farben und blenden Sie Widgets aus, um sie an Ihre persönliche Finanzübersicht anzupassen."
+
+#: templates/core/help.html:51
+#| msgid "Simulation"
+msgid "Calculations"
+msgstr "Simulation"
+
+#: templates/core/help.html:52
+msgid ""
+"Understand how we calculate your net worth forecast and how inflation "
+"affects your future purchasing power."
+msgstr ""
+
+#: templates/core/help.html:62
+msgid "Frequently Asked Questions"
+msgstr ""
+
+#: templates/core/help.html:67
+msgid "How do I add a new recurring expense?"
+msgstr ""
+
+#: templates/core/help.html:72
+msgid ""
+"Go to the Admin panel, select \"Cash Flow Sources\", and click \"Add\". Set "
+"the frequency to \"Monthly\" and provide a start date."
+msgstr ""
+
+#: templates/core/help.html:79
+#| msgid "Inflation Monitor"
+msgid "What is the \"Inflation Monitor\"?"
+msgstr "Inflations-Monitor"
+
+#: templates/core/help.html:84
+msgid ""
+"This chart shows the gap between your nominal net worth and your real "
+"purchasing power over time based on the inflation rate set in your profile."
+msgstr ""
+
+#: templates/core/help.html:98
+msgid "Quick Start Guide"
+msgstr ""
+
+#: templates/core/help.html:103
+msgid "Go to your Profile and set your default currency and inflation rate."
+msgstr ""
+
+#: templates/core/help.html:104
+msgid "Add your current Assets (bank accounts, investments, real estate)."
+msgstr ""
+
+#: templates/core/help.html:105
+msgid "Enter your regular Income and Expenses in the Cash Flow section."
+msgstr ""
+
+#: templates/core/help.html:106
+msgid "Check the Dashboard to see your 30-year financial forecast!"
+msgstr ""
+
+#: templates/core/help.html:117
+#| msgid "Dashboard Configuration"
+msgid "Dashboard Customization"
+msgstr "Dashboard-Konfiguration"
+
+#: templates/core/help.html:121
+msgid ""
+"Click the gear icon on the dashboard to open the configuration panel. Here "
+"you can:"
+msgstr ""
+
+#: templates/core/help.html:123
+msgid "Drag and drop widgets to change their order."
+msgstr ""
+
+#: templates/core/help.html:124
+msgid "Resize widgets (Small/Medium/Large)."
+msgstr ""
+
+#: templates/core/help.html:125
+msgid "Change background and text colors of individual charts."
+msgstr ""
+
+#: templates/core/help.html:126
+msgid "Toggle visibility of widgets you don\\"
+msgstr ""
+
+#: templates/core/help.html:137
+msgid "How calculations work"
+msgstr ""
+
+#: templates/core/help.html:142
+msgid ""
+"We take your starting assets and simulate growth based on your specified "
+"return rates, adding/subtracting your monthly cash flow until your target "
+"age."
+msgstr ""
+
+#: templates/core/help.html:143
+#| msgid "Inflation Adjusted"
+msgid "Inflation Adjustment"
+msgstr "Inflationsangepasst"
+
+#: templates/core/help.html:144
+msgid ""
+"We discount future values using the inflation rate in your profile to show "
+"you what that money will be worth in today\\"
 msgstr ""
 
 #: templates/core/login.html:21
@@ -326,7 +604,7 @@ msgstr ""
 msgid "Edit Profile"
 msgstr ""
 
-#: templates/core/profile.html:16 templates/finance/dashboard.html:225
+#: templates/core/profile.html:16 templates/finance/dashboard.html:216
 msgid "Save Changes"
 msgstr ""
 
@@ -334,112 +612,166 @@ msgstr ""
 msgid "Already have an account? Login"
 msgstr ""
 
-#: templates/finance/dashboard.html:14
+#: templates/finance/dashboard.html:16
 msgid "Configure Layout"
 msgstr "Layout konfigurieren"
 
-#: templates/finance/dashboard.html:18 templates/finance/dashboard.html:64
+#: templates/finance/dashboard.html:20 templates/finance/dashboard.html:38
 msgid "Simulation"
 msgstr "Simulation"
 
-#: templates/finance/dashboard.html:71
+#: templates/finance/dashboard.html:44
+msgid "Changes here are temporary. Update your profile for permanent settings."
+msgstr ""
+
+#: templates/finance/dashboard.html:50
 #, python-format
 msgid "Inflation Rate (%%)"
 msgstr ""
 
-#: templates/finance/dashboard.html:76
+#: templates/finance/dashboard.html:55
 #, python-format
 msgid "Salary Increase (%%)"
 msgstr ""
 
-#: templates/finance/dashboard.html:81
+#: templates/finance/dashboard.html:60
 #, python-format
 msgid "Inv. Return Offset (%%)"
 msgstr ""
 
-#: templates/finance/dashboard.html:86
+#: templates/finance/dashboard.html:68
 msgid "Update Simulation"
 msgstr "Simulation aktualisieren"
 
-#: templates/finance/dashboard.html:87
-msgid "Reset"
+#: templates/finance/dashboard.html:71
+msgid "Reset to Defaults"
 msgstr ""
 
-#: templates/finance/dashboard.html:125
+#: templates/finance/dashboard.html:82
 msgid "Configure Dashboard"
 msgstr "Dashboard konfigurieren"
 
-#: templates/finance/dashboard.html:134
+#: templates/finance/dashboard.html:95
+msgid "Customize colors and visibility for all dashboard components."
+msgstr ""
+
+#: templates/finance/dashboard.html:98
+msgid "Table Headers"
+msgstr ""
+
+#: templates/finance/dashboard.html:101
+msgid "Header Background"
+msgstr ""
+
+#: templates/finance/dashboard.html:105
+msgid "Header Text Color"
+msgstr ""
+
+#: templates/finance/dashboard.html:109
+msgid "Filter Row Background"
+msgstr ""
+
+#: templates/finance/dashboard.html:114
+#| msgid "Simulation"
+msgid "Simulation Panel"
+msgstr "Simulation"
+
+#: templates/finance/dashboard.html:117
+msgid "Header Background & Text"
+msgstr ""
+
+#: templates/finance/dashboard.html:124
+msgid "Panel Background & Text"
+msgstr ""
+
+#: templates/finance/dashboard.html:132
 msgid "Summary Cards"
 msgstr "Zusammenfassungskarten"
 
-#: templates/finance/dashboard.html:139
+#: templates/finance/dashboard.html:137
 msgid "Widget"
 msgstr "Widget"
 
-#: templates/finance/dashboard.html:140 templates/finance/dashboard.html:180
+#: templates/finance/dashboard.html:138 templates/finance/dashboard.html:170
 msgid "Visible"
 msgstr "Sichtbar"
 
-#: templates/finance/dashboard.html:141 templates/finance/dashboard.html:183
-#, fuzzy
+#: templates/finance/dashboard.html:139 templates/finance/dashboard.html:173
 #| msgid "Color"
 msgid "Colors"
 msgstr "Farbe"
 
-#: templates/finance/dashboard.html:142 templates/finance/dashboard.html:184
-#: venv/lib/python3.12/site-packages/django/forms/formsets.py:484
-#: venv/lib/python3.12/site-packages/django/forms/formsets.py:491
-msgid "Order"
-msgstr "Reihenfolge"
-
-#: templates/finance/dashboard.html:174
+#: templates/finance/dashboard.html:164
 msgid "Charts & Widgets"
 msgstr "Charts & Widgets"
 
-#: templates/finance/dashboard.html:179
+#: templates/finance/dashboard.html:169
 msgid "Chart"
 msgstr "Chart"
 
-#: templates/finance/dashboard.html:181
+#: templates/finance/dashboard.html:171
 msgid "Width"
 msgstr "Breite"
 
-#: templates/finance/dashboard.html:182
+#: templates/finance/dashboard.html:172
 msgid "Height"
 msgstr "Höhe"
 
-#: templates/finance/dashboard.html:202
+#: templates/finance/dashboard.html:197
 msgid "Small"
 msgstr ""
 
-#: templates/finance/dashboard.html:203
+#: templates/finance/dashboard.html:198
 msgid "Medium"
 msgstr ""
 
-#: templates/finance/dashboard.html:204
+#: templates/finance/dashboard.html:199
 msgid "Large"
 msgstr ""
 
-#: templates/finance/dashboard.html:224
+#: templates/finance/dashboard.html:215
 msgid "Close"
 msgstr ""
 
-#: templates/finance/partials/dashboard_charts.html:20
+#: templates/finance/partials/dashboard_charts.html:23
 msgid "Simulation Parameters"
 msgstr "Simulationsparameter"
 
-#: templates/finance/partials/dashboard_charts.html:20
+#: templates/finance/partials/dashboard_charts.html:23
 msgid "Inflation"
 msgstr "Inflation"
 
-#: templates/finance/partials/dashboard_charts.html:20
+#: templates/finance/partials/dashboard_charts.html:23
 msgid "Salary"
 msgstr "Gehalt"
 
-#: templates/finance/partials/dashboard_charts.html:20
+#: templates/finance/partials/dashboard_charts.html:23
 msgid "Return Offset"
 msgstr "Rendite-Offset"
+
+#: templates/finance/partials/dashboard_table_simple.html:118
+#| msgid "Yearly"
+msgid "Year"
+msgstr "Jährlich"
+
+#: templates/finance/partials/dashboard_table_simple.html:132
+#: templates/finance/partials/dashboard_table_simple.html:135
+#: templates/finance/partials/dashboard_table_simple.html:138
+#: templates/finance/partials/dashboard_table_simple.html:141
+msgid "Filter..."
+msgstr ""
+
+#: templates/finance/partials/dashboard_table_simple.html:157
+msgid "Group Sum"
+msgstr ""
+
+#: templates/finance/partials/dashboard_table_simple.html:183
+msgid "No items found"
+msgstr ""
+
+#: templates/finance/partials/dashboard_table_simple.html:190
+msgid "Total"
+msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/contrib/messages/apps.py:16
 msgid "Messages"
@@ -454,7 +786,6 @@ msgid "Static Files"
 msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/contrib/syndication/apps.py:7
-#, fuzzy
 #| msgid "Simulation"
 msgid "Syndication"
 msgstr "Simulation"
@@ -500,11 +831,14 @@ msgstr ""
 
 #. Translators: "letters" means latin letters: a-z and A-Z.
 #: venv/lib/python3.12/site-packages/django/core/validators.py:289
-msgid "Enter a valid “slug” consisting of letters, numbers, underscores or hyphens."
+msgid ""
+"Enter a valid “slug” consisting of letters, numbers, underscores or hyphens."
 msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/core/validators.py:297
-msgid "Enter a valid “slug” consisting of Unicode letters, numbers, underscores, or hyphens."
+msgid ""
+"Enter a valid “slug” consisting of Unicode letters, numbers, underscores, or "
+"hyphens."
 msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/core/validators.py:309
@@ -554,20 +888,30 @@ msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/core/validators.py:441
 #, python-format
-msgid "Ensure this value is a multiple of step size %(limit_value)s, starting from %(offset)s, e.g. %(offset)s, %(valid_value1)s, %(valid_value2)s, and so on."
+msgid ""
+"Ensure this value is a multiple of step size %(limit_value)s, starting from "
+"%(offset)s, e.g. %(offset)s, %(valid_value1)s, %(valid_value2)s, and so on."
 msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/core/validators.py:473
 #, python-format
-msgid "Ensure this value has at least %(limit_value)d character (it has %(show_value)d)."
-msgid_plural "Ensure this value has at least %(limit_value)d characters (it has %(show_value)d)."
+msgid ""
+"Ensure this value has at least %(limit_value)d character (it has "
+"%(show_value)d)."
+msgid_plural ""
+"Ensure this value has at least %(limit_value)d characters (it has "
+"%(show_value)d)."
 msgstr[0] ""
 msgstr[1] ""
 
 #: venv/lib/python3.12/site-packages/django/core/validators.py:491
 #, python-format
-msgid "Ensure this value has at most %(limit_value)d character (it has %(show_value)d)."
-msgid_plural "Ensure this value has at most %(limit_value)d characters (it has %(show_value)d)."
+msgid ""
+"Ensure this value has at most %(limit_value)d character (it has "
+"%(show_value)d)."
+msgid_plural ""
+"Ensure this value has at most %(limit_value)d characters (it has "
+"%(show_value)d)."
 msgstr[0] ""
 msgstr[1] ""
 
@@ -593,14 +937,18 @@ msgstr[1] ""
 
 #: venv/lib/python3.12/site-packages/django/core/validators.py:526
 #, python-format
-msgid "Ensure that there are no more than %(max)s digit before the decimal point."
-msgid_plural "Ensure that there are no more than %(max)s digits before the decimal point."
+msgid ""
+"Ensure that there are no more than %(max)s digit before the decimal point."
+msgid_plural ""
+"Ensure that there are no more than %(max)s digits before the decimal point."
 msgstr[0] ""
 msgstr[1] ""
 
 #: venv/lib/python3.12/site-packages/django/core/validators.py:597
 #, python-format
-msgid "File extension “%(extension)s” is not allowed. Allowed extensions are: %(allowed_extensions)s."
+msgid ""
+"File extension “%(extension)s” is not allowed. Allowed extensions are: "
+"%(allowed_extensions)s."
 msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/core/validators.py:659
@@ -644,7 +992,8 @@ msgstr ""
 #. 'month'. Eg: "Title must be unique for pub_date year"
 #: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:141
 #, python-format
-msgid "%(field_label)s must be unique for %(date_field_label)s %(lookup_type)s."
+msgid ""
+"%(field_label)s must be unique for %(date_field_label)s %(lookup_type)s."
 msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:180
@@ -681,13 +1030,17 @@ msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1426
 #, python-format
-msgid "“%(value)s” value has an invalid date format. It must be in YYYY-MM-DD format."
+msgid ""
+"“%(value)s” value has an invalid date format. It must be in YYYY-MM-DD "
+"format."
 msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1430
 #: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1565
 #, python-format
-msgid "“%(value)s” value has the correct format (YYYY-MM-DD) but it is an invalid date."
+msgid ""
+"“%(value)s” value has the correct format (YYYY-MM-DD) but it is an invalid "
+"date."
 msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1434
@@ -696,12 +1049,16 @@ msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1561
 #, python-format
-msgid "“%(value)s” value has an invalid format. It must be in YYYY-MM-DD HH:MM[:ss[.uuuuuu]][TZ] format."
+msgid ""
+"“%(value)s” value has an invalid format. It must be in YYYY-MM-DD HH:MM[:ss[."
+"uuuuuu]][TZ] format."
 msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1569
 #, python-format
-msgid "“%(value)s” value has the correct format (YYYY-MM-DD HH:MM[:ss[.uuuuuu]][TZ]) but it is an invalid date/time."
+msgid ""
+"“%(value)s” value has the correct format (YYYY-MM-DD HH:MM[:ss[.uuuuuu]]"
+"[TZ]) but it is an invalid date/time."
 msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1574
@@ -719,11 +1076,12 @@ msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1864
 #, python-format
-msgid "“%(value)s” value has an invalid format. It must be in [DD] [[HH:]MM:]ss[.uuuuuu] format."
+msgid ""
+"“%(value)s” value has an invalid format. It must be in [DD] [[HH:]MM:]ss[."
+"uuuuuu] format."
 msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1868
-#, fuzzy
 #| msgid "Simulation"
 msgid "Duration"
 msgstr "Simulation"
@@ -803,12 +1161,16 @@ msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2526
 #, python-format
-msgid "“%(value)s” value has an invalid format. It must be in HH:MM[:ss[.uuuuuu]] format."
+msgid ""
+"“%(value)s” value has an invalid format. It must be in HH:MM[:ss[.uuuuuu]] "
+"format."
 msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2530
 #, python-format
-msgid "“%(value)s” value has the correct format (HH:MM[:ss[.uuuuuu]]) but it is an invalid time."
+msgid ""
+"“%(value)s” value has the correct format (HH:MM[:ss[.uuuuuu]]) but it is an "
+"invalid time."
 msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2534
@@ -928,7 +1290,8 @@ msgstr ""
 #: venv/lib/python3.12/site-packages/django/forms/fields.py:643
 #, python-format
 msgid "Ensure this filename has at most %(max)d character (it has %(length)d)."
-msgid_plural "Ensure this filename has at most %(max)d characters (it has %(length)d)."
+msgid_plural ""
+"Ensure this filename has at most %(max)d characters (it has %(length)d)."
 msgstr[0] ""
 msgstr[1] ""
 
@@ -937,7 +1300,9 @@ msgid "Please either submit a file or check the clear checkbox, not both."
 msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/forms/fields.py:716
-msgid "Upload a valid image. The file you uploaded was either not an image or a corrupted image."
+msgid ""
+"Upload a valid image. The file you uploaded was either not an image or a "
+"corrupted image."
 msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/forms/fields.py:872
@@ -977,7 +1342,9 @@ msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/forms/formsets.py:61
 #, python-format
-msgid "ManagementForm data is missing or has been tampered with. Missing fields: %(field_names)s. You may need to file a bug report if the issue persists."
+msgid ""
+"ManagementForm data is missing or has been tampered with. Missing fields: "
+"%(field_names)s. You may need to file a bug report if the issue persists."
 msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/forms/formsets.py:65
@@ -993,6 +1360,11 @@ msgid "Please submit at least %(num)d form."
 msgid_plural "Please submit at least %(num)d forms."
 msgstr[0] ""
 msgstr[1] ""
+
+#: venv/lib/python3.12/site-packages/django/forms/formsets.py:484
+#: venv/lib/python3.12/site-packages/django/forms/formsets.py:491
+msgid "Order"
+msgstr "Reihenfolge"
 
 #: venv/lib/python3.12/site-packages/django/forms/formsets.py:499
 msgid "Delete"
@@ -1010,7 +1382,9 @@ msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/forms/models.py:937
 #, python-format
-msgid "Please correct the duplicate data for %(field_name)s which must be unique for the %(lookup)s in %(date_field)s."
+msgid ""
+"Please correct the duplicate data for %(field_name)s which must be unique "
+"for the %(lookup)s in %(date_field)s."
 msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/forms/models.py:946
@@ -1032,7 +1406,9 @@ msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/forms/utils.py:229
 #, python-format
-msgid "%(datetime)s couldn’t be interpreted in time zone %(current_timezone)s; it may be ambiguous or it may not exist."
+msgid ""
+"%(datetime)s couldn’t be interpreted in time zone %(current_timezone)s; it "
+"may be ambiguous or it may not exist."
 msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/forms/widgets.py:528
@@ -1040,7 +1416,6 @@ msgid "Clear"
 msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/forms/widgets.py:529
-#, fuzzy
 #| msgid "Currency"
 msgid "Currently"
 msgstr "Währung"
@@ -1172,7 +1547,6 @@ msgid "Sunday"
 msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/utils/dates.py:16
-#, fuzzy
 #| msgid "Monthly"
 msgid "Mon"
 msgstr "Monatlich"
@@ -1488,23 +1862,40 @@ msgid "CSRF verification failed. Request aborted."
 msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/views/csrf.py:34
-msgid "You are seeing this message because this HTTPS site requires a “Referer header” to be sent by your web browser, but none was sent. This header is required for security reasons, to ensure that your browser is not being hijacked by third parties."
+msgid ""
+"You are seeing this message because this HTTPS site requires a “Referer "
+"header” to be sent by your web browser, but none was sent. This header is "
+"required for security reasons, to ensure that your browser is not being "
+"hijacked by third parties."
 msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/views/csrf.py:40
-msgid "If you have configured your browser to disable “Referer” headers, please re-enable them, at least for this site, or for HTTPS connections, or for “same-origin” requests."
+msgid ""
+"If you have configured your browser to disable “Referer” headers, please re-"
+"enable them, at least for this site, or for HTTPS connections, or for “same-"
+"origin” requests."
 msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/views/csrf.py:45
-msgid "If you are using the <meta name=\"referrer\" content=\"no-referrer\"> tag or including the “Referrer-Policy: no-referrer” header, please remove them. The CSRF protection requires the “Referer” header to do strict referer checking. If you’re concerned about privacy, use alternatives like <a rel=\"noreferrer\" …> for links to third-party sites."
+msgid ""
+"If you are using the <meta name=\"referrer\" content=\"no-referrer\"> tag or "
+"including the “Referrer-Policy: no-referrer” header, please remove them. The "
+"CSRF protection requires the “Referer” header to do strict referer checking. "
+"If you’re concerned about privacy, use alternatives like <a "
+"rel=\"noreferrer\" …> for links to third-party sites."
 msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/views/csrf.py:54
-msgid "You are seeing this message because this site requires a CSRF cookie when submitting forms. This cookie is required for security reasons, to ensure that your browser is not being hijacked by third parties."
+msgid ""
+"You are seeing this message because this site requires a CSRF cookie when "
+"submitting forms. This cookie is required for security reasons, to ensure "
+"that your browser is not being hijacked by third parties."
 msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/views/csrf.py:60
-msgid "If you have configured your browser to disable cookies, please re-enable them, at least for this site, or for “same-origin” requests."
+msgid ""
+"If you have configured your browser to disable cookies, please re-enable "
+"them, at least for this site, or for “same-origin” requests."
 msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/views/csrf.py:66
@@ -1541,7 +1932,9 @@ msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/views/generic/dates.py:680
 #, python-format
-msgid "Future %(verbose_name_plural)s not available because %(class_name)s.allow_future is False."
+msgid ""
+"Future %(verbose_name_plural)s not available because %(class_name)s."
+"allow_future is False."
 msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/views/generic/dates.py:720
@@ -1591,12 +1984,18 @@ msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/views/templates/default_urlconf.html:206
 #, python-format
-msgid "View <a href=\"https://docs.djangoproject.com/en/%(version)s/releases/\" target=\"_blank\" rel=\"noopener\">release notes</a> for Django %(version)s"
+msgid ""
+"View <a href=\"https://docs.djangoproject.com/en/%(version)s/releases/\" "
+"target=\"_blank\" rel=\"noopener\">release notes</a> for Django %(version)s"
 msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/views/templates/default_urlconf.html:208
 #, python-format
-msgid "You are seeing this page because <a href=\"https://docs.djangoproject.com/en/%(version)s/ref/settings/#debug\" target=\"_blank\" rel=\"noopener\">DEBUG=True</a> is in your settings file and you have not configured any URLs."
+msgid ""
+"You are seeing this page because <a href=\"https://docs.djangoproject.com/en/"
+"%(version)s/ref/settings/#debug\" target=\"_blank\" "
+"rel=\"noopener\">DEBUG=True</a> is in your settings file and you have not "
+"configured any URLs."
 msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/views/templates/default_urlconf.html:217
@@ -1644,18 +2043,3 @@ msgstr ""
 
 #~ msgid "Age"
 #~ msgstr "Alter"
-
-msgid "Income Table"
-msgstr "Einnahmen-Tabelle"
-
-msgid "Expense Table"
-msgstr "Ausgaben-Tabelle"
-
-msgid "Asset Table"
-msgstr "Vermögenswerte-Tabelle"
-
-msgid "Pension Table"
-msgstr "Renten-Tabelle"
-
-msgid "One-Time Event Table"
-msgstr "Einmalige Ereignisse"

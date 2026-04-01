@@ -1,4 +1,48 @@
+# Django / Python standard ignore
 db.sqlite3
+db.sqlite3.bak
 venv/
 .env
 data/
+server.log
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+instance/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local settings
+local_settings.py
+
+# Media and Static
+media/
+staticfiles/
+
+# Build and Dist
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Miscellaneous
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo

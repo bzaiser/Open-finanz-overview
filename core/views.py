@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
+from django.conf import settings
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
+from django.utils import translation
 from .forms import CustomUserCreationForm, UserProfileForm
 from .models import UserProfile
 
@@ -14,6 +16,9 @@ def signup(request):
             # Create profile
             UserProfile.objects.create(user=user)
             login(request, user)
+            # Default language from profile
+            translation.activate('de')
+            request.session[translation.LANGUAGE_SESSION_KEY] = 'de'
             return redirect('dashboard')
     else:
         form = CustomUserCreationForm()
@@ -25,8 +30,13 @@ def profile_view(request):
     if request.method == 'POST':
         form = UserProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
-            form.save()
-            return redirect('profile')
+            profile = form.save()
+            # Update session language
+            translation.activate(profile.language)
+            request.session[translation.LANGUAGE_SESSION_KEY] = profile.language
+            response = redirect('profile')
+            response.set_cookie(settings.LANGUAGE_COOKIE_NAME, profile.language)
+            return response
     else:
         form = UserProfileForm(instance=profile)
     return render(request, 'core/profile.html', {'form': form})

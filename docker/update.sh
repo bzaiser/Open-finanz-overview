@@ -27,6 +27,10 @@ docker compose up -d
 echo "Running database migrations..."
 docker compose exec web python manage.py migrate
 
+# Compile translations
+echo "Compiling translations..."
+docker compose exec web python manage.py compilemessages
+
 echo "-----------------------------------"
 echo "Update complete! Application is running."
 
