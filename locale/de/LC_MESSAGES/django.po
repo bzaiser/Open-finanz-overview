@@ -25,39 +25,39 @@ msgstr "Geburtsdatum"
 #: finance/models.py:44 finance/models.py:61
 #: templates/finance/partials/dashboard_table_simple.html:104
 msgid "Name"
-msgstr ""
+msgstr "Name"
 
 #: core/models.py:10
 msgid "Primary Color"
-msgstr ""
+msgstr "Primärfarbe"
 
 #: core/models.py:11
 msgid "Secondary Color"
-msgstr ""
+msgstr "Sekundärfarbe"
 
 #: core/models.py:12
 msgid "Background Color"
-msgstr ""
+msgstr "Hintergrundfarbe"
 
 #: core/models.py:13
 msgid "Text Color"
-msgstr ""
+msgstr "Textfarbe"
 
 #: core/models.py:14
 msgid "Sidebar Background"
-msgstr ""
+msgstr "Sidebar-Hintergrund"
 
 #: core/models.py:17
 msgid "Table Header Background"
-msgstr ""
+msgstr "Tabellenkopf-Hintergrund"
 
 #: core/models.py:18
 msgid "Table Header Text"
-msgstr ""
+msgstr "Tabellenkopf-Text"
 
 #: core/models.py:19
 msgid "Table Filter Background"
-msgstr ""
+msgstr "Tabellenfilter-Hintergrund"
 
 #: core/models.py:22 core/models.py:67
 msgid "Theme"
@@ -188,11 +188,11 @@ msgstr "Jährliche Wachstumsrate (%)"
 
 #: finance/models.py:49
 msgid "Monthly Withdrawal"
-msgstr ""
+msgstr "Monatliche Auszahlung"
 
 #: finance/models.py:49
 msgid "Amount to take out of this asset each month"
-msgstr ""
+msgstr "Betrag, der jeden Monat aus diesem Vermögenswert entnommen wird"
 
 #: finance/models.py:50
 #| msgid "Start Date"
@@ -418,12 +418,18 @@ msgid ""
 "Welcome to your personal financial cockpit. This platform is designed to "
 "give you a clear and realistic look at your long-term financial future."
 msgstr ""
+"Willkommen in Ihrem persönlichen Finanz-Cockpit. Diese Plattform wurde "
+"entwickelt, um Ihnen einen klaren und realistischen Blick auf Ihre "
+"langfristige finanzielle Zukunft zu geben."
 
 #: templates/core/about.html:15
 msgid ""
 "Our goal is to demystify complex financial planning by offering simple, "
 "visual, and highly customizable tools to help you reach your goals."
 msgstr ""
+"Unser Ziel ist es, komplexe Finanzplanung zu entmystifizieren, indem wir "
+"einfache, visuelle und hochgradig anpassbare Tools anbieten, die Ihnen "
+"helfen, Ihre Ziele zu erreichen."
 
 #: templates/core/about.html:23
 msgid "Personal Data Security"
@@ -434,6 +440,8 @@ msgid ""
 "Your data is only stored in your personal database and is not shared with "
 "third parties."
 msgstr ""
+"Ihre Daten werden nur in Ihrer persönlichen Datenbank gespeichert und nicht "
+"an Dritte weitergegeben."
 
 #: templates/core/about.html:33
 #| msgid "Update Simulation"
@@ -445,6 +453,8 @@ msgid ""
 "We use high-precision calculations for inflation and compound interest over "
 "a 30-year period."
 msgstr ""
+"Wir verwenden Hochpräzisionsberechnungen für Inflation und Zinseszins über "
+"einen Zeitraum von 30 Jahren."
 
 #: templates/core/about.html:47
 msgid "Lead Developer & Architect"
@@ -456,6 +466,9 @@ msgid ""
 "dream. My passion is to create tools that turn those dreams into actionable "
 "plans."
 msgstr ""
+"Finanzielle Unabhängigkeit ist für viele ein Ziel, aber für die meisten "
+"bleibt es nur ein Traum. Meine Leidenschaft ist es, Werkzeuge zu schaffen, "
+"die diese Träume in umsetzbare Pläne verwandeln."
 
 #: templates/core/help.html:10
 msgid "How can we help you?"
@@ -483,7 +496,7 @@ msgstr "Mehr erfahren"
 #: templates/core/help.html:37
 #| msgid "Dashboard"
 msgid "Personal Dashboard"
-msgstr "Übersicht"
+msgstr "Persönliches Dashboard"
 
 #: templates/core/help.html:38
 msgid ""
@@ -504,7 +517,7 @@ msgstr ""
 
 #: templates/core/help.html:62
 msgid "Frequently Asked Questions"
-msgstr ""
+msgstr "Häufig gestellte Fragen"
 
 #: templates/core/help.html:67
 msgid "How do I add a new recurring expense?"
@@ -1255,7 +1268,7 @@ msgstr ""
 #: venv/lib/python3.12/site-packages/django/forms/fields.py:485
 #: venv/lib/python3.12/site-packages/django/forms/fields.py:1251
 msgid "Enter a valid date."
-msgstr ""
+msgstr "Geben Sie ein gültiges Datum ein."
 
 #: venv/lib/python3.12/site-packages/django/forms/fields.py:508
 #: venv/lib/python3.12/site-packages/django/forms/fields.py:1252
@@ -1430,11 +1443,11 @@ msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/forms/widgets.py:870
 msgid "Yes"
-msgstr ""
+msgstr "Ja"
 
 #: venv/lib/python3.12/site-packages/django/forms/widgets.py:871
 msgid "No"
-msgstr ""
+msgstr "Nein"
 
 #: venv/lib/python3.12/site-packages/django/tasks/base.py:34
 msgctxt "Task"

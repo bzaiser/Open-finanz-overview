@@ -16,9 +16,6 @@ def signup(request):
             # Create profile
             UserProfile.objects.create(user=user)
             login(request, user)
-            # Default language from profile
-            translation.activate('de')
-            request.session[translation.LANGUAGE_SESSION_KEY] = 'de'
             return redirect('dashboard')
     else:
         form = CustomUserCreationForm()
@@ -30,16 +27,8 @@ def profile_view(request):
     if request.method == 'POST':
         form = UserProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
-            profile = form.save()
-            # Update session and cookie for immediate language switch
-            language = profile.language
-            translation.activate(language)
-            request.session[translation.LANGUAGE_SESSION_KEY] = language
-            response = redirect('profile')
-            # Use getattr for safety or default to 'django_language'
-            cookie_name = getattr(settings, 'LANGUAGE_COOKIE_NAME', 'django_language')
-            response.set_cookie(cookie_name, language)
-            return response
+            form.save()
+            return redirect('profile')
     else:
         form = UserProfileForm(instance=profile)
     return render(request, 'core/profile.html', {'form': form})
