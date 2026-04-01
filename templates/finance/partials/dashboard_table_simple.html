@@ -144,7 +144,7 @@
             </thead>
             <tbody>
                 <template x-for="(row, idx) in displayRows" :key="'row-' + idx">
-                    <tr :class="row.isGroupHeader ? 'bg-secondary-subtle border-top border-bottom cursor-pointer text-body-emphasis' : 'align-middle'"
+                    <tr :class="row.isGroupHeader ? 'table-secondary border-top border-bottom cursor-pointer text-body-emphasis' : 'align-middle'"
                         @click="if(row.isGroupHeader) collapsedGroups[row.year] = !collapsedGroups[row.year]">
                         <template x-if="row.isGroupHeader">
                             <td class="p-2 border-0" colspan="3">
