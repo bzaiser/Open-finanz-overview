@@ -513,7 +513,7 @@ msgstr "Simulation"
 msgid ""
 "Understand how we calculate your net worth forecast and how inflation "
 "affects your future purchasing power."
-msgstr ""
+msgstr "Verstehen Sie, wie wir Ihre Vermögensprognose berechnen und wie sich die Inflation auf Ihre zukünftige Kaufkraft auswirkt."
 
 #: templates/core/help.html:62
 msgid "Frequently Asked Questions"
@@ -521,13 +521,13 @@ msgstr "Häufig gestellte Fragen"
 
 #: templates/core/help.html:67
 msgid "How do I add a new recurring expense?"
-msgstr ""
+msgstr "Wie füge ich eine neue wiederkehrende Ausgabe hinzu?"
 
 #: templates/core/help.html:72
 msgid ""
 "Go to the Admin panel, select \"Cash Flow Sources\", and click \"Add\". Set "
 "the frequency to \"Monthly\" and provide a start date."
-msgstr ""
+msgstr "Gehen Sie in den Admin-Bereich, wählen Sie „Cash Flow Sources“ und klicken Sie auf „Hinzufügen“. Stellen Sie die Häufigkeit auf „Monatlich“ ein und geben Sie ein Startdatum an."
 
 #: templates/core/help.html:79
 #| msgid "Inflation Monitor"
@@ -538,27 +538,27 @@ msgstr "Inflations-Monitor"
 msgid ""
 "This chart shows the gap between your nominal net worth and your real "
 "purchasing power over time based on the inflation rate set in your profile."
-msgstr ""
+msgstr "Dieses Diagramm zeigt die Lücke zwischen Ihrem nominalen Reinvermögen und Ihrer realen Kaufkraft im Laufe der Zeit, basierend auf der in Ihrem Profil eingestellten Inflationsrate."
 
 #: templates/core/help.html:98
 msgid "Quick Start Guide"
-msgstr ""
+msgstr "Schnellstart-Anleitung"
 
 #: templates/core/help.html:103
 msgid "Go to your Profile and set your default currency and inflation rate."
-msgstr ""
+msgstr "Gehen Sie zu Ihrem Profil und legen Sie Ihre Standardwährung und Inflationsrate fest."
 
 #: templates/core/help.html:104
 msgid "Add your current Assets (bank accounts, investments, real estate)."
-msgstr ""
+msgstr "Fügen Sie Ihr aktuelles Vermögen hinzu (Bankkonten, Investitionen, Immobilien)."
 
 #: templates/core/help.html:105
 msgid "Enter your regular Income and Expenses in the Cash Flow section."
-msgstr ""
+msgstr "Geben Sie Ihr regelmäßiges Einkommen und Ihre Ausgaben im Bereich Cashflow ein."
 
 #: templates/core/help.html:106
 msgid "Check the Dashboard to see your 30-year financial forecast!"
-msgstr ""
+msgstr "Prüfen Sie das Dashboard, um Ihre 30-jährige Finanzprognose zu sehen!"
 
 #: templates/core/help.html:117
 #| msgid "Dashboard Configuration"
