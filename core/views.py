@@ -31,11 +31,14 @@ def profile_view(request):
         form = UserProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             profile = form.save()
-            # Update session language
-            translation.activate(profile.language)
-            request.session[translation.LANGUAGE_SESSION_KEY] = profile.language
+            # Update session and cookie for immediate language switch
+            language = profile.language
+            translation.activate(language)
+            request.session[translation.LANGUAGE_SESSION_KEY] = language
             response = redirect('profile')
-            response.set_cookie(settings.LANGUAGE_COOKIE_NAME, profile.language)
+            # Use getattr for safety or default to 'django_language'
+            cookie_name = getattr(settings, 'LANGUAGE_COOKIE_NAME', 'django_language')
+            response.set_cookie(cookie_name, language)
             return response
     else:
         form = UserProfileForm(instance=profile)
