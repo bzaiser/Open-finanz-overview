@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans 'Help' %} - Finanzplan{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h1 class="display-4 fw-bold">{% trans 'How can we help you?' %}</h1>
+            <p class="lead text-muted">{% trans 'Find answers and tips to get the most out of your financial planning.' %}</p>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Quick Start -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body p-4 text-center">
+                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                        <i class="bi bi-rocket-takeoff fs-3"></i>
+                    </div>
+                    <h3 class="h5 mb-3">{% trans 'Quick Start' %}</h3>
+                    <p class="text-muted small">{% trans 'New here? Learn the basics of how to set up your profile and your first cash flow sources.' %}</p>
+                    <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#quickStartModal">{% trans 'Learn More' %}</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Customization -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body p-4 text-center">
+                    <div class="bg-success bg-opacity-10 text-success rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                        <i class="bi bi-grid-3x3-gap fs-3"></i>
+                    </div>
+                    <h3 class="h5 mb-3">{% trans 'Personal Dashboard' %}</h3>
+                    <p class="text-muted small">{% trans 'Rearrange charts, change colors, and hide widgets to suit your personal financial overview.' %}</p>
+                    <button class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#dashboardHelpModal">{% trans 'Learn More' %}</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Calculations & Inflation -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body p-4 text-center">
+                    <div class="bg-warning bg-opacity-10 text-warning rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                        <i class="bi bi-graph-up-arrow fs-3"></i>
+                    </div>
+                    <h3 class="h5 mb-3">{% trans 'Calculations' %}</h3>
+                    <p class="text-muted small">{% trans 'Understand how we calculate your net worth forecast and how inflation affects your future purchasing power.' %}</p>
+                    <button class="btn btn-outline-warning btn-sm" data-bs-toggle="modal" data-bs-target="#calcHelpModal">{% trans 'Learn More' %}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ Accordion -->
+    <div class="row mt-5">
+        <div class="col-lg-8 mx-auto">
+            <h2 class="text-center mb-4">{% trans 'Frequently Asked Questions' %}</h2>
+            <div class="accordion accordion-flush" id="faqAccordion">
+                <div class="accordion-item shadow-sm rounded mb-2 border-0">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                            {% trans 'How do I add a new recurring expense?' %}
+                        </button>
+                    </h2>
+                    <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            {% trans 'Go to the Admin panel, select "Cash Flow Sources", and click "Add". Set the frequency to "Monthly" and provide a start date.' %}
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item shadow-sm rounded mb-2 border-0">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                            {% trans 'What is the "Inflation Monitor"?' %}
+                        </button>
+                    </h2>
+                    <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            {% trans 'This chart shows the gap between your nominal net worth and your real purchasing power over time based on the inflation rate set in your profile.' %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modals for details -->
+<div class="modal fade" id="quickStartModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold">{% trans 'Quick Start Guide' %}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <ol class="list-group list-group-numbered border-0">
+                    <li class="list-group-item border-0">{% trans 'Go to your Profile and set your default currency and inflation rate.' %}</li>
+                    <li class="list-group-item border-0">{% trans 'Add your current Assets (bank accounts, investments, real estate).' %}</li>
+                    <li class="list-group-item border-0">{% trans 'Enter your regular Income and Expenses in the Cash Flow section.' %}</li>
+                    <li class="list-group-item border-0">{% trans 'Check the Dashboard to see your 30-year financial forecast!' %}</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="dashboardHelpModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold">{% trans 'Dashboard Customization' %}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <p>{% trans 'Click the gear icon on the dashboard to open the configuration panel. Here you can:' %}</p>
+                <ul>
+                    <li>{% trans 'Drag and drop widgets to change their order.' %}</li>
+                    <li>{% trans 'Resize widgets (Small/Medium/Large).' %}</li>
+                    <li>{% trans 'Change background and text colors of individual charts.' %}</li>
+                    <li>{% trans 'Toggle visibility of widgets you don\'t need.' %}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="calcHelpModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold">{% trans 'How calculations work' %}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <h6>{% trans 'Net Worth Forecast' %}</h6>
+                <p class="small text-muted">{% trans 'We take your starting assets and simulate growth based on your specified return rates, adding/subtracting your monthly cash flow until your target age.' %}</p>
+                <h6>{% trans 'Inflation Adjustment' %}</h6>
+                <p class="small text-muted">{% trans 'We discount future values using the inflation rate in your profile to show you what that money will be worth in today\'s purchasing power.' %}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

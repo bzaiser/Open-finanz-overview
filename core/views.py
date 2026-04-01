@@ -30,3 +30,10 @@ def profile_view(request):
     else:
         form = UserProfileForm(instance=profile)
     return render(request, 'core/profile.html', {'form': form})
+
+@login_required
+def help_view(request):
+    return render(request, 'core/help.html')
+
+def about_view(request):
+    return render(request, 'core/about.html')

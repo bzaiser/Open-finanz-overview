@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans 'About' %} - Finanzplan{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row align-items-center g-5">
+        <div class="col-lg-6">
+            <h1 class="display-3 fw-bold text-primary mb-4">{% trans 'About the Project' %}</h1>
+            <p class="lead text-muted mb-4">
+                {% trans 'Welcome to your personal financial cockpit. This platform is designed to give you a clear and realistic look at your long-term financial future.' %}
+            </p>
+            <p class="text-secondary mb-5">
+                {% trans 'Our goal is to demystify complex financial planning by offering simple, visual, and highly customizable tools to help you reach your goals.' %}
+            </p>
+            
+            <div class="d-flex align-items-start gap-4 mb-4">
+                <div class="bg-primary bg-opacity-10 p-3 rounded-4">
+                    <i class="bi bi-shield-check fs-2 text-primary"></i>
+                </div>
+                <div>
+                    <h4 class="h5 mb-1">{% trans 'Personal Data Security' %}</h4>
+                    <p class="text-muted small mb-0">{% trans 'Your data is only stored in your personal database and is not shared with third parties.' %}</p>
+                </div>
+            </div>
+
+            <div class="d-flex align-items-start gap-4">
+                <div class="bg-info bg-opacity-10 p-3 rounded-4">
+                    <i class="bi bi-cpu fs-2 text-info"></i>
+                </div>
+                <div>
+                    <h4 class="h5 mb-1">{% trans 'Advanced Simulation' %}</h4>
+                    <p class="text-muted small mb-0">{% trans 'We use high-precision calculations for inflation and compound interest over a 30-year period.' %}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-5 offset-lg-1">
+            <div class="card border-0 shadow-lg p-4 rounded-5" style="background: linear-gradient(135deg, #ffffff 0%, #f9fbfd 100%);">
+                <div class="card-body text-center">
+                    <div class="mb-4">
+                        <div class="rounded-circle bg-primary mx-auto mb-3" style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem;">
+                            B
+                        </div>
+                        <h2 class="h4 fw-bold">Bernd Zaiser</h2>
+                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 rounded-pill">{% trans 'Lead Developer & Architect' %}</span>
+                    </div>
+                    <p class="text-muted small mb-4 px-3">
+                        {% trans 'Financial Independence is a goal for many, but for most it remains just a dream. My passion is to create tools that turn those dreams into actionable plans.' %}
+                    </p>
+                    <div class="d-flex justify-content-center gap-3">
+                        <a href="mailto:admin@admin.com" class="btn btn-light btn-sm rounded-circle"><i class="bi bi-envelope"></i></a>
+                        <a href="#" class="btn btn-light btn-sm rounded-circle"><i class="bi bi-github"></i></a>
+                        <a href="#" class="btn btn-light btn-sm rounded-circle"><i class="bi bi-linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
