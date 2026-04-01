@@ -6,7 +6,13 @@
 {% endblock %}
 
 {% block content %}
-<div class="row">
+<div class="row mb-4">
+    <!-- I18N Debug Info (Hidden to normal users or just for us) -->
+    <div class="col-12 d-none">
+        <span id="debug-lang">{{ debug_lang }}</span>
+        <span id="debug-test">{{ debug_trans_test }}</span>
+    </div>
+    
     <div class="col-md-12">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h1>{% trans "Dashboard" %}</h1>

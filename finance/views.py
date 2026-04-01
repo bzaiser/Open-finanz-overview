@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
+from django.utils import translation
 from django.utils.translation import gettext_lazy as _
 from .services import SimulationEngine
 from .models import Category
@@ -445,6 +446,8 @@ def dashboard_view(request):
         'simulation_config': simulation_config,
         'table_config': table_config,
         'table_datasets': table_datasets,
+        'debug_lang': translation.get_language(),
+        'debug_trans_test': translation.gettext('Help'),
     }
     
     if request.headers.get('HX-Request') and 'config_update' not in request.POST:

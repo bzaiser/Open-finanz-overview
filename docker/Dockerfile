@@ -18,6 +18,7 @@ RUN mkdir -p /app/data && chown -R app:app /app
 RUN apt-get update && apt-get install -y \
     gcc \
     sqlite3 \
+    gettext \
     && rm -rf /var/lib/apt/lists/*
 
 # Install python dependencies
@@ -29,6 +30,9 @@ COPY --chown=app:app . /app/
 
 # Switch to the non-root user
 USER app
+
+# Compile translations
+RUN python manage.py compilemessages
 
 # Collect static files with proper permissions
 RUN python manage.py collectstatic --noinput
