@@ -6,8 +6,19 @@ class PensionAdmin(admin.ModelAdmin):
     list_display = ('provider', 'user', 'current_value', 'monthly_contribution')
     search_fields = ('provider', 'user__username')
 
+from django import forms
+
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = '__all__'
+        widgets = {
+            'color': forms.TextInput(attrs={'type': 'color'}),
+        }
+
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
+    form = CategoryForm
     list_display = ('name', 'slug', 'color')
     prepopulated_fields = {'slug': ('name',)}
 

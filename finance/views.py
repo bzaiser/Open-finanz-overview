@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.utils.translation import gettext_lazy as _
 from .services import SimulationEngine
+from .models import Category
 from django.core.serializers.json import DjangoJSONEncoder
 import json
 from decimal import Decimal
@@ -170,15 +171,20 @@ def dashboard_view(request):
     expenses_yearly = [-float(d['monthly_expenses']) * 12 for d in forecast_data[::12]]
     net_savings_yearly = [inc + exp for inc, exp in zip(income_yearly, expenses_yearly)]
 
+    category_color_map = {c.name: c.color for c in Category.objects.all()}
+    fallback_colors = ['#0d6efd', '#6610f2', '#6f42c1', '#d63384', '#dc3545', '#fd7e14', '#ffc107', '#198754', '#20c997', '#0dcaf0']
+
     # 3. Budget Pie (Current/Start month breakdown)
     if forecast_data:
         first_month = forecast_data[0]
         budget_labels = list(first_month['category_breakdown'].keys())
         budget_data = list(first_month['category_breakdown'].values())
+        budget_colors = [category_color_map.get(lbl, fallback_colors[i % len(fallback_colors)]) for i, lbl in enumerate(budget_labels)]
     else:
         first_month = {}
         budget_labels = []
         budget_data = []
+        budget_colors = []
 
     # 4. Expense Evolution (Stacked categories over years)
     categories = set()
@@ -186,11 +192,14 @@ def dashboard_view(request):
         categories.update(d['category_breakdown'].keys())
     
     expense_evo_datasets = []
-    for cat in sorted(list(categories)):
+    for idx, cat in enumerate(sorted(list(categories))):
         cat_data = [float(d['category_breakdown'].get(cat, 0)) * 12 for d in forecast_data[::12]]
+        color = category_color_map.get(cat, fallback_colors[idx % len(fallback_colors)])
         expense_evo_datasets.append({
             'label': cat,
             'data': cat_data,
+            'backgroundColor': color,
+            'borderColor': color,
             'fill': True
         })
 
@@ -221,16 +230,10 @@ def dashboard_view(request):
     for d in forecast_data[::12]:
         income_categories.update(d['income_category_breakdown'].keys())
     
-    # Category colors for income
-    income_cat_colors = [
-        '#198754', '#0d6efd', '#6f42c1', '#20c997',
-        '#0dcaf0', '#6610f2', '#d63384', '#ffc107',
-    ]
-    
     income_evo_datasets = []
     for idx, cat in enumerate(sorted(list(income_categories))):
         cat_data = [float(d['income_category_breakdown'].get(cat, 0)) * 12 for d in forecast_data[::12]]
-        color = income_cat_colors[idx % len(income_cat_colors)]
+        color = category_color_map.get(cat, fallback_colors[idx % len(fallback_colors)])
         income_evo_datasets.append({
             'label': cat,
             'data': cat_data,
@@ -290,7 +293,7 @@ def dashboard_view(request):
         },
         'budget_pie_chart': {
             'labels': budget_labels,
-            'datasets': [{'data': budget_data, 'backgroundColor': ['#0d6efd', '#6610f2', '#6f42c1', '#d63384', '#dc3545', '#fd7e14', '#ffc107', '#198754', '#20c997', '#0dcaf0']}]
+            'datasets': [{'data': budget_data, 'backgroundColor': budget_colors}]
         },
     }
 
