@@ -38,8 +38,8 @@ This project is a personal finance dashboard that simulates your financial futur
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/bzaiser/finanzplan.git
-   cd finanzplan
+   git clone https://github.com/bzaiser/Open-finanz-overview.git
+   cd Open-finanz-overview
    ```
 
 2. **Set up virtual environment**:
@@ -54,21 +54,27 @@ This project is a personal finance dashboard that simulates your financial futur
    pip install -r requirements.txt
    ```
 
-4. **Initialize database**:
+4. **Set up environment variables**:
    ```bash
-   python manage.py migrate
+   cp .env.example .env
+   # Edit .env and add your SECRET_KEY and (optional) GEMINI_API_KEY
    ```
 
-5. **Create a superuser**:
+5. **Initialize database & Demo data**:
    ```bash
-   python manage.py createsuperuser
+   python manage.py migrate
+   python manage.py seed_demo_data
    ```
+   *This creates a user **demo** with password **demo** pre-filled with realistic financial data.*
 
 6. **Run server**:
    ```bash
-   python manage.py run_server
+   python manage.py runserver
    ```
-   Access at `http://127.0.0.1:8000`.
+   Access at `http://127.0.0.1:8000` (Login: `demo` / `demo`).
+
+### 🤖 Smart Import (New Feature)
+This project now includes an **AI-powered bank statement import**. Use an Excel export from your bank, and the Google Gemini AI will automatically categorize transactions and detect recurring patterns (subscriptions, salaries) for easy database entry.
 
 ### Docker Deployment (Recommended)
 
