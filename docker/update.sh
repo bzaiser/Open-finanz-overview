@@ -23,6 +23,10 @@ docker compose build
 echo "Starting the container..."
 docker compose up -d
 
+# Ensure the data directory is writeable (fixes readonly database errors)
+echo "Fixing permissions for data directory..."
+sudo chmod -R 777 ../data
+
 # Run database migrations
 echo "Running database migrations..."
 docker compose exec web python manage.py migrate
