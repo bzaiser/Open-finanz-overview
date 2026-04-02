@@ -33,6 +33,16 @@ def classify_transactions(transactions, categories):
             }
         return results, error_msg
 
+    # Discovery: Let's see what models this API Key can actually use
+    available_models = []
+    try:
+        for m in client.models.list():
+            if 'generateContent' in m.supported_methods:
+                available_models.append(m.name.replace('models/', ''))
+    except Exception as e:
+        logger.error(f"Discovery failed: {e}")
+        # Optional fallback to defaults if discovery fails
+
     category_list = ", ".join([f"{c['name']} (slug: {c['slug']})" for c in categories])
     prompt = f"""
     Du bist ein Finanzassistent. Analysiere die folgenden Banktransaktionen und ordne sie Kategorien zu.
@@ -61,11 +71,16 @@ def classify_transactions(transactions, categories):
     ]
     """
 
-    # Try different models in order of preference
-    models_to_try = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-pro']
-    last_error = ""
+    # Try found models, prioritizing the flash versions
+    models_to_try = [m for m in available_models if 'flash' in m] + \
+                     [m for m in available_models if 'flash' not in m]
     
-    for model_name in models_to_try:
+    # Absolute fallback if list failed
+    if not models_to_try:
+        models_to_try = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-pro']
+    
+    last_error = ""
+    for model_name in models_to_try[:5]: # Try top 5
         try:
             response = client.models.generate_content(
                 model=model_name,
@@ -78,12 +93,12 @@ def classify_transactions(transactions, categories):
                 text = text.split("```")[1].split("```")[0].strip()
                 
             data = json.loads(text)
-            return {str(item['id']): item for item in data}, None
+            return {str(item['id']): item for item in data}, f"KI aktiv via {model_name}. Verfügbare Modelle: {', '.join(available_models[:10])}"
         except Exception as e:
             last_error = f"{model_name}: {str(e)}"
             continue # Try next model
             
-    return {}, f"Alle KI-Modelle fehlgeschlagen. Letzter Fehler: {last_error}"
+    return {}, f"Alle entdeckten KI-Modelle ({', '.join(available_models[:5])}) fehlgeschlagen. Letzter Fehler: {last_error}"
 
 def get_pension_forecast():
     client = get_gemini_client()
