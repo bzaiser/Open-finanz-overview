@@ -562,9 +562,14 @@ def _async_import_task(batch_id, file_path, filename):
 @login_required
 def upload_bank_transactions(request):
     if request.method == 'POST':
-        # 0. Cleanup old unapplied batches (using correct 'date' field)
-        cutoff = timezone.now() - datetime.timedelta(hours=24)
-        ImportBatch.objects.filter(user=request.user, is_applied=False, date__lt=cutoff).delete()
+        # 0. Cleanup old unapplied batches - gracefully
+        try:
+            cutoff = timezone.now() - datetime.timedelta(hours=24)
+            ImportBatch.objects.filter(user=request.user, is_applied=False, date__lt=cutoff).delete()
+        except Exception as e:
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.warning(f"Cleanup of old batches failed: {e}")
 
         form = BankImportForm(request.POST, request.FILES)
         if form.is_valid():

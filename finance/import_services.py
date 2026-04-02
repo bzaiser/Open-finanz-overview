@@ -53,30 +53,39 @@ class ExcelParserService:
             df = pd.read_excel(self.file_path)
             log_messages = [f"Datei eingelesen: {len(df)} Zeilen gefunden."]
 
-            # Column detection (now returns mapping AND header_row index)
+            # Find the best header row (deep scan)
             col_map, header_row = self._detect_columns(df)
-            log_messages.append(f"Header in Zeile {header_row} gefunden. Mapping: {col_map}")
-
+            
             # Re-align DataFrame if header was not in row 0
             if header_row > 0:
-                # Set the found row as columns and drop everything above it
                 header_row_values = df.iloc[header_row-1]
                 df.columns = header_row_values
                 df = df.iloc[header_row:]
-                # Update col_map to use the new column names found in that row
-                col_map, _ = self._detect_columns(df)
+            
+            # Final verification and renaming
+            # We search the current columns one last time to be sure
+            final_col_map = self._check_row_for_keywords(df.columns, 
+                ['datum', 'date', 'buchungstag', 'valuta', 'buchungsdatum', 'wertstellung', 'tag'],
+                ['zweck', 'beschreibung', 'text', 'info', 'verwendungszweck', 'empfänger', 'auftraggeber', 'name'],
+                ['betrag', 'amount', 'wert', 'summe', 'umsatz', 'soll', 'haben', 'eur', 'euro']
+            )
+
+            if not final_col_map or 'date' not in final_col_map or 'amount' not in final_col_map:
+                available = [str(c) for c in df.columns]
+                raise ValueError(f"Konnte Spalten für Datum und Betrag nicht finden. Vorhanden: {available}")
 
             # Standardize DataFrame
-            try:
-                df = df.rename(columns={
-                    col_map['date']: 'date',
-                    col_map['desc']: 'description',
-                    col_map['amount']: 'amount'
-                })
-            except Exception as e:
-                # If rename fails, let's log the available columns to debug
-                available = list(df.columns)
-                raise ValueError(f"Spalten konnten nicht umbenannt werden: {str(e)}. Mapping: {col_map}. Verfügbar: {available}")
+            df = df.rename(columns={
+                final_col_map['date']: 'date',
+                final_col_map.get('desc', ''): 'description', # Desc is optional for rename
+                final_col_map['amount']: 'amount'
+            })
+            
+            # If description is still missing as a column, create it empty
+            if 'description' not in df.columns:
+                df['description'] = "Kein Verwendungszweck"
+
+            log_messages.append(f"Spalten erfolgreich gemappt: {final_col_map}")
 
             # Clean data - convert date and handle German number formats
             df['date'] = pd.to_datetime(df['date'], errors='coerce')
@@ -92,10 +101,13 @@ class ExcelParserService:
                     return None
 
             df['amount'] = df['amount'].apply(clean_amount)
+            
+            # Drop rows where we couldn't parse date or amount
+            initial_count = len(df)
             df = df.dropna(subset=['date', 'amount'])
-            log_messages.append(f"Gültige Buchungen nach Bereinigung: {len(df)} Zeilen.")
+            log_messages.append(f"Gültige Buchungen: {len(df)} (von {initial_count}).")
 
-            # 2. Smart Grouping: collapse similar recurring transactions
+            # 2. Smart Grouping
             groups = self._group_transactions(df)
             log_messages.append(f"Transaktionen nach Gruppierung: {len(groups)} Zeilen.")
 
