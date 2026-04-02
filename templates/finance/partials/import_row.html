@@ -46,6 +46,11 @@
                 <option value="{{ cat.id }}" {% if t.category == cat %}selected{% endif %}>{{ cat.name }}</option>
             {% endfor %}
         </select>
+        {% if t.ai_reasoning %}
+        <div class="mt-1 small text-muted italic" style="font-size: 0.75rem; line-height: 1.1;">
+            <i class="bi bi-robot"></i> <em>{{ t.ai_reasoning }}</em>
+        </div>
+        {% endif %}
     </td>
     
     <td class="text-center">
