@@ -17,11 +17,11 @@
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h1>{% trans "Dashboard" %}</h1>
             <div>
-                <a href="{% url 'import_transactions' %}" class="btn btn-primary me-2 shadow-sm" style="background: linear-gradient(135deg, #6610f2 0%, #0d6efd 100%); border: none;">
+                <a href="{% url 'import_transactions' %}" class="btn btn-primary me-2 shadow-sm" style="background: var(--app-gradient); border: none;">
                     <i class="bi bi-magic"></i>
                     {% trans "Smart Import" %}
                 </a>
-                <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#configModal">
+                <button class="btn btn-primary me-2 shadow-sm" style="background: var(--app-gradient); border: none;" data-bs-toggle="modal" data-bs-target="#configModal">
                     <i class="bi bi-layout-text-window-reverse"></i>
                     {% trans "Configure Layout" %}
                 </button>

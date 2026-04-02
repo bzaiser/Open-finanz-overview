@@ -25,6 +25,17 @@
         }
     </style>
     {% endif %}
+    {% if user.is_authenticated %}
+    <style>
+        :root {
+            --app-gradient: linear-gradient(135deg, {{ user.profile.gradient_start|default:"#6610f2" }} 0%, {{ user.profile.gradient_end|default:"#0d6efd" }} 100%);
+        }
+    </style>
+    {% else %}
+    <style>
+        :root { --app-gradient: linear-gradient(135deg, #6610f2 0%, #0d6efd 100%); }
+    </style>
+    {% endif %}
     <style>
         body {
             background-color: var(--bs-body-bg, #ffffff);
@@ -46,7 +57,7 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+    <nav class="navbar navbar-expand-lg navbar-dark mb-4" style="background: var(--app-gradient);">
         <div class="container-fluid">
             <a class="navbar-brand" href="{% url 'dashboard' %}">Finanzplan</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">

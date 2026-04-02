@@ -70,6 +70,13 @@ class UserProfile(models.Model):
     theme = models.ForeignKey(Theme, on_delete=models.SET_NULL, null=True, blank=True, verbose_name=_("Theme"))
     dashboard_config = models.JSONField(_("Dashboard Configuration"), default=dict, blank=True)
 
+    # Gradient Design
+    gradient_start = models.CharField(_("Gradient Start Color"), max_length=7, default="#6610f2",
+                                      help_text=_("Hex color for gradient start (e.g. #6610f2)"))
+    gradient_end = models.CharField(_("Gradient End Color"), max_length=7, default="#0d6efd",
+                                    help_text=_("Hex color for gradient end (e.g. #0d6efd)"))
+
+
     class Meta:
         verbose_name = _("User Profile")
         verbose_name_plural = _("User Profiles")

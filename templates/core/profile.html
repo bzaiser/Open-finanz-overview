@@ -4,16 +4,162 @@
 {% block title %}{% trans "User Profile" %}{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <h2>{% trans "Edit Profile" %}</h2>
-    <form method="post" enctype="multipart/form-data">
+<div class="container mt-4 mb-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="fw-bold">
+                <i class="bi bi-person-circle me-2"></i>{% trans "Edit Profile" %}
+            </h1>
+            <p class="text-muted">{% trans "Configure your account settings and personalize your dashboard." %}</p>
+        </div>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" id="profileForm">
         {% csrf_token %}
-        <div class="row">
-            <div class="col-md-6">
-                {{ form|crispy }}
+        <div class="row g-4">
+
+            <!-- Left Column: Profile Settings -->
+            <div class="col-lg-7">
+                <!-- Personal Settings -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header py-3" style="background: var(--app-gradient); color: white;">
+                        <h5 class="mb-0"><i class="bi bi-person me-2"></i>{% trans "Personal Settings" %}</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        {{ form.avatar|as_crispy_field }}
+                        {{ form.birth_date|as_crispy_field }}
+                        {{ form.language|as_crispy_field }}
+                        {{ form.currency|as_crispy_field }}
+                    </div>
+                </div>
+
+                <!-- Simulation Settings -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header py-3" style="background: var(--app-gradient); color: white;">
+                        <h5 class="mb-0"><i class="bi bi-graph-up-arrow me-2"></i>{% trans "Simulation Defaults" %}</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        {{ form.simulation_max_age|as_crispy_field }}
+                        {{ form.inflation_rate|as_crispy_field }}
+                        {{ form.salary_increase|as_crispy_field }}
+                        {{ form.investment_return_offset|as_crispy_field }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Design Settings -->
+            <div class="col-lg-5">
+                <!-- Theme -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header py-3" style="background: var(--app-gradient); color: white;">
+                        <h5 class="mb-0"><i class="bi bi-palette me-2"></i>{% trans "Theme" %}</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        {{ form.theme|as_crispy_field }}
+                    </div>
+                </div>
+
+                <!-- Gradient Design -->
+                <div class="card shadow-sm mb-4 border-0" style="overflow: hidden;">
+                    <div class="card-header py-3" style="background: var(--app-gradient); color: white;">
+                        <h5 class="mb-0"><i class="bi bi-droplet-half me-2"></i>{% trans "Gradient Design" %}</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <p class="text-muted small mb-3">
+                            {% trans "Configure the gradient used for buttons, the navbar, and card headers." %}
+                        </p>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-6">
+                                <label class="form-label fw-semibold small">{% trans "Start Color" %}</label>
+                                {{ form.gradient_start }}
+                                <small class="text-muted d-block mt-1" id="startHex">{{ form.gradient_start.value }}</small>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-semibold small">{% trans "End Color" %}</label>
+                                {{ form.gradient_end }}
+                                <small class="text-muted d-block mt-1" id="endHex">{{ form.gradient_end.value }}</small>
+                            </div>
+                        </div>
+
+                        <!-- Live Preview -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small">{% trans "Live Preview" %}</label>
+                            <div id="gradientPreview" class="rounded-3 p-3 text-white shadow-sm d-flex align-items-center justify-content-between"
+                                 style="background: linear-gradient(135deg, {{ user.profile.gradient_start }} 0%, {{ user.profile.gradient_end }} 100%); min-height: 80px; transition: background 0.3s ease;">
+                                <span><i class="bi bi-magic me-2"></i>{% trans "Smart Import" %}</span>
+                                <span><i class="bi bi-layout-text-window-reverse me-2"></i>{% trans "Configure" %}</span>
+                            </div>
+                        </div>
+
+                        <!-- Presets -->
+                        <div>
+                            <label class="form-label fw-semibold small">{% trans "Presets" %}</label>
+                            <div class="d-flex flex-wrap gap-2">
+                                <button type="button" class="btn btn-sm text-white shadow-sm gradient-preset"
+                                        data-start="#6610f2" data-end="#0d6efd"
+                                        style="background: linear-gradient(135deg, #6610f2 0%, #0d6efd 100%); border: none; min-width: 60px; height: 30px; border-radius: 15px;"
+                                        title="Purple → Blue"></button>
+                                <button type="button" class="btn btn-sm text-white shadow-sm gradient-preset"
+                                        data-start="#198754" data-end="#0dcaf0"
+                                        style="background: linear-gradient(135deg, #198754 0%, #0dcaf0 100%); border: none; min-width: 60px; height: 30px; border-radius: 15px;"
+                                        title="Green → Cyan"></button>
+                                <button type="button" class="btn btn-sm text-white shadow-sm gradient-preset"
+                                        data-start="#dc3545" data-end="#fd7e14"
+                                        style="background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%); border: none; min-width: 60px; height: 30px; border-radius: 15px;"
+                                        title="Red → Orange"></button>
+                                <button type="button" class="btn btn-sm text-white shadow-sm gradient-preset"
+                                        data-start="#212529" data-end="#495057"
+                                        style="background: linear-gradient(135deg, #212529 0%, #495057 100%); border: none; min-width: 60px; height: 30px; border-radius: 15px;"
+                                        title="Dark Gray"></button>
+                                <button type="button" class="btn btn-sm text-white shadow-sm gradient-preset"
+                                        data-start="#d63384" data-end="#6610f2"
+                                        style="background: linear-gradient(135deg, #d63384 0%, #6610f2 100%); border: none; min-width: 60px; height: 30px; border-radius: 15px;"
+                                        title="Pink → Purple"></button>
+                                <button type="button" class="btn btn-sm text-dark shadow-sm gradient-preset"
+                                        data-start="#ffc107" data-end="#fd7e14"
+                                        style="background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%); border: none; min-width: 60px; height: 30px; border-radius: 15px;"
+                                        title="Yellow → Orange"></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Save Button -->
+                <button type="submit" class="btn btn-lg w-100 text-white shadow fw-bold"
+                        style="background: var(--app-gradient); border: none; border-radius: 12px; padding: 14px;">
+                    <i class="bi bi-check-circle-fill me-2"></i>{% trans "Save Changes" %}
+                </button>
             </div>
         </div>
-        <button type="submit" class="btn btn-primary">{% trans "Save Changes" %}</button>
     </form>
 </div>
+
+<script>
+const startInput = document.querySelector('[name="gradient_start"]');
+const endInput = document.querySelector('[name="gradient_end"]');
+const preview = document.getElementById('gradientPreview');
+const startHex = document.getElementById('startHex');
+const endHex = document.getElementById('endHex');
+
+function updatePreview() {
+    const s = startInput.value;
+    const e = endInput.value;
+    preview.style.background = `linear-gradient(135deg, ${s} 0%, ${e} 100%)`;
+    startHex.textContent = s;
+    endHex.textContent = e;
+}
+
+startInput?.addEventListener('input', updatePreview);
+endInput?.addEventListener('input', updatePreview);
+
+// Preset buttons
+document.querySelectorAll('.gradient-preset').forEach(btn => {
+    btn.addEventListener('click', () => {
+        startInput.value = btn.dataset.start;
+        endInput.value = btn.dataset.end;
+        updatePreview();
+    });
+});
+</script>
 {% endblock %}

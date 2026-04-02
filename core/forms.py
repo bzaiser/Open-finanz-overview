@@ -15,10 +15,21 @@ class UserProfileForm(forms.ModelForm):
         required=False,
         label=_("Birth Date")
     )
+    gradient_start = forms.CharField(
+        widget=forms.TextInput(attrs={'type': 'color', 'class': 'form-control form-control-color'}),
+        label=_("Gradient Start Color"),
+        required=False,
+    )
+    gradient_end = forms.CharField(
+        widget=forms.TextInput(attrs={'type': 'color', 'class': 'form-control form-control-color'}),
+        label=_("Gradient End Color"),
+        required=False,
+    )
 
     class Meta:
         model = UserProfile
         fields = [
             'avatar', 'birth_date', 'language', 'currency', 'simulation_max_age', 'theme',
-            'inflation_rate', 'salary_increase', 'investment_return_offset'
+            'inflation_rate', 'salary_increase', 'investment_return_offset',
+            'gradient_start', 'gradient_end',
         ]
