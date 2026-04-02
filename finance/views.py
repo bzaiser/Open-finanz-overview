@@ -721,13 +721,17 @@ def apply_import_batch(request, batch_id):
 @login_required
 def get_import_progress(request):
     """
-    Returns the current import progress percentage for the logged in user as HTML.
+    Returns the current import progress percentage AND the ai_log as HTML.
     Target for HTMX polling.
     """
     cache_key = f"import_progress_{request.user.id}"
     progress = cache.get(cache_key, 0)
     
-    # Simple Bootstrap progress bar
+    # Fetch the latest batch to get the REAL-TIME log
+    latest_batch = ImportBatch.objects.filter(user=request.user, is_applied=False).order_by('-date').first()
+    log_content = latest_batch.ai_log if latest_batch else "Warte auf Batch..."
+    
+    # We return the bar AND the updated log window content
     html = f'''
     <div class="progress" style="height: 25px;">
         <div class="progress-bar progress-bar-striped progress-bar-animated" 
@@ -740,6 +744,11 @@ def get_import_progress(request):
         </div>
     </div>
     <p class="text-center mt-2 text-muted small">KI analysiert Daten... ({progress}%)</p>
+
+    <!-- Update the log window via OOB (Out of Band) swap or just inclusion -->
+    <div id="ai-log-stream" hx-swap-oob="innerHTML">
+        {log_content.replace("\\n", "<br>")}
+    </div>
     '''
     return HttpResponse(html)
 

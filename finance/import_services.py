@@ -46,25 +46,33 @@ class ExcelParserService:
         self.user = user
         self.file_path = file_path
         self.filename = filename
+        self._log_messages = []
+
+    def _log(self, batch, message):
+        """Helper to append log and save immediately for live UI update."""
+        self._log_messages.append(message)
+        if batch:
+            batch.ai_log = "\n".join(self._log_messages)
+            batch.save(update_fields=['ai_log'])
+        logger.info(message)
 
     def parse_and_categorize(self, batch=None):
         try:
             # 1. Read Excel
             df = pd.read_excel(self.file_path)
-            log_messages = [
-                f"### START ANALYSE: {self.filename} ###",
-                f"Datei eingelesen: {len(df)} Zeilen Rohdaten gefunden.",
-                f"Rohspalten in Datei: {list(df.columns)}"
-            ]
+            self._log(batch, f"### START ANALYSE: {self.filename} ###")
+            self._log(batch, f"Datei eingelesen: {len(df)} Zeilen Rohdaten gefunden.")
+            self._log(batch, f"Rohspalten: {list(df.columns)}")
+            
             if not df.empty:
-                log_messages.append(f"Erste Zeile Rohdaten: {df.iloc[0].to_dict()}")
+                self._log(batch, f"Probe (Zeile 1): {df.iloc[0].to_dict()}")
 
             # Find the best header row (deep scan)
             col_map, header_row = self._detect_columns(df)
             
             # Re-align DataFrame if header was not in row 0
             if header_row > 0:
-                log_messages.append(f"Kopfzeile in Zeile {header_row} gefunden. Richte Daten neu aus...")
+                self._log(batch, f"Kopfzeile in Zeile {header_row} gefunden. Richte Daten neu aus...")
                 header_row_values = df.iloc[header_row-1]
                 df.columns = header_row_values
                 df = df.iloc[header_row:]
@@ -72,22 +80,23 @@ class ExcelParserService:
             # 2. Identify and rename columns robustly
             final_mapping = {}
             row_to_check = [str(c).lower().strip() for c in df.columns]
-            log_messages.append(f"Suche Spalten in: {row_to_check}")
+            self._log(batch, f"Suche Schlüsselbegriffe in: {row_to_check}")
             
             for i, col_name in enumerate(row_to_check):
                 if not final_mapping.get('date') and any(k in col_name for k in ['datum', 'date', 'buchungstag', 'valuta', 'wertstellung', 'tag']):
                     final_mapping['date'] = i
-                    log_messages.append(f"-> 'Datum' in Spalte {i} ('{df.columns[i]}') erkannt.")
+                    self._log(batch, f"-> 'Datum' in Spalte {i} ('{df.columns[i]}') erkannt.")
                 elif not final_mapping.get('desc') and any(k in col_name for k in ['zweck', 'beschreibung', 'text', 'info', 'verwendungszweck', 'empfänger', 'name']):
                     final_mapping['desc'] = i
-                    log_messages.append(f"-> 'Beschreibung' in Spalte {i} ('{df.columns[i]}') erkannt.")
+                    self._log(batch, f"-> 'Beschreibung' in Spalte {i} ('{df.columns[i]}') erkannt.")
                 elif not final_mapping.get('amount') and any(k in col_name for k in ['betrag', 'amount', 'wert', 'summe', 'umsatz', 'soll', 'haben', 'eur', 'euro']):
                     final_mapping['amount'] = i
-                    log_messages.append(f"-> 'Betrag' in Spalte {i} ('{df.columns[i]}') erkannt.")
+                    self._log(batch, f"-> 'Betrag' in Spalte {i} ('{df.columns[i]}') erkannt.")
 
             if 'date' not in final_mapping or 'amount' not in final_mapping:
                 available = [str(c) for c in df.columns]
-                raise ValueError(f"FEHLER: 'Datum' oder 'Betrag' Spalte fehlt! Gefunden: {available}")
+                self._log(batch, f"FEHLER: 'Datum' oder 'Betrag' fehlt! Gefunden: {available}")
+                raise ValueError(f"Spalten für Datum/Betrag fehlen! Gefunden: {available}")
 
             # Direct renaming by index
             new_cols = list(df.columns)
@@ -102,11 +111,11 @@ class ExcelParserService:
                 df['description'] = "Kein Verwendungszweck"
 
             # Clean data - convert date and handle German number formats
-            log_messages.append("Starte Daten-Bereinigung (Formate prüfen)...")
+            self._log(batch, "Bereinigung: Formate prüfen...")
             df['date'] = pd.to_datetime(df['date'], dayfirst=True, errors='coerce')
             
             def clean_amount(val):
-                if pd.isna(val) or val == '': return None
+                if pd.isna(val) or val == '': return Decimal('0.00')
                 if isinstance(val, (int, float, Decimal)): return Decimal(str(round(float(val), 2)))
                 s = str(val).strip()
                 s = re.sub(r'[^\d,.€$\-]', '', s)
@@ -116,36 +125,31 @@ class ExcelParserService:
                 try:
                     return Decimal(s)
                 except:
-                    return None
+                    return Decimal('0.00')
 
             df['amount'] = df['amount'].apply(clean_amount)
             
-            # Logging failures
+            # Logging failures but KEEPING rows
             invalid_dates = df['date'].isna().sum()
-            invalid_amounts = df['amount'].isna().sum()
-            if invalid_dates > 0: log_messages.append(f"WARNUNG: {invalid_dates} Zeilen haben ein ungültiges Datum.")
-            if invalid_amounts > 0: log_messages.append(f"WARNUNG: {invalid_amounts} Zeilen haben einen ungültigen Betrag.")
+            if invalid_dates > 0: 
+                self._log(batch, f"WARNUNG: {invalid_dates} Zeilen mit ungültigem Datum. Nutze heute.")
+                df['date'] = df['date'].fillna(pd.Timestamp.now())
 
-            # Drop rows where we couldn't parse date or amount
+            # Final check
             initial_count = len(df)
-            df = df.dropna(subset=['date', 'amount'])
-            log_messages.append(f"Bereinigung fertig: {len(df)} von {initial_count} Zeilen sind gültig.")
+            self._log(batch, f"Bereinigung fertig: {initial_count} Zeilen verarbeitet.")
 
             if df.empty:
-                log_messages.append("KRITISCH: Liste ist leer! Prüfe Datums- und Zahlenformate.")
+                self._log(batch, "KRITISCH: Datei ist leer!")
 
             # 3. Smart Grouping
             groups = self._group_transactions(df)
-            log_messages.append(f"Gruppierung fertig: {len(groups)} Buchungen zusammengefasst.")
+            self._log(batch, f"Gruppierung: {len(groups)} Buchungen zusammengefasst.")
 
             # 3. Create or use ImportBatch
             if not batch:
                 batch = ImportBatch.objects.create(user=self.user, filename=self.filename)
             
-            # Save the detection log
-            batch.ai_log = "\n".join(log_messages)
-            batch.save()
-
             categories = list(Category.objects.values('name', 'slug'))
 
             # 4. Send UNIQUE groups to AI (not every raw row!)
@@ -168,10 +172,10 @@ class ExcelParserService:
             cache.set(cache_key, 0, 300) # Initial 0%
 
             if total_items == 0:
-                # No transactions to analyze? Mark as done.
                 cache.set(cache_key, 100, 300)
             else:
                 for i in range(0, total_items, 20):
+                    self._log(batch, f"KI analysiert Chunk {i//20 + 1}...")
                     chunk = transactions_for_ai[i:i+20]
                     results, error = classify_transactions(chunk, categories)
                     if results:
@@ -184,19 +188,17 @@ class ExcelParserService:
                     cache.set(cache_key, progress, 300)
 
             if error_logs:
-                batch.ai_log = "\n".join(set(error_logs))
-                batch.save()
+                self._log(batch, f"KI Fehler: {error_logs[0]}")
             
             # Reset progress when done
             cache.set(cache_key, 100, 10)
 
             # 5. Save one PendingTransaction per group
+            self._log(batch, "Speichere Buchungen in Datenbank...")
             pending_list = []
             for idx, group in enumerate(groups):
-                # Lookup AI result by string-cast index to ensure a match
                 res = ai_results.get(str(idx), {})
                 cat_slug = res.get('category_slug', 'uncategorized')
-                # Use iexact for case-insensitive matching
                 category = Category.objects.filter(slug__iexact=cat_slug).first()
 
                 pending = PendingTransaction(
@@ -213,6 +215,7 @@ class ExcelParserService:
                 pending_list.append(pending)
 
             PendingTransaction.objects.bulk_create(pending_list)
+            self._log(batch, "### ANALYSE ERFOLGREICH ABGESCHLOSSEN ###")
             return batch
 
         except Exception as e:
@@ -222,33 +225,21 @@ class ExcelParserService:
     def _group_transactions(self, df):
         """
         Groups transactions by normalized description AND month/year.
-        Returns a list of group dicts with:
-          - description: clean brand + month/year
-          - total_amount: sum of all amounts in that bucket
-          - count: how many transactions were collapsed
-          - is_recurring: True if it appears in multiple months (not currently computed here)
-          - latest_date: the date to show in the UI
         """
         df['_key'] = df['description'].apply(_normalize_description)
         df['_month'] = df['date'].dt.month
         df['_year'] = df['date'].dt.year
 
         groups = []
-        # Group by Normalized Description, Year and Month
-        # We use dropna=False to ensure we don't lose transactions with unparseable dates
         for (key, year, month), group_df in df.groupby(['_key', '_year', '_month'], dropna=False):
             count = len(group_df)
             total_amount = group_df['amount'].sum()
             
-            # Safe date extraction
             valid_dates = group_df['date'].dropna()
             latest_date = valid_dates.max().date() if not valid_dates.empty else datetime.date.today()
             
-            # Use most frequent original description, or just the key
             modes = group_df['description'].mode()
             base_desc = modes.iloc[0] if not modes.empty else (key if key else "Unbekannt")
-            
-            # Format: "BRAND (3 Buchungen) [MM/YYYY]"
             display_desc = base_desc
             if count > 1:
                 display_desc = f"{base_desc} ({count} Buchungen)"
@@ -258,54 +249,41 @@ class ExcelParserService:
                 'total_amount': Decimal(str(round(float(total_amount), 2))),
                 'count': count,
                 'latest_date': latest_date,
-                'is_recurring': count >= 2 # Within a single month, it's a recurring habit
+                'is_recurring': count >= 2
             })
 
-        # Sort: by date descending, then by amount magnitude descending
         groups.sort(key=lambda x: (x['latest_date'], -abs(float(x['total_amount']))), reverse=True)
         return groups
 
     def _detect_columns(self, df):
         """
         Heuristic to find date, description, and amount columns.
-        Scans the first 20 rows of the file to find the actual header row.
         """
         date_keywords = ['datum', 'date', 'buchungstag', 'valuta', 'buchungsdatum', 'wertstellung', 'tag']
         desc_keywords = ['zweck', 'beschreibung', 'text', 'info', 'verwendungszweck', 'empfänger', 'auftraggeber', 'name']
         amount_keywords = ['betrag', 'amount', 'wert', 'summe', 'umsatz', 'soll', 'haben', 'eur', 'euro']
 
-        # 1. First try if the current columns are already the headers
         mapping = self._check_row_for_keywords(df.columns, date_keywords, desc_keywords, amount_keywords)
         if mapping:
-            return mapping, 0 # Header at row 0 (already in columns)
+            return mapping, 0
 
-        # 2. If not, scan the first 20 rows of data
         for i in range(min(20, len(df))):
             row_values = [str(x).lower() for x in df.iloc[i].values]
             mapping = self._check_row_for_keywords(row_values, date_keywords, desc_keywords, amount_keywords)
             if mapping:
-                # We found the header row! 
-                # Map the original column names to our internal keywords
                 final_mapping = {}
                 for key, val in mapping.items():
-                    # val is the actual text found in that row. We need to find which column index that was.
                     col_idx = row_values.index(val)
                     final_mapping[key] = df.columns[col_idx]
-                return final_mapping, i + 1 # Header is at row i, data starts at i + 1
+                return final_mapping, i + 1
 
-        # Failure: Log what we saw to help debugging
         found_cols = list(df.columns)
         first_row = [str(x) for x in df.iloc[0].values] if not df.empty else "Empty"
-        raise ValueError(
-            f"Konnte Tabellenkopf nicht finden. Spalten: {found_cols}. Erste Zeile Rohdaten: {first_row}. "
-            f"Stelle sicher, dass die Datei Spalten für Datum, Beschreibung und Betrag enthält."
-        )
+        raise ValueError(f"Keine Header gefunden! Spalten: {found_cols}, Reihe 1: {first_row}")
 
     def _check_row_for_keywords(self, row_values, date_k, desc_k, amount_k):
-        """Helper to check if a row looks like a header."""
         row_str = [str(x).lower() for x in row_values]
         mapping = {}
-        
         for val in row_str:
             if not mapping.get('date') and any(k in val for k in date_k):
                 mapping['date'] = val
@@ -313,7 +291,6 @@ class ExcelParserService:
                 mapping['desc'] = val
             elif not mapping.get('amount') and any(k in val for k in amount_k):
                 mapping['amount'] = val
-        
-        if len(mapping) >= 3:
+        if len(mapping) >= 2 and 'date' in mapping and 'amount' in mapping:
             return mapping
         return None
