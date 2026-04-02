@@ -200,6 +200,10 @@ select,
     font-size: 0.9rem !important;
 }
 
+select {
+    height: 2.875rem !important;
+}
+
 input[type=text]:focus,
 input[type=email]:focus,
 textarea:focus,
