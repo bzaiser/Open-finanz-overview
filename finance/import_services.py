@@ -13,10 +13,24 @@ logger = logging.getLogger(__name__)
 def _normalize_description(text: str) -> str:
     """
     Normalize a transaction description for grouping.
-    Strips reference numbers, dates, and extra whitespace so that
-    e.g. "NETFLIX 12345 Dec" and "NETFLIX 67890 Nov" collapse to "NETFLIX".
+    Detects major brands and returns a clean brand name if found.
+    Otherwise, strips reference numbers, dates, and extra whitespace.
     """
     text = str(text).upper().strip()
+    
+    # Common brands to aggregate (High-level grouping)
+    brands = [
+        'EDEKA', 'REWE', 'ALDI', 'LIDL', 'PENNY', 'NETTO', 'KAUFLAND',
+        'TEGUT', 'DM-MARKT', 'ROSSMANN', 'MUELLER', 'AMAZON', 'PAYPAL',
+        'NETFLIX', 'SPOTIFY', 'DISNEY PLUS', 'DAZN', 'SKY', 'DB VERTRIEB',
+        'APPLE.COM', 'GOOGLE *', 'MICROSOFT *', 'SHELL', 'ARAL', 'TOTAL',
+        'ESSO', 'JET ', 'VODAFONE', 'TELEKOM', 'O2 ', 'STRATO', 'IONOS'
+    ]
+    
+    for brand in brands:
+        if brand in text:
+            return brand
+
     # Remove common noise: long digit sequences, dates like 2024-01-01, reference codes
     text = re.sub(r'\b\d{6,}\b', '', text)           # long numbers (account/ref IDs)
     text = re.sub(r'\b\d{2}[./]\d{2}[./]\d{2,4}\b', '', text)  # dates
@@ -66,7 +80,8 @@ class ExcelParserService:
                 transactions_for_ai.append({
                     "id": idx,
                     "description": group['description'],
-                    "amount": float(group['avg_amount']),
+                    "amount": float(group['total_amount']),
+                    "total_amount": float(group['total_amount']),
                     "occurrences": group['count'],
                     "is_likely_recurring": group['is_recurring'],
                 })
@@ -98,8 +113,8 @@ class ExcelParserService:
                     batch=batch,
                     date=group['latest_date'],
                     description=group['description'],
-                    amount=group['avg_amount'],
-                    is_income=res.get('is_income', group['avg_amount'] > 0),
+                    amount=group['total_amount'],
+                    is_income=res.get('is_income', group['total_amount'] > 0),
                     category=category,
                     is_recurring=group['is_recurring'] or res.get('is_recurring', False),
                     frequency=res.get('frequency', 'monthly'),
@@ -116,37 +131,44 @@ class ExcelParserService:
 
     def _group_transactions(self, df):
         """
-        Groups transactions by normalized description.
+        Groups transactions by normalized description AND month/year.
         Returns a list of group dicts with:
-          - description: clean display name
-          - avg_amount: typical amount
-          - count: how many times it appeared
-          - is_recurring: True if it appeared 2+ times
-          - latest_date: most recent occurrence
+          - description: clean brand + month/year
+          - total_amount: sum of all amounts in that bucket
+          - count: how many transactions were collapsed
+          - is_recurring: True if it appears in multiple months (not currently computed here)
+          - latest_date: the date to show in the UI
         """
         df['_key'] = df['description'].apply(_normalize_description)
+        df['_month'] = df['date'].dt.month
+        df['_year'] = df['date'].dt.year
 
         groups = []
-        for key, group_df in df.groupby('_key'):
+        # Group by Normalized Description, Year and Month
+        for (key, year, month), group_df in df.groupby(['_key', '_year', '_month']):
             count = len(group_df)
-            avg_amount = group_df['amount'].mean()
+            total_amount = group_df['amount'].sum()
             latest_date = group_df['date'].max().date()
-            # Use the most frequent original description as display name, fallback to key
+            
+            # Use most frequent original description, or just the key
             modes = group_df['description'].mode()
-            display_desc = modes.iloc[0] if not modes.empty else key
-            # Recurring if it appears more than once
-            is_recurring = count >= 2
+            base_desc = modes.iloc[0] if not modes.empty else key
+            
+            # Format: "BRAND (3 Buchungen) [MM/YYYY]"
+            display_desc = base_desc
+            if count > 1:
+                display_desc = f"{base_desc} ({count} Buchungen)"
 
             groups.append({
                 'description': str(display_desc),
-                'avg_amount': Decimal(str(round(float(avg_amount), 2))),
+                'total_amount': Decimal(str(round(float(total_amount), 2))),
                 'count': count,
-                'is_recurring': is_recurring,
                 'latest_date': latest_date,
+                'is_recurring': count >= 2 # Within a single month, it's a recurring habit
             })
 
-        # Sort: recurring first, then by amount descending
-        groups.sort(key=lambda x: (-int(x['is_recurring']), -abs(float(x['avg_amount']))))
+        # Sort: by date descending, then by amount magnitude descending
+        groups.sort(key=lambda x: (x['latest_date'], -abs(float(x['total_amount']))), reverse=True)
         return groups
 
     def _detect_columns(self, df):

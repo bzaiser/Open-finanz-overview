@@ -58,11 +58,14 @@ def classify_transactions(transactions, categories):
         "id": "123",
         "category_slug": "slug",
         "is_income": false,
-        "is_recurring": true,
+        "is_recurring": true,  // True bei echten Abos/Verträgen, False bei Einkäufen
         "frequency": "monthly",
-        "reasoning": "Kurze Begründung hier"
+        "reasoning": "Kurze Begründung hier (z.B. 'Zusammengefasste Einkäufe')"
       }}
     ]
+    
+    Hinweis: Wenn eine Transaktion den Zusatz '(x Buchungen)' hat, wurde sie bereits monatlich zusammengefasst. 
+    Wähle 'is_recurring': true nur, wenn es sich um einen festen Vertrag/Abo handelt, nicht bei normalen Einkäufen.
     """
     
     try:
