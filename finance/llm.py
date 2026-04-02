@@ -1,4 +1,4 @@
-from google import genai
+import google.generativeai as genai
 from django.conf import settings
 import json
 import logging
@@ -6,20 +6,23 @@ import logging
 logger = logging.getLogger(__name__)
 
 def get_gemini_client():
+    """
+    Initializes and returns the Gemini model using the stable google-generativeai SDK.
+    """
     if not settings.GEMINI_API_KEY:
         return None
     try:
-        return genai.Client(
-            api_key=settings.GEMINI_API_KEY,
-            http_options={'api_version': 'v1'}
-        )
+        genai.configure(api_key=settings.GEMINI_API_KEY)
+        # We use a fixed stable model name that is universally supported in the old SDK
+        return genai.GenerativeModel('gemini-1.5-flash')
     except Exception as e:
         logger.error(f"Error configuring Gemini Client: {e}")
         return None
 
 def classify_transactions(transactions, categories):
-    client = get_gemini_client()
-    if not client:
+    model = get_gemini_client()
+    if not model:
+        # Fallback to a very basic rule-based classification if no API key
         results = {}
         error_msg = "Gemini API Key fehlt oder ist nicht konfiguriert."
         for t in transactions:
@@ -33,17 +36,8 @@ def classify_transactions(transactions, categories):
             }
         return results, error_msg
 
-    # Discovery: Let's see what models this API Key can actually use
-    available_models = []
-    try:
-        for m in client.models.list():
-            if 'generateContent' in m.supported_methods:
-                available_models.append(m.name.replace('models/', ''))
-    except Exception as e:
-        logger.error(f"Discovery failed: {e}")
-        # Optional fallback to defaults if discovery fails
-
     category_list = ", ".join([f"{c['name']} (slug: {c['slug']})" for c in categories])
+    
     prompt = f"""
     Du bist ein Finanzassistent. Analysiere die folgenden Banktransaktionen und ordne sie Kategorien zu.
     Verfügbare Kategorien: {category_list}.
@@ -70,81 +64,54 @@ def classify_transactions(transactions, categories):
       }}
     ]
     """
-
-    # Try found models, prioritizing the flash versions
-    models_to_try = [m for m in available_models if 'flash' in m] + \
-                     [m for m in available_models if 'flash' not in m]
     
-    # Absolute fallback if list failed
-    if not models_to_try:
-        models_to_try = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-pro']
-    
-    last_error = ""
-    for model_name in models_to_try[:5]: # Try top 5
-        try:
-            response = client.models.generate_content(
-                model=model_name,
-                contents=prompt
-            )
-            text = response.text.strip()
-            if "```json" in text:
-                text = text.split("```json")[1].split("```")[0].strip()
-            elif "```" in text:
-                text = text.split("```")[1].split("```")[0].strip()
-                
-            data = json.loads(text)
-            return {str(item['id']): item for item in data}, f"KI aktiv via {model_name}. Verfügbare Modelle: {', '.join(available_models[:10])}"
-        except Exception as e:
-            last_error = f"{model_name}: {str(e)}"
-            continue # Try next model
+    try:
+        # Use generation_config for stable JSON-like output if possible, 
+        # but the parser handles markdown too.
+        response = model.generate_content(prompt)
+        text = response.text.strip()
+        
+        # Robust extraction
+        if "```json" in text:
+            text = text.split("```json")[1].split("```")[0].strip()
+        elif "```" in text:
+            text = text.split("```")[1].split("```")[0].strip()
             
-    return {}, f"Alle entdeckten KI-Modelle ({', '.join(available_models[:5])}) fehlgeschlagen. Letzter Fehler: {last_error}"
+        data = json.loads(text)
+        # Ensure IDs are strings for reliable mapping
+        return {str(item['id']): item for item in data}, None
+    except Exception as e:
+        error_msg = f"Gemini Fehler (Legacy SDK): {str(e)}"
+        logger.error(error_msg)
+        return {}, error_msg
 
 def get_pension_forecast():
-    client = get_gemini_client()
-    if not client:
+    model = get_gemini_client()
+    if not model:
         return {
             "text": "Laut aktuellen Prognosen wird für 2026 eine Rentenanpassung von ca. 3,5% erwartet.",
             "value": 3.5,
             "source": "Mock (No API Key)"
         }
     
-    models_to_try = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-pro']
-    prompt = "Nenne mir die aktuelle Prognose für die Rentenanpassung 2026 laut dem jüngsten Rentenversicherungsbericht des BMAS. Antworte kurz und gib nur die Prozentzahl am Ende an."
-    
-    for model_name in models_to_try:
-        try:
-            response = client.models.generate_content(
-                model=model_name,
-                contents=prompt
-            )
-            text = response.text.strip()
-            return {"text": text, "value": 3.5, "source": f"Gemini ({model_name})"}
-        except:
-            continue
-            
-    return {"text": "Fehler bei KI-Abfrage", "value": 0, "source": "Error"}
+    try:
+        prompt = "Nenne mir die aktuelle Prognose für die Rentenanpassung 2026 laut dem jüngsten Rentenversicherungsbericht des BMAS. Antworte kurz und gib nur die Prozentzahl am Ende an."
+        response = model.generate_content(prompt)
+        return {"text": response.text.strip(), "value": 3.5, "source": "Gemini AI"}
+    except:
+        return {"text": "Fehler bei KI-Abfrage", "value": 0, "source": "Error"}
 
 def get_inflation_forecast():
-    client = get_gemini_client()
-    if not client:
+    model = get_gemini_client()
+    if not model:
         return {
             "text": "Die Inflationsrate für das aktuelle Jahr wird auf etwa 2,2% geschätzt.",
             "value": 2.2,
             "source": "Mock (No API Key)"
         }
-    
-    models_to_try = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-pro']
-    prompt = "Wie hoch schätzt das Statistische Bundesamt die Inflationsrate für das aktuelle Jahr? Antworte kurz."
-    
-    for model_name in models_to_try:
-        try:
-            response = client.models.generate_content(
-                model=model_name,
-                contents=prompt
-            )
-            return {"text": response.text.strip(), "value": 2.2, "source": f"Gemini ({model_name})"}
-        except:
-            continue
-            
-    return {"text": "Fehler bei KI-Abfrage", "value": 0, "source": "Error"}
+    try:
+        prompt = "Wie hoch schätzt das Statistische Bundesamt die Inflationsrate für das aktuelle Jahr? Antworte kurz."
+        response = model.generate_content(prompt)
+        return {"text": response.text.strip(), "value": 2.2, "source": "Gemini AI"}
+    except:
+        return {"text": "Fehler bei KI-Abfrage", "value": 0, "source": "Error"}
