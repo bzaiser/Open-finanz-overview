@@ -31,5 +31,9 @@ docker compose exec web python manage.py migrate
 echo "Compiling translations..."
 docker compose exec web python manage.py compilemessages
 
+# Collect static files
+echo "Collecting static files..."
+docker compose exec web python manage.py collectstatic --noinput
+
 echo "-----------------------------------"
 echo "FAST Update complete! The UI/Code is now live."
