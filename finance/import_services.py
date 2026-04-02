@@ -193,8 +193,8 @@ class ExcelParserService:
             # AI analysis finished - progress will be marked 100 in the task caller
             pass
 
-            # 5. Save one PendingTransaction per group
-            self._log(batch, "Speichere Buchungen in Datenbank...")
+            # 5. Save PendingTransactions in chunks to avoid DB locks
+            self._log(batch, f"Starte Speichern von {len(groups)} Buchungen...")
             pending_list = []
             for idx, group in enumerate(groups):
                 res = ai_results.get(str(idx), {})
@@ -204,17 +204,25 @@ class ExcelParserService:
                 pending = PendingTransaction(
                     batch=batch,
                     date=group['latest_date'],
-                    description=group['description'],
+                    description=str(group['description'])[:500], # Safety truncation
                     amount=group['total_amount'],
                     is_income=res.get('is_income', group['total_amount'] > 0),
                     category=category,
                     is_recurring=group['is_recurring'] or res.get('is_recurring', False),
                     frequency=res.get('frequency', 'monthly'),
-                    ai_reasoning=res.get('reasoning', '')
+                    ai_reasoning=str(res.get('reasoning', ''))[:500] # Safety truncation
                 )
                 pending_list.append(pending)
 
-            PendingTransaction.objects.bulk_create(pending_list)
+            # Chunked save for reliability
+            total_saved = 0
+            chunk_size = 100
+            for i in range(0, len(pending_list), chunk_size):
+                chunk = pending_list[i:i+chunk_size]
+                PendingTransaction.objects.bulk_create(chunk)
+                total_saved += len(chunk)
+                self._log(batch, f"-> {total_saved} von {len(pending_list)} Buchungen gespeichert...")
+
             self._log(batch, "### ANALYSE ERFOLGREICH ABGESCHLOSSEN ###")
             return batch
 
