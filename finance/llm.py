@@ -50,10 +50,10 @@ def classify_transactions(transactions, categories):
     Transaktionen:
     {json.dumps(transactions, indent=2)}
     
-    Antworte NUR mit einer validen JSON-Liste von Objekten im Format:
+    Antworte AUSSCHLIESSLICH mit einer validen JSON-Liste von Objekten im Format:
     [
       {{
-        "id": 123,
+        "id": "123",
         "category_slug": "slug",
         "is_income": false,
         "is_recurring": true,
@@ -78,7 +78,8 @@ def classify_transactions(transactions, categories):
             text = text.split("```")[1].split("```")[0].strip()
             
         data = json.loads(text)
-        return {item['id']: item for item in data}
+        # Ensure IDs are strings for reliable mapping
+        return {str(item['id']): item for item in data}
     except Exception as e:
         logger.error(f"Gemini classification failed: {e}")
         return {}

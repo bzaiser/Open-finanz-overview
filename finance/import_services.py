@@ -81,7 +81,8 @@ class ExcelParserService:
             # 5. Save one PendingTransaction per group
             pending_list = []
             for idx, group in enumerate(groups):
-                res = ai_results.get(idx, {})
+                # Lookup AI result by string-cast index to ensure a match
+                res = ai_results.get(str(idx), {})
                 cat_slug = res.get('category_slug', 'uncategorized')
                 category = Category.objects.filter(slug=cat_slug).first()
 
