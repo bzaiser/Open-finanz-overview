@@ -1,8 +1,39 @@
 from django.contrib import admin
 from .models import Category, CashFlowSource, Asset, OneTimeEvent, Pension, FinancialStatusProxy
 
+class BaseOwnedModelAdmin(admin.ModelAdmin):
+    """
+    Base Admin class that enforces tenant isolation:
+    - Non-superusers only see their own objects.
+    - Non-superusers have the 'user' field hidden and autofilled to request.user.
+    """
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        return qs.filter(user=request.user)
+
+    def get_exclude(self, request, obj=None):
+        exclude = super().get_exclude(request, obj) or []
+        if not request.user.is_superuser:
+            if 'user' not in exclude:
+                exclude = list(exclude) + ['user']
+        return exclude
+
+    def save_model(self, request, obj, form, change):
+        if getattr(obj, 'user', None) is None:
+            obj.user = request.user
+        super().save_model(request, obj, form, change)
+
+    def get_list_filter(self, request):
+        """Remove 'user' from filters for standard users."""
+        filters = super().get_list_filter(request)
+        if not request.user.is_superuser and filters:
+            return tuple(f for f in filters if f != 'user')
+        return filters
+
 @admin.register(Pension)
-class PensionAdmin(admin.ModelAdmin):
+class PensionAdmin(BaseOwnedModelAdmin):
     list_display = ('provider', 'user', 'current_value', 'monthly_contribution')
     search_fields = ('provider', 'user__username')
 
@@ -122,7 +153,7 @@ class FinancialStatusAdmin(admin.ModelAdmin):
         return False # User werden hier nicht gelöscht
 
 @admin.register(CashFlowSource)
-class CashFlowSourceAdmin(admin.ModelAdmin):
+class CashFlowSourceAdmin(BaseOwnedModelAdmin):
     list_display = ('name', 'user', 'value', 'category', 'is_income', 'frequency', 'start_date', 'end_date')
     list_editable = ('value', 'category', 'is_income', 'frequency', 'start_date', 'end_date')
     list_filter = (YearListFilter, 'is_income', 'frequency', 'user', 'category')
@@ -130,13 +161,13 @@ class CashFlowSourceAdmin(admin.ModelAdmin):
     actions = [duplicate_and_increment_cashflow]
 
 @admin.register(Asset)
-class AssetAdmin(admin.ModelAdmin):
+class AssetAdmin(BaseOwnedModelAdmin):
     list_display = ('name', 'user', 'value', 'growth_rate')
     list_filter = ('user',)
     search_fields = ('name',)
 
 @admin.register(OneTimeEvent)
-class OneTimeEventAdmin(admin.ModelAdmin):
+class OneTimeEventAdmin(BaseOwnedModelAdmin):
     list_display = ('name', 'user', 'value', 'date')
     list_filter = ('user',)
     search_fields = ('name',)
