@@ -55,22 +55,28 @@ class ExcelParserService:
 
             # Column detection (now returns mapping AND header_row index)
             col_map, header_row = self._detect_columns(df)
-            log_messages.append(f"Header in Zeile {header_row} gefunden. Spalten: {col_map}")
+            log_messages.append(f"Header in Zeile {header_row} gefunden. Mapping: {col_map}")
 
             # Re-align DataFrame if header was not in row 0
             if header_row > 0:
                 # Set the found row as columns and drop everything above it
-                df.columns = df.iloc[header_row-1]
+                header_row_values = df.iloc[header_row-1]
+                df.columns = header_row_values
                 df = df.iloc[header_row:]
                 # Update col_map to use the new column names found in that row
                 col_map, _ = self._detect_columns(df)
 
             # Standardize DataFrame
-            df = df.rename(columns={
-                col_map['date']: 'date',
-                col_map['desc']: 'description',
-                col_map['amount']: 'amount'
-            })
+            try:
+                df = df.rename(columns={
+                    col_map['date']: 'date',
+                    col_map['desc']: 'description',
+                    col_map['amount']: 'amount'
+                })
+            except Exception as e:
+                # If rename fails, let's log the available columns to debug
+                available = list(df.columns)
+                raise ValueError(f"Spalten konnten nicht umbenannt werden: {str(e)}. Mapping: {col_map}. Verfügbar: {available}")
 
             # Clean data - convert date and handle German number formats
             df['date'] = pd.to_datetime(df['date'], errors='coerce')
