@@ -43,12 +43,23 @@
     color: rgba(255,255,255,0.85) !important;
     border-bottom: 1px solid rgba(255,255,255,0.3) !important;
     padding-bottom: 1px;
-    transition: color 0.2s, border-color 0.2s;
+    padding: 4px 8px !important;
+    border-radius: 6px !important;
+    transition: background 0.2s, color 0.2s, border-color 0.2s !important;
+    text-decoration: none !important;
 }
 
-#user-tools a:hover {
+#user-tools a:hover,
+#user-tools a:focus {
     color: #fff !important;
-    border-color: #fff !important;
+    background: rgba(255,255,255,0.15) !important;
+    border-color: transparent !important;
+}
+
+/* Dropdown im Header (Recent Actions etc.) */
+#header a:hover {
+    color: #fff !important;
+    text-decoration: underline !important;
 }
 
 /* --- BREADCRUMBS --- */
