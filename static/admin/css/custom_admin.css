@@ -93,23 +93,24 @@ div.breadcrumbs a {
 }
 
 #nav-sidebar a:link,
-#nav-sidebar a:visited {
-    color: #2d2d3a !important;
-    text-decoration: none !important;
-}
-
+#nav-sidebar a:visited,
 #nav-sidebar th a,
 #nav-sidebar td a {
     color: #2d2d3a !important;
-}
-
-#nav-sidebar a:hover,
-#nav-sidebar a:focus {
-    color: var(--admin-primary) !important;
     text-decoration: none !important;
 }
 
-#nav-sidebar .selected a {
+#nav-sidebar a:hover,
+#nav-sidebar a:focus,
+#nav-sidebar th a:hover,
+#nav-sidebar td a:hover {
+    color: var(--admin-primary) !important;
+    text-decoration: underline !important;
+}
+
+#nav-sidebar .selected a,
+#nav-sidebar .selected a:link,
+#nav-sidebar .selected a:visited {
     color: var(--admin-primary) !important;
     font-weight: 600 !important;
 }
@@ -220,16 +221,31 @@ input[type=color] {
 /* --- TABELLEN (Change-List) --- */
 #result_list thead th {
     background: var(--admin-gradient) !important;
-    color: #fff !important;
-    font-weight: 600 !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
     font-size: 0.82rem !important;
     letter-spacing: 0.3px !important;
     border: none !important;
     padding: 12px 10px !important;
 }
 
-#result_list thead th a {
-    color: rgba(255,255,255,0.9) !important;
+#result_list thead th a,
+#result_list thead th a:link,
+#result_list thead th a:visited {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+}
+
+#result_list thead th a:hover {
+    color: rgba(255,255,255,0.8) !important;
+    text-decoration: underline !important;
+}
+
+/* Sortier-Icon ebenfalls hell */
+#result_list thead th.sorted a,
+#result_list thead .sortedAsc a,
+#result_list thead .sortedDesc a {
+    color: #ffffff !important;
 }
 
 #result_list tbody tr:hover {
