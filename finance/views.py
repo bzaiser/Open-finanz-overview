@@ -1,12 +1,21 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.utils import timezone, translation
 from django.utils.translation import gettext_lazy as _
+from django.contrib import messages
 from .services import SimulationEngine
-from .models import Category
+from .models import (
+    Asset, CashFlowSource, OneTimeEvent, Pension, Category, 
+    ImportBatch, PendingTransaction
+)
+from .forms import BankImportForm
+from .import_services import ExcelParserService
 from django.core.serializers.json import DjangoJSONEncoder
+from django.conf import settings
+from django.core.files.storage import default_storage
 import json
+import os
 from decimal import Decimal
 
 # Define available charts and their default properties
@@ -43,25 +52,33 @@ def dashboard_view(request):
     user = request.user
     profile = user.profile
     
+    # Helper for safe merging of defaults
+    def safe_merge(user_data, defaults):
+        if not user_data: return defaults
+        return {**defaults, **user_data}
+
     # Initialize or get Dashboard Config
     dashboard_config = profile.dashboard_config or {}
+    
+    # 2. Extract configurations with safe defaults
     layout = dashboard_config.get('layout', DEFAULT_LAYOUT)
+
     summary_layout = dashboard_config.get('summary_layout', [
         {'id': 'current_assets', 'visible': True, 'bg_color': '#0d6efd', 'text_color': '#ffffff', 'order': 1},
         {'id': 'monthly_income', 'visible': True, 'bg_color': '#198754', 'text_color': '#ffffff', 'order': 2},
         {'id': 'monthly_expenses', 'visible': True, 'bg_color': '#dc3545', 'text_color': '#ffffff', 'order': 3},
         {'id': 'total_pensions', 'visible': True, 'bg_color': '#0dcaf0', 'text_color': '#ffffff', 'order': 4},
     ])
-    
-    simulation_config = dashboard_config.get('simulation_panel', {
+
+    simulation_config = safe_merge(dashboard_config.get('simulation_panel'), {
         'bg_color': '#ffffff', 
         'text_color': '#212529',
         'header_bg_color': '#ffc107',
         'header_text_color': '#212529'
     })
-    
-    table_config = dashboard_config.get('table_style', {
-        'header_bg_color': '#212529',
+
+    table_config = safe_merge(dashboard_config.get('table_style'), {
+        'header_bg_color': '#212529', 
         'header_text_color': '#ffffff',
         'filter_bg_color': '#f1f3f5',
         'body_bg_color': '#ffffff',
@@ -494,7 +511,111 @@ def dashboard_view(request):
         'debug_trans_test': translation.gettext('Help'),
     }
     
-    if request.headers.get('HX-Request') and 'config_update' not in request.POST:
-        return render(request, 'finance/partials/dashboard_charts.html', context)
+
+@login_required
+def upload_bank_transactions(request):
+    if request.method == 'POST':
+        form = BankImportForm(request.POST, request.FILES)
+        if form.is_valid():
+            uploaded_file = request.FILES['file']
+            # Save file temporarily
+            file_name = default_storage.save(f"tmp/{uploaded_file.name}", uploaded_file)
+            file_path = os.path.join(settings.MEDIA_ROOT, file_name)
+            
+            try:
+                parser = ExcelParserService(request.user, file_path, uploaded_file.name)
+                batch = parser.parse_and_categorize()
+                messages.success(request, _("Datei erfolgreich eingelesen. Bitte überprüfe die Kategorisierung."))
+                return redirect('review_transactions', batch_id=batch.id)
+            except Exception as e:
+                messages.error(request, f"Fehler beim Import: {str(e)}")
+            finally:
+                # Cleanup
+                if os.path.exists(file_path):
+                    os.remove(file_path)
+    else:
+        form = BankImportForm()
+    
+    return render(request, 'finance/import_upload.html', {'form': form})
+
+@login_required
+def review_bank_transactions(request, batch_id):
+    batch = get_object_or_404(ImportBatch, id=batch_id, user=request.user)
+    transactions = batch.transactions.all().order_by('date')
+    categories = Category.objects.all()
+    
+    return render(request, 'finance/import_review.html', {
+        'batch': batch,
+        'transactions': transactions,
+        'categories': categories
+    })
+
+@login_required
+def confirm_bank_transaction(request, transaction_id):
+    """
+    HTMX endpoint to toggle fields.
+    """
+    transaction = get_object_or_404(PendingTransaction, id=transaction_id, batch__user=request.user)
+    
+    field = request.GET.get('field')
+    value = request.GET.get('value')
+    
+    if field == 'is_ignored':
+        transaction.is_ignored = (value == 'true')
+    elif field == 'is_recurring':
+        transaction.is_recurring = (value == 'true')
+    elif field == 'is_income':
+        transaction.is_income = (value == 'true')
+    elif field == 'category':
+        transaction.category = Category.objects.filter(id=value).first()
+    elif field == 'frequency':
+        transaction.frequency = value
         
-    return render(request, 'finance/dashboard.html', context)
+    transaction.save()
+    
+    # Return the partial for this row
+    return render(request, 'finance/partials/import_row.html', {
+        't': transaction, 
+        'categories': Category.objects.all()
+    })
+
+@login_required
+def apply_import_batch(request, batch_id):
+    batch = get_object_or_404(ImportBatch, id=batch_id, user=request.user)
+    if batch.is_applied:
+        messages.warning(request, _("Dieser Import wurde bereits angewendet."))
+        return redirect('dashboard')
+        
+    transactions = batch.transactions.filter(is_ignored=False)
+    
+    count_one_time = 0
+    count_recurring = 0
+    
+    for t in transactions:
+        if t.is_recurring:
+            CashFlowSource.objects.create(
+                user=request.user,
+                name=t.description,
+                value=t.amount if t.is_income else abs(t.amount),
+                is_income=t.is_income,
+                start_date=t.date,
+                category=t.category,
+                frequency=t.frequency,
+                is_inflation_adjusted=True
+            )
+            count_recurring += 1
+        else:
+            OneTimeEvent.objects.create(
+                user=request.user,
+                name=t.description,
+                value=t.amount if t.is_income else -abs(t.amount),
+                date=t.date,
+                description=_("Importiert via Bank-Assistent")
+            )
+            count_one_time += 1
+            
+    batch.is_applied = True
+    batch.save()
+    
+    messages.success(request, _(f"Import abgeschlossen: {count_one_time} Einzelbuchungen und {count_recurring} regelmäßige Zahlungen erstellt."))
+    return redirect('dashboard')

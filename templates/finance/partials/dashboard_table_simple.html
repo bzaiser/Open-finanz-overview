@@ -94,9 +94,9 @@
     }
 }" class="h-100 d-flex flex-column" x-init="init()">
     
-    <div class="flex-grow-1 overflow-auto px-2" style="max-height: 100%; background-color: {{ table_config.body_bg_color }} !important; color: {{ table_config.body_text_color }} !important;">
+    <div class="flex-grow-1 overflow-auto px-2" style="max-height: 100%; background-color: {{ table_config.body_bg_color }} !important;">
         <table class="table table-sm table-hover align-middle mb-0" 
-               style="font-size: 0.85rem; color: inherit; border-color: {{ table_config.border_color }} !important;">
+               style="font-size: 0.85rem; border-color: {{ table_config.border_color }} !important; --bs-table-bg: {{ table_config.body_bg_color }}; --bs-table-color: {{ table_config.body_text_color }};">
             <thead class="sticky-top" style="z-index: 10;">
                 <tr class="text-uppercase" style="font-size: 0.70rem;">
                     <th class="py-2 px-3 border-0 cursor-pointer" @click="sortCol = 'name'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"

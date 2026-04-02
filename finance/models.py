@@ -86,6 +86,43 @@ class Pension(models.Model):
     def __str__(self):
         return self.provider
 
+
+class ImportBatch(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='import_batches')
+    date = models.DateTimeField(auto_now_add=True)
+    filename = models.CharField(max_length=255)
+    is_applied = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name = _("Import Batch")
+        verbose_name_plural = _("Import Batches")
+
+    def __str__(self):
+        return f"{self.filename} ({self.date.strftime('%d.%m.%Y')})"
+
+class PendingTransaction(models.Model):
+    batch = models.ForeignKey(ImportBatch, on_delete=models.CASCADE, related_name='transactions')
+    date = models.DateField(_("Date"))
+    description = models.TextField(_("Description"))
+    amount = models.DecimalField(_("Amount"), max_digits=12, decimal_places=2)
+    is_income = models.BooleanField(_("Is Income"), default=True)
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, verbose_name=_("Suggested Category"))
+    
+    # AI/Heuristic Suggestions
+    is_recurring = models.BooleanField(_("Is Recurring"), default=False)
+    frequency = models.CharField(_("Frequency"), max_length=20, default='monthly', choices=CashFlowSource.FREQUENCY_CHOICES)
+    
+    # User Review state
+    is_ignored = models.BooleanField(_("Ignore"), default=False)
+
+    class Meta:
+        verbose_name = _("Pending Transaction")
+        verbose_name_plural = _("Pending Transactions")
+
+    def __str__(self):
+        return f"{self.description} ({self.amount})"
+
+
 class FinancialStatusProxy(CustomUser):
     class Meta:
         proxy = True

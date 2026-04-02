@@ -174,3 +174,6 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 SESSION_COOKIE_AGE = 1209600  # 2 weeks
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 SESSION_SAVE_EVERY_REQUEST = True # Updates expiry on every request
+
+# AI Settings
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', '')
