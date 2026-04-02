@@ -265,6 +265,37 @@ input[type=color] {
     overflow: hidden !important;
     box-shadow: 0 2px 12px rgba(0,0,0,0.08) !important;
     border: 1px solid rgba(0,0,0,0.06) !important;
+    /* Kompakte Spaltenbreiten */
+    table-layout: auto !important;
+}
+
+/* Schmalere Spalten für Typ/Einkommen und Betrag */
+#result_list .column-type,
+#result_list .column-income_type,
+#result_list .column-is_income {
+    width: 7rem !important;
+    white-space: nowrap !important;
+}
+
+#result_list .column-amount,
+#result_list .column-betrag {
+    width: 9rem !important;
+    white-space: nowrap !important;
+}
+
+/* Lange Text-Felder abschneiden statt scrollen */
+#result_list td {
+    max-width: 220px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+}
+
+/* Name/Beschreibung darf breiter sein */
+#result_list .column-name,
+#result_list .column-description {
+    max-width: none !important;
+    width: auto !important;
 }
 
 /* --- PAGINATION --- */
