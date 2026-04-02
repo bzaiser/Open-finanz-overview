@@ -9,7 +9,10 @@ def get_gemini_client():
     if not settings.GEMINI_API_KEY:
         return None
     try:
-        return genai.Client(api_key=settings.GEMINI_API_KEY)
+        return genai.Client(
+            api_key=settings.GEMINI_API_KEY,
+            http_options={'api_version': 'v1'}
+        )
     except Exception as e:
         logger.error(f"Error configuring Gemini Client: {e}")
         return None
