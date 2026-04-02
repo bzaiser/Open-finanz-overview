@@ -518,57 +518,70 @@ def dashboard_view(request):
     return render(request, 'finance/dashboard.html', context)
 
 
-def _async_import_task(user, file_path, filename):
+def _async_import_task(batch_id, file_path, filename):
     """
     Background worker that performs the long-running AI categorization.
-    Safely opens/closes its own DB connections.
     """
     from django.db import connections
+    from .models import ImportBatch
+    from .import_services import ExcelParserService
+    
     try:
+        batch = ImportBatch.objects.get(id=batch_id)
+        user = batch.user
         service = ExcelParserService(user, file_path, filename)
-        service.parse_and_categorize()
+        service.parse_and_categorize(batch=batch)
     except Exception as e:
         # Mark as error in cache
-        cache_key = f"import_progress_{user.id}"
-        cache.set(cache_key, -1, 300)
         import logging
-        logging.error(f"Async import error: {e}")
+        logger = logging.getLogger(__name__)
+        logger.error(f"Async import error: {str(e)}")
+        # We need the user id for the cache key
+        try:
+            batch = ImportBatch.objects.get(id=batch_id)
+            cache_key = f"import_progress_{batch.user.id}"
+            cache.set(cache_key, -1, 300)
+        except:
+            pass
     finally:
-        # Clean up: the file is already deleted by the service if it succeeds
-        # but the task needs to close its DB handle
         for conn in connections.all():
             conn.close()
 
 @login_required
 def upload_bank_transactions(request):
     if request.method == 'POST':
-        # 0. Cleanup old unapplied batches
+        # 0. Cleanup old unapplied batches (using correct 'date' field)
         cutoff = timezone.now() - datetime.timedelta(hours=24)
-        ImportBatch.objects.filter(user=request.user, is_applied=False, created_at__lt=cutoff).delete()
+        ImportBatch.objects.filter(user=request.user, is_applied=False, date__lt=cutoff).delete()
 
         form = BankImportForm(request.POST, request.FILES)
         if form.is_valid():
             uploaded_file = request.FILES['file']
             
-            # Save file to a persistent tmp location within media for the thread to find
+            # 1. Create the Batch synchronously so we have an ID
+            batch = ImportBatch.objects.create(
+                user=request.user, 
+                filename=uploaded_file.name
+            )
+
+            # 2. Save file for the thread
             temp_subdir = os.path.join(settings.MEDIA_ROOT, 'temp_imports')
             os.makedirs(temp_subdir, exist_ok=True)
-            file_path = os.path.join(temp_subdir, f"upload_{request.user.id}_{int(time.time())}.xlsx")
+            file_path = os.path.join(temp_subdir, f"batch_{batch.id}_{int(time.time())}.xlsx")
             
             with open(file_path, 'wb+') as destination:
                 for chunk in uploaded_file.chunks():
                     destination.write(chunk)
 
-            # Reset progress in DB cache
+            # 3. Reset progress
             cache_key = f"import_progress_{request.user.id}"
             cache.set(cache_key, 0, 300)
 
-            # Start background thread
-            thread = threading.Thread(target=_async_import_task, args=(request.user, file_path, uploaded_file.name))
+            # 4. Start background thread
+            thread = threading.Thread(target=_async_import_task, args=(batch.id, file_path, uploaded_file.name))
             thread.daemon = True
             thread.start()
 
-            # Redirect to the loading page
             return redirect('import_processing')
     else:
         form = BankImportForm()
@@ -581,16 +594,12 @@ def upload_bank_transactions(request):
 
 @login_required
 def import_processing(request):
-    """
-    Shows a loading screen. Checks if the latest batch for this user is ready.
-    """
-    # Find the latest unapplied batch
-    latest_batch = ImportBatch.objects.filter(user=request.user, is_applied=False).order_by('-created_at').first()
+    # Find the latest unapplied batch using 'date' instead of 'created_at'
+    latest_batch = ImportBatch.objects.filter(user=request.user, is_applied=False).order_by('-date').first()
     
     cache_key = f"import_progress_{request.user.id}"
     progress = cache.get(cache_key, 0)
     
-    # If done (100%), redirect to review
     if progress >= 100 and latest_batch:
         return redirect('review_transactions', batch_id=latest_batch.id)
     
@@ -600,7 +609,7 @@ def import_processing(request):
 
     return render(request, 'finance/import_processing.html', {
         'progress': progress,
-        'batch_id': latest_batch.id if latest_batch else None
+        'batch': latest_batch
     })
 
 @login_required

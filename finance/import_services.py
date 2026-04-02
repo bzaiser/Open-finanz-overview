@@ -47,7 +47,7 @@ class ExcelParserService:
         self.file_path = file_path
         self.filename = filename
 
-    def parse_and_categorize(self):
+    def parse_and_categorize(self, batch=None):
         try:
             # 1. Read Excel
             df = pd.read_excel(self.file_path)
@@ -70,8 +70,9 @@ class ExcelParserService:
             # 2. Smart Grouping: collapse similar recurring transactions
             groups = self._group_transactions(df)
 
-            # 3. Create ImportBatch
-            batch = ImportBatch.objects.create(user=self.user, filename=self.filename)
+            # 3. Create or use ImportBatch
+            if not batch:
+                batch = ImportBatch.objects.create(user=self.user, filename=self.filename)
 
             categories = list(Category.objects.values('name', 'slug'))
 
