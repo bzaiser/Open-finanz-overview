@@ -16,6 +16,7 @@ from django.conf import settings
 from django.core.files.storage import default_storage
 import json
 import os
+import datetime
 from decimal import Decimal
 
 # Define available charts and their default properties
@@ -517,6 +518,10 @@ def dashboard_view(request):
 @login_required
 def upload_bank_transactions(request):
     if request.method == 'POST':
+        # 0. Cleanup old unapplied batches (older than 24h) to avoid database clutter
+        cutoff = timezone.now() - datetime.timedelta(hours=24)
+        ImportBatch.objects.filter(user=request.user, is_applied=False, date__lt=cutoff).delete()
+
         form = BankImportForm(request.POST, request.FILES)
         if form.is_valid():
             uploaded_file = request.FILES['file']
@@ -620,8 +625,8 @@ def apply_import_batch(request, batch_id):
             )
             count_one_time += 1
             
-    batch.is_applied = True
-    batch.save()
+    # Cleanup: Delete the batch and its pending transactions now that they are applied
+    batch.delete()
     
     messages.success(request, _(f"Import abgeschlossen: {count_one_time} Einzelbuchungen und {count_recurring} regelmäßige Zahlungen erstellt."))
     return redirect('dashboard')
