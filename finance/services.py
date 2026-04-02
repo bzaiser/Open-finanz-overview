@@ -67,7 +67,7 @@ class SimulationEngine:
         # Initial State
         assets = list(self.user.assets.all())
         pensions = list(self.user.pensions.all())
-        cash_flows = list(self.user.cash_flows.all())
+        cash_flows = list(self.user.cash_flows.select_related('category').all())
         one_time_events = list(self.user.events.all())
 
         pensions_state = []

@@ -398,7 +398,7 @@ def dashboard_view(request):
     continuous_label = _('Continuous')
     table_data_income = []
     # Direct income
-    for cf in user.cash_flows.filter(is_income=True):
+    for cf in user.cash_flows.select_related('category').filter(is_income=True):
         amt = cf.value if cf.frequency == 'monthly' else cf.value / 12
         year = str(cf.start_date.year) if cf.start_date else continuous_label
         table_data_income.append({
@@ -421,7 +421,7 @@ def dashboard_view(request):
 
     table_data_expense = []
     # Direct expenses
-    for cf in user.cash_flows.filter(is_income=False):
+    for cf in user.cash_flows.select_related('category').filter(is_income=False):
         amt = cf.value if cf.frequency == 'monthly' else cf.value / 12
         year = str(cf.start_date.year) if cf.start_date else continuous_label
         table_data_expense.append({
