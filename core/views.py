@@ -4,7 +4,7 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.utils import translation
 from .forms import CustomUserCreationForm, UserProfileForm
-from .models import UserProfile
+from .models import UserProfile, Theme
 
 def signup(request):
     if request.method == 'POST':
@@ -31,7 +31,11 @@ def profile_view(request):
             return redirect('profile')
     else:
         form = UserProfileForm(instance=profile)
-    return render(request, 'core/profile.html', {'form': form})
+    themes = Theme.objects.all()
+    return render(request, 'core/profile.html', {
+        'form': form,
+        'themes': themes
+    })
 
 @login_required
 def help_view(request):

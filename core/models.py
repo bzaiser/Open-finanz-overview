@@ -21,6 +21,10 @@ class Theme(models.Model):
     table_body_text_color = models.CharField(_("Table Body Text"), max_length=7, default="#212529")
     table_border_color = models.CharField(_("Table Border Color"), max_length=7, default="#dee2e6")
     
+    # Gradient Design (Moved into Theme)
+    gradient_start = models.CharField(_("Gradient Start Color"), max_length=7, default="#6610f2")
+    gradient_end = models.CharField(_("Gradient End Color"), max_length=7, default="#0d6efd")
+    
     class Meta:
         verbose_name = _("Theme")
         verbose_name_plural = _("Themes")

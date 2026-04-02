@@ -4,162 +4,167 @@
 {% block title %}{% trans "User Profile" %}{% endblock %}
 
 {% block content %}
-<div class="container mt-4 mb-5">
-    <div class="row mb-4">
+<div class="container mt-4 mb-5 animate__animated animate__fadeIn">
+    <div class="row mb-5 text-center">
         <div class="col-12">
-            <h1 class="fw-bold">
-                <i class="bi bi-person-circle me-2"></i>{% trans "Edit Profile" %}
+            <h1 class="fw-bold display-5 text-gradient">
+                <i class="bi bi-person-circle me-3"></i>{% trans "Your Dashboard Experience" %}
             </h1>
-            <p class="text-muted">{% trans "Configure your account settings and personalize your dashboard." %}</p>
+            <p class="text-muted lead mt-2">{% trans "Unifying your theme and visual style for a perfectly matched look." %}</p>
         </div>
     </div>
 
     <form method="post" enctype="multipart/form-data" id="profileForm">
         {% csrf_token %}
-        <div class="row g-4">
-
-            <!-- Left Column: Profile Settings -->
+        <div class="row g-5">
+            <!-- Left: Settings -->
             <div class="col-lg-7">
                 <!-- Personal Settings -->
-                <div class="card shadow-sm mb-4">
-                    <div class="card-header py-3" style="background: var(--app-gradient); color: white;">
-                        <h5 class="mb-0"><i class="bi bi-person me-2"></i>{% trans "Personal Settings" %}</h5>
-                    </div>
-                    <div class="card-body p-4">
-                        {{ form.avatar|as_crispy_field }}
-                        {{ form.birth_date|as_crispy_field }}
-                        {{ form.language|as_crispy_field }}
-                        {{ form.currency|as_crispy_field }}
+                <div class="glass-card shadow-sm p-4 mb-4">
+                    <h4 class="mb-4 fw-bold"><i class="bi bi-person-badge me-2 text-primary"></i>{% trans "Identity & Core" %}</h4>
+                    <div class="row g-3">
+                        <div class="col-md-6">{{ form.avatar|as_crispy_field }}</div>
+                        <div class="col-md-6">{{ form.birth_date|as_crispy_field }}</div>
+                        <div class="col-md-6">{{ form.language|as_crispy_field }}</div>
+                        <div class="col-md-6">{{ form.currency|as_crispy_field }}</div>
                     </div>
                 </div>
 
                 <!-- Simulation Settings -->
-                <div class="card shadow-sm mb-4">
-                    <div class="card-header py-3" style="background: var(--app-gradient); color: white;">
-                        <h5 class="mb-0"><i class="bi bi-graph-up-arrow me-2"></i>{% trans "Simulation Defaults" %}</h5>
-                    </div>
-                    <div class="card-body p-4">
-                        {{ form.simulation_max_age|as_crispy_field }}
-                        {{ form.inflation_rate|as_crispy_field }}
-                        {{ form.salary_increase|as_crispy_field }}
-                        {{ form.investment_return_offset|as_crispy_field }}
+                <div class="glass-card shadow-sm p-4">
+                    <h4 class="mb-4 fw-bold"><i class="bi bi-cpu me-2 text-primary"></i>{% trans "Prediction Engine" %}</h4>
+                    <div class="row g-3">
+                        <div class="col-md-6">{{ form.simulation_max_age|as_crispy_field }}</div>
+                        <div class="col-md-6">{{ form.inflation_rate|as_crispy_field }}</div>
+                        <div class="col-md-6">{{ form.salary_increase|as_crispy_field }}</div>
+                        <div class="col-md-6">{{ form.investment_return_offset|as_crispy_field }}</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Right Column: Design Settings -->
+            <!-- Right: The Unified Design Station -->
             <div class="col-lg-5">
-                <!-- Theme -->
-                <div class="card shadow-sm mb-4">
-                    <div class="card-header py-3" style="background: var(--app-gradient); color: white;">
-                        <h5 class="mb-0"><i class="bi bi-palette me-2"></i>{% trans "Theme" %}</h5>
+                <div class="glass-card shadow-lg p-4 border-primary border-opacity-25" style="border-width: 2px;">
+                    <h4 class="mb-4 fw-bold"><i class="bi bi-magic me-2 text-primary"></i>{% trans "Design Station" %}</h4>
+                    
+                    <!-- One Pair of Shoes: Theme Selection -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold small">{% trans "Active Theme" %}</label>
+                        {{ form.theme }}
+                        <small class="text-muted d-block mt-2">
+                            {% trans "Selecting a theme automatically sets your colors to a harmonized palette." %}
+                        </small>
                     </div>
-                    <div class="card-body p-4">
-                        {{ form.theme|as_crispy_field }}
+
+                    <hr class="my-4 opacity-10">
+
+                    <!-- Gradient Tweak Station -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-6">
+                            <label class="form-label small fw-semibold">{% trans "Color Start" %}</label>
+                            {{ form.gradient_start }}
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small fw-semibold">{% trans "Color End" %}</label>
+                            {{ form.gradient_end }}
+                        </div>
+                    </div>
+
+                    <!-- Live Harmony Preview -->
+                    <div id="harmonyPreview" class="rounded-4 p-4 text-white shadow-gradient d-flex flex-column justify-content-center text-center mb-4"
+                         style="background: var(--app-gradient); min-height: 120px; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);">
+                        <div class="fs-4 fw-bold shadow-text">{% trans "Visual Harmony" %}</div>
+                        <div class="small opacity-75">{% trans "Colors & Theme Unified" %}</div>
+                    </div>
+
+                    <!-- Presets (Quick Access) -->
+                    <label class="form-label small fw-bold mb-3">{% trans "Quick Harmonies" %}</label>
+                    <div class="d-flex flex-wrap gap-2">
+                        <div class="preset-pill shadow-sm gradient-preset" data-start="#6610f2" data-end="#0d6efd" style="background: linear-gradient(135deg, #6610f2, #0d6efd);" title="Standard Blue"></div>
+                        <div class="preset-pill shadow-sm gradient-preset" data-start="#198754" data-end="#0dcaf0" style="background: linear-gradient(135deg, #198754, #0dcaf0);" title="Eco Cyan"></div>
+                        <div class="preset-pill shadow-sm gradient-preset" data-start="#212529" data-end="#495057" style="background: linear-gradient(135deg, #212529, #495057);" title="Midnight Graphite"></div>
+                        <div class="preset-pill shadow-sm gradient-preset" data-start="#d63384" data-end="#6610f2" style="background: linear-gradient(135deg, #d63384, #6610f2);" title="Modern Pink"></div>
                     </div>
                 </div>
 
-                <!-- Gradient Design -->
-                <div class="card shadow-sm mb-4 border-0" style="overflow: hidden;">
-                    <div class="card-header py-3" style="background: var(--app-gradient); color: white;">
-                        <h5 class="mb-0"><i class="bi bi-droplet-half me-2"></i>{% trans "Gradient Design" %}</h5>
-                    </div>
-                    <div class="card-body p-4">
-                        <p class="text-muted small mb-3">
-                            {% trans "Configure the gradient used for buttons, the navbar, and card headers." %}
-                        </p>
-
-                        <div class="row g-3 mb-3">
-                            <div class="col-6">
-                                <label class="form-label fw-semibold small">{% trans "Start Color" %}</label>
-                                {{ form.gradient_start }}
-                                <small class="text-muted d-block mt-1" id="startHex">{{ form.gradient_start.value }}</small>
-                            </div>
-                            <div class="col-6">
-                                <label class="form-label fw-semibold small">{% trans "End Color" %}</label>
-                                {{ form.gradient_end }}
-                                <small class="text-muted d-block mt-1" id="endHex">{{ form.gradient_end.value }}</small>
-                            </div>
-                        </div>
-
-                        <!-- Live Preview -->
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold small">{% trans "Live Preview" %}</label>
-                            <div id="gradientPreview" class="rounded-3 p-3 text-white shadow-sm d-flex align-items-center justify-content-between"
-                                 style="background: linear-gradient(135deg, {{ user.profile.gradient_start }} 0%, {{ user.profile.gradient_end }} 100%); min-height: 80px; transition: background 0.3s ease;">
-                                <span><i class="bi bi-magic me-2"></i>{% trans "Smart Import" %}</span>
-                                <span><i class="bi bi-layout-text-window-reverse me-2"></i>{% trans "Configure" %}</span>
-                            </div>
-                        </div>
-
-                        <!-- Presets -->
-                        <div>
-                            <label class="form-label fw-semibold small">{% trans "Presets" %}</label>
-                            <div class="d-flex flex-wrap gap-2">
-                                <button type="button" class="btn btn-sm text-white shadow-sm gradient-preset"
-                                        data-start="#6610f2" data-end="#0d6efd"
-                                        style="background: linear-gradient(135deg, #6610f2 0%, #0d6efd 100%); border: none; min-width: 60px; height: 30px; border-radius: 15px;"
-                                        title="Purple → Blue"></button>
-                                <button type="button" class="btn btn-sm text-white shadow-sm gradient-preset"
-                                        data-start="#198754" data-end="#0dcaf0"
-                                        style="background: linear-gradient(135deg, #198754 0%, #0dcaf0 100%); border: none; min-width: 60px; height: 30px; border-radius: 15px;"
-                                        title="Green → Cyan"></button>
-                                <button type="button" class="btn btn-sm text-white shadow-sm gradient-preset"
-                                        data-start="#dc3545" data-end="#fd7e14"
-                                        style="background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%); border: none; min-width: 60px; height: 30px; border-radius: 15px;"
-                                        title="Red → Orange"></button>
-                                <button type="button" class="btn btn-sm text-white shadow-sm gradient-preset"
-                                        data-start="#212529" data-end="#495057"
-                                        style="background: linear-gradient(135deg, #212529 0%, #495057 100%); border: none; min-width: 60px; height: 30px; border-radius: 15px;"
-                                        title="Dark Gray"></button>
-                                <button type="button" class="btn btn-sm text-white shadow-sm gradient-preset"
-                                        data-start="#d63384" data-end="#6610f2"
-                                        style="background: linear-gradient(135deg, #d63384 0%, #6610f2 100%); border: none; min-width: 60px; height: 30px; border-radius: 15px;"
-                                        title="Pink → Purple"></button>
-                                <button type="button" class="btn btn-sm text-dark shadow-sm gradient-preset"
-                                        data-start="#ffc107" data-end="#fd7e14"
-                                        style="background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%); border: none; min-width: 60px; height: 30px; border-radius: 15px;"
-                                        title="Yellow → Orange"></button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Save Button -->
-                <button type="submit" class="btn btn-lg w-100 text-white shadow fw-bold"
-                        style="background: var(--app-gradient); border: none; border-radius: 12px; padding: 14px;">
-                    <i class="bi bi-check-circle-fill me-2"></i>{% trans "Save Changes" %}
+                <button type="submit" class="btn btn-gradient btn-lg w-100 py-3 mt-4 fw-bold rounded-4 shadow-sm">
+                    <i class="bi bi-lightning-charge me-2"></i>{% trans "Adopt New Design" %}
                 </button>
             </div>
         </div>
     </form>
 </div>
 
-<script>
-const startInput = document.querySelector('[name="gradient_start"]');
-const endInput = document.querySelector('[name="gradient_end"]');
-const preview = document.getElementById('gradientPreview');
-const startHex = document.getElementById('startHex');
-const endHex = document.getElementById('endHex');
-
-function updatePreview() {
-    const s = startInput.value;
-    const e = endInput.value;
-    preview.style.background = `linear-gradient(135deg, ${s} 0%, ${e} 100%)`;
-    startHex.textContent = s;
-    endHex.textContent = e;
+<!-- Theme-to-Gradient Data (Hidden JSON) -->
+<script id="theme-data" type="application/json">
+{
+    {% for theme in themes %}
+    "{{ theme.id }}": {"start": "{{ theme.gradient_start }}", "end": "{{ theme.gradient_end }}"}{% if not forloop.last %},{% endif %}
+    {% endfor %}
 }
-
-startInput?.addEventListener('input', updatePreview);
-endInput?.addEventListener('input', updatePreview);
-
-// Preset buttons
-document.querySelectorAll('.gradient-preset').forEach(btn => {
-    btn.addEventListener('click', () => {
-        startInput.value = btn.dataset.start;
-        endInput.value = btn.dataset.end;
-        updatePreview();
-    });
-});
 </script>
+
+<script>
+    const themeSelect = document.querySelector('[name="theme"]');
+    const startInput = document.querySelector('[name="gradient_start"]');
+    const endInput = document.querySelector('[name="gradient_end"]');
+    const preview = document.getElementById('harmonyPreview');
+    const themeGradients = JSON.parse(document.getElementById('theme-data').textContent);
+
+    function updatePreview(manual = false) {
+        // If not manual, sync from theme selection
+        if (!manual && themeSelect.value && themeGradients[themeSelect.value]) {
+            const colors = themeGradients[themeSelect.value];
+            startInput.value = colors.start;
+            endInput.value = colors.end;
+        }
+        
+        const s = startInput.value;
+        const e = endInput.value;
+        preview.style.background = `linear-gradient(135deg, ${s} 0%, ${e} 100%)`;
+    }
+
+    themeSelect?.addEventListener('change', () => updatePreview(false));
+    startInput?.addEventListener('input', () => updatePreview(true));
+    endInput?.addEventListener('input', () => updatePreview(true));
+
+    document.querySelectorAll('.gradient-preset').forEach(btn => {
+        btn.addEventListener('click', () => {
+            startInput.value = btn.dataset.start;
+            endInput.value = btn.dataset.end;
+            updatePreview(true);
+        });
+    });
+
+    // Initial Sync
+    updatePreview(true);
+</script>
+
+<style>
+    .glass-card {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 20px;
+    }
+    .preset-pill {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: transform 0.2s;
+        border: 2px solid white;
+    }
+    .preset-pill:hover { transform: scale(1.15); }
+    .shadow-text { text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+    .shadow-gradient {
+        box-shadow: 0 10px 40px -10px rgba(0,0,0,0.3);
+    }
+    .text-gradient {
+        background: var(--app-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+</style>
 {% endblock %}
