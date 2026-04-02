@@ -47,13 +47,23 @@ class ExcelParserService:
         self.file_path = file_path
         self.filename = filename
         self._log_messages = []
+        import time
+        self._last_save_time = time.time()
 
     def _log(self, batch, message):
         """Helper to append log and save immediately for live UI update."""
+        import time
         self._log_messages.append(message)
-        if batch:
+        
+        # Only save to DB if it's a major milestone or at least 1.5s since last save
+        # This prevents SQLite "database is locked" during heavy parallel processing
+        is_milestone = any(x in message for x in ["###", "FEHLER", "KRITISCH", "Speichere", "KI analysiert"])
+        current_time = time.time()
+        
+        if batch and (is_milestone or (current_time - self._last_save_time > 1.5)):
             batch.ai_log = "\n".join(self._log_messages)
             batch.save(update_fields=['ai_log'])
+            self._last_save_time = current_time
         logger.info(message)
 
     def parse_and_categorize(self, batch=None):
