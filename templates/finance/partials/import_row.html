@@ -1,3 +1,4 @@
+{% load i18n humanize %}
 <tr id="row-{{ t.id }}" 
     class="transition-row {% if t.is_ignored %}row-ignored{% else %}{% if t.is_income %}row-income{% else %}row-expense{% endif %}{% endif %}">
     
