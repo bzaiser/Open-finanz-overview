@@ -14,7 +14,7 @@ services:
     env_file:
       - ../.env
     environment:
-      - DEBUG=False
+      - DEBUG=${DEBUG:-False}
       - SECRET_KEY=change_this_to_a_secure_long_random_string_in_production!
       - ALLOWED_HOSTS=*
       - RUNNING_IN_DOCKER=1
