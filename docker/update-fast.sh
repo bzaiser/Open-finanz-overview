@@ -36,5 +36,9 @@ docker compose exec web python manage.py compilemessages
 echo "Collecting static files..."
 docker compose exec web python manage.py collectstatic --noinput
 
+# Restart the web service to load new code
+echo "Restarting the web server..."
+docker compose restart web
+
 echo "-----------------------------------"
 echo "FAST Update complete! The UI/Code is now live."
