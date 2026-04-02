@@ -51,17 +51,6 @@
                     {% endif %}
                 </div>
 
-                <div class="mt-4 pt-3 border-top">
-                    <!-- Real-time Debug Log -->
-                    <p class="text-start small fw-bold mb-2">{% trans "Technisches Protokoll (Live):" %}</p>
-                    <div class="bg-dark text-success p-3 rounded text-start" style="font-family: monospace; font-size: 0.75rem; max-height: 250px; overflow-y: auto; border: 1px solid #333;">
-                        <div id="ai-log-stream">
-                            {{ batch.ai_log|linebreaksbr|default:"Initialisierung läuft..." }}
-                        </div>
-                    </div>
-                    <small class="text-muted d-block mt-2">
-                        {% trans "Dies kann je nach Anzahl der Buchungen 1-2 Minuten dauern." %}
-                    </small>
                 </div>
             </div>
         </div>
