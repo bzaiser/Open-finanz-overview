@@ -511,6 +511,8 @@ def dashboard_view(request):
         'debug_trans_test': translation.gettext('Help'),
     }
     
+    return render(request, 'finance/dashboard.html', context)
+
 
 @login_required
 def upload_bank_transactions(request):
