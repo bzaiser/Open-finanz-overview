@@ -90,33 +90,52 @@ class ExcelParserService:
     def _detect_columns(self, df):
         """
         Heuristic to find date, description, and amount columns.
+        Supports many common German bank export formats.
         """
         cols = df.columns
         mapping = {}
         
-        # Date detection
+        # Date detection - extended with more German bank formats
+        date_keywords = [
+            'datum', 'date', 'buchungstag', 'valuta', 'buchungsdatum',
+            'wertstellungsdatum', 'wertstellung', 'auftragsdatum', 'tag', 'time'
+        ]
         for c in cols:
-            if any(x in str(c).lower() for x in ['datum', 'date', 'buchungstag', 'valuta']):
+            if any(x in str(c).lower() for x in date_keywords):
                 mapping['date'] = c
                 break
         
-        # Description detection
+        # Description detection - extended
+        desc_keywords = [
+            'zweck', 'beschreibung', 'text', 'info', 'verwendungszweck',
+            'buchungstext', 'empfänger', 'auftraggeber', 'beguenstigter',
+            'name', 'memo', 'betreff', 'details', 'zahlungsempfanger',
+            'transaktionsbeschreibung', 'grund', 'mitteilung'
+        ]
         for c in cols:
-            if any(x in str(c).lower() for x in ['zweck', 'beschreibung', 'text', 'info', 'verwendungszweck']):
+            if any(x in str(c).lower() for x in desc_keywords):
                 mapping['desc'] = c
                 break
                 
-        # Amount detection
+        # Amount detection - extended
+        amount_keywords = [
+            'betrag', 'amount', 'wert', 'summe', 'umsatz', 'soll',
+            'haben', 'buchungsbetrag', 'zahlungsbetrag', 'eur', 'euro'
+        ]
         for c in cols:
-            if any(x in str(c).lower() for x in ['betrag', 'amount', 'wert', 'summe']):
+            if any(x in str(c).lower() for x in amount_keywords):
                 # Secondary check: is it numeric?
                 if pd.to_numeric(df[c], errors='coerce').notnull().any():
                     mapping['amount'] = c
                     break
         
         if len(mapping) < 3:
-            # Fallback based on column index: 0=Date?, 1=Desc?, 2=Amount?
-            # Many banks have different orders, so this is risky.
-            return None
+            missing = [k for k in ['date', 'desc', 'amount'] if k not in mapping]
+            found_cols = list(cols)
+            raise ValueError(
+                f"Konnte folgende Spalten nicht erkennen: {missing}. "
+                f"Gefundene Spalten in der Datei: {found_cols}. "
+                f"Bitte stelle sicher, dass deine Datei Spalten für Datum, Beschreibung und Betrag enthält."
+            )
             
         return mapping
