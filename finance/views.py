@@ -539,6 +539,10 @@ def _async_import_task(batch_id, file_path, filename):
         user = batch.user
         service = ExcelParserService(user, file_path, filename)
         service.parse_and_categorize(batch=batch)
+
+        # Mark as 100% only AFTER everything is done and saved
+        cache_key_progress = f"import_progress_{batch.user.id}"
+        cache.set(cache_key_progress, 100, 300) # 5 minutes timeout
     except Exception as e:
         import traceback
         error_trace = traceback.format_exc()

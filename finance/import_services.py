@@ -190,8 +190,8 @@ class ExcelParserService:
             if error_logs:
                 self._log(batch, f"KI Fehler: {error_logs[0]}")
             
-            # Reset progress when done
-            cache.set(cache_key, 100, 10)
+            # AI analysis finished - progress will be marked 100 in the task caller
+            pass
 
             # 5. Save one PendingTransaction per group
             self._log(batch, "Speichere Buchungen in Datenbank...")
