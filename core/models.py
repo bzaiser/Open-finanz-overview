@@ -17,6 +17,9 @@ class Theme(models.Model):
     table_header_bg_color = models.CharField(_("Table Header Background"), max_length=7, default="#212529")
     table_header_text_color = models.CharField(_("Table Header Text"), max_length=7, default="#ffffff")
     table_filter_bg_color = models.CharField(_("Table Filter Background"), max_length=7, default="#f1f3f5")
+    table_body_bg_color = models.CharField(_("Table Body Background"), max_length=7, default="#ffffff")
+    table_body_text_color = models.CharField(_("Table Body Text"), max_length=7, default="#212529")
+    table_border_color = models.CharField(_("Table Border Color"), max_length=7, default="#dee2e6")
     
     class Meta:
         verbose_name = _("Theme")

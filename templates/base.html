@@ -69,6 +69,13 @@
                             <i class="bi bi-info-circle me-1"></i>{% trans 'About' %}
                         </a>
                     </li>
+                    {% if user.is_staff %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'admin:index' %}">
+                            <i class="bi bi-shield-lock me-1"></i>{% trans 'Admin' %}
+                        </a>
+                    </li>
+                    {% endif %}
                 </ul>
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     {% if user.is_authenticated %}

@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from django.utils import translation
+from django.utils import timezone, translation
 from django.utils.translation import gettext_lazy as _
 from .services import SimulationEngine
 from .models import Category
@@ -64,6 +64,9 @@ def dashboard_view(request):
         'header_bg_color': '#212529',
         'header_text_color': '#ffffff',
         'filter_bg_color': '#f1f3f5',
+        'body_bg_color': '#ffffff',
+        'body_text_color': '#212529',
+        'border_color': '#dee2e6',
     })
     
     # Remove old widgets that no longer exist
@@ -266,11 +269,22 @@ def dashboard_view(request):
         'tooltipData': one_time_tooltips,
     })
 
-    # 3. Budget Pie (Current/Start month breakdown)
+    # 3. Budget Pie (Current month breakdown)
+    today = timezone.now().date()
+    current_month_data = None
     if forecast_data:
-        first_month = forecast_data[0]
-        budget_labels = list(first_month['category_breakdown'].keys())
-        budget_data = list(first_month['category_breakdown'].values())
+        # Find the point corresponding to the current month/year
+        for d in forecast_data:
+            if d['date'].year == today.year and d['date'].month == today.month:
+                current_month_data = d
+                break
+        
+        # Fallback to the first month if today is not in the forecast
+        if not current_month_data:
+            current_month_data = forecast_data[0]
+            
+        budget_labels = list(current_month_data['category_breakdown'].keys())
+        budget_data = list(current_month_data['category_breakdown'].values())
         budget_colors = [category_color_map.get(lbl, fallback_colors[i % len(fallback_colors)]) for i, lbl in enumerate(budget_labels)]
     else:
         budget_labels = []
@@ -344,16 +358,15 @@ def dashboard_view(request):
         }
     }
 
-    # Key Metrics for Summary Panels
-    if forecast_data:
-        first_month = forecast_data[0]
+    # Key Metrics for Summary Panels (Current situation)
+    if current_month_data:
         last_month = forecast_data[-1]
-        current_net_worth = first_month.get('nominal_net_worth', 0)
+        current_net_worth = current_month_data.get('nominal_net_worth', 0)
         projected_net_worth = last_month.get('nominal_net_worth', 0)
-        current_monthly_income = first_month.get('monthly_income', 0)
-        current_monthly_expenses = first_month.get('monthly_expenses', 0)
-        current_pensions_total = first_month.get('pension_total', 0)
-        current_assets_total = first_month.get('asset_total', 0)
+        current_monthly_income = current_month_data.get('monthly_income', 0)
+        current_monthly_expenses = current_month_data.get('monthly_expenses', 0)
+        current_pensions_total = current_month_data.get('pension_total', 0)
+        current_assets_total = current_month_data.get('asset_total', 0)
     else:
         current_net_worth = 0
         projected_net_worth = 0

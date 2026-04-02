@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-01 19:54+0200\n"
+"POT-Creation-Date: 2026-04-02 10:40+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,15 +17,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: core/forms.py:16 core/models.py:31
+#: core/forms.py:16 core/models.py:34
 msgid "Birth Date"
 msgstr "Geburtsdatum"
 
 #: core/models.py:9 finance/models.py:8 finance/models.py:26
 #: finance/models.py:44 finance/models.py:61
-#: templates/finance/partials/dashboard_table_simple.html:104
+#: templates/finance/partials/dashboard_table_simple.html:105
 msgid "Name"
-msgstr "Name"
+msgstr "Bezeichnung"
 
 #: core/models.py:10
 msgid "Primary Color"
@@ -59,52 +59,69 @@ msgstr "Tabellenkopf-Text"
 msgid "Table Filter Background"
 msgstr "Tabellenfilter-Hintergrund"
 
-#: core/models.py:22 core/models.py:67
+#: core/models.py:20
+#, fuzzy
+#| msgid "Table Header Background"
+msgid "Table Body Background"
+msgstr "Tabellenkopf-Hintergrund"
+
+#: core/models.py:21
+#, fuzzy
+#| msgid "Table Header Text"
+msgid "Table Body Text"
+msgstr "Tabellenkopf-Text"
+
+#: core/models.py:22
+#, fuzzy
+#| msgid "Secondary Color"
+msgid "Table Border Color"
+msgstr "Sekundärfarbe"
+
+#: core/models.py:25 core/models.py:70
 msgid "Theme"
 msgstr "Design"
 
-#: core/models.py:23
+#: core/models.py:26
 msgid "Themes"
 msgstr "Designs"
 
-#: core/models.py:30
+#: core/models.py:33
 msgid "Avatar"
 msgstr "Profilbild"
 
-#: core/models.py:52
+#: core/models.py:55
 msgid "Currency"
 msgstr "Währung"
 
-#: core/models.py:53
+#: core/models.py:56
 msgid "Language"
 msgstr "Sprache"
 
-#: core/models.py:60
+#: core/models.py:63
 msgid "Simulation Max Age"
 msgstr "Max. Simulationsalter"
 
-#: core/models.py:63
+#: core/models.py:66
 msgid "Default Inflation Rate (%)"
-msgstr ""
+msgstr "Standard-Inflationsrate (%)"
 
-#: core/models.py:64
+#: core/models.py:67
 msgid "Default Salary Increase (%)"
-msgstr ""
-
-#: core/models.py:65
-#| msgid "Return Offset"
-msgid "Investment Return Offset (%)"
-msgstr "Rendite-Offset"
+msgstr "Standard-Gehaltssteigerung (%)"
 
 #: core/models.py:68
+msgid "Investment Return Offset (%)"
+msgstr "Anlage-Rendite Offset (%)"
+
+#: core/models.py:71
 msgid "Dashboard Configuration"
 msgstr "Dashboard-Konfiguration"
 
-#: core/models.py:71 templates/core/profile.html:4
+#: core/models.py:74 templates/core/profile.html:4
 msgid "User Profile"
 msgstr "Benutzerprofil"
 
-#: core/models.py:72
+#: core/models.py:75
 msgid "User Profiles"
 msgstr "Benutzerprofile"
 
@@ -129,7 +146,7 @@ msgid "Hex color code, e.g. #FF0000"
 msgstr "Hex-Farbcode, z.B. #FF0000"
 
 #: finance/models.py:13 finance/models.py:32
-#: templates/finance/partials/dashboard_table_simple.html:111
+#: templates/finance/partials/dashboard_table_simple.html:112
 msgid "Category"
 msgstr "Kategorie"
 
@@ -146,7 +163,7 @@ msgid "Yearly"
 msgstr "Jährlich"
 
 #: finance/models.py:27 finance/models.py:62
-#: templates/finance/partials/dashboard_table_simple.html:125
+#: templates/finance/partials/dashboard_table_simple.html:126
 msgid "Amount"
 msgstr "Betrag"
 
@@ -195,12 +212,11 @@ msgid "Amount to take out of this asset each month"
 msgstr "Betrag, der jeden Monat aus diesem Vermögenswert entnommen wird"
 
 #: finance/models.py:50
-#| msgid "Start Date"
 msgid "Withdrawal Start Date"
 msgstr "Startdatum"
 
-#: finance/models.py:53 finance/views.py:355 finance/views.py:356
-#: finance/views.py:388
+#: finance/models.py:53 finance/views.py:390 finance/views.py:391
+#: finance/views.py:423
 msgid "Asset"
 msgstr "Vermögenswert"
 
@@ -213,7 +229,7 @@ msgid "Positive for income, negative for expense"
 msgstr "Positiv für Einnahmen, negativ für Ausgaben"
 
 #: finance/models.py:63
-#: templates/finance/partials/dashboard_table_simple.html:111
+#: templates/finance/partials/dashboard_table_simple.html:112
 msgid "Date"
 msgstr "Datum"
 
@@ -249,8 +265,8 @@ msgstr "Auszahlungsbeginn"
 msgid "Approximate date when pension payout starts"
 msgstr "Ungefähres Datum, wann die Rentenzahlung beginnt"
 
-#: finance/models.py:83 finance/views.py:378 finance/views.py:379
-#: finance/views.py:399
+#: finance/models.py:83 finance/views.py:413 finance/views.py:414
+#: finance/views.py:434
 msgid "Pension"
 msgstr "Rente/Vorsorge"
 
@@ -266,128 +282,125 @@ msgstr ""
 msgid "Meine Finanzen (Schnelleingabe)"
 msgstr ""
 
-#: finance/views.py:13 templates/core/help.html:141
+#: finance/views.py:14 templates/core/help.html:141
 msgid "Net Worth Forecast"
 msgstr "Vermögensprognose"
 
-#: finance/views.py:14
+#: finance/views.py:15
 msgid "Cash Flow Analysis"
 msgstr "Cashflow-Analyse"
 
-#: finance/views.py:15
+#: finance/views.py:16
 msgid "Income & One-Time Effects"
 msgstr "Entwicklung der Einnahmen und Einmaleffekte"
 
-#: finance/views.py:16
+#: finance/views.py:17
 msgid "Expense Evolution"
 msgstr "Ausgaben-Evolution"
 
-#: finance/views.py:17
+#: finance/views.py:18
 msgid "Inflation Monitor"
 msgstr "Inflations-Monitor"
 
-#: finance/views.py:18
+#: finance/views.py:19
 msgid "Monthly Budget"
 msgstr "Monatliches Budget"
 
-#: finance/views.py:19
+#: finance/views.py:20
 msgid "Income Table"
 msgstr "Einnahmen-Tabelle"
 
-#: finance/views.py:20
+#: finance/views.py:21
 msgid "Expense Table"
 msgstr "Ausgaben-Tabelle"
 
-#: finance/views.py:21
+#: finance/views.py:22
 msgid "Asset Table"
 msgstr "Vermögenswerte-Tabelle"
 
-#: finance/views.py:22
+#: finance/views.py:23
 msgid "Pension Table"
 msgstr "Renten-Tabelle"
 
-#: finance/views.py:23
+#: finance/views.py:24
 msgid "One-Time Event Table"
 msgstr "Einmalige Ereignisse"
 
-#: finance/views.py:27
+#: finance/views.py:28
 msgid "Current Assets"
 msgstr "Aktuelles Vermögen"
 
-#: finance/views.py:28
+#: finance/views.py:29
 msgid "Monthly Income"
 msgstr "Monatliches Einkommen"
 
-#: finance/views.py:29
+#: finance/views.py:30
 msgid "Monthly Expenses"
 msgstr "Monatliche Ausgaben"
 
-#: finance/views.py:30
+#: finance/views.py:31
 msgid "Total Pensions"
 msgstr "Gesamtrenten"
 
-#: finance/views.py:261
+#: finance/views.py:263
 msgid "One-Time Events"
 msgstr "Einmalige Ereignisse"
 
-#: finance/views.py:281
+#: finance/views.py:317
 msgid "Income"
 msgstr "Einnahmen"
 
-#: finance/views.py:282
+#: finance/views.py:318
 msgid "Expenses"
 msgstr "Ausgaben"
 
-#: finance/views.py:283
+#: finance/views.py:319
 msgid "Net Savings"
 msgstr "Nettoersparnis"
 
-#: finance/views.py:303
+#: finance/views.py:337
 msgid "Nominal Value"
 msgstr "Nominalwert"
 
-#: finance/views.py:304
+#: finance/views.py:338
 msgid "Real Value (Purchasing Power)"
 msgstr "Realwert (Kaufkraft)"
 
-#: finance/views.py:306
+#: finance/views.py:340
 msgid "Purchasing Power Loss"
 msgstr "Kaufkraftverlust"
 
-#: finance/views.py:336
+#: finance/views.py:371
 msgid "Continuous"
 msgstr ""
 
-#: finance/views.py:345 finance/views.py:368
-#| msgid "Categories"
+#: finance/views.py:380 finance/views.py:403
 msgid "Uncategorized"
 msgstr "Kategorien"
 
-#: finance/views.py:346 finance/views.py:369
-#: templates/finance/partials/dashboard_table_simple.html:170
+#: finance/views.py:381 finance/views.py:404
+#: templates/finance/partials/dashboard_table_simple.html:172
 msgid "Manual"
 msgstr ""
 
-#: finance/views.py:409
-#| msgid "One-Time Events"
+#: finance/views.py:444
 msgid "One-Time"
 msgstr "Einmalige Ereignisse"
 
-#: templates/base.html:59 templates/finance/dashboard.html:5
-#: templates/finance/dashboard.html:12
-msgid "Dashboard"
-msgstr "Übersicht"
-
-#: templates/base.html:64 templates/core/help.html:4
+#: finance/views.py:484 templates/base.html:64 templates/core/help.html:4
 msgid "Help"
 msgstr "Hilfe"
+
+#: templates/base.html:59 templates/finance/dashboard.html:5
+#: templates/finance/dashboard.html:18
+msgid "Dashboard"
+msgstr "Übersicht"
 
 #: templates/base.html:69 templates/core/about.html:4
 msgid "About"
 msgstr "Über uns"
 
 #: templates/base.html:83
-#| msgid "User Profile"
 msgid "Profile"
 msgstr "Benutzerprofil"
 
@@ -444,7 +457,6 @@ msgstr ""
 "an Dritte weitergegeben."
 
 #: templates/core/about.html:33
-#| msgid "Update Simulation"
 msgid "Advanced Simulation"
 msgstr "Simulation aktualisieren"
 
@@ -476,7 +488,8 @@ msgstr "Wie können wir Ihnen helfen?"
 
 #: templates/core/help.html:11
 msgid "Find answers and tips to get the most out of your financial planning."
-msgstr "Finden Sie Antworten und Tipps, um Ihre Finanzplanung optimal zu nutzen."
+msgstr ""
+"Finden Sie Antworten und Tipps, um Ihre Finanzplanung optimal zu nutzen."
 
 #: templates/core/help.html:23
 msgid "Quick Start"
@@ -486,7 +499,9 @@ msgstr "Schnellstart"
 msgid ""
 "New here? Learn the basics of how to set up your profile and your first cash "
 "flow sources."
-msgstr "Neu hier? Lernen Sie die Grundlagen zur Einrichtung Ihres Profils und Ihrer ersten Cashflow-Quellen."
+msgstr ""
+"Neu hier? Lernen Sie die Grundlagen zur Einrichtung Ihres Profils und Ihrer "
+"ersten Cashflow-Quellen."
 
 #: templates/core/help.html:25 templates/core/help.html:39
 #: templates/core/help.html:53
@@ -494,7 +509,6 @@ msgid "Learn More"
 msgstr "Mehr erfahren"
 
 #: templates/core/help.html:37
-#| msgid "Dashboard"
 msgid "Personal Dashboard"
 msgstr "Persönliches Dashboard"
 
@@ -502,10 +516,11 @@ msgstr "Persönliches Dashboard"
 msgid ""
 "Rearrange charts, change colors, and hide widgets to suit your personal "
 "financial overview."
-msgstr "Ordnen Sie Diagramme neu an, ändern Sie die Farben und blenden Sie Widgets aus, um sie an Ihre persönliche Finanzübersicht anzupassen."
+msgstr ""
+"Ordnen Sie Diagramme neu an, ändern Sie die Farben und blenden Sie Widgets "
+"aus, um sie an Ihre persönliche Finanzübersicht anzupassen."
 
 #: templates/core/help.html:51
-#| msgid "Simulation"
 msgid "Calculations"
 msgstr "Simulation"
 
@@ -513,7 +528,9 @@ msgstr "Simulation"
 msgid ""
 "Understand how we calculate your net worth forecast and how inflation "
 "affects your future purchasing power."
-msgstr "Verstehen Sie, wie wir Ihre Vermögensprognose berechnen und wie sich die Inflation auf Ihre zukünftige Kaufkraft auswirkt."
+msgstr ""
+"Verstehen Sie, wie wir Ihre Vermögensprognose berechnen und wie sich die "
+"Inflation auf Ihre zukünftige Kaufkraft auswirkt."
 
 #: templates/core/help.html:62
 msgid "Frequently Asked Questions"
@@ -527,10 +544,12 @@ msgstr "Wie füge ich eine neue wiederkehrende Ausgabe hinzu?"
 msgid ""
 "Go to the Admin panel, select \"Cash Flow Sources\", and click \"Add\". Set "
 "the frequency to \"Monthly\" and provide a start date."
-msgstr "Gehen Sie in den Admin-Bereich, wählen Sie „Cash Flow Sources“ und klicken Sie auf „Hinzufügen“. Stellen Sie die Häufigkeit auf „Monatlich“ ein und geben Sie ein Startdatum an."
+msgstr ""
+"Gehen Sie in den Admin-Bereich, wählen Sie „Cash Flow Sources“ und klicken "
+"Sie auf „Hinzufügen“. Stellen Sie die Häufigkeit auf „Monatlich“ ein und "
+"geben Sie ein Startdatum an."
 
 #: templates/core/help.html:79
-#| msgid "Inflation Monitor"
 msgid "What is the \"Inflation Monitor\"?"
 msgstr "Inflations-Monitor"
 
@@ -538,7 +557,10 @@ msgstr "Inflations-Monitor"
 msgid ""
 "This chart shows the gap between your nominal net worth and your real "
 "purchasing power over time based on the inflation rate set in your profile."
-msgstr "Dieses Diagramm zeigt die Lücke zwischen Ihrem nominalen Reinvermögen und Ihrer realen Kaufkraft im Laufe der Zeit, basierend auf der in Ihrem Profil eingestellten Inflationsrate."
+msgstr ""
+"Dieses Diagramm zeigt die Lücke zwischen Ihrem nominalen Reinvermögen und "
+"Ihrer realen Kaufkraft im Laufe der Zeit, basierend auf der in Ihrem Profil "
+"eingestellten Inflationsrate."
 
 #: templates/core/help.html:98
 msgid "Quick Start Guide"
@@ -546,22 +568,27 @@ msgstr "Schnellstart-Anleitung"
 
 #: templates/core/help.html:103
 msgid "Go to your Profile and set your default currency and inflation rate."
-msgstr "Gehen Sie zu Ihrem Profil und legen Sie Ihre Standardwährung und Inflationsrate fest."
+msgstr ""
+"Gehen Sie zu Ihrem Profil und legen Sie Ihre Standardwährung und "
+"Inflationsrate fest."
 
 #: templates/core/help.html:104
 msgid "Add your current Assets (bank accounts, investments, real estate)."
-msgstr "Fügen Sie Ihr aktuelles Vermögen hinzu (Bankkonten, Investitionen, Immobilien)."
+msgstr ""
+"Fügen Sie Ihr aktuelles Vermögen hinzu (Bankkonten, Investitionen, "
+"Immobilien)."
 
 #: templates/core/help.html:105
 msgid "Enter your regular Income and Expenses in the Cash Flow section."
-msgstr "Geben Sie Ihr regelmäßiges Einkommen und Ihre Ausgaben im Bereich Cashflow ein."
+msgstr ""
+"Geben Sie Ihr regelmäßiges Einkommen und Ihre Ausgaben im Bereich Cashflow "
+"ein."
 
 #: templates/core/help.html:106
 msgid "Check the Dashboard to see your 30-year financial forecast!"
 msgstr "Prüfen Sie das Dashboard, um Ihre 30-jährige Finanzprognose zu sehen!"
 
 #: templates/core/help.html:117
-#| msgid "Dashboard Configuration"
 msgid "Dashboard Customization"
 msgstr "Dashboard-Konfiguration"
 
@@ -599,7 +626,6 @@ msgid ""
 msgstr ""
 
 #: templates/core/help.html:143
-#| msgid "Inflation Adjusted"
 msgid "Inflation Adjustment"
 msgstr "Inflationsangepasst"
 
@@ -617,7 +643,7 @@ msgstr ""
 msgid "Edit Profile"
 msgstr ""
 
-#: templates/core/profile.html:16 templates/finance/dashboard.html:216
+#: templates/core/profile.html:16 templates/finance/dashboard.html:234
 msgid "Save Changes"
 msgstr ""
 
@@ -625,126 +651,136 @@ msgstr ""
 msgid "Already have an account? Login"
 msgstr ""
 
-#: templates/finance/dashboard.html:16
+#: templates/finance/dashboard.html:22
 msgid "Configure Layout"
 msgstr "Layout konfigurieren"
 
-#: templates/finance/dashboard.html:20 templates/finance/dashboard.html:38
+#: templates/finance/dashboard.html:26 templates/finance/dashboard.html:44
 msgid "Simulation"
 msgstr "Simulation"
 
-#: templates/finance/dashboard.html:44
-msgid "Changes here are temporary. Update your profile for permanent settings."
-msgstr ""
-
 #: templates/finance/dashboard.html:50
+msgid "Changes here are temporary. Update your profile for permanent settings."
+msgstr "Änderungen hier sind temporär. Aktualisiere dein Profil für dauerhafte Einstellungen."
+
+#: templates/finance/dashboard.html:56
 #, python-format
 msgid "Inflation Rate (%%)"
-msgstr ""
+msgstr "Inflationsrate (%%)"
 
-#: templates/finance/dashboard.html:55
+#: templates/finance/dashboard.html:61
 #, python-format
 msgid "Salary Increase (%%)"
-msgstr ""
+msgstr "Gehaltssteigerung (%%)"
 
-#: templates/finance/dashboard.html:60
+#: templates/finance/dashboard.html:66
 #, python-format
 msgid "Inv. Return Offset (%%)"
-msgstr ""
+msgstr "Anlage-Rendite Offset (%%)"
 
-#: templates/finance/dashboard.html:68
+#: templates/finance/dashboard.html:74
 msgid "Update Simulation"
 msgstr "Simulation aktualisieren"
 
-#: templates/finance/dashboard.html:71
+#: templates/finance/dashboard.html:77
 msgid "Reset to Defaults"
-msgstr ""
+msgstr "Zurücksetzen"
 
-#: templates/finance/dashboard.html:82
+#: templates/finance/dashboard.html:88
 msgid "Configure Dashboard"
 msgstr "Dashboard konfigurieren"
 
-#: templates/finance/dashboard.html:95
-msgid "Customize colors and visibility for all dashboard components."
-msgstr ""
-
-#: templates/finance/dashboard.html:98
-msgid "Table Headers"
-msgstr ""
-
 #: templates/finance/dashboard.html:101
+msgid "Customize colors and visibility for all dashboard components."
+msgstr "Farben und Sichtbarkeit der Dashboard-Komponenten anpassen."
+
+#: templates/finance/dashboard.html:104
+msgid "Table Styling"
+msgstr "Tabellen-Design"
+
+#: templates/finance/dashboard.html:107
 msgid "Header Background"
-msgstr ""
+msgstr "Kopf-Hintergrund"
 
-#: templates/finance/dashboard.html:105
+#: templates/finance/dashboard.html:111
 msgid "Header Text Color"
-msgstr ""
+msgstr "Kopf-Textfarbe"
 
-#: templates/finance/dashboard.html:109
+#: templates/finance/dashboard.html:115
 msgid "Filter Row Background"
-msgstr ""
+msgstr "Filterzeilen-Hintergrund"
 
-#: templates/finance/dashboard.html:114
-#| msgid "Simulation"
+#: templates/finance/dashboard.html:119
+msgid "Body Background"
+msgstr "Tabellen-Hintergrund"
+
+#: templates/finance/dashboard.html:123
+msgid "Body Text Color"
+msgstr "Tabellen-Textfarbe"
+
+#: templates/finance/dashboard.html:127
+msgid "Border Color"
+msgstr "Rahmenfarbe"
+
+#: templates/finance/dashboard.html:132
 msgid "Simulation Panel"
 msgstr "Simulation"
 
-#: templates/finance/dashboard.html:117
+#: templates/finance/dashboard.html:135
 msgid "Header Background & Text"
-msgstr ""
+msgstr "Header Hintergrund & Text"
 
-#: templates/finance/dashboard.html:124
+#: templates/finance/dashboard.html:142
 msgid "Panel Background & Text"
-msgstr ""
+msgstr "Panel Hintergrund & Text"
 
-#: templates/finance/dashboard.html:132
+#: templates/finance/dashboard.html:150
 msgid "Summary Cards"
 msgstr "Zusammenfassungskarten"
 
-#: templates/finance/dashboard.html:137
+#: templates/finance/dashboard.html:155
 msgid "Widget"
 msgstr "Widget"
 
-#: templates/finance/dashboard.html:138 templates/finance/dashboard.html:170
+#: templates/finance/dashboard.html:156 templates/finance/dashboard.html:188
 msgid "Visible"
 msgstr "Sichtbar"
 
-#: templates/finance/dashboard.html:139 templates/finance/dashboard.html:173
-#| msgid "Color"
+#: templates/finance/dashboard.html:157 templates/finance/dashboard.html:191
 msgid "Colors"
 msgstr "Farbe"
 
-#: templates/finance/dashboard.html:164
+#: templates/finance/dashboard.html:182
 msgid "Charts & Widgets"
 msgstr "Charts & Widgets"
 
-#: templates/finance/dashboard.html:169
+#: templates/finance/dashboard.html:187
 msgid "Chart"
 msgstr "Chart"
 
-#: templates/finance/dashboard.html:171
+#: templates/finance/dashboard.html:189
 msgid "Width"
 msgstr "Breite"
 
-#: templates/finance/dashboard.html:172
+#: templates/finance/dashboard.html:190
 msgid "Height"
 msgstr "Höhe"
 
-#: templates/finance/dashboard.html:197
-msgid "Small"
-msgstr ""
-
-#: templates/finance/dashboard.html:198
-msgid "Medium"
-msgstr ""
-
-#: templates/finance/dashboard.html:199
-msgid "Large"
-msgstr ""
-
 #: templates/finance/dashboard.html:215
+msgid "Small"
+msgstr "Klein"
+
+#: templates/finance/dashboard.html:216
+msgid "Medium"
+msgstr "Mittel"
+
+#: templates/finance/dashboard.html:217
+msgid "Large"
+msgstr "Groß"
+
+#: templates/finance/dashboard.html:233
 msgid "Close"
-msgstr ""
+msgstr "Schließen"
 
 #: templates/finance/partials/dashboard_charts.html:23
 msgid "Simulation Parameters"
@@ -762,29 +798,28 @@ msgstr "Gehalt"
 msgid "Return Offset"
 msgstr "Rendite-Offset"
 
-#: templates/finance/partials/dashboard_table_simple.html:118
-#| msgid "Yearly"
+#: templates/finance/partials/dashboard_table_simple.html:119
 msgid "Year"
 msgstr "Jährlich"
 
-#: templates/finance/partials/dashboard_table_simple.html:132
-#: templates/finance/partials/dashboard_table_simple.html:135
-#: templates/finance/partials/dashboard_table_simple.html:138
-#: templates/finance/partials/dashboard_table_simple.html:141
+#: templates/finance/partials/dashboard_table_simple.html:133
+#: templates/finance/partials/dashboard_table_simple.html:136
+#: templates/finance/partials/dashboard_table_simple.html:139
+#: templates/finance/partials/dashboard_table_simple.html:142
 msgid "Filter..."
-msgstr ""
+msgstr "Filter..."
 
-#: templates/finance/partials/dashboard_table_simple.html:157
+#: templates/finance/partials/dashboard_table_simple.html:159
 msgid "Group Sum"
-msgstr ""
+msgstr "Gruppensumme"
 
-#: templates/finance/partials/dashboard_table_simple.html:183
+#: templates/finance/partials/dashboard_table_simple.html:185
 msgid "No items found"
-msgstr ""
+msgstr "Keine Einträge gefunden"
 
-#: templates/finance/partials/dashboard_table_simple.html:190
+#: templates/finance/partials/dashboard_table_simple.html:193
 msgid "Total"
-msgstr ""
+msgstr "Gesamt"
 
 #: venv/lib/python3.12/site-packages/django/contrib/messages/apps.py:16
 msgid "Messages"
@@ -799,7 +834,6 @@ msgid "Static Files"
 msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/contrib/syndication/apps.py:7
-#| msgid "Simulation"
 msgid "Syndication"
 msgstr "Simulation"
 
@@ -1095,7 +1129,6 @@ msgid ""
 msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1868
-#| msgid "Simulation"
 msgid "Duration"
 msgstr "Simulation"
 
@@ -1429,7 +1462,6 @@ msgid "Clear"
 msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/forms/widgets.py:529
-#| msgid "Currency"
 msgid "Currently"
 msgstr "Währung"
 
@@ -1560,7 +1592,6 @@ msgid "Sunday"
 msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/utils/dates.py:16
-#| msgid "Monthly"
 msgid "Mon"
 msgstr "Monatlich"
 

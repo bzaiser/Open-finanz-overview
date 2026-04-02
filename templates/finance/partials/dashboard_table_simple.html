@@ -94,8 +94,9 @@
     }
 }" class="h-100 d-flex flex-column" x-init="init()">
     
-    <div class="flex-grow-1 overflow-auto px-2" style="max-height: 100%;">
-        <table class="table table-sm table-hover align-middle mb-0" style="font-size: 0.85rem; color: inherit;">
+    <div class="flex-grow-1 overflow-auto px-2" style="max-height: 100%; background-color: {{ table_config.body_bg_color }} !important; color: {{ table_config.body_text_color }} !important;">
+        <table class="table table-sm table-hover align-middle mb-0" 
+               style="font-size: 0.85rem; color: inherit; border-color: {{ table_config.border_color }} !important;">
             <thead class="sticky-top" style="z-index: 10;">
                 <tr class="text-uppercase" style="font-size: 0.70rem;">
                     <th class="py-2 px-3 border-0 cursor-pointer" @click="sortCol = 'name'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
@@ -129,50 +130,51 @@
                 </tr>
                 <tr>
                     <td class="p-1 border-0" style="background-color: {{ table_config.filter_bg_color }} !important;">
-                        <input type="text" x-model="colFilters.name" class="form-control form-control-xs py-0 border-secondary-subtle shadow-sm" style="font-size: 0.7rem; background-color: #ffffff;" placeholder="{% trans 'Filter...' %}">
+                        <input type="text" x-model="colFilters.name" class="form-control form-control-xs py-0 border-secondary-subtle shadow-sm" style="font-size: 0.7rem;" placeholder="{% trans 'Filter...' %}">
                     </td>
                     <td class="p-1 border-0" style="background-color: {{ table_config.filter_bg_color }} !important;">
-                        <input type="text" x-model="colFilters.cat" class="form-control form-control-xs py-0 border-secondary-subtle shadow-sm" style="font-size: 0.7rem; background-color: #ffffff;" placeholder="{% trans 'Filter...' %}">
+                        <input type="text" x-model="colFilters.cat" class="form-control form-control-xs py-0 border-secondary-subtle shadow-sm" style="font-size: 0.7rem;" placeholder="{% trans 'Filter...' %}">
                     </td>
                     <td class="p-1 border-0" style="background-color: {{ table_config.filter_bg_color }} !important;">
-                        <input type="text" x-model="colFilters.year" class="form-control form-control-xs py-0 border-secondary-subtle shadow-sm text-center" style="font-size: 0.7rem; background-color: #ffffff;" placeholder="{% trans 'Filter...' %}">
+                        <input type="text" x-model="colFilters.year" class="form-control form-control-xs py-0 border-secondary-subtle shadow-sm text-center" style="font-size: 0.7rem;" placeholder="{% trans 'Filter...' %}">
                     </td>
                     <td class="p-1 border-0" style="background-color: {{ table_config.filter_bg_color }} !important;">
-                        <input type="text" x-model="colFilters.amount" class="form-control form-control-xs py-0 text-end border-secondary-subtle shadow-sm" style="font-size: 0.7rem; background-color: #ffffff;" placeholder="{% trans 'Filter...' %}">
+                        <input type="text" x-model="colFilters.amount" class="form-control form-control-xs py-0 text-end border-secondary-subtle shadow-sm" style="font-size: 0.7rem;" placeholder="{% trans 'Filter...' %}">
                     </td>
                 </tr>
             </thead>
-            <tbody>
+            <tbody style="border-top: 1px solid {{ table_config.border_color }} !important;">
                 <template x-for="(row, idx) in displayRows" :key="'row-' + idx">
-                    <tr :class="row.isGroupHeader ? 'table-secondary border-top border-bottom cursor-pointer text-body-emphasis' : 'align-middle'"
+                    <tr :class="row.isGroupHeader ? 'border-top border-bottom cursor-pointer' : 'align-middle'"
+                        :style="row.isGroupHeader ? 'background-color: rgba(0,0,0,0.05);' : ''"
                         @click="if(row.isGroupHeader) collapsedGroups[row.year] = !collapsedGroups[row.year]">
                         <template x-if="row.isGroupHeader">
                             <td class="p-2 border-0" colspan="3">
-                                <i class="bi me-2 text-muted" :class="collapsedGroups[row.year] ? 'bi-chevron-right' : 'bi-chevron-down'"></i>
+                                <i class="bi me-2 opacity-75" :class="collapsedGroups[row.year] ? 'bi-chevron-right' : 'bi-chevron-down'"></i>
                                 <span class="badge bg-secondary" style="font-size: 0.75rem;" x-text="row.year"></span>
                             </td>
                         </template>
                         <template x-if="row.isGroupHeader">
                             <td class="text-end p-2 border-0">
-                                <div class="small text-muted text-uppercase" style="font-size: 0.6rem;">{% trans 'Group Sum' %}</div>
-                                <div class="fw-bold text-dark h6 mb-0" x-text="new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ currency }}' }).format(row.subtotal)"></div>
+                                <div class="small opacity-75 text-uppercase" style="font-size: 0.6rem;">{% trans 'Group Sum' %}</div>
+                                <div class="fw-bold h6 mb-0" x-text="new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ currency }}' }).format(row.subtotal)"></div>
                             </td>
                         </template>
-
+                        
                         <template x-if="!row.isGroupHeader">
                             <td class="fw-medium text-truncate border-0" style="max-width: 150px;" :title="row.name" x-text="row.name"></td>
                         </template>
                         <template x-if="!row.isGroupHeader">
                             <td class="border-0">
                                 <div class="d-flex flex-wrap gap-1">
-                                    <span x-show="row.date" class="text-muted small" x-text="row.date"></span>
+                                    <span x-show="row.date" class="opacity-75 small" x-text="row.date"></span>
                                     <span x-show="!row.date" class="badge bg-light text-dark border" x-text="row.category"></span>
                                     <span x-show="row.type && row.type !== '{% trans 'Manual' %}'" class="badge bg-info-subtle text-info border-info-subtle" style="font-size: 0.6rem;" x-text="row.type"></span>
                                 </div>
                             </td>
                         </template>
                         <template x-if="!row.isGroupHeader">
-                            <td class="text-center text-muted border-0" style="font-size: 0.75rem" x-text="row.year"></td>
+                            <td class="text-center opacity-75 border-0" style="font-size: 0.75rem" x-text="row.year"></td>
                         </template>
                         <template x-if="!row.isGroupHeader">
                             <td class="text-end fw-bold border-0" x-text="new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ currency }}' }).format(row.amount)"></td>
@@ -180,14 +182,15 @@
                     </tr>
                 </template>
                 <tr x-show="filteredItems.length === 0">
-                    <td colspan="4" class="text-center text-muted py-4">{% trans 'No items found' %}</td>
+                    <td colspan="4" class="text-center opacity-75 py-4">{% trans 'No items found' %}</td>
                 </tr>
             </tbody>
         </table>
     </div>
     
-    <div class="mt-auto border-top p-2 bg-light rounded-bottom d-flex justify-content-between align-items-center">
-        <span class="small fw-bold text-muted text-uppercase">{% trans 'Total' %}</span>
+    <div class="mt-auto border-top p-2 rounded-bottom d-flex justify-content-between align-items-center" 
+         style="background-color: rgba(0,0,0,0.03); border-top-color: {{ table_config.border_color }} !important;">
+        <span class="small fw-bold opacity-75 text-uppercase">{% trans 'Total' %}</span>
         <span class="fw-bold text-primary" x-text="new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ currency }}' }).format(total)"></span>
     </div>
 </div>

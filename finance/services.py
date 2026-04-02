@@ -84,40 +84,14 @@ class SimulationEngine:
         # Pre-calculate monthly pension contributions to deduct from cashflow
         total_monthly_pension_contribution = sum(p.monthly_contribution for p in pensions)
 
+        today_date = timezone.now().date().replace(day=1)
+
         for i in range(months):
             current_date = start_date + relativedelta(months=i)
-            year_passed = i / 12.0
-            
-            # 1. Apply Asset Growth & Withdrawals
-            asset_total = Decimal('0.00')
-            for item in assets_state:
-                asset = item['asset']
-                rate = (asset.growth_rate / 100) + self.investment_return_offset
-                monthly_rate = rate / 12
-                
-                # Apply growth
-                item['balance'] *= (1 + monthly_rate)
-                
-                # Apply withdrawal
-                if asset.withdrawal_start_date and current_date >= asset.withdrawal_start_date:
-                    withdrawal = asset.withdrawal_amount
-                    item['balance'] = max(Decimal('0'), item['balance'] - withdrawal)
-                
-                asset_total += item['balance']
-            
-            # 2. Apply Pension Growth
-            pension_total = Decimal('0.00')
-            for item in pensions_state:
-                pension = item['pension']
-                rate = (pension.growth_rate / 100)
-                monthly_rate = rate / 12
-                
-                # Apply growth to current balance + add contribution
-                # (Assuming contribution happens at start of month for growth)
-                item['balance'] = (item['balance'] + pension.monthly_contribution) * (1 + monthly_rate)
-                pension_total += item['balance']
+            year_passed = (current_date.year - today_date.year) * 12 + (current_date.month - today_date.month)
+            year_passed_decimal = Decimal(str(max(0, year_passed))) / 12
 
-            # 3. Process Cash Flows (Income/Expenses)
+            # 3. Process Cash Flows (Income/Expenses) - Always for all months
             monthly_income = Decimal('0.00')
             monthly_expenses = Decimal('0.00')
             category_breakdown = {}
@@ -133,7 +107,7 @@ class SimulationEngine:
                 
                 if cf.is_inflation_adjusted:
                     rate = self.salary_increase if cf.is_income else self.inflation_rate
-                    amount = amount * ((1 + rate) ** Decimal(year_passed))
+                    amount = amount * ((1 + rate) ** year_passed_decimal)
 
                 if cf.frequency == 'monthly':
                     val = amount
@@ -151,11 +125,7 @@ class SimulationEngine:
                     cat_name = cf.category.name if cf.category else "Uncategorized"
                     category_breakdown[cat_name] = category_breakdown.get(cat_name, Decimal('0')) + val
 
-            # 4. Monthly Savings (Cash)
-            monthly_savings = monthly_income - monthly_expenses - total_monthly_pension_contribution
-            accumulated_cash += monthly_savings 
-            
-            # 5. One Time Events
+            # 4. One Time Events - Always for all months
             event_impact = Decimal('0.00')
             events_this_month = []
             for event in one_time_events:
@@ -167,13 +137,46 @@ class SimulationEngine:
                         'date': event.date.isoformat(),
                         'value': float(round(event.value, 2)),
                     })
-            
-            accumulated_cash += event_impact
 
-            # 6. Total Net Worth & Real Value
-            total_nominal = asset_total + pension_total + accumulated_cash
-            inflation_factor = (1 + self.inflation_rate) ** Decimal(year_passed)
-            total_real = total_nominal / inflation_factor
+            # 5. Wealth Accumulation and Growth - START FROM TODAY
+            asset_total = Decimal('0.00')
+            pension_total = Decimal('0.00')
+
+            if current_date < today_date:
+                # History mode: No net worth tracking, only income/expenses
+                total_nominal = Decimal('0.00')
+                total_real = Decimal('0.00')
+            else:
+                # Future mode (and Today): Apply growth for months AFTER today
+                if current_date > today_date:
+                    # Apply Asset Growth & Withdrawals
+                    for item in assets_state:
+                        asset = item['asset']
+                        rate = (asset.growth_rate / 100) + self.investment_return_offset
+                        monthly_rate = rate / 12
+                        item['balance'] *= (1 + monthly_rate)
+                        
+                        if asset.withdrawal_start_date and current_date >= asset.withdrawal_start_date:
+                            withdrawal = asset.withdrawal_amount
+                            item['balance'] = max(Decimal('0'), item['balance'] - withdrawal)
+                    
+                    # Apply Pension Growth
+                    for item in pensions_state:
+                        pension = item['pension']
+                        rate = (pension.growth_rate / 100)
+                        monthly_rate = rate / 12
+                        item['balance'] = (item['balance'] + pension.monthly_contribution) * (1 + monthly_rate)
+
+                    # Monthly Savings (Cash)
+                    monthly_savings = monthly_income - monthly_expenses - total_monthly_pension_contribution
+                    accumulated_cash += (monthly_savings + event_impact)
+                
+                # Totals for current month (Today or Future)
+                asset_total = sum(item['balance'] for item in assets_state)
+                pension_total = sum(item['balance'] for item in pensions_state)
+                total_nominal = asset_total + pension_total + accumulated_cash
+                inflation_factor = (1 + self.inflation_rate) ** year_passed_decimal
+                total_real = total_nominal / inflation_factor
 
             data.append({
                 'date': current_date,

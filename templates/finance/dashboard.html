@@ -101,7 +101,7 @@
                         <small><i class="bi bi-info-circle"></i> {% trans "Customize colors and visibility for all dashboard components." %}</small>
                     </div>
 
-                    <h6 class="mb-2 fw-bold text-primary">{% trans "Table Headers" %}</h6>
+                    <h6 class="mb-2 fw-bold text-primary">{% trans "Table Styling" %}</h6>
                     <div class="row g-3 mb-4 p-2 border rounded bg-light mx-0">
                         <div class="col-md-4">
                             <label class="form-label small mb-1">{% trans "Header Background" %}</label>
@@ -114,6 +114,18 @@
                         <div class="col-md-4">
                             <label class="form-label small mb-1">{% trans "Filter Row Background" %}</label>
                             <input type="color" id="table-filter-bg" class="form-control form-control-color w-100" value="{{ table_config.filter_bg_color }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small mb-1">{% trans "Body Background" %}</label>
+                            <input type="color" id="table-body-bg" class="form-control form-control-color w-100" value="{{ table_config.body_bg_color|default:'#ffffff' }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small mb-1">{% trans "Body Text Color" %}</label>
+                            <input type="color" id="table-body-text" class="form-control form-control-color w-100" value="{{ table_config.body_text_color|default:'#212529' }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small mb-1">{% trans "Border Color" %}</label>
+                            <input type="color" id="table-border-color" class="form-control form-control-color w-100" value="{{ table_config.border_color|default:'#dee2e6' }}">
                         </div>
                     </div>
 
@@ -277,7 +289,10 @@
             var tableStyle = {
                 header_bg_color: document.getElementById('table-header-bg').value,
                 header_text_color: document.getElementById('table-header-text').value,
-                filter_bg_color: document.getElementById('table-filter-bg').value
+                filter_bg_color: document.getElementById('table-filter-bg').value,
+                body_bg_color: document.getElementById('table-body-bg').value,
+                body_text_color: document.getElementById('table-body-text').value,
+                border_color: document.getElementById('table-border-color').value
             };
             document.getElementById('layout_json').value = JSON.stringify(layout);
             document.getElementById('summary_layout_json').value = JSON.stringify(summaryLayout);
