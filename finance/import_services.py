@@ -53,9 +53,17 @@ class ExcelParserService:
             df = pd.read_excel(self.file_path)
             log_messages = [f"Datei eingelesen: {len(df)} Zeilen gefunden."]
 
-            # Column detection
-            col_map = self._detect_columns(df)
-            log_messages.append(f"Spalten erkannt: {col_map}")
+            # Column detection (now returns mapping AND header_row index)
+            col_map, header_row = self._detect_columns(df)
+            log_messages.append(f"Header in Zeile {header_row} gefunden. Spalten: {col_map}")
+
+            # Re-align DataFrame if header was not in row 0
+            if header_row > 0:
+                # Set the found row as columns and drop everything above it
+                df.columns = df.iloc[header_row-1]
+                df = df.iloc[header_row:]
+                # Update col_map to use the new column names found in that row
+                col_map, _ = self._detect_columns(df)
 
             # Standardize DataFrame
             df = df.rename(columns={
@@ -182,14 +190,18 @@ class ExcelParserService:
 
         groups = []
         # Group by Normalized Description, Year and Month
-        for (key, year, month), group_df in df.groupby(['_key', '_year', '_month']):
+        # We use dropna=False to ensure we don't lose transactions with unparseable dates
+        for (key, year, month), group_df in df.groupby(['_key', '_year', '_month'], dropna=False):
             count = len(group_df)
             total_amount = group_df['amount'].sum()
-            latest_date = group_df['date'].max().date()
+            
+            # Safe date extraction
+            valid_dates = group_df['date'].dropna()
+            latest_date = valid_dates.max().date() if not valid_dates.empty else datetime.date.today()
             
             # Use most frequent original description, or just the key
             modes = group_df['description'].mode()
-            base_desc = modes.iloc[0] if not modes.empty else key
+            base_desc = modes.iloc[0] if not modes.empty else (key if key else "Unbekannt")
             
             # Format: "BRAND (3 Buchungen) [MM/YYYY]"
             display_desc = base_desc
@@ -211,51 +223,52 @@ class ExcelParserService:
     def _detect_columns(self, df):
         """
         Heuristic to find date, description, and amount columns.
-        Supports many common German bank export formats.
+        Scans the first 20 rows of the file to find the actual header row.
         """
-        cols = df.columns
+        date_keywords = ['datum', 'date', 'buchungstag', 'valuta', 'buchungsdatum', 'wertstellung', 'tag']
+        desc_keywords = ['zweck', 'beschreibung', 'text', 'info', 'verwendungszweck', 'empfänger', 'auftraggeber', 'name']
+        amount_keywords = ['betrag', 'amount', 'wert', 'summe', 'umsatz', 'soll', 'haben', 'eur', 'euro']
+
+        # 1. First try if the current columns are already the headers
+        mapping = self._check_row_for_keywords(df.columns, date_keywords, desc_keywords, amount_keywords)
+        if mapping:
+            return mapping, 0 # Header at row 0 (already in columns)
+
+        # 2. If not, scan the first 20 rows of data
+        for i in range(min(20, len(df))):
+            row_values = [str(x).lower() for x in df.iloc[i].values]
+            mapping = self._check_row_for_keywords(row_values, date_keywords, desc_keywords, amount_keywords)
+            if mapping:
+                # We found the header row! 
+                # Map the original column names to our internal keywords
+                final_mapping = {}
+                for key, val in mapping.items():
+                    # val is the actual text found in that row. We need to find which column index that was.
+                    col_idx = row_values.index(val)
+                    final_mapping[key] = df.columns[col_idx]
+                return final_mapping, i + 1 # Header is at row i, data starts at i + 1
+
+        # Failure: Log what we saw to help debugging
+        found_cols = list(df.columns)
+        first_row = [str(x) for x in df.iloc[0].values] if not df.empty else "Empty"
+        raise ValueError(
+            f"Konnte Tabellenkopf nicht finden. Spalten: {found_cols}. Erste Zeile Rohdaten: {first_row}. "
+            f"Stelle sicher, dass die Datei Spalten für Datum, Beschreibung und Betrag enthält."
+        )
+
+    def _check_row_for_keywords(self, row_values, date_k, desc_k, amount_k):
+        """Helper to check if a row looks like a header."""
+        row_str = [str(x).lower() for x in row_values]
         mapping = {}
-
-        # Date detection - extended with more German bank formats
-        date_keywords = [
-            'datum', 'date', 'buchungstag', 'valuta', 'buchungsdatum',
-            'wertstellungsdatum', 'wertstellung', 'auftragsdatum', 'tag', 'time'
-        ]
-        for c in cols:
-            if any(x in str(c).lower() for x in date_keywords):
-                mapping['date'] = c
-                break
-
-        # Description detection - extended
-        desc_keywords = [
-            'zweck', 'beschreibung', 'text', 'info', 'verwendungszweck',
-            'buchungstext', 'empfänger', 'auftraggeber', 'beguenstigter',
-            'name', 'memo', 'betreff', 'details', 'zahlungsempfanger',
-            'transaktionsbeschreibung', 'grund', 'mitteilung'
-        ]
-        for c in cols:
-            if any(x in str(c).lower() for x in desc_keywords):
-                mapping['desc'] = c
-                break
-
-        # Amount detection - extended
-        amount_keywords = [
-            'betrag', 'amount', 'wert', 'summe', 'umsatz', 'soll',
-            'haben', 'buchungsbetrag', 'zahlungsbetrag', 'eur', 'euro'
-        ]
-        for c in cols:
-            if any(x in str(c).lower() for x in amount_keywords):
-                if pd.to_numeric(df[c], errors='coerce').notnull().any():
-                    mapping['amount'] = c
-                    break
-
-        if len(mapping) < 3:
-            missing = [k for k in ['date', 'desc', 'amount'] if k not in mapping]
-            found_cols = list(cols)
-            raise ValueError(
-                f"Konnte folgende Spalten nicht erkennen: {missing}. "
-                f"Gefundene Spalten in der Datei: {found_cols}. "
-                f"Bitte stelle sicher, dass deine Datei Spalten für Datum, Beschreibung und Betrag enthält."
-            )
-
-        return mapping
+        
+        for val in row_str:
+            if not mapping.get('date') and any(k in val for k in date_k):
+                mapping['date'] = val
+            elif not mapping.get('desc') and any(k in val for k in desc_k):
+                mapping['desc'] = val
+            elif not mapping.get('amount') and any(k in val for k in amount_k):
+                mapping['amount'] = val
+        
+        if len(mapping) >= 3:
+            return mapping
+        return None
