@@ -62,30 +62,36 @@ class ExcelParserService:
                 df.columns = header_row_values
                 df = df.iloc[header_row:]
             
-            # Final verification and renaming
-            # We search the current columns one last time to be sure
-            final_col_map = self._check_row_for_keywords(df.columns, 
-                ['datum', 'date', 'buchungstag', 'valuta', 'buchungsdatum', 'wertstellung', 'tag'],
-                ['zweck', 'beschreibung', 'text', 'info', 'verwendungszweck', 'empfänger', 'auftraggeber', 'name'],
-                ['betrag', 'amount', 'wert', 'summe', 'umsatz', 'soll', 'haben', 'eur', 'euro']
-            )
-
-            if not final_col_map or 'date' not in final_col_map or 'amount' not in final_col_map:
-                available = [str(c) for c in df.columns]
-                raise ValueError(f"Konnte Spalten für Datum und Betrag nicht finden. Vorhanden: {available}")
-
-            # Standardize DataFrame
-            df = df.rename(columns={
-                final_col_map['date']: 'date',
-                final_col_map.get('desc', ''): 'description', # Desc is optional for rename
-                final_col_map['amount']: 'amount'
-            })
+            # 2. Identify and rename columns robustly
+            final_mapping = {}
+            row_to_check = [str(c).lower() for c in df.columns]
             
-            # If description is still missing as a column, create it empty
+            # Simple keyword search on current column names
+            for i, col_name in enumerate(row_to_check):
+                if not final_mapping.get('date') and any(k in col_name for k in ['datum', 'date', 'buchungstag', 'valuta', 'wertstellung', 'tag']):
+                    final_mapping['date'] = i
+                elif not final_mapping.get('desc') and any(k in col_name for k in ['zweck', 'beschreibung', 'text', 'info', 'verwendungszweck', 'empfänger', 'name']):
+                    final_mapping['desc'] = i
+                elif not final_mapping.get('amount') and any(k in col_name for k in ['betrag', 'amount', 'wert', 'summe', 'umsatz', 'soll', 'haben', 'eur', 'euro']):
+                    final_mapping['amount'] = i
+
+            if 'date' not in final_mapping or 'amount' not in final_mapping:
+                available = [str(c) for c in df.columns]
+                raise ValueError(f"Konnte Spalten für Datum und Betrag nicht identifizieren. Gefunden: {available}")
+
+            # Direct renaming by index
+            new_cols = list(df.columns)
+            new_cols[final_mapping['date']] = 'date'
+            new_cols[final_mapping['amount']] = 'amount'
+            if 'desc' in final_mapping:
+                new_cols[final_mapping['desc']] = 'description'
+            df.columns = new_cols
+            
+            # Ensure description exists
             if 'description' not in df.columns:
                 df['description'] = "Kein Verwendungszweck"
 
-            log_messages.append(f"Spalten erfolgreich gemappt: {final_col_map}")
+            log_messages.append(f"Spalten erfolgreich zugeordnet (Index: {final_mapping})")
 
             # Clean data - convert date and handle German number formats
             df['date'] = pd.to_datetime(df['date'], errors='coerce')

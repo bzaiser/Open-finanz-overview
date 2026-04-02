@@ -540,15 +540,16 @@ def _async_import_task(batch_id, file_path, filename):
         service = ExcelParserService(user, file_path, filename)
         service.parse_and_categorize(batch=batch)
     except Exception as e:
-        # Save the error to the batch log
-        error_detailed = f"Kritischer Fehler: {str(e)}"
+        import traceback
+        error_trace = traceback.format_exc()
+        error_detailed = f"Kritischer Fehler: {str(e)}\n\nDetails:\n{error_trace}"
         logger.error(error_detailed)
         try:
             batch = ImportBatch.objects.get(id=batch_id)
             batch.ai_log = error_detailed
             batch.save()
             
-            # Save the exact error message to cache for the UI
+            # Save the error to cache so the UI shows the TRACEBACK
             cache_key_progress = f"import_progress_{batch.user.id}"
             cache_key_error = f"import_error_{batch.user.id}"
             cache.set(cache_key_progress, -1, 300)
