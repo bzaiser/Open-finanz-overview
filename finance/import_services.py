@@ -94,7 +94,8 @@ class ExcelParserService:
                     is_income=res.get('is_income', group['avg_amount'] > 0),
                     category=category,
                     is_recurring=group['is_recurring'] or res.get('is_recurring', False),
-                    frequency=res.get('frequency', 'monthly')
+                    frequency=res.get('frequency', 'monthly'),
+                    ai_reasoning=res.get('reasoning', '')
                 )
                 pending_list.append(pending)
 

@@ -111,6 +111,7 @@ class PendingTransaction(models.Model):
     # AI/Heuristic Suggestions
     is_recurring = models.BooleanField(_("Is Recurring"), default=False)
     frequency = models.CharField(_("Frequency"), max_length=20, default='monthly', choices=CashFlowSource.FREQUENCY_CHOICES)
+    ai_reasoning = models.TextField(_("AI Reasoning"), blank=True, null=True)
     
     # User Review state
     is_ignored = models.BooleanField(_("Ignore"), default=False)

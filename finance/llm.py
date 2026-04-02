@@ -46,6 +46,7 @@ def classify_transactions(transactions, categories):
     2. Entscheide, ob es sich um eine Einnahme ('is_income': true) oder Ausgabe ('is_income': false) handelt.
     3. Entscheide, ob die Buchung wahrscheinlich regelmäßig ist ('is_recurring': true), z.B. Abos, Miete, Gehalt, Versicherungen.
     4. Wenn regelmäßig, gib die Frequenz an ('frequency'): 'monthly' oder 'yearly'.
+    5. Gib eine kurze Begründung für deine Wahl an ('reasoning'), z.B. "Erkannt als monatliches Abo", "Regelmäßige Mietzahlung", "Einmalige Ausgabe".
     
     Transaktionen:
     {json.dumps(transactions, indent=2)}
@@ -57,7 +58,8 @@ def classify_transactions(transactions, categories):
         "category_slug": "slug",
         "is_income": false,
         "is_recurring": true,
-        "frequency": "monthly"
+        "frequency": "monthly",
+        "reasoning": "Kurze Begründung hier"
       }}
     ]
     """
