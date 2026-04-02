@@ -150,51 +150,102 @@ def dashboard_view(request):
     forecast_data = engine.get_forecast()
     
     # Prepare Chart Data
-    # 1. Net Worth & General Labels
+    yearly_buckets = {}
+    
+    # 1. Aggregate everything by year
+    for d in forecast_data:
+        year = d['date'].year
+        if year not in yearly_buckets:
+            yearly_buckets[year] = {
+                'date': d['date'], # Sample date for month/day checks
+                'nominal_net_worth': 0,
+                'real_net_worth': 0,
+                'monthly_income': 0,
+                'monthly_expenses': 0,
+                'one_time_events': [],
+                'one_time_total': 0,
+                'category_breakdown': {},
+                'income_category_breakdown': {},
+            }
+        
+        bucket = yearly_buckets[year]
+        # Net worth is a point-in-time value, take the last one of the year
+        bucket['nominal_net_worth'] = d['nominal_net_worth']
+        bucket['real_net_worth'] = d['real_net_worth']
+        
+        # Totals for the year
+        bucket['monthly_income'] += d['monthly_income']
+        bucket['monthly_expenses'] += d['monthly_expenses']
+        
+        # Category Breakdowns (Sum up)
+        for cat, val in d['category_breakdown'].items():
+            bucket['category_breakdown'][cat] = bucket['category_breakdown'].get(cat, 0) + val
+        for cat, val in d['income_category_breakdown'].items():
+            bucket['income_category_breakdown'][cat] = bucket['income_category_breakdown'].get(cat, 0) + val
+            
+        # One Time Events
+        if d['one_time_events']:
+            bucket['one_time_events'].extend(d['one_time_events'])
+            bucket['one_time_total'] += sum(evt['value'] for evt in d['one_time_events'])
+
+    sorted_years = sorted(yearly_buckets.keys())
+    
     labels_yearly = []
     net_worth_nominal = []
     net_worth_real = []
+    income_yearly = []
+    expenses_yearly = []
+    net_savings_yearly = []
+    one_time_yearly = []
+    one_time_tooltips = []
     
     birth_date = profile.birth_date
-    
-    for d in forecast_data[::12]:
-        year = d['date'].year
+
+    for year in sorted_years:
+        bucket = yearly_buckets[year]
+        d_date = bucket['date']
+        
+        # Label with Age
         label = str(year)
         if birth_date:
-            age = year - birth_date.year - ((d['date'].month, d['date'].day) < (birth_date.month, birth_date.day))
+            age = year - birth_date.year - ((d_date.month, d_date.day) < (birth_date.month, birth_date.day))
             label = f"{year} ({age})"
         labels_yearly.append(label)
-        net_worth_nominal.append(float(d['nominal_net_worth']))
-        net_worth_real.append(float(d['real_net_worth']))
+        
+        net_worth_nominal.append(float(bucket['nominal_net_worth']))
+        net_worth_real.append(float(bucket['real_net_worth']))
+        
+        income_yearly.append(float(bucket['monthly_income']))
+        expenses_yearly.append(-float(bucket['monthly_expenses']))
+        net_savings_yearly.append(float(bucket['monthly_income'] - bucket['monthly_expenses'] + bucket['one_time_total']))
+        
+        one_time_yearly.append(float(bucket['one_time_total']))
+        one_time_tooltips.append(bucket['one_time_events'])
 
-    # 2. Cashflow (Aggregated by year) + Net Savings
-    income_yearly = [float(d['monthly_income']) * 12 for d in forecast_data[::12]]
-    expenses_yearly = [-float(d['monthly_expenses']) * 12 for d in forecast_data[::12]]
-    net_savings_yearly = [inc + exp for inc, exp in zip(income_yearly, expenses_yearly)]
-
+    # Categories for stacked charts
+    income_categories = set()
+    expense_categories = set()
+    for year in sorted_years:
+        income_categories.update(yearly_buckets[year]['income_category_breakdown'].keys())
+        expense_categories.update(yearly_buckets[year]['category_breakdown'].keys())
+    
     category_color_map = {c.name: c.color for c in Category.objects.all()}
     fallback_colors = ['#0d6efd', '#6610f2', '#6f42c1', '#d63384', '#dc3545', '#fd7e14', '#ffc107', '#198754', '#20c997', '#0dcaf0']
 
-    # 3. Budget Pie (Current/Start month breakdown)
-    if forecast_data:
-        first_month = forecast_data[0]
-        budget_labels = list(first_month['category_breakdown'].keys())
-        budget_data = list(first_month['category_breakdown'].values())
-        budget_colors = [category_color_map.get(lbl, fallback_colors[i % len(fallback_colors)]) for i, lbl in enumerate(budget_labels)]
-    else:
-        first_month = {}
-        budget_labels = []
-        budget_data = []
-        budget_colors = []
-
-    # 4. Expense Evolution (Stacked categories over years)
-    categories = set()
-    for d in forecast_data[::12]:
-        categories.update(d['category_breakdown'].keys())
+    income_evo_datasets = []
+    for idx, cat in enumerate(sorted(list(income_categories))):
+        cat_data = [float(yearly_buckets[y]['income_category_breakdown'].get(cat, 0)) for y in sorted_years]
+        color = category_color_map.get(cat, fallback_colors[idx % len(fallback_colors)])
+        income_evo_datasets.append({
+            'label': cat,
+            'data': cat_data,
+            'backgroundColor': color,
+            'stack': 'income',
+        })
     
     expense_evo_datasets = []
-    for idx, cat in enumerate(sorted(list(categories))):
-        cat_data = [float(d['category_breakdown'].get(cat, 0)) * 12 for d in forecast_data[::12]]
+    for idx, cat in enumerate(sorted(list(expense_categories))):
+        cat_data = [float(yearly_buckets[y]['category_breakdown'].get(cat, 0)) for y in sorted_years]
         color = category_color_map.get(cat, fallback_colors[idx % len(fallback_colors)])
         expense_evo_datasets.append({
             'label': cat,
@@ -204,12 +255,35 @@ def dashboard_view(request):
             'fill': True
         })
 
+    # Add One-Time Events to Income Evolution chart
+    income_evo_datasets.append({
+        'label': str(_('One-Time Events')),
+        'data': one_time_yearly,
+        'backgroundColor': 'rgba(255, 165, 0, 0.85)',
+        'borderColor': '#ff8c00',
+        'borderWidth': 2,
+        'stack': 'events',
+        'tooltipData': one_time_tooltips,
+    })
+
+    # 3. Budget Pie (Current/Start month breakdown)
+    if forecast_data:
+        first_month = forecast_data[0]
+        budget_labels = list(first_month['category_breakdown'].keys())
+        budget_data = list(first_month['category_breakdown'].values())
+        budget_colors = [category_color_map.get(lbl, fallback_colors[i % len(fallback_colors)]) for i, lbl in enumerate(budget_labels)]
+    else:
+        budget_labels = []
+        budget_data = []
+        budget_colors = []
+
     # 5. Inflation Monitor (Real vs Nominal Gap + Lines)
     inflation_loss = []
     inflation_loss_percent = []
-    for d in forecast_data[::12]:
-        nom = float(d['nominal_net_worth'])
-        real = float(d['real_net_worth'])
+    for y in sorted_years:
+        bucket = yearly_buckets[y]
+        nom = float(bucket['nominal_net_worth'])
+        real = float(bucket['real_net_worth'])
         loss = nom - real
         inflation_loss.append(loss)
         if nom > 0:
@@ -225,48 +299,6 @@ def dashboard_view(request):
         'loss': inflation_loss,
         'loss_percent': inflation_loss_percent
     }
-
-    # 6. Income Evolution + One-Time Events (NEW)
-    income_categories = set()
-    for d in forecast_data[::12]:
-        income_categories.update(d['income_category_breakdown'].keys())
-    
-    income_evo_datasets = []
-    for idx, cat in enumerate(sorted(list(income_categories))):
-        cat_data = [float(d['income_category_breakdown'].get(cat, 0)) * 12 for d in forecast_data[::12]]
-        color = category_color_map.get(cat, fallback_colors[idx % len(fallback_colors)])
-        income_evo_datasets.append({
-            'label': cat,
-            'data': cat_data,
-            'backgroundColor': color,
-            'stack': 'income',
-        })
-    
-    # One-Time Events dataset — aggregate per year
-    one_time_yearly = []
-    one_time_tooltips = []
-    for d in forecast_data[::12]:
-        year = d['date'].year
-        # Collect all events for this year
-        year_events = []
-        year_total = 0.0
-        for md in forecast_data:
-            if md['date'].year == year and md['one_time_events']:
-                for evt in md['one_time_events']:
-                    year_events.append(evt)
-                    year_total += evt['value']
-        one_time_yearly.append(year_total)
-        one_time_tooltips.append(year_events)
-    
-    income_evo_datasets.append({
-        'label': str(_('One-Time Events')),
-        'data': one_time_yearly,
-        'backgroundColor': 'rgba(255, 165, 0, 0.85)',
-        'borderColor': '#ff8c00',
-        'borderWidth': 2,
-        'stack': 'events',
-        'tooltipData': one_time_tooltips,
-    })
 
     chart_datasets = {
         'net_worth_chart': {
@@ -296,21 +328,20 @@ def dashboard_view(request):
             'labels': budget_labels,
             'datasets': [{'data': budget_data, 'backgroundColor': budget_colors}]
         },
-    }
-
-    chart_datasets['inflation_monitor_chart'] = {
-        'labels': inflation_data['labels'],
-        'datasets': [
-            {'label': str(_('Nominal Value')), 'data': inflation_data['nominal'], 'borderColor': '#0d6efd', 'fill': False},
-            {'label': str(_('Real Value (Purchasing Power)')), 'data': inflation_data['real'], 'borderColor': '#198754', 'fill': False},
-            {
-                'label': str(_('Purchasing Power Loss')), 
-                'data': inflation_data['loss'], 
-                'backgroundColor': 'rgba(220, 53, 69, 0.5)', 
-                'type': 'bar',
-                'percentData': inflation_data['loss_percent']
-            }
-        ]
+        'inflation_monitor_chart': {
+            'labels': labels_yearly,
+            'datasets': [
+                {'label': str(_('Nominal Value')), 'data': net_worth_nominal, 'borderColor': '#0d6efd', 'fill': False},
+                {'label': str(_('Real Value (Purchasing Power)')), 'data': net_worth_real, 'borderColor': '#198754', 'fill': False},
+                {
+                    'label': str(_('Purchasing Power Loss')), 
+                    'data': inflation_loss, 
+                    'backgroundColor': 'rgba(220, 53, 69, 0.5)', 
+                    'type': 'bar',
+                    'percentData': inflation_loss_percent
+                }
+            ]
+        }
     }
 
     # Key Metrics for Summary Panels
