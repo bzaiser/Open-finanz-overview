@@ -95,16 +95,21 @@ class ExcelParserService:
             cache_key = f"import_progress_{self.user.id}"
             cache.set(cache_key, 0, 300) # Initial 0%
 
-            for i in range(0, total_items, 20):
-                chunk = transactions_for_ai[i:i+20]
-                results, error = classify_transactions(chunk, categories)
-                ai_results.update(results)
-                if error:
-                    error_logs.append(error)
-                
-                # Update progress in cache
-                progress = int((min(i + 20, total_items) / total_items) * 100)
-                cache.set(cache_key, progress, 300)
+            if total_items == 0:
+                # No transactions to analyze? Mark as done.
+                cache.set(cache_key, 100, 300)
+            else:
+                for i in range(0, total_items, 20):
+                    chunk = transactions_for_ai[i:i+20]
+                    results, error = classify_transactions(chunk, categories)
+                    if results:
+                        ai_results.update(results)
+                    if error:
+                        error_logs.append(error)
+                    
+                    # Update progress in cache
+                    progress = int((min(i + 20, total_items) / total_items) * 100)
+                    cache.set(cache_key, progress, 300)
 
             if error_logs:
                 batch.ai_log = "\n".join(set(error_logs))

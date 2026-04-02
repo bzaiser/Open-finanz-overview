@@ -43,13 +43,12 @@
 <script>
     // Listen for HTMX events to handle the final redirect
     document.body.addEventListener('htmx:afterOnLoad', function(evt) {
-        // If the progress reached 100%, the server will eventually redirect the next poll
-        // But we can also check the content here
-        if (evt.detail.xhr.responseText.includes('100%')) {
+        // If the progress reached 100% or Error (-1%)
+        if (evt.detail.xhr.responseText.includes('100%') || evt.detail.xhr.responseText.includes('-1%')) {
             // Give it a small delay then refresh to trigger the view's internal redirect
             setTimeout(function() {
                 window.location.reload();
-            }, 1500);
+            }, 1000);
         }
     });
 </script>

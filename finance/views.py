@@ -525,20 +525,25 @@ def _async_import_task(batch_id, file_path, filename):
     from django.db import connections
     from .models import ImportBatch
     from .import_services import ExcelParserService
+    import logging
     
+    logger = logging.getLogger(__name__)
+
     try:
         batch = ImportBatch.objects.get(id=batch_id)
         user = batch.user
         service = ExcelParserService(user, file_path, filename)
         service.parse_and_categorize(batch=batch)
     except Exception as e:
-        # Mark as error in cache
-        import logging
-        logger = logging.getLogger(__name__)
-        logger.error(f"Async import error: {str(e)}")
-        # We need the user id for the cache key
+        # Save the error to the batch log so we can see it
+        error_msg = f"Hintergrund-Fehler: {str(e)}"
+        logger.error(error_msg)
         try:
             batch = ImportBatch.objects.get(id=batch_id)
+            batch.ai_log = error_msg
+            batch.save()
+            
+            # Set error flag in cache
             cache_key = f"import_progress_{batch.user.id}"
             cache.set(cache_key, -1, 300)
         except:
