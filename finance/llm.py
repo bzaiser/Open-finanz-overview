@@ -19,53 +19,54 @@ def get_gemini_client():
 import time
 import random
 
-def simple_keyword_classify(description):
+def simple_keyword_classify(description, categories):
     """
-    Very fast, local keyword-based fallback for common German transactions.
+    Local keyword-based fallback that intelligently matches against
+    the user's existing category list.
     """
     desc = str(description).lower()
     
-    mapping = {
-        'miete': ('housing', 'Miete'),
-        'gehalt': ('income', 'Gehalt'),
-        'lohn': ('income', 'Lohn'),
-        'edeka': ('groceries', 'Einkauf Edeka'),
-        'rewe': ('groceries', 'Einkauf Rewe'),
-        'aldi': ('groceries', 'Einkauf Aldi'),
-        'lidl': ('groceries', 'Einkauf Lidl'),
-        'penny': ('groceries', 'Einkauf Penny'),
-        'netto': ('groceries', 'Einkauf Netto'),
-        'kaufland': ('groceries', 'Einkauf Kaufland'),
-        'amazon': ('shopping', 'Amazon Bestellung'),
-        'paypal': ('shopping', 'Paypal Zahlung'),
-        'netflix': ('entertainment', 'Netflix Abo'),
-        'spotify': ('entertainment', 'Spotify Abo'),
-        'disney': ('entertainment', 'Disney+ Abo'),
-        'apple': ('services', 'Apple Digital Service'),
-        'google': ('services', 'Google Service'),
-        'microsoft': ('services', 'Microsoft / Office'),
-        'versicherung': ('insurance', 'Versicherung'),
-        'krankenkasse': ('insurance', 'Krankenkasse'),
-        'telekom': ('telecom', 'Telekom Rechnung'),
-        'vodafone': ('telecom', 'Vodafone Rechnung'),
-        'telefonica': ('telecom', 'O2 / Telefonica'),
-        'tankstelle': ('transport', 'Tanken'),
-        'aral': ('transport', 'Tanken Aral'),
-        'shell': ('transport', 'Tanken Shell'),
-        'total': ('transport', 'Tanken Total'),
-        'jet ': ('transport', 'Tanken Jet'),
-        'db vertrieb': ('transport', 'Deutsche Bahn'),
-        'db bahn': ('transport', 'Deutsche Bahn'),
+    # Map keywords to intended category-related search terms
+    keyword_map = {
+        'miete': ['miete', 'wohnen', 'housing'],
+        'gehalt': ['einkommen', 'gehalt', 'lohn', 'income'],
+        'lohn': ['einkommen', 'gehalt', 'lohn', 'income'],
+        'edeka': ['lebensmittel', 'groceries', 'einkauf'],
+        'rewe': ['lebensmittel', 'groceries', 'einkauf'],
+        'aldi': ['lebensmittel', 'groceries', 'einkauf'],
+        'lidl': ['lebensmittel', 'groceries', 'einkauf'],
+        'penny': ['lebensmittel', 'groceries', 'einkauf'],
+        'netto': ['lebensmittel', 'groceries', 'einkauf'],
+        'amazon': ['shopping', 'einkauf'],
+        'paypal': ['shopping', 'einkauf'],
+        'netflix': ['freizeit', 'entertainment', 'abo'],
+        'spotify': ['freizeit', 'entertainment', 'abo'],
+        'apple': ['services', 'it', 'software'],
+        'google': ['services', 'it', 'software'],
+        'versicherung': ['versicherung', 'insurance'],
+        'tankstelle': ['verkehr', 'tanken', 'transport', 'auto'],
+        'aral': ['verkehr', 'tanken', 'transport', 'auto'],
+        'shell': ['verkehr', 'tanken', 'transport', 'auto'],
+        'db bahn': ['verkehr', 'bahn', 'transport'],
     }
-    
-    for key, (slug, reason) in mapping.items():
+
+    # Helper to find a matching category slug from user's list
+    def find_best_slug(search_terms):
+        for term in search_terms:
+            for cat in categories:
+                if term in cat['slug'].lower() or term in cat['name'].lower():
+                    return cat['slug']
+        return "uncategorized"
+
+    for key, search_terms in keyword_map.items():
         if key in desc:
+            matching_slug = find_best_slug(search_terms)
             return {
-                "category_slug": slug,
+                "category_slug": matching_slug,
                 "is_income": 'gehalt' in desc or 'lohn' in desc,
                 "is_recurring": True,
                 "frequency": "monthly",
-                "reasoning": f"Lokale Erkennung: {reason}"
+                "reasoning": f"Lokale intelligente Erkennung für: {key.capitalize()}"
             }
     return None
 
@@ -135,7 +136,7 @@ def classify_transactions(transactions, categories):
     
     # 1. Local Keyword Pre-Check (Saves API costs & prevents Rate Limits)
     for t in transactions:
-        local_match = simple_keyword_classify(t['description'])
+        local_match = simple_keyword_classify(t['description'], categories)
         if local_match:
             final_results[str(t['id'])] = local_match
         else:
