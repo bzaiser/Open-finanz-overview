@@ -121,8 +121,9 @@ class ExcelParserService:
             count = len(group_df)
             avg_amount = group_df['amount'].mean()
             latest_date = group_df['date'].max().date()
-            # Use the most frequent original description as display name
-            display_desc = group_df['description'].mode().iloc[0]
+            # Use the most frequent original description as display name, fallback to key
+            modes = group_df['description'].mode()
+            display_desc = modes.iloc[0] if not modes.empty else key
             # Recurring if it appears more than once
             is_recurring = count >= 2
 

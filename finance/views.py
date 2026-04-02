@@ -538,7 +538,10 @@ def upload_bank_transactions(request):
     else:
         form = BankImportForm()
     
-    return render(request, 'finance/import_upload.html', {'form': form})
+    return render(request, 'finance/import_upload.html', {
+        'form': form,
+        'ai_active': bool(settings.GEMINI_API_KEY)
+    })
 
 @login_required
 def review_bank_transactions(request, batch_id):
@@ -549,7 +552,8 @@ def review_bank_transactions(request, batch_id):
     return render(request, 'finance/import_review.html', {
         'batch': batch,
         'transactions': transactions,
-        'categories': categories
+        'categories': categories,
+        'ai_active': bool(settings.GEMINI_API_KEY)
     })
 
 @login_required
