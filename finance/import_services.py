@@ -174,32 +174,33 @@ class ExcelParserService:
                     "is_likely_recurring": group['is_recurring'],
                 })
 
-            # AI Categorization in chunks of 20
-            ai_results = {}
-            error_logs = []
-            total_items = len(transactions_for_ai)
-            cache_key = f"import_progress_{self.user.id}"
-            cache.set(cache_key, 0, 300) # Initial 0%
-
-            if total_items == 0:
-                cache.set(cache_key, 100, 300)
-            else:
-                for i in range(0, total_items, 20):
-                    self._log(batch, f"KI analysiert Chunk {i//20 + 1}...")
-                    chunk = transactions_for_ai[i:i+20]
-                    results, error = classify_transactions(chunk, categories)
-                    if results:
-                        ai_results.update(results)
-                    if error:
-                        error_logs.append(error)
-                    
-                    # Update progress in cache
-                    progress = int((min(i + 20, total_items) / total_items) * 100)
-                    cache.set(cache_key, progress, 300)
-                    
-                    # Throttling: Small sleep to avoid AI Rate Limits
-                    import time
-                    time.sleep(0.5)
+                # AI Categorization in chunks of 50 (Faster for large files)
+                chunk_size = 50
+                ai_results = {}
+                error_logs = []
+                total_items = len(transactions_for_ai)
+                cache_key = f"import_progress_{self.user.id}"
+                cache.set(cache_key, 0, 300) # Initial 0%
+    
+                if total_items == 0:
+                    cache.set(cache_key, 100, 300)
+                else:
+                    for i in range(0, total_items, chunk_size):
+                        self._log(batch, f"KI analysiert Chunk {i//chunk_size + 1}...")
+                        chunk = transactions_for_ai[i:i+chunk_size]
+                        results, error = classify_transactions(chunk, categories)
+                        if results:
+                            ai_results.update(results)
+                        if error:
+                            error_logs.append(error)
+                        
+                        # Update progress in cache
+                        progress = int((min(i + chunk_size, total_items) / total_items) * 100)
+                        cache.set(cache_key, progress, 300)
+                        
+                        # Throttling: Small sleep to avoid AI Rate Limits (reduced for speed)
+                        import time
+                        time.sleep(0.2)
 
             if error_logs:
                 self._log(batch, f"KI Fehler: {error_logs[0]}")
