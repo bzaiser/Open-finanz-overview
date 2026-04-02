@@ -92,6 +92,7 @@ class ImportBatch(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     filename = models.CharField(max_length=255)
     is_applied = models.BooleanField(default=False)
+    ai_log = models.TextField(_("AI Log / Errors"), blank=True, null=True)
 
     class Meta:
         verbose_name = _("Import Batch")

@@ -21,10 +21,10 @@ def classify_transactions(transactions, categories):
     categories: list of dicts {name, slug}
     returns: dict mapping transaction id to {category_slug, is_income, is_recurring, frequency}
     """
-    client = get_gemini_client()
     if not client:
         # Fallback to a very basic rule-based classification if no API key
         results = {}
+        error_msg = "Gemini API Key fehlt oder ist nicht konfiguriert."
         for t in transactions:
             is_income = t['amount'] > 0
             results[str(t['id'])] = {
@@ -34,7 +34,7 @@ def classify_transactions(transactions, categories):
                 "frequency": "monthly",
                 "reasoning": "Regel-basierter Fallback (kein KI-Key)"
             }
-        return results
+        return results, error_msg
 
     category_list = ", ".join([f"{c['name']} (slug: {c['slug']})" for c in categories])
     
@@ -82,10 +82,11 @@ def classify_transactions(transactions, categories):
             
         data = json.loads(text)
         # Ensure IDs are strings for reliable mapping
-        return {str(item['id']): item for item in data}
+        return {str(item['id']): item for item in data}, None
     except Exception as e:
-        logger.error(f"Gemini classification failed: {e}")
-        return {}
+        error_msg = f"Gemini Fehler: {str(e)}"
+        logger.error(error_msg)
+        return {}, error_msg
 
 def get_pension_forecast():
     client = get_gemini_client()

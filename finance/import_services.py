@@ -73,10 +73,17 @@ class ExcelParserService:
 
             # AI Categorization in chunks of 20
             ai_results = {}
+            error_logs = []
             for i in range(0, len(transactions_for_ai), 20):
                 chunk = transactions_for_ai[i:i+20]
-                results = classify_transactions(chunk, categories)
+                results, error = classify_transactions(chunk, categories)
                 ai_results.update(results)
+                if error:
+                    error_logs.append(error)
+
+            if error_logs:
+                batch.ai_log = "\n".join(set(error_logs))
+                batch.save()
 
             # 5. Save one PendingTransaction per group
             pending_list = []
