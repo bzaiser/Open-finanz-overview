@@ -84,7 +84,8 @@ class ExcelParserService:
                 # Lookup AI result by string-cast index to ensure a match
                 res = ai_results.get(str(idx), {})
                 cat_slug = res.get('category_slug', 'uncategorized')
-                category = Category.objects.filter(slug=cat_slug).first()
+                # Use iexact for case-insensitive matching
+                category = Category.objects.filter(slug__iexact=cat_slug).first()
 
                 pending = PendingTransaction(
                     batch=batch,

@@ -27,11 +27,12 @@ def classify_transactions(transactions, categories):
         results = {}
         for t in transactions:
             is_income = t['amount'] > 0
-            results[t['id']] = {
+            results[str(t['id'])] = {
                 "category_slug": "uncategorized",
                 "is_income": is_income,
                 "is_recurring": False,
-                "frequency": "monthly"
+                "frequency": "monthly",
+                "reasoning": "Regel-basierter Fallback (kein KI-Key)"
             }
         return results
 
