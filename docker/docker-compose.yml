@@ -11,6 +11,7 @@ services:
     volumes:
       - ../data:/app/data
       - ../:/app
+      - static_volume:/app/staticfiles
     env_file:
       - ../.env
     environment:
@@ -18,3 +19,6 @@ services:
       - "SECRET_KEY=change_this_to_a_secure_long_random_string_in_production!"
       - "ALLOWED_HOSTS=*"
       - "RUNNING_IN_DOCKER=1"
+
+volumes:
+  static_volume:

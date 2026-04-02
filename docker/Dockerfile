@@ -11,8 +11,8 @@ RUN addgroup --system app && adduser --system --group app
 # Set work directory
 WORKDIR /app
 
-# Ensure the persistent data directory exists
-RUN mkdir -p /app/data && chown -R app:app /app
+# Ensure the persistent data and static directories exist
+RUN mkdir -p /app/data /app/staticfiles && chown -R app:app /app
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
