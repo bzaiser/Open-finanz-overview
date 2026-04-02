@@ -16,9 +16,62 @@ def get_gemini_client():
         logger.error(f"Error configuring Gemini: {e}")
         return None
 
+import time
+import random
+
+def simple_keyword_classify(description):
+    """
+    Very fast, local keyword-based fallback for common German transactions.
+    """
+    desc = str(description).lower()
+    
+    mapping = {
+        'miete': ('housing', 'Miete'),
+        'gehalt': ('income', 'Gehalt'),
+        'lohn': ('income', 'Lohn'),
+        'edeka': ('groceries', 'Einkauf Edeka'),
+        'rewe': ('groceries', 'Einkauf Rewe'),
+        'aldi': ('groceries', 'Einkauf Aldi'),
+        'lidl': ('groceries', 'Einkauf Lidl'),
+        'penny': ('groceries', 'Einkauf Penny'),
+        'netto': ('groceries', 'Einkauf Netto'),
+        'kaufland': ('groceries', 'Einkauf Kaufland'),
+        'amazon': ('shopping', 'Amazon Bestellung'),
+        'paypal': ('shopping', 'Paypal Zahlung'),
+        'netflix': ('entertainment', 'Netflix Abo'),
+        'spotify': ('entertainment', 'Spotify Abo'),
+        'disney': ('entertainment', 'Disney+ Abo'),
+        'apple': ('services', 'Apple Digital Service'),
+        'google': ('services', 'Google Service'),
+        'microsoft': ('services', 'Microsoft / Office'),
+        'versicherung': ('insurance', 'Versicherung'),
+        'krankenkasse': ('insurance', 'Krankenkasse'),
+        'telekom': ('telecom', 'Telekom Rechnung'),
+        'vodafone': ('telecom', 'Vodafone Rechnung'),
+        'telefonica': ('telecom', 'O2 / Telefonica'),
+        'tankstelle': ('transport', 'Tanken'),
+        'aral': ('transport', 'Tanken Aral'),
+        'shell': ('transport', 'Tanken Shell'),
+        'total': ('transport', 'Tanken Total'),
+        'jet ': ('transport', 'Tanken Jet'),
+        'db vertrieb': ('transport', 'Deutsche Bahn'),
+        'db bahn': ('transport', 'Deutsche Bahn'),
+    }
+    
+    for key, (slug, reason) in mapping.items():
+        if key in desc:
+            return {
+                "category_slug": slug,
+                "is_income": 'gehalt' in desc or 'lohn' in desc,
+                "is_recurring": True,
+                "frequency": "monthly",
+                "reasoning": f"Lokale Erkennung: {reason}"
+            }
+    return None
+
 def classify_with_groq(transactions, categories):
     """
-    Experimental fallback using the Groq API (fast, free, OpenAI-compatible).
+    Experimental fallback using the Groq API with Retry Logic.
     Model: llama-3.3-70b-versatile
     """
     if not hasattr(settings, 'GROQ_API_KEY') or not settings.GROQ_API_KEY:
@@ -32,99 +85,103 @@ def classify_with_groq(transactions, categories):
         "Content-Type": "application/json"
     }
     
-    prompt = f"""
-    Du bist ein Finanzassistent. Analysiere die folgenden Banktransaktionen und ordne sie Kategorien zu.
-    Verfügbare Kategorien: {category_list}.
-    
-    Du MUSST als valide JSON-Liste antworten:
-    [
-      {{
-        "id": "original_id",
-        "category_slug": "slug",
-        "is_income": false,
-        "is_recurring": true,
-        "frequency": "monthly",
-        "reasoning": "Kurze Begründung"
-      }}
-    ]
-
-    Transaktionen:
-    {json.dumps(transactions, indent=2)}
-    """
-    
     payload = {
         "model": "llama-3.3-70b-versatile",
         "messages": [
             {"role": "system", "content": "Du bist ein präziser Finanz-Experte, der nur JSON antwortet."},
-            {"role": "user", "content": prompt}
+            {"role": "user", "content": f"Kategorisiere diese Transaktionen (Kategorien: {category_list}): {json.dumps(transactions)}"}
         ],
         "temperature": 0.1,
         "response_format": {"type": "json_object"}
     }
     
-    try:
-        response = requests.post(url, headers=headers, json=payload, timeout=30)
-        response.raise_for_status()
-        data = response.json()
-        text = data['choices'][0]['message']['content']
-        
-        # Parse JSON from content
-        result_data = json.loads(text)
-        # Groq might return a wrapper object {"transactions": [...]} or just the list
-        if isinstance(result_data, dict):
-            # Try to find the list inside
-            for key, val in result_data.items():
-                if isinstance(val, list):
-                    result_data = val
-                    break
-        
-        return {str(item['id']): item for item in result_data}, None
-    except Exception as e:
-        return None, f"Groq Fehler: {str(e)}"
+    # Retry Loop (3 attempts)
+    for attempt in range(3):
+        try:
+            response = requests.post(url, headers=headers, json=payload, timeout=20)
+            if response.status_code == 429: # Rate Limit
+                wait_time = (attempt + 1) * 2
+                logger.warning(f"Groq Rate Limit (429). Warte {wait_time}s...")
+                time.sleep(wait_time)
+                continue
+                
+            response.raise_for_status()
+            data = response.json()
+            text = data['choices'][0]['message']['content']
+            result_data = json.loads(text)
+            
+            if isinstance(result_data, dict):
+                for key, val in result_data.items():
+                    if isinstance(val, list):
+                        result_data = val
+                        break
+            
+            return {str(item['id']): item for item in result_data}, None
+        except Exception as e:
+            if attempt == 2:
+                return None, f"Groq Fehler nach 3 Versuchen: {str(e)}"
+            time.sleep(1)
+            
+    return None, "Groq fehlgeschlagen."
 
 
 def classify_transactions(transactions, categories):
     """
     Main entry point for transaction classification.
-    Favors Groq if GROQ_API_KEY is present (more reliable for 404 avoidance).
-    Falls back to Gemini.
+    Hybrid approach: Keyword Fallback -> Groq -> Gemini.
     """
-    # 1. Try Groq if available
-    if hasattr(settings, 'GROQ_API_KEY') and settings.GROQ_API_KEY:
-        results, error = classify_with_groq(transactions, categories)
-        if results:
-            return results, "KI aktiv via Groq (Llama-3)."
-        logger.warning(f"Groq failed, trying Gemini: {error}")
+    final_results = {}
+    remaining_transactions = []
+    
+    # 1. Local Keyword Pre-Check (Saves API costs & prevents Rate Limits)
+    for t in transactions:
+        local_match = simple_keyword_classify(t['description'])
+        if local_match:
+            final_results[str(t['id'])] = local_match
+        else:
+            remaining_transactions.append(t)
+            
+    if not remaining_transactions:
+        return final_results, "KI-Status: 100% lokal erkannt."
 
-    # 2. Try Gemini
+    # 2. Try Groq for the rest
+    if hasattr(settings, 'GROQ_API_KEY') and settings.GROQ_API_KEY:
+        results, error = classify_with_groq(remaining_transactions, categories)
+        if results:
+            final_results.update(results)
+            return final_results, "KI aktiv via Groq (Llama-3)."
+    
+    # 3. Try Gemini for the rest
     model = get_gemini_client()
     if model:
         try:
             category_list = ", ".join([f"{c['name']} (slug: {c['slug']})" for c in categories])
-            prompt = f"Analysiere diese Transaktionen: {json.dumps(transactions)}. Kategorien: {category_list}. Regelsatz: JSON format like [{{'id': '...', 'category_slug': '...', 'reasoning': '...'}}]"
+            prompt = f"Kategorisiere bitte diese Bankbuchungen als JSON (Kategorien: {category_list}): {json.dumps(remaining_transactions)}"
+            # Tiny sleep to avoid Gemini rate limits too
+            time.sleep(1)
             response = model.generate_content(prompt)
             text = response.text.strip()
             if "```json" in text:
                 text = text.split("```json")[1].split("```")[0].strip()
-            elif "```" in text:
-                text = text.split("```")[1].split("```")[0].strip()
             data = json.loads(text)
-            return {str(item['id']): item for item in data}, "KI aktiv via Gemini (Google)."
+            ai_data = {str(item['id']): item for item in data}
+            final_results.update(ai_data)
+            return final_results, "KI aktiv via Gemini (Google)."
         except Exception as e:
-            logger.error(f"Gemini fallback failed: {e}")
+            logger.error(f"Gemini failed: {e}")
     
-    # 3. Rule-based Fallback
-    results = {}
-    for t in transactions:
-        is_income = t['amount'] > 0
-        results[str(t['id'])] = {
-            "category_slug": "uncategorized",
-            "is_income": is_income,
-            "is_recurring": False,
-            "frequency": "monthly",
-            "reasoning": "Regel-basierter Fallback (alle KIs fehlgeschlagen)"
-        }
-    return results, "Alle KI-Modelle fehlgeschlagen or No Keys found."
+    # 4. Final Rule-based Fallback for anything left
+    for t in remaining_transactions:
+        if str(t['id']) not in final_results:
+            final_results[str(t['id'])] = {
+                "category_slug": "uncategorized",
+                "is_income": t['amount'] > 0,
+                "is_recurring": False,
+                "frequency": "monthly",
+                "reasoning": "Standard-Zuweisung (KI Limit überschritten)"
+            }
+            
+    return final_results, "Limit erreicht (Hybrid Modus)."
 
 def get_pension_forecast():
     # Use Gemini for general knowledge (better than small Llama sometimes)

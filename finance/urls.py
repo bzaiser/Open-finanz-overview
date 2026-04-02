@@ -10,4 +10,5 @@ urlpatterns = [
     path('import/progress/', views.get_import_progress, name='import_progress'),
     path('import/processing/', views.import_processing, name='import_processing'),
     path('import/delete-all/', views.delete_all_temporary_data, name='delete_all_temporary_data'),
+    path('ai-status/', views.ai_status, name='ai_status'),
 ]

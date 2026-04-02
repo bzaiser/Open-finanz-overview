@@ -18,6 +18,30 @@ from django.core.files.storage import default_storage
 import json
 import os
 import datetime
+import requests
+
+@login_required
+def ai_status(request):
+    """Hidden diagnostic view to check AI key status."""
+    groq_ok = bool(getattr(settings, 'GROQ_API_KEY', None))
+    gemini_ok = bool(getattr(settings, 'GEMINI_API_KEY', None))
+    
+    groq_ping = "N/A"
+    if groq_ok:
+        try:
+            r = requests.get("https://api.groq.com/openai/v1/models", 
+                             headers={"Authorization": f"Bearer {settings.GROQ_API_KEY}"},
+                             timeout=5)
+            groq_ping = "Online" if r.status_code == 200 else f"Error {r.status_code}"
+        except:
+            groq_ping = "Offline"
+
+    return render(request, 'finance/ai_status.html', {
+        'groq_ok': groq_ok,
+        'gemini_ok': gemini_ok,
+        'groq_ping': groq_ping,
+        'debug_mode': settings.DEBUG
+    })
 import threading
 import time
 from django.core.cache import cache

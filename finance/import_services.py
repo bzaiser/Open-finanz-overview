@@ -196,6 +196,10 @@ class ExcelParserService:
                     # Update progress in cache
                     progress = int((min(i + 20, total_items) / total_items) * 100)
                     cache.set(cache_key, progress, 300)
+                    
+                    # Throttling: Small sleep to avoid AI Rate Limits
+                    import time
+                    time.sleep(0.5)
 
             if error_logs:
                 self._log(batch, f"KI Fehler: {error_logs[0]}")
