@@ -92,19 +92,31 @@ div.breadcrumbs a {
     letter-spacing: 0.5px !important;
 }
 
-#nav-sidebar th a,
-#nav-sidebar td a {
-    color: var(--admin-sidebar-text) !important;
+#nav-sidebar a:link,
+#nav-sidebar a:visited {
+    color: rgba(255, 255, 255, 0.85) !important;
     transition: all 0.2s ease !important;
     border-radius: 6px;
     padding: 4px 8px;
     display: block;
+    text-decoration: none !important;
 }
 
-#nav-sidebar a:hover {
+#nav-sidebar th a,
+#nav-sidebar td a {
+    color: rgba(255, 255, 255, 0.85) !important;
+}
+
+#nav-sidebar a:hover,
+#nav-sidebar a:focus {
     background: var(--admin-sidebar-hover) !important;
     color: #fff !important;
     text-decoration: none !important;
+}
+
+#nav-sidebar .selected a {
+    color: #fff !important;
+    font-weight: 600 !important;
 }
 
 /* --- MODULE HEADERS (Gruppen-Überschriften) --- */
@@ -321,8 +333,20 @@ body {
     background: #f0f2f5 !important;
 }
 
-a:link, a:visited {
+/* Nur außerhalb der dunklen Sidebar globale Linkfarbe setzen */
+#content a:link,
+#content a:visited,
+div.breadcrumbs a:link,
+div.breadcrumbs a:visited,
+#changelist-filter a:link,
+#changelist-filter a:visited {
     color: var(--admin-primary) !important;
+}
+
+/* Innerhalb der Sidebar immer hell */
+#nav-sidebar a:link,
+#nav-sidebar a:visited {
+    color: rgba(255, 255, 255, 0.85) !important;
 }
 
 #footer {
