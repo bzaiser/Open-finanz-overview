@@ -1,18 +1,17 @@
-import google.generativeai as genai
+from google import genai
 from django.conf import settings
 import json
 import logging
 
 logger = logging.getLogger(__name__)
 
-def get_gemini_model():
+def get_gemini_client():
     if not settings.GEMINI_API_KEY:
         return None
     try:
-        genai.configure(api_key=settings.GEMINI_API_KEY)
-        return genai.GenerativeModel('gemini-1.5-flash')
+        return genai.Client(api_key=settings.GEMINI_API_KEY)
     except Exception as e:
-        logger.error(f"Error configuring Gemini: {e}")
+        logger.error(f"Error configuring Gemini Client: {e}")
         return None
 
 def classify_transactions(transactions, categories):
@@ -22,8 +21,8 @@ def classify_transactions(transactions, categories):
     categories: list of dicts {name, slug}
     returns: dict mapping transaction id to {category_slug, is_income, is_recurring, frequency}
     """
-    model = get_gemini_model()
-    if not model:
+    client = get_gemini_client()
+    if not client:
         # Fallback to a very basic rule-based classification if no API key
         results = {}
         for t in transactions:
@@ -64,7 +63,10 @@ def classify_transactions(transactions, categories):
     """
     
     try:
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(
+            model='gemini-1.5-flash',
+            contents=prompt
+        )
         # Handle potential markdown formatting in response
         text = response.text.strip()
         if text.startswith("```json"):
@@ -79,8 +81,8 @@ def classify_transactions(transactions, categories):
         return {}
 
 def get_pension_forecast():
-    model = get_gemini_model()
-    if not model:
+    client = get_gemini_client()
+    if not client:
         return {
             "text": "Laut aktuellen Prognosen wird für 2026 eine Rentenanpassung von ca. 3,5% erwartet.",
             "value": 3.5,
@@ -89,7 +91,10 @@ def get_pension_forecast():
     
     try:
         prompt = "Nenne mir die aktuelle Prognose für die Rentenanpassung 2026 laut dem jüngsten Rentenversicherungsbericht des BMAS. Antworte kurz und gib nur die Prozentzahl am Ende an."
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(
+            model='gemini-1.5-flash',
+            contents=prompt
+        )
         text = response.text.strip()
         # Simple extraction logic or just return text
         return {"text": text, "value": 3.5, "source": "Gemini AI"}
@@ -97,8 +102,8 @@ def get_pension_forecast():
         return {"text": "Fehler bei KI-Abfrage", "value": 0, "source": "Error"}
 
 def get_inflation_forecast():
-    model = get_gemini_model()
-    if not model:
+    client = get_gemini_client()
+    if not client:
         return {
             "text": "Die Inflationsrate für das aktuelle Jahr wird auf etwa 2,2% geschätzt.",
             "value": 2.2,
@@ -106,7 +111,10 @@ def get_inflation_forecast():
         }
     try:
         prompt = "Wie hoch schätzt das Statistische Bundesamt die Inflationsrate für das aktuelle Jahr? Antworte kurz."
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(
+            model='gemini-1.5-flash',
+            contents=prompt
+        )
         return {"text": response.text.strip(), "value": 2.2, "source": "Gemini AI"}
     except:
         return {"text": "Fehler bei KI-Abfrage", "value": 0, "source": "Error"}
