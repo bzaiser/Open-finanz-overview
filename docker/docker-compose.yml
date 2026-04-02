@@ -10,8 +10,11 @@ services:
       - "8000:8000"  # Exposes the server to port 8000. Change left side (e.g. "80:8000") to expose on default web port
     volumes:
       - ../data:/app/data
+      - ../:/app
+    env_file:
+      - ../.env
     environment:
       - DEBUG=False
       - SECRET_KEY=change_this_to_a_secure_long_random_string_in_production!
-      - ALLOWED_HOSTS=*  # Change this to your actual domain name like 'finanz.meinedomain.de'
+      - ALLOWED_HOSTS=*
       - RUNNING_IN_DOCKER=1
