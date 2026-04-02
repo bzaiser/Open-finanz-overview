@@ -94,13 +94,22 @@ class ExcelParserService:
             log_messages.append(f"Spalten erfolgreich zugeordnet (Index: {final_mapping})")
 
             # Clean data - convert date and handle German number formats
-            df['date'] = pd.to_datetime(df['date'], errors='coerce')
+            # Use dayfirst=True for German date formats (DD.MM.YYYY)
+            df['date'] = pd.to_datetime(df['date'], dayfirst=True, errors='coerce')
             
             def clean_amount(val):
-                if pd.isna(val): return None
-                if isinstance(val, (int, float, Decimal)): return Decimal(str(val))
-                # Handle string format (e.g. "1.234,56")
-                s = str(val).replace('.', '').replace(',', '.')
+                if pd.isna(val) or val == '': return None
+                if isinstance(val, (int, float, Decimal)): return Decimal(str(round(float(val), 2)))
+                
+                # Robust cleaning: remove currency symbols and everything except digits, minus, dot and comma
+                s = str(val).strip()
+                s = re.sub(r'[^\d,.€$\-]', '', s) # Keep only digits, dot, comma, minus and currency signs
+                s = s.replace('€', '').replace('$', '').strip()
+                
+                # Handle German format "1.234,56" or "1234,56"
+                if ',' in s and ('.' not in s or s.find('.') < s.find(',')):
+                    s = s.replace('.', '').replace(',', '.')
+                
                 try:
                     return Decimal(s)
                 except:
@@ -111,7 +120,7 @@ class ExcelParserService:
             # Drop rows where we couldn't parse date or amount
             initial_count = len(df)
             df = df.dropna(subset=['date', 'amount'])
-            log_messages.append(f"Gültige Buchungen: {len(df)} (von {initial_count}).")
+            log_messages.append(f"Gültige Buchungen nach Bereinigung: {len(df)} Zeilen (von {initial_count}).")
 
             # 2. Smart Grouping
             groups = self._group_transactions(df)
