@@ -1,5 +1,5 @@
 {% load i18n static %}
-<html lang="{{ request.LANGUAGE_CODE }}" data-bs-theme="light">
+<html lang="{{ request.LANGUAGE_CODE }}" data-bs-theme="{% if user.is_authenticated and user.profile.theme and user.profile.theme.background_color == '#212529' or user.profile.theme.background_color == '#1a1a2e' or user.profile.theme.background_color == '#0d1117' or user.profile.theme.background_color == '#1e1e2e' %}dark{% else %}light{% endif %}">
 
 <head>
     <meta charset="UTF-8">
@@ -32,8 +32,8 @@
         }
 
         .modal-content {
-            background-color: #ffffff !important;
-            color: #212529 !important;
+            background-color: var(--bs-modal-bg, var(--bs-body-bg, #ffffff));
+            color: var(--bs-modal-color, var(--bs-body-color, #212529));
             opacity: 1 !important;
         }
 
@@ -91,7 +91,7 @@
                                 height="30" width="30">{% else %}<i class="bi bi-person-circle"></i>{% endif %}
                             {{ user.username }}
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end bg-white" style="z-index: 1050;">
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0" style="z-index: 1050;">
                             <li><a class="dropdown-item" href="{% url 'profile' %}">{% trans 'Profile' %}</a></li>
                             <li><a class="dropdown-item" href="{% url 'admin:index' %}">{% trans 'Admin' %}</a></li>
 
