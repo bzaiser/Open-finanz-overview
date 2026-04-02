@@ -51,33 +51,43 @@ class ExcelParserService:
         try:
             # 1. Read Excel
             df = pd.read_excel(self.file_path)
-            log_messages = [f"Datei eingelesen: {len(df)} Zeilen gefunden."]
+            log_messages = [
+                f"### START ANALYSE: {self.filename} ###",
+                f"Datei eingelesen: {len(df)} Zeilen Rohdaten gefunden.",
+                f"Rohspalten in Datei: {list(df.columns)}"
+            ]
+            if not df.empty:
+                log_messages.append(f"Erste Zeile Rohdaten: {df.iloc[0].to_dict()}")
 
             # Find the best header row (deep scan)
             col_map, header_row = self._detect_columns(df)
             
             # Re-align DataFrame if header was not in row 0
             if header_row > 0:
+                log_messages.append(f"Kopfzeile in Zeile {header_row} gefunden. Richte Daten neu aus...")
                 header_row_values = df.iloc[header_row-1]
                 df.columns = header_row_values
                 df = df.iloc[header_row:]
             
             # 2. Identify and rename columns robustly
             final_mapping = {}
-            row_to_check = [str(c).lower() for c in df.columns]
+            row_to_check = [str(c).lower().strip() for c in df.columns]
+            log_messages.append(f"Suche Spalten in: {row_to_check}")
             
-            # Simple keyword search on current column names
             for i, col_name in enumerate(row_to_check):
                 if not final_mapping.get('date') and any(k in col_name for k in ['datum', 'date', 'buchungstag', 'valuta', 'wertstellung', 'tag']):
                     final_mapping['date'] = i
+                    log_messages.append(f"-> 'Datum' in Spalte {i} ('{df.columns[i]}') erkannt.")
                 elif not final_mapping.get('desc') and any(k in col_name for k in ['zweck', 'beschreibung', 'text', 'info', 'verwendungszweck', 'empfänger', 'name']):
                     final_mapping['desc'] = i
+                    log_messages.append(f"-> 'Beschreibung' in Spalte {i} ('{df.columns[i]}') erkannt.")
                 elif not final_mapping.get('amount') and any(k in col_name for k in ['betrag', 'amount', 'wert', 'summe', 'umsatz', 'soll', 'haben', 'eur', 'euro']):
                     final_mapping['amount'] = i
+                    log_messages.append(f"-> 'Betrag' in Spalte {i} ('{df.columns[i]}') erkannt.")
 
             if 'date' not in final_mapping or 'amount' not in final_mapping:
                 available = [str(c) for c in df.columns]
-                raise ValueError(f"Konnte Spalten für Datum und Betrag nicht identifizieren. Gefunden: {available}")
+                raise ValueError(f"FEHLER: 'Datum' oder 'Betrag' Spalte fehlt! Gefunden: {available}")
 
             # Direct renaming by index
             new_cols = list(df.columns)
@@ -91,25 +101,18 @@ class ExcelParserService:
             if 'description' not in df.columns:
                 df['description'] = "Kein Verwendungszweck"
 
-            log_messages.append(f"Spalten erfolgreich zugeordnet (Index: {final_mapping})")
-
             # Clean data - convert date and handle German number formats
-            # Use dayfirst=True for German date formats (DD.MM.YYYY)
+            log_messages.append("Starte Daten-Bereinigung (Formate prüfen)...")
             df['date'] = pd.to_datetime(df['date'], dayfirst=True, errors='coerce')
             
             def clean_amount(val):
                 if pd.isna(val) or val == '': return None
                 if isinstance(val, (int, float, Decimal)): return Decimal(str(round(float(val), 2)))
-                
-                # Robust cleaning: remove currency symbols and everything except digits, minus, dot and comma
                 s = str(val).strip()
-                s = re.sub(r'[^\d,.€$\-]', '', s) # Keep only digits, dot, comma, minus and currency signs
+                s = re.sub(r'[^\d,.€$\-]', '', s)
                 s = s.replace('€', '').replace('$', '').strip()
-                
-                # Handle German format "1.234,56" or "1234,56"
                 if ',' in s and ('.' not in s or s.find('.') < s.find(',')):
                     s = s.replace('.', '').replace(',', '.')
-                
                 try:
                     return Decimal(s)
                 except:
@@ -117,14 +120,23 @@ class ExcelParserService:
 
             df['amount'] = df['amount'].apply(clean_amount)
             
+            # Logging failures
+            invalid_dates = df['date'].isna().sum()
+            invalid_amounts = df['amount'].isna().sum()
+            if invalid_dates > 0: log_messages.append(f"WARNUNG: {invalid_dates} Zeilen haben ein ungültiges Datum.")
+            if invalid_amounts > 0: log_messages.append(f"WARNUNG: {invalid_amounts} Zeilen haben einen ungültigen Betrag.")
+
             # Drop rows where we couldn't parse date or amount
             initial_count = len(df)
             df = df.dropna(subset=['date', 'amount'])
-            log_messages.append(f"Gültige Buchungen nach Bereinigung: {len(df)} Zeilen (von {initial_count}).")
+            log_messages.append(f"Bereinigung fertig: {len(df)} von {initial_count} Zeilen sind gültig.")
 
-            # 2. Smart Grouping
+            if df.empty:
+                log_messages.append("KRITISCH: Liste ist leer! Prüfe Datums- und Zahlenformate.")
+
+            # 3. Smart Grouping
             groups = self._group_transactions(df)
-            log_messages.append(f"Transaktionen nach Gruppierung: {len(groups)} Zeilen.")
+            log_messages.append(f"Gruppierung fertig: {len(groups)} Buchungen zusammengefasst.")
 
             # 3. Create or use ImportBatch
             if not batch:
