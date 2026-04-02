@@ -5,6 +5,7 @@ from decimal import Decimal
 from django.utils import timezone
 from .models import Category, ImportBatch, PendingTransaction
 from .llm import classify_transactions
+from django.core.cache import cache
 import logging
 
 logger = logging.getLogger(__name__)
@@ -89,16 +90,27 @@ class ExcelParserService:
             # AI Categorization in chunks of 20
             ai_results = {}
             error_logs = []
-            for i in range(0, len(transactions_for_ai), 20):
+            total_items = len(transactions_for_ai)
+            cache_key = f"import_progress_{self.user.id}"
+            cache.set(cache_key, 0, 300) # Initial 0%
+
+            for i in range(0, total_items, 20):
                 chunk = transactions_for_ai[i:i+20]
                 results, error = classify_transactions(chunk, categories)
                 ai_results.update(results)
                 if error:
                     error_logs.append(error)
+                
+                # Update progress in cache
+                progress = int((min(i + 20, total_items) / total_items) * 100)
+                cache.set(cache_key, progress, 300)
 
             if error_logs:
                 batch.ai_log = "\n".join(set(error_logs))
                 batch.save()
+            
+            # Reset progress when done
+            cache.set(cache_key, 100, 10)
 
             # 5. Save one PendingTransaction per group
             pending_list = []

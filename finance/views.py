@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
+from django.core.cache import cache
 from django.utils import timezone, translation
 from django.utils.translation import gettext_lazy as _
 from django.contrib import messages
@@ -630,3 +631,28 @@ def apply_import_batch(request, batch_id):
     
     messages.success(request, _(f"Import abgeschlossen: {count_one_time} Einzelbuchungen und {count_recurring} regelmäßige Zahlungen erstellt."))
     return redirect('dashboard')
+
+@login_required
+def get_import_progress(request):
+    """
+    Returns the current import progress percentage for the logged in user as HTML.
+    Target for HTMX polling.
+    """
+    cache_key = f"import_progress_{request.user.id}"
+    progress = cache.get(cache_key, 0)
+    
+    # Simple Bootstrap progress bar
+    html = f'''
+    <div class="progress" style="height: 25px;">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" 
+             role="progressbar" 
+             style="width: {progress}%;" 
+             aria-valuenow="{progress}" 
+             aria-valuemin="0" 
+             aria-valuemax="100">
+             {progress}%
+        </div>
+    </div>
+    <p class="text-center mt-2 text-muted small">KI analysiert Daten... ({progress}%)</p>
+    '''
+    return HttpResponse(html)

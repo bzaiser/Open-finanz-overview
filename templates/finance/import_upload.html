@@ -21,16 +21,33 @@
                         </ul>
                     </div>
 
-                    <form method="post" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        {{ form|crispy }}
-                        
-                        <div class="d-grid mt-4">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="bi bi-magic me-2"></i>{% trans "Datei analysieren" %}
-                            </button>
+                    <div id="import-form-container">
+                        <form method="post" enctype="multipart/form-data" 
+                              onsubmit="document.getElementById('import-form-container').style.display='none'; document.getElementById('progress-container').style.display='block';">
+                            {% csrf_token %}
+                            {{ form|crispy }}
+                            
+                            <div class="d-grid mt-4">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="bi bi-magic me-2"></i>{% trans "Datei analysieren" %}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Progress Bar Container (Initially Hidden) -->
+                    <div id="progress-container" style="display: none;" class="py-4">
+                        <h4 class="text-center mb-4">{% trans "Analyse läuft..." %}</h4>
+                        <div id="progress-bar-placeholder" 
+                             hx-get="{% url 'import_progress' %}" 
+                             hx-trigger="every 1s"
+                             hx-swap="innerHTML">
+                            <div class="progress" style="height: 25px;">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                            </div>
+                            <p class="text-center mt-2 text-muted small">{% trans "Bereite Daten vor..." %}</p>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
             
