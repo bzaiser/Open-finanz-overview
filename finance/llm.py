@@ -21,6 +21,7 @@ def classify_transactions(transactions, categories):
     categories: list of dicts {name, slug}
     returns: dict mapping transaction id to {category_slug, is_income, is_recurring, frequency}
     """
+    client = get_gemini_client()
     if not client:
         # Fallback to a very basic rule-based classification if no API key
         results = {}
