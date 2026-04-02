@@ -23,30 +23,39 @@
 
                     <div id="import-form-container">
                         <form method="post" enctype="multipart/form-data" 
-                              onsubmit="document.getElementById('import-form-container').style.display='none'; document.getElementById('progress-container').style.display='block';">
+                              onsubmit="document.getElementById('import-form-container').style.display='none'; document.getElementById('uploading-spinner').style.display='block';">
                             {% csrf_token %}
                             {{ form|crispy }}
                             
                             <div class="d-grid mt-4">
                                 <button type="submit" class="btn btn-primary btn-lg">
-                                    <i class="bi bi-magic me-2"></i>{% trans "Datei analysieren" %}
+                                    <i class="bi bi-magic me-2"></i>{% trans "Analyse starten" %}
                                 </button>
                             </div>
                         </form>
                     </div>
 
-                    <!-- Progress Bar Container (Initially Hidden) -->
-                    <div id="progress-container" style="display: none;" class="py-4">
-                        <h4 class="text-center mb-4">{% trans "Analyse läuft..." %}</h4>
-                        <div id="progress-bar-placeholder" 
-                             hx-get="{% url 'import_progress' %}" 
-                             hx-trigger="every 1s"
-                             hx-swap="innerHTML">
-                            <div class="progress" style="height: 25px;">
-                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
-                            </div>
-                            <p class="text-center mt-2 text-muted small">{% trans "Bereite Daten vor..." %}</p>
+                    <!-- Simple Upload Spinner (shown during file transfer) -->
+                    <div id="uploading-spinner" style="display: none;" class="py-4 text-center">
+                        <div class="spinner-border text-primary mb-3" role="status"></div>
+                        <h4>{% trans "Lade Datei hoch..." %}</h4>
+                        <p class="text-muted">{% trans "Bitte warten, die Daten werden zum Server übertragen." %}</p>
+                    </div>
+
+                    <!-- Clean-up / Emergency Button -->
+                    <div class="mt-5 border-top pt-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <small class="text-danger fw-bold text-uppercase">{% trans "Fehlersuche & Wartung" %}</small>
                         </div>
+                        <p class="small text-muted mb-3">
+                            {% trans "Falls ein Vorgang hängen bleibt, kannst du hier alle unfertigen Importe löschen und den Cache leeren." %}
+                        </p>
+                        <form method="post" action="{% url 'delete_all_temporary_data' %}" onsubmit="return confirm('Möchtest du wirklich alle nicht übernommenen Importe löschen?');">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                                <i class="bi bi-trash me-2"></i>{% trans "Alle temporären Daten löschen" %}
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>

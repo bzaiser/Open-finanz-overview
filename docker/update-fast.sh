@@ -26,6 +26,7 @@ cd docker
 # Run database migrations (fast if no new ones)
 echo "Running database migrations..."
 docker compose exec web python manage.py migrate
+docker compose exec web python manage.py createcachetable
 
 # Compile translations
 echo "Compiling translations..."

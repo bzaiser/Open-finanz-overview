@@ -8,4 +8,6 @@ urlpatterns = [
     path('import/confirm/<int:transaction_id>/', views.confirm_bank_transaction, name='confirm_transaction'),
     path('import/apply/<int:batch_id>/', views.apply_import_batch, name='apply_import'),
     path('import/progress/', views.get_import_progress, name='import_progress'),
+    path('import/processing/', views.import_processing, name='import_processing'),
+    path('import/delete-all/', views.delete_all_temporary_data, name='delete_all_temporary_data'),
 ]

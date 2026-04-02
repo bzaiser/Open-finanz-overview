@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content %}
+<div class="container py-5 text-center">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 p-5">
+                <div class="mb-4">
+                    <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                
+                <h3 class="mb-3">{% trans "Analyse läuft..." %}</h3>
+                <p class="text-muted mb-4">
+                    {% trans "Deine Daten werden von der KI kategorisiert. Bitte schließe dieses Fenster nicht." %}
+                </p>
+
+                <!-- Progress Bar Container -->
+                <div id="progress-container">
+                    <div id="progress-bar-placeholder" 
+                         hx-get="{% url 'import_progress' %}" 
+                         hx-trigger="every 1.5s"
+                         hx-swap="innerHTML">
+                        <div class="progress" style="height: 25px;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                        </div>
+                        <p class="text-center mt-2 text-muted small">{% trans "Initialisierung..." %}</p>
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-3 border-top">
+                    <small class="text-muted">
+                        {% trans "Dies kann je nach Anzahl der Buchungen 1-2 Minuten dauern." %}
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Listen for HTMX events to handle the final redirect
+    document.body.addEventListener('htmx:afterOnLoad', function(evt) {
+        // If the progress reached 100%, the server will eventually redirect the next poll
+        // But we can also check the content here
+        if (evt.detail.xhr.responseText.includes('100%')) {
+            // Give it a small delay then refresh to trigger the view's internal redirect
+            setTimeout(function() {
+                window.location.reload();
+            }, 1500);
+        }
+    });
+</script>
+{% endblock %}
