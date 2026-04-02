@@ -51,9 +51,11 @@ class ExcelParserService:
         try:
             # 1. Read Excel
             df = pd.read_excel(self.file_path)
+            log_messages = [f"Datei eingelesen: {len(df)} Zeilen gefunden."]
 
             # Column detection
             col_map = self._detect_columns(df)
+            log_messages.append(f"Spalten erkannt: {col_map}")
 
             # Standardize DataFrame
             df = df.rename(columns={
@@ -62,17 +64,34 @@ class ExcelParserService:
                 col_map['amount']: 'amount'
             })
 
-            # Clean data
+            # Clean data - convert date and handle German number formats
             df['date'] = pd.to_datetime(df['date'], errors='coerce')
+            
+            def clean_amount(val):
+                if pd.isna(val): return None
+                if isinstance(val, (int, float, Decimal)): return Decimal(str(val))
+                # Handle string format (e.g. "1.234,56")
+                s = str(val).replace('.', '').replace(',', '.')
+                try:
+                    return Decimal(s)
+                except:
+                    return None
+
+            df['amount'] = df['amount'].apply(clean_amount)
             df = df.dropna(subset=['date', 'amount'])
-            df['amount'] = df['amount'].apply(lambda x: Decimal(str(x)))
+            log_messages.append(f"Gültige Buchungen nach Bereinigung: {len(df)} Zeilen.")
 
             # 2. Smart Grouping: collapse similar recurring transactions
             groups = self._group_transactions(df)
+            log_messages.append(f"Transaktionen nach Gruppierung: {len(groups)} Zeilen.")
 
             # 3. Create or use ImportBatch
             if not batch:
                 batch = ImportBatch.objects.create(user=self.user, filename=self.filename)
+            
+            # Save the detection log
+            batch.ai_log = "\n".join(log_messages)
+            batch.save()
 
             categories = list(Category.objects.values('name', 'slug'))
 
