@@ -20,6 +20,7 @@ import os
 import datetime
 import threading
 import time
+from django.core.cache import cache
 from decimal import Decimal
 
 # Define available charts and their default properties
