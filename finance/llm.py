@@ -18,15 +18,8 @@ def get_gemini_client():
         return None
 
 def classify_transactions(transactions, categories):
-    """
-    Classifies a list of transactions using Gemini.
-    transactions: list of dicts {id, date, description, amount}
-    categories: list of dicts {name, slug}
-    returns: dict mapping transaction id to {category_slug, is_income, is_recurring, frequency}
-    """
     client = get_gemini_client()
     if not client:
-        # Fallback to a very basic rule-based classification if no API key
         results = {}
         error_msg = "Gemini API Key fehlt oder ist nicht konfiguriert."
         for t in transactions:
@@ -41,7 +34,6 @@ def classify_transactions(transactions, categories):
         return results, error_msg
 
     category_list = ", ".join([f"{c['name']} (slug: {c['slug']})" for c in categories])
-    
     prompt = f"""
     Du bist ein Finanzassistent. Analysiere die folgenden Banktransaktionen und ordne sie Kategorien zu.
     Verfügbare Kategorien: {category_list}.
@@ -68,26 +60,30 @@ def classify_transactions(transactions, categories):
       }}
     ]
     """
+
+    # Try different models in order of preference
+    models_to_try = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-pro']
+    last_error = ""
     
-    try:
-        response = client.models.generate_content(
-            model='gemini-1.5-flash',
-            contents=prompt
-        )
-        text = response.text.strip()
-        # More robust extraction in case the model still includes markdown
-        if "```json" in text:
-            text = text.split("```json")[1].split("```")[0].strip()
-        elif "```" in text:
-            text = text.split("```")[1].split("```")[0].strip()
+    for model_name in models_to_try:
+        try:
+            response = client.models.generate_content(
+                model=model_name,
+                contents=prompt
+            )
+            text = response.text.strip()
+            if "```json" in text:
+                text = text.split("```json")[1].split("```")[0].strip()
+            elif "```" in text:
+                text = text.split("```")[1].split("```")[0].strip()
+                
+            data = json.loads(text)
+            return {str(item['id']): item for item in data}, None
+        except Exception as e:
+            last_error = f"{model_name}: {str(e)}"
+            continue # Try next model
             
-        data = json.loads(text)
-        # Ensure IDs are strings for reliable mapping
-        return {str(item['id']): item for item in data}, None
-    except Exception as e:
-        error_msg = f"Gemini Fehler: {str(e)}"
-        logger.error(error_msg)
-        return {}, error_msg
+    return {}, f"Alle KI-Modelle fehlgeschlagen. Letzter Fehler: {last_error}"
 
 def get_pension_forecast():
     client = get_gemini_client()
@@ -98,17 +94,21 @@ def get_pension_forecast():
             "source": "Mock (No API Key)"
         }
     
-    try:
-        prompt = "Nenne mir die aktuelle Prognose für die Rentenanpassung 2026 laut dem jüngsten Rentenversicherungsbericht des BMAS. Antworte kurz und gib nur die Prozentzahl am Ende an."
-        response = client.models.generate_content(
-            model='gemini-1.5-flash',
-            contents=prompt
-        )
-        text = response.text.strip()
-        # Simple extraction logic or just return text
-        return {"text": text, "value": 3.5, "source": "Gemini AI"}
-    except:
-        return {"text": "Fehler bei KI-Abfrage", "value": 0, "source": "Error"}
+    models_to_try = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-pro']
+    prompt = "Nenne mir die aktuelle Prognose für die Rentenanpassung 2026 laut dem jüngsten Rentenversicherungsbericht des BMAS. Antworte kurz und gib nur die Prozentzahl am Ende an."
+    
+    for model_name in models_to_try:
+        try:
+            response = client.models.generate_content(
+                model=model_name,
+                contents=prompt
+            )
+            text = response.text.strip()
+            return {"text": text, "value": 3.5, "source": f"Gemini ({model_name})"}
+        except:
+            continue
+            
+    return {"text": "Fehler bei KI-Abfrage", "value": 0, "source": "Error"}
 
 def get_inflation_forecast():
     client = get_gemini_client()
@@ -118,12 +118,18 @@ def get_inflation_forecast():
             "value": 2.2,
             "source": "Mock (No API Key)"
         }
-    try:
-        prompt = "Wie hoch schätzt das Statistische Bundesamt die Inflationsrate für das aktuelle Jahr? Antworte kurz."
-        response = client.models.generate_content(
-            model='gemini-1.5-flash',
-            contents=prompt
-        )
-        return {"text": response.text.strip(), "value": 2.2, "source": "Gemini AI"}
-    except:
-        return {"text": "Fehler bei KI-Abfrage", "value": 0, "source": "Error"}
+    
+    models_to_try = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-pro']
+    prompt = "Wie hoch schätzt das Statistische Bundesamt die Inflationsrate für das aktuelle Jahr? Antworte kurz."
+    
+    for model_name in models_to_try:
+        try:
+            response = client.models.generate_content(
+                model=model_name,
+                contents=prompt
+            )
+            return {"text": response.text.strip(), "value": 2.2, "source": f"Gemini ({model_name})"}
+        except:
+            continue
+            
+    return {"text": "Fehler bei KI-Abfrage", "value": 0, "source": "Error"}
