@@ -1,27 +1,46 @@
 {% extends 'base.html' %}
 {% load i18n crispy_forms_tags %}
 
-{% block title %}{% trans "User Profile" %}{% endblock %}
+{% block title %}{% trans "Benutzerprofil" %}{% endblock %}
 
 {% block content %}
 <div class="container mt-4 mb-5 animate__animated animate__fadeIn">
     <div class="row mb-5 text-center">
         <div class="col-12">
             <h1 class="fw-bold display-5 text-gradient">
-                <i class="bi bi-person-circle me-3"></i>{% trans "Your Dashboard Experience" %}
+                <i class="bi bi-person-circle me-3"></i>{% trans "Deine Dashboard-Konfiguration" %}
             </h1>
-            <p class="text-muted lead mt-2">{% trans "Unifying your theme and visual style for a perfectly matched look." %}</p>
+            <p class="text-muted lead mt-2">{% trans "Hier kannst du dein Thema und deinen visuellen Stil harmonisch vereinen." %}</p>
         </div>
     </div>
 
     <form method="post" enctype="multipart/form-data" id="profileForm">
         {% csrf_token %}
         <div class="row g-5">
-            <!-- Left: Settings -->
+            <!-- Links: Basis-Einstellungen -->
             <div class="col-lg-7">
-                <!-- Personal Settings -->
+                <!-- Identität -->
                 <div class="glass-card shadow-sm p-4 mb-4">
-                    <h4 class="mb-4 fw-bold"><i class="bi bi-person-badge me-2 text-primary"></i>{% trans "Identity & Core" %}</h4>
+                    <h4 class="mb-4 fw-bold"><i class="bi bi-person-badge me-2 text-primary"></i>{% trans "Identität & Kern" %}</h4>
+                    
+                    <!-- Avatar Fix -->
+                    <div class="d-flex align-items-center mb-4 p-3 rounded-4 bg-light bg-opacity-50 border border-white">
+                        <div class="me-4 position-relative">
+                            {% if user.profile.avatar %}
+                                <img src="{{ user.profile.avatar.url }}" class="rounded-circle shadow-sm object-fit-cover" width="100" height="100" style="border: 3px solid white;">
+                            {% else %}
+                                <div class="rounded-circle bg-white shadow-sm d-flex align-items-center justify-content-center" style="width: 100px; height: 100px; border: 3px solid #eee;">
+                                    <i class="bi bi-person text-secondary fs-1"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <p class="mb-1 text-muted small">{% trans "Aktueller Avatar" %}</p>
+                            <h5 class="fw-bold mb-0 text-primary">{{ user.username }}</h5>
+                            <span class="badge bg-primary bg-opacity-10 text-primary mt-2">{% trans "Mitglied seit" %} {{ user.date_joined|date:"M Y" }}</span>
+                        </div>
+                    </div>
+
                     <div class="row g-3">
                         <div class="col-md-6">{{ form.avatar|as_crispy_field }}</div>
                         <div class="col-md-6">{{ form.birth_date|as_crispy_field }}</div>
@@ -30,9 +49,9 @@
                     </div>
                 </div>
 
-                <!-- Simulation Settings -->
+                <!-- Simulation -->
                 <div class="glass-card shadow-sm p-4">
-                    <h4 class="mb-4 fw-bold"><i class="bi bi-cpu me-2 text-primary"></i>{% trans "Prediction Engine" %}</h4>
+                    <h4 class="mb-4 fw-bold"><i class="bi bi-cpu me-2 text-primary"></i>{% trans "Parameter für Vorhersagen" %}</h4>
                     <div class="row g-3">
                         <div class="col-md-6">{{ form.simulation_max_age|as_crispy_field }}</div>
                         <div class="col-md-6">{{ form.inflation_rate|as_crispy_field }}</div>
@@ -42,60 +61,56 @@
                 </div>
             </div>
 
-            <!-- Right: The Unified Design Station -->
+            <!-- Rechts: Design Studio -->
             <div class="col-lg-5">
                 <div class="glass-card shadow-lg p-4 border-primary border-opacity-25" style="border-width: 2px;">
-                    <h4 class="mb-4 fw-bold"><i class="bi bi-magic me-2 text-primary"></i>{% trans "Design Station" %}</h4>
+                    <h4 class="mb-4 fw-bold"><i class="bi bi-magic me-2 text-primary"></i>{% trans "Design-Studio" %}</h4>
                     
-                    <!-- One Pair of Shoes: Theme Selection -->
                     <div class="mb-4">
-                        <label class="form-label fw-bold small">{% trans "Active Theme" %}</label>
+                        <label class="form-label fw-bold small">{% trans "Aktuelles Thema" %}</label>
                         {{ form.theme }}
                         <small class="text-muted d-block mt-2">
-                            {% trans "Selecting a theme automatically sets your colors to a harmonized palette." %}
+                            {% trans "Die Auswahl eines Themas setzt automatisch deine Farben auf eine harmonische Palette." %}
                         </small>
                     </div>
 
                     <hr class="my-4 opacity-10">
 
-                    <!-- Gradient Tweak Station -->
                     <div class="row g-3 mb-4">
                         <div class="col-6">
-                            <label class="form-label small fw-semibold">{% trans "Color Start" %}</label>
+                            <label class="form-label small fw-semibold">{% trans "Verlauf Start" %}</label>
                             {{ form.gradient_start }}
                         </div>
                         <div class="col-6">
-                            <label class="form-label small fw-semibold">{% trans "Color End" %}</label>
+                            <label class="form-label small fw-semibold">{% trans "Verlauf Ende" %}</label>
                             {{ form.gradient_end }}
                         </div>
                     </div>
 
-                    <!-- Live Harmony Preview -->
                     <div id="harmonyPreview" class="rounded-4 p-4 text-white shadow-gradient d-flex flex-column justify-content-center text-center mb-4"
                          style="background: var(--app-gradient); min-height: 120px; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);">
-                        <div class="fs-4 fw-bold shadow-text">{% trans "Visual Harmony" %}</div>
-                        <div class="small opacity-75">{% trans "Colors & Theme Unified" %}</div>
+                        <div class="fs-4 fw-bold shadow-text">{% trans "Visuelle Harmonie" %}</div>
+                        <div class="small opacity-75">{% trans "Design & Farben vereint" %}</div>
                     </div>
 
-                    <!-- Presets (Quick Access) -->
-                    <label class="form-label small fw-bold mb-3">{% trans "Quick Harmonies" %}</label>
+                    <label class="form-label small fw-bold mb-3">{% trans "Schnelle Harmonien" %}</label>
                     <div class="d-flex flex-wrap gap-2">
-                        <div class="preset-pill shadow-sm gradient-preset" data-start="#6610f2" data-end="#0d6efd" style="background: linear-gradient(135deg, #6610f2, #0d6efd);" title="Standard Blue"></div>
-                        <div class="preset-pill shadow-sm gradient-preset" data-start="#198754" data-end="#0dcaf0" style="background: linear-gradient(135deg, #198754, #0dcaf0);" title="Eco Cyan"></div>
-                        <div class="preset-pill shadow-sm gradient-preset" data-start="#212529" data-end="#495057" style="background: linear-gradient(135deg, #212529, #495057);" title="Midnight Graphite"></div>
-                        <div class="preset-pill shadow-sm gradient-preset" data-start="#d63384" data-end="#6610f2" style="background: linear-gradient(135deg, #d63384, #6610f2);" title="Modern Pink"></div>
+                        <div class="preset-pill shadow-sm gradient-preset" data-start="#6610f2" data-end="#0d6efd" style="background: linear-gradient(135deg, #6610f2, #0d6efd);" title="Standard Blau"></div>
+                        <div class="preset-pill shadow-sm gradient-preset" data-start="#11998e" data-end="#38ef7d" style="background: linear-gradient(135deg, #11998e, #38ef7d);" title="Smaragd Ozean"></div>
+                        <div class="preset-pill shadow-sm gradient-preset" data-start="#ff512f" data-end="#dd2476" style="background: linear-gradient(135deg, #ff512f, #dd2476);" title="Sonnenuntergang"></div>
+                        <div class="preset-pill shadow-sm gradient-preset" data-start="#212529" data-end="#495057" style="background: linear-gradient(135deg, #212529, #495057);" title="Mitternacht"></div>
                     </div>
                 </div>
 
                 <button type="submit" class="btn btn-gradient btn-lg w-100 py-3 mt-4 fw-bold rounded-4 shadow-sm">
-                    <i class="bi bi-lightning-charge me-2"></i>{% trans "Adopt New Design" %}
+                    <i class="bi bi-check2-circle me-2"></i>{% trans "Design übernehmen" %}
                 </button>
             </div>
         </div>
     </form>
 </div>
 
-<!-- Theme-to-Gradient Data (Hidden JSON) -->
+<!-- Theme-Daten (Versteckt) -->
 <script id="theme-data" type="application/json">
 {
     {% for theme in themes %}
@@ -112,7 +127,6 @@
     const themeGradients = JSON.parse(document.getElementById('theme-data').textContent);
 
     function updatePreview(manual = false) {
-        // If not manual, sync from theme selection
         if (!manual && themeSelect.value && themeGradients[themeSelect.value]) {
             const colors = themeGradients[themeSelect.value];
             startInput.value = colors.start;
@@ -136,7 +150,6 @@
         });
     });
 
-    // Initial Sync
     updatePreview(true);
 </script>
 
