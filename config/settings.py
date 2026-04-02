@@ -178,3 +178,6 @@ SESSION_SAVE_EVERY_REQUEST = True # Updates expiry on every request
 
 # AI Settings
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', '')
+
+# Overrides for heavy bulk edits
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
