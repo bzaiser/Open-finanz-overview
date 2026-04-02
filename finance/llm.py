@@ -72,10 +72,7 @@ def classify_transactions(transactions, categories):
     try:
         response = client.models.generate_content(
             model='gemini-1.5-flash',
-            contents=prompt,
-            config={
-                'response_mime_type': 'application/json',
-            }
+            contents=prompt
         )
         text = response.text.strip()
         # More robust extraction in case the model still includes markdown
