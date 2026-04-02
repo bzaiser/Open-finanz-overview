@@ -65,14 +65,17 @@ def classify_transactions(transactions, categories):
     try:
         response = client.models.generate_content(
             model='gemini-1.5-flash',
-            contents=prompt
+            contents=prompt,
+            config={
+                'response_mime_type': 'application/json',
+            }
         )
-        # Handle potential markdown formatting in response
         text = response.text.strip()
-        if text.startswith("```json"):
-            text = text[7:-3].strip()
-        elif text.startswith("```"):
-            text = text[3:-3].strip()
+        # More robust extraction in case the model still includes markdown
+        if "```json" in text:
+            text = text.split("```json")[1].split("```")[0].strip()
+        elif "```" in text:
+            text = text.split("```")[1].split("```")[0].strip()
             
         data = json.loads(text)
         return {item['id']: item for item in data}
