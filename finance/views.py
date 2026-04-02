@@ -545,7 +545,7 @@ def upload_bank_transactions(request):
     
     return render(request, 'finance/import_upload.html', {
         'form': form,
-        'ai_active': bool(settings.GEMINI_API_KEY)
+        'ai_active': bool(settings.GEMINI_API_KEY or settings.GROQ_API_KEY)
     })
 
 @login_required
@@ -558,7 +558,7 @@ def review_bank_transactions(request, batch_id):
         'batch': batch,
         'transactions': transactions,
         'categories': categories,
-        'ai_active': bool(settings.GEMINI_API_KEY)
+        'ai_active': bool(settings.GEMINI_API_KEY or settings.GROQ_API_KEY)
     })
 
 @login_required
