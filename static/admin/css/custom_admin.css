@@ -9,9 +9,9 @@
     --admin-primary: #6610f2;
     --admin-primary-dark: #520dc2;
     --admin-radius: 10px;
-    --admin-sidebar-bg: #1e1e2e;
-    --admin-sidebar-text: rgba(255, 255, 255, 0.85);
-    --admin-sidebar-hover: rgba(255, 255, 255, 0.1);
+    --admin-sidebar-bg: #f8f9fc;
+    --admin-sidebar-text: #2d2d3a;
+    --admin-sidebar-hover: rgba(102, 16, 242, 0.08);
 }
 
 /* --- HEADER --- */
@@ -94,7 +94,7 @@ div.breadcrumbs a {
 
 #nav-sidebar a:link,
 #nav-sidebar a:visited {
-    color: rgba(255, 255, 255, 0.85) !important;
+    color: #2d2d3a !important;
     transition: all 0.2s ease !important;
     border-radius: 6px;
     padding: 4px 8px;
@@ -104,18 +104,18 @@ div.breadcrumbs a {
 
 #nav-sidebar th a,
 #nav-sidebar td a {
-    color: rgba(255, 255, 255, 0.85) !important;
+    color: #2d2d3a !important;
 }
 
 #nav-sidebar a:hover,
 #nav-sidebar a:focus {
-    background: var(--admin-sidebar-hover) !important;
-    color: #fff !important;
+    background: rgba(102, 16, 242, 0.1) !important;
+    color: var(--admin-primary) !important;
     text-decoration: none !important;
 }
 
 #nav-sidebar .selected a {
-    color: #fff !important;
+    color: var(--admin-primary) !important;
     font-weight: 600 !important;
 }
 
@@ -343,10 +343,10 @@ div.breadcrumbs a:visited,
     color: var(--admin-primary) !important;
 }
 
-/* Innerhalb der Sidebar immer hell */
+/* Innerhalb der Sidebar immer dunkle Linkfarbe */
 #nav-sidebar a:link,
 #nav-sidebar a:visited {
-    color: rgba(255, 255, 255, 0.85) !important;
+    color: #2d2d3a !important;
 }
 
 #footer {
