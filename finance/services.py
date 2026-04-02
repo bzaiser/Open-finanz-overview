@@ -16,16 +16,52 @@ class SimulationEngine:
         self.salary_increase = Decimal(str(self.params.get('salary_increase', self.profile.salary_increase))) / 100
         self.investment_return_offset = Decimal(str(self.params.get('investment_return_offset', self.profile.investment_return_offset))) / 100
 
-    def get_forecast(self, years=None):
-        if years is None:
-            # Default to max age
-            current_age = (datetime.date.today() - self.profile.birth_date).days / 365.25 if self.profile.birth_date else 30
-            years = math.ceil(self.profile.simulation_max_age - current_age) + 1
+    def get_simulation_start_date(self):
+        """
+        Finds the earliest relevant date across all models for the user.
+        Always returns at least the 1st of the current month.
+        """
+        today = datetime.date.today().replace(day=1)
+        dates = [today]
+
+        # Check Cash Flows
+        cf_start = self.user.cash_flows.filter(start_date__isnull=False).order_by('start_date').first()
+        if cf_start:
+            dates.append(cf_start.start_date)
+
+        # Check One Time Events
+        event_start = self.user.events.order_by('date').first()
+        if event_start:
+            dates.append(event_start.date)
+            
+        # Check Pensions
+        pension_start = self.user.pensions.filter(start_payout_date__isnull=False).order_by('start_payout_date').first()
+        if pension_start:
+            dates.append(pension_start.start_payout_date)
+            
+        # Check Assets
+        asset_start = self.user.assets.filter(withdrawal_start_date__isnull=False).order_by('withdrawal_start_date').first()
+        if asset_start:
+            dates.append(asset_start.withdrawal_start_date)
+
+        min_date = min(dates)
+        # Normalize to the 1st of the month
+        return min_date.replace(day=1)
+
+    def get_forecast(self, months=None):
+        start_date = self.get_simulation_start_date()
         
-        years = max(1, min(years, 60)) # Cap at 60 years or min 1
-        months = years * 12
+        if months is None:
+            # Calculate total months from start_date until simulation_max_age
+            if self.profile.birth_date:
+                end_date = self.profile.birth_date + relativedelta(years=self.profile.simulation_max_age)
+                # Calculate difference in months
+                diff = relativedelta(end_date, start_date)
+                months = diff.years * 12 + diff.months
+            else:
+                months = 360 # Default 30 years
         
-        start_date = datetime.date.today().replace(day=1)
+        months = max(1, min(months, 720)) # Cap at 60 years or min 1
         data = []
         
         # Initial State
