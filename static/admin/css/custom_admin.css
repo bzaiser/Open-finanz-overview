@@ -1,97 +1,66 @@
 /* ============================================================
-   Finanzplan Admin – Custom Design
-   Passt den Django Admin an das Gradient-Design der App an.
+   Finanzplan Admin – Minimales Farb-Theming
+   Nur Farben angepasst, kein Layout verändert.
    ============================================================ */
 
-/* --- Gradient als CSS-Variable (Fallback wenn kein User-Theme) --- */
 :root {
     --admin-gradient: linear-gradient(135deg, #6610f2 0%, #0d6efd 100%);
     --admin-primary: #6610f2;
-    --admin-primary-dark: #520dc2;
-    --admin-radius: 10px;
-    --admin-sidebar-bg: #f8f9fc;
-    --admin-sidebar-text: #2d2d3a;
-    --admin-sidebar-hover: rgba(102, 16, 242, 0.08);
 }
 
-/* --- HEADER --- */
+/* Header: Gradient statt Django-Standardblau */
 #header {
     background: var(--admin-gradient) !important;
-    color: #fff !important;
-    padding: 12px 24px !important;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
-    border-bottom: none !important;
 }
 
-#header a:link, #header a:visited {
-    color: #fff !important;
-}
-
-#site-name a {
-    font-size: 1.3rem !important;
-    font-weight: 700 !important;
-    letter-spacing: -0.3px !important;
-    color: #fff !important;
-    text-decoration: none !important;
-}
-
-#user-tools {
-    font-size: 0.82rem !important;
-}
-
-#user-tools a {
-    color: rgba(255,255,255,0.85) !important;
-    border-bottom: 1px solid rgba(255,255,255,0.3) !important;
-    padding-bottom: 1px;
-    padding: 4px 8px !important;
-    border-radius: 6px !important;
-    transition: background 0.2s, color 0.2s, border-color 0.2s !important;
-    text-decoration: none !important;
-}
-
-#user-tools a:hover,
-#user-tools a:focus {
-    color: #fff !important;
-    background: rgba(255,255,255,0.15) !important;
-    border-color: transparent !important;
-}
-
-/* Dropdown im Header (Recent Actions etc.) */
-#header a:hover {
-    color: #fff !important;
-    text-decoration: underline !important;
-}
-
-/* --- BREADCRUMBS --- */
+/* Breadcrumbs */
 div.breadcrumbs {
-    background: rgba(102, 16, 242, 0.08) !important;
-    border-bottom: 1px solid rgba(102, 16, 242, 0.15) !important;
+    background: rgba(102, 16, 242, 0.07) !important;
     color: var(--admin-primary) !important;
-    padding: 10px 24px !important;
-    font-size: 0.85rem !important;
 }
 
 div.breadcrumbs a {
     color: var(--admin-primary) !important;
 }
 
-/* --- SIDEBAR / NAVIGATION (App-Liste links) --- */
-#nav-sidebar {
-    background: var(--admin-sidebar-bg) !important;
-    border-right: none !important;
-}
-
-#nav-sidebar .current-app .section:first-child,
-#nav-sidebar .module caption {
+/* Modul-Überschriften */
+.module caption,
+.module > h2 {
     background: var(--admin-gradient) !important;
     color: #fff !important;
-    border-radius: var(--admin-radius) var(--admin-radius) 0 0 !important;
-    padding: 10px 14px !important;
-    font-size: 0.8rem !important;
-    font-weight: 600 !important;
-    letter-spacing: 0.5px !important;
 }
 
+/* Buttons */
+.button,
+input[type=submit],
+input[type=button],
+.submit-row input,
+a.button {
+    background: var(--admin-gradient) !important;
+    border-color: var(--admin-primary) !important;
+}
+
+/* Löschen-Button rot lassen */
+.deletelink,
+a.deletelink {
+    background: #e74c3c !important;
+    border-color: #c0392b !important;
+}
+
+/* Tabellen-Header */
+#result_list thead th {
+    background: var(--admin-gradient) !important;
+    color: #fff !important;
+}
+
+#result_list thead th a,
+#result_list thead th a:link,
+#result_list thead th a:visited,
+#result_list thead th a:hover {
+    color: #fff !important;
+}
+
+/* Sidebar-Links: Farbe passend zum Theme */
 #nav-sidebar a:link,
 #nav-sidebar a:visited,
 #nav-sidebar th a,
@@ -108,296 +77,52 @@ div.breadcrumbs a {
     text-decoration: underline !important;
 }
 
-#nav-sidebar .selected a,
-#nav-sidebar .selected a:link,
-#nav-sidebar .selected a:visited {
+/* User-Tools (oben rechts) */
+#user-tools a:link,
+#user-tools a:visited {
+    color: rgba(255,255,255,0.9) !important;
+}
+
+#user-tools a:hover,
+#user-tools a:focus {
+    color: #fff !important;
+    text-decoration: underline !important;
+}
+
+/* Links im Content-Bereich */
+#content a:link,
+#content a:visited {
     color: var(--admin-primary) !important;
-    font-weight: 600 !important;
 }
 
-/* --- MODULE HEADERS (Gruppen-Überschriften) --- */
-.module caption,
-.module > h2 {
-    background: var(--admin-gradient) !important;
-    color: #fff !important;
-    border-radius: var(--admin-radius) var(--admin-radius) 0 0 !important;
-    padding: 10px 16px !important;
-    font-size: 0.85rem !important;
-    font-weight: 600 !important;
-    letter-spacing: 0.3px !important;
-    text-transform: none !important;
+/* Fokus-Farbe bei Formfeldern */
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--admin-primary) !important;
+    outline-color: var(--admin-primary) !important;
 }
 
-.module {
-    border-radius: var(--admin-radius) !important;
-    overflow: hidden !important;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.08) !important;
-    border: 1px solid rgba(0,0,0,0.06) !important;
-    margin-bottom: 20px !important;
-}
-
-/* --- CONTENT AREA --- */
-#content {
-    padding: 24px !important;
-}
-
-#content-main {
-    background: transparent !important;
-}
-
-/* --- BUTTONS --- */
-.button,
-input[type=submit],
-input[type=button],
-.submit-row input,
-a.button {
-    background: var(--admin-gradient) !important;
-    border: none !important;
-    border-radius: 8px !important;
-    color: #fff !important;
-    font-weight: 600 !important;
-    padding: 8px 18px !important;
+/* Color-Picker: etwas größer damit man ihn gut bedienen kann */
+input[type=color] {
+    height: 38px !important;
+    width: 60px !important;
     cursor: pointer !important;
-    transition: opacity 0.2s, box-shadow 0.2s !important;
-    box-shadow: 0 2px 8px rgba(102, 16, 242, 0.25) !important;
 }
 
-.button:hover,
-input[type=submit]:hover,
-.submit-row input:hover,
-a.button:hover {
-    opacity: 0.9 !important;
-    box-shadow: 0 4px 16px rgba(102, 16, 242, 0.35) !important;
-}
-
-.button.default,
-input[type=submit].default {
-    background: var(--admin-gradient) !important;
-}
-
-/* Löschen-Button rot halten */
-.deletelink,
-a.deletelink {
-    background: linear-gradient(135deg, #dc3545, #c0392b) !important;
-    box-shadow: 0 2px 8px rgba(220, 53, 69, 0.25) !important;
-}
-
-/* --- FORM FIELDS --- */
-input[type=text],
-input[type=password],
-input[type=email],
-input[type=url],
-input[type=number],
-input[type=date],
-input[type=color],
-textarea,
-select,
-.vTextField {
-    border: 1px solid #dee2e6 !important;
-    border-radius: 8px !important;
-    padding: 8px 12px !important;
-    transition: border-color 0.2s, box-shadow 0.2s !important;
-    font-size: 0.9rem !important;
-}
-
+/* Select: Mindesthöhe damit Inhalte nicht abgeschnitten werden */
 select {
     height: 2.875rem !important;
 }
 
-input[type=text]:focus,
-input[type=email]:focus,
-textarea:focus,
-select:focus,
-.vTextField:focus {
-    border-color: var(--admin-primary) !important;
-    box-shadow: 0 0 0 3px rgba(102, 16, 242, 0.15) !important;
-    outline: none !important;
-}
-
-/* Color-Picker spezial */
-input[type=color] {
-    height: 40px !important;
-    width: 70px !important;
-    padding: 4px 6px !important;
-    cursor: pointer !important;
-}
-
-/* --- TABELLEN (Change-List) --- */
-#result_list thead th {
-    background: var(--admin-gradient) !important;
-    color: #ffffff !important;
-    font-weight: 700 !important;
-    font-size: 0.82rem !important;
-    letter-spacing: 0.3px !important;
-    border: none !important;
-    padding: 12px 10px !important;
-}
-
-#result_list thead th a,
-#result_list thead th a:link,
-#result_list thead th a:visited {
-    color: #ffffff !important;
-    font-weight: 700 !important;
-}
-
-#result_list thead th a:hover {
-    color: rgba(255,255,255,0.8) !important;
-    text-decoration: underline !important;
-}
-
-/* Sortier-Icon ebenfalls hell */
-#result_list thead th.sorted a,
-#result_list thead .sortedAsc a,
-#result_list thead .sortedDesc a {
-    color: #ffffff !important;
-}
-
-#result_list tbody tr:hover {
-    background-color: rgba(102, 16, 242, 0.04) !important;
-}
-
-#result_list tbody tr:nth-child(even) {
-    background-color: rgba(0,0,0,0.02) !important;
-}
-
-#result_list {
-    border-radius: var(--admin-radius) !important;
-    overflow: hidden !important;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.08) !important;
-    border: 1px solid rgba(0,0,0,0.06) !important;
-    /* Kompakte Spaltenbreiten */
-    table-layout: auto !important;
-}
-
-/* Schmalere Spalten für Typ/Einkommen und Betrag */
-#result_list .column-type,
-#result_list .column-income_type,
-#result_list .column-is_income {
-    width: 7rem !important;
-    white-space: nowrap !important;
-}
-
-#result_list .column-amount,
-#result_list .column-betrag {
-    width: 9rem !important;
-    white-space: nowrap !important;
-}
-
-/* Lange Text-Felder abschneiden statt scrollen */
-#result_list td {
-    max-width: 220px !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    white-space: nowrap !important;
-}
-
-/* Name/Beschreibung darf breiter sein */
-#result_list .column-name,
-#result_list .column-description {
-    max-width: none !important;
-    width: auto !important;
-}
-
-/* --- PAGINATION --- */
+/* Pagination aktive Seite */
 .paginator .this-page {
-    background: var(--admin-gradient) !important;
+    background: var(--admin-primary) !important;
     color: #fff !important;
-    border-radius: 6px !important;
-    padding: 4px 10px !important;
 }
 
-.paginator a {
-    border-radius: 6px !important;
-    padding: 4px 10px !important;
-    transition: background 0.2s;
-}
-
-.paginator a:hover {
-    background: rgba(102, 16, 242, 0.1) !important;
-    color: var(--admin-primary) !important;
-}
-
-/* --- MESSAGES / ALERTS --- */
+/* Erfolgsmeldungen */
 li.success {
-    background: linear-gradient(135deg, #198754, #20c997) !important;
+    background: #198754 !important;
     color: #fff !important;
-    border-radius: 8px !important;
-    padding: 12px 16px !important;
-}
-
-li.warning {
-    border-left: 4px solid #ffc107 !important;
-    border-radius: 8px !important;
-}
-
-li.error {
-    border-left: 4px solid #dc3545 !important;
-    border-radius: 8px !important;
-}
-
-/* --- FILTER SIDEBAR --- */
-#changelist-filter {
-    background: #f8f9fa !important;
-    border-radius: var(--admin-radius) !important;
-    border: 1px solid rgba(0,0,0,0.06) !important;
-    overflow: hidden !important;
-}
-
-#changelist-filter h2 {
-    background: var(--admin-gradient) !important;
-    color: #fff !important;
-    padding: 10px 14px !important;
-    margin: 0 !important;
-    font-size: 0.85rem !important;
-}
-
-#changelist-filter h3 {
-    font-size: 0.78rem !important;
-    font-weight: 700 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.5px !important;
-    color: #6c757d !important;
-    padding: 10px 14px 4px !important;
-    margin: 0 !important;
-}
-
-#changelist-filter a {
-    color: var(--admin-primary) !important;
-    padding: 3px 14px !important;
-    display: block !important;
-    font-size: 0.85rem !important;
-    transition: background 0.2s;
-}
-
-#changelist-filter a:hover {
-    background: rgba(102, 16, 242, 0.08) !important;
-}
-
-/* --- ALLGEMEIN --- */
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif !important;
-    background: #f0f2f5 !important;
-}
-
-/* Nur außerhalb der dunklen Sidebar globale Linkfarbe setzen */
-#content a:link,
-#content a:visited,
-div.breadcrumbs a:link,
-div.breadcrumbs a:visited,
-#changelist-filter a:link,
-#changelist-filter a:visited {
-    color: var(--admin-primary) !important;
-}
-
-/* Innerhalb der Sidebar immer dunkle Linkfarbe */
-#nav-sidebar a:link,
-#nav-sidebar a:visited {
-    color: #2d2d3a !important;
-}
-
-#footer {
-    font-size: 0.75rem !important;
-    color: #adb5bd !important;
-    border-top: 1px solid #dee2e6 !important;
-    text-align: center !important;
 }
