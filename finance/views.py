@@ -540,17 +540,19 @@ def _async_import_task(batch_id, file_path, filename):
         service = ExcelParserService(user, file_path, filename)
         service.parse_and_categorize(batch=batch)
     except Exception as e:
-        # Save the error to the batch log so we can see it
-        error_msg = f"Hintergrund-Fehler: {str(e)}"
-        logger.error(error_msg)
+        # Save the error to the batch log
+        error_detailed = f"Kritischer Fehler: {str(e)}"
+        logger.error(error_detailed)
         try:
             batch = ImportBatch.objects.get(id=batch_id)
-            batch.ai_log = error_msg
+            batch.ai_log = error_detailed
             batch.save()
             
-            # Set error flag in cache
-            cache_key = f"import_progress_{batch.user.id}"
-            cache.set(cache_key, -1, 300)
+            # Save the exact error message to cache for the UI
+            cache_key_progress = f"import_progress_{batch.user.id}"
+            cache_key_error = f"import_error_{batch.user.id}"
+            cache.set(cache_key_progress, -1, 300)
+            cache.set(cache_key_error, error_detailed, 300)
         except:
             pass
     finally:
@@ -583,9 +585,11 @@ def upload_bank_transactions(request):
                 for chunk in uploaded_file.chunks():
                     destination.write(chunk)
 
-            # 3. Reset progress
-            cache_key = f"import_progress_{request.user.id}"
-            cache.set(cache_key, 0, 300)
+            # 3. Reset progress and CLEAR previous errors
+            cache_key_progress = f"import_progress_{request.user.id}"
+            cache_key_error = f"import_error_{request.user.id}"
+            cache.set(cache_key_progress, 0, 300)
+            cache.delete(cache_key_error)
 
             # 4. Start background thread
             thread = threading.Thread(target=_async_import_task, args=(batch.id, file_path, uploaded_file.name))
@@ -604,21 +608,24 @@ def upload_bank_transactions(request):
 
 @login_required
 def import_processing(request):
-    # Find the latest unapplied batch using 'date' instead of 'created_at'
+    # Find the latest unapplied batch
     latest_batch = ImportBatch.objects.filter(user=request.user, is_applied=False).order_by('-date').first()
     
-    cache_key = f"import_progress_{request.user.id}"
-    progress = cache.get(cache_key, 0)
+    cache_key_progress = f"import_progress_{request.user.id}"
+    cache_key_error = f"import_error_{request.user.id}"
+    
+    progress = cache.get(cache_key_progress, 0)
+    error_msg = cache.get(cache_key_error, None)
     
     if progress >= 100 and latest_batch:
         return redirect('review_transactions', batch_id=latest_batch.id)
     
-    if progress == -1:
-        messages.error(request, _("Es gab ein Problem bei der KI-Analyse. Bitte versuche es noch einmal."))
-        return redirect('import_transactions')
+    # We no longer redirect immediately on -1 here, the template will handle it
+    # to show the red box first!
 
     return render(request, 'finance/import_processing.html', {
         'progress': progress,
+        'error_msg': error_msg,
         'batch': latest_batch
     })
 
