@@ -3,6 +3,7 @@ version: '3.8'
 services:
   web:
     container_name: ${CONTAINER_NAME:-finanzplan-web}
+    image: ${IMAGE_NAME:-finanzplan-image}
     build: 
       context: ../
       dockerfile: docker/Dockerfile
