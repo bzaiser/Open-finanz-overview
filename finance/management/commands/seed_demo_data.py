@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
-from django.contrib.auth.models import User
-from finance.models import Profile, Asset, CashFlowSource, OneTimeEvent, Category
+from django.conf import settings
+from core.models import CustomUser, UserProfile
+from finance.models import Asset, CashFlowSource, OneTimeEvent, Category
 from datetime import date
 from decimal import Decimal
 from django.utils import timezone
@@ -13,7 +14,7 @@ class Command(BaseCommand):
         username = 'demo'
         password = 'demo'
         
-        user, created = User.objects.get_or_create(username=username)
+        user, created = CustomUser.objects.get_or_create(username=username)
         user.set_password(password)
         user.is_staff = True # Allow admin access for demo
         user.save()
@@ -22,6 +23,9 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS(f'Created user "{username}"'))
         else:
             self.stdout.write(self.style.WARNING(f'Reset password for existing user "{username}"'))
+
+        # Ensure UserProfile exists
+        UserProfile.objects.get_or_create(user=user)
 
         # 2. Reset existing data for this user to ensure clean state
         Asset.objects.filter(user=user).delete()
@@ -33,8 +37,8 @@ class Command(BaseCommand):
             'Gehalt': 'Gehalt',
             'Miete': 'Miete',
             'Lebensmittel': 'Lebensmittel',
-            'ETF': 'Investitionen',
-            'Versicherung': 'Versicherungen',
+            'Investitionen': 'Investitionen',
+            'Versicherungen': 'Versicherungen',
             'Freizeit': 'Freizeit',
         }
         category_objects = {}
@@ -46,18 +50,15 @@ class Command(BaseCommand):
         Asset.objects.create(
             user=user, name='Girokonto', 
             value=Decimal('4200.00'), 
-            asset_type='Bank'
         )
         Asset.objects.create(
             user=user, name='Tagesgeld', 
             value=Decimal('12000.00'), 
-            asset_type='Bank'
         )
         Asset.objects.create(
             user=user, name='MSCI World ETF', 
             value=Decimal('35000.00'), 
-            asset_type='Stock',
-            expected_annual_return=Decimal('7.0')
+            growth_rate=Decimal('7.0')
         )
 
         # 5. Create Income (CashFlowSource)
