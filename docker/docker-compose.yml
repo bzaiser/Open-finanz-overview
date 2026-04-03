@@ -2,12 +2,13 @@ version: '3.8'
 
 services:
   web:
+    container_name: ${CONTAINER_NAME:-docker-web}
     build: 
       context: ../
       dockerfile: docker/Dockerfile
     restart: always
     ports:
-      - "8000:8000"  # Exposes the server to port 8000. Change left side (e.g. "80:8000") to expose on default web port
+      - "${WEB_PORT:-8000}:8000"  # Exposes the server to port 8000 or the WEB_PORT env variable
     volumes:
       - ../data:/app/data
       - ../:/app
