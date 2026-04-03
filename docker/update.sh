@@ -10,7 +10,7 @@ cd ..
 
 # Pull new changes from git
 echo "Pulling from git repository..."
-git pull origin master
+git pull origin $(git rev-parse --abbrev-ref HEAD)
 
 # Move back to the docker folder
 cd docker

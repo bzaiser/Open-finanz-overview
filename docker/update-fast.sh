@@ -14,7 +14,7 @@ git stash || true
 
 # Pull new changes from git
 echo "Pulling from git repository..."
-git pull origin master
+git pull origin $(git rev-parse --abbrev-ref HEAD)
 
 # Restore local changes
 echo "Restoring local changes..."
