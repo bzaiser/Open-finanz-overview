@@ -15,7 +15,7 @@ services:
       - ../:/app
       - static_volume:/app/staticfiles
     env_file:
-      - .env
+      - ../.env
     environment:
       - "DEBUG=${DEBUG:-False}"
       - "SECRET_KEY=change_this_to_a_secure_long_random_string_in_production!"
