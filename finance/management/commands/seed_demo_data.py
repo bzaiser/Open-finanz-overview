@@ -93,7 +93,7 @@ class Command(BaseCommand):
             user=user, name='ETF Sparplan',
             value=Decimal('500.00'),
             is_income=False,
-            category=category_objects['ETF'],
+            category=category_objects['Investitionen'],
             start_date=date(2023, 1, 1),
             frequency='monthly'
         )
@@ -101,7 +101,7 @@ class Command(BaseCommand):
             user=user, name='KFZ-Versicherung',
             value=Decimal('450.00'),
             is_income=False,
-            category=category_objects['Versicherung'],
+            category=category_objects['Versicherungen'],
             start_date=date(2024, 1, 1),
             frequency='yearly'
         )
