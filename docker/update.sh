@@ -16,9 +16,9 @@ cd "$ROOT_DIR"
 echo "Pulling from git repository..."
 git pull origin $(git rev-parse --abbrev-ref HEAD)
 
-# Fix permissions for the Docker user (prevents 'Permission denied' on manage.py)
+# Fix permissions for the Docker user (prevents 'Permission denied' on manage.py and locale files)
 echo "Ensuring project-wide permissions..."
-chmod -R a+rX .
+chmod -R a+rwX .
 chmod +x manage.py
 
 # Move back to the docker folder for Docker operations
