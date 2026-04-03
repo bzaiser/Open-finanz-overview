@@ -8,17 +8,9 @@ echo "Starting FAST Update Process (No Rebuild)..."
 # Move to the project root directory
 cd ..
 
-# Save local changes (like DEBUG=True or .env changes) to avoid pull conflicts
-echo "Stashing local changes..."
-git stash || true
-
 # Pull new changes from git
 echo "Pulling from git repository..."
 git pull origin $(git rev-parse --abbrev-ref HEAD)
-
-# Restore local changes
-echo "Restoring local changes..."
-git stash pop || true
 
 # Move back to the docker folder
 cd docker
