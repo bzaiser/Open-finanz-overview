@@ -25,20 +25,20 @@ cd docker
 
 # Run database migrations (fast if no new ones)
 echo "Running database migrations..."
-docker compose exec web python manage.py migrate
-docker compose exec web python manage.py createcachetable
+docker compose --env-file ../.env exec web python manage.py migrate
+docker compose --env-file ../.env exec web python manage.py createcachetable
 
 # Compile translations
 echo "Compiling translations..."
-docker compose exec web python manage.py compilemessages
+docker compose --env-file ../.env exec web python manage.py compilemessages
 
 # Collect static files
 echo "Collecting static files..."
-docker compose exec web python manage.py collectstatic --noinput
+docker compose --env-file ../.env exec web python manage.py collectstatic --noinput
 
 # Restart the web service to load new code
 echo "Restarting the web server..."
-docker compose restart web
+docker compose --env-file ../.env restart web
 
 echo "-----------------------------------"
 echo "FAST Update complete! The UI/Code is now live."

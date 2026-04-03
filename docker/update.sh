@@ -17,11 +17,11 @@ cd docker
 
 # Rebuild the docker image (fast since it uses cache)
 echo "Building the docker image..."
-docker compose build
+docker compose --env-file ../.env build
 
 # Start the container in detached mode (recreates only if image/config changed)
 echo "Starting the container..."
-docker compose up -d
+docker compose --env-file ../.env up -d
 
 # Ensure the data directory is writeable (fixes readonly database errors)
 echo "Fixing permissions for data directory..."
@@ -29,8 +29,8 @@ sudo chmod -R 777 ../data
 
 # Run database migrations
 echo "Running database migrations..."
-docker compose exec web python manage.py migrate
-docker compose exec web python manage.py createcachetable
+docker compose --env-file ../.env exec web python manage.py migrate
+docker compose --env-file ../.env exec web python manage.py createcachetable
 
 # Compile translations
 echo "Compiling translations..."
