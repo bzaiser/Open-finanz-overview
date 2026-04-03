@@ -2,13 +2,13 @@ version: '3.8'
 
 services:
   web:
-    container_name: ${CONTAINER_NAME:-docker-web}
+    container_name: ${CONTAINER_NAME:-finanzplan-web}
     build: 
       context: ../
       dockerfile: docker/Dockerfile
     restart: always
     ports:
-      - "${WEB_PORT:-8000}:8000"  # Exposes the server to port 8000 or the WEB_PORT env variable
+      - "${WEB_PORT:-8000}:8000"
     volumes:
       - ../data:/app/data
       - ../:/app
