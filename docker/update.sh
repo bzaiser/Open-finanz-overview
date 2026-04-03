@@ -3,17 +3,21 @@
 # Exit on any error
 set -e
 
+# Find the script's directory and project root
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(dirname "$SCRIPT_DIR")"
+
 echo "Starting Update Process..."
 
-# Move to the project root directory where git lives
-cd ..
+# Move to the project root directory
+cd "$ROOT_DIR"
 
 # Pull new changes from git
 echo "Pulling from git repository..."
 git pull origin $(git rev-parse --abbrev-ref HEAD)
 
-# Move back to the docker folder
-cd docker
+# Move back to the docker folder for Docker operations
+cd "$SCRIPT_DIR"
 
 # Rebuild the docker image (fast since it uses cache)
 echo "Building the docker image..."
