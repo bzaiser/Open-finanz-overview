@@ -26,16 +26,16 @@ cd "$SCRIPT_DIR"
 
 # Run database migrations (fast if no new ones)
 echo "Running database migrations..."
-docker compose --env-file ../.env exec web python manage.py migrate
-docker compose --env-file ../.env exec web python manage.py createcachetable
+docker compose --env-file ../.env exec web python3 manage.py migrate
+docker compose --env-file ../.env exec web python3 manage.py createcachetable
 
 # Compile translations
 echo "Compiling translations..."
-docker compose --env-file ../.env exec web python manage.py compilemessages
+docker compose --env-file ../.env exec web python3 manage.py compilemessages
 
 # Collect static files
 echo "Collecting static files..."
-docker compose --env-file ../.env exec web python manage.py collectstatic --noinput
+docker compose --env-file ../.env exec web python3 manage.py collectstatic --noinput
 
 # Restart/Recreate the services to load new code/config
 echo "Updating containers..."

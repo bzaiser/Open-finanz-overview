@@ -32,10 +32,10 @@ COPY --chown=app:app . /app/
 USER app
 
 # Compile translations
-RUN python manage.py compilemessages
+RUN python3 manage.py compilemessages
 
 # Collect static files with proper permissions
-RUN python manage.py collectstatic --noinput
+RUN python3 manage.py collectstatic --noinput
 
 EXPOSE 8000
 

@@ -38,16 +38,16 @@ sudo chmod -R 777 ../data
 
 # Run database migrations
 echo "Running database migrations..."
-docker compose --env-file ../.env exec web python manage.py migrate
-docker compose --env-file ../.env exec web python manage.py createcachetable
+docker compose --env-file ../.env exec web python3 manage.py migrate
+docker compose --env-file ../.env exec web python3 manage.py createcachetable
 
 # Compile translations
 echo "Compiling translations..."
-docker compose exec web python manage.py compilemessages
+docker compose exec web python3 manage.py compilemessages
 
 # Collect static files
 echo "Collecting static files..."
-docker compose exec web python manage.py collectstatic --noinput
+docker compose exec web python3 manage.py collectstatic --noinput
 
 echo "-----------------------------------"
 echo "Update complete! Application is running."

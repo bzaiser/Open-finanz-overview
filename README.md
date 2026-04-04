@@ -62,14 +62,14 @@ This project is a personal finance dashboard that simulates your financial futur
 
 5. **Initialize database & Demo data**:
    ```bash
-   python manage.py migrate
-   python manage.py seed_demo_data
+   python3 manage.py migrate
+   python3 manage.py seed_demo_data
    ```
    *This creates a user **demo** with password **demo** pre-filled with realistic financial data.*
 
 6. **Run server**:
    ```bash
-   python manage.py runserver
+   python3 manage.py runserver
    ```
    Access at `http://127.0.0.1:8000` (Login: `demo` / `demo`).
 
