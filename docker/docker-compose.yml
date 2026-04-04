@@ -32,17 +32,6 @@ services:
       - ../data/ollama:/root/.ollama
     restart: always
 
-  db-browser:
-    image: coleifer/sqlite-web
-    container_name: ${CONTAINER_NAME:-finanzplan-web}_db_browser
-    volumes:
-      - ../data:/data
-    ports:
-      - "${DB_BROWSER_PORT:-9001}:8080"
-    environment:
-      - SQLITE_DATABASE=db.sqlite3
-    command: /data/db.sqlite3
-    restart: always
 
 volumes:
   static_volume:
