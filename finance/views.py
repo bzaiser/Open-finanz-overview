@@ -67,8 +67,8 @@ SUMMARY_WIDGETS = {
     'current_assets': {'title': _('Current Assets'), 'default_bg': '#0d6efd', 'default_text': '#ffffff'},
     'monthly_income': {'title': _('Monthly Income'), 'default_bg': '#198754', 'default_text': '#ffffff'},
     'monthly_expenses': {'title': _('Monthly Expenses'), 'default_bg': '#dc3545', 'default_text': '#ffffff'},
-    'total_pensions': {'title': _('Total Pensions'), 'default_bg': '#0dcaf0', 'default_text': '#ffffff'},
-    'expected_payout': {'title': _('Exp. Monthly Pension'), 'default_bg': '#6f42c1', 'default_text': '#ffffff'},
+    'total_pensions': {'title': _('Pension Capital'), 'default_bg': '#0dcaf0', 'default_text': '#ffffff'},
+    'expected_payout': {'title': _('Expected Monthly Payout'), 'default_bg': '#6f42c1', 'default_text': '#ffffff'},
 }
 
 DEFAULT_LAYOUT = [
