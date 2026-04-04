@@ -116,6 +116,14 @@
                 {% elif item.id == 'expense_evolution_chart' %}
                 config.type = 'line';
                 config.options.scales = { y: { stacked: true } };
+                // Restore tooltip colors to use the category fill color
+                config.options.plugins.tooltip.callbacks.labelColor = function(context) {
+                    return {
+                        borderColor: context.dataset.backgroundColor,
+                        backgroundColor: context.dataset.backgroundColor,
+                        borderWidth: 2
+                    };
+                };
                 // High contrast lines and points (Black on light theme, White on dark theme)
                 const contrastColor = '{{ item.text_color|default:"#212529" }}';
                 config.data.datasets.forEach(ds => {
