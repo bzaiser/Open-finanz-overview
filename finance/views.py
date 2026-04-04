@@ -420,7 +420,10 @@ def dashboard_view(request):
     
     # Calculate the adjustment growth factor from today to the Stichtag
     inflation_rate = Decimal(str(simulation_params.get('inflation_rate', profile.inflation_rate))) / 100
-    stichtag_dt = datetime.datetime.strptime(simulation_params['stichtag'], '%Y-%m-%d').date()
+    stichtag_dt = simulation_params['stichtag']
+    if isinstance(stichtag_dt, str):
+        stichtag_dt = datetime.datetime.strptime(stichtag_dt, '%Y-%m-%d').date()
+    
     today = timezone.now().date()
     
     # Calculate months from today to Stichtag for growth factor
