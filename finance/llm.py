@@ -126,15 +126,69 @@ def classify_with_groq(transactions, categories):
     return None, "Groq fehlgeschlagen."
 
 
+def classify_with_ollama(transactions, categories):
+    """
+    Ollama-Integration für lokale Kategorisierung.
+    """
+    if not settings.OLLAMA_BASE_URL:
+        return None, "Ollama URL nicht konfiguriert."
+
+    category_list = ", ".join([f"{c['name']} (slug: {c['slug']})" for c in categories])
+    url = f"{settings.OLLAMA_BASE_URL.rstrip('/')}/api/generate"
+    
+    prompt = (
+        f"Du bist ein präziser Finanz-Experte. Kategorisiere diese Bankbuchungen und antworte NUR im JSON-Format. "
+        f"Mögliche Kategorien (mit Slugs): {category_list}\n\n"
+        f"Transaktionen: {json.dumps(transactions)}\n\n"
+        f"Antworte mit einem JSON-Array von Objekten, jedes mit: id, category_slug, is_income (boolean), is_recurring (boolean), frequency (monthly/yearly/once), reasoning (kurz)."
+    )
+    
+    payload = {
+        "model": settings.OLLAMA_MODEL,
+        "prompt": prompt,
+        "stream": False,
+        "format": "json"
+    }
+
+    try:
+        # Erhöhter Timeout für lokale LLMs auf NAS/Docker
+        response = requests.post(url, json=payload, timeout=120)
+        response.raise_for_status()
+        data = response.json()
+        text = data.get('response', '')
+        
+        # Bereinigen von potentiellem Markdown-Output falls 'format':'json' ignoriert wurde
+        if "```json" in text:
+            text = text.split("```json")[1].split("```")[0].strip()
+        
+        result_data = json.loads(text)
+        
+        # Normalisierung des Outputs (Liste von Objekten erwartet)
+        if isinstance(result_data, list):
+            return {str(item['id']): item for item in result_data}, None
+        elif isinstance(result_data, dict):
+             # Falls die KI die Liste in ein Feld wie 'transactions' packt
+             if 'transactions' in result_data:
+                 return {str(item['id']): item for item in result_data['transactions']}, None
+             # Falls das oberste Level direkt die IDs sind
+             return {str(k): v for k, v in result_data.items() if isinstance(v, dict)}, None
+        
+        return None, "Ollama lieferte kein gültiges JSON-Array."
+    except Exception as e:
+        logger.error(f"Ollama failed: {e}")
+        return None, str(e)
+
+
 def classify_transactions(transactions, categories):
     """
-    Main entry point for transaction classification.
-    Hybrid approach: Keyword Fallback -> Groq -> Gemini.
+    Zentrale Einstiegsfunktion für die Kategorisierung.
+    Wählt den Provider basierend auf der Einstellung 'LLM_PROVIDER'.
     """
+    provider = getattr(settings, 'LLM_PROVIDER', 'hybrid').lower()
     final_results = {}
     remaining_transactions = []
     
-    # 1. Local Keyword Pre-Check (Saves API costs & prevents Rate Limits)
+    # 0. Lokaler Keyword-Check (Spart Ressourcen & Kosten)
     for t in transactions:
         local_match = simple_keyword_classify(t['description'], categories)
         if local_match:
@@ -143,35 +197,51 @@ def classify_transactions(transactions, categories):
             remaining_transactions.append(t)
             
     if not remaining_transactions:
-        return final_results, "KI-Status: 100% lokal erkannt."
+        return final_results, "KI-Status: 100% lokal (Keywords) erkannt."
 
-    # 2. Try Groq for the rest
-    if hasattr(settings, 'GROQ_API_KEY') and settings.GROQ_API_KEY:
+    # 1. Ollama (Lokal)
+    if provider == 'ollama':
+        results, error = classify_with_ollama(remaining_transactions, categories)
+        if results:
+            final_results.update(results)
+            return final_results, f"KI aktiv via Ollama ({settings.OLLAMA_MODEL})."
+        logger.warning(f"Ollama fehlgeschlagen, Fallback auf Hybrid: {error}")
+
+    # 2. Groq (API - Llama 3)
+    if provider == 'groq' or (provider == 'hybrid' and getattr(settings, 'GROQ_API_KEY', None)):
         results, error = classify_with_groq(remaining_transactions, categories)
         if results:
             final_results.update(results)
-            return final_results, "KI aktiv via Groq (Llama-3)."
-    
-    # 3. Try Gemini for the rest
-    model = get_gemini_client()
-    if model:
-        try:
-            category_list = ", ".join([f"{c['name']} (slug: {c['slug']})" for c in categories])
-            prompt = f"Kategorisiere bitte diese Bankbuchungen als JSON (Kategorien: {category_list}): {json.dumps(remaining_transactions)}"
-            # Tiny sleep to avoid Gemini rate limits too
-            time.sleep(1)
-            response = model.generate_content(prompt)
-            text = response.text.strip()
-            if "```json" in text:
-                text = text.split("```json")[1].split("```")[0].strip()
-            data = json.loads(text)
-            ai_data = {str(item['id']): item for item in data}
-            final_results.update(ai_data)
-            return final_results, "KI aktiv via Gemini (Google)."
-        except Exception as e:
-            logger.error(f"Gemini failed: {e}")
-    
-    # 4. Final Rule-based Fallback for anything left
+            if provider == 'groq':
+                return final_results, "KI aktiv via Groq (Llama-3)."
+            # Für Hybrid: Update remaining für Gemini
+            remaining_transactions = [t for t in remaining_transactions if str(t['id']) not in final_results]
+            if not remaining_transactions:
+                return final_results, "KI aktiv via Groq."
+
+    # 3. Gemini (API - Google)
+    if provider == 'gemini' or (provider == 'hybrid' and getattr(settings, 'GEMINI_API_KEY', None)):
+        model = get_gemini_client()
+        if model:
+            try:
+                category_list = ", ".join([f"{c['name']} (slug: {c['slug']})" for c in categories])
+                prompt = (
+                    f"Kategorisiere bitte diese Bankbuchungen als JSON (Kategorien: {category_list}): "
+                    f"{json.dumps(remaining_transactions)}"
+                )
+                time.sleep(0.5) # Anti-Rate-Limit
+                response = model.generate_content(prompt)
+                text = response.text.strip()
+                if "```json" in text:
+                    text = text.split("```json")[1].split("```")[0].strip()
+                data = json.loads(text)
+                ai_data = {str(item['id']): item for item in data}
+                final_results.update(ai_data)
+                return final_results, "KI aktiv via Gemini (Google)."
+            except Exception as e:
+                logger.error(f"Gemini failed: {e}")
+
+    # 4. Finaler Fallback für nicht erkannte Zeilen
     for t in remaining_transactions:
         if str(t['id']) not in final_results:
             final_results[str(t['id'])] = {
@@ -179,10 +249,10 @@ def classify_transactions(transactions, categories):
                 "is_income": t['amount'] > 0,
                 "is_recurring": False,
                 "frequency": "monthly",
-                "reasoning": "Standard-Zuweisung (KI Limit überschritten)"
+                "reasoning": "Standard-Zuweisung (KI Limit überschritten oder Fehler)"
             }
             
-    return final_results, "Limit erreicht (Hybrid Modus)."
+    return final_results, "Hybrid-Modus (Fallback aktiv)."
 
 def get_pension_forecast():
     # Use Gemini for general knowledge (better than small Llama sometimes)

@@ -174,8 +174,9 @@ class ExcelParserService:
                     "is_likely_recurring": group['is_recurring'],
                 })
 
-            # AI Categorization in chunks of 50 (Faster for large files)
-            chunk_size = 50
+            # AI Categorization in chunks (Smaller for local LLMs/Ollama for better progress)
+            provider = getattr(settings, 'LLM_PROVIDER', 'hybrid').lower()
+            chunk_size = 10 if provider == 'ollama' else 50
             ai_results = {}
             error_logs = []
             total_items = len(transactions_for_ai)
