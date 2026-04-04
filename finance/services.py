@@ -105,11 +105,11 @@ class SimulationEngine:
             for p_item in pensions_state:
                 p = p_item['pension']
                 # Contrib: only if before end date
-                if not p.contribution_end_date or current_date < p.contribution_end_date:
+                if not p.contribution_end_date or current_date < p.contribution_end_date.replace(day=1):
                     current_monthly_pension_contribution += p.monthly_contribution
                 
                 # Payout: only if after/at start payout date
-                if p.start_payout_date and current_date >= p.start_payout_date:
+                if p.start_payout_date and current_date >= p.start_payout_date.replace(day=1):
                     if p.expected_payout_at_retirement:
                         # Use the contract value but apply growth from start of payout until now
                         payout_val = Decimal(str(p.expected_payout_at_retirement))
@@ -133,8 +133,8 @@ class SimulationEngine:
             } if current_monthly_pension_payout > 0 else {}
             
             for cf in cash_flows:
-                if cf.start_date and cf.start_date > current_date: continue
-                if cf.end_date and cf.end_date < current_date: continue
+                if cf.start_date and cf.start_date.replace(day=1) > current_date: continue
+                if cf.end_date and cf.end_date.replace(day=1) < current_date: continue
                 
                 amount = cf.value
                 if cf.is_inflation_adjusted:
@@ -170,7 +170,7 @@ class SimulationEngine:
                     asset = item['asset']
                     rate = (asset.growth_rate / 100) + self.investment_return_offset
                     item['balance'] *= (1 + (rate / 12))
-                    if asset.withdrawal_start_date and current_date >= asset.withdrawal_start_date:
+                    if asset.withdrawal_start_date and current_date >= asset.withdrawal_start_date.replace(day=1):
                         item['balance'] = max(Decimal('0'), item['balance'] - asset.withdrawal_amount)
                 
                 # Apply Pension Growth & Contribution
@@ -180,7 +180,7 @@ class SimulationEngine:
                     rate = (pension.growth_rate / 100)
                     item['balance'] *= (1 + (rate / 12))
                     # Contribution only if before end date
-                    if not pension.contribution_end_date or current_date < pension.contribution_end_date:
+                    if not pension.contribution_end_date or current_date < pension.contribution_end_date.replace(day=1):
                         item['balance'] += pension.monthly_contribution
 
                 # Monthly Savings: monthly_expenses already includes current_monthly_pension_contribution
