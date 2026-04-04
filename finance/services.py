@@ -3,6 +3,7 @@ import math
 from decimal import Decimal
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 from .models import Asset, CashFlowSource, OneTimeEvent, Pension
 from core.models import UserProfile
 
@@ -122,6 +123,8 @@ class SimulationEngine:
             # 1. Dynamic Pension Contributions and Payouts for this month
             current_monthly_pension_contribution = Decimal('0.00')
             current_monthly_pension_payout = Decimal('0.00')
+            current_monthly_pension_payout_fixed = Decimal('0.00')
+            current_monthly_pension_payout_capital = Decimal('0.00')
             
             for p_item in pensions_state:
                 p = p_item['pension']
@@ -142,6 +145,12 @@ class SimulationEngine:
                         # Grow Nominal Payout by pension_increase rate annually (step function)
                         payout_val = payout_val * ((1 + self.pension_increase) ** full_years_since_start)
                         current_monthly_pension_payout += payout_val
+                        
+                        # Split by capital base
+                        if p.current_value > 0:
+                            current_monthly_pension_payout_capital += payout_val
+                        else:
+                            current_monthly_pension_payout_fixed += payout_val
 
             # 2. Process Cash Flows (Income/Expenses)
             monthly_income = current_monthly_pension_payout
@@ -149,9 +158,11 @@ class SimulationEngine:
             category_breakdown = {
                 'Sparen': current_monthly_pension_contribution
             }
-            income_category_breakdown = {
-                'Rente': current_monthly_pension_payout
-            } if current_monthly_pension_payout > 0 else {}
+            income_category_breakdown = {}
+            if current_monthly_pension_payout_fixed > 0:
+                income_category_breakdown[str(_('Gesetzliche Rente'))] = current_monthly_pension_payout_fixed
+            if current_monthly_pension_payout_capital > 0:
+                income_category_breakdown[str(_('Private Kapital-Rente'))] = current_monthly_pension_payout_capital
             
             for cf in cash_flows:
                 if cf.start_date and cf.start_date.replace(day=1) > current_date: continue
@@ -233,6 +244,8 @@ class SimulationEngine:
                 'real_monthly_expenses': float(round(monthly_expenses / inflation_factor, 2)),
                 'monthly_pension_payout': float(round(current_monthly_pension_payout, 2)),
                 'real_monthly_pension_payout': float(round(current_monthly_pension_payout / inflation_factor, 2)),
+                'real_monthly_pension_payout_fixed': float(round(current_monthly_pension_payout_fixed / inflation_factor, 2)),
+                'real_monthly_pension_payout_capital': float(round(current_monthly_pension_payout_capital / inflation_factor, 2)),
                 'monthly_pension_contribution': float(round(current_monthly_pension_contribution, 2)),
                 'category_breakdown': {k: float(round(v, 2)) for k, v in category_breakdown.items()},
                 'income_category_breakdown': {k: float(round(v, 2)) for k, v in income_category_breakdown.items()},

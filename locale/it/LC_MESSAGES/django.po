@@ -2035,3 +2035,9 @@ msgstr "Contanti Accumulati"
 
 msgid "Asset Allocation"
 msgstr "Allocazione degli Asset"
+
+msgid "Gesetzliche Rente"
+msgstr "Pensione statale"
+
+msgid "Private Kapital-Rente"
+msgstr "Pensione a capitalizzazione"

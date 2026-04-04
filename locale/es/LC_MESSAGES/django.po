@@ -2037,3 +2037,9 @@ msgstr "Activos Líquidos"
 
 msgid "Accumulated Cash"
 msgstr "Efectivo Acumulado"
+
+msgid "Gesetzliche Rente"
+msgstr "Pensión pública"
+
+msgid "Private Kapital-Rente"
+msgstr "Pensión de capital privado"

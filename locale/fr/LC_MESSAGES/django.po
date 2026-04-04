@@ -2035,3 +2035,9 @@ msgstr "Liquidités Accumulées"
 
 msgid "Asset Allocation"
 msgstr "Allocation d'Actifs"
+
+msgid "Gesetzliche Rente"
+msgstr "Retraite d'État"
+
+msgid "Private Kapital-Rente"
+msgstr "Retraite par capitalisation"

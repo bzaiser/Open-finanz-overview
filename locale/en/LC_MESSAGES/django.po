@@ -2073,3 +2073,9 @@ msgstr "Table Styling"
 
 msgid "Stichtag"
 msgstr "Reference Date"
+
+msgid "Gesetzliche Rente"
+msgstr "State Pension"
+
+msgid "Private Kapital-Rente"
+msgstr "Private Capital Pension"
