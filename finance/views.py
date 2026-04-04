@@ -323,7 +323,7 @@ def dashboard_view(request):
             'backgroundColor': color,
             'borderColor': '#000000',
             'borderWidth': 1.5,
-            'pointBackgroundColor': '#ffffff',
+            'pointBackgroundColor': color,
             'pointBorderColor': '#000000',
             'fill': True
         })
