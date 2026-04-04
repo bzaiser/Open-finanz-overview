@@ -460,7 +460,7 @@ def dashboard_view(request):
     current_monthly_income = current_month_data.get('monthly_income', 0)       # Nominal: what you'll actually earn
     current_monthly_expenses = current_month_data.get('monthly_expenses', 0)   # Nominal: what you'll actually spend
     current_pensions_total = current_month_data.get('real_pension_total', 0)
-    current_assets_total = current_month_data.get('real_asset_total', 0)
+    current_assets_total = current_month_data.get('real_asset_total', 0) + current_pensions_total
     
     # Calculate Total Expected Payout (Real value at Stichtag)
     raw_expected_sum = sum(p.expected_payout_at_retirement or 0 for p in user.pensions.all())
@@ -569,6 +569,15 @@ def dashboard_view(request):
             'amount': float(a.value or 0), 
             'category': _('Asset'),
             'rate': f"{a.growth_rate or 0}%",
+            'year': continuous_label
+        })
+
+    for p in user.pensions.all():
+        table_data_asset.append({
+            'name': f"{_('Rente')}: {p.provider}", 
+            'amount': float(p.current_value or 0), 
+            'category': _('Rente'),
+            'rate': f"{p.growth_rate or 0}%",
             'year': continuous_label
         })
 
