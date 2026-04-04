@@ -5,7 +5,7 @@ from decimal import Decimal
 from django.utils import timezone
 from .models import Category, ImportBatch, PendingTransaction
 from .llm import classify_transactions
-from django.core.cache import cache
+from django.conf import settings
 import logging
 
 logger = logging.getLogger(__name__)
