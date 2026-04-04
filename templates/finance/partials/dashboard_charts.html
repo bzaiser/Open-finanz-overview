@@ -75,7 +75,28 @@
                         responsive: true,
                         maintainAspectRatio: false,
                         plugins: {
-                            tooltip: { mode: 'index', intersect: false }
+                            tooltip: { 
+                                mode: 'index', 
+                                intersect: false,
+                                callbacks: {
+                                    labelColor: function(context) {
+                                        return {
+                                            borderColor: context.dataset.borderColor,
+                                            backgroundColor: context.dataset.backgroundColor || context.dataset.borderColor
+                                        };
+                                    }
+                                }
+                            }
+                        },
+                        elements: {
+                            line: {
+                                borderWidth: 2,
+                                hoverBorderWidth: 4
+                            },
+                            point: {
+                                hitRadius: 10,
+                                hoverRadius: 6
+                            }
                         },
                         scales: {
                             x: { grid: { color: function(context) {
@@ -127,6 +148,12 @@
                 const evtDataset = data.datasets[evtDatasetIdx];
                 const tooltipMeta = evtDataset.tooltipData || [];
                 config.options.plugins.tooltip.callbacks = {
+                    labelColor: function(context) {
+                        return {
+                            borderColor: context.dataset.borderColor,
+                            backgroundColor: context.dataset.backgroundColor || context.dataset.borderColor
+                        };
+                    },
                     label: function (context) {
                         if (context.datasetIndex === evtDatasetIdx && tooltipMeta[context.dataIndex] && tooltipMeta[context.dataIndex].length > 0) {
                             const events = tooltipMeta[context.dataIndex];
@@ -143,6 +170,12 @@
                 };
                 {% elif item.id == 'inflation_monitor_chart' %}
                 config.options.plugins.tooltip.callbacks = {
+                    labelColor: function(context) {
+                        return {
+                            borderColor: context.dataset.borderColor,
+                            backgroundColor: context.dataset.backgroundColor || context.dataset.borderColor
+                        };
+                    },
                     label: function(context) {
                         let label = context.dataset.label || '';
                         if (label) { label += ': '; }
