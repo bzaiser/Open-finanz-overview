@@ -111,6 +111,10 @@ def classify_with_groq(transactions, categories):
                 time.sleep(wait_time)
                 continue
                 
+            if response.status_code == 401:
+                key_preview = settings.GROQ_API_KEY[:4] + "..." if settings.GROQ_API_KEY else "KEIN_KEY"
+                logger.error(f"Groq 401 Unauthorized! Key-Vorschau: {key_preview}. Prüfen Sie Ihren Key in der .env.")
+
             response.raise_for_status()
             data = response.json()
             text = data['choices'][0]['message']['content']
