@@ -434,11 +434,11 @@ def dashboard_view(request):
     simulated_payout = current_month_data.get('monthly_pension_payout', 0)
     
     if simulated_payout > 0:
-        # If pensions are already flowing, show the exactly simulated adjusted value
+        # If pensions are already flowing, show the simulated payout
         total_expected_pensions = simulated_payout
     else:
-        # If not yet flowing, show the total target sum adjusted for Rentenanpassungen until Stichtag
-        total_expected_pensions = float(raw_expected_sum * growth_factor)
+        # If not yet flowing, show the static target sum from contracts
+        total_expected_pensions = float(raw_expected_sum)
     
     simulated_end_age = int(profile.simulation_max_age)
     

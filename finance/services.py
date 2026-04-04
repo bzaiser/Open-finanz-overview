@@ -110,11 +110,9 @@ class SimulationEngine:
                 # Payout: only if after/at start payout date
                 if p.start_payout_date and current_date >= p.start_payout_date:
                     if p.expected_payout_at_retirement:
-                        # Apply adjustment growth from now to current_date
-                        payout_val = p.expected_payout_at_retirement
-                        # We use the inflation rate as a proxy for pension adjustments (Rentenerhöhungen)
-                        payout_val = Decimal(str(payout_val)) * ((1 + self.inflation_rate) ** year_passed_decimal)
-                        current_monthly_pension_payout += payout_val
+                        # Use the static contract value (as entered in the profile)
+                        # to avoid double growth-projection issues.
+                        current_monthly_pension_payout += p.expected_payout_at_retirement
 
             # 2. Process Cash Flows (Income/Expenses)
             monthly_income = current_monthly_pension_payout
@@ -177,8 +175,8 @@ class SimulationEngine:
                     if not pension.contribution_end_date or current_date < pension.contribution_end_date:
                         item['balance'] += pension.monthly_contribution
 
-                # Monthly Savings
-                monthly_savings = monthly_income - monthly_expenses - current_monthly_pension_contribution
+                # Monthly Savings: monthly_expenses already includes current_monthly_pension_contribution
+                monthly_savings = monthly_income - monthly_expenses
                 accumulated_cash += (monthly_savings + event_impact)
             
             # Totals
