@@ -336,12 +336,21 @@ def dashboard_view(request):
             percent = 0.0
         inflation_loss_percent.append(percent)
 
+    # Identify the index of the Stichtag's year for highlighting in charts
+    stichtag_year = target_date.year
+    stichtag_year_index = -1
+    for i, yr in enumerate(sorted_years):
+        if yr == stichtag_year:
+            stichtag_year_index = i
+            break
+
     inflation_data = {
         'labels': labels_yearly,
         'nominal': net_worth_nominal,
         'real': net_worth_real,
         'loss': inflation_loss,
-        'loss_percent': inflation_loss_percent
+        'loss_percent': inflation_loss_percent,
+        'stichtag_index': stichtag_year_index
     }
 
     chart_datasets = {
@@ -350,7 +359,8 @@ def dashboard_view(request):
             'datasets': [
                 {'label': 'Nominal', 'data': net_worth_nominal, 'borderColor': 'blue', 'fill': True},
                 {'label': 'Real', 'data': net_worth_real, 'borderColor': 'green', 'borderDash': [5, 5], 'fill': False},
-            ]
+            ],
+            'stichtag_index': stichtag_year_index
         },
         'cashflow_chart': {
              'labels': labels_yearly,
@@ -396,7 +406,8 @@ def dashboard_view(request):
     current_monthly_expenses = current_month_data.get('monthly_expenses', 0)
     current_pensions_total = current_month_data.get('pension_total', 0)
     current_assets_total = current_month_data.get('asset_total', 0)
-    total_expected_pensions = sum(p.expected_payout_at_retirement or 0 for p in user.pensions.all())
+    # The summary widget should show what is ACTUALLY being paid out at the chosen Stichtag
+    total_expected_pensions = current_month_data.get('monthly_pension_payout', 0)
     
     simulated_end_age = int(profile.simulation_max_age)
     
@@ -524,6 +535,8 @@ def dashboard_view(request):
         'current_monthly_income': current_monthly_income,
         'current_monthly_expenses': current_monthly_expenses,
         'current_pensions_total': current_pensions_total,
+        'total_expected_pensions': total_expected_pensions,
+        'stichtag_year_index': stichtag_year_index,
         'simulation_config': simulation_config,
         'table_config': table_config,
         'table_datasets': table_datasets,

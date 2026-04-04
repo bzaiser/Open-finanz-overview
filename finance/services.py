@@ -192,6 +192,8 @@ class SimulationEngine:
                 'accumulated_cash': float(round(accumulated_cash, 2)),
                 'monthly_income': float(round(monthly_income, 2)),
                 'monthly_expenses': float(round(monthly_expenses, 2)),
+                'monthly_pension_payout': float(round(current_monthly_pension_payout, 2)),
+                'monthly_pension_contribution': float(round(current_monthly_pension_contribution, 2)),
                 'category_breakdown': {k: float(round(v, 2)) for k, v in category_breakdown.items()},
                 'income_category_breakdown': {k: float(round(v, 2)) for k, v in income_category_breakdown.items()},
                 'one_time_events': events_this_month,
