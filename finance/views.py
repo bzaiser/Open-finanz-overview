@@ -415,15 +415,28 @@ def dashboard_view(request):
             'year': year
         })
     # Asset withdrawals (Income)
-    for a in user.assets.filter(withdrawal_amount__gt=0):
-        year = str(a.withdrawal_start_date.year) if a.withdrawal_start_date else continuous_label
-        table_data_income.append({
-            'name': f"{_('Withdrawal')}: {a.name}", 
-            'amount': float(a.withdrawal_amount), 
-            'category': _('Asset'),
-            'type': _('Asset'),
-            'year': year
-        })
+    for a in user.assets.all():
+        if a.withdrawal_amount and a.withdrawal_amount > 0:
+            year = str(a.withdrawal_start_date.year) if a.withdrawal_start_date else continuous_label
+            table_data_income.append({
+                'name': f"{_('Entnahme')}: {a.name}", 
+                'amount': float(a.withdrawal_amount), 
+                'category': _('Vermögen'),
+                'type': _('Entnahme'),
+                'year': year
+            })
+    
+    # Pension payouts (Income)
+    for p in user.pensions.all():
+        if p.expected_payout_at_retirement and p.expected_payout_at_retirement > 0:
+            year = str(p.start_payout_date.year) if p.start_payout_date else continuous_label
+            table_data_income.append({
+                'name': f"{_('Rente')}: {p.provider}", 
+                'amount': float(p.expected_payout_at_retirement), 
+                'category': _('Rente'),
+                'type': _('Auszahlung'),
+                'year': year
+            })
 
     table_data_expense = []
     # Direct expenses
@@ -438,15 +451,16 @@ def dashboard_view(request):
             'year': year
         })
     # Pension contributions (Expense)
-    for p in user.pensions.filter(monthly_contribution__gt=0):
-        # Pensions are usually continuous until retirement
-        table_data_expense.append({
-            'name': f"{_('Contribution')}: {p.provider}", 
-            'amount': float(p.monthly_contribution), 
-            'category': _('Sparen'),
-            'type': _('Pension'),
-            'year': continuous_label
-        })
+    for p in user.pensions.all():
+        if p.monthly_contribution and p.monthly_contribution > 0:
+            year = str(p.contribution_end_date.year) if p.contribution_end_date else continuous_label
+            table_data_expense.append({
+                'name': f"{_('Beitrag')}: {p.provider}", 
+                'amount': float(p.monthly_contribution), 
+                'category': _('Sparen'),
+                'type': _('Rente'),
+                'year': year
+            })
 
     table_data_asset = []
     for a in user.assets.all():
