@@ -93,8 +93,10 @@ class SimulationEngine:
 
             # 3. Process Cash Flows (Income/Expenses) - Always for all months
             monthly_income = Decimal('0.00')
-            monthly_expenses = Decimal('0.00')
-            category_breakdown = {}
+            monthly_expenses = total_monthly_pension_contribution # Pension savings count as expense
+            category_breakdown = {
+                'Sparen': float(total_monthly_pension_contribution)
+            }
             income_category_breakdown = {}
             
             for cf in cash_flows:

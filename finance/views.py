@@ -466,7 +466,7 @@ def dashboard_view(request):
         table_data_expense.append({
             'name': f"{_('Contribution')}: {p.provider}", 
             'amount': float(p.monthly_contribution), 
-            'category': _('Pension'),
+            'category': _('Sparen'),
             'type': _('Pension'),
             'year': continuous_label
         })
