@@ -459,12 +459,12 @@ def dashboard_view(request):
 
     # Key Metrics for Summary Panels (Use REAL values for purchasing power consistency)
     last_month = forecast_data[-1]
-    current_net_worth = current_month_data.get('real_net_worth', current_month_data.get('nominal_net_worth', 0))
-    projected_net_worth = last_month.get('real_net_worth', last_month.get('nominal_net_worth', 0))
-    current_monthly_income = current_month_data.get('monthly_income', 0)       # Nominal: what you'll actually earn
-    current_monthly_expenses = current_month_data.get('monthly_expenses', 0)   # Nominal: what you'll actually spend
-    current_pensions_total = current_month_data.get('real_pension_total', 0)
-    current_assets_total = current_month_data.get('real_asset_total', 0) + current_pensions_total
+    current_net_worth = round(current_month_data.get('real_net_worth', current_month_data.get('nominal_net_worth', 0)), 2)
+    projected_net_worth = round(last_month.get('real_net_worth', last_month.get('nominal_net_worth', 0)), 2)
+    current_monthly_income = round(current_month_data.get('monthly_income', 0), 2)       # Nominal: what you'll actually earn
+    current_monthly_expenses = round(current_month_data.get('monthly_expenses', 0), 2)   # Nominal: what you'll actually spend
+    current_pensions_total = round(current_month_data.get('real_pension_total', 0), 2)
+    current_assets_total = round(current_month_data.get('real_asset_total', 0) + current_pensions_total, 2)
     
     # Calculate Total Expected Payout (Real value at Stichtag)
     raw_expected_sum = sum(p.expected_payout_at_retirement or 0 for p in user.pensions.all())
