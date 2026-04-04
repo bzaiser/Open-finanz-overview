@@ -2049,6 +2049,7 @@ msgstr "Indexé (Ajustement à l'inflation)"
 msgid "If checked, the payout will increase annually based on the global pension increase rate."
 msgstr "Si cette case est cochée, le versement augmentera annuellement en fonction du taux global d'augmentation des pensions."
 
+
 msgid "Contribution End Date"
 msgstr "Date de fin de cotisation"
 
