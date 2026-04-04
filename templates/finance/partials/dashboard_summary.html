@@ -1,5 +1,5 @@
 {% load i18n humanize %}
-<div id="dashboard-summary" class="row mb-4" {% if request.headers.HX_Request %}hx-swap-oob="true"{% endif %}>
+<div id="dashboard-summary" class="row mb-4" {% if request.META.HTTP_HX_REQUEST or 'HX-Request' in request.headers %}hx-swap-oob="true"{% endif %}>
     {% for item in summary_layout %}
     {% if item.visible %}
     <div class="col-md-3 mb-3" style="order: {{ item.order }};">
