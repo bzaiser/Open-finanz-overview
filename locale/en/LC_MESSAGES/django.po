@@ -2079,3 +2079,9 @@ msgstr "State Pension"
 
 msgid "Private Kapital-Rente"
 msgstr "Private Capital Pension"
+
+msgid "Indexed (Inflation Adjustment)"
+msgstr "Indexed (Inflation Adjustment)"
+
+msgid "If checked, the payout will increase annually based on the global pension increase rate."
+msgstr "If checked, the payout will increase annually based on the global pension increase rate."

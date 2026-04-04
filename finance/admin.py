@@ -34,7 +34,8 @@ class BaseOwnedModelAdmin(admin.ModelAdmin):
 
 @admin.register(Pension)
 class PensionAdmin(BaseOwnedModelAdmin):
-    list_display = ('provider', 'user', 'current_value', 'monthly_contribution', 'expected_payout_at_retirement', 'contribution_end_date', 'start_payout_date')
+    list_display = ('provider', 'user', 'current_value', 'monthly_contribution', 'expected_payout_at_retirement', 'is_indexed', 'contribution_end_date', 'start_payout_date')
+    list_editable = ('is_indexed',)
     search_fields = ('provider', 'user__username')
     list_filter = ('user',)
 
@@ -129,7 +130,7 @@ class OneTimeEventInline(admin.TabularInline):
 class PensionInline(admin.TabularInline):
     model = Pension
     extra = 1
-    fields = ('provider', 'current_value', 'monthly_contribution', 'contribution_end_date', 'expected_payout_at_retirement', 'growth_rate', 'start_payout_date')
+    fields = ('provider', 'current_value', 'monthly_contribution', 'contribution_end_date', 'expected_payout_at_retirement', 'is_indexed', 'growth_rate', 'start_payout_date')
     classes = ['collapse']
 
 @admin.register(FinancialStatusProxy)

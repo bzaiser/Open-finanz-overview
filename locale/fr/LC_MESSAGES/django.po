@@ -2041,3 +2041,9 @@ msgstr "Retraite d'État"
 
 msgid "Private Kapital-Rente"
 msgstr "Retraite par capitalisation"
+
+msgid "Indexed (Inflation Adjustment)"
+msgstr "Indexé (Ajustement à l'inflation)"
+
+msgid "If checked, the payout will increase annually based on the global pension increase rate."
+msgstr "Si cette case est cochée, le versement augmentera annuellement en fonction du taux global d'augmentation des pensions."

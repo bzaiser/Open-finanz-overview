@@ -142,8 +142,9 @@ class SimulationEngine:
                         years_since_start = (current_date.year - p.start_payout_date.year) * 12 + (current_date.month - p.start_payout_date.month)
                         full_years_since_start = Decimal(str(max(0, years_since_start) // 12))
                         
-                        # Grow Nominal Payout by pension_increase rate annually (step function)
-                        payout_val = payout_val * ((1 + self.pension_increase) ** full_years_since_start)
+                        # Grow Nominal Payout by pension_increase rate annually (step function) if indexed
+                        actual_increase = self.pension_increase if p.is_indexed else Decimal('0.00')
+                        payout_val = payout_val * ((1 + actual_increase) ** full_years_since_start)
                         current_monthly_pension_payout += payout_val
                         
                         # Split by capital base

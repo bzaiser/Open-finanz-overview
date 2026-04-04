@@ -2221,3 +2221,9 @@ msgstr "Angespartes Barvermögen"
 
 msgid "A snapshot donut chart showing the percentage distribution of your assets."
 msgstr "Ein Ringdiagramm, das die prozentuale Verteilung Ihrer Vermögenswerte am heutigen Tag zeigt."
+
+msgid "Indexed (Inflation Adjustment)"
+msgstr "Indiziert (Inflationsanpassung)"
+
+msgid "If checked, the payout will increase annually based on the global pension increase rate."
+msgstr "Wenn aktiviert, steigt die Auszahlung jährlich basierend auf der globalen Rentensteigerungsrate."
