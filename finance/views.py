@@ -341,7 +341,8 @@ def dashboard_view(request):
     except:
         target_date = timezone.now().date().replace(day=1)
 
-    current_month_data = next((d for d in forecast_data if d['date'] == target_date), forecast_data[0])
+    # Find the forecast entry closest to target_date (avoids exact-match failures)
+    current_month_data = min(forecast_data, key=lambda d: abs((d['date'] - target_date).days))
             
     budget_labels = list(current_month_data['category_breakdown'].keys())
     budget_data = list(current_month_data['category_breakdown'].values())
