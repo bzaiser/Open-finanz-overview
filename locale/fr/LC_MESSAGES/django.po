@@ -2030,9 +2030,6 @@ msgstr "Décalage de Rendement Inv. (%)"
 msgid "Liquid Assets"
 msgstr "Actifs Liquides"
 
-msgid "Pension Capital"
-msgstr "Capital de Retraite"
-
 msgid "Accumulated Cash"
 msgstr "Liquidités Accumulées"
 

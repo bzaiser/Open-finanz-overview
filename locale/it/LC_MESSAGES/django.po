@@ -2030,9 +2030,6 @@ msgstr "Offset di Rendimento Inv. (%)"
 msgid "Liquid Assets"
 msgstr "Attività Liquide"
 
-msgid "Pension Capital"
-msgstr "Capitale Pensione"
-
 msgid "Accumulated Cash"
 msgstr "Contanti Accumulati"
 

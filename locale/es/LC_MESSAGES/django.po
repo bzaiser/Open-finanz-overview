@@ -2035,14 +2035,5 @@ msgstr "Estilos de Tabla"
 msgid "Liquid Assets"
 msgstr "Activos Líquidos"
 
-msgid "Pension Capital"
-msgstr "Capital de Pensión"
-
 msgid "Accumulated Cash"
 msgstr "Efectivo Acumulado"
-
-msgid "Asset Allocation"
-msgstr "Asignación de Activos"
-
-msgid "Asset Allocation"
-msgstr "Asignación de Activos"
