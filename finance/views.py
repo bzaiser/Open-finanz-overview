@@ -321,7 +321,10 @@ def dashboard_view(request):
             'label': cat,
             'data': cat_data,
             'backgroundColor': color,
-            'borderColor': color,
+            'borderColor': '#000000',
+            'borderWidth': 1.5,
+            'pointBackgroundColor': '#ffffff',
+            'pointBorderColor': '#000000',
             'fill': True
         })
 
