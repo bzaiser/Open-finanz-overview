@@ -2050,3 +2050,9 @@ msgstr "Indexado (Ajuste por inflación)"
 
 msgid "If checked, the payout will increase annually based on the global pension increase rate."
 msgstr "Si está marcado, el pago aumentará anualmente según la tasa global de aumento de las pensiones."
+
+msgid "Contribution End Date"
+msgstr "Fecha de finalización de la contribución"
+
+msgid "Date when you stop paying into this pension"
+msgstr "Fecha en la que deja de cotizar a esta pensión"
