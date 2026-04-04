@@ -67,6 +67,7 @@ SUMMARY_WIDGETS = {
     'monthly_income': {'title': _('Monthly Income'), 'default_bg': '#198754', 'default_text': '#ffffff'},
     'monthly_expenses': {'title': _('Monthly Expenses'), 'default_bg': '#dc3545', 'default_text': '#ffffff'},
     'total_pensions': {'title': _('Total Pensions'), 'default_bg': '#0dcaf0', 'default_text': '#ffffff'},
+    'expected_payout': {'title': _('Exp. Monthly Pension'), 'default_bg': '#6f42c1', 'default_text': '#ffffff'},
 }
 
 DEFAULT_LAYOUT = [
@@ -97,6 +98,7 @@ def dashboard_view(request):
         {'id': 'monthly_income', 'visible': True, 'bg_color': '#198754', 'text_color': '#ffffff', 'order': 2},
         {'id': 'monthly_expenses', 'visible': True, 'bg_color': '#dc3545', 'text_color': '#ffffff', 'order': 3},
         {'id': 'total_pensions', 'visible': True, 'bg_color': '#0dcaf0', 'text_color': '#ffffff', 'order': 4},
+        {'id': 'expected_payout', 'visible': True, 'bg_color': '#6f42c1', 'text_color': '#ffffff', 'order': 5},
     ])
 
     simulation_config = safe_merge(dashboard_config.get('simulation_panel'), {
@@ -143,44 +145,32 @@ def dashboard_view(request):
         'investment_return_offset': float(profile.investment_return_offset),
     }
     
-    # Use profile_params as baseline, then potentially override with POST data
     simulation_params = profile_params.copy()
+    simulation_params['stichtag'] = request.GET.get('stichtag') or request.POST.get('stichtag')
 
     if request.method == 'POST':
         if 'config_update' in request.POST:
             # Handle Configuration Update
             try:
-                layout_json = request.POST.get('layout_json')
-                summary_layout_json = request.POST.get('summary_layout_json')
-                if layout_json:
-                    new_layout = json.loads(layout_json)
-                    dashboard_config['layout'] = new_layout
-                if summary_layout_json:
-                    new_summary_layout = json.loads(summary_layout_json)
-                    dashboard_config['summary_layout'] = new_summary_layout
-                
-                simulation_panel_json = request.POST.get('simulation_panel_json')
-                if simulation_panel_json:
-                    new_sim_config = json.loads(simulation_panel_json)
-                    dashboard_config['simulation_panel'] = new_sim_config
-                
-                table_style_json = request.POST.get('table_style_json')
-                if table_style_json:
-                    new_table_config = json.loads(table_style_json)
-                    dashboard_config['table_style'] = new_table_config
+                if request.POST.get('layout_json'):
+                    dashboard_config['layout'] = json.loads(request.POST.get('layout_json'))
+                if request.POST.get('summary_layout_json'):
+                    dashboard_config['summary_layout'] = json.loads(request.POST.get('summary_layout_json'))
+                if request.POST.get('simulation_panel_json'):
+                    dashboard_config['simulation_panel'] = json.loads(request.POST.get('simulation_panel_json'))
+                if request.POST.get('table_style_json'):
+                    dashboard_config['table_style'] = json.loads(request.POST.get('table_style_json'))
                 
                 profile.dashboard_config = dashboard_config
                 profile.save()
                 return redirect('dashboard')
             except json.JSONDecodeError:
-                pass # Handle error
+                pass
         else:
-            # Handle Simulation Update (Temporary for this view/request)
+            # Handle Simulation Update
             def safe_float(val, default):
-                try:
-                    return float(val) if val else default
-                except (ValueError, TypeError):
-                    return default
+                try: return float(val) if val else default
+                except (ValueError, TypeError): return default
                     
             simulation_params['inflation_rate'] = safe_float(request.POST.get('inflation_rate'), profile_params['inflation_rate'])
             simulation_params['salary_increase'] = safe_float(request.POST.get('salary_increase'), profile_params['salary_increase'])
@@ -315,27 +305,21 @@ def dashboard_view(request):
         'tooltipData': one_time_tooltips,
     })
 
-    # 3. Budget Pie (Current month breakdown)
-    today = timezone.now().date()
-    current_month_data = None
-    if forecast_data:
-        # Find the point corresponding to the current month/year
-        for d in forecast_data:
-            if d['date'].year == today.year and d['date'].month == today.month:
-                current_month_data = d
-                break
-        
-        # Fallback to the first month if today is not in the forecast
-        if not current_month_data:
-            current_month_data = forecast_data[0]
+    # 3. Budget Pie (Reference month breakdown)
+    stichtag_str = simulation_params.get('stichtag')
+    try:
+        if stichtag_str:
+            target_date = datetime.datetime.strptime(stichtag_str, '%Y-%m-%d').date().replace(day=1)
+        else:
+            target_date = timezone.now().date().replace(day=1)
+    except:
+        target_date = timezone.now().date().replace(day=1)
+
+    current_month_data = next((d for d in forecast_data if d['date'] == target_date), forecast_data[0])
             
-        budget_labels = list(current_month_data['category_breakdown'].keys())
-        budget_data = list(current_month_data['category_breakdown'].values())
-        budget_colors = [category_color_map.get(lbl, fallback_colors[i % len(fallback_colors)]) for i, lbl in enumerate(budget_labels)]
-    else:
-        budget_labels = []
-        budget_data = []
-        budget_colors = []
+    budget_labels = list(current_month_data['category_breakdown'].keys())
+    budget_data = list(current_month_data['category_breakdown'].values())
+    budget_colors = [category_color_map.get(lbl, fallback_colors[i % len(fallback_colors)]) for i, lbl in enumerate(budget_labels)]
 
     # 5. Inflation Monitor (Real vs Nominal Gap + Lines)
     inflation_loss = []
@@ -404,22 +388,15 @@ def dashboard_view(request):
         }
     }
 
-    # Key Metrics for Summary Panels (Current situation)
-    if current_month_data:
-        last_month = forecast_data[-1]
-        current_net_worth = current_month_data.get('nominal_net_worth', 0)
-        projected_net_worth = last_month.get('nominal_net_worth', 0)
-        current_monthly_income = current_month_data.get('monthly_income', 0)
-        current_monthly_expenses = current_month_data.get('monthly_expenses', 0)
-        current_pensions_total = current_month_data.get('pension_total', 0)
-        current_assets_total = current_month_data.get('asset_total', 0)
-    else:
-        current_net_worth = 0
-        projected_net_worth = 0
-        current_monthly_income = 0
-        current_monthly_expenses = 0
-        current_pensions_total = 0
-        current_assets_total = 0
+    # Key Metrics for Summary Panels
+    last_month = forecast_data[-1]
+    current_net_worth = current_month_data.get('nominal_net_worth', 0)
+    projected_net_worth = last_month.get('nominal_net_worth', 0)
+    current_monthly_income = current_month_data.get('monthly_income', 0)
+    current_monthly_expenses = current_month_data.get('monthly_expenses', 0)
+    current_pensions_total = current_month_data.get('pension_total', 0)
+    current_assets_total = current_month_data.get('asset_total', 0)
+    total_expected_pensions = sum(p.expected_payout_at_retirement or 0 for p in user.pensions.all())
     
     simulated_end_age = int(profile.simulation_max_age)
     

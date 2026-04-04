@@ -51,17 +51,28 @@ class SimulationEngine:
     def get_forecast(self, months=None):
         start_date = self.get_simulation_start_date()
         
+        # Reference Date (Stichtag) - Baseline for "Today/Current" metrics
+        stichtag = self.params.get('stichtag')
+        if isinstance(stichtag, str):
+            try:
+                stichtag = datetime.datetime.strptime(stichtag, '%Y-%m-%d').date().replace(day=1)
+            except:
+                stichtag = timezone.now().date().replace(day=1)
+        if not stichtag:
+            stichtag = timezone.now().date().replace(day=1)
+        else:
+            stichtag = stichtag.replace(day=1)
+
         if months is None:
             # Calculate total months from start_date until simulation_max_age
             if self.profile.birth_date:
                 end_date = self.profile.birth_date + relativedelta(years=self.profile.simulation_max_age)
-                # Calculate difference in months
                 diff = relativedelta(end_date, start_date)
                 months = diff.years * 12 + diff.months
             else:
                 months = 360 # Default 30 years
         
-        months = max(1, min(months, 720)) # Cap at 60 years or min 1
+        months = max(1, min(months, 720)) 
         data = []
         
         # Initial State
@@ -78,45 +89,49 @@ class SimulationEngine:
         for a in assets:
             assets_state.append({'asset': a, 'balance': a.value})
             
-        # Accumulated cash covers generic monthly savings
         accumulated_cash = Decimal('0.00')
-
-        # Pre-calculate monthly pension contributions to deduct from cashflow
-        total_monthly_pension_contribution = sum(p.monthly_contribution for p in pensions)
-
-        today_date = timezone.now().date().replace(day=1)
 
         for i in range(months):
             current_date = start_date + relativedelta(months=i)
-            year_passed = (current_date.year - today_date.year) * 12 + (current_date.month - today_date.month)
-            year_passed_decimal = Decimal(str(max(0, year_passed))) / 12
+            # Inflation calculation relative to Stichtag
+            months_from_stichtag = (current_date.year - stichtag.year) * 12 + (current_date.month - stichtag.month)
+            year_passed_decimal = Decimal(str(max(0, months_from_stichtag))) / 12
 
-            # 3. Process Cash Flows (Income/Expenses) - Always for all months
-            monthly_income = Decimal('0.00')
-            monthly_expenses = total_monthly_pension_contribution # Pension savings count as expense
+            # 1. Dynamic Pension Contributions and Payouts for this month
+            current_monthly_pension_contribution = Decimal('0.00')
+            current_monthly_pension_payout = Decimal('0.00')
+            
+            for p_item in pensions_state:
+                p = p_item['pension']
+                # Contrib: only if before end date
+                if not p.contribution_end_date or current_date < p.contribution_end_date:
+                    current_monthly_pension_contribution += p.monthly_contribution
+                
+                # Payout: only if after/at start payout date
+                if p.start_payout_date and current_date >= p.start_payout_date:
+                    if p.expected_payout_at_retirement:
+                        current_monthly_pension_payout += p.expected_payout_at_retirement
+
+            # 2. Process Cash Flows (Income/Expenses)
+            monthly_income = current_monthly_pension_payout
+            monthly_expenses = current_monthly_pension_contribution # Savings count as expense
             category_breakdown = {
-                'Sparen': float(total_monthly_pension_contribution)
+                'Sparen': float(current_monthly_pension_contribution)
             }
-            income_category_breakdown = {}
+            income_category_breakdown = {
+                'Rente': float(current_monthly_pension_payout)
+            } if current_monthly_pension_payout > 0 else {}
             
             for cf in cash_flows:
-                if cf.start_date and cf.start_date > current_date:
-                    continue
-                if cf.end_date and cf.end_date < current_date:
-                    continue
+                if cf.start_date and cf.start_date > current_date: continue
+                if cf.end_date and cf.end_date < current_date: continue
                 
                 amount = cf.value
-                
                 if cf.is_inflation_adjusted:
                     rate = self.salary_increase if cf.is_income else self.inflation_rate
                     amount = amount * ((1 + rate) ** year_passed_decimal)
 
-                if cf.frequency == 'monthly':
-                    val = amount
-                elif cf.frequency == 'yearly':
-                    val = amount / 12
-                else:
-                    val = Decimal('0.00') 
+                val = amount if cf.frequency == 'monthly' else amount / 12
 
                 if cf.is_income:
                     monthly_income += val
@@ -127,58 +142,55 @@ class SimulationEngine:
                     cat_name = cf.category.name if cf.category else "Uncategorized"
                     category_breakdown[cat_name] = category_breakdown.get(cat_name, Decimal('0')) + val
 
-            # 4. One Time Events - Always for all months
+            # 3. One Time Events
             event_impact = Decimal('0.00')
             events_this_month = []
             for event in one_time_events:
                 if event.date.year == current_date.year and event.date.month == current_date.month:
                     event_impact += event.value
                     events_this_month.append({
-                        'name': event.name,
-                        'description': event.description or '',
-                        'date': event.date.isoformat(),
-                        'value': float(round(event.value, 2)),
+                        'name': event.name, 'description': event.description or '',
+                        'date': event.date.isoformat(), 'value': float(round(event.value, 2)),
                     })
 
-            # 5. Wealth Accumulation and Growth - START FROM TODAY
+            # 4. Wealth Accumulation and Growth - START FROM STICHTAG
             asset_total = Decimal('0.00')
             pension_total = Decimal('0.00')
 
-            if current_date < today_date:
-                # History mode: No net worth tracking, only income/expenses
+            if current_date < stichtag:
+                # History mode: tracking only flows
                 total_nominal = Decimal('0.00')
                 total_real = Decimal('0.00')
             else:
-                # Future mode (and Today): Apply growth for months AFTER today
-                if current_date > today_date:
+                # Future mode: Growth after Stichtag
+                if current_date > stichtag:
                     # Apply Asset Growth & Withdrawals
                     for item in assets_state:
                         asset = item['asset']
                         rate = (asset.growth_rate / 100) + self.investment_return_offset
-                        monthly_rate = rate / 12
-                        item['balance'] *= (1 + monthly_rate)
-                        
+                        item['balance'] *= (1 + (rate / 12))
                         if asset.withdrawal_start_date and current_date >= asset.withdrawal_start_date:
-                            withdrawal = asset.withdrawal_amount
-                            item['balance'] = max(Decimal('0'), item['balance'] - withdrawal)
+                            item['balance'] = max(Decimal('0'), item['balance'] - asset.withdrawal_amount)
                     
-                    # Apply Pension Growth
+                    # Apply Pension Growth & Contribution
                     for item in pensions_state:
                         pension = item['pension']
+                        # Growth applies to current balance
                         rate = (pension.growth_rate / 100)
-                        monthly_rate = rate / 12
-                        item['balance'] = (item['balance'] + pension.monthly_contribution) * (1 + monthly_rate)
+                        item['balance'] *= (1 + (rate / 12))
+                        # Contribution only if before end date
+                        if not pension.contribution_end_date or current_date < pension.contribution_end_date:
+                            item['balance'] += pension.monthly_contribution
 
-                    # Monthly Savings (Cash)
-                    monthly_savings = monthly_income - monthly_expenses - total_monthly_pension_contribution
+                    # Monthly Savings
+                    monthly_savings = monthly_income - monthly_expenses - current_monthly_pension_contribution
                     accumulated_cash += (monthly_savings + event_impact)
                 
-                # Totals for current month (Today or Future)
+                # Totals
                 asset_total = sum(item['balance'] for item in assets_state)
                 pension_total = sum(item['balance'] for item in pensions_state)
                 total_nominal = asset_total + pension_total + accumulated_cash
-                inflation_factor = (1 + self.inflation_rate) ** year_passed_decimal
-                total_real = total_nominal / inflation_factor
+                total_real = total_nominal / ((1 + self.inflation_rate) ** year_passed_decimal)
 
             data.append({
                 'date': current_date,

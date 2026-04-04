@@ -83,6 +83,7 @@ class Pension(models.Model):
     monthly_contribution = models.DecimalField(_("Monthly Contribution"), max_digits=10, decimal_places=2, default=0.00)
     growth_rate = models.DecimalField(_("Annual Growth Rate (%)"), max_digits=5, decimal_places=2, default=0.00)
     expected_payout_at_retirement = models.DecimalField(_("Expected Monthly Payout"), max_digits=10, decimal_places=2, blank=True, null=True)
+    contribution_end_date = models.DateField(_("Contribution End Date"), blank=True, null=True, help_text=_("Date when you stop paying into this pension"))
     start_payout_date = models.DateField(_("Payout Start Date"), blank=True, null=True, help_text=_("Approximate date when pension payout starts"))
 
     class Meta:
