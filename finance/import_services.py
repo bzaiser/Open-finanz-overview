@@ -6,6 +6,7 @@ from django.utils import timezone
 from .models import Category, ImportBatch, PendingTransaction
 from .llm import classify_transactions
 from django.conf import settings
+from django.core.cache import cache
 import logging
 
 logger = logging.getLogger(__name__)
