@@ -62,14 +62,16 @@ def simple_keyword_classify(description, categories):
     for key, search_terms in keyword_map.items():
         # Match only full words to avoid false positives (e.g. 'Apple' matching in 'Kapple')
         pattern = rf"\b{re.escape(key)}\b"
-        if re.search(pattern, desc):
+        match = re.search(pattern, desc, re.IGNORECASE)
+        if match:
+            matched_substring = match.group(0)
             matching_slug = find_best_slug(search_terms)
             return {
                 "category_slug": matching_slug,
                 "is_income": 'gehalt' in desc or 'lohn' in desc,
                 "is_recurring": True,
                 "frequency": "monthly",
-                "reasoning": f"Genaue Stichwort-Erkennung: {key.capitalize()}"
+                "reasoning": f"Stichwort-Treffer '{matched_substring}' in Buchung gefunden"
             }
     return None
 
