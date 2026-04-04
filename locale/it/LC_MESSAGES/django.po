@@ -2042,6 +2042,7 @@ msgstr "Pensione statale"
 msgid "Private Kapital-Rente"
 msgstr "Pensione a capitalizzazione"
 
+
 msgid "Indexed (Inflation Adjustment)"
 msgstr "Indicizzato (Adeguamento all'inflazione)"
 

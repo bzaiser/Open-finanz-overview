@@ -2080,6 +2080,7 @@ msgstr "State Pension"
 msgid "Private Kapital-Rente"
 msgstr "Private Capital Pension"
 
+
 msgid "Indexed (Inflation Adjustment)"
 msgstr "Indexed (Inflation Adjustment)"
 

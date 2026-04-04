@@ -34,7 +34,7 @@ class CashFlowSource(models.Model):
     start_date = models.DateField(_("Start Date"), blank=True, null=True)
     end_date = models.DateField(_("End Date"), blank=True, null=True)
     is_income = models.BooleanField(_("Is Income"), default=True)
-    is_inflation_adjusted = models.BooleanField(_("Inflation Adjusted"), default=True)
+    is_inflation_adjusted = models.BooleanField(_("Indexed (Inflation Adjustment)"), default=True, help_text=_("If checked, the payout will increase annually based on the global pension increase rate."))
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, verbose_name=_("Category"))
     frequency = models.CharField(_("Frequency"), max_length=20, default='monthly', choices=FREQUENCY_CHOICES)
     

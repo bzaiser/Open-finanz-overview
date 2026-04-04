@@ -2044,6 +2044,7 @@ msgstr "Pensión pública"
 msgid "Private Kapital-Rente"
 msgstr "Pensión de capital privado"
 
+
 msgid "Indexed (Inflation Adjustment)"
 msgstr "Indexado (Ajuste por inflación)"
 

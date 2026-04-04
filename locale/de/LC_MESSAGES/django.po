@@ -178,9 +178,6 @@ msgid "Is Income"
 msgstr "Ist Einkommen"
 
 #: finance/models.py:31
-msgid "Inflation Adjusted"
-msgstr "Inflationsangepasst"
-
 #: finance/models.py:33
 msgid "Frequency"
 msgstr "Häufigkeit"
@@ -2221,6 +2218,7 @@ msgstr "Angespartes Barvermögen"
 
 msgid "A snapshot donut chart showing the percentage distribution of your assets."
 msgstr "Ein Ringdiagramm, das die prozentuale Verteilung Ihrer Vermögenswerte am heutigen Tag zeigt."
+
 
 msgid "Indexed (Inflation Adjustment)"
 msgstr "Indiziert (Inflationsanpassung)"
