@@ -190,11 +190,13 @@ class ExcelParserService:
                 for i in range(0, total_items, chunk_size):
                     self._log(batch, f"KI analysiert Chunk {i//chunk_size + 1}...")
                     chunk = transactions_for_ai[i:i+chunk_size]
-                    results, error = classify_transactions(chunk, categories)
+                    results, status_msg = classify_transactions(chunk, categories)
+                    
                     if results:
                         ai_results.update(results)
-                    if error:
-                        error_logs.append(error)
+                        self._log(batch, f"KI-Status: {status_msg}")
+                    else:
+                        self._log(batch, f"FEHLER Chunk {i//chunk_size + 1}: {status_msg}")
                     
                     # Update progress in cache
                     progress = int((min(i + chunk_size, total_items) / total_items) * 100)
