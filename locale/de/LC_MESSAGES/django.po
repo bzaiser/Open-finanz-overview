@@ -328,7 +328,7 @@ msgstr "Einmalige Ereignisse"
 
 #: finance/views.py:28
 msgid "Current Assets"
-msgstr "Aktuelles Vermögen"
+msgstr "Aktuelles Vermögen / Konten"
 
 #: finance/views.py:29
 msgid "Monthly Income"
@@ -2111,3 +2111,107 @@ msgstr "Rendite-Offset (%)"
 
 msgid "Stichtag"
 msgstr "Stichtag"
+
+
+msgid "Glossary & Charts"
+msgstr "Glossar & Diagramme"
+
+
+msgid "Do you want to know what "Pension Capital" or the "Inflation Monitor" is? Find all definitions here."
+msgstr "Möchten Sie wissen, was "Angespartes Rentenkapital" oder der "Inflations-Monitor" bedeutet? Finden Sie hier alle Definitionen."
+
+
+msgid "Glossary of Dashboard Terms & Charts"
+msgstr "Glossar der Dashboard-Begriffe & Diagramme"
+
+
+msgid "Summary Widgets"
+msgstr "Zusammenfassungs-Widgets (Kennzahlen)"
+
+
+msgid "The accumulated value of all your bank accounts, properties, and investments, excluding pensions."
+msgstr "Der kumulierte Wert all Ihrer Bankkonten, Immobilien und Investitionen (ohne private Renten)."
+
+
+msgid "Your total active regular incoming cash flow (e.g., salary, rent income) at the selected date."
+msgstr "Ihr gesamter regelmäßiger eingehender Geldfluss (z.B. Gehalt, Mieteinnahmen) zum gewählten Stichtag."
+
+
+msgid "Your total active regular outgoing cash flow at the selected date."
+msgstr "Ihr gesamter regelmäßiger ausgehender Geldfluss zum gewählten Stichtag."
+
+
+msgid "The accumulated lump sum balance (savings) sitting in all your pension and retirement accounts."
+msgstr "Der angesparte Gesamtwert auf all Ihren privaten oder betrieblichen Rentenkonten."
+
+
+msgid "Your desired retirement income. This is simply the raw total of the target payouts you defined in your pension contracts."
+msgstr "Ihr gewünschtes Renteneinkommen. Dies ist einfach die unbereinigte Summe der Ziel-Auszahlungen aus Ihren Rentenverträgen."
+
+
+msgid "The actual cash flow being paid out to you by active pensions at the selected simulation date. (0 EUR if not retired yet)."
+msgstr "Der tatsächliche Geldfluss, der Ihnen zum gewählten Simulationsdatum aus aktiven Renten ausgezahlt wird (0 EUR, falls noch nicht im Ruhestand)."
+
+
+msgid "Interactive Charts"
+msgstr "Interaktive Diagramme"
+
+
+msgid "Net Worth Development"
+msgstr "Vermögensentwicklung"
+
+
+msgid "A line chart showing how your total wealth grows over time, comparing nominal values to inflation-adjusted purchasing power."
+msgstr "Ein Liniendiagramm, das zeigt, wie Ihr Gesamtvermögen im Laufe der Zeit wächst, und nominale Werte mit inflationsbereinigter Kaufkraft vergleicht."
+
+
+msgid "Cash Flow Forecast"
+msgstr "Cashflow Vorhersage"
+
+
+msgid "Visualizes the evolution of your monthly income versus your monthly expenses over the years."
+msgstr "Visualisiert die Entwicklung Ihres monatlichen Einkommens gegenüber Ihren monatlichen Ausgaben im Laufe der Jahre."
+
+
+msgid "Wealth Breakdown"
+msgstr "Vermögenszusammensetzung"
+
+
+msgid "An area chart illustrating the composition of your total wealth, comparing liquid assets and locked pension capital."
+msgstr "Ein Flächendiagramm zur Veranschaulichung der Zusammensetzung Ihres Gesamtvermögens, das liquide Mittel und gebundenes Rentenkapital vergleicht."
+
+
+msgid "Income vs Expenses"
+msgstr "Einnahmen vs Ausgaben"
+
+
+msgid "A direct bar chart comparison of money coming in versus money going out."
+msgstr "Ein direkter Balkendiagramm-Vergleich von eingehendem gegenüber ausgehendem Geld."
+
+
+msgid "Category Breakdown"
+msgstr "Kategorien-Übersicht"
+
+
+msgid "A pie chart dividing your cash flow into individual categories (e.g., Housing, Food, Transport)."
+msgstr "Ein Kreisdiagramm, das Ihren Cashflow in einzelne Kategorien unterteilt (z.B. Wohnen, Essen, Transport)."
+
+
+msgid "Highlights the expanding gap between the absolute money you have and its real value due to inflation."
+msgstr "Hebt die wachsende Lücke zwischen Ihrem absoluten Geld und seinem wahren Wert aufgrund von Inflation hervor."
+
+
+msgid "Event Impact"
+msgstr "Auswirkungen von Ereignissen"
+
+
+msgid "Visualizes the financial spikes caused by configured one-time events, like buying a car or receiving an inheritance."
+msgstr "Visualisiert die finanziellen Ausschläge durch konfigurierte einmalige Ereignisse, wie z.B. den Kauf eines Autos oder eine Erbschaft."
+
+
+msgid "Asset Allocation"
+msgstr "Vermögensaufteilung (Asset Allocation)"
+
+
+msgid "A snapshot donut chart showing the percentage distribution of your assets."
+msgstr "Ein Ringdiagramm, das die prozentuale Verteilung Ihrer Vermögenswerte am heutigen Tag zeigt."
