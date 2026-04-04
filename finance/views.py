@@ -598,7 +598,10 @@ def dashboard_view(request):
     }
     
     if request.headers.get('HX-Request'):
-        return render(request, 'finance/partials/dashboard_charts.html', context)
+        from django.template.loader import render_to_string
+        charts_html = render_to_string('finance/partials/dashboard_charts.html', context, request=request)
+        summary_html = render_to_string('finance/partials/dashboard_summary.html', context, request=request)
+        return HttpResponse(charts_html + summary_html)
         
     return render(request, 'finance/dashboard.html', context)
 
