@@ -2117,8 +2117,8 @@ msgid "Glossary & Charts"
 msgstr "Glossar & Diagramme"
 
 
-msgid "Do you want to know what "Pension Capital" or the "Inflation Monitor" is? Find all definitions here."
-msgstr "Möchten Sie wissen, was "Angespartes Rentenkapital" oder der "Inflations-Monitor" bedeutet? Finden Sie hier alle Definitionen."
+msgid "Do you want to know what \"Pension Capital\" or the \"Inflation Monitor\" is? Find all definitions here."
+msgstr "Möchten Sie wissen, was \"Angespartes Rentenkapital\" oder der \"Inflations-Monitor\" bedeutet? Finden Sie hier alle Definitionen."
 
 
 msgid "Glossary of Dashboard Terms & Charts"
