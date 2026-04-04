@@ -147,10 +147,10 @@ class SimulationEngine:
             monthly_income = current_monthly_pension_payout
             monthly_expenses = current_monthly_pension_contribution # Savings count as expense
             category_breakdown = {
-                'Sparen': float(current_monthly_pension_contribution)
+                'Sparen': current_monthly_pension_contribution
             }
             income_category_breakdown = {
-                'Rente': float(current_monthly_pension_payout)
+                'Rente': current_monthly_pension_payout
             } if current_monthly_pension_payout > 0 else {}
             
             for cf in cash_flows:
