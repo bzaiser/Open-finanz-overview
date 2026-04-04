@@ -19,6 +19,7 @@ import json
 import os
 import datetime
 import requests
+from decimal import Decimal
 
 @login_required
 def ai_status(request):
