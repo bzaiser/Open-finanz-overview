@@ -116,15 +116,6 @@
                 {% elif item.id == 'expense_evolution_chart' %}
                 config.type = 'line';
                 config.options.scales = { y: { stacked: true } };
-                // High contrast lines and points (Black on light theme, White on dark theme)
-                const contrastColor = '{{ item.text_color|default:"#212529" }}';
-                config.data.datasets.forEach(ds => {
-                    ds.borderColor = contrastColor;
-                    ds.pointBackgroundColor = contrastColor;
-                    ds.pointBorderColor = contrastColor;
-                    ds.pointHoverBackgroundColor = contrastColor;
-                    ds.borderWidth = 2;
-                });
                 {% elif item.id == 'income_evolution_chart' %}
                 config.type = 'bar';
                 config.options.scales = {
@@ -171,11 +162,11 @@
                 config.options.plugins.legend = { position: 'bottom' };
                 config.options.plugins.tooltip.callbacks = {
                     label: function(context) {
-                        const val = context.raw || 0;
+                        const val = context.parsed;
                         const total = context.dataset.data.reduce((a, b) => a + b, 0);
                         const pct = total > 0 ? ((val / total) * 100).toFixed(1) : 0;
-                        const formatted = new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ currency|default:"EUR" }}' }).format(val);
-                        return (context.label || '') + ': ' + formatted + ' (' + pct + '%)';
+                        const formatted = new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ profile.currency }}' }).format(val);
+                        return context.label + ': ' + formatted + ' (' + pct + '%)';
                     }
                 };
                 {% endif %}
