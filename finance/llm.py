@@ -58,15 +58,18 @@ def simple_keyword_classify(description, categories):
                     return cat['slug']
         return "uncategorized"
 
+    import re
     for key, search_terms in keyword_map.items():
-        if key in desc:
+        # Match only full words to avoid false positives (e.g. 'Apple' matching in 'Kapple')
+        pattern = rf"\b{re.escape(key)}\b"
+        if re.search(pattern, desc):
             matching_slug = find_best_slug(search_terms)
             return {
                 "category_slug": matching_slug,
                 "is_income": 'gehalt' in desc or 'lohn' in desc,
                 "is_recurring": True,
                 "frequency": "monthly",
-                "reasoning": f"Lokale intelligente Erkennung für: {key.capitalize()}"
+                "reasoning": f"Genaue Stichwort-Erkennung: {key.capitalize()}"
             }
     return None
 
@@ -244,12 +247,13 @@ def classify_transactions(transactions, categories):
     # 4. Finaler Fallback für nicht erkannte Zeilen
     for t in remaining_transactions:
         if str(t['id']) not in final_results:
+            error_info = error if 'error' in locals() and error else "Alle KI-Anbieter (Ollama/Google) antworteten nicht."
             final_results[str(t['id'])] = {
                 "category_slug": "uncategorized",
                 "is_income": t['amount'] > 0,
                 "is_recurring": False,
                 "frequency": "monthly",
-                "reasoning": "Standard-Zuweisung (KI Limit überschritten oder Fehler)"
+                "reasoning": f"Standard (KI Fehler): {error_info}"
             }
             
     return final_results, "Hybrid-Modus (Fallback aktiv)."
