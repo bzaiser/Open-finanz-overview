@@ -30,6 +30,6 @@ class UserProfileForm(forms.ModelForm):
         model = UserProfile
         fields = [
             'avatar', 'birth_date', 'language', 'currency', 'simulation_max_age', 'theme',
-            'inflation_rate', 'salary_increase', 'investment_return_offset',
+            'inflation_rate', 'salary_increase', 'pension_increase', 'investment_return_offset',
             'gradient_start', 'gradient_end',
         ]

@@ -71,6 +71,11 @@
                     value="{{ simulation_params.salary_increase|stringformat:'.2f' }}" class="form-control form-control-sm border-0 bg-light">
             </div>
             <div class="mb-4">
+                <label class="form-label fw-bold small text-muted text-uppercase" style="font-size: 0.7rem;">{% trans "Pension Increase (%)" %}</label>
+                <input type="number" step="0.1" name="pension_increase"
+                    value="{{ simulation_params.pension_increase|stringformat:'.2f' }}" class="form-control form-control-sm border-0 bg-light">
+            </div>
+            <div class="mb-4">
                 <label class="form-label fw-bold small text-muted text-uppercase" style="font-size: 0.7rem;">{% trans "Inv. Return Offset (%)" %}</label>
                 <input type="number" step="0.1" name="investment_return_offset"
                     value="{{ simulation_params.investment_return_offset|stringformat:'.2f' }}" class="form-control form-control-sm border-0 bg-light">

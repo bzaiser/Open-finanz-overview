@@ -143,6 +143,7 @@ def dashboard_view(request):
     profile_params = {
         'inflation_rate': float(profile.inflation_rate),
         'salary_increase': float(profile.salary_increase),
+        'pension_increase': float(profile.pension_increase),
         'investment_return_offset': float(profile.investment_return_offset),
     }
     
@@ -442,12 +443,9 @@ def dashboard_view(request):
     
     simulated_real_payout = current_month_data.get('real_monthly_pension_payout', 0)
     
-    if simulated_real_payout > 0:
-        # Show exactly what the simulation says is the real payout (purchasing power)
-        total_expected_pensions = simulated_real_payout
-    else:
-        # Show the target sum from contracts, but adjusted for inflation until Stichtag (Kaufkraft)
-        total_expected_pensions = float(Decimal(str(raw_expected_sum)) / inflation_factor)
+    # We strictly show the actual simulated cashflow at the Stichtag
+    # (If not retired at Stichtag, it will correctly show 0)
+    total_expected_pensions = simulated_real_payout
     
     simulated_end_age = int(profile.simulation_max_age)
     
