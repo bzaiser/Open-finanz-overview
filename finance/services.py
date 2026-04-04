@@ -85,9 +85,13 @@ class SimulationEngine:
         if months is None:
             # Calculate total months from start_date until simulation_max_age
             if self.profile.birth_date:
-                end_date = self.profile.birth_date + relativedelta(years=self.profile.simulation_max_age)
+                target_end = self.profile.birth_date + relativedelta(years=self.profile.simulation_max_age)
+                # Fill up the last year to ensure yearly aggregations show full years
+                end_date = datetime.date(target_end.year, 12, 31)
                 diff = relativedelta(end_date, start_date)
-                months = diff.years * 12 + diff.months
+                months = diff.years * 12 + diff.months + (1 if diff.days > 0 else 0)
+                # Ensure we include at least one month
+                months = max(1, months)
             else:
                 months = 360 # Default 30 years
         
