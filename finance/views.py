@@ -387,66 +387,68 @@ def dashboard_view(request):
         'stichtag_index': stichtag_year_index
     }
 
-    chart_datasets = {
-        'net_worth_chart': {
-            'labels': labels_yearly,
-            'datasets': [
-                {'label': 'Nominal', 'data': net_worth_nominal, 'borderColor': 'blue', 'fill': True},
-                {'label': 'Real', 'data': net_worth_real, 'borderColor': 'green', 'borderDash': [5, 5], 'fill': False},
-            ],
-            'stichtag_index': stichtag_year_index
-        },
-        'cashflow_chart': {
-             'labels': labels_yearly,
-             'datasets': [
-                 {'label': str(_('Income')), 'data': income_yearly, 'backgroundColor': 'rgba(25, 135, 84, 0.7)', 'order': 2},
-                 {'label': str(_('Expenses')), 'data': expenses_yearly, 'backgroundColor': 'rgba(220, 53, 69, 0.7)', 'order': 2},
-                 {'label': str(_('Net Savings')), 'data': net_savings_yearly, 'type': 'line', 'borderColor': '#0d6efd', 'borderWidth': 2, 'fill': False, 'pointRadius': 3, 'order': 1},
-             ]
-        },
-        'income_evolution_chart': {
-            'labels': labels_yearly,
-            'datasets': income_evo_datasets,
-        },
-        'expense_evolution_chart': {
-            'labels': labels_yearly,
-            'datasets': expense_evo_datasets
-        },
-        'budget_pie_chart': {
-            'labels': budget_labels,
-            'datasets': [{'data': budget_data, 'backgroundColor': budget_colors}]
-        },
-        'inflation_monitor_chart': {
-            'labels': labels_yearly,
-            'datasets': [
-                {'label': str(_('Nominal Value')), 'data': net_worth_nominal, 'borderColor': '#0d6efd', 'fill': False},
-                {'label': str(_('Real Value (Purchasing Power)')), 'data': net_worth_real, 'borderColor': '#198754', 'fill': False},
-                {
-                    'label': str(_('Purchasing Power Loss')), 
-                    'data': inflation_loss, 
-                    'backgroundColor': 'rgba(220, 53, 69, 0.5)', 
-                    'type': 'bar',
-                    'percentData': inflation_loss_percent
-                }
-            ]
-        },
-        'asset_allocation_chart': {
-            'labels': [
-                _eager('Liquid Assets'),
-                _eager('Pension Capital'),
-                _eager('Accumulated Cash'),
-            ],
-            'datasets': [{
-                'data': [
-                    round(current_month_data.get('real_asset_total', 0), 2),
-                    round(current_month_data.get('real_pension_total', 0), 2),
-                    round(current_month_data.get('real_accumulated_cash', 0), 2),
+    # Force language activation for chart data to ensure consistent translation
+    with translation.override(translation.get_language()):
+        chart_datasets = {
+            'net_worth_chart': {
+                'labels': labels_yearly,
+                'datasets': [
+                    {'label': _eager('Nominal'), 'data': net_worth_nominal, 'borderColor': 'blue', 'fill': True},
+                    {'label': _eager('Real'), 'data': net_worth_real, 'borderColor': 'green', 'borderDash': [5, 5], 'fill': False},
                 ],
-                'backgroundColor': ['#0d6efd', '#6f42c1', '#198754'],
-                'hoverOffset': 8,
-            }]
-        },
-    }
+                'stichtag_index': stichtag_year_index
+            },
+            'cashflow_chart': {
+                 'labels': labels_yearly,
+                 'datasets': [
+                     {'label': _eager('Income'), 'data': income_yearly, 'backgroundColor': 'rgba(25, 135, 84, 0.7)', 'order': 2},
+                     {'label': _eager('Expenses'), 'data': expenses_yearly, 'backgroundColor': 'rgba(220, 53, 69, 0.7)', 'order': 2},
+                     {'label': _eager('Net Savings'), 'data': net_savings_yearly, 'type': 'line', 'borderColor': '#0d6efd', 'borderWidth': 2, 'fill': False, 'pointRadius': 3, 'order': 1},
+                 ]
+            },
+            'income_evolution_chart': {
+                'labels': labels_yearly,
+                'datasets': income_evo_datasets,
+            },
+            'expense_evolution_chart': {
+                'labels': labels_yearly,
+                'datasets': expense_evo_datasets
+            },
+            'budget_pie_chart': {
+                'labels': budget_labels,
+                'datasets': [{'data': budget_data, 'backgroundColor': budget_colors}]
+            },
+            'inflation_monitor_chart': {
+                'labels': labels_yearly,
+                'datasets': [
+                    {'label': _eager('Nominal Value'), 'data': net_worth_nominal, 'borderColor': '#0d6efd', 'fill': False},
+                    {'label': _eager('Real Value (Purchasing Power)'), 'data': net_worth_real, 'borderColor': '#198754', 'fill': False},
+                    {
+                        'label': _eager('Purchasing Power Loss'), 
+                        'data': inflation_loss, 
+                        'backgroundColor': 'rgba(220, 53, 69, 0.5)', 
+                        'type': 'bar',
+                        'percentData': inflation_loss_percent
+                    }
+                ]
+            },
+            'asset_allocation_chart': {
+                'labels': [
+                    _eager('Liquid Assets'),
+                    _eager('Pension Capital'),
+                    _eager('Accumulated Cash'),
+                ],
+                'datasets': [{
+                    'data': [
+                        round(current_month_data.get('real_asset_total', 0), 2),
+                        round(current_month_data.get('real_pension_total', 0), 2),
+                        round(current_month_data.get('real_accumulated_cash', 0), 2),
+                    ],
+                    'backgroundColor': ['#0d6efd', '#6f42c1', '#198754'],
+                    'hoverOffset': 8,
+                }]
+            },
+        }
 
     # Key Metrics for Summary Panels (Use REAL values for purchasing power consistency)
     last_month = forecast_data[-1]
@@ -599,6 +601,11 @@ def dashboard_view(request):
 
     # Key Metrics for Summary Panels
 
+    # Ensure all chart titles are eagerly translated in the current language context
+    with translation.override(translation.get_language()):
+        translated_available_charts = {k: {**v, 'title': _eager(str(v['title']))} for k, v in AVAILABLE_CHARTS.items()}
+        translated_summary_widgets = {k: {**v, 'title': _eager(str(v['title']))} for k, v in SUMMARY_WIDGETS.items()}
+
     context = {
         'profile': profile,
         'currency': profile.currency or 'EUR',
@@ -606,8 +613,8 @@ def dashboard_view(request):
         'summary_layout': summary_layout,
         'layout_json': json.dumps(layout, cls=DjangoJSONEncoder),
         'summary_layout_json': json.dumps(summary_layout, cls=DjangoJSONEncoder),
-        'available_charts': {k: {**v, 'title': _eager(str(v['title']))} for k, v in AVAILABLE_CHARTS.items()},
-        'summary_widgets': {k: {**v, 'title': _eager(str(v['title']))} for k, v in SUMMARY_WIDGETS.items()},
+        'available_charts': translated_available_charts,
+        'summary_widgets': translated_summary_widgets,
         'chart_datasets': chart_datasets,
         'simulation_params': simulation_params,
         'is_simulation_active': is_simulation_active,
