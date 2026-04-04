@@ -328,11 +328,13 @@ def dashboard_view(request):
         'tooltipData': one_time_tooltips,
     })
 
-    # 3. Budget Pie (Reference month breakdown)
-    stichtag_str = simulation_params.get('stichtag')
+    # 3. Budget Pie & Current Month Data (Reference month breakdown)
+    stichtag_val = simulation_params.get('stichtag')
     try:
-        if stichtag_str:
-            target_date = datetime.datetime.strptime(stichtag_str, '%Y-%m-%d').date().replace(day=1)
+        if isinstance(stichtag_val, str):
+            target_date = datetime.datetime.strptime(stichtag_val, '%Y-%m-%d').date().replace(day=1)
+        elif hasattr(stichtag_val, 'year'):
+            target_date = stichtag_val.replace(day=1)
         else:
             target_date = timezone.now().date().replace(day=1)
     except:
