@@ -190,7 +190,11 @@ class ExcelParserService:
                 for i in range(0, total_items, chunk_size):
                     self._log(batch, f"KI analysiert Chunk {i//chunk_size + 1}...")
                     chunk = transactions_for_ai[i:i+chunk_size]
-                    results, status_msg = classify_transactions(chunk, categories)
+                    results, status_msg, events = classify_transactions(chunk, categories)
+                    
+                    # Log all intermediate events/errors from the AI
+                    for event in events:
+                        self._log(batch, f"KI-Event: {event}")
                     
                     if results:
                         ai_results.update(results)

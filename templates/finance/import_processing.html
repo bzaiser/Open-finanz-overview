@@ -53,14 +53,19 @@
 
                 <!-- Live AI Terminal Console -->
                 <div class="mt-4 text-start">
-                    <div class="d-flex align-items-center mb-2 px-1">
-                        <div class="spinner-grow spinner-grow-sm text-primary me-2" role="status"></div>
-                        <span class="small fw-bold text-uppercase text-muted">KI Live Konsole</span>
+                    <div class="d-flex justify-content-between align-items-center mb-2 px-1">
+                        <div class="d-flex align-items-center">
+                            <div class="spinner-grow spinner-grow-sm text-primary me-2" role="status"></div>
+                            <span class="small fw-bold text-uppercase text-muted">KI Live Konsole</span>
+                        </div>
+                        <button onclick="copyAiLogs()" class="btn btn-sm btn-outline-secondary py-0" style="font-size: 0.75rem;">
+                            <i class="bi bi-clipboard"></i> Logs kopieren
+                        </button>
                     </div>
                     <div id="ai-log-stream" 
                          class="p-3 bg-dark text-success rounded shadow-lg border border-secondary" 
-                         style="height: 200px; overflow-y: auto; font-family: 'Courier New', Courier, monospace; font-size: 0.85rem; line-height: 1.4; scroll-behavior: smooth;">
-                        <span class="text-muted">Verbindung hergestellt. Warte auf KI-Logs...</span>
+                         style="height: 250px; overflow-y: auto; font-family: 'Courier New', Courier, monospace; font-size: 0.85rem; line-height: 1.4; scroll-behavior: smooth;">
+                        <span class="text-muted">Verbindung hergestellt. Warte auf KI-Kontext...</span>
                     </div>
                 </div>
 
@@ -71,15 +76,17 @@
 </div>
 
 <script>
-    // Listen for HTMX events to handle the final redirect
-    document.body.addEventListener('htmx:afterOnLoad', function(evt) {
-        // If the progress reached 100% or Error (-1%)
-        if (evt.detail.xhr.responseText.includes('100%') || evt.detail.xhr.responseText.includes('-1%')) {
-            // Give it a small delay then refresh to trigger the view's internal redirect
-            setTimeout(function() {
-                window.location.reload();
-            }, 1000);
-        }
-    });
+    function copyAiLogs() {
+        const logContent = document.getElementById('ai-log-stream').innerText;
+        navigator.clipboard.writeText(logContent).then(() => {
+            const btn = event.currentTarget;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="bi bi-check"></i> Kopiert!';
+            setTimeout(() => { btn.innerHTML = originalText; }, 2000);
+        });
+    }
+
+    // HTMX Polling handles everything. The "Continue" button appears when results reach 100%.
+    // We removed the automatic reload/redirect to keep logs visible.
 </script>
 {% endblock %}
