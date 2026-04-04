@@ -445,8 +445,8 @@ def dashboard_view(request):
     last_month = forecast_data[-1]
     current_net_worth = current_month_data.get('real_net_worth', current_month_data.get('nominal_net_worth', 0))
     projected_net_worth = last_month.get('real_net_worth', last_month.get('nominal_net_worth', 0))
-    current_monthly_income = current_month_data.get('real_monthly_income', 0)
-    current_monthly_expenses = current_month_data.get('real_monthly_expenses', 0)
+    current_monthly_income = current_month_data.get('monthly_income', 0)       # Nominal: what you'll actually earn
+    current_monthly_expenses = current_month_data.get('monthly_expenses', 0)   # Nominal: what you'll actually spend
     current_pensions_total = current_month_data.get('real_pension_total', 0)
     current_assets_total = current_month_data.get('real_asset_total', 0)
     
