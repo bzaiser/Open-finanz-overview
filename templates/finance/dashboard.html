@@ -89,6 +89,19 @@
     </div>
 </div>
 
+<script>
+    // Close the simulation offcanvas after a successful HTMX update
+    document.addEventListener('htmx:afterOnLoad', function(evt) {
+        if (evt.detail.elt.id === 'simulation-form') {
+            const offcanvasElement = document.getElementById('simulationOffcanvas');
+            const offcanvas = bootstrap.Offcanvas.getInstance(offcanvasElement);
+            if (offcanvas) {
+                offcanvas.hide();
+            }
+        }
+    });
+</script>
+
 <div class="modal fade" id="configModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content" style="background-color: #ffffff !important; color: #212529 !important; opacity: 1 !important;">
