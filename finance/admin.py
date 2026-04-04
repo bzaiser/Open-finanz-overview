@@ -34,8 +34,9 @@ class BaseOwnedModelAdmin(admin.ModelAdmin):
 
 @admin.register(Pension)
 class PensionAdmin(BaseOwnedModelAdmin):
-    list_display = ('provider', 'user', 'current_value', 'monthly_contribution')
+    list_display = ('provider', 'user', 'current_value', 'monthly_contribution', 'expected_payout_at_retirement', 'contribution_end_date', 'start_payout_date')
     search_fields = ('provider', 'user__username')
+    list_filter = ('user',)
 
 from django import forms
 
@@ -128,7 +129,7 @@ class OneTimeEventInline(admin.TabularInline):
 class PensionInline(admin.TabularInline):
     model = Pension
     extra = 1
-    fields = ('provider', 'current_value', 'monthly_contribution', 'growth_rate', 'start_payout_date')
+    fields = ('provider', 'current_value', 'monthly_contribution', 'contribution_end_date', 'expected_payout_at_retirement', 'growth_rate', 'start_payout_date')
     classes = ['collapse']
 
 @admin.register(FinancialStatusProxy)
@@ -162,9 +163,10 @@ class CashFlowSourceAdmin(BaseOwnedModelAdmin):
 
 @admin.register(Asset)
 class AssetAdmin(BaseOwnedModelAdmin):
-    list_display = ('name', 'user', 'value', 'growth_rate')
+    list_display = ('name', 'user', 'value', 'growth_rate', 'withdrawal_amount', 'withdrawal_start_date')
     list_filter = ('user',)
     search_fields = ('name',)
+    list_editable = ('value', 'growth_rate', 'withdrawal_amount', 'withdrawal_start_date')
 
 @admin.register(OneTimeEvent)
 class OneTimeEventAdmin(BaseOwnedModelAdmin):
