@@ -410,22 +410,24 @@ def dashboard_view(request):
     # Calculate Total Expected Payout (Real value at Stichtag)
     raw_expected_sum = sum(p.expected_payout_at_retirement or 0 for p in user.pensions.all())
     
-    # Apply inflation adjustment to the target payout to see "what it's worth at Stichtag"
+    # Calculate the adjustment growth factor from today to the Stichtag
     inflation_rate = Decimal(str(simulation_params.get('inflation_rate', profile.inflation_rate))) / 100
     stichtag_dt = datetime.datetime.strptime(simulation_params['stichtag'], '%Y-%m-%d').date()
+    today = timezone.now().date()
     
-    # For a very simple "Real Value" of the future target, we look at the average start date
-    # or just use the simulated monthly_pension_payout if it's already active.
+    # Calculate months from today to Stichtag for growth factor
+    months_diff = (stichtag_dt.year - today.year) * 12 + (stichtag_dt.month - today.month)
+    years_diff_decimal = Decimal(str(max(0, months_diff))) / 12
+    growth_factor = (1 + inflation_rate) ** years_diff_decimal
+    
     simulated_payout = current_month_data.get('monthly_pension_payout', 0)
     
     if simulated_payout > 0:
-        # If pensions are already flowing at Stichtag, show the simulated real value
-        # The SimulationEngine already handles inflation for the 'real_net_worth', 
-        # so we can use the nominal simulated payout here as it's 'current' at that date.
+        # If pensions are already flowing, show the exactly simulated adjusted value
         total_expected_pensions = simulated_payout
     else:
-        # If not yet flowing, show the sum of all expected fields (static for now)
-        total_expected_pensions = float(raw_expected_sum)
+        # If not yet flowing, show the total target sum adjusted for Rentenanpassungen until Stichtag
+        total_expected_pensions = float(raw_expected_sum * growth_factor)
     
     simulated_end_age = int(profile.simulation_max_age)
     
