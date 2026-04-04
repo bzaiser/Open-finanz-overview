@@ -94,9 +94,13 @@ class SimulationEngine:
 
         for i in range(months):
             current_date = start_date + relativedelta(months=i)
-            # Inflation calculation relative to Stichtag
+            # Inflation calculation relative to Simulation Start (today), not Stichtag
+            today_normalized = datetime.date.today().replace(day=1)
+            months_from_today = (current_date.year - today_normalized.year) * 12 + (current_date.month - today_normalized.month)
+            year_passed_decimal = Decimal(str(max(0, months_from_today))) / 12
+            # Inflation factor for real-value conversion is relative to Stichtag
             months_from_stichtag = (current_date.year - stichtag.year) * 12 + (current_date.month - stichtag.month)
-            year_passed_decimal = Decimal(str(max(0, months_from_stichtag))) / 12
+            year_from_stichtag = Decimal(str(max(0, months_from_stichtag))) / 12
 
             # 1. Dynamic Pension Contributions and Payouts for this month
             current_monthly_pension_contribution = Decimal('0.00')
@@ -192,8 +196,8 @@ class SimulationEngine:
             pension_total = sum(item['balance'] for item in pensions_state)
             total_nominal = asset_total + pension_total + accumulated_cash
             
-            # Inflation Factor for Real Value (Purchasing Power)
-            inflation_factor = (1 + self.inflation_rate) ** year_passed_decimal
+            # Inflation Factor for Real Value (Purchasing Power relative to Stichtag)
+            inflation_factor = (1 + self.inflation_rate) ** year_from_stichtag
             total_real = total_nominal / inflation_factor
 
             data.append({
