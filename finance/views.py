@@ -544,6 +544,9 @@ def dashboard_view(request):
         'debug_trans_test': translation.gettext('Help'),
     }
     
+    if request.headers.get('HX-Request'):
+        return render(request, 'finance/partials/dashboard_charts.html', context)
+        
     return render(request, 'finance/dashboard.html', context)
 
 
