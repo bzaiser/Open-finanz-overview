@@ -192,6 +192,7 @@ def classify_transactions(transactions, categories):
     provider = getattr(settings, 'LLM_PROVIDER', 'hybrid').lower()
     final_results = {}
     remaining_transactions = []
+    error = None
     
     # 0. Lokaler Keyword-Check (Spart Ressourcen & Kosten)
     for t in transactions:
