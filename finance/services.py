@@ -12,11 +12,20 @@ class SimulationEngine:
         self.profile, _ = UserProfile.objects.get_or_create(user=user)
         self.params = simulation_params or {}
         
-        # Simulation Parameters from profile or override
-        self.inflation_rate = Decimal(str(self.params.get('inflation_rate', self.profile.inflation_rate))) / 100
-        self.salary_increase = Decimal(str(self.params.get('salary_increase', self.profile.salary_increase))) / 100
-        self.pension_increase = Decimal(str(self.params.get('pension_increase', self.profile.pension_increase))) / 100
-        self.investment_return_offset = Decimal(str(self.params.get('investment_return_offset', self.profile.investment_return_offset))) / 100
+        # Simulation Parameters from profile or override (with safe fallbacks for missing columns)
+        def get_safe_decimal(params, field, profile_obj, default):
+            try:
+                val = params.get(field)
+                if val is None:
+                    val = getattr(profile_obj, field, default)
+                return Decimal(str(val))
+            except (AttributeError, TypeError, ValueError):
+                return Decimal(str(default))
+
+        self.inflation_rate = get_safe_decimal(self.params, 'inflation_rate', self.profile, 2.0) / 100
+        self.salary_increase = get_safe_decimal(self.params, 'salary_increase', self.profile, 1.5) / 100
+        self.pension_increase = get_safe_decimal(self.params, 'pension_increase', self.profile, 1.0) / 100
+        self.investment_return_offset = get_safe_decimal(self.params, 'investment_return_offset', self.profile, 0.0) / 100
 
     def get_simulation_start_date(self):
         """
@@ -173,20 +182,20 @@ class SimulationEngine:
             if i > 0: # Start growth from the second month
                 for item in assets_state:
                     asset = item['asset']
-                    rate = (asset.growth_rate / 100) + self.investment_return_offset
+                    rate = ((asset.growth_rate or Decimal('0.00')) / 100) + self.investment_return_offset
                     item['balance'] *= (1 + (rate / 12))
                     if asset.withdrawal_start_date and current_date >= asset.withdrawal_start_date.replace(day=1):
-                        item['balance'] = max(Decimal('0'), item['balance'] - asset.withdrawal_amount)
+                        item['balance'] = max(Decimal('0'), item['balance'] - (asset.withdrawal_amount or Decimal('0.00')))
                 
                 # Apply Pension Growth & Contribution
                 for item in pensions_state:
                     pension = item['pension']
                     # Growth applies to current balance
-                    rate = (pension.growth_rate / 100)
+                    rate = (pension.growth_rate or Decimal('0.00')) / 100
                     item['balance'] *= (1 + (rate / 12))
                     # Contribution only if before end date
                     if not pension.contribution_end_date or current_date < pension.contribution_end_date.replace(day=1):
-                        item['balance'] += pension.monthly_contribution
+                        item['balance'] += (pension.monthly_contribution or Decimal('0.00'))
 
                 # Monthly Savings: monthly_expenses already includes current_monthly_pension_contribution
                 monthly_savings = monthly_income - monthly_expenses

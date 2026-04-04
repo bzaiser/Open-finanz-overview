@@ -155,12 +155,12 @@ def dashboard_view(request):
     layout.sort(key=lambda x: x.get('order', 99))
     summary_layout.sort(key=lambda x: x.get('order', 99))
 
-    # Simulation Params from Profile
+    # Simulation Params from Profile (with safe fallbacks for missing columns)
     profile_params = {
-        'inflation_rate': float(profile.inflation_rate),
-        'salary_increase': float(profile.salary_increase),
-        'pension_increase': float(profile.pension_increase),
-        'investment_return_offset': float(profile.investment_return_offset),
+        'inflation_rate': float(getattr(profile, 'inflation_rate', 2.0)),
+        'salary_increase': float(getattr(profile, 'salary_increase', 1.5)),
+        'pension_increase': float(getattr(profile, 'pension_increase', 1.0)),
+        'investment_return_offset': float(getattr(profile, 'investment_return_offset', 0.0)),
     }
     
     simulation_params = profile_params.copy()
@@ -516,7 +516,7 @@ def dashboard_view(request):
             year = str(p.start_payout_date.year) if p.start_payout_date else continuous_label
             table_data_income.append({
                 'name': f"{_('Rente')}: {p.provider}", 
-                'amount': float(p.expected_payout_at_retirement), 
+                'amount': float(p.expected_payout_at_retirement or 0), 
                 'category': _('Rente'),
                 'type': _('Auszahlung'),
                 'year': year
@@ -540,7 +540,7 @@ def dashboard_view(request):
             year = str(p.contribution_end_date.year) if p.contribution_end_date else continuous_label
             table_data_expense.append({
                 'name': f"{_('Beitrag')}: {p.provider}", 
-                'amount': float(p.monthly_contribution), 
+                'amount': float(p.monthly_contribution or 0), 
                 'category': _('Sparen'),
                 'type': _('Rente'),
                 'year': year
@@ -550,9 +550,9 @@ def dashboard_view(request):
     for a in user.assets.all():
         table_data_asset.append({
             'name': a.name, 
-            'amount': float(a.value), 
+            'amount': float(a.value or 0), 
             'category': _('Asset'),
-            'rate': f"{a.growth_rate}%",
+            'rate': f"{a.growth_rate or 0}%",
             'year': continuous_label
         })
 
@@ -561,9 +561,9 @@ def dashboard_view(request):
         year = str(p.start_payout_date.year) if p.start_payout_date else continuous_label
         table_data_pension.append({
             'name': p.provider, 
-            'amount': float(p.current_value), 
+            'amount': float(p.current_value or 0), 
             'category': _('Pension'),
-            'contribution': float(p.monthly_contribution),
+            'contribution': float(p.monthly_contribution or 0),
             'year': year
         })
 
