@@ -68,7 +68,8 @@ SUMMARY_WIDGETS = {
     'monthly_income': {'title': _('Monthly Income'), 'default_bg': '#198754', 'default_text': '#ffffff'},
     'monthly_expenses': {'title': _('Monthly Expenses'), 'default_bg': '#dc3545', 'default_text': '#ffffff'},
     'total_pensions': {'title': _('Pension Capital'), 'default_bg': '#0dcaf0', 'default_text': '#ffffff'},
-    'expected_payout': {'title': _('Expected Monthly Payout'), 'default_bg': '#6f42c1', 'default_text': '#ffffff'},
+    'expected_payout': {'title': _('Target Monthly Pension'), 'default_bg': '#6f42c1', 'default_text': '#ffffff'},
+    'current_pension_payout': {'title': _('Current Pension'), 'default_bg': '#fd7e14', 'default_text': '#ffffff'},
 }
 
 DEFAULT_LAYOUT = [
@@ -98,9 +99,22 @@ def dashboard_view(request):
         {'id': 'current_assets', 'visible': True, 'bg_color': '#0d6efd', 'text_color': '#ffffff', 'order': 1},
         {'id': 'monthly_income', 'visible': True, 'bg_color': '#198754', 'text_color': '#ffffff', 'order': 2},
         {'id': 'monthly_expenses', 'visible': True, 'bg_color': '#dc3545', 'text_color': '#ffffff', 'order': 3},
-        {'id': 'total_pensions', 'visible': True, 'bg_color': '#0dcaf0', 'text_color': '#ffffff', 'order': 4},
-        {'id': 'expected_payout', 'visible': True, 'bg_color': '#6f42c1', 'text_color': '#ffffff', 'order': 5},
+        {'id': 'current_pension_payout', 'visible': True, 'bg_color': '#fd7e14', 'text_color': '#ffffff', 'order': 4},
+        {'id': 'total_pensions', 'visible': True, 'bg_color': '#0dcaf0', 'text_color': '#ffffff', 'order': 5},
+        {'id': 'expected_payout', 'visible': True, 'bg_color': '#6f42c1', 'text_color': '#ffffff', 'order': 6},
     ])
+
+    # Ensure all available summary widgets are in the layout (auto-add missing ones)
+    existing_ids = [item['id'] for item in summary_layout]
+    for widget_id, widget_info in SUMMARY_WIDGETS.items():
+        if widget_id not in existing_ids:
+            summary_layout.append({
+                'id': widget_id,
+                'visible': False, 
+                'bg_color': widget_info.get('default_bg', '#ffffff'),
+                'text_color': widget_info.get('default_text', '#212529'),
+                'order': len(summary_layout) + 1
+            })
 
     simulation_config = safe_merge(dashboard_config.get('simulation_panel'), {
         'bg_color': '#ffffff', 
@@ -573,7 +587,8 @@ def dashboard_view(request):
         'current_monthly_income': current_monthly_income,
         'current_monthly_expenses': current_monthly_expenses,
         'current_pensions_total': current_pensions_total,
-        'total_expected_pensions': total_expected_pensions,
+        'total_expected_pensions': raw_expected_sum, # The raw target sum from contracts
+        'simulated_pension_payout': total_expected_pensions, # The actual simulated payout at Stichtag
         'stichtag_year_index': stichtag_year_index,
         'simulation_config': simulation_config,
         'table_config': table_config,
