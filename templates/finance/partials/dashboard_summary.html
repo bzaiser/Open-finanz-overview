@@ -10,7 +10,7 @@
                     {% for k,v in summary_widgets.items %}
                     {% if k == item.id %}{{ v.title }}{% endif %}
                     {% endfor %}
-                    <span class="d-block text-primary" style="font-size: 0.6rem;">({{ simulation_params.stichtag|default:"" }})</span>
+                    <span class="d-block opacity-75" style="font-size: 0.6rem;">({{ simulation_params.stichtag|date:"d.m.Y" }})</span>
                 </small>
                 <h4 class="mb-0 fw-bold">
                     {% if item.id == 'current_assets' %}

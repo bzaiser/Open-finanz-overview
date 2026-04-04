@@ -146,7 +146,14 @@ def dashboard_view(request):
     }
     
     simulation_params = profile_params.copy()
-    simulation_params['stichtag'] = request.GET.get('stichtag') or request.POST.get('stichtag') or timezone.now().date().isoformat()
+    stichtag_raw = request.GET.get('stichtag') or request.POST.get('stichtag')
+    if stichtag_raw:
+        try:
+            simulation_params['stichtag'] = datetime.datetime.strptime(stichtag_raw, '%Y-%m-%d').date()
+        except (ValueError, TypeError):
+            simulation_params['stichtag'] = timezone.now().date()
+    else:
+        simulation_params['stichtag'] = timezone.now().date()
 
     if request.method == 'POST':
         if 'config_update' in request.POST:
