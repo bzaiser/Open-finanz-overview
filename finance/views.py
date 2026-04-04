@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse
 from django.core.cache import cache
 from django.utils import timezone, translation
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext_lazy as _, gettext as _eager
 from django.contrib import messages
 from .services import SimulationEngine
 from .models import (
@@ -432,9 +432,9 @@ def dashboard_view(request):
         },
         'asset_allocation_chart': {
             'labels': [
-                str(_('Liquid Assets')),
-                str(_('Pension Capital')),
-                str(_('Accumulated Cash')),
+                _eager('Liquid Assets'),
+                _eager('Pension Capital'),
+                _eager('Accumulated Cash'),
             ],
             'datasets': [{
                 'data': [
