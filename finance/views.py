@@ -406,14 +406,14 @@ def dashboard_view(request):
         }
     }
 
-    # Key Metrics for Summary Panels
+    # Key Metrics for Summary Panels (Use REAL values for purchasing power consistency)
     last_month = forecast_data[-1]
-    current_net_worth = current_month_data.get('nominal_net_worth', 0)
-    projected_net_worth = last_month.get('nominal_net_worth', 0)
-    current_monthly_income = current_month_data.get('monthly_income', 0)
-    current_monthly_expenses = current_month_data.get('monthly_expenses', 0)
-    current_pensions_total = current_month_data.get('pension_total', 0)
-    current_assets_total = current_month_data.get('asset_total', 0)
+    current_net_worth = current_month_data.get('real_net_worth', current_month_data.get('nominal_net_worth', 0))
+    projected_net_worth = last_month.get('real_net_worth', last_month.get('nominal_net_worth', 0))
+    current_monthly_income = current_month_data.get('real_monthly_income', 0)
+    current_monthly_expenses = current_month_data.get('real_monthly_expenses', 0)
+    current_pensions_total = current_month_data.get('real_pension_total', 0)
+    current_assets_total = current_month_data.get('real_asset_total', 0)
     
     # Calculate Total Expected Payout (Real value at Stichtag)
     raw_expected_sum = sum(p.expected_payout_at_retirement or 0 for p in user.pensions.all())
@@ -431,14 +431,23 @@ def dashboard_view(request):
     years_diff_decimal = Decimal(str(max(0, months_diff))) / 12
     growth_factor = (1 + inflation_rate) ** years_diff_decimal
     
-    simulated_payout = current_month_data.get('monthly_pension_payout', 0)
+    # Calculate adjustment factor for the target sum (if pensions not yet flowing)
+    stichtag_dt = simulation_params['stichtag']
+    if isinstance(stichtag_dt, str):
+        stichtag_dt = datetime.datetime.strptime(stichtag_dt, '%Y-%m-%d').date()
+    today = timezone.now().date()
+    months_diff = (stichtag_dt.year - today.year) * 12 + (stichtag_dt.month - today.month)
+    inflation_rate = Decimal(str(simulation_params.get('inflation_rate', profile.inflation_rate))) / 100
+    inflation_factor = (1 + inflation_rate) ** (Decimal(str(max(0, months_diff))) / 12)
     
-    if simulated_payout > 0:
-        # If pensions are already flowing, show the simulated payout
-        total_expected_pensions = simulated_payout
+    simulated_real_payout = current_month_data.get('real_monthly_pension_payout', 0)
+    
+    if simulated_real_payout > 0:
+        # Show exactly what the simulation says is the real payout (purchasing power)
+        total_expected_pensions = simulated_real_payout
     else:
-        # If not yet flowing, show the static target sum from contracts
-        total_expected_pensions = float(raw_expected_sum)
+        # Show the target sum from contracts, but adjusted for inflation until Stichtag (Kaufkraft)
+        total_expected_pensions = float(Decimal(str(raw_expected_sum)) / inflation_factor)
     
     simulated_end_age = int(profile.simulation_max_age)
     

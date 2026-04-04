@@ -183,18 +183,27 @@ class SimulationEngine:
             asset_total = sum(item['balance'] for item in assets_state)
             pension_total = sum(item['balance'] for item in pensions_state)
             total_nominal = asset_total + pension_total + accumulated_cash
-            total_real = total_nominal / ((1 + self.inflation_rate) ** year_passed_decimal)
+            
+            # Inflation Factor for Real Value (Purchasing Power)
+            inflation_factor = (1 + self.inflation_rate) ** year_passed_decimal
+            total_real = total_nominal / inflation_factor
 
             data.append({
                 'date': current_date,
                 'nominal_net_worth': float(round(total_nominal, 2)),
                 'real_net_worth': float(round(total_real, 2)),
                 'pension_total': float(round(pension_total, 2)),
+                'real_pension_total': float(round(pension_total / inflation_factor, 2)),
                 'asset_total': float(round(asset_total, 2)),
+                'real_asset_total': float(round(asset_total / inflation_factor, 2)),
                 'accumulated_cash': float(round(accumulated_cash, 2)),
+                'real_accumulated_cash': float(round(accumulated_cash / inflation_factor, 2)),
                 'monthly_income': float(round(monthly_income, 2)),
+                'real_monthly_income': float(round(monthly_income / inflation_factor, 2)),
                 'monthly_expenses': float(round(monthly_expenses, 2)),
+                'real_monthly_expenses': float(round(monthly_expenses / inflation_factor, 2)),
                 'monthly_pension_payout': float(round(current_monthly_pension_payout, 2)),
+                'real_monthly_pension_payout': float(round(current_monthly_pension_payout / inflation_factor, 2)),
                 'monthly_pension_contribution': float(round(current_monthly_pension_contribution, 2)),
                 'category_breakdown': {k: float(round(v, 2)) for k, v in category_breakdown.items()},
                 'income_category_breakdown': {k: float(round(v, 2)) for k, v in income_category_breakdown.items()},
