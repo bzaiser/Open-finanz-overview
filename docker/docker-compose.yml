@@ -21,6 +21,16 @@ services:
       - "SECRET_KEY=change_this_to_a_secure_long_random_string_in_production!"
       - "ALLOWED_HOSTS=*"
       - "RUNNING_IN_DOCKER=1"
+      - "OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://ollama:11434}"
+      - "OLLAMA_MODEL=${OLLAMA_MODEL:-llama3}"
+      - "LLM_PROVIDER=${LLM_PROVIDER:-hybrid}"
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ${CONTAINER_NAME:-finanzplan-web}_ollama
+    volumes:
+      - ../data/ollama:/root/.ollama
+    restart: always
 
 volumes:
   static_volume:
