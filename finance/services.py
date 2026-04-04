@@ -9,15 +9,22 @@ from core.models import UserProfile
 class SimulationEngine:
     def __init__(self, user, simulation_params=None):
         self.user = user
-        self.profile, _ = UserProfile.objects.get_or_create(user=user)
+        self.profile, created = UserProfile.objects.get_or_create(user=user)
         self.params = simulation_params or {}
         
         # Simulation Parameters from profile or override (with safe fallbacks for missing columns)
         def get_safe_decimal(params, field, profile_obj, default):
             try:
+                # Try getting from simulation params first
                 val = params.get(field)
                 if val is None:
+                    # Fallback to profile attribute
                     val = getattr(profile_obj, field, default)
+                
+                # FINAL safety: if it's still None (NULL in DB), use default
+                if val is None:
+                    val = default
+                    
                 return Decimal(str(val))
             except (AttributeError, TypeError, ValueError):
                 return Decimal(str(default))

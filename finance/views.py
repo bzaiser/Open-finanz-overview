@@ -84,7 +84,7 @@ DEFAULT_LAYOUT = [
 @login_required
 def dashboard_view(request):
     user = request.user
-    profile, _ = UserProfile.objects.get_or_create(user=user)
+    profile, created = UserProfile.objects.get_or_create(user=user)
     
     # Helper for safe merging of defaults
     def safe_merge(user_data, defaults):
@@ -155,12 +155,18 @@ def dashboard_view(request):
     layout.sort(key=lambda x: x.get('order', 99))
     summary_layout.sort(key=lambda x: x.get('order', 99))
 
-    # Simulation Params from Profile (with safe fallbacks for missing columns)
+    # Simulation Params from Profile (with safe fallbacks for missing columns or NULL values)
+    def get_safe_profile_val(profile_obj, field, default):
+        val = getattr(profile_obj, field, default)
+        if val is None:
+            return float(default)
+        return float(val)
+
     profile_params = {
-        'inflation_rate': float(getattr(profile, 'inflation_rate', 2.0)),
-        'salary_increase': float(getattr(profile, 'salary_increase', 1.5)),
-        'pension_increase': float(getattr(profile, 'pension_increase', 1.0)),
-        'investment_return_offset': float(getattr(profile, 'investment_return_offset', 0.0)),
+        'inflation_rate': get_safe_profile_val(profile, 'inflation_rate', 2.0),
+        'salary_increase': get_safe_profile_val(profile, 'salary_increase', 1.5),
+        'pension_increase': get_safe_profile_val(profile, 'pension_increase', 1.0),
+        'investment_return_offset': get_safe_profile_val(profile, 'investment_return_offset', 0.0),
     }
     
     simulation_params = profile_params.copy()

@@ -23,7 +23,7 @@ def signup(request):
 
 @login_required
 def profile_view(request):
-    profile, _ = UserProfile.objects.get_or_create(user=request.user)
+    profile, created = UserProfile.objects.get_or_create(user=request.user)
     if request.method == 'POST':
         form = UserProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
