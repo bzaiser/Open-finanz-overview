@@ -60,20 +60,14 @@ msgid "Table Filter Background"
 msgstr "Tabellenfilter-Hintergrund"
 
 #: core/models.py:20
-#, fuzzy
-#| msgid "Table Header Background"
 msgid "Table Body Background"
 msgstr "Tabellenkopf-Hintergrund"
 
 #: core/models.py:21
-#, fuzzy
-#| msgid "Table Header Text"
 msgid "Table Body Text"
 msgstr "Tabellenkopf-Text"
 
 #: core/models.py:22
-#, fuzzy
-#| msgid "Secondary Color"
 msgid "Table Border Color"
 msgstr "Sekundärfarbe"
 
