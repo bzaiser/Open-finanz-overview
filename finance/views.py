@@ -146,7 +146,7 @@ def dashboard_view(request):
     }
     
     simulation_params = profile_params.copy()
-    simulation_params['stichtag'] = request.GET.get('stichtag') or request.POST.get('stichtag')
+    simulation_params['stichtag'] = request.GET.get('stichtag') or request.POST.get('stichtag') or timezone.now().date().isoformat()
 
     if request.method == 'POST':
         if 'config_update' in request.POST:
