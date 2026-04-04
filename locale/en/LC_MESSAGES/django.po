@@ -624,7 +624,7 @@ msgstr "Simulation"
 
 #: templates/finance/dashboard.html:44
 msgid "Changes here are temporary. Update your profile for permanent settings."
-msgstr ""
+msgstr "Changes here are temporary. Update your profile for permanent settings."
 
 #: templates/finance/dashboard.html:50
 #, python-format
@@ -676,15 +676,15 @@ msgstr ""
 #: templates/finance/dashboard.html:114
 #| msgid "Simulation"
 msgid "Simulation Panel"
-msgstr "Simulation"
+msgstr "Simulation Panel"
 
 #: templates/finance/dashboard.html:117
 msgid "Header Background & Text"
-msgstr ""
+msgstr "Header Background & Text"
 
 #: templates/finance/dashboard.html:124
 msgid "Panel Background & Text"
-msgstr ""
+msgstr "Panel Background & Text"
 
 #: templates/finance/dashboard.html:132
 msgid "Summary Cards"
@@ -2042,3 +2042,31 @@ msgstr ""
 
 #~ msgid "Kaufkraftverlust"
 #~ msgstr "Purchasing Power Loss"
+
+
+msgid "Pension Capital"
+msgstr "Pension Capital"
+
+
+msgid "Target Monthly Pension"
+msgstr "Target Monthly Pension"
+
+
+msgid "Current Pension"
+msgstr "Current Pension"
+
+
+msgid "Pension Increase (%)"
+msgstr "Pension Increase (%)"
+
+
+msgid "Inv. Return Offset (%)"
+msgstr "Inv. Return Offset (%)"
+
+
+msgid "Table Styling"
+msgstr "Table Styling"
+
+
+msgid "Stichtag"
+msgstr "Reference Date"

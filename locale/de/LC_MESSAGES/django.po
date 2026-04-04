@@ -661,7 +661,7 @@ msgstr "Simulation"
 
 #: templates/finance/dashboard.html:50
 msgid "Changes here are temporary. Update your profile for permanent settings."
-msgstr "Änderungen hier sind temporär. Aktualisiere dein Profil für dauerhafte Einstellungen."
+msgstr "Änderungen hier sind temporär. Aktualisieren Sie Ihr Profil für dauerhafte Einstellungen."
 
 #: templates/finance/dashboard.html:56
 #, python-format
@@ -724,7 +724,7 @@ msgstr "Rahmenfarbe"
 
 #: templates/finance/dashboard.html:132
 msgid "Simulation Panel"
-msgstr "Simulation"
+msgstr "Simulations-Panel"
 
 #: templates/finance/dashboard.html:135
 msgid "Header Background & Text"
@@ -2087,3 +2087,27 @@ msgstr ""
 
 #~ msgid "Age"
 #~ msgstr "Alter"
+
+
+msgid "Pension Capital"
+msgstr "Angespartes Rentenkapital"
+
+
+msgid "Target Monthly Pension"
+msgstr "Ziel-Rente (Vertrag)"
+
+
+msgid "Current Pension"
+msgstr "Aktuelle Rente (am Stichtag)"
+
+
+msgid "Pension Increase (%)"
+msgstr "Rentensteigerung (%)"
+
+
+msgid "Inv. Return Offset (%)"
+msgstr "Rendite-Offset (%)"
+
+
+msgid "Stichtag"
+msgstr "Stichtag"

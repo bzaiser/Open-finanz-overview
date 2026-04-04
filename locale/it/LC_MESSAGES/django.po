@@ -2003,3 +2003,23 @@ msgstr ""
 #: venv/lib/python3.12/site-packages/django/views/templates/default_urlconf.html:236
 msgid "Connect, get help, or contribute"
 msgstr ""
+
+
+msgid "Pension Capital"
+msgstr "Capitale Pensione Risparmiato"
+
+
+msgid "Target Monthly Pension"
+msgstr "Pensione Mensile Obiettivo"
+
+
+msgid "Current Pension"
+msgstr "Pensione Attuale"
+
+
+msgid "Pension Increase (%)"
+msgstr "Aumento Pensione (%)"
+
+
+msgid "Inv. Return Offset (%)"
+msgstr "Offset di Rendimento Inv. (%)"

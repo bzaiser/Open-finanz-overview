@@ -663,7 +663,7 @@ msgstr ""
 
 #: templates/finance/dashboard.html:114
 msgid "Simulation Panel"
-msgstr ""
+msgstr "Panel de Simulación"
 
 #: templates/finance/dashboard.html:117
 msgid "Header Background & Text"
@@ -2004,3 +2004,27 @@ msgstr ""
 #: venv/lib/python3.12/site-packages/django/views/templates/default_urlconf.html:236
 msgid "Connect, get help, or contribute"
 msgstr ""
+
+
+msgid "Pension Capital"
+msgstr "Capital de Pensión Ahorrado"
+
+
+msgid "Target Monthly Pension"
+msgstr "Pensión Mensual Objetivo"
+
+
+msgid "Current Pension"
+msgstr "Pensión Actual"
+
+
+msgid "Pension Increase (%)"
+msgstr "Aumento de Pensión (%)"
+
+
+msgid "Inv. Return Offset (%)"
+msgstr "Ajuste de Retorno Inv. (%)"
+
+
+msgid "Table Styling"
+msgstr "Estilos de Tabla"
