@@ -109,6 +109,10 @@ msgstr "Standard-Inflationsrate (%)"
 msgid "Default Salary Increase (%)"
 msgstr "Standard-Gehaltssteigerung (%)"
 
+#: core/models.py:72
+msgid "Default Pension Increase (%)"
+msgstr "Standard-Rentensteigerung (%)"
+
 #: core/models.py:68
 msgid "Investment Return Offset (%)"
 msgstr "Anlage-Rendite Offset (%)"
@@ -2211,6 +2215,14 @@ msgstr "Visualisiert die finanziellen Ausschläge durch konfigurierte einmalige 
 
 msgid "Asset Allocation"
 msgstr "Vermögensaufteilung (Asset Allocation)"
+
+
+msgid "Liquid Assets"
+msgstr "Flüssige Mittel & Anlagen"
+
+
+msgid "Accumulated Cash"
+msgstr "Angespartes Barvermögen"
 
 
 msgid "A snapshot donut chart showing the percentage distribution of your assets."

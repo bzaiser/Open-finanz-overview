@@ -156,6 +156,19 @@
                         return label;
                     }
                 };
+                {% elif item.id == 'asset_allocation_chart' %}
+                config.type = 'doughnut';
+                config.options.scales = { x: { display: false }, y: { display: false } };
+                config.options.plugins.legend = { position: 'bottom' };
+                config.options.plugins.tooltip.callbacks = {
+                    label: function(context) {
+                        const val = context.parsed;
+                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                        const pct = total > 0 ? ((val / total) * 100).toFixed(1) : 0;
+                        const formatted = new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ profile.currency }}' }).format(val);
+                        return context.label + ': ' + formatted + ' (' + pct + '%)';
+                    }
+                };
                 {% endif %}
                 new Chart(ctx, config);
             }

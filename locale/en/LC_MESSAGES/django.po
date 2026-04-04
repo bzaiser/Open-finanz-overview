@@ -91,6 +91,9 @@ msgstr ""
 msgid "Default Salary Increase (%)"
 msgstr ""
 
+msgid "Default Pension Increase (%)"
+msgstr "Default Pension Increase (%)"
+
 #: core/models.py:65
 msgid "Investment Return Offset (%)"
 msgstr ""

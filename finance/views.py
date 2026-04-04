@@ -56,6 +56,7 @@ AVAILABLE_CHARTS = {
     'expense_evolution_chart': {'title': _('Expense Evolution'), 'type': 'line', 'default_width': 6, 'default_height': 'small'},
     'inflation_monitor_chart': {'title': _('Inflation Monitor'), 'type': 'line', 'default_width': 6, 'default_height': 'small'},
     'budget_pie_chart': {'title': _('Monthly Budget'), 'type': 'pie', 'default_width': 6, 'default_height': 'small'},
+    'asset_allocation_chart': {'title': _('Asset Allocation'), 'type': 'doughnut', 'default_width': 6, 'default_height': 'small'},
     'income_table_widget': {'title': _('Income Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small'},
     'expense_table_widget': {'title': _('Expense Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small'},
     'asset_table_widget': {'title': _('Asset Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small'},
@@ -420,7 +421,23 @@ def dashboard_view(request):
                     'percentData': inflation_loss_percent
                 }
             ]
-        }
+        },
+        'asset_allocation_chart': {
+            'labels': [
+                str(_('Liquid Assets')),
+                str(_('Pension Capital')),
+                str(_('Accumulated Cash')),
+            ],
+            'datasets': [{
+                'data': [
+                    round(current_month_data.get('real_asset_total', 0), 2),
+                    round(current_month_data.get('real_pension_total', 0), 2),
+                    round(current_month_data.get('real_accumulated_cash', 0), 2),
+                ],
+                'backgroundColor': ['#0d6efd', '#6f42c1', '#198754'],
+                'hoverOffset': 8,
+            }]
+        },
     }
 
     # Key Metrics for Summary Panels (Use REAL values for purchasing power consistency)
