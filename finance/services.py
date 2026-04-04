@@ -153,44 +153,35 @@ class SimulationEngine:
                         'date': event.date.isoformat(), 'value': float(round(event.value, 2)),
                     })
 
-            # 4. Wealth Accumulation and Growth - START FROM STICHTAG
-            asset_total = Decimal('0.00')
-            pension_total = Decimal('0.00')
-
-            if current_date < stichtag:
-                # History mode: tracking only flows
-                total_nominal = Decimal('0.00')
-                total_real = Decimal('0.00')
-            else:
-                # Future mode: Growth after Stichtag
-                if current_date > stichtag:
-                    # Apply Asset Growth & Withdrawals
-                    for item in assets_state:
-                        asset = item['asset']
-                        rate = (asset.growth_rate / 100) + self.investment_return_offset
-                        item['balance'] *= (1 + (rate / 12))
-                        if asset.withdrawal_start_date and current_date >= asset.withdrawal_start_date:
-                            item['balance'] = max(Decimal('0'), item['balance'] - asset.withdrawal_amount)
-                    
-                    # Apply Pension Growth & Contribution
-                    for item in pensions_state:
-                        pension = item['pension']
-                        # Growth applies to current balance
-                        rate = (pension.growth_rate / 100)
-                        item['balance'] *= (1 + (rate / 12))
-                        # Contribution only if before end date
-                        if not pension.contribution_end_date or current_date < pension.contribution_end_date:
-                            item['balance'] += pension.monthly_contribution
-
-                    # Monthly Savings
-                    monthly_savings = monthly_income - monthly_expenses - current_monthly_pension_contribution
-                    accumulated_cash += (monthly_savings + event_impact)
+            # 4. Wealth Accumulation and Growth - Continuous Simulation
+            # Apply Asset Growth & Withdrawals
+            if i > 0: # Start growth from the second month
+                for item in assets_state:
+                    asset = item['asset']
+                    rate = (asset.growth_rate / 100) + self.investment_return_offset
+                    item['balance'] *= (1 + (rate / 12))
+                    if asset.withdrawal_start_date and current_date >= asset.withdrawal_start_date:
+                        item['balance'] = max(Decimal('0'), item['balance'] - asset.withdrawal_amount)
                 
-                # Totals
-                asset_total = sum(item['balance'] for item in assets_state)
-                pension_total = sum(item['balance'] for item in pensions_state)
-                total_nominal = asset_total + pension_total + accumulated_cash
-                total_real = total_nominal / ((1 + self.inflation_rate) ** year_passed_decimal)
+                # Apply Pension Growth & Contribution
+                for item in pensions_state:
+                    pension = item['pension']
+                    # Growth applies to current balance
+                    rate = (pension.growth_rate / 100)
+                    item['balance'] *= (1 + (rate / 12))
+                    # Contribution only if before end date
+                    if not pension.contribution_end_date or current_date < pension.contribution_end_date:
+                        item['balance'] += pension.monthly_contribution
+
+                # Monthly Savings
+                monthly_savings = monthly_income - monthly_expenses - current_monthly_pension_contribution
+                accumulated_cash += (monthly_savings + event_impact)
+            
+            # Totals
+            asset_total = sum(item['balance'] for item in assets_state)
+            pension_total = sum(item['balance'] for item in pensions_state)
+            total_nominal = asset_total + pension_total + accumulated_cash
+            total_real = total_nominal / ((1 + self.inflation_rate) ** year_passed_decimal)
 
             data.append({
                 'date': current_date,
