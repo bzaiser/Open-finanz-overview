@@ -492,65 +492,70 @@ def dashboard_view(request):
     
     # 7. Table Gadget Data (Monthly Normalized)
     continuous_label = _('Continuous')
+    # 7. Dynamic Table Widgets (Filtered by target_date)
+    continuous_label = _('Continuous')
     table_data_income = []
-    # Direct income
+    
+    # 1. Manual Cash Flows
     for cf in user.cash_flows.select_related('category').filter(is_income=True):
-        amt = cf.value if cf.frequency == 'monthly' else cf.value / 12
-        year = str(cf.start_date.year) if cf.start_date else continuous_label
-        table_data_income.append({
-            'name': cf.name, 
-            'amount': float(amt), 
-            'category': cf.category.name if cf.category else _('Uncategorized'),
-            'type': _('Manual'),
-            'year': year
-        })
-    # Asset withdrawals (Income)
-    for a in user.assets.all():
-        if a.withdrawal_amount and a.withdrawal_amount > 0:
-            year = str(a.withdrawal_start_date.year) if a.withdrawal_start_date else continuous_label
+        if (not cf.start_date or cf.start_date.replace(day=1) <= target_date) and \
+           (not cf.end_date or cf.end_date.replace(day=1) >= target_date):
+            amt = cf.value if cf.frequency == 'monthly' else cf.value / 12
             table_data_income.append({
-                'name': f"{_('Entnahme')}: {a.name}", 
-                'amount': float(a.withdrawal_amount), 
-                'category': _('Vermögen'),
-                'type': _('Entnahme'),
-                'year': year
+                'name': cf.name, 
+                'amount': float(amt), 
+                'category': cf.category.name if cf.category else _('Einnahme'),
+                'type': _('Manuell'),
+                'year': str(cf.start_date.year) if cf.start_date else continuous_label
             })
     
-    # Pension payouts (Income)
+    # 2. Asset withdrawals (Income)
+    for a in user.assets.all():
+        if a.withdrawal_start_date and a.withdrawal_start_date.replace(day=1) <= target_date:
+            table_data_income.append({
+                'name': f"{_('Entnahme')}: {a.name}", 
+                'amount': float(a.withdrawal_amount or 0), 
+                'category': _('Vermögen'),
+                'type': _('Simulation'),
+                'year': str(a.withdrawal_start_date.year)
+            })
+
+    # 3. Pension payouts (Income)
     for p in user.pensions.all():
-        if p.expected_payout_at_retirement and p.expected_payout_at_retirement > 0:
-            year = str(p.start_payout_date.year) if p.start_payout_date else continuous_label
+        if p.start_payout_date and p.start_payout_date.replace(day=1) <= target_date:
             table_data_income.append({
                 'name': f"{_('Rente')}: {p.provider}", 
                 'amount': float(p.expected_payout_at_retirement or 0), 
                 'category': _('Rente'),
-                'type': _('Auszahlung'),
-                'year': year
+                'type': _('Vertrag'),
+                'year': str(p.start_payout_date.year)
             })
 
     table_data_expense = []
-    # Direct expenses
+    # 1. Manual Cash Flows
     for cf in user.cash_flows.select_related('category').filter(is_income=False):
-        amt = cf.value if cf.frequency == 'monthly' else cf.value / 12
-        year = str(cf.start_date.year) if cf.start_date else continuous_label
-        table_data_expense.append({
-            'name': cf.name, 
-            'amount': float(amt), 
-            'category': cf.category.name if cf.category else _('Uncategorized'),
-            'type': _('Manual'),
-            'year': year
-        })
-    # Pension contributions (Expense)
+        if (not cf.start_date or cf.start_date.replace(day=1) <= target_date) and \
+           (not cf.end_date or cf.end_date.replace(day=1) >= target_date):
+            amt = cf.value if cf.frequency == 'monthly' else cf.value / 12
+            table_data_expense.append({
+                'name': cf.name, 
+                'amount': float(amt), 
+                'category': cf.category.name if cf.category else _('Ausgabe'),
+                'type': _('Manuell'),
+                'year': str(cf.start_date.year) if cf.start_date else continuous_label
+            })
+
+    # 2. Pension contributions (Expense)
     for p in user.pensions.all():
         if p.monthly_contribution and p.monthly_contribution > 0:
-            year = str(p.contribution_end_date.year) if p.contribution_end_date else continuous_label
-            table_data_expense.append({
-                'name': f"{_('Beitrag')}: {p.provider}", 
-                'amount': float(p.monthly_contribution or 0), 
-                'category': _('Sparen'),
-                'type': _('Rente'),
-                'year': year
-            })
+            if not p.contribution_end_date or p.contribution_end_date.replace(day=1) > target_date:
+                table_data_expense.append({
+                    'name': f"{_('Beitrag')}: {p.provider}", 
+                    'amount': float(p.monthly_contribution or 0), 
+                    'category': _('Sparen'),
+                    'type': _('Vertrag'),
+                    'year': str(p.contribution_end_date.year) if p.contribution_end_date else continuous_label
+                })
 
     table_data_asset = []
     for a in user.assets.all():
@@ -568,7 +573,7 @@ def dashboard_view(request):
         table_data_pension.append({
             'name': p.provider, 
             'amount': float(p.current_value or 0), 
-            'category': _('Pension'),
+            'category': _('Rente'),
             'contribution': float(p.monthly_contribution or 0),
             'year': year
         })
