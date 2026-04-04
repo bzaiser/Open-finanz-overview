@@ -11,6 +11,7 @@ from .models import (
     ImportBatch, PendingTransaction
 )
 from .forms import BankImportForm
+from core.models import UserProfile
 from .import_services import ExcelParserService
 from django.core.serializers.json import DjangoJSONEncoder
 from django.conf import settings
@@ -83,7 +84,7 @@ DEFAULT_LAYOUT = [
 @login_required
 def dashboard_view(request):
     user = request.user
-    profile = user.profile
+    profile, _ = UserProfile.objects.get_or_create(user=user)
     
     # Helper for safe merging of defaults
     def safe_merge(user_data, defaults):

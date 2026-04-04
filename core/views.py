@@ -14,7 +14,7 @@ def signup(request):
             user.is_staff = True
             user.save()
             # Create profile
-            UserProfile.objects.create(user=user)
+            UserProfile.objects.get_or_create(user=user)
             login(request, user)
             return redirect('dashboard')
     else:
@@ -23,7 +23,7 @@ def signup(request):
 
 @login_required
 def profile_view(request):
-    profile = request.user.profile
+    profile, _ = UserProfile.objects.get_or_create(user=request.user)
     if request.method == 'POST':
         form = UserProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():

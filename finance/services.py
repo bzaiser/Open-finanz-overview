@@ -4,11 +4,12 @@ from decimal import Decimal
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 from .models import Asset, CashFlowSource, OneTimeEvent, Pension
+from core.models import UserProfile
 
 class SimulationEngine:
     def __init__(self, user, simulation_params=None):
         self.user = user
-        self.profile = user.profile
+        self.profile, _ = UserProfile.objects.get_or_create(user=user)
         self.params = simulation_params or {}
         
         # Simulation Parameters from profile or override
