@@ -229,7 +229,10 @@ def classify_transactions(transactions, categories):
         if results:
             final_results.update(results)
             return final_results, f"KI aktiv via Ollama ({settings.OLLAMA_MODEL}).", events
+        
+        # Strikte Provider-Wahl: Wenn Ollama eingestellt ist und fehlschlägt -> kein Fallback auf Cloud
         events.append(f"Ollama fehlgeschlagen: {error}")
+        return final_results, f"Ollama fehlgeschlagen: {error}. Kein Fallback konfiguriert (DSGVO-Modus).", events
 
     # 2. Groq (API - Llama 3)
     if provider == 'groq' or (provider == 'hybrid' and getattr(settings, 'GROQ_API_KEY', None)):
@@ -245,6 +248,8 @@ def classify_transactions(transactions, categories):
                 return final_results, "KI aktiv via Groq.", events
         else:
             events.append(f"Groq fehlgeschlagen: {error}")
+            if provider == 'groq':
+                return final_results, f"Groq fehlgeschlagen: {error}", events
 
     # 3. Gemini (API - Google)
     if provider == 'gemini' or (provider == 'hybrid' and getattr(settings, 'GEMINI_API_KEY', None)):
@@ -269,6 +274,9 @@ def classify_transactions(transactions, categories):
             except Exception as e:
                 events.append(f"Gemini fehlgeschlagen: {e}")
                 logger.error(f"Gemini failed: {e}")
+        
+        if provider == 'gemini':
+            return final_results, "Gemini fehlgeschlagen (Key/Connection).", events
 
     # 4. Finaler Fallback für nicht erkannte Zeilen
     num_fallback = 0
