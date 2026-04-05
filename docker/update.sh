@@ -41,6 +41,10 @@ docker compose --env-file ../.env up -d
 echo "Fixing permissions for data directory..."
 sudo chmod -R 777 ../data
 
+# Install potential new requirements from requirements.txt
+echo "Syncing requirements..."
+docker compose --env-file ../.env exec web pip install --no-cache-dir -r requirements.txt
+
 # Run database migrations (from git)
 echo "Running database migrations..."
 docker compose --env-file ../.env exec web python3 manage.py migrate
@@ -48,11 +52,11 @@ docker compose --env-file ../.env exec web python3 manage.py createcachetable
 
 # Compile translations
 echo "Compiling translations..."
-docker compose exec web python3 manage.py compilemessages
+docker compose --env-file ../.env exec web python3 manage.py compilemessages
 
 # Collect static files
 echo "Collecting static files..."
-docker compose exec web python3 manage.py collectstatic --noinput
+docker compose --env-file ../.env exec web python3 manage.py collectstatic --noinput
 
 
 

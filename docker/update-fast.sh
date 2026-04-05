@@ -31,7 +31,7 @@ cd "$SCRIPT_DIR"
 
 # Install potential new requirements (FAST update)
 echo "Syncing requirements..."
-docker compose --env-file ../.env exec web pip install -r requirements.txt
+docker compose --env-file ../.env exec web pip install --no-cache-dir -r requirements.txt
 
 # Run database migrations (from git)
 echo "Running database migrations..."
