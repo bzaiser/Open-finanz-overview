@@ -138,34 +138,46 @@ def classify_with_groq(transactions, categories):
 
 def classify_with_ollama(transactions, categories):
     """
-    Ollama-Integration für lokale Kategorisierung.
+    Ollama-Integration für lokale Kategorisierung via /api/chat (moderner & stabiler).
     """
     if not settings.OLLAMA_BASE_URL:
         return None, "Ollama URL nicht konfiguriert."
 
     category_list = ", ".join([f"{c['name']} (slug: {c['slug']})" for c in categories])
-    url = f"{settings.OLLAMA_BASE_URL.rstrip('/')}/api/generate"
+    url = f"{settings.OLLAMA_BASE_URL.rstrip('/')}/api/chat"
     
-    prompt = (
-        f"Du bist ein präziser Finanz-Experte. Kategorisiere diese Bankbuchungen und antworte NUR im JSON-Format. "
+    system_prompt = "Du bist ein präziser Finanz-Experte. Kategorisiere Bankbuchungen und antworte AUSSCHLIESSLICH im JSON-Format."
+    user_prompt = (
         f"Mögliche Kategorien (mit Slugs): {category_list}\n\n"
         f"Transaktionen: {json.dumps(transactions)}\n\n"
-        f"Antworte mit einem JSON-Array von Objekten, jedes mit: id, category_slug, is_income (boolean), is_recurring (boolean), frequency (monthly/yearly/once), reasoning (kurz)."
+        f"Antworte mit einem JSON-Array von Objekten, jedes mit: id (als String), category_slug, is_income (boolean), is_recurring (boolean), frequency (monthly/yearly/once), reasoning (kurz)."
     )
     
     payload = {
         "model": settings.OLLAMA_MODEL,
-        "prompt": prompt,
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt}
+        ],
         "stream": False,
         "format": "json"
     }
 
     try:
         # Erhöhter Timeout für lokale LLMs auf NAS/Docker
+        logger.info(f"Ollama Request an {url} (Modell: {settings.OLLAMA_MODEL})")
         response = requests.post(url, json=payload, timeout=120)
-        response.raise_for_status()
+        
+        if response.status_code != 200:
+            error_data = response.text
+            logger.error(f"Ollama Error {response.status_code}: {error_data}")
+            if response.status_code == 404:
+                return None, f"Ollama Endpunkt oder Modell '{settings.OLLAMA_MODEL}' nicht gefunden (404). Bitte 'ollama pull {settings.OLLAMA_MODEL}' ausführen."
+            return None, f"Ollama Server Fehler {response.status_code}: {error_data}"
+
         data = response.json()
-        text = data.get('response', '')
+        # Bei /api/chat kommt die Antwort in data['message']['content']
+        text = data.get('message', {}).get('content', '')
         
         # Bereinigen von potentiellem Markdown-Output falls 'format':'json' ignoriert wurde
         if "```json" in text:
