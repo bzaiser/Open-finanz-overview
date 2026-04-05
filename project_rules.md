@@ -26,7 +26,8 @@
 - **Vorgehensweise**: Führe nach jedem Commit beide Pushes aus: `git push origin master:master` und `git push public master:main`.
 
 ## Infrastructure & Environment
-- **NO Local Docker**: Es darf NIEMALS versucht werden, `docker` oder `docker-compose` Befehle lokal auszuführen. Es gibt keinen lokalen Docker-Daemon.
+- **STRICT: NO Local Docker**: Es darf NIEMALS versucht werden, `docker` oder `docker-compose` Befehle lokal auszuführen. Es darf auch NICHT nach einem lokalen Docker-Daemon gesucht werden. 
+- **Migrationen**: Datenbank-Migrationen (`makemigrations`, `migrate`) werden niemals lokal ausgeführt. Diese erfolgen ausschließlich auf dem Remote-System über die dortigen Update-Scripte.
 - **NO Local Virtual Environment**: Es gibt keine lokale virtuelle Umgebung (`venv`). Python-Skripte dürfen nur direkt mit dem System-Python ausgeführt werden, falls nötig.
 - **Remote-Only Execution**: Alle produktiven Befehle (wie `update-fast.sh`) werden erst nach dem Push direkt auf dem Zielserver ausgeführt.
 
