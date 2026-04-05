@@ -125,6 +125,23 @@
                     <button type="submit" class="btn btn-gradient btn-lg w-100 py-3 mt-2 fw-bold rounded-4 shadow-sm" style="background: var(--app-gradient); border: none; color: white;">
                         <i class="bi bi-check2-circle me-2"></i>{% trans "Design & Profil speichern" %}
                     </button>
+                    <div class="d-flex flex-wrap gap-3 justify-content-center mt-4">
+                        <div class="preset-pill shadow-sm gradient-preset" 
+                             data-start="#6610f2" data-end="#0d6efd" data-primary="#0d6efd" data-bg="#ffffff" data-sidebar="#f8f9fa" data-text="#212529"
+                             style="background: linear-gradient(135deg, #6610f2 0%, #0d6efd 100%);" title="Vibrant Blue"></div>
+                        <div class="preset-pill shadow-sm gradient-preset" 
+                             data-start="#198754" data-end="#20c997" data-primary="#198754" data-bg="#f8fff9" data-sidebar="#e9f5ed" data-text="#0f5132"
+                             style="background: linear-gradient(135deg, #198754 0%, #20c997 100%);" title="Nature Green"></div>
+                        <div class="preset-pill shadow-sm gradient-preset" 
+                             data-start="#fd7e14" data-end="#ffc107" data-primary="#fd7e14" data-bg="#fff9f2" data-sidebar="#fdf2e2" data-text="#854000"
+                             style="background: linear-gradient(135deg, #fd7e14 0%, #ffc107 100%);" title="Sunset Orange"></div>
+                        <div class="preset-pill shadow-sm gradient-preset" 
+                             data-start="#d63384" data-end="#6610f2" data-primary="#d63384" data-bg="#fff5f8" data-sidebar="#f8e9f0" data-text="#a10056"
+                             style="background: linear-gradient(135deg, #d63384 0%, #6610f2 100%);" title="Deep Purple"></div>
+                        <div class="preset-pill shadow-sm gradient-preset" 
+                             data-start="#212529" data-end="#495057" data-primary="#343a40" data-bg="#121212" data-sidebar="#1a1a1a" data-text="#e9ecef"
+                             style="background: linear-gradient(135deg, #212529 0%, #495057 100%);" title="Midnight"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -132,27 +149,53 @@
 </div>
 
 <script>
-    const startInput = document.querySelector('[name="gradient_start"]');
-    const endInput = document.querySelector('[name="gradient_end"]');
-    const primaryInput = document.querySelector('[name="primary_color"]');
-    const headerBgInput = document.querySelector('[name="table_header_bg_color"]');
+    const inputs = {
+        gradient_start: document.querySelector('[name="gradient_start"]'),
+        gradient_end: document.querySelector('[name="gradient_end"]'),
+        primary_color: document.querySelector('[name="primary_color"]'),
+        background_color: document.querySelector('[name="background_color"]'),
+        sidebar_bg_color: document.querySelector('[name="sidebar_bg_color"]'),
+        text_color: document.querySelector('[name="text_color"]'),
+        table_header_bg_color: document.querySelector('[name="table_header_bg_color"]'),
+        table_header_text_color: document.querySelector('[name="table_header_text_color"]'),
+        table_filter_bg_color: document.querySelector('[name="table_filter_bg_color"]'),
+        table_body_bg_color: document.querySelector('[name="table_body_bg_color"]'),
+        table_body_text_color: document.querySelector('[name="table_body_text_color"]'),
+        table_border_color: document.querySelector('[name="table_border_color"]')
+    };
+
     const preview = document.getElementById('harmonyPreview');
 
     function updatePreview() {
-        const s = startInput.value;
-        const e = endInput.value;
+        const s = inputs.gradient_start?.value || '#6610f2';
+        const e = inputs.gradient_end?.value || '#0d6efd';
         if (preview) preview.style.background = `linear-gradient(135deg, ${s} 0%, ${e} 100%)`;
     }
 
-    startInput?.addEventListener('input', updatePreview);
-    endInput?.addEventListener('input', updatePreview);
+    // Attach local input listeners
+    if (inputs.gradient_start) inputs.gradient_start.addEventListener('input', updatePreview);
+    if (inputs.gradient_end) inputs.gradient_end.addEventListener('input', updatePreview);
 
     document.querySelectorAll('.gradient-preset').forEach(btn => {
         btn.addEventListener('click', () => {
-            if (startInput) startInput.value = btn.dataset.start;
-            if (endInput) endInput.value = btn.dataset.end;
-            if (primaryInput) primaryInput.value = btn.dataset.primary;
-            if (headerBgInput) headerBgInput.value = btn.dataset.primary;
+            const data = btn.dataset;
+            
+            // Core Colors
+            if (inputs.gradient_start) inputs.gradient_start.value = data.start;
+            if (inputs.gradient_end) inputs.gradient_end.value = data.end;
+            if (inputs.primary_color) inputs.primary_color.value = data.primary;
+            if (inputs.background_color) inputs.background_color.value = data.bg;
+            if (inputs.sidebar_bg_color) inputs.sidebar_bg_color.value = data.sidebar;
+            if (inputs.text_color) inputs.text_color.value = data.text;
+            
+            // Table Colors (Derived)
+            if (inputs.table_header_bg_color) inputs.table_header_bg_color.value = data.primary;
+            if (inputs.table_header_text_color) inputs.table_header_text_color.value = (data.bg === '#121212' ? '#ffffff' : '#ffffff');
+            if (inputs.table_filter_bg_color) inputs.table_filter_bg_color.value = (data.bg === '#121212' ? '#2a2a2a' : '#f1f3f5');
+            if (inputs.table_body_bg_color) inputs.table_body_bg_color.value = data.bg;
+            if (inputs.table_body_text_color) inputs.table_body_text_color.value = data.text;
+            if (inputs.table_border_color) inputs.table_border_color.value = (data.bg === '#121212' ? '#333333' : '#dee2e6');
+            
             updatePreview();
         });
     });
