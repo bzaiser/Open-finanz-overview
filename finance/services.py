@@ -216,10 +216,10 @@ class SimulationEngine:
                     cat_name = str(_('Immobilien (Miete)'))
                     income_category_breakdown[cat_name] = income_category_breakdown.get(cat_name, Decimal('0')) + val
                 
-                costs = (re.maintenance_costs_monthly or Decimal('0')) + (re.ancillary_costs_monthly or Decimal('0'))
+                costs = (re.maintenance_costs_monthly or Decimal('0'))
                 if costs > 0:
                     monthly_expenses += costs
-                    cat_name = str(_('Immobilien (Kosten)'))
+                    cat_name = str(_('Immobilien (Instandhaltung)'))
                     category_breakdown[cat_name] = category_breakdown.get(cat_name, Decimal('0')) + costs
 
             # 3. One Time Events
