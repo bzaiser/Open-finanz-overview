@@ -54,6 +54,13 @@ docker compose exec web python3 manage.py compilemessages
 echo "Collecting static files..."
 docker compose exec web python3 manage.py collectstatic --noinput
 
+# Ensure the correct Ollama model is downloaded
+if grep -q "OLLAMA_MODEL=" ../.env; then
+    MODEL=$(grep -E '^OLLAMA_MODEL=' ../.env | cut -d '=' -f 2 | tr -d '"' | tr -d "'" | tr -d '\r')
+    echo "Ensuring Ollama model '$MODEL' is downloaded (this may take a while on first run)..."
+    docker compose --env-file ../.env exec -T ollama ollama pull "$MODEL" || echo "Warning: Could not pull Ollama model. Is the container running?"
+fi
+
 echo "-----------------------------------"
 echo "Update complete! Application is running."
 
