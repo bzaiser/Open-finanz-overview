@@ -47,14 +47,6 @@ docker compose --env-file ../.env exec web python3 manage.py collectstatic --noi
 echo "Updating containers..."
 docker compose --env-file ../.env up -d
 
-# Ensure the correct Ollama model is downloaded
-if grep -q "OLLAMA_MODEL" ../.env; then
-    MODEL=$(grep -E '^\s*OLLAMA_MODEL\s*=' ../.env | cut -d '=' -f 2 | tr -d '"' | tr -d "'" | tr -d '\r' | tr -d ' ')
-    if [ -n "$MODEL" ]; then
-        echo "Ensuring Ollama model '$MODEL' is downloaded (this may take a while on first run)..."
-        docker compose --env-file ../.env exec -T ollama ollama pull "$MODEL" || echo "Warning: Could not pull Ollama model. Is the container running?"
-    fi
-fi
 
 echo "-----------------------------------"
 echo "FAST Update complete! The UI/Code is now live."
