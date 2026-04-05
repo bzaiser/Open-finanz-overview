@@ -812,14 +812,12 @@ msgstr ""
 msgid "Ensure that there are no more than %(max)s digit in total."
 msgid_plural "Ensure that there are no more than %(max)s digits in total."
 msgstr[0] ""
-msgstr[1] ""
 
 #: venv/lib/python3.12/site-packages/django/core/validators.py:521
 #, python-format
 msgid "Ensure that there are no more than %(max)s decimal place."
 msgid_plural "Ensure that there are no more than %(max)s decimal places."
 msgstr[0] ""
-msgstr[1] ""
 
 #: venv/lib/python3.12/site-packages/django/core/validators.py:659
 msgid "Null characters are not allowed."
@@ -1103,8 +1101,6 @@ msgstr ""
 msgid "Ensure this filename has at most %(max)d character (it has %(length)d)."
 msgid_plural ""
 "Ensure this filename has at most %(max)d characters (it has %(length)d)."
-msgstr[0] ""
-msgstr[1] ""
 
 #: venv/lib/python3.12/site-packages/django/forms/fields.py:648
 msgid "Please either submit a file or check the clear checkbox, not both."
@@ -1150,14 +1146,12 @@ msgstr ""
 msgid "Please submit at most %(num)d form."
 msgid_plural "Please submit at most %(num)d forms."
 msgstr[0] ""
-msgstr[1] ""
 
 #: venv/lib/python3.12/site-packages/django/forms/formsets.py:70
 #, python-format
 msgid "Please submit at least %(num)d form."
 msgid_plural "Please submit at least %(num)d forms."
 msgstr[0] ""
-msgstr[1] ""
 
 #: venv/lib/python3.12/site-packages/django/forms/formsets.py:484
 #: venv/lib/python3.12/site-packages/django/forms/formsets.py:491
@@ -1250,7 +1244,6 @@ msgstr ""
 msgid "%(size)d byte"
 msgid_plural "%(size)d bytes"
 msgstr[0] ""
-msgstr[1] ""
 
 #: venv/lib/python3.12/site-packages/django/template/defaultfilters.py:927
 #, python-format
@@ -1525,42 +1518,36 @@ msgstr ""
 msgid "%(num)d year"
 msgid_plural "%(num)d years"
 msgstr[0] ""
-msgstr[1] ""
 
 #: venv/lib/python3.12/site-packages/django/utils/timesince.py:9
 #, python-format
 msgid "%(num)d month"
 msgid_plural "%(num)d months"
 msgstr[0] ""
-msgstr[1] ""
 
 #: venv/lib/python3.12/site-packages/django/utils/timesince.py:10
 #, python-format
 msgid "%(num)d week"
 msgid_plural "%(num)d weeks"
 msgstr[0] ""
-msgstr[1] ""
 
 #: venv/lib/python3.12/site-packages/django/utils/timesince.py:11
 #, python-format
 msgid "%(num)d day"
 msgid_plural "%(num)d days"
 msgstr[0] ""
-msgstr[1] ""
 
 #: venv/lib/python3.12/site-packages/django/utils/timesince.py:12
 #, python-format
 msgid "%(num)d hour"
 msgid_plural "%(num)d hours"
 msgstr[0] ""
-msgstr[1] ""
 
 #: venv/lib/python3.12/site-packages/django/utils/timesince.py:13
 #, python-format
 msgid "%(num)d minute"
 msgid_plural "%(num)d minutes"
 msgstr[0] ""
-msgstr[1] ""
 
 #: venv/lib/python3.12/site-packages/django/views/csrf.py:29
 msgid "Forbidden"
@@ -1654,7 +1641,6 @@ msgid ""
 "%(version)s/ref/settings/#debug\" target=\"_blank\" "
 "rel=\"noopener\">DEBUG=True</a> is in your settings file and you have not "
 "configured any URLs."
-msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/views/templates/default_urlconf.html:217
 msgid "Django Documentation"
@@ -1848,14 +1834,15 @@ msgstr "Rentensteigerung (%)"
 msgid "Inv. Return Offset (%)"
 msgstr "Rendite-Offset (%)"
 
-msgid "Growth Real Estate (%)"
-msgstr "Wertsteigerung Immobilien %"
-
-msgid "Decline Physical Assets (%)"
-msgstr "Wertminderung Sachwerte %"
-
 msgid "Update Simulation"
 msgstr "Simulation aktualisieren"
 
 msgid "Reset to Defaults"
 msgstr "Auf Standard zurücksetzen"
+
+
+msgid "Growth Real Estate (%)"
+msgstr "Wertsteigerung Immobilien %"
+
+msgid "Decline Physical Assets (%)"
+msgstr "Wertminderung Sachwerte %"
