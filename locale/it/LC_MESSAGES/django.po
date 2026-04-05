@@ -2094,3 +2094,27 @@ msgstr "Rivalutazione annua predefinita per gli immobili. Utilizzata solo se non
 
 msgid "Jährliche Wertminderung für Sachwerte (wie Autos). Wird nur verwendet, wenn am Objekt selbst kein individueller Wert (0%) hinterlegt ist. Tragen Sie hier positive Werte für Wertverlust ein."
 msgstr "Ammortamento annuo per i beni fisici (come le auto). Utilizzato solo se non è specificato alcun valore individuale (0%) sull'oggetto stesso. Inserisci qui valori positivi per la perdita di valore."
+
+msgid "Stichtag"
+msgstr "Data obiettivo"
+
+msgid "Inflation Rate (%)"
+msgstr "Tasso di inflazione (%)"
+
+msgid "Salary Increase (%)"
+msgstr "Aumento salariale (%)"
+
+msgid "Pension Increase (%)"
+msgstr "Aumento della pensione (%)"
+
+msgid "Inv. Return Offset (%)"
+msgstr "Offset di rendimento (%)"
+
+msgid "Growth Real Estate (%)"
+msgstr "Rivalutazione immobiliare (%)"
+
+msgid "Decline Physical Assets (%)"
+msgstr "Ammortamento beni fisici (%)"
+
+msgid "Reset to Defaults"
+msgstr "Ripristina"

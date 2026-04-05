@@ -2096,3 +2096,27 @@ msgstr "Plusvalía anual por defecto para bienes inmuebles. Solo se usa si no se
 
 msgid "Jährliche Wertminderung für Sachwerte (wie Autos). Wird nur verwendet, wenn am Objekt selbst kein individueller Wert (0%) hinterlegt ist. Tragen Sie hier positive Werte für Wertverlust ein."
 msgstr "Depreciación anual de activos físicos (como coches). Solo se usa si no se especifica ningún valor individual (0%) en el propio objeto. Introduzca aquí valores positivos para la pérdida de valor."
+
+msgid "Stichtag"
+msgstr "Fecha objetivo"
+
+msgid "Inflation Rate (%)"
+msgstr "Tasa de inflación (%)"
+
+msgid "Salary Increase (%)"
+msgstr "Aumento salarial (%)"
+
+msgid "Pension Increase (%)"
+msgstr "Aumento de pensión (%)"
+
+msgid "Inv. Return Offset (%)"
+msgstr "Offset de rendimiento (%)"
+
+msgid "Growth Real Estate (%)"
+msgstr "Plusvalía inmobiliaria (%)"
+
+msgid "Decline Physical Assets (%)"
+msgstr "Depreciación de activos físicos (%)"
+
+msgid "Reset to Defaults"
+msgstr "Restablecer"

@@ -2132,3 +2132,27 @@ msgstr "Default annual appreciation for real estate. Only used if no individual 
 
 msgid "Jährliche Wertminderung für Sachwerte (wie Autos). Wird nur verwendet, wenn am Objekt selbst kein individueller Wert (0%) hinterlegt ist. Tragen Sie hier positive Werte für Wertverlust ein."
 msgstr "Annual depreciation for physical assets (such as cars). Only used if no individual value (0%) is specified on the object itself. Enter positive values here for loss of value."
+
+msgid "Stichtag"
+msgstr "Target Date"
+
+msgid "Inflation Rate (%)"
+msgstr "Inflation Rate (%)"
+
+msgid "Salary Increase (%)"
+msgstr "Salary Increase (%)"
+
+msgid "Pension Increase (%)"
+msgstr "Pension Increase (%)"
+
+msgid "Inv. Return Offset (%)"
+msgstr "Inv. Return Offset (%)"
+
+msgid "Growth Real Estate (%)"
+msgstr "Growth Real Estate (%)"
+
+msgid "Decline Physical Assets (%)"
+msgstr "Decline Physical Assets (%)"
+
+msgid "Reset to Defaults"
+msgstr "Reset to Defaults"

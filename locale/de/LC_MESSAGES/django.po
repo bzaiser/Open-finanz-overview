@@ -2271,3 +2271,12 @@ msgstr "Standardmäßige jährliche Wertsteigerung für Immobilien. Wird nur ver
 
 msgid "Jährliche Wertminderung für Sachwerte (wie Autos). Wird nur verwendet, wenn am Objekt selbst kein individueller Wert (0%) hinterlegt ist. Tragen Sie hier positive Werte für Wertverlust ein."
 msgstr "Jährliche Wertminderung für Sachwerte (wie Autos). Wird nur verwendet, wenn am Objekt selbst kein individueller Wert (0%) hinterlegt ist. Tragen Sie hier positive Werte für Wertverlust ein."
+
+msgid "Inflation Rate (%)"
+msgstr "Inflationsrate (%)"
+
+msgid "Salary Increase (%)"
+msgstr "Gehaltssteigerung (%)"
+
+msgid "Reset to Defaults"
+msgstr "Auf Standardwerte zurücksetzen"

@@ -2094,3 +2094,27 @@ msgstr "Plus-value annuelle par défaut pour l'immobilier. Utilisé uniquement s
 
 msgid "Jährliche Wertminderung für Sachwerte (wie Autos). Wird nur verwendet, wenn am Objekt selbst kein individueller Wert (0%) hinterlegt ist. Tragen Sie hier positive Werte für Wertverlust ein."
 msgstr "Amortissement annuel des actifs physiques (comme les voitures). Utilisé uniquement si aucune valeur individuelle (0%) n'est spécifiée sur l'objet lui-même. Saisissez ici des valeurs positives pour la perte de valeur."
+
+msgid "Stichtag"
+msgstr "Date cible"
+
+msgid "Inflation Rate (%)"
+msgstr "Taux d'inflation (%)"
+
+msgid "Salary Increase (%)"
+msgstr "Augmentation de salaire (%)"
+
+msgid "Pension Increase (%)"
+msgstr "Augmentation de pension (%)"
+
+msgid "Inv. Return Offset (%)"
+msgstr "Offset de rendement (%)"
+
+msgid "Growth Real Estate (%)"
+msgstr "Plus-value immobilière (%)"
+
+msgid "Decline Physical Assets (%)"
+msgstr "Amortissement des actifs physiques (%)"
+
+msgid "Reset to Defaults"
+msgstr "Réinitialiser"
