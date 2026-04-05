@@ -14,4 +14,11 @@
 - **Tag Consolidation**: Prefer keeping biological units (like an `if` block wrapping a `trans` tag) on one line if it aids in following the no-split rule: `{% if ... %}{% trans ... %}{% endif %}`.
 
 ## General Frontend
+## General Frontend
 - **Single Line Variables**: Always keep variables like `{{ currency }}` on the same line as the value they accompany.
+
+## Git Deployment
+- **STRICT Push Targets**: Alle Änderungen MÜSSEN zwingend in zwei spezifische Remote-Ziele / Branches gepusht werden:
+  1. `https://github.com/bzaiser/finanzplan` (origin) $\rightarrow$ Branch: `master`
+  2. `https://github.com/bzaiser/Open-finanz-overview` (public) $\rightarrow$ Branch: `main`
+- **Vorgehensweise**: Führe nach jedem Commit beide Pushes aus: `git push origin master:master` und `git push public master:main`.
