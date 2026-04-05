@@ -1806,3 +1806,42 @@ msgstr "Beitragsende"
 
 msgid "Date when you stop paying into this pension"
 msgstr "Datum, an dem die Beitragszahlung für diese Rente endet"
+
+msgid "Initial Loan Amount"
+msgstr "Darlehenssumme"
+
+msgid "Interest Rate (%)"
+msgstr "Zinssatz (%)"
+
+msgid "Interest Lock End Date"
+msgstr "Ende Zinsbindung"
+
+msgid "Monthly Installment"
+msgstr "Monatliche Rate"
+
+msgid "Extra Repayment Possible"
+msgstr "Sondertilgung möglich"
+
+msgid "Loan / Debt"
+msgstr "Kredit / Schulden"
+
+msgid "Loans / Debts"
+msgstr "Kredite / Schulden"
+
+msgid "Extra Repayment"
+msgstr "Sondertilgung"
+
+msgid "Extra Repayments"
+msgstr "Sondertilgungen"
+
+msgid "Kredit"
+msgstr "Kredit"
+
+msgid "Total Debts"
+msgstr "Gesamtschulden"
+
+msgid "Loan Table"
+msgstr "Kredit-Übersicht"
+
+msgid "Kreditrate"
+msgstr "Kreditrate"

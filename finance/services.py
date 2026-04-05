@@ -4,7 +4,7 @@ from decimal import Decimal
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from .models import Asset, CashFlowSource, OneTimeEvent, Pension, PhysicalAsset, RealEstate
+from .models import Asset, CashFlowSource, OneTimeEvent, Pension, PhysicalAsset, RealEstate, Loan, LoanExtraRepayment
 from core.models import UserProfile
 
 class SimulationEngine:
@@ -62,6 +62,11 @@ class SimulationEngine:
         asset_start = self.user.assets.filter(withdrawal_start_date__isnull=False).order_by('withdrawal_start_date').first()
         if asset_start:
             dates.append(asset_start.withdrawal_start_date)
+
+        # Check Loans
+        loan_start = self.user.loans.order_by('start_date').first()
+        if loan_start:
+            dates.append(loan_start.start_date)
 
         min_date = min(dates)
         # Normalize to the 1st of the month
@@ -124,6 +129,11 @@ class SimulationEngine:
         real_estates_state = []
         for re in real_estates:
             real_estates_state.append({'asset': re, 'balance': re.property_value})
+
+        loans_state = []
+        user_loans = list(self.user.loans.prefetch_related('extra_repayments').all())
+        for l in user_loans:
+            loans_state.append({'loan': l, 'balance': l.nominal_amount})
             
         accumulated_cash = Decimal('0.00')
 
@@ -225,6 +235,38 @@ class SimulationEngine:
                     cat_name = str(_('Immobilien (Instandhaltung)'))
                     category_breakdown[cat_name] = category_breakdown.get(cat_name, Decimal('0')) + costs
 
+            # 2.1 Process Loans (Installments and Interest)
+            current_monthly_loan_installment = Decimal('0.00')
+            for item in loans_state:
+                loan = item['loan']
+                # Loan only active if after/at start_date and still has balance
+                if current_date >= loan.start_date.replace(day=1) and item['balance'] > 0:
+                    if not loan.end_date or current_date <= loan.end_date.replace(day=1):
+                        installment = loan.monthly_installment
+                        # Interest calculation relative to current balance
+                        interest = item['balance'] * ((loan.interest_rate or Decimal('0')) / 100 / 12)
+                        
+                        # Apply installment (part interest, rest principal)
+                        if installment > item['balance'] + interest:
+                            installment = item['balance'] + interest
+                        
+                        current_monthly_loan_installment += installment
+                        cat_name = f"{_('Kredit')} ({loan.name})"
+                        category_breakdown[cat_name] = category_breakdown.get(cat_name, Decimal('0')) + installment
+                        
+                        # Extra repayments
+                        extras_this_month = sum(e.amount for e in loan.extra_repayments.all() 
+                                               if e.date.year == current_date.year and e.date.month == current_date.month)
+                        
+                        if i > 0: # Only update balance from second month of core loop
+                            reduction = (installment - interest) + extras_this_month
+                            item['balance'] = max(Decimal('0'), item['balance'] - reduction)
+                elif i > 0:
+                    # Even if not active yet or finished, we keep current balance at 0 if finished or initial
+                    pass
+
+            monthly_expenses += current_monthly_loan_installment
+
             # 3. One Time Events
             event_impact = Decimal('0.00')
             events_this_month = []
@@ -299,8 +341,9 @@ class SimulationEngine:
             pension_total = sum(item['balance'] for item in pensions_state)
             physical_asset_total = sum(item['balance'] for item in physical_assets_state)
             real_estate_total = sum(item['balance'] for item in real_estates_state)
+            loan_total = sum(item['balance'] for item in loans_state)
             
-            total_nominal = asset_total + pension_total + accumulated_cash
+            total_nominal = asset_total + pension_total + accumulated_cash - loan_total
             
             # Inflation Factor for Real Value (Purchasing Power relative to Stichtag)
             inflation_factor = (1 + self.inflation_rate) ** year_from_stichtag
@@ -320,6 +363,8 @@ class SimulationEngine:
                 'real_real_estate_total': float(round(real_estate_total / inflation_factor, 2)),
                 'accumulated_cash': float(round(accumulated_cash, 2)),
                 'real_accumulated_cash': float(round(accumulated_cash / inflation_factor, 2)),
+                'loan_total': float(round(loan_total, 2)),
+                'real_loan_total': float(round(loan_total / inflation_factor, 2)),
                 'monthly_income': float(round(monthly_income, 2)),
                 'real_monthly_income': float(round(monthly_income / inflation_factor, 2)),
                 'monthly_expenses': float(round(monthly_expenses, 2)),

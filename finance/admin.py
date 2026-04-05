@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, CashFlowSource, Asset, OneTimeEvent, Pension, FinancialStatusProxy, PhysicalAsset, RealEstate
+from .models import Category, CashFlowSource, Asset, OneTimeEvent, Pension, FinancialStatusProxy, PhysicalAsset, RealEstate, Loan, LoanExtraRepayment
 
 class BaseOwnedModelAdmin(admin.ModelAdmin):
     """
@@ -145,9 +145,15 @@ class RealEstateInline(admin.TabularInline):
     fields = ('name', 'property_value', 'appreciation_rate', 'location', 'current_tenant', 'rental_income_monthly', 'maintenance_costs_monthly', 'ancillary_costs_monthly', 'is_sold')
     classes = ['collapse']
 
+class LoanInline(admin.TabularInline):
+    model = Loan
+    extra = 1
+    fields = ('name', 'provider', 'nominal_amount', 'interest_rate', 'monthly_installment', 'start_date', 'end_date', 'allows_extra_repayment')
+    classes = ['collapse']
+
 @admin.register(FinancialStatusProxy)
 class FinancialStatusAdmin(admin.ModelAdmin):
-    inlines = [CashFlowSourceInline, AssetInline, OneTimeEventInline, PensionInline, PhysicalAssetInline, RealEstateInline]
+    inlines = [CashFlowSourceInline, AssetInline, OneTimeEventInline, PensionInline, PhysicalAssetInline, RealEstateInline, LoanInline]
     fieldsets = (
         (None, {'fields': ('username',)}),
     )
@@ -200,4 +206,15 @@ class RealEstateAdmin(BaseOwnedModelAdmin):
     list_filter = ('user', 'is_sold')
     search_fields = ('name',)
     list_editable = ('property_value', 'appreciation_rate', 'rental_income_monthly', 'is_sold', 'sale_date')
+
+class LoanExtraRepaymentInline(admin.TabularInline):
+    model = LoanExtraRepayment
+    extra = 1
+
+@admin.register(Loan)
+class LoanAdmin(BaseOwnedModelAdmin):
+    list_display = ('name', 'user', 'provider', 'nominal_amount', 'interest_rate', 'monthly_installment', 'start_date', 'end_date')
+    list_filter = ('user', 'provider')
+    search_fields = ('name', 'provider')
+    inlines = [LoanExtraRepaymentInline]
 

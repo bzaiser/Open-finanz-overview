@@ -29,6 +29,8 @@
                     {{ current_physical_assets_total|intcomma }}
                     {% elif item.id == 'total_real_estate' %}
                     {{ current_real_estate_total|intcomma }}
+                    {% elif item.id == 'total_debts' %}
+                    <span class="text-danger">{{ current_debts_total|intcomma }}</span>
                     {% elif item.id == 'total_combined_assets' %}
                     {{ current_total_combined|intcomma }}
                     {% endif %}

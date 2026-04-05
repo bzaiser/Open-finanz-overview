@@ -63,6 +63,7 @@ AVAILABLE_CHARTS = {
     'asset_table_widget': {'title': _('Asset Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small'},
     'pension_table_widget': {'title': _('Pension Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small'},
     'event_table_widget': {'title': _('One-Time Event Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small'},
+    'loan_table_widget': {'title': _('Loan Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small'},
 }
 
 SUMMARY_WIDGETS = {
@@ -75,6 +76,7 @@ SUMMARY_WIDGETS = {
     'total_physical_assets': {'title': _('Sachwerte'), 'default_bg': '#8a2be2', 'default_text': '#ffffff'},
     'total_real_estate': {'title': _('Immobilien'), 'default_bg': '#20c997', 'default_text': '#ffffff'},
     'total_combined_assets': {'title': _('Gesamtvermögen'), 'default_bg': '#ffc107', 'default_text': '#212529'},
+    'total_debts': {'title': _('Gesamtschulden'), 'default_bg': '#343a40', 'default_text': '#ffffff'},
 }
 
 DEFAULT_LAYOUT = [
@@ -246,6 +248,7 @@ def dashboard_view(request):
                 'real_net_worth': 0,
                 'monthly_income': 0,
                 'monthly_expenses': 0,
+                'loan_total': 0,
                 'one_time_events': [],
                 'one_time_total': 0,
                 'category_breakdown': {},
@@ -262,6 +265,8 @@ def dashboard_view(request):
         # Totals for the year
         bucket['monthly_income'] += d['monthly_income']
         bucket['monthly_expenses'] += d['monthly_expenses']
+        bucket['loan_total'] = d.get('loan_total', 0) # Snap to last month of year
+        bucket['one_time_total'] += d.get('one_time_impact', 0)
         
         # Category Breakdowns (Sum up)
         for cat, val in d['category_breakdown'].items():
@@ -483,13 +488,14 @@ def dashboard_view(request):
     last_month = forecast_data[-1]
     current_net_worth = round(current_month_data.get('real_net_worth', current_month_data.get('nominal_net_worth', 0)), 2)
     projected_net_worth = round(last_month.get('real_net_worth', last_month.get('nominal_net_worth', 0)), 2)
-    current_monthly_income = round(current_month_data.get('monthly_income', 0), 2)       # Nominal: what you'll actually earn
-    current_monthly_expenses = round(current_month_data.get('monthly_expenses', 0), 2)   # Nominal: what you'll actually spend
+    current_monthly_income = round(current_month_data.get('monthly_income', 0), 2)
+    current_monthly_expenses = round(current_month_data.get('monthly_expenses', 0), 2)
     current_pensions_total = round(current_month_data.get('real_pension_total', 0), 2)
     current_assets_total = round(current_month_data.get('real_asset_total', 0) + current_pensions_total, 2)
     current_physical_assets_total = round(current_month_data.get('real_physical_asset_total', 0), 2)
     current_real_estate_total = round(current_month_data.get('real_real_estate_total', 0), 2)
-    current_total_combined = round(current_assets_total + current_physical_assets_total + current_real_estate_total, 2)
+    current_debts_total = round(current_month_data.get('real_loan_total', 0), 2)
+    current_total_combined = round(current_assets_total + current_physical_assets_total + current_real_estate_total - current_debts_total, 2)
     
     # Calculate Total Expected Payout (Real value at Stichtag)
     raw_expected_sum = sum(p.expected_payout_at_retirement or 0 for p in user.pensions.all())
@@ -591,6 +597,18 @@ def dashboard_view(request):
                     'year': str(p.contribution_end_date.year) if p.contribution_end_date else continuous_label
                 })
 
+    # 3. Loan installments (Expense)
+    for l in user.loans.all():
+        l_state = next((item for item in forecast_data if item['date'] == target_date), None)
+        if (not l.end_date or l.end_date.replace(day=1) >= target_date) and (l.start_date.replace(day=1) <= target_date):
+            table_data_expense.append({
+                'name': f"{_('Kreditrate')}: {l.name}", 
+                'amount': float(l.monthly_installment), 
+                'category': _('Kredit'),
+                'type': _('Vertrag'),
+                'year': str(l.end_date.year) if l.end_date else continuous_label
+            })
+
     table_data_asset = []
     for a in user.assets.all():
         table_data_asset.append({
@@ -631,12 +649,33 @@ def dashboard_view(request):
             'year': str(e.date.year)
         })
 
+    table_data_loan = []
+    for l in user.loans.all():
+        # Get remaining balance at Stichtag
+        l_total = 0
+        # Find the specific balance for THIS loan in forecast_data
+        # We need to access the engine's internal state or recalculate
+        # Simplest: find current balance in SimulationEngine's list for THIS month
+        # We'll pass it from the SimulationEngine result if we restructure slightly, 
+        # but for now, we'll just show nominal or use a heuristic.
+        # Better: use the current_month_data's loan_total but that's a sum.
+        # For the table, we'll iterate and show basic info + end date.
+        table_data_loan.append({
+            'name': l.name,
+            'amount': float(l.nominal_amount), # Initial
+            'provider': l.provider,
+            'rate': f"{l.interest_rate}%",
+            'monthly': float(l.monthly_installment),
+            'year': str(l.end_date.year) if l.end_date else continuous_label
+        })
+
     table_datasets = {
         'income_table_widget': table_data_income,
         'expense_table_widget': table_data_expense,
         'asset_table_widget': table_data_asset,
         'pension_table_widget': table_data_pension,
         'event_table_widget': table_data_event,
+        'loan_table_widget': table_data_loan,
     }
     table_json = {k: json.dumps(v, cls=DjangoJSONEncoder) for k, v in table_datasets.items()}
 
@@ -669,6 +708,7 @@ def dashboard_view(request):
         'current_pensions_total': current_pensions_total,
         'current_physical_assets_total': current_physical_assets_total,
         'current_real_estate_total': current_real_estate_total,
+        'current_debts_total': current_debts_total,
         'current_total_combined': current_total_combined,
         'total_expected_pensions': raw_expected_sum, # The raw target sum from contracts
         'simulated_pension_payout': total_expected_pensions, # The actual simulated payout at Stichtag

@@ -177,3 +177,38 @@ class FinancialStatusProxy(CustomUser):
         proxy = True
         verbose_name = _("Mein Finanzstatus (Vorausgefüllt)")
         verbose_name_plural = _("Meine Finanzen (Schnelleingabe)")
+
+
+class Loan(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='loans')
+    name = models.CharField(_("Name"), max_length=100)
+    provider = models.CharField(_("Provider / Bank"), max_length=100, blank=True)
+    nominal_amount = models.DecimalField(_("Initial Loan Amount"), max_digits=12, decimal_places=2)
+    interest_rate = models.DecimalField(_("Interest Rate (%)"), max_digits=5, decimal_places=2)
+    interest_lock_end = models.DateField(_("Interest Lock End Date"), null=True, blank=True)
+    monthly_installment = models.DecimalField(_("Monthly Installment"), max_digits=12, decimal_places=2)
+    start_date = models.DateField(_("Start Date"))
+    end_date = models.DateField(_("End Date"), null=True, blank=True)
+    notes = models.TextField(_("Notes"), blank=True)
+    allows_extra_repayment = models.BooleanField(_("Extra Repayment Possible"), default=False)
+
+    class Meta:
+        verbose_name = _("Loan / Debt")
+        verbose_name_plural = _("Loans / Debts")
+
+    def __str__(self):
+        return f"{self.name} ({self.provider})"
+
+
+class LoanExtraRepayment(models.Model):
+    loan = models.ForeignKey(Loan, on_delete=models.CASCADE, related_name='extra_repayments')
+    date = models.DateField(_("Date"))
+    amount = models.DecimalField(_("Amount"), max_digits=12, decimal_places=2)
+
+    class Meta:
+        verbose_name = _("Extra Repayment")
+        verbose_name_plural = _("Extra Repayments")
+        ordering = ['date']
+
+    def __str__(self):
+        return f"{self.date}: {self.amount}"
