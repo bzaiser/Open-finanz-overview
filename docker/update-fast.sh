@@ -46,6 +46,7 @@ docker compose --env-file ../.env exec web python3 manage.py collectstatic --noi
 # Restart/Recreate the services to load new code/config
 echo "Updating containers..."
 docker compose --env-file ../.env up -d
+docker compose --env-file ../.env restart web
 
 
 echo "-----------------------------------"
