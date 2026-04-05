@@ -769,12 +769,9 @@ def import_processing(request):
     progress = cache.get(cache_key_progress, 0)
     error_msg = cache.get(cache_key_error, None)
     
-    if progress >= 100 and latest_batch:
-        return redirect('review_transactions', batch_id=latest_batch.id)
+    # We no longer redirect immediately on 100% here, the template will handle it
+    # to show the button and message!
     
-    # We no longer redirect immediately on -1 here, the template will handle it
-    # to show the red box first!
-
     return render(request, 'finance/import_processing.html', {
         'progress': progress,
         'error_msg': error_msg,
@@ -875,25 +872,70 @@ def get_import_progress(request):
     
     # Fetch the latest batch to get the REAL-TIME log
     latest_batch = ImportBatch.objects.filter(user=request.user, is_applied=False).order_by('-date').first()
-    log_content = latest_batch.ai_log if latest_batch else "Warte auf Batch..."
+    log_content = latest_batch.ai_log if latest_batch else _eager("Warte auf Batch...")
     
-    # We return the bar AND the updated log window content
-    html = f'''
-    <div class="progress" style="height: 25px;">
-        <div class="progress-bar progress-bar-striped progress-bar-animated" 
-             role="progressbar" 
-             style="width: {progress}%;" 
-             aria-valuenow="{progress}" 
-             aria-valuemin="0" 
-             aria-valuemax="100">
-             {progress}%
-        </div>
-    </div>
-    <p class="text-center mt-2 text-muted small">KI analysiert Daten... ({progress}%)</p>
+    # Status and styling logic
+    is_finished = (progress >= 100)
+    is_error = (progress == -1)
+    
+    color_class = "bg-primary"
+    if is_finished: color_class = "bg-success"
+    if is_error: color_class = "bg-danger"
+    
+    progress_val = 100 if is_finished else (0 if is_error else progress)
+    
+    # Building the HTML fragment
+    # IMPORTANT: We only include hx-get if NOT finished/error to STOP polling
+    polling_attrs = ""
+    if not (is_finished or is_error):
+        polling_attrs = f'hx-get="/finance/import/progress/" hx-trigger="every 1.5s" hx-swap="outerHTML"'
 
-    <!-- Update the log window via OOB (Out of Band) swap or just inclusion -->
-    <div id="ai-log-stream" hx-swap-oob="innerHTML">
-        {log_content.replace("\\n", "<br>")}
+    html = f'''
+    <div id="progress-bar-placeholder" {polling_attrs}>
+        <div class="progress shadow-sm" style="height: 25px; border-radius: 12px;">
+            <div class="progress-bar progress-bar-striped progress-bar-animated {color_class}" 
+                 role="progressbar" 
+                 style="width: {progress_val}%;" 
+                 aria-valuenow="{progress_val}" 
+                 aria-valuemin="0" 
+                 aria-valuemax="100">
+                 {progress_val}%
+            </div>
+        </div>
+    '''
+    
+    if is_finished:
+        html += f'''
+        <p class="text-center mt-2 text-success fw-bold">
+            <i class="bi bi-check-circle-fill me-1"></i>{_eager("Analyse abgeschlossen!")}
+        </p>
+        <div class="mt-4 animate__animated animate__bounceIn">
+            <a href="/finance/import/review/{latest_batch.id}/" class="btn btn-success fw-bold shadow-lg px-5 py-3">
+                <i class="bi bi-check-all me-2"></i>{_eager("Buchungen ansehen")}
+            </a>
+        </div>
+        '''
+    elif is_error:
+        error_msg = cache.get(f"import_error_{request.user.id}", _eager("Unbekannter Fehler"))
+        html += f'''
+        <p class="text-center mt-2 text-danger fw-bold">{_eager("Analyse fehlgeschlagen")}</p>
+        <div class="alert alert-danger mt-3 small">
+            <code>{error_msg}</code>
+        </div>
+        <div class="mt-3">
+            <a href="/finance/import/" class="btn btn-outline-danger btn-sm px-4">
+                <i class="bi bi-arrow-left me-2"></i>{_eager("Zurück zum Upload")}
+            </a>
+        </div>
+        '''
+    else:
+        html += f'<p class="text-center mt-2 text-muted small fw-bold">{_eager("KI analysiert Daten...")} ({progress}%)</p>'
+
+    html += f'''
+        <!-- Update the log window via OOB (Out of Band) swap -->
+        <div id="ai-log-stream" hx-swap-oob="innerHTML">
+            {log_content.replace("\\n", "<br>")}
+        </div>
     </div>
     '''
     return HttpResponse(html)
