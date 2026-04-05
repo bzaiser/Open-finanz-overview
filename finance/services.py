@@ -4,7 +4,7 @@ from decimal import Decimal
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from .models import Asset, CashFlowSource, OneTimeEvent, Pension
+from .models import Asset, CashFlowSource, OneTimeEvent, Pension, PhysicalAsset, RealEstate
 from core.models import UserProfile
 
 class SimulationEngine:
@@ -103,6 +103,8 @@ class SimulationEngine:
         pensions = list(self.user.pensions.all())
         cash_flows = list(self.user.cash_flows.select_related('category').all())
         one_time_events = list(self.user.events.all())
+        physical_assets = list(self.user.physical_assets.filter(is_sold=False))
+        real_estates = list(self.user.real_estates.filter(is_sold=False))
 
         pensions_state = []
         for p in pensions:
@@ -111,6 +113,14 @@ class SimulationEngine:
         assets_state = []
         for a in assets:
             assets_state.append({'asset': a, 'balance': a.value})
+            
+        physical_assets_state = []
+        for pa in physical_assets:
+            physical_assets_state.append({'asset': pa, 'balance': pa.value})
+            
+        real_estates_state = []
+        for re in real_estates:
+            real_estates_state.append({'asset': re, 'balance': re.property_value})
             
         accumulated_cash = Decimal('0.00')
 
@@ -189,6 +199,29 @@ class SimulationEngine:
                     cat_name = cf.category.name if cf.category else "Uncategorized"
                     category_breakdown[cat_name] = category_breakdown.get(cat_name, Decimal('0')) + val
 
+            # Cash flows from PhysicalAssets and RealEstate
+            for item in physical_assets_state:
+                pa = item['asset']
+                if pa.storage_costs_monthly:
+                    val = pa.storage_costs_monthly
+                    monthly_expenses += val
+                    cat_name = str(_('Sachwerte (Kosten)'))
+                    category_breakdown[cat_name] = category_breakdown.get(cat_name, Decimal('0')) + val
+                    
+            for item in real_estates_state:
+                re = item['asset']
+                if re.rental_income_monthly:
+                    val = re.rental_income_monthly
+                    monthly_income += val
+                    cat_name = str(_('Immobilien (Miete)'))
+                    income_category_breakdown[cat_name] = income_category_breakdown.get(cat_name, Decimal('0')) + val
+                
+                costs = (re.maintenance_costs_monthly or Decimal('0')) + (re.ancillary_costs_monthly or Decimal('0'))
+                if costs > 0:
+                    monthly_expenses += costs
+                    cat_name = str(_('Immobilien (Kosten)'))
+                    category_breakdown[cat_name] = category_breakdown.get(cat_name, Decimal('0')) + costs
+
             # 3. One Time Events
             event_impact = Decimal('0.00')
             events_this_month = []
@@ -220,6 +253,18 @@ class SimulationEngine:
                     if not pension.contribution_end_date or current_date < pension.contribution_end_date.replace(day=1):
                         item['balance'] += (pension.monthly_contribution or Decimal('0.00'))
 
+                # Apply Sachwerte Growth
+                for item in physical_assets_state:
+                    pa = item['asset']
+                    rate = (pa.appreciation_rate or Decimal('0.00')) / 100
+                    item['balance'] *= (1 + (rate / 12))
+                    
+                # Apply Immobilien Growth
+                for item in real_estates_state:
+                    re = item['asset']
+                    rate = (re.appreciation_rate or Decimal('0.00')) / 100
+                    item['balance'] *= (1 + (rate / 12))
+
                 # Monthly Savings: monthly_expenses already includes current_monthly_pension_contribution
                 monthly_savings = monthly_income - monthly_expenses
                 accumulated_cash += (monthly_savings + event_impact)
@@ -227,7 +272,10 @@ class SimulationEngine:
             # Totals
             asset_total = sum(item['balance'] for item in assets_state)
             pension_total = sum(item['balance'] for item in pensions_state)
-            total_nominal = asset_total + pension_total + accumulated_cash
+            physical_asset_total = sum(item['balance'] for item in physical_assets_state)
+            real_estate_total = sum(item['balance'] for item in real_estates_state)
+            
+            total_nominal = asset_total + pension_total + physical_asset_total + real_estate_total + accumulated_cash
             
             # Inflation Factor for Real Value (Purchasing Power relative to Stichtag)
             inflation_factor = (1 + self.inflation_rate) ** year_from_stichtag
@@ -241,6 +289,10 @@ class SimulationEngine:
                 'real_pension_total': float(round(pension_total / inflation_factor, 2)),
                 'asset_total': float(round(asset_total, 2)),
                 'real_asset_total': float(round(asset_total / inflation_factor, 2)),
+                'physical_asset_total': float(round(physical_asset_total, 2)),
+                'real_physical_asset_total': float(round(physical_asset_total / inflation_factor, 2)),
+                'real_estate_total': float(round(real_estate_total, 2)),
+                'real_real_estate_total': float(round(real_estate_total / inflation_factor, 2)),
                 'accumulated_cash': float(round(accumulated_cash, 2)),
                 'real_accumulated_cash': float(round(accumulated_cash / inflation_factor, 2)),
                 'monthly_income': float(round(monthly_income, 2)),

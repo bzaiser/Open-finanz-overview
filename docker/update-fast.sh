@@ -31,6 +31,7 @@ cd "$SCRIPT_DIR"
 
 # Run database migrations (fast if no new ones)
 echo "Running database migrations..."
+docker compose --env-file ../.env exec web python3 manage.py makemigrations
 docker compose --env-file ../.env exec web python3 manage.py migrate
 docker compose --env-file ../.env exec web python3 manage.py createcachetable
 

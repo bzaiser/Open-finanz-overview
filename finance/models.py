@@ -133,9 +133,45 @@ class PendingTransaction(models.Model):
         return f"{self.description} ({self.amount})"
 
 
+class PhysicalAsset(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='physical_assets')
+    name = models.CharField(_("Name"), max_length=100)
+    value = models.DecimalField(_("Current Value"), max_digits=12, decimal_places=2)
+    appreciation_rate = models.DecimalField(_("Annual Appreciation Rate (%)"), max_digits=5, decimal_places=2, default=0.0)
+    location = models.CharField(_("Location / Storage"), max_length=255, blank=True)
+    storage_costs_monthly = models.DecimalField(_("Monthly Storage/Maintenance Costs"), max_digits=10, decimal_places=2, default=0.0)
+    is_sold = models.BooleanField(_("Is Sold"), default=False)
+    
+    class Meta:
+        verbose_name = _("Sachwert (Physical Asset)")
+        verbose_name_plural = _("Sachwerte (Physical Assets)")
+
+    def __str__(self):
+        return f"{self.name} ({self.value})"
+
+
+class RealEstate(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='real_estates')
+    name = models.CharField(_("Name / Property"), max_length=100)
+    property_value = models.DecimalField(_("Property Value"), max_digits=12, decimal_places=2)
+    appreciation_rate = models.DecimalField(_("Annual Appreciation Rate (%)"), max_digits=5, decimal_places=2, default=0.0)
+    location = models.CharField(_("Location"), max_length=255, blank=True)
+    current_tenant = models.CharField(_("Current Tenant"), max_length=100, blank=True)
+    rental_income_monthly = models.DecimalField(_("Monthly Rental Income (Net)"), max_digits=10, decimal_places=2, default=0.0)
+    maintenance_costs_monthly = models.DecimalField(_("Monthly Maintenance/Mgmt Costs"), max_digits=10, decimal_places=2, default=0.0)
+    ancillary_costs_monthly = models.DecimalField(_("Monthly Ancillary Costs (Nebenkosten)"), max_digits=10, decimal_places=2, default=0.0)
+    is_sold = models.BooleanField(_("Is Sold"), default=False)
+
+    class Meta:
+        verbose_name = _("Immobilie (Real Estate)")
+        verbose_name_plural = _("Immobilien (Real Estate)")
+
+    def __str__(self):
+        return f"{self.name} ({self.property_value})"
+
+
 class FinancialStatusProxy(CustomUser):
     class Meta:
         proxy = True
         verbose_name = _("Mein Finanzstatus (Vorausgefüllt)")
         verbose_name_plural = _("Meine Finanzen (Schnelleingabe)")
-

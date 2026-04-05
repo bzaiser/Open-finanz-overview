@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, CashFlowSource, Asset, OneTimeEvent, Pension, FinancialStatusProxy
+from .models import Category, CashFlowSource, Asset, OneTimeEvent, Pension, FinancialStatusProxy, PhysicalAsset, RealEstate
 
 class BaseOwnedModelAdmin(admin.ModelAdmin):
     """
@@ -133,9 +133,21 @@ class PensionInline(admin.TabularInline):
     fields = ('provider', 'current_value', 'monthly_contribution', 'contribution_end_date', 'expected_payout_at_retirement', 'is_indexed', 'growth_rate', 'start_payout_date')
     classes = ['collapse']
 
+class PhysicalAssetInline(admin.TabularInline):
+    model = PhysicalAsset
+    extra = 1
+    fields = ('name', 'value', 'appreciation_rate', 'location', 'storage_costs_monthly', 'is_sold')
+    classes = ['collapse']
+
+class RealEstateInline(admin.TabularInline):
+    model = RealEstate
+    extra = 1
+    fields = ('name', 'property_value', 'appreciation_rate', 'location', 'current_tenant', 'rental_income_monthly', 'maintenance_costs_monthly', 'ancillary_costs_monthly', 'is_sold')
+    classes = ['collapse']
+
 @admin.register(FinancialStatusProxy)
 class FinancialStatusAdmin(admin.ModelAdmin):
-    inlines = [CashFlowSourceInline, AssetInline, OneTimeEventInline, PensionInline]
+    inlines = [CashFlowSourceInline, AssetInline, OneTimeEventInline, PensionInline, PhysicalAssetInline, RealEstateInline]
     fieldsets = (
         (None, {'fields': ('username',)}),
     )
@@ -174,3 +186,16 @@ class OneTimeEventAdmin(BaseOwnedModelAdmin):
     list_display = ('name', 'user', 'value', 'date')
     list_filter = ('user',)
     search_fields = ('name',)
+
+@admin.register(PhysicalAsset)
+class PhysicalAssetAdmin(BaseOwnedModelAdmin):
+    list_display = ('name', 'user', 'value', 'appreciation_rate', 'storage_costs_monthly', 'is_sold')
+    list_filter = ('user', 'is_sold')
+    search_fields = ('name',)
+
+@admin.register(RealEstate)
+class RealEstateAdmin(BaseOwnedModelAdmin):
+    list_display = ('name', 'user', 'property_value', 'appreciation_rate', 'rental_income_monthly', 'is_sold')
+    list_filter = ('user', 'is_sold')
+    search_fields = ('name',)
+

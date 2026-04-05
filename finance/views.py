@@ -72,6 +72,8 @@ SUMMARY_WIDGETS = {
     'total_pensions': {'title': _('Pension Capital'), 'default_bg': '#0dcaf0', 'default_text': '#ffffff'},
     'expected_payout': {'title': _('Target Monthly Pension'), 'default_bg': '#6f42c1', 'default_text': '#ffffff'},
     'current_pension_payout': {'title': _('Current Pension'), 'default_bg': '#fd7e14', 'default_text': '#ffffff'},
+    'total_physical_assets': {'title': _('Sachwerte'), 'default_bg': '#8a2be2', 'default_text': '#ffffff'},
+    'total_real_estate': {'title': _('Immobilien'), 'default_bg': '#20c997', 'default_text': '#ffffff'},
 }
 
 DEFAULT_LAYOUT = [
@@ -108,6 +110,8 @@ def dashboard_view(request):
         {'id': 'current_pension_payout', 'visible': True, 'bg_color': '#fd7e14', 'text_color': '#ffffff', 'order': 4},
         {'id': 'total_pensions', 'visible': True, 'bg_color': '#0dcaf0', 'text_color': '#ffffff', 'order': 5},
         {'id': 'expected_payout', 'visible': True, 'bg_color': '#6f42c1', 'text_color': '#ffffff', 'order': 6},
+        {'id': 'total_physical_assets', 'visible': True, 'bg_color': '#8a2be2', 'text_color': '#ffffff', 'order': 7},
+        {'id': 'total_real_estate', 'visible': True, 'bg_color': '#20c997', 'text_color': '#ffffff', 'order': 8},
     ])
 
     # Ensure all available summary widgets are in the layout (auto-add missing ones)
@@ -244,8 +248,10 @@ def dashboard_view(request):
         
         bucket = yearly_buckets[year]
         # Net worth is a point-in-time value, take the last one of the year
-        bucket['nominal_net_worth'] = d['nominal_net_worth']
-        bucket['real_net_worth'] = d['real_net_worth']
+        bucket['nominal_net_worth'] = d.get('nominal_net_worth', 0)
+        bucket['real_net_worth'] = d.get('real_net_worth', 0)
+        bucket['physical_asset_total'] = d.get('physical_asset_total', 0)
+        bucket['real_estate_total'] = d.get('real_estate_total', 0)
         
         # Totals for the year
         bucket['monthly_income'] += d['monthly_income']
@@ -267,6 +273,8 @@ def dashboard_view(request):
     labels_yearly = []
     net_worth_nominal = []
     net_worth_real = []
+    physical_asset_yearly = []
+    real_estate_yearly = []
     income_yearly = []
     expenses_yearly = []
     net_savings_yearly = []
@@ -288,6 +296,8 @@ def dashboard_view(request):
         
         net_worth_nominal.append(float(bucket['nominal_net_worth']))
         net_worth_real.append(float(bucket['real_net_worth']))
+        physical_asset_yearly.append(float(bucket['physical_asset_total']))
+        real_estate_yearly.append(float(bucket['real_estate_total']))
         
         income_yearly.append(float(bucket['monthly_income']))
         expenses_yearly.append(-float(bucket['monthly_expenses']))
@@ -400,8 +410,10 @@ def dashboard_view(request):
             'net_worth_chart': {
                 'labels': labels_yearly,
                 'datasets': [
-                    {'label': _eager('Nominal'), 'data': net_worth_nominal, 'borderColor': 'blue', 'fill': True},
-                    {'label': _eager('Real'), 'data': net_worth_real, 'borderColor': 'green', 'borderDash': [5, 5], 'fill': False},
+                    {'label': _eager('Nominal Gesamtwert'), 'data': net_worth_nominal, 'borderColor': 'blue'},
+                    {'label': _eager('Real Gesamtwert'), 'data': net_worth_real, 'borderColor': 'green', 'borderDash': [5, 5]},
+                    {'label': _eager('Sachwerte'), 'data': physical_asset_yearly, 'borderColor': '#8a2be2', 'backgroundColor': 'rgba(138, 43, 226, 0.1)', 'fill': True},
+                    {'label': _eager('Immobilien'), 'data': real_estate_yearly, 'borderColor': '#20c997', 'backgroundColor': 'rgba(32, 201, 151, 0.1)', 'fill': True},
                 ],
                 'stichtag_index': stichtag_year_index
             },
@@ -444,14 +456,18 @@ def dashboard_view(request):
                     _eager('Liquid Assets'),
                     _eager('Pension Capital'),
                     _eager('Accumulated Cash'),
+                    _eager('Sachwerte'),
+                    _eager('Immobilien'),
                 ],
                 'datasets': [{
                     'data': [
                         round(current_month_data.get('real_asset_total', 0), 2),
                         round(current_month_data.get('real_pension_total', 0), 2),
                         round(current_month_data.get('real_accumulated_cash', 0), 2),
+                        round(current_month_data.get('real_physical_asset_total', 0), 2),
+                        round(current_month_data.get('real_real_estate_total', 0), 2),
                     ],
-                    'backgroundColor': ['#0d6efd', '#6f42c1', '#198754'],
+                    'backgroundColor': ['#0d6efd', '#6f42c1', '#198754', '#8a2be2', '#20c997'],
                     'hoverOffset': 8,
                 }]
             },
@@ -465,6 +481,8 @@ def dashboard_view(request):
     current_monthly_expenses = round(current_month_data.get('monthly_expenses', 0), 2)   # Nominal: what you'll actually spend
     current_pensions_total = round(current_month_data.get('real_pension_total', 0), 2)
     current_assets_total = round(current_month_data.get('real_asset_total', 0) + current_pensions_total, 2)
+    current_physical_assets_total = round(current_month_data.get('real_physical_asset_total', 0), 2)
+    current_real_estate_total = round(current_month_data.get('real_real_estate_total', 0), 2)
     
     # Calculate Total Expected Payout (Real value at Stichtag)
     raw_expected_sum = sum(p.expected_payout_at_retirement or 0 for p in user.pensions.all())
@@ -642,6 +660,8 @@ def dashboard_view(request):
         'current_monthly_income': current_monthly_income,
         'current_monthly_expenses': current_monthly_expenses,
         'current_pensions_total': current_pensions_total,
+        'current_physical_assets_total': current_physical_assets_total,
+        'current_real_estate_total': current_real_estate_total,
         'total_expected_pensions': raw_expected_sum, # The raw target sum from contracts
         'simulated_pension_payout': total_expected_pensions, # The actual simulated payout at Stichtag
         'stichtag_year_index': stichtag_year_index,

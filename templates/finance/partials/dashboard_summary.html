@@ -25,6 +25,10 @@
                     {{ total_expected_pensions|intcomma }}
                     {% elif item.id == 'current_pension_payout' %}
                     {{ simulated_pension_payout|intcomma }}
+                    {% elif item.id == 'total_physical_assets' %}
+                    {{ current_physical_assets_total|intcomma }}
+                    {% elif item.id == 'total_real_estate' %}
+                    {{ current_real_estate_total|intcomma }}
                     {% endif %}
                     <span class="ms-1 small opacity-75">{{ profile.currency }}</span>
                 </h4>
