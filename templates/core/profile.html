@@ -77,7 +77,7 @@
                         <label class="form-label fw-bold small">{% trans "Aktuelles Thema" %}</label>
                         {{ form.theme }}
                         <small class="text-muted d-block mt-2">
-                            {% trans "Die Auswahl eines Themas setzt automatisch deine Farben auf eine harmonische Palette." %}
+                            {% trans "Wähle ein festes Design-Paket oder nutze eine 'Schnelle Harmonie' unten für ein dynamisches Design." %}
                         </small>
                     </div>
 
@@ -158,6 +158,9 @@
         btn.addEventListener('click', () => {
             startInput.value = btn.dataset.start;
             endInput.value = btn.dataset.end;
+            // Wenn eine Harmonie gewählt wird, setzen wir das Thema auf "Standard" zurück
+            // damit die Farben dynamisch aus dem Gradient berechnet werden.
+            if (themeSelect) themeSelect.value = "";
             updatePreview(true);
         });
     });

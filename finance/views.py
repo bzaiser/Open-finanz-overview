@@ -108,7 +108,7 @@ def dashboard_view(request):
     layout = dashboard_config.get('layout', DEFAULT_LAYOUT)
 
     summary_layout = dashboard_config.get('summary_layout', [
-        {'id': 'current_assets', 'visible': True, 'bg_color': '#0d6efd', 'text_color': '#ffffff', 'order': 1},
+        {'id': 'current_assets', 'visible': True, 'bg_color': 'var(--app-primary)', 'text_color': '#ffffff', 'order': 1},
         {'id': 'monthly_income', 'visible': True, 'bg_color': '#198754', 'text_color': '#ffffff', 'order': 2},
         {'id': 'monthly_expenses', 'visible': True, 'bg_color': '#dc3545', 'text_color': '#ffffff', 'order': 3},
         {'id': 'current_pension_payout', 'visible': True, 'bg_color': '#fd7e14', 'text_color': '#ffffff', 'order': 4},
@@ -116,7 +116,7 @@ def dashboard_view(request):
         {'id': 'expected_payout', 'visible': True, 'bg_color': '#6f42c1', 'text_color': '#ffffff', 'order': 6},
         {'id': 'total_physical_assets', 'visible': True, 'bg_color': '#8a2be2', 'text_color': '#ffffff', 'order': 8},
         {'id': 'total_real_estate', 'visible': True, 'bg_color': '#20c997', 'text_color': '#ffffff', 'order': 9},
-        {'id': 'total_combined_assets', 'visible': True, 'bg_color': '#ffc107', 'text_color': '#212529', 'order': 1},
+        {'id': 'total_combined_assets', 'visible': True, 'bg_color': 'var(--app-primary)', 'text_color': '#ffffff', 'order': 1},
     ])
 
     # Ensure all available summary widgets are in the layout (auto-add missing ones)
@@ -126,25 +126,25 @@ def dashboard_view(request):
             summary_layout.append({
                 'id': widget_id,
                 'visible': False, 
-                'bg_color': widget_info.get('default_bg', '#ffffff'),
-                'text_color': widget_info.get('default_text', '#212529'),
+                'bg_color': 'var(--app-card-bg)',
+                'text_color': 'var(--app-card-color)',
                 'order': len(summary_layout) + 1
             })
 
     simulation_config = safe_merge(dashboard_config.get('simulation_panel'), {
-        'bg_color': '#ffffff', 
-        'text_color': '#212529',
-        'header_bg_color': '#ffc107',
-        'header_text_color': '#212529'
+        'bg_color': 'var(--app-card-bg)', 
+        'text_color': 'var(--app-card-color)',
+        'header_bg_color': 'var(--app-primary)',
+        'header_text_color': '#ffffff'
     })
 
     table_config = safe_merge(dashboard_config.get('table_style'), {
-        'header_bg_color': '#212529', 
+        'header_bg_color': 'var(--app-primary)', 
         'header_text_color': '#ffffff',
-        'filter_bg_color': '#f1f3f5',
-        'body_bg_color': '#ffffff',
-        'body_text_color': '#212529',
-        'border_color': '#dee2e6',
+        'filter_bg_color': 'rgba(0,0,0,0.05)',
+        'body_bg_color': 'var(--app-card-bg)',
+        'body_text_color': 'var(--app-card-color)',
+        'border_color': 'rgba(0,0,0,0.1)',
     })
     
     # Remove old widgets that no longer exist

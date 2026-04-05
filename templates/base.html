@@ -11,29 +11,35 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
-    {% if user.is_authenticated and user.profile.theme %}
-    <style>
-        :root {
-            --bs-primary: {{ user.profile.theme.primary_color }};
-            --bs-secondary: {{ user.profile.theme.secondary_color }};
-            --bs-body-bg: {{ user.profile.theme.background_color }};
-            --bs-body-color: {{ user.profile.theme.text_color }};
-            --bs-modal-bg: {{ user.profile.theme.background_color|default:"#ffffff" }};
-            --bs-modal-color: {{ user.profile.theme.text_color|default:"#212529" }};
-            --bs-tertiary-bg: {{ user.profile.theme.background_color }};
-            --sidebar-bg: {{ user.profile.theme.sidebar_bg_color|default:"#f8f9fa" }};
-        }
-    </style>
-    {% endif %}
     {% if user.is_authenticated %}
     <style>
         :root {
+            /* Theme Base Colors */
+            --bs-primary: {% if user.profile.theme %}{{ user.profile.theme.primary_color }}{% else %}{{ user.profile.gradient_start|default:"#0d6efd" }}{% endif %};
+            --bs-secondary: {% if user.profile.theme %}{{ user.profile.theme.secondary_color }}{% else %}"#6c757d"{% endif %};
+            --bs-body-bg: {% if user.profile.theme %}{{ user.profile.theme.background_color }}{% else %}"#ffffff"{% endif %};
+            --bs-body-color: {% if user.profile.theme %}{{ user.profile.theme.text_color }}{% else %}"#212529"{% endif %};
+            
+            /* App Specific Layout Variables */
+            --app-primary: var(--bs-primary);
+            --app-secondary: var(--bs-secondary);
+            --app-card-bg: var(--bs-body-bg);
+            --app-card-color: var(--bs-body-color);
+            --app-sidebar-bg: {% if user.profile.theme %}{{ user.profile.theme.sidebar_bg_color|default:"#f8f9fa" }}{% else %}"#f8f9fa"{% endif %};
             --app-gradient: linear-gradient(135deg, {{ user.profile.gradient_start|default:"#6610f2" }} 0%, {{ user.profile.gradient_end|default:"#0d6efd" }} 100%);
+            
+            /* Bootstrap Variable Overrides */
+            --bs-modal-bg: var(--app-card-bg);
+            --bs-modal-color: var(--app-card-color);
+            --bs-tertiary-bg: var(--app-card-bg);
         }
     </style>
     {% else %}
     <style>
-        :root { --app-gradient: linear-gradient(135deg, #6610f2 0%, #0d6efd 100%); }
+        :root { 
+            --app-gradient: linear-gradient(135deg, #6610f2 0%, #0d6efd 100%);
+            --app-primary: #0d6efd;
+        }
     </style>
     {% endif %}
     <style>
@@ -43,9 +49,20 @@
         }
 
         .modal-content {
-            background-color: var(--bs-modal-bg, var(--bs-body-bg, #ffffff));
-            color: var(--bs-modal-color, var(--bs-body-color, #212529));
+            background-color: var(--bs-modal-bg, #ffffff);
+            color: var(--bs-modal-color, #212529);
             opacity: 1 !important;
+        }
+
+        .card {
+            background-color: var(--app-card-bg) !important;
+            color: var(--app-card-color) !important;
+            border-color: rgba(0,0,0,0.1) !important;
+        }
+        
+        .card-header {
+            background-color: rgba(0,0,0,0.03) !important;
+            color: inherit !important;
         }
 
         .sidebar {
