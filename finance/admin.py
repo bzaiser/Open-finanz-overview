@@ -52,8 +52,14 @@ class CategoryForm(forms.ModelForm):
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     form = CategoryForm
-    list_display = ('name', 'slug', 'color')
+    list_display = ('name', 'slug', 'color', 'is_system')
     prepopulated_fields = {'slug': ('name',)}
+    readonly_fields = ('is_system',)
+
+    def has_delete_permission(self, request, obj=None):
+        if obj and obj.is_system:
+            return False
+        return super().has_delete_permission(request, obj)
 
 import datetime
 import calendar

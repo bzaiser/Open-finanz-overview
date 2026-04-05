@@ -147,138 +147,9 @@ class SimulationEngine:
             months_from_stichtag = (current_date.year - stichtag.year) * 12 + (current_date.month - stichtag.month)
             year_from_stichtag = Decimal(str(max(0, months_from_stichtag))) / 12
 
-            # 1. Dynamic Pension Contributions and Payouts for this month
-            current_monthly_pension_contribution = Decimal('0.00')
-            current_monthly_pension_payout = Decimal('0.00')
-            current_monthly_pension_payout_fixed = Decimal('0.00')
-            current_monthly_pension_payout_capital = Decimal('0.00')
+            # 1. Wealth Accumulation and Growth - Continuous Simulation
+            current_monthly_asset_withdrawal = Decimal('0.00')
             
-            for p_item in pensions_state:
-                p = p_item['pension']
-                # Contrib: only if before end date
-                if not p.contribution_end_date or current_date < p.contribution_end_date.replace(day=1):
-                    current_monthly_pension_contribution += p.monthly_contribution
-                
-                # Payout: only if after/at start payout date
-                if p.start_payout_date and current_date >= p.start_payout_date.replace(day=1):
-                    if p.expected_payout_at_retirement:
-                        # Use the contract value but apply growth from start of payout until now
-                        payout_val = Decimal(str(p.expected_payout_at_retirement))
-                        
-                        # Calculate full years since payout started for annual step-growth
-                        years_since_start = (current_date.year - p.start_payout_date.year) * 12 + (current_date.month - p.start_payout_date.month)
-                        full_years_since_start = Decimal(str(max(0, years_since_start) // 12))
-                        
-                        # Grow Nominal Payout by pension_increase rate annually (step function) if indexed
-                        actual_increase = self.pension_increase if p.is_indexed else Decimal('0.00')
-                        payout_val = payout_val * ((1 + actual_increase) ** full_years_since_start)
-                        current_monthly_pension_payout += payout_val
-                        
-                        # Split by capital base
-                        if p.current_value > 0:
-                            current_monthly_pension_payout_capital += payout_val
-                        else:
-                            current_monthly_pension_payout_fixed += payout_val
-
-            # 2. Process Cash Flows (Income/Expenses)
-            monthly_income = current_monthly_pension_payout
-            monthly_expenses = current_monthly_pension_contribution # Savings count as expense
-            category_breakdown = {
-                'Sparen': current_monthly_pension_contribution
-            }
-            income_category_breakdown = {}
-            if current_monthly_pension_payout_fixed > 0:
-                income_category_breakdown[str(_('Gesetzliche Rente'))] = current_monthly_pension_payout_fixed
-            if current_monthly_pension_payout_capital > 0:
-                income_category_breakdown[str(_('Private Kapital-Rente'))] = current_monthly_pension_payout_capital
-            
-            for cf in cash_flows:
-                if cf.start_date and cf.start_date.replace(day=1) > current_date: continue
-                if cf.end_date and cf.end_date.replace(day=1) < current_date: continue
-                
-                amount = cf.value
-                if cf.is_inflation_adjusted:
-                    rate = self.salary_increase if cf.is_income else self.inflation_rate
-                    amount = amount * ((1 + rate) ** year_passed_decimal)
-
-                val = amount if cf.frequency == 'monthly' else amount / 12
-
-                if cf.is_income:
-                    monthly_income += val
-                    cat_name = cf.category.name if cf.category else "Uncategorized"
-                    income_category_breakdown[cat_name] = income_category_breakdown.get(cat_name, Decimal('0')) + val
-                else:
-                    monthly_expenses += val
-                    cat_name = cf.category.name if cf.category else "Uncategorized"
-                    category_breakdown[cat_name] = category_breakdown.get(cat_name, Decimal('0')) + val
-
-            # Cash flows from PhysicalAssets and RealEstate
-            for item in physical_assets_state:
-                pa = item['asset']
-                if pa.storage_costs_monthly:
-                    val = pa.storage_costs_monthly
-                    monthly_expenses += val
-                    cat_name = str(_('Sachwerte (Kosten)'))
-                    category_breakdown[cat_name] = category_breakdown.get(cat_name, Decimal('0')) + val
-                    
-            for item in real_estates_state:
-                re = item['asset']
-                if re.rental_income_monthly:
-                    val = re.rental_income_monthly
-                    monthly_income += val
-                    cat_name = str(_('Immobilien (Miete)'))
-                    income_category_breakdown[cat_name] = income_category_breakdown.get(cat_name, Decimal('0')) + val
-                
-                costs = (re.maintenance_costs_monthly or Decimal('0'))
-                if costs > 0:
-                    monthly_expenses += costs
-                    cat_name = str(_('Immobilien (Instandhaltung)'))
-                    category_breakdown[cat_name] = category_breakdown.get(cat_name, Decimal('0')) + costs
-
-            # 2.1 Process Loans (Installments and Interest)
-            current_monthly_loan_installment = Decimal('0.00')
-            for item in loans_state:
-                loan = item['loan']
-                # Loan only active if after/at start_date and still has balance
-                if current_date >= loan.start_date.replace(day=1) and item['balance'] > 0:
-                    if not loan.end_date or current_date <= loan.end_date.replace(day=1):
-                        installment = loan.monthly_installment
-                        # Interest calculation relative to current balance
-                        interest = item['balance'] * ((loan.interest_rate or Decimal('0')) / 100 / 12)
-                        
-                        # Apply installment (part interest, rest principal)
-                        if installment > item['balance'] + interest:
-                            installment = item['balance'] + interest
-                        
-                        current_monthly_loan_installment += installment
-                        cat_name = f"{_('Kredit')} ({loan.name})"
-                        category_breakdown[cat_name] = category_breakdown.get(cat_name, Decimal('0')) + installment
-                        
-                        # Extra repayments
-                        extras_this_month = sum(e.amount for e in loan.extra_repayments.all() 
-                                               if e.date.year == current_date.year and e.date.month == current_date.month)
-                        
-                        if i > 0: # Only update balance from second month of core loop
-                            reduction = (installment - interest) + extras_this_month
-                            item['balance'] = max(Decimal('0'), item['balance'] - reduction)
-                elif i > 0:
-                    # Even if not active yet or finished, we keep current balance at 0 if finished or initial
-                    pass
-
-            monthly_expenses += current_monthly_loan_installment
-
-            # 3. One Time Events
-            event_impact = Decimal('0.00')
-            events_this_month = []
-            for event in one_time_events:
-                if event.date.year == current_date.year and event.date.month == current_date.month:
-                    event_impact += event.value
-                    events_this_month.append({
-                        'name': event.name, 'description': event.description or '',
-                        'date': event.date.isoformat(), 'value': float(round(event.value, 2)),
-                    })
-
-            # 4. Wealth Accumulation and Growth - Continuous Simulation
             # Apply Asset Growth & Withdrawals
             if i > 0: # Start growth from the second month
                 for item in assets_state:
@@ -286,7 +157,9 @@ class SimulationEngine:
                     rate = ((asset.growth_rate or Decimal('0.00')) / 100) + self.investment_return_offset
                     item['balance'] *= (1 + (rate / 12))
                     if asset.withdrawal_start_date and current_date >= asset.withdrawal_start_date.replace(day=1):
-                        item['balance'] = max(Decimal('0'), item['balance'] - (asset.withdrawal_amount or Decimal('0.00')))
+                        withdrawal = (asset.withdrawal_amount or Decimal('0.00'))
+                        item['balance'] = max(Decimal('0'), item['balance'] - withdrawal)
+                        current_monthly_asset_withdrawal += withdrawal
                 
                 # Apply Pension Growth & Contribution
                 for item in pensions_state:
@@ -331,6 +204,141 @@ class SimulationEngine:
                         rate = global_re_growth
 
                     item['balance'] *= (1 + (rate / 100 / 12))
+
+            # 2. Dynamic Pension Contributions and Payouts for this month
+            current_monthly_pension_contribution = Decimal('0.00')
+            current_monthly_pension_payout = Decimal('0.00')
+            current_monthly_pension_payout_fixed = Decimal('0.00')
+            current_monthly_pension_payout_capital = Decimal('0.00')
+            
+            for p_item in pensions_state:
+                p = p_item['pension']
+                # Contrib: only if before end date
+                if not p.contribution_end_date or current_date < p.contribution_end_date.replace(day=1):
+                    current_monthly_pension_contribution += p.monthly_contribution
+                
+                # Payout: only if after/at start payout date
+                if p.start_payout_date and current_date >= p.start_payout_date.replace(day=1):
+                    if p.expected_payout_at_retirement:
+                        # Use the contract value but apply growth from start of payout until now
+                        payout_val = Decimal(str(p.expected_payout_at_retirement))
+                        
+                        # Calculate full years since payout started for annual step-growth
+                        years_since_start = (current_date.year - p.start_payout_date.year) * 12 + (current_date.month - p.start_payout_date.month)
+                        full_years_since_start = Decimal(str(max(0, years_since_start) // 12))
+                        
+                        # Grow Nominal Payout by pension_increase rate annually (step function) if indexed
+                        actual_increase = self.pension_increase if p.is_indexed else Decimal('0.00')
+                        payout_val = payout_val * ((1 + actual_increase) ** full_years_since_start)
+                        current_monthly_pension_payout += payout_val
+                        
+                        # Split by capital base
+                        if p.current_value > 0:
+                            current_monthly_pension_payout_capital += payout_val
+                        else:
+                            current_monthly_pension_payout_fixed += payout_val
+
+            # 3. Process Cash Flows (Income/Expenses)
+            monthly_income = current_monthly_pension_payout + current_monthly_asset_withdrawal
+            monthly_expenses = current_monthly_pension_contribution
+            category_breakdown = {
+                str(_('Sparen')): current_monthly_pension_contribution
+            }
+            income_category_breakdown = {}
+            if current_monthly_asset_withdrawal > 0:
+                income_category_breakdown[str(_('Vermögen'))] = current_monthly_asset_withdrawal
+
+            if current_monthly_pension_payout_fixed > 0:
+                income_category_breakdown[str(_('Rente'))] = current_monthly_pension_payout_fixed
+            if current_monthly_pension_payout_capital > 0:
+                cat_name = str(_('Rente'))
+                income_category_breakdown[cat_name] = income_category_breakdown.get(cat_name, Decimal('0')) + current_monthly_pension_payout_capital
+            
+            for cf in cash_flows:
+                if cf.start_date and cf.start_date.replace(day=1) > current_date: continue
+                if cf.end_date and cf.end_date.replace(day=1) < current_date: continue
+                
+                amount = cf.value
+                if cf.is_inflation_adjusted:
+                    rate = self.salary_increase if cf.is_income else self.inflation_rate
+                    amount = amount * ((1 + rate) ** year_passed_decimal)
+
+                val = amount if cf.frequency == 'monthly' else amount / 12
+
+                if cf.is_income:
+                    monthly_income += val
+                    cat_name = cf.category.name if cf.category else "Uncategorized"
+                    income_category_breakdown[cat_name] = income_category_breakdown.get(cat_name, Decimal('0')) + val
+                else:
+                    monthly_expenses += val
+                    cat_name = cf.category.name if cf.category else "Uncategorized"
+                    category_breakdown[cat_name] = category_breakdown.get(cat_name, Decimal('0')) + val
+
+            # Cash flows from PhysicalAssets and RealEstate
+            for item in physical_assets_state:
+                pa = item['asset']
+                if pa.storage_costs_monthly:
+                    val = pa.storage_costs_monthly
+                    monthly_expenses += val
+                    cat_name = str(_('Sachwerte'))
+                    category_breakdown[cat_name] = category_breakdown.get(cat_name, Decimal('0')) + val
+                    
+            for item in real_estates_state:
+                re = item['asset']
+                if re.rental_income_monthly:
+                    val = re.rental_income_monthly
+                    monthly_income += val
+                    cat_name = str(_('Immobilien'))
+                    income_category_breakdown[cat_name] = income_category_breakdown.get(cat_name, Decimal('0')) + val
+                
+                costs = (re.maintenance_costs_monthly or Decimal('0'))
+                if costs > 0:
+                    monthly_expenses += costs
+                    cat_name = str(_('Immobilien'))
+                    category_breakdown[cat_name] = category_breakdown.get(cat_name, Decimal('0')) + costs
+
+            # 2.1 Process Loans (Installments and Interest)
+            current_monthly_loan_installment = Decimal('0.00')
+            for item in loans_state:
+                loan = item['loan']
+                # Loan only active if after/at start_date and still has balance
+                if current_date >= loan.start_date.replace(day=1) and item['balance'] > 0:
+                    if not loan.end_date or current_date <= loan.end_date.replace(day=1):
+                        installment = loan.monthly_installment
+                        # Interest calculation relative to current balance
+                        interest = item['balance'] * ((loan.interest_rate or Decimal('0')) / 100 / 12)
+                        
+                        # Apply installment (part interest, rest principal)
+                        if installment > item['balance'] + interest:
+                            installment = item['balance'] + interest
+                        
+                        current_monthly_loan_installment += installment
+                        cat_name = str(_('Kredit'))
+                        category_breakdown[cat_name] = category_breakdown.get(cat_name, Decimal('0')) + installment
+                        
+                        # Extra repayments
+                        extras_this_month = sum(e.amount for e in loan.extra_repayments.all() 
+                                               if e.date.year == current_date.year and e.date.month == current_date.month)
+                        
+                        if i > 0: # Only update balance from second month of core loop
+                            reduction = (installment - interest) + extras_this_month
+                            item['balance'] = max(Decimal('0'), item['balance'] - reduction)
+                elif i > 0:
+                    # Even if not active yet or finished, we keep current balance at 0 if finished or initial
+                    pass
+
+            monthly_expenses += current_monthly_loan_installment
+
+            # 3. One Time Events
+            event_impact = Decimal('0.00')
+            events_this_month = []
+            for event in one_time_events:
+                if event.date.year == current_date.year and event.date.month == current_date.month:
+                    event_impact += event.value
+                    events_this_month.append({
+                        'name': event.name, 'description': event.description or '',
+                        'date': event.date.isoformat(), 'value': float(round(event.value, 2)),
+                    })
 
                 # Monthly Savings: monthly_expenses already includes current_monthly_pension_contribution
                 monthly_savings = monthly_income - monthly_expenses

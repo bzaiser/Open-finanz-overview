@@ -9,6 +9,7 @@ class Category(models.Model):
     name = models.CharField(_("Name"), max_length=100)
     slug = models.SlugField(_("Slug"), unique=True, blank=True)
     color = models.CharField(_("Color"), max_length=7, default="#6c757d", help_text=_("Hex color code, e.g. #FF0000"))
+    is_system = models.BooleanField(_("System Category"), default=False)
     
     class Meta:
         verbose_name = _("Category")
@@ -18,6 +19,11 @@ class Category(models.Model):
         if not self.slug:
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        if self.is_system:
+            raise PermissionError(_("System categories cannot be deleted."))
+        super().delete(*args, **kwargs)
 
     def __str__(self):
         return self.name
