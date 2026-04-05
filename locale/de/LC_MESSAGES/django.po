@@ -1,21 +1,5 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
-msgid ""
-msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-02 10:40+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+#~ msgid "Current Net Worth"
+#~ msgstr "Aktuelles Nettovermögen"
 
 #: core/forms.py:16 core/models.py:34
 msgid "Birth Date"
@@ -421,61 +405,17 @@ msgstr ""
 msgid "About the Project"
 msgstr "Über das Projekt"
 
-#: templates/core/about.html:12
-msgid ""
-"Welcome to your personal financial cockpit. This platform is designed to "
-"give you a clear and realistic look at your long-term financial future."
-msgstr ""
-"Willkommen in Ihrem persönlichen Finanz-Cockpit. Diese Plattform wurde "
-"entwickelt, um Ihnen einen klaren und realistischen Blick auf Ihre "
-"langfristige finanzielle Zukunft zu geben."
-
-#: templates/core/about.html:15
-msgid ""
-"Our goal is to demystify complex financial planning by offering simple, "
-"visual, and highly customizable tools to help you reach your goals."
-msgstr ""
-"Unser Ziel ist es, komplexe Finanzplanung zu entmystifizieren, indem wir "
-"einfache, visuelle und hochgradig anpassbare Tools anbieten, die Ihnen "
-"helfen, Ihre Ziele zu erreichen."
-
 #: templates/core/about.html:23
 msgid "Personal Data Security"
 msgstr ""
-
-#: templates/core/about.html:24
-msgid ""
-"Your data is only stored in your personal database and is not shared with "
-"third parties."
-msgstr ""
-"Ihre Daten werden nur in Ihrer persönlichen Datenbank gespeichert und nicht "
-"an Dritte weitergegeben."
 
 #: templates/core/about.html:33
 msgid "Advanced Simulation"
 msgstr "Simulation aktualisieren"
 
-#: templates/core/about.html:34
-msgid ""
-"We use high-precision calculations for inflation and compound interest over "
-"a 30-year period."
-msgstr ""
-"Wir verwenden Hochpräzisionsberechnungen für Inflation und Zinseszins über "
-"einen Zeitraum von 30 Jahren."
-
 #: templates/core/about.html:47
 msgid "Lead Developer & Architect"
 msgstr "Hauptentwickler & Architekt"
-
-#: templates/core/about.html:50
-msgid ""
-"Financial Independence is a goal for many, but for most it remains just a "
-"dream. My passion is to create tools that turn those dreams into actionable "
-"plans."
-msgstr ""
-"Finanzielle Unabhängigkeit ist für viele ein Ziel, aber für die meisten "
-"bleibt es nur ein Traum. Meine Leidenschaft ist es, Werkzeuge zu schaffen, "
-"die diese Träume in umsetzbare Pläne verwandeln."
 
 #: templates/core/help.html:10
 msgid "How can we help you?"
@@ -490,14 +430,6 @@ msgstr ""
 msgid "Quick Start"
 msgstr "Schnellstart"
 
-#: templates/core/help.html:24
-msgid ""
-"New here? Learn the basics of how to set up your profile and your first cash "
-"flow sources."
-msgstr ""
-"Neu hier? Lernen Sie die Grundlagen zur Einrichtung Ihres Profils und Ihrer "
-"ersten Cashflow-Quellen."
-
 #: templates/core/help.html:25 templates/core/help.html:39
 #: templates/core/help.html:53
 msgid "Learn More"
@@ -507,25 +439,9 @@ msgstr "Mehr erfahren"
 msgid "Personal Dashboard"
 msgstr "Persönliches Dashboard"
 
-#: templates/core/help.html:38
-msgid ""
-"Rearrange charts, change colors, and hide widgets to suit your personal "
-"financial overview."
-msgstr ""
-"Ordnen Sie Diagramme neu an, ändern Sie die Farben und blenden Sie Widgets "
-"aus, um sie an Ihre persönliche Finanzübersicht anzupassen."
-
 #: templates/core/help.html:51
 msgid "Calculations"
 msgstr "Simulation"
-
-#: templates/core/help.html:52
-msgid ""
-"Understand how we calculate your net worth forecast and how inflation "
-"affects your future purchasing power."
-msgstr ""
-"Verstehen Sie, wie wir Ihre Vermögensprognose berechnen und wie sich die "
-"Inflation auf Ihre zukünftige Kaufkraft auswirkt."
 
 #: templates/core/help.html:62
 msgid "Frequently Asked Questions"
@@ -535,27 +451,9 @@ msgstr "Häufig gestellte Fragen"
 msgid "How do I add a new recurring expense?"
 msgstr "Wie füge ich eine neue wiederkehrende Ausgabe hinzu?"
 
-#: templates/core/help.html:72
-msgid ""
-"Go to the Admin panel, select \"Cash Flow Sources\", and click \"Add\". Set "
-"the frequency to \"Monthly\" and provide a start date."
-msgstr ""
-"Gehen Sie in den Admin-Bereich, wählen Sie „Cash Flow Sources“ und klicken "
-"Sie auf „Hinzufügen“. Stellen Sie die Häufigkeit auf „Monatlich“ ein und "
-"geben Sie ein Startdatum an."
-
 #: templates/core/help.html:79
 msgid "What is the \"Inflation Monitor\"?"
 msgstr "Inflations-Monitor"
-
-#: templates/core/help.html:84
-msgid ""
-"This chart shows the gap between your nominal net worth and your real "
-"purchasing power over time based on the inflation rate set in your profile."
-msgstr ""
-"Dieses Diagramm zeigt die Lücke zwischen Ihrem nominalen Reinvermögen und "
-"Ihrer realen Kaufkraft im Laufe der Zeit, basierend auf der in Ihrem Profil "
-"eingestellten Inflationsrate."
 
 #: templates/core/help.html:98
 msgid "Quick Start Guide"
@@ -587,12 +485,6 @@ msgstr "Prüfen Sie das Dashboard, um Ihre 30-jährige Finanzprognose zu sehen!"
 msgid "Dashboard Customization"
 msgstr "Dashboard-Konfiguration"
 
-#: templates/core/help.html:121
-msgid ""
-"Click the gear icon on the dashboard to open the configuration panel. Here "
-"you can:"
-msgstr ""
-
 #: templates/core/help.html:123
 msgid "Drag and drop widgets to change their order."
 msgstr ""
@@ -613,22 +505,9 @@ msgstr ""
 msgid "How calculations work"
 msgstr ""
 
-#: templates/core/help.html:142
-msgid ""
-"We take your starting assets and simulate growth based on your specified "
-"return rates, adding/subtracting your monthly cash flow until your target "
-"age."
-msgstr ""
-
 #: templates/core/help.html:143
 msgid "Inflation Adjustment"
 msgstr "Inflationsangepasst"
-
-#: templates/core/help.html:144
-msgid ""
-"We discount future values using the inflation rate in your profile to show "
-"you what that money will be worth in today\\"
-msgstr ""
 
 #: templates/core/login.html:21
 msgid "No account yet? Sign up"
@@ -676,10 +555,6 @@ msgstr "Anlage-Rendite Offset (%%)"
 #: templates/finance/dashboard.html:74
 msgid "Update Simulation"
 msgstr "Simulation aktualisieren"
-
-#: templates/finance/dashboard.html:77
-msgid "Reset to Defaults"
-msgstr "Zurücksetzen"
 
 #: templates/finance/dashboard.html:88
 msgid "Configure Dashboard"
@@ -871,18 +746,6 @@ msgstr ""
 msgid "Enter a valid email address."
 msgstr ""
 
-#. Translators: "letters" means latin letters: a-z and A-Z.
-#: venv/lib/python3.12/site-packages/django/core/validators.py:289
-msgid ""
-"Enter a valid “slug” consisting of letters, numbers, underscores or hyphens."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/core/validators.py:297
-msgid ""
-"Enter a valid “slug” consisting of Unicode letters, numbers, underscores, or "
-"hyphens."
-msgstr ""
-
 #: venv/lib/python3.12/site-packages/django/core/validators.py:309
 #: venv/lib/python3.12/site-packages/django/core/validators.py:318
 #: venv/lib/python3.12/site-packages/django/core/validators.py:332
@@ -928,35 +791,6 @@ msgstr ""
 msgid "Ensure this value is a multiple of step size %(limit_value)s."
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/core/validators.py:441
-#, python-format
-msgid ""
-"Ensure this value is a multiple of step size %(limit_value)s, starting from "
-"%(offset)s, e.g. %(offset)s, %(valid_value1)s, %(valid_value2)s, and so on."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/core/validators.py:473
-#, python-format
-msgid ""
-"Ensure this value has at least %(limit_value)d character (it has "
-"%(show_value)d)."
-msgid_plural ""
-"Ensure this value has at least %(limit_value)d characters (it has "
-"%(show_value)d)."
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.12/site-packages/django/core/validators.py:491
-#, python-format
-msgid ""
-"Ensure this value has at most %(limit_value)d character (it has "
-"%(show_value)d)."
-msgid_plural ""
-"Ensure this value has at most %(limit_value)d characters (it has "
-"%(show_value)d)."
-msgstr[0] ""
-msgstr[1] ""
-
 #: venv/lib/python3.12/site-packages/django/core/validators.py:514
 #: venv/lib/python3.12/site-packages/django/forms/fields.py:365
 #: venv/lib/python3.12/site-packages/django/forms/fields.py:404
@@ -976,22 +810,6 @@ msgid "Ensure that there are no more than %(max)s decimal place."
 msgid_plural "Ensure that there are no more than %(max)s decimal places."
 msgstr[0] ""
 msgstr[1] ""
-
-#: venv/lib/python3.12/site-packages/django/core/validators.py:526
-#, python-format
-msgid ""
-"Ensure that there are no more than %(max)s digit before the decimal point."
-msgid_plural ""
-"Ensure that there are no more than %(max)s digits before the decimal point."
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.12/site-packages/django/core/validators.py:597
-#, python-format
-msgid ""
-"File extension “%(extension)s” is not allowed. Allowed extensions are: "
-"%(allowed_extensions)s."
-msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/core/validators.py:659
 msgid "Null characters are not allowed."
@@ -1030,14 +848,6 @@ msgstr ""
 msgid "%(model_name)s with this %(field_label)s already exists."
 msgstr ""
 
-#. Translators: The 'lookup_type' is one of 'date', 'year' or
-#. 'month'. Eg: "Title must be unique for pub_date year"
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:141
-#, python-format
-msgid ""
-"%(field_label)s must be unique for %(date_field_label)s %(lookup_type)s."
-msgstr ""
-
 #: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:180
 #, python-format
 msgid "Field of type: %(field_type)s"
@@ -1070,37 +880,8 @@ msgstr ""
 msgid "Comma-separated integers"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1426
-#, python-format
-msgid ""
-"“%(value)s” value has an invalid date format. It must be in YYYY-MM-DD "
-"format."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1430
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1565
-#, python-format
-msgid ""
-"“%(value)s” value has the correct format (YYYY-MM-DD) but it is an invalid "
-"date."
-msgstr ""
-
 #: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1434
 msgid "Date (without time)"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1561
-#, python-format
-msgid ""
-"“%(value)s” value has an invalid format. It must be in YYYY-MM-DD HH:MM[:ss[."
-"uuuuuu]][TZ] format."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1569
-#, python-format
-msgid ""
-"“%(value)s” value has the correct format (YYYY-MM-DD HH:MM[:ss[.uuuuuu]]"
-"[TZ]) but it is an invalid date/time."
 msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1574
@@ -1114,13 +895,6 @@ msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1703
 msgid "Decimal number"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1864
-#, python-format
-msgid ""
-"“%(value)s” value has an invalid format. It must be in [DD] [[HH:]MM:]ss[."
-"uuuuuu] format."
 msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1868
@@ -1198,20 +972,6 @@ msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2446
 msgid "Text"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2526
-#, python-format
-msgid ""
-"“%(value)s” value has an invalid format. It must be in HH:MM[:ss[.uuuuuu]] "
-"format."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2530
-#, python-format
-msgid ""
-"“%(value)s” value has the correct format (HH:MM[:ss[.uuuuuu]]) but it is an "
-"invalid time."
 msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2534
@@ -1340,12 +1100,6 @@ msgstr[1] ""
 msgid "Please either submit a file or check the clear checkbox, not both."
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/forms/fields.py:716
-msgid ""
-"Upload a valid image. The file you uploaded was either not an image or a "
-"corrupted image."
-msgstr ""
-
 #: venv/lib/python3.12/site-packages/django/forms/fields.py:872
 #: venv/lib/python3.12/site-packages/django/forms/fields.py:959
 #: venv/lib/python3.12/site-packages/django/forms/models.py:1621
@@ -1381,13 +1135,6 @@ msgstr ""
 msgid "(Hidden field %(name)s) %(error)s"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/forms/formsets.py:61
-#, python-format
-msgid ""
-"ManagementForm data is missing or has been tampered with. Missing fields: "
-"%(field_names)s. You may need to file a bug report if the issue persists."
-msgstr ""
-
 #: venv/lib/python3.12/site-packages/django/forms/formsets.py:65
 #, python-format
 msgid "Please submit at most %(num)d form."
@@ -1421,13 +1168,6 @@ msgstr ""
 msgid "Please correct the duplicate data for %(field)s, which must be unique."
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/forms/models.py:937
-#, python-format
-msgid ""
-"Please correct the duplicate data for %(field_name)s which must be unique "
-"for the %(lookup)s in %(date_field)s."
-msgstr ""
-
 #: venv/lib/python3.12/site-packages/django/forms/models.py:946
 msgid "Please correct the duplicate values below."
 msgstr ""
@@ -1443,13 +1183,6 @@ msgstr ""
 #: venv/lib/python3.12/site-packages/django/forms/models.py:1623
 #, python-format
 msgid "“%(pk)s” is not a valid value."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/forms/utils.py:229
-#, python-format
-msgid ""
-"%(datetime)s couldn’t be interpreted in time zone %(current_timezone)s; it "
-"may be ambiguous or it may not exist."
 msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/forms/widgets.py:528
@@ -1614,54 +1347,6 @@ msgstr ""
 msgid "Sun"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:25
-msgid "January"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:26
-msgid "February"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:27
-msgid "March"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:28
-msgid "April"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:29
-msgid "May"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:30
-msgid "June"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:31
-msgid "July"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:32
-msgid "August"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:33
-msgid "September"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:34
-msgid "October"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:35
-msgid "November"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:36
-msgid "December"
-msgstr ""
-
 #: venv/lib/python3.12/site-packages/django/utils/dates.py:39
 msgid "jan"
 msgstr ""
@@ -1718,31 +1403,6 @@ msgstr ""
 #: venv/lib/python3.12/site-packages/django/utils/dates.py:54
 msgctxt "abbrev. month"
 msgid "Feb."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:55
-msgctxt "abbrev. month"
-msgid "March"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:56
-msgctxt "abbrev. month"
-msgid "April"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:57
-msgctxt "abbrev. month"
-msgid "May"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:58
-msgctxt "abbrev. month"
-msgid "June"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:59
-msgctxt "abbrev. month"
-msgid "July"
 msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/utils/dates.py:60
@@ -1900,43 +1560,6 @@ msgstr ""
 msgid "CSRF verification failed. Request aborted."
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/views/csrf.py:34
-msgid ""
-"You are seeing this message because this HTTPS site requires a “Referer "
-"header” to be sent by your web browser, but none was sent. This header is "
-"required for security reasons, to ensure that your browser is not being "
-"hijacked by third parties."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/views/csrf.py:40
-msgid ""
-"If you have configured your browser to disable “Referer” headers, please re-"
-"enable them, at least for this site, or for HTTPS connections, or for “same-"
-"origin” requests."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/views/csrf.py:45
-msgid ""
-"If you are using the <meta name=\"referrer\" content=\"no-referrer\"> tag or "
-"including the “Referrer-Policy: no-referrer” header, please remove them. The "
-"CSRF protection requires the “Referer” header to do strict referer checking. "
-"If you’re concerned about privacy, use alternatives like <a "
-"rel=\"noreferrer\" …> for links to third-party sites."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/views/csrf.py:54
-msgid ""
-"You are seeing this message because this site requires a CSRF cookie when "
-"submitting forms. This cookie is required for security reasons, to ensure "
-"that your browser is not being hijacked by third parties."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/views/csrf.py:60
-msgid ""
-"If you have configured your browser to disable cookies, please re-enable "
-"them, at least for this site, or for “same-origin” requests."
-msgstr ""
-
 #: venv/lib/python3.12/site-packages/django/views/csrf.py:66
 msgid "More information is available with DEBUG=True."
 msgstr ""
@@ -1967,13 +1590,6 @@ msgstr ""
 #: venv/lib/python3.12/site-packages/django/views/generic/dates.py:384
 #, python-format
 msgid "No %(verbose_name_plural)s available"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/views/generic/dates.py:680
-#, python-format
-msgid ""
-"Future %(verbose_name_plural)s not available because %(class_name)s."
-"allow_future is False."
 msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/views/generic/dates.py:720
@@ -2021,13 +1637,6 @@ msgstr ""
 msgid "The install worked successfully! Congratulations!"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/views/templates/default_urlconf.html:206
-#, python-format
-msgid ""
-"View <a href=\"https://docs.djangoproject.com/en/%(version)s/releases/\" "
-"target=\"_blank\" rel=\"noopener\">release notes</a> for Django %(version)s"
-msgstr ""
-
 #: venv/lib/python3.12/site-packages/django/views/templates/default_urlconf.html:208
 #, python-format
 msgid ""
@@ -2060,28 +1669,6 @@ msgstr ""
 #: venv/lib/python3.12/site-packages/django/views/templates/default_urlconf.html:236
 msgid "Connect, get help, or contribute"
 msgstr ""
-
-#~ msgid "Current Net Worth"
-#~ msgstr "Aktuelles Nettovermögen"
-
-#~ msgid "Projected Wealth"
-#~ msgstr "Voraussichtliches Endvermögen"
-
-#~ msgid "Vermögensprognose"
-#~ msgstr "Vermögensprognose"
-
-#~ msgid "Aktuelles Vermögen"
-#~ msgstr "Aktuelles Vermögen"
-
-#~ msgid "Prognostiziertes Vermögen"
-#~ msgstr "Prognostiziertes Vermögen"
-
-#, python-format
-#~ msgid "Projected Wealth (Age %(age)s)"
-#~ msgstr "Voraussichtliches Endvermögen (Alter %(age)s)"
-
-#~ msgid "Age"
-#~ msgstr "Alter"
 
 
 msgid "Pension Capital"
@@ -2280,3 +1867,4 @@ msgstr "Gehaltssteigerung (%)"
 
 msgid "Reset to Defaults"
 msgstr "Auf Standardwerte zurücksetzen"
+
