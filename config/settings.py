@@ -38,6 +38,8 @@ CSRF_TRUSTED_ORIGINS = [url.strip() for url in csrf_env.split(',') if url.strip(
 # Application definition
 
 INSTALLED_APPS = [
+    'admin_interface',
+    'colorfield',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -197,3 +199,5 @@ OLLAMA_MODEL = os.getenv('OLLAMA_MODEL', 'llama3')
 
 # Overrides for heavy bulk edits
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
+
+X_FRAME_OPTIONS = "SAMEORIGIN"
