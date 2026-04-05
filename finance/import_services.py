@@ -3,7 +3,7 @@ import datetime
 import re
 from decimal import Decimal
 from django.utils import timezone
-from .models import Category, ImportBatch, PendingTransaction
+from .models import Category, ImportBatch, PendingTransaction, CashFlowSource, OneTimeEvent
 from .llm import classify_transactions
 from django.conf import settings
 from django.core.cache import cache
@@ -224,18 +224,48 @@ class ExcelParserService:
                 cat_slug = res.get('category_slug', 'uncategorized')
                 category = Category.objects.filter(slug__iexact=cat_slug).first()
 
+                is_recurring = group['is_recurring'] or res.get('is_recurring', False)
+                is_income = res.get('is_income', group['total_amount'] > 0)
+                ai_reasoning = str(res.get('reasoning', ''))[:500]
+                is_ignored = (category is None)
+
+                # --- DUPLICATE DETECTION ---
+                is_duplicate = False
+                if is_recurring:
+                    # Check against existing CashFlowSource
+                    abs_val = abs(group['total_amount'])
+                    if CashFlowSource.objects.filter(
+                        user=self.user,
+                        is_income=is_income,
+                        value=abs_val,
+                        name__icontains=group['base_desc']
+                    ).exists():
+                        is_duplicate = True
+                else:
+                    # Check against existing OneTimeEvent
+                    db_amount = group['total_amount'] if is_income else -abs(group['total_amount'])
+                    if OneTimeEvent.objects.filter(
+                        user=self.user,
+                        date=group['latest_date'],
+                        value=db_amount
+                    ).exists():
+                        is_duplicate = True
+
+                if is_duplicate:
+                    is_ignored = True
+                    ai_reasoning = f"[DUPLIKAT] Existiert bereits in Datenbank. {ai_reasoning}"
+
                 pending = PendingTransaction(
                     batch=batch,
                     date=group['latest_date'],
                     description=str(group['description'])[:500], # Safety truncation
                     amount=group['total_amount'],
-                    is_income=res.get('is_income', group['total_amount'] > 0),
+                    is_income=is_income,
                     category=category,
-                    # Only mark transactions for saving if a category was successfully found
-                    is_ignored=(category is None),
-                    is_recurring=group['is_recurring'] or res.get('is_recurring', False),
+                    is_ignored=is_ignored,
+                    is_recurring=is_recurring,
                     frequency=res.get('frequency', 'monthly'),
-                    ai_reasoning=str(res.get('reasoning', ''))[:500] # Safety truncation
+                    ai_reasoning=ai_reasoning
                 )
                 pending_list.append(pending)
 
@@ -280,6 +310,7 @@ class ExcelParserService:
 
             groups.append({
                 'description': str(display_desc),
+                'base_desc': str(base_desc),
                 'total_amount': Decimal(str(round(float(total_amount), 2))),
                 'count': count,
                 'latest_date': latest_date,
