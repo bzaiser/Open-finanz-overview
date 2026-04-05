@@ -23,7 +23,7 @@ chmod +x manage.py
 
 # Ensure data and ollama directories exist to prevent mount failures
 echo "Preparing data directories..."
-mkdir -p "$ROOT_DIR/data/ollama"
+
 chmod -R 777 "$ROOT_DIR/data"
 
 # Move back to the docker folder for Docker operations

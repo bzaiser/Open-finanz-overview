@@ -25,13 +25,5 @@ services:
       - "OLLAMA_MODEL=${OLLAMA_MODEL:-llama3}"
       - "LLM_PROVIDER=${LLM_PROVIDER:-hybrid}"
 
-  ollama:
-    image: ollama/ollama:latest
-    container_name: ${CONTAINER_NAME:-finanzplan-web}_ollama
-    volumes:
-      - ../data/ollama:/root/.ollama
-    restart: always
-
-
 volumes:
   static_volume:
