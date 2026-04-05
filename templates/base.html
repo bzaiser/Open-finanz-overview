@@ -14,19 +14,23 @@
     {% if user.is_authenticated %}
     <style>
         :root {
-            /* Theme Base Colors */
-            --bs-primary: {% if user.profile.theme %}{{ user.profile.theme.primary_color }}{% else %}{{ user.profile.gradient_start|default:"#0d6efd" }}{% endif %};
-            --bs-secondary: {% if user.profile.theme %}{{ user.profile.theme.secondary_color }}{% else %}"#6c757d"{% endif %};
-            --bs-body-bg: {% if user.profile.theme %}{{ user.profile.theme.background_color }}{% else %}"#ffffff"{% endif %};
-            --bs-body-color: {% if user.profile.theme %}{{ user.profile.theme.text_color }}{% else %}"#212529"{% endif %};
+            /* Theme Base Colors from UserProfile */
+            --bs-primary: {{ user.profile.primary_color|default:"#0d6efd" }};
+            --bs-secondary: {{ user.profile.secondary_color|default:"#6c757d" }};
+            --bs-body-bg: {{ user.profile.background_color|default:"#ffffff" }};
+            --bs-body-color: {{ user.profile.text_color|default:"#212529" }};
             
             /* App Specific Layout Variables */
             --app-primary: var(--bs-primary);
             --app-secondary: var(--bs-secondary);
             --app-card-bg: var(--bs-body-bg);
             --app-card-color: var(--bs-body-color);
-            --app-sidebar-bg: {% if user.profile.theme %}{{ user.profile.theme.sidebar_bg_color|default:"#f8f9fa" }}{% else %}"#f8f9fa"{% endif %};
+            --app-sidebar-bg: {{ user.profile.sidebar_bg_color|default:"#f8f9fa" }};
             --app-gradient: linear-gradient(135deg, {{ user.profile.gradient_start|default:"#6610f2" }} 0%, {{ user.profile.gradient_end|default:"#0d6efd" }} 100%);
+            
+            /* Table Styles from UserProfile */
+            --app-table-header-bg: {{ user.profile.table_header_bg_color|default:"#212529" }};
+            --app-table-header-text: {{ user.profile.table_header_text_color|default:"#ffffff" }};
             
             /* Bootstrap Variable Overrides */
             --bs-modal-bg: var(--app-card-bg);
@@ -55,25 +59,31 @@
         }
 
         .card {
-            background-color: var(--app-card-bg) !important;
-            color: var(--app-card-color) !important;
-            border-color: rgba(0,0,0,0.1) !important;
+            background-color: var(--app-card-bg);
+            color: var(--app-card-color);
+            border-color: rgba(0,0,0,0.1);
         }
         
         .card-header {
-            background-color: rgba(0,0,0,0.03) !important;
-            color: inherit !important;
+            background-color: rgba(0,0,0,0.03);
+            color: inherit;
         }
 
         .sidebar {
             display: none;
         }
 
-        /* Bootstrap Icons – globaler Abstand zum Text */
-        .bi::before,
-        [class*=" bi-"]::before,
-        [class^=bi-]::before {
-            margin-right: 10px;
+        /* Dropdown Fix: Lesbarkeit über Gradient */
+        .dropdown-menu {
+            background-color: var(--app-card-bg, #ffffff) !important;
+            border: 1px solid rgba(0,0,0,0.1) !important;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2) !important;
+        }
+        .dropdown-item {
+            color: var(--app-card-color, #212529) !important;
+        }
+        .dropdown-item:hover {
+            background-color: rgba(0,0,0,0.05) !important;
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
