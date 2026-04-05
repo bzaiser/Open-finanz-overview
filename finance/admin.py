@@ -189,13 +189,15 @@ class OneTimeEventAdmin(BaseOwnedModelAdmin):
 
 @admin.register(PhysicalAsset)
 class PhysicalAssetAdmin(BaseOwnedModelAdmin):
-    list_display = ('name', 'user', 'value', 'appreciation_rate', 'storage_costs_monthly', 'is_sold')
+    list_display = ('name', 'user', 'value', 'appreciation_rate', 'storage_costs_monthly', 'is_sold', 'sale_date')
     list_filter = ('user', 'is_sold')
     search_fields = ('name',)
+    list_editable = ('value', 'appreciation_rate', 'storage_costs_monthly', 'is_sold', 'sale_date')
 
 @admin.register(RealEstate)
 class RealEstateAdmin(BaseOwnedModelAdmin):
-    list_display = ('name', 'user', 'property_value', 'appreciation_rate', 'rental_income_monthly', 'is_sold')
+    list_display = ('name', 'user', 'property_value', 'appreciation_rate', 'rental_income_monthly', 'is_sold', 'sale_date')
     list_filter = ('user', 'is_sold')
     search_fields = ('name',)
+    list_editable = ('property_value', 'appreciation_rate', 'rental_income_monthly', 'is_sold', 'sale_date')
 

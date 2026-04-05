@@ -30,5 +30,5 @@ class ThemeAdmin(admin.ModelAdmin):
 
 @admin.register(UserProfile)
 class UserProfileAdmin(BaseOwnedModelAdmin):
-    list_display = ('user', 'language', 'currency', 'simulation_max_age')
+    list_display = ('user', 'language', 'currency', 'simulation_max_age', 'real_estate_growth_rate', 'physical_asset_growth_rate')
     search_fields = ('user__username', 'user__email')

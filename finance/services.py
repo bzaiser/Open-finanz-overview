@@ -103,8 +103,11 @@ class SimulationEngine:
         pensions = list(self.user.pensions.all())
         cash_flows = list(self.user.cash_flows.select_related('category').all())
         one_time_events = list(self.user.events.all())
-        physical_assets = list(self.user.physical_assets.filter(is_sold=False))
-        real_estates = list(self.user.real_estates.filter(is_sold=False))
+        physical_assets = list(self.user.physical_assets.all())
+        real_estates = list(self.user.real_estates.all())
+
+        global_pa_growth = Decimal(str(self.params.get('physical_asset_growth_rate', 0.0)))
+        global_re_growth = Decimal(str(self.params.get('real_estate_growth_rate', 0.0)))
 
         pensions_state = []
         for p in pensions:
@@ -256,14 +259,36 @@ class SimulationEngine:
                 # Apply Sachwerte Growth
                 for item in physical_assets_state:
                     pa = item['asset']
-                    rate = (pa.appreciation_rate or Decimal('0.00')) / 100
-                    item['balance'] *= (1 + (rate / 12))
+                    # Sale Date Check
+                    if pa.sale_date and current_date >= pa.sale_date:
+                        item['balance'] = Decimal('0.00')
+                        continue
+                    if pa.is_sold and i == 0: # Already sold at simulation start
+                        item['balance'] = Decimal('0.00')
+                        continue
+                        
+                    rate = pa.appreciation_rate
+                    if rate == 0 and global_pa_growth != 0:
+                        rate = global_pa_growth
+                        
+                    item['balance'] *= (1 + (rate / 100 / 12))
                     
                 # Apply Immobilien Growth
                 for item in real_estates_state:
                     re = item['asset']
-                    rate = (re.appreciation_rate or Decimal('0.00')) / 100
-                    item['balance'] *= (1 + (rate / 12))
+                    # Sale Date Check
+                    if re.sale_date and current_date >= re.sale_date:
+                        item['balance'] = Decimal('0.00')
+                        continue
+                    if re.is_sold and i == 0: # Already sold at simulation start
+                        item['balance'] = Decimal('0.00')
+                        continue
+
+                    rate = re.appreciation_rate
+                    if rate == 0 and global_re_growth != 0:
+                        rate = global_re_growth
+
+                    item['balance'] *= (1 + (rate / 100 / 12))
 
                 # Monthly Savings: monthly_expenses already includes current_monthly_pension_contribution
                 monthly_savings = monthly_income - monthly_expenses

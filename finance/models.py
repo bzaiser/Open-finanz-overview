@@ -141,6 +141,7 @@ class PhysicalAsset(models.Model):
     location = models.CharField(_("Location / Storage"), max_length=255, blank=True)
     storage_costs_monthly = models.DecimalField(_("Monthly Storage/Maintenance Costs"), max_digits=10, decimal_places=2, default=0.0)
     is_sold = models.BooleanField(_("Is Sold"), default=False)
+    sale_date = models.DateField(_("Sale Date"), null=True, blank=True)
     
     class Meta:
         verbose_name = _("Sachwert (Physical Asset)")
@@ -161,6 +162,7 @@ class RealEstate(models.Model):
     maintenance_costs_monthly = models.DecimalField(_("Monthly Maintenance/Mgmt Costs"), max_digits=10, decimal_places=2, default=0.0)
     ancillary_costs_monthly = models.DecimalField(_("Monthly Ancillary Costs (Nebenkosten)"), max_digits=10, decimal_places=2, default=0.0)
     is_sold = models.BooleanField(_("Is Sold"), default=False)
+    sale_date = models.DateField(_("Sale Date"), null=True, blank=True)
 
     class Meta:
         verbose_name = _("Immobilie (Real Estate)")
