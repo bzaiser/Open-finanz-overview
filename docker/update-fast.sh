@@ -31,20 +31,21 @@ cd "$SCRIPT_DIR"
 
 # Install potential new requirements (FAST update)
 echo "Syncing requirements..."
-docker compose --env-file ../.env exec web pip install --no-cache-dir -r requirements.txt
+docker compose --env-file ../.env exec web pip install -q --no-cache-dir -r requirements.txt
 
-# Run database migrations (from git)
-echo "Running database migrations..."
-docker compose --env-file ../.env exec web python3 manage.py migrate
-docker compose --env-file ../.env exec web python3 manage.py createcachetable
+# Run database migrations (from git or auto-generated)
+echo "Ensuring database migrations are up to date..."
+docker compose --env-file ../.env exec web python3 manage.py makemigrations --noinput --verbosity 0
+docker compose --env-file ../.env exec web python3 manage.py migrate --verbosity 0
+docker compose --env-file ../.env exec web python3 manage.py createcachetable --verbosity 0
 
 # Compile translations
 echo "Compiling translations..."
-docker compose --env-file ../.env exec web python3 manage.py compilemessages
+docker compose --env-file ../.env exec web python3 manage.py compilemessages --verbosity 0
 
 # Collect static files
 echo "Collecting static files..."
-docker compose --env-file ../.env exec web python3 manage.py collectstatic --noinput
+docker compose --env-file ../.env exec web python3 manage.py collectstatic --noinput --verbosity 0
 
 # Restart/Recreate the services to load new code/config
 echo "Updating containers..."

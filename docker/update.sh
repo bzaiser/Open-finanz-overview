@@ -41,25 +41,22 @@ docker compose --env-file ../.env up -d
 echo "Fixing permissions for data directory..."
 sudo chmod -R 777 ../data
 
-# Install potential new requirements from requirements.txt
-echo "Syncing requirements..."
-docker compose --env-file ../.env exec web pip install --no-cache-dir -r requirements.txt
+# 4. Install requirements (quietly)
+echo "Step 4: Syncing requirements..."
+docker compose --env-file ../.env exec web pip install -q --no-cache-dir -r requirements.txt
 
-# Run database migrations (from git)
-echo "Running database migrations..."
-docker compose --env-file ../.env exec web python3 manage.py migrate
-docker compose --env-file ../.env exec web python3 manage.py createcachetable
+# 5. Database migrations (self-healing)
+echo "Step 5: Database migrations..."
+docker compose --env-file ../.env exec web python3 manage.py makemigrations --noinput --verbosity 0
+docker compose --env-file ../.env exec web python3 manage.py migrate --verbosity 0
+docker compose --env-file ../.env exec web python3 manage.py createcachetable --verbosity 0
 
-# Compile translations
-echo "Compiling translations..."
-docker compose --env-file ../.env exec web python3 manage.py compilemessages
-
-# Collect static files
-echo "Collecting static files..."
-docker compose --env-file ../.env exec web python3 manage.py collectstatic --noinput
+# 6. Build frontend & translations
+echo "Step 6: Processing assets..."
+docker compose --env-file ../.env exec web python3 manage.py compilemessages --verbosity 0
+docker compose --env-file ../.env exec web python3 manage.py collectstatic --noinput --verbosity 0
 
 
 
 echo "-----------------------------------"
 echo "Update complete! Application is running."
-

@@ -77,11 +77,23 @@ class UserProfile(models.Model):
     theme = models.ForeignKey(Theme, on_delete=models.SET_NULL, null=True, blank=True, verbose_name=_("Theme"))
     dashboard_config = models.JSONField(_("Dashboard Configuration"), default=dict, blank=True)
 
-    # Gradient Design
-    gradient_start = models.CharField(_("Gradient Start Color"), max_length=7, default="#6610f2",
-                                      help_text=_("Hex color for gradient start (e.g. #6610f2)"))
-    gradient_end = models.CharField(_("Gradient End Color"), max_length=7, default="#0d6efd",
-                                    help_text=_("Hex color for gradient end (e.g. #0d6efd)"))
+    # Gradient & Unified Design Fields
+    gradient_start = models.CharField(_("Gradient Start Color"), max_length=7, default="#6610f2")
+    gradient_end = models.CharField(_("Gradient End Color"), max_length=7, default="#0d6efd")
+    
+    primary_color = models.CharField(_("Primary Color"), max_length=7, default="#0d6efd")
+    secondary_color = models.CharField(_("Secondary Color"), max_length=7, default="#6c757d")
+    background_color = models.CharField(_("Background Color"), max_length=7, default="#ffffff")
+    text_color = models.CharField(_("Text Color"), max_length=7, default="#212529")
+    sidebar_bg_color = models.CharField(_("Sidebar Background"), max_length=7, default="#f8f9fa")
+    
+    # Table Specific Colors
+    table_header_bg_color = models.CharField(_("Table Header Background"), max_length=7, default="#212529")
+    table_header_text_color = models.CharField(_("Table Header Text"), max_length=7, default="#ffffff")
+    table_filter_bg_color = models.CharField(_("Table Filter Background"), max_length=7, default="#f1f3f5")
+    table_body_bg_color = models.CharField(_("Table Body Background"), max_length=7, default="#ffffff")
+    table_body_text_color = models.CharField(_("Table Body Text"), max_length=7, default="#212529")
+    table_border_color = models.CharField(_("Table Border Color"), max_length=7, default="#dee2e6")
 
 
     class Meta:
