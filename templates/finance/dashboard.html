@@ -186,38 +186,9 @@
                     <input type="hidden" name="layout_json" id="layout_json">
                     <input type="hidden" name="summary_layout_json" id="summary_layout_json">
                     <input type="hidden" name="simulation_panel_json" id="simulation_panel_json">
-                    <input type="hidden" name="table_style_json" id="table_style_json">
                     
                     <div class="alert alert-info py-2 mb-3">
                         <small><i class="bi bi-info-circle"></i> {% trans "Customize colors and visibility for all dashboard components." %}</small>
-                    </div>
-
-                    <h6 class="mb-2 fw-bold text-primary">{% trans "Table Styling" %}</h6>
-                    <div class="row g-3 mb-4 p-2 border rounded bg-light mx-0">
-                        <div class="col-md-4">
-                            <label class="form-label small mb-1">{% trans "Header Background" %}</label>
-                            <input type="color" id="table-header-bg" class="form-control form-control-color w-100" value="{{ table_config.header_bg_color }}">
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label small mb-1">{% trans "Header Text Color" %}</label>
-                            <input type="color" id="table-header-text" class="form-control form-control-color w-100" value="{{ table_config.header_text_color }}">
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label small mb-1">{% trans "Filter Row Background" %}</label>
-                            <input type="color" id="table-filter-bg" class="form-control form-control-color w-100" value="{{ table_config.filter_bg_color }}">
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label small mb-1">{% trans "Body Background" %}</label>
-                            <input type="color" id="table-body-bg" class="form-control form-control-color w-100" value="{{ table_config.body_bg_color|default:'#ffffff' }}">
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label small mb-1">{% trans "Body Text Color" %}</label>
-                            <input type="color" id="table-body-text" class="form-control form-control-color w-100" value="{{ table_config.body_text_color|default:'#212529' }}">
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label small mb-1">{% trans "Border Color" %}</label>
-                            <input type="color" id="table-border-color" class="form-control form-control-color w-100" value="{{ table_config.border_color|default:'#dee2e6' }}">
-                        </div>
                     </div>
 
                     <h6 class="mb-2 fw-bold text-primary">{% trans "Simulation Panel" %}</h6>
@@ -377,18 +348,9 @@
                 header_bg_color: document.getElementById('sim-header-bg').value,
                 header_text_color: document.getElementById('sim-header-text').value
             };
-            var tableStyle = {
-                header_bg_color: document.getElementById('table-header-bg').value,
-                header_text_color: document.getElementById('table-header-text').value,
-                filter_bg_color: document.getElementById('table-filter-bg').value,
-                body_bg_color: document.getElementById('table-body-bg').value,
-                body_text_color: document.getElementById('table-body-text').value,
-                border_color: document.getElementById('table-border-color').value
-            };
             document.getElementById('layout_json').value = JSON.stringify(layout);
             document.getElementById('summary_layout_json').value = JSON.stringify(summaryLayout);
             document.getElementById('simulation_panel_json').value = JSON.stringify(simConfig);
-            document.getElementById('table_style_json').value = JSON.stringify(tableStyle);
             document.getElementById('config-form').submit();
         });
     });

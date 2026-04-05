@@ -138,14 +138,14 @@ def dashboard_view(request):
         'header_text_color': '#ffffff'
     })
 
-    table_config = safe_merge(dashboard_config.get('table_style'), {
-        'header_bg_color': 'var(--app-primary)', 
-        'header_text_color': '#ffffff',
-        'filter_bg_color': 'rgba(0,0,0,0.05)',
-        'body_bg_color': 'var(--app-card-bg)',
-        'body_text_color': 'var(--app-card-color)',
-        'border_color': 'rgba(0,0,0,0.1)',
-    })
+    table_config = {
+        'header_bg_color': profile.table_header_bg_color or 'var(--app-primary)', 
+        'header_text_color': profile.table_header_text_color or '#ffffff',
+        'filter_bg_color': profile.table_filter_bg_color or 'rgba(0,0,0,0.05)',
+        'body_bg_color': profile.table_body_bg_color or 'var(--app-card-bg)',
+        'body_text_color': profile.table_body_text_color or 'var(--app-card-color)',
+        'border_color': profile.table_border_color or 'rgba(0,0,0,0.1)',
+    }
     
     # Remove old widgets that no longer exist
     layout = [item for item in layout if item['id'] not in ('net_worth_widget', 'projected_wealth_widget')]
@@ -204,8 +204,6 @@ def dashboard_view(request):
                     dashboard_config['summary_layout'] = json.loads(request.POST.get('summary_layout_json'))
                 if request.POST.get('simulation_panel_json'):
                     dashboard_config['simulation_panel'] = json.loads(request.POST.get('simulation_panel_json'))
-                if request.POST.get('table_style_json'):
-                    dashboard_config['table_style'] = json.loads(request.POST.get('table_style_json'))
                 
                 profile.dashboard_config = dashboard_config
                 profile.save()
