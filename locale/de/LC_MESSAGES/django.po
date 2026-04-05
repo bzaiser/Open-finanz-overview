@@ -2096,14 +2096,6 @@ msgid "Current Pension"
 msgstr "Aktuelle Rente (am Stichtag)"
 
 
-msgid "Pension Increase (%)"
-msgstr "Rentensteigerung (%)"
-
-
-msgid "Inv. Return Offset (%)"
-msgstr "Rendite-Offset (%)"
-
-
 msgid "Stichtag"
 msgstr "Stichtag"
 
@@ -2232,3 +2224,15 @@ msgstr "Beitragsende"
 
 msgid "Date when you stop paying into this pension"
 msgstr "Datum, an dem die Beitragszahlung für diese Rente endet"
+
+msgid "Pension Increase (%)"
+msgstr "Rentenerhöhung (%)"
+
+msgid "Inv. Return Offset (%)"
+msgstr "Investitionsrendite (%)"
+
+msgid "Growth Real Estate (%)"
+msgstr "Wertsteigerung Immobilien (%)"
+
+msgid "Decline Physical Assets (%)"
+msgstr "Wertverlust Sachwerte (%)"
