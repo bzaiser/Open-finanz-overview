@@ -231,6 +231,8 @@ class ExcelParserService:
                     amount=group['total_amount'],
                     is_income=res.get('is_income', group['total_amount'] > 0),
                     category=category,
+                    # Only mark transactions for saving if a category was successfully found
+                    is_ignored=(category is None),
                     is_recurring=group['is_recurring'] or res.get('is_recurring', False),
                     frequency=res.get('frequency', 'monthly'),
                     ai_reasoning=str(res.get('reasoning', ''))[:500] # Safety truncation
