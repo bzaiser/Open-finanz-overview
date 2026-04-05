@@ -666,6 +666,7 @@ def dashboard_view(request):
         'current_assets_total': current_assets_total,
         'current_monthly_income': current_monthly_income,
         'current_monthly_expenses': current_monthly_expenses,
+        'current_pensions_total': current_pensions_total,
         'current_physical_assets_total': current_physical_assets_total,
         'current_real_estate_total': current_real_estate_total,
         'current_total_combined': current_total_combined,
