@@ -101,7 +101,8 @@
                     value="{{ simulation_params.investment_return_offset|stringformat:'.2f' }}" class="form-control form-control-sm border-0 bg-light">
             </div>
             <div class="mb-4 border-top pt-3">
-                <label class="form-label fw-bold small text-muted text-uppercase d-flex align-items-center justify-content-between" style="font-size: 0.7rem;">{% trans "Growth Real Estate (%)" %}
+                <label class="form-label fw-bold small text-muted text-uppercase d-flex align-items-center justify-content-between" style="font-size: 0.7rem;">
+                    {% trans "Growth Real Estate (%)" %}
                     <i class="bi bi-info-circle ms-1 text-primary cursor-pointer" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-container="body"
                        data-bs-title="{% trans 'Standardmäßige jährliche Wertsteigerung für Immobilien. Wird nur verwendet, wenn am Objekt selbst kein individueller Wert (0%) hinterlegt ist.' %}"></i>
                 </label>
@@ -109,7 +110,8 @@
                     value="{{ simulation_params.real_estate_growth_rate|stringformat:'.2f' }}" class="form-control form-control-sm border-0 bg-light">
             </div>
             <div class="mb-4">
-                <label class="form-label fw-bold small text-muted text-uppercase d-flex align-items-center justify-content-between" style="font-size: 0.7rem;">{% trans "Decline Physical Assets (%)" %}
+                <label class="form-label fw-bold small text-muted text-uppercase d-flex align-items-center justify-content-between" style="font-size: 0.7rem;">
+                    {% trans "Decline Physical Assets (%)" %}
                     <i class="bi bi-info-circle ms-1 text-primary cursor-pointer" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-container="body"
                        data-bs-title="{% trans 'Jährliche Wertminderung für Sachwerte (wie Autos). Wird nur verwendet, wenn am Objekt selbst kein individueller Wert (0%) hinterlegt ist. Tragen Sie hier positive Werte für Wertverlust ein.' %}"></i>
                 </label>
