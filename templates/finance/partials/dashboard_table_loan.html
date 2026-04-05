@@ -1,0 +1,115 @@
+{% load i18n humanize %}
+<div x-data="{ 
+    colFilters: { name: '', provider: '', year: '' },
+    sortCol: 'current_balance', 
+    sortDir: 'desc',
+    items: [],
+    init() {
+        const scriptTag = document.getElementById('{{ widget_id }}');
+        if (scriptTag) {
+            try {
+                this.items = JSON.parse(scriptTag.textContent);
+            } catch (e) {
+                console.error('Error parsing loan table data:', e);
+            }
+        }
+    },
+    get filteredItems() {
+        if (!this.items) return [];
+        return this.items.filter(i => {
+            if (this.colFilters.name && !(i.name || '').toLowerCase().includes(this.colFilters.name.toLowerCase())) return false;
+            if (this.colFilters.provider && !(i.provider || '').toLowerCase().includes(this.colFilters.provider.toLowerCase())) return false;
+            if (this.colFilters.year && !(i.year || '').toLowerCase().includes(this.colFilters.year.toLowerCase())) return false;
+            return true;
+        }).sort((a, b) => {
+            let va = a[this.sortCol];
+            let vb = b[this.sortCol];
+            if (typeof va === 'string') {
+                va = va.toLowerCase();
+                vb = vb.toLowerCase();
+            }
+            if (va < vb) return this.sortDir === 'asc' ? -1 : 1;
+            if (va > vb) return this.sortDir === 'asc' ? 1 : -1;
+            return 0;
+        });
+    },
+    get totalBalance() {
+        return this.filteredItems.reduce((sum, i) => sum + (parseFloat(i.current_balance) || 0), 0);
+    },
+    get totalInterest() {
+        return this.filteredItems.reduce((sum, i) => sum + (parseFloat(i.total_interest) || 0), 0);
+    }
+}" class="h-100 d-flex flex-column" x-init="init()">
+    
+    <div class="flex-grow-1 overflow-auto px-2" style="background-color: {{ table_config.body_bg_color }} !important;">
+        <table class="table table-sm table-hover align-middle mb-0" 
+               style="font-size: 0.82rem; border-color: {{ table_config.border_color }} !important; --bs-table-bg: {{ table_config.body_bg_color }}; --bs-table-color: {{ table_config.body_text_color }};">
+            <thead class="sticky-top" style="z-index: 10;">
+                <tr class="text-uppercase" style="font-size: 0.65rem;">
+                    <th class="py-2 px-2 border-0 cursor-pointer" @click="sortCol = 'name'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
+                        style="background-color: {{ table_config.header_bg_color }} !important; color: {{ table_config.header_text_color }} !important;">
+                        {% trans 'Loan' %} <i class="bi" :class="sortCol === 'name' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                    </th>
+                    <th class="py-2 px-2 border-0 cursor-pointer" @click="sortCol = 'provider'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
+                        style="background-color: {{ table_config.header_bg_color }} !important; color: {{ table_config.header_text_color }} !important;">
+                        {% trans 'Provider' %}
+                    </th>
+                    <th class="py-2 px-2 border-0 text-end cursor-pointer" @click="sortCol = 'current_balance'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
+                        style="background-color: {{ table_config.header_bg_color }} !important; color: {{ table_config.header_text_color }} !important;">
+                        {% trans 'Balance' %} <i class="bi" :class="sortCol === 'current_balance' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                    </th>
+                    <th class="py-2 px-2 border-0 text-end cursor-pointer text-warning" @click="sortCol = 'total_interest'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
+                        style="background-color: {{ table_config.header_bg_color }} !important; color: {{ table_config.header_text_color }} !important;">
+                        {% trans 'Sum Interest' %}
+                    </th>
+                    <th class="py-2 px-2 border-0 text-center"
+                        style="background-color: {{ table_config.header_bg_color }} !important; color: {{ table_config.header_text_color }} !important;">
+                        %
+                    </th>
+                    <th class="py-2 px-2 border-0 text-end"
+                        style="background-color: {{ table_config.header_bg_color }} !important; color: {{ table_config.header_text_color }} !important;">
+                        {% trans 'Monthly' %}
+                    </th>
+                    <th class="py-2 px-2 border-0 text-center cursor-pointer" @click="sortCol = 'year'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
+                        style="background-color: {{ table_config.header_bg_color }} !important; color: {{ table_config.header_text_color }} !important;">
+                        {% trans 'End' %}
+                    </th>
+                </tr>
+                <tr>
+                    <td class="p-1 border-0" style="background-color: {{ table_config.filter_bg_color }} !important;">
+                        <input type="text" x-model="colFilters.name" class="form-control form-control-xs py-0 border-0 shadow-none" style="font-size: 0.65rem;" placeholder="Filter...">
+                    </td>
+                    <td class="p-1 border-0" style="background-color: {{ table_config.filter_bg_color }} !important;">
+                        <input type="text" x-model="colFilters.provider" class="form-control form-control-xs py-0 border-0 shadow-none" style="font-size: 0.65rem;" placeholder="Filter...">
+                    </td>
+                    <td class="p-1 border-0" colspan="5" style="background-color: {{ table_config.filter_bg_color }} !important;"></td>
+                </tr>
+            </thead>
+            <tbody>
+                <template x-for="row in filteredItems" :key="row.name">
+                    <tr class="align-middle">
+                        <td class="fw-bold border-0" x-text="row.name"></td>
+                        <td class="border-0 opacity-75" x-text="row.provider"></td>
+                        <td class="text-end fw-bold border-0" x-text="new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ currency }}' }).format(row.current_balance)"></td>
+                        <td class="text-end border-0 text-warning" x-text="new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ currency }}' }).format(row.total_interest)"></td>
+                        <td class="text-center border-0 small" x-text="row.rate"></td>
+                        <td class="text-end border-0" x-text="new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ currency }}' }).format(row.monthly)"></td>
+                        <td class="text-center border-0 small opacity-75" x-text="row.year"></td>
+                    </tr>
+                </template>
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="mt-auto border-top p-2 rounded-bottom d-flex justify-content-between align-items-center" 
+         style="background-color: rgba(0,0,0,0.03); border-top-color: {{ table_config.border_color }} !important; font-size: 0.8rem;">
+        <div>
+            <span class="opacity-50 me-1">{% trans 'Total Balance' %}:</span>
+            <span class="fw-bold" x-text="new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ currency }}' }).format(totalBalance)"></span>
+        </div>
+        <div>
+            <span class="opacity-50 me-1">{% trans 'Total Interest' %}:</span>
+            <span class="fw-bold text-warning" x-text="new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ currency }}' }).format(totalInterest)"></span>
+        </div>
+    </div>
+</div>

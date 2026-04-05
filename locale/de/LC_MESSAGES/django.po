@@ -1845,3 +1845,18 @@ msgstr "Kredit-Übersicht"
 
 msgid "Kreditrate"
 msgstr "Kreditrate"
+
+msgid "Loan Balance Trend"
+msgstr "Kredit-Trend"
+
+msgid "Sum Interest"
+msgstr "Zinskosten (voraus.)"
+
+msgid "Total Interest"
+msgstr "Zinsen gesamt"
+
+msgid "Total Balance"
+msgstr "Restsaldo gesamt"
+
+msgid "Loan"
+msgstr "Kredit"

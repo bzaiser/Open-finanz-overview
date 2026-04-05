@@ -133,7 +133,11 @@ class SimulationEngine:
         loans_state = []
         user_loans = list(self.user.loans.prefetch_related('extra_repayments').all())
         for l in user_loans:
-            loans_state.append({'loan': l, 'balance': l.nominal_amount})
+            loans_state.append({
+                'loan': l, 
+                'balance': l.nominal_amount,
+                'total_interest_paid': Decimal('0.00')
+            })
             
         accumulated_cash = Decimal('0.00')
 
@@ -313,6 +317,7 @@ class SimulationEngine:
                             installment = item['balance'] + interest
                         
                         current_monthly_loan_installment += installment
+                        item['total_interest_paid'] += interest
                         cat_name = str(_('Kredit'))
                         category_breakdown[cat_name] = category_breakdown.get(cat_name, Decimal('0')) + installment
                         
@@ -384,7 +389,10 @@ class SimulationEngine:
                 'monthly_pension_contribution': float(round(current_monthly_pension_contribution, 2)),
                 'category_breakdown': {k: float(round(v, 2)) for k, v in category_breakdown.items()},
                 'income_category_breakdown': {k: float(round(v, 2)) for k, v in income_category_breakdown.items()},
+                'loan_balances': {str(item['loan'].id): float(round(item['balance'], 2)) for item in loans_state},
                 'one_time_events': events_this_month,
             })
+            
+        self.loan_interest_totals = {str(item['loan'].id): item['total_interest_paid'] for item in loans_state}
             
         return data

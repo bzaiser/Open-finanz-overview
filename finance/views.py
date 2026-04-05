@@ -64,6 +64,7 @@ AVAILABLE_CHARTS = {
     'pension_table_widget': {'title': _('Pension Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small'},
     'event_table_widget': {'title': _('One-Time Event Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small'},
     'loan_table_widget': {'title': _('Loan Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small'},
+    'loan_evolution_chart': {'title': _('Loan Balance Trend'), 'type': 'line', 'default_width': 12, 'default_height': 'medium'},
 }
 
 SUMMARY_WIDGETS = {
@@ -249,6 +250,7 @@ def dashboard_view(request):
                 'monthly_income': 0,
                 'monthly_expenses': 0,
                 'loan_total': 0,
+                'loan_balances': {},
                 'one_time_events': [],
                 'one_time_total': 0,
                 'category_breakdown': {},
@@ -274,6 +276,10 @@ def dashboard_view(request):
         for cat, val in d['income_category_breakdown'].items():
             bucket['income_category_breakdown'][cat] = bucket['income_category_breakdown'].get(cat, 0) + val
             
+        # Loan Balances (Snapshot at end of year)
+        if 'loan_balances' in d:
+            bucket['loan_balances'] = d['loan_balances']
+
         # One Time Events
         if d['one_time_events']:
             bucket['one_time_events'].extend(d['one_time_events'])
@@ -353,16 +359,26 @@ def dashboard_view(request):
             'fill': True
         })
 
-    # Add One-Time Events to Income Evolution chart
-    income_evo_datasets.append({
-        'label': str(_('One-Time Events')),
-        'data': one_time_yearly,
-        'backgroundColor': 'rgba(255, 165, 0, 0.85)',
-        'borderColor': '#ff8c00',
-        'borderWidth': 2,
-        'stack': 'events',
-        'tooltipData': one_time_tooltips,
-    })
+    # 2.2 Loan Evolution Chart
+    loan_evo_datasets = []
+    user_loans_list = list(user.loans.all())
+    loan_colors = ['#dc3545', '#fd7e14', '#ffc107', '#20c997', '#0d6efd', '#6610f2', '#6f42c1', '#e83e8c']
+    
+    for idx, l in enumerate(user_loans_list):
+        l_id_str = str(l.id)
+        l_data = [float(yearly_buckets[y]['loan_balances'].get(l_id_str, 0)) for y in sorted_years]
+        
+        # Only add if there is any debt in the simulation period
+        if any(v > 0 for v in l_data):
+            loan_evo_datasets.append({
+                'label': l.name,
+                'data': l_data,
+                'borderColor': loan_colors[idx % len(loan_colors)],
+                'backgroundColor': loan_colors[idx % len(loan_colors)] + '1A', # 10% alpha
+                'fill': False,
+                'borderWidth': 3,
+                'tension': 0.1
+            })
 
     # 3. Budget Pie & Current Month Data (Reference month breakdown)
     stichtag_val = simulation_params.get('stichtag')
@@ -447,6 +463,11 @@ def dashboard_view(request):
             'budget_pie_chart': {
                 'labels': budget_labels,
                 'datasets': [{'data': budget_data, 'backgroundColor': budget_colors}]
+            },
+            'loan_evolution_chart': {
+                'labels': labels_yearly,
+                'datasets': loan_evo_datasets,
+                'stichtag_index': stichtag_year_index
             },
             'inflation_monitor_chart': {
                 'labels': labels_yearly,
@@ -650,19 +671,19 @@ def dashboard_view(request):
         })
 
     table_data_loan = []
+    loan_interest_map = getattr(engine, 'loan_interest_totals', {})
+
     for l in user.loans.all():
-        # Get remaining balance at Stichtag
-        l_total = 0
-        # Find the specific balance for THIS loan in forecast_data
-        # We need to access the engine's internal state or recalculate
-        # Simplest: find current balance in SimulationEngine's list for THIS month
-        # We'll pass it from the SimulationEngine result if we restructure slightly, 
-        # but for now, we'll just show nominal or use a heuristic.
-        # Better: use the current_month_data's loan_total but that's a sum.
-        # For the table, we'll iterate and show basic info + end date.
+        l_id_str = str(l.id)
+        # Remaining balance at Stichtag
+        current_bal = current_month_data.get('loan_balances', {}).get(l_id_str, 0.0)
+        total_int = loan_interest_map.get(l_id_str, 0.0)
+
         table_data_loan.append({
             'name': l.name,
-            'amount': float(l.nominal_amount), # Initial
+            'amount': float(l.nominal_amount), 
+            'current_balance': float(current_bal),
+            'total_interest': float(total_int),
             'provider': l.provider,
             'rate': f"{l.interest_rate}%",
             'monthly': float(l.monthly_installment),
