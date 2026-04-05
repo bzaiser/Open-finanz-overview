@@ -2108,3 +2108,27 @@ msgstr "Real Estate Growth (%)"
 
 msgid "Decline Physical Assets (%)"
 msgstr "Physical Asset Decline (%)"
+
+msgid "Gesamtvermögen"
+msgstr "Total Assets"
+
+msgid "Ankerdatum für die Simulation. Alle Berechnungen beziehen sich auf diesen Monat."
+msgstr "Anchor date for the simulation. All calculations refer to this month."
+
+msgid "Jährliche Inflationsrate. Reduziert die reale Kaufkraft Ihres Vermögens über die Zeit."
+msgstr "Annual inflation rate. Reduces the real purchasing power of your assets over time."
+
+msgid "Voraussichtliche jährliche Gehaltssteigerung in Prozent."
+msgstr "Expected annual salary increase in percent."
+
+msgid "Jährliche Rentenanpassung. Standardmäßig oft niedriger als die Inflation."
+msgstr "Annual pension adjustment. Often lower than inflation by default."
+
+msgid "Zusätzliche Rendite auf Ihr liquides Anlagevermögen (z.B. Aktien, ETFs)."
+msgstr "Additional return on your liquid investment assets (e.g. stocks, ETFs)."
+
+msgid "Standardmäßige jährliche Wertsteigerung für Immobilien. Wird nur verwendet, wenn am Objekt selbst kein individueller Wert (0%) hinterlegt ist."
+msgstr "Default annual appreciation for real estate. Only used if no individual value (0%) is specified on the object itself."
+
+msgid "Jährliche Wertminderung für Sachwerte (wie Autos). Wird nur verwendet, wenn am Objekt selbst kein individueller Wert (0%) hinterlegt ist. Tragen Sie hier positive Werte für Wertverlust ein."
+msgstr "Annual depreciation for physical assets (such as cars). Only used if no individual value (0%) is specified on the object itself. Enter positive values here for loss of value."

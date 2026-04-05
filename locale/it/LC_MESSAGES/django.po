@@ -2070,3 +2070,27 @@ msgstr "Crescita immobiliare (%)"
 
 msgid "Decline Physical Assets (%)"
 msgstr "Deprezzamento beni fisici (%)"
+
+msgid "Gesamtvermögen"
+msgstr "Patrimonio totale"
+
+msgid "Ankerdatum für die Simulation. Alle Berechnungen beziehen sich auf diesen Monat."
+msgstr "Data di ancoraggio per la simulazione. Tutti i calcoli si riferiscono a questo mese."
+
+msgid "Jährliche Inflationsrate. Reduziert die reale Kaufkraft Ihres Vermögens über die Zeit."
+msgstr "Tasso di inflazione annuale. Riduce il potere d'acquisto reale dei tuoi beni nel tempo."
+
+msgid "Voraussichtliche jährliche Gehaltssteigerung in Prozent."
+msgstr "Aumento salariale annuo previsto in percentuale."
+
+msgid "Jährliche Rentenanpassung. Standardmäßig oft niedriger als die Inflation."
+msgstr "Rivalutazione annua delle pensioni. Spesso inferiore all'inflazione per impostazione predefinita."
+
+msgid "Zusätzliche Rendite auf Ihr liquides Anlagevermögen (z.B. Aktien, ETFs)."
+msgstr "Rendimento aggiuntivo sulle tue attività di investimento liquide (es. azioni, ETF)."
+
+msgid "Standardmäßige jährliche Wertsteigerung für Immobilien. Utilizzata solo se non è specificato alcun valore individuale (0%) sull'oggetto stesso."
+msgstr "Rivalutazione annua predefinita per gli immobili. Utilizzata solo se non è specificato alcun valore individuale (0%) sull'oggetto stesso."
+
+msgid "Jährliche Wertminderung für Sachwerte (wie Autos). Wird nur verwendet, wenn am Objekt selbst kein individueller Wert (0%) hinterlegt ist. Tragen Sie hier positive Werte für Wertverlust ein."
+msgstr "Ammortamento annuo per i beni fisici (come le auto). Utilizzato solo se non è specificato alcun valore individuale (0%) sull'oggetto stesso. Inserisci qui valori positivi per la perdita di valore."

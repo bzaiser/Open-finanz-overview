@@ -2072,3 +2072,27 @@ msgstr "Crecimiento inmobiliario (%)"
 
 msgid "Decline Physical Assets (%)"
 msgstr "Depreciación de activos físicos (%)"
+
+msgid "Gesamtvermögen"
+msgstr "Patrimonio total"
+
+msgid "Ankerdatum für die Simulation. Alle Berechnungen beziehen sich auf diesen Monat."
+msgstr "Fecha de anclaje para la simulación. Todos los cálculos se refieren a este mes."
+
+msgid "Jährliche Inflationsrate. Reduziert die reale Kaufkraft Ihres Vermögens über die Zeit."
+msgstr "Tasa de inflación anual. Reduce el poder adquisitivo real de sus activos con el tiempo."
+
+msgid "Voraussichtliche jährliche Gehaltssteigerung in Prozent."
+msgstr "Aumento salarial anual previsto en porcentaje."
+
+msgid "Jährliche Rentenanpassung. Standardmäßig oft niedriger als die Inflation."
+msgstr "Ajuste anual de las pensiones. A menudo inferior a la inflación por defecto."
+
+msgid "Zusätzliche Rendite auf Ihr liquides Anlagevermögen (z.B. Aktien, ETFs)."
+msgstr "Rendimiento adicional de sus activos de inversión líquidos (por ejemplo, acciones, ETF)."
+
+msgid "Standardmäßige jährliche Wertsteigerung für Immobilien. Wird nur verwendet, wenn am Objekt selbst kein individueller Wert (0%) hinterlegt ist."
+msgstr "Plusvalía anual por defecto para bienes inmuebles. Solo se usa si no se especifica ningún valor individual (0%) en el propio objeto."
+
+msgid "Jährliche Wertminderung für Sachwerte (wie Autos). Wird nur verwendet, wenn am Objekt selbst kein individueller Wert (0%) hinterlegt ist. Tragen Sie hier positive Werte für Wertverlust ein."
+msgstr "Depreciación anual de activos físicos (como coches). Solo se usa si no se especifica ningún valor individual (0%) en el propio objeto. Introduzca aquí valores positivos para la pérdida de valor."

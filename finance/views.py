@@ -74,6 +74,7 @@ SUMMARY_WIDGETS = {
     'current_pension_payout': {'title': _('Current Pension'), 'default_bg': '#fd7e14', 'default_text': '#ffffff'},
     'total_physical_assets': {'title': _('Sachwerte'), 'default_bg': '#8a2be2', 'default_text': '#ffffff'},
     'total_real_estate': {'title': _('Immobilien'), 'default_bg': '#20c997', 'default_text': '#ffffff'},
+    'total_combined_assets': {'title': _('Gesamtvermögen'), 'default_bg': '#ffc107', 'default_text': '#212529'},
 }
 
 DEFAULT_LAYOUT = [
@@ -110,8 +111,9 @@ def dashboard_view(request):
         {'id': 'current_pension_payout', 'visible': True, 'bg_color': '#fd7e14', 'text_color': '#ffffff', 'order': 4},
         {'id': 'total_pensions', 'visible': True, 'bg_color': '#0dcaf0', 'text_color': '#ffffff', 'order': 5},
         {'id': 'expected_payout', 'visible': True, 'bg_color': '#6f42c1', 'text_color': '#ffffff', 'order': 6},
-        {'id': 'total_physical_assets', 'visible': True, 'bg_color': '#8a2be2', 'text_color': '#ffffff', 'order': 7},
-        {'id': 'total_real_estate', 'visible': True, 'bg_color': '#20c997', 'text_color': '#ffffff', 'order': 8},
+        {'id': 'total_physical_assets', 'visible': True, 'bg_color': '#8a2be2', 'text_color': '#ffffff', 'order': 8},
+        {'id': 'total_real_estate', 'visible': True, 'bg_color': '#20c997', 'text_color': '#ffffff', 'order': 9},
+        {'id': 'total_combined_assets', 'visible': True, 'bg_color': '#ffc107', 'text_color': '#212529', 'order': 1},
     ])
 
     # Ensure all available summary widgets are in the layout (auto-add missing ones)
@@ -487,6 +489,7 @@ def dashboard_view(request):
     current_assets_total = round(current_month_data.get('real_asset_total', 0) + current_pensions_total, 2)
     current_physical_assets_total = round(current_month_data.get('real_physical_asset_total', 0), 2)
     current_real_estate_total = round(current_month_data.get('real_real_estate_total', 0), 2)
+    current_total_combined = round(current_assets_total + current_physical_assets_total + current_real_estate_total, 2)
     
     # Calculate Total Expected Payout (Real value at Stichtag)
     raw_expected_sum = sum(p.expected_payout_at_retirement or 0 for p in user.pensions.all())
@@ -663,9 +666,9 @@ def dashboard_view(request):
         'current_assets_total': current_assets_total,
         'current_monthly_income': current_monthly_income,
         'current_monthly_expenses': current_monthly_expenses,
-        'current_pensions_total': current_pensions_total,
         'current_physical_assets_total': current_physical_assets_total,
         'current_real_estate_total': current_real_estate_total,
+        'current_total_combined': current_total_combined,
         'total_expected_pensions': raw_expected_sum, # The raw target sum from contracts
         'simulated_pension_payout': total_expected_pensions, # The actual simulated payout at Stichtag
         'stichtag_year_index': stichtag_year_index,

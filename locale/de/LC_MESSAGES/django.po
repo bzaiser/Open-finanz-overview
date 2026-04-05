@@ -2247,3 +2247,27 @@ msgstr "Immobilienwachstum (%)"
 
 msgid "Decline Physical Assets (%)"
 msgstr "Wertminderung Sachwerte (%)"
+
+msgid "Gesamtvermögen"
+msgstr "Gesamtvermögen"
+
+msgid "Ankerdatum für die Simulation. Alle Berechnungen beziehen sich auf diesen Monat."
+msgstr "Ankerdatum für die Simulation. Alle Berechnungen beziehen sich auf diesen Monat."
+
+msgid "Jährliche Inflationsrate. Reduziert die reale Kaufkraft Ihres Vermögens über die Zeit."
+msgstr "Jährliche Inflationsrate. Reduziert die reale Kaufkraft Ihres Vermögens über die Zeit."
+
+msgid "Voraussichtliche jährliche Gehaltssteigerung in Prozent."
+msgstr "Voraussichtliche jährliche Gehaltssteigerung in Prozent."
+
+msgid "Jährliche Rentenanpassung. Standardmäßig oft niedriger als die Inflation."
+msgstr "Jährliche Rentenanpassung. Standardmäßig oft niedriger als die Inflation."
+
+msgid "Zusätzliche Rendite auf Ihr liquides Anlagevermögen (z.B. Aktien, ETFs)."
+msgstr "Zusätzliche Rendite auf Ihr liquides Anlagevermögen (z.B. Aktien, ETFs)."
+
+msgid "Standardmäßige jährliche Wertsteigerung für Immobilien. Wird nur verwendet, wenn am Objekt selbst kein individueller Wert (0%) hinterlegt ist."
+msgstr "Standardmäßige jährliche Wertsteigerung für Immobilien. Wird nur verwendet, wenn am Objekt selbst kein individueller Wert (0%) hinterlegt ist."
+
+msgid "Jährliche Wertminderung für Sachwerte (wie Autos). Wird nur verwendet, wenn am Objekt selbst kein individueller Wert (0%) hinterlegt ist. Tragen Sie hier positive Werte für Wertverlust ein."
+msgstr "Jährliche Wertminderung für Sachwerte (wie Autos). Wird nur verwendet, wenn am Objekt selbst kein individueller Wert (0%) hinterlegt ist. Tragen Sie hier positive Werte für Wertverlust ein."
