@@ -101,21 +101,21 @@
                             <div id="collapseStudio" class="accordion-collapse collapse" data-bs-parent="#designAccordion">
                                 <div class="accordion-body bg-light bg-opacity-50 border-top">
                                     <div class="row g-3">
-                                        <div class="col-md-6">{{ form.primary_color|as_crispy_field }}</div>
-                                        <div class="col-md-6">{{ form.background_color|as_crispy_field }}</div>
-                                        <div class="col-md-6">{{ form.sidebar_bg_color|as_crispy_field }}</div>
-                                        <div class="col-md-6">{{ form.text_color|as_crispy_field }}</div>
+                                        <div class="col-md-6"><label class="form-label small fw-bold">{% trans "Primärfarbe" %}</label>{{ form.primary_color }}</div>
+                                        <div class="col-md-6"><label class="form-label small fw-bold">{% trans "Hintergrund" %}</label>{{ form.background_color }}</div>
+                                        <div class="col-md-6"><label class="form-label small fw-bold">{% trans "Sidebar BG" %}</label>{{ form.sidebar_bg_color }}</div>
+                                        <div class="col-md-6"><label class="form-label small fw-bold">{% trans "Text Farbe" %}</label>{{ form.text_color }}</div>
                                         <div class="col-12"><hr class="my-2"></div>
-                                        <div class="col-md-6">{{ form.table_header_bg_color|as_crispy_field }}</div>
-                                        <div class="col-md-6">{{ form.table_header_text_color|as_crispy_field }}</div>
-                                        <div class="col-md-6">{{ form.table_filter_bg_color|as_crispy_field }}</div>
-                                        <div class="col-md-6">{{ form.table_border_color|as_crispy_field }}</div>
+                                        <div class="col-md-6"><label class="form-label small fw-bold">{% trans "Tabellenkopf BG" %}</label>{{ form.table_header_bg_color }}</div>
+                                        <div class="col-md-6"><label class="form-label small fw-bold">{% trans "Tabellenkopf Text" %}</label>{{ form.table_header_text_color }}</div>
+                                        <div class="col-md-6"><label class="form-label small fw-bold">{% trans "Tabellenfilter BG" %}</label>{{ form.table_filter_bg_color }}</div>
+                                        <div class="col-md-6"><label class="form-label small fw-bold">{% trans "Tabellenrahmen" %}</label>{{ form.table_border_color }}</div>
                                         <div class="col-12"><hr class="my-2"></div>
-                                        <div class="col-md-6">{{ form.table_body_bg_color|as_crispy_field }}</div>
-                                        <div class="col-md-6">{{ form.table_body_text_color|as_crispy_field }}</div>
+                                        <div class="col-md-6"><label class="form-label small fw-bold">{% trans "Tabelleninhalt BG" %}</label>{{ form.table_body_bg_color }}</div>
+                                        <div class="col-md-6"><label class="form-label small fw-bold">{% trans "Tabelleninhalt Text" %}</label>{{ form.table_body_text_color }}</div>
                                         <div class="col-12"><hr class="my-2"></div>
-                                        <div class="col-md-6">{{ form.gradient_start|as_crispy_field }}</div>
-                                        <div class="col-md-6">{{ form.gradient_end|as_crispy_field }}</div>
+                                        <div class="col-md-6"><label class="form-label small fw-bold">{% trans "Verlauf Start" %}</label>{{ form.gradient_start }}</div>
+                                        <div class="col-md-6"><label class="form-label small fw-bold">{% trans "Verlauf Ende" %}</label>{{ form.gradient_end }}</div>
                                     </div>
                                 </div>
                             </div>
