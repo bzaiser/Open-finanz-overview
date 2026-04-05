@@ -1,4 +1,4 @@
-import google.generativeai as genai
+from google import genai
 from django.conf import settings
 import json
 import logging
@@ -10,8 +10,7 @@ def get_gemini_client():
     if not settings.GEMINI_API_KEY:
         return None
     try:
-        genai.configure(api_key=settings.GEMINI_API_KEY)
-        return genai.GenerativeModel('gemini-1.5-flash')
+        return genai.Client(api_key=settings.GEMINI_API_KEY)
     except Exception as e:
         logger.error(f"Error configuring Gemini: {e}")
         return None
@@ -253,8 +252,8 @@ def classify_transactions(transactions, categories):
 
     # 3. Gemini (API - Google)
     if provider == 'gemini' or (provider == 'hybrid' and getattr(settings, 'GEMINI_API_KEY', None)):
-        model = get_gemini_client()
-        if model:
+        client = get_gemini_client()
+        if client:
             try:
                 category_list = ", ".join([f"{c['name']} (slug: {c['slug']})" for c in categories])
                 prompt = (
@@ -262,7 +261,10 @@ def classify_transactions(transactions, categories):
                     f"{json.dumps(remaining_transactions)}"
                 )
                 time.sleep(0.5) 
-                response = model.generate_content(prompt)
+                response = client.models.generate_content(
+                    model='gemini-1.5-flash',
+                    contents=prompt
+                )
                 text = response.text.strip()
                 if "```json" in text:
                     text = text.split("```json")[1].split("```")[0].strip()
@@ -299,21 +301,27 @@ def classify_transactions(transactions, categories):
 
 def get_pension_forecast():
     # Use Gemini for general knowledge (better than small Llama sometimes)
-    model = get_gemini_client()
-    if not model:
+    client = get_gemini_client()
+    if not client:
         return {"text": "Keine KI aktiv für Renten-Prognose.", "value": 3.5, "source": "Cache"}
     try:
-        response = model.generate_content("Rentenanpassung 2026 Prognose kurz.")
+        response = client.models.generate_content(
+            model='gemini-1.5-flash',
+            contents="Rentenanpassung 2026 Prognose kurz."
+        )
         return {"text": response.text.strip(), "value": 3.5, "source": "Gemini AI"}
     except:
         return {"text": "Fehler bei KI-Abfrage", "value": 0, "source": "Error"}
 
 def get_inflation_forecast():
-    model = get_gemini_client()
-    if not model:
+    client = get_gemini_client()
+    if not client:
         return {"text": "Keine KI aktiv für Inflation.", "value": 2.2, "source": "Cache"}
     try:
-        response = model.generate_content("Inflationsrate Deutschland 2025/2026 Prognose kurz.")
+        response = client.models.generate_content(
+            model='gemini-1.5-flash', 
+            contents="Inflationsrate Deutschland 2025/2026 Prognose kurz."
+        )
         return {"text": response.text.strip(), "value": 2.2, "source": "Gemini AI"}
     except:
         return {"text": "Fehler bei KI-Abfrage", "value": 0, "source": "Error"}
