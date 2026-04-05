@@ -61,10 +61,9 @@
                     </div>
                 </div>
 
-                <div class="d-grid mt-4">
-                    <button type="submit" class="btn btn-primary btn-lg py-3 fw-bold rounded-4 shadow-sm">
-                        <i class="bi bi-person-check me-2"></i>{% trans "Profil speichern" %}
-                    </button>
+                <div class="alert alert-info border-0 shadow-sm rounded-4 small">
+                    <i class="bi bi-info-circle me-2"></i>
+                    {% trans "Alle Parameter werden für die Simulationen und Berechnungen auf dem Dashboard verwendet." %}
                 </div>
             </div>
 
@@ -72,22 +71,8 @@
             <div class="col-lg-5">
                 <div class="glass-card shadow-lg p-4 border-primary border-opacity-25" style="border-width: 2px;">
                     <h4 class="mb-4 fw-bold"><i class="bi bi-magic me-2 text-primary"></i>{% trans "Design" %}</h4>
-                    
+                                      <!-- Design: Schnelle Harmonien (Main Star) -->
                     <div class="mb-4">
-                        <label class="form-label fw-bold small">{% trans "Aktuelles Thema" %}</label>
-                        {{ form.theme }}
-                        <small class="text-muted d-block mt-2">
-                            {% trans "Wähle ein festes Design-Paket oder nutze eine 'Schnelle Harmonie' unten für ein dynamisches Design." %}
-                        </small>
-                    </div>
-
-                    <hr class="my-4 opacity-10">
-
-                    <div class="row g-3 mb-4">
-                        <div class="col-6">
-                            <label class="form-label small fw-semibold">{% trans "Verlauf Start" %}</label>
-                            {{ form.gradient_start }}
-                        </div>
                         <div class="col-6">
                             <label class="form-label small fw-semibold">{% trans "Verlauf Ende" %}</label>
                             {{ form.gradient_end }}
@@ -102,15 +87,15 @@
 
                     <label class="form-label small fw-bold mb-3">{% trans "Schnelle Harmonien" %}</label>
                     <div class="d-flex flex-wrap gap-2">
-                        <div class="preset-pill shadow-sm gradient-preset" data-start="#6610f2" data-end="#0d6efd" style="background: linear-gradient(135deg, #6610f2, #0d6efd);" title="Standard Blau"></div>
-                        <div class="preset-pill shadow-sm gradient-preset" data-start="#11998e" data-end="#38ef7d" style="background: linear-gradient(135deg, #11998e, #38ef7d);" title="Smaragd Ozean"></div>
-                        <div class="preset-pill shadow-sm gradient-preset" data-start="#ff512f" data-end="#dd2476" style="background: linear-gradient(135deg, #ff512f, #dd2476);" title="Sonnenuntergang"></div>
-                        <div class="preset-pill shadow-sm gradient-preset" data-start="#212529" data-end="#495057" style="background: linear-gradient(135deg, #212529, #495057);" title="Mitternacht"></div>
+                        <div class="preset-pill shadow-sm gradient-preset" data-start="#6610f2" data-end="#0d6efd" data-primary="#0d6efd" style="background: linear-gradient(135deg, #6610f2, #0d6efd);" title="Standard Blau"></div>
+                        <div class="preset-pill shadow-sm gradient-preset" data-start="#11998e" data-end="#38ef7d" data-primary="#11998e" style="background: linear-gradient(135deg, #11998e, #38ef7d);" title="Smaragd Ozean"></div>
+                        <div class="preset-pill shadow-sm gradient-preset" data-start="#ff512f" data-end="#dd2476" data-primary="#ff512f" style="background: linear-gradient(135deg, #ff512f, #dd2476);" title="Sonnenuntergang"></div>
+                        <div class="preset-pill shadow-sm gradient-preset" data-start="#212529" data-end="#495057" data-primary="#212529" style="background: linear-gradient(135deg, #212529, #495057);" title="Mitternacht"></div>
                         <!-- Neue Harmonien -->
-                        <div class="preset-pill shadow-sm gradient-preset" data-start="#8e2de2" data-end="#4a00e0" style="background: linear-gradient(135deg, #8e2de2, #4a00e0);" title="Lila Traum"></div>
-                        <div class="preset-pill shadow-sm gradient-preset" data-start="#f2994a" data-end="#f2c94c" style="background: linear-gradient(135deg, #f2994a, #f2c94c);" title="Goldener Herbst"></div>
-                        <div class="preset-pill shadow-sm gradient-preset" data-start="#2980b9" data-end="#6dd5fa" style="background: linear-gradient(135deg, #2980b9, #6dd5fa);" title="Frostige Arktis"></div>
-                        <div class="preset-pill shadow-sm gradient-preset" data-start="#f093fb" data-end="#f5576c" style="background: linear-gradient(135deg, #f093fb, #f5576c);" title="Kirschblüte"></div>
+                        <div class="preset-pill shadow-sm gradient-preset" data-start="#8e2de2" data-end="#4a00e0" data-primary="#8e2de2" style="background: linear-gradient(135deg, #8e2de2, #4a00e0);" title="Lila Traum"></div>
+                        <div class="preset-pill shadow-sm gradient-preset" data-start="#f2994a" data-end="#f2c94c" data-primary="#f2994a" style="background: linear-gradient(135deg, #f2994a, #f2c94c);" title="Goldener Herbst"></div>
+                        <div class="preset-pill shadow-sm gradient-preset" data-start="#2980b9" data-end="#6dd5fa" data-primary="#2980b9" style="background: linear-gradient(135deg, #2980b9, #6dd5fa);" title="Frostige Arktis"></div>
+                        <div class="preset-pill shadow-sm gradient-preset" data-start="#f093fb" data-end="#f5576c" data-primary="#f5576c" style="background: linear-gradient(135deg, #f093fb, #f5576c);" title="Kirschblüte"></div>
                     </div>
                 </div>
 
@@ -132,40 +117,32 @@
 </script>
 
 <script>
-    const themeSelect = document.querySelector('[name="theme"]');
     const startInput = document.querySelector('[name="gradient_start"]');
     const endInput = document.querySelector('[name="gradient_end"]');
+    const primaryInput = document.querySelector('[name="primary_color"]');
+    const headerBgInput = document.querySelector('[name="table_header_bg_color"]');
     const preview = document.getElementById('harmonyPreview');
-    const themeGradients = JSON.parse(document.getElementById('theme-data').textContent);
 
-    function updatePreview(manual = false) {
-        if (!manual && themeSelect.value && themeGradients[themeSelect.value]) {
-            const colors = themeGradients[themeSelect.value];
-            startInput.value = colors.start;
-            endInput.value = colors.end;
-        }
-        
+    function updatePreview() {
         const s = startInput.value;
         const e = endInput.value;
-        preview.style.background = `linear-gradient(135deg, ${s} 0%, ${e} 100%)`;
+        if (preview) preview.style.background = `linear-gradient(135deg, ${s} 0%, ${e} 100%)`;
     }
 
-    themeSelect?.addEventListener('change', () => updatePreview(false));
-    startInput?.addEventListener('input', () => updatePreview(true));
-    endInput?.addEventListener('input', () => updatePreview(true));
+    startInput?.addEventListener('input', updatePreview);
+    endInput?.addEventListener('input', updatePreview);
 
     document.querySelectorAll('.gradient-preset').forEach(btn => {
         btn.addEventListener('click', () => {
-            startInput.value = btn.dataset.start;
-            endInput.value = btn.dataset.end;
-            // Wenn eine Harmonie gewählt wird, setzen wir das Thema auf "Standard" zurück
-            // damit die Farben dynamisch aus dem Gradient berechnet werden.
-            if (themeSelect) themeSelect.value = "";
-            updatePreview(true);
+            if (startInput) startInput.value = btn.dataset.start;
+            if (endInput) endInput.value = btn.dataset.end;
+            if (primaryInput) primaryInput.value = btn.dataset.primary;
+            if (headerBgInput) headerBgInput.value = btn.dataset.primary;
+            updatePreview();
         });
     });
 
-    updatePreview(true);
+    updatePreview();
 </script>
 
 <style>
