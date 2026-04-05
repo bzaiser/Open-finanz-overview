@@ -4,7 +4,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('core', '0009_userprofile_pension_increase'),
+        ('core', '0010_userprofile_physical_asset_growth_rate_and_more'),
     ]
 
     operations = [
