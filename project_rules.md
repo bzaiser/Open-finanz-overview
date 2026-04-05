@@ -22,3 +22,8 @@
   1. `https://github.com/bzaiser/finanzplan` (origin) $\rightarrow$ Branch: `master`
   2. `https://github.com/bzaiser/Open-finanz-overview` (public) $\rightarrow$ Branch: `main`
 - **Vorgehensweise**: Führe nach jedem Commit beide Pushes aus: `git push origin master:master` und `git push public master:main`.
+
+## Infrastructure & Environment
+- **NO Local Docker**: Es darf NIEMALS versucht werden, `docker` oder `docker-compose` Befehle lokal auszuführen. Es gibt keinen lokalen Docker-Daemon.
+- **NO Local Virtual Environment**: Es gibt keine lokale virtuelle Umgebung (`venv`). Python-Skripte dürfen nur direkt mit dem System-Python ausgeführt werden, falls nötig.
+- **Remote-Only Execution**: Alle produktiven Befehle (wie `update-fast.sh`) werden erst nach dem Push direkt auf dem Zielserver ausgeführt.
