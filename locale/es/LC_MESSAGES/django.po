@@ -2057,3 +2057,18 @@ msgstr "Fecha de finalización de la contribución"
 
 msgid "Date when you stop paying into this pension"
 msgstr "Fecha en la que deja de cotizar a esta pensión"
+
+msgid "Default Real Estate Growth (%)"
+msgstr "Crecimiento inmobiliario predeterminado (%)"
+
+msgid "Default Physical Asset Growth (%)"
+msgstr "Crecimiento de activos físicos predeterminado (%)"
+
+msgid "Sale Date"
+msgstr "Fecha de venta"
+
+msgid "Growth Real Estate (%)"
+msgstr "Crecimiento inmobiliario (%)"
+
+msgid "Decline Physical Assets (%)"
+msgstr "Depreciación de activos físicos (%)"

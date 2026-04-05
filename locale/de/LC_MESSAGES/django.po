@@ -2232,3 +2232,18 @@ msgstr "Beitragsende"
 
 msgid "Date when you stop paying into this pension"
 msgstr "Datum, an dem die Beitragszahlung für diese Rente endet"
+
+msgid "Default Real Estate Growth (%)"
+msgstr "Standard-Immobilienwachstum (%)"
+
+msgid "Default Physical Asset Growth (%)"
+msgstr "Standard-Sachwertwachstum (%)"
+
+msgid "Sale Date"
+msgstr "Verkaufsdatum"
+
+msgid "Growth Real Estate (%)"
+msgstr "Immobilienwachstum (%)"
+
+msgid "Decline Physical Assets (%)"
+msgstr "Wertminderung Sachwerte (%)"

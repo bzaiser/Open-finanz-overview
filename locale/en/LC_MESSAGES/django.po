@@ -2093,3 +2093,18 @@ msgstr "Contribution End Date"
 
 msgid "Date when you stop paying into this pension"
 msgstr "Date when you stop paying into this pension"
+
+msgid "Default Real Estate Growth (%)"
+msgstr "Default Real Estate Growth (%)"
+
+msgid "Default Physical Asset Growth (%)"
+msgstr "Default Physical Asset Growth (%)"
+
+msgid "Sale Date"
+msgstr "Sale Date"
+
+msgid "Growth Real Estate (%)"
+msgstr "Real Estate Growth (%)"
+
+msgid "Decline Physical Assets (%)"
+msgstr "Physical Asset Decline (%)"
