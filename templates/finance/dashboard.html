@@ -58,7 +58,7 @@
             {% csrf_token %}
             <div class="mb-3">
                 <label class="form-label fw-bold small text-muted text-uppercase d-flex align-items-center justify-content-between" style="font-size: 0.7rem;">
-                    {% trans "Stichtag" %}
+                    {% trans "Target Date" %}
                     <i class="bi bi-info-circle ms-1 text-primary cursor-pointer" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-container="body"
                        data-bs-title="{% trans 'Ankerdatum für die Simulation. Alle Berechnungen beziehen sich auf diesen Monat.' %}"></i>
                 </label>
@@ -135,16 +135,19 @@
 <script>
     // Initialize Tooltips
     function initTooltips() {
+        console.log("Initializing Tooltips...");
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
         tooltipTriggerList.forEach(function (tooltipTriggerEl) {
             bootstrap.Tooltip.getOrCreateInstance(tooltipTriggerEl, {
                 container: 'body',
-                trigger: 'hover'
+                boundary: 'viewport',
+                fallbackPlacements: ['top', 'right', 'bottom'],
+                trigger: 'hover focus'
             })
         });
     }
     document.addEventListener('DOMContentLoaded', initTooltips);
-    document.addEventListener('htmx:afterOnLoad', initTooltips);
+    document.addEventListener('htmx:afterSettle', initTooltips);
 
     // Close the simulation offcanvas after a successful HTMX update
     document.addEventListener('htmx:afterOnLoad', function(evt) {
@@ -157,6 +160,17 @@
         }
     });
 </script>
+
+<style>
+    .offcanvas-body {
+        padding: 1.5rem;
+    }
+    
+    /* Ensure tooltips are always on top of EVERYTHING */
+    .tooltip {
+        z-index: 2100 !important;
+    }
+</style>
 
 <div class="modal fade" id="configModal" tabindex="-1">
     <div class="modal-dialog modal-lg">

@@ -212,9 +212,5 @@
         }
         {% endif %}
         {% endfor %}
-        if (typeof bootstrap !== 'undefined') {
-            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-            tooltipTriggerList.map(function (t) { return new bootstrap.Tooltip(t); });
-        }
     })();
 </script>

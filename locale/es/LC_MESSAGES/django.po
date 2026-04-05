@@ -313,25 +313,21 @@ msgstr ""
 msgid "One-Time Event Table"
 msgstr ""
 
-#: finance/views.py:27
 msgid "Current Assets"
-msgstr ""
+msgstr "Activos actuales"
 
-#: finance/views.py:28
 msgid "Monthly Income"
-msgstr ""
+msgstr "Ingresos mensuales"
 
-#: finance/views.py:29
 msgid "Monthly Expenses"
-msgstr ""
+msgstr "Gastos mensuales"
 
 #: finance/views.py:30
 msgid "Total Pensions"
 msgstr ""
 
-#: finance/views.py:261
 msgid "One-Time Events"
-msgstr ""
+msgstr "Eventos únicos"
 
 #: finance/views.py:281
 msgid "Income"
@@ -534,9 +530,8 @@ msgstr ""
 msgid "Simulation"
 msgstr ""
 
-#: templates/finance/dashboard.html:44
 msgid "Changes here are temporary. Update your profile for permanent settings."
-msgstr ""
+msgstr "Cambios temporales."
 
 #: templates/finance/dashboard.html:50
 #, python-format
@@ -553,9 +548,8 @@ msgstr ""
 msgid "Inv. Return Offset (%%)"
 msgstr ""
 
-#: templates/finance/dashboard.html:68
 msgid "Update Simulation"
-msgstr ""
+msgstr "Actualizar"
 
 #: templates/finance/dashboard.html:82
 msgid "Configure Dashboard"
@@ -1659,18 +1653,14 @@ msgstr ""
 msgid "Connect, get help, or contribute"
 msgstr ""
 
-
 msgid "Pension Capital"
-msgstr "Capital de Pensión Ahorrado"
-
+msgstr "Capital de jubilación"
 
 msgid "Target Monthly Pension"
-msgstr "Pensión Mensual Objetivo"
-
+msgstr "Pensión objetivo"
 
 msgid "Current Pension"
-msgstr "Pensión Actual"
-
+msgstr "Pensión actual"
 
 msgid "Table Styling"
 msgstr "Estilos de Tabla"
@@ -1685,15 +1675,13 @@ msgid "Gesetzliche Rente"
 msgstr "Pensión pública"
 
 msgid "Private Kapital-Rente"
-msgstr "Pensión de capital privado"
-
+msgstr "Pensión de capital privada"
 
 msgid "Indexed (Inflation Adjustment)"
 msgstr "Indexado (Ajuste por inflación)"
 
 msgid "If checked, the payout will increase annually based on the global pension increase rate."
 msgstr "Si está marcado, el pago aumentará anualmente según la tasa global de aumento de las pensiones."
-
 
 msgid "Contribution End Date"
 msgstr "Fecha de finalización de la contribución"
@@ -1717,22 +1705,22 @@ msgid "Ankerdatum für die Simulation. Alle Berechnungen beziehen sich auf diese
 msgstr "Fecha de anclaje para la simulación. Todos los cálculos se refieren a este mes."
 
 msgid "Jährliche Inflationsrate. Reduziert die reale Kaufkraft Ihres Vermögens über die Zeit."
-msgstr "Tasa de inflación anual. Reduce el poder adquisitivo real de sus activos con el tiempo."
+msgstr "Tasa de inflación anual."
 
 msgid "Voraussichtliche jährliche Gehaltssteigerung in Prozent."
-msgstr "Aumento salarial anual previsto en porcentaje."
+msgstr "Aumento salarial anual previsto."
 
 msgid "Jährliche Rentenanpassung. Standardmäßig oft niedriger als die Inflation."
-msgstr "Ajuste anual de las pensiones. A menudo inferior a la inflación por defecto."
+msgstr "Ajuste anual de las pensiones."
 
 msgid "Zusätzliche Rendite auf Ihr liquides Anlagevermögen (z.B. Aktien, ETFs)."
-msgstr "Rendimiento adicional de sus activos de inversión líquidos (por ejemplo, acciones, ETF)."
+msgstr "Rendimiento adicional."
 
 msgid "Standardmäßige jährliche Wertsteigerung für Immobilien. Wird nur verwendet, wenn am Objekt selbst kein individueller Wert (0%) hinterlegt ist."
-msgstr "Plusvalía anual por defecto para bienes inmuebles. Solo se usa si no se especifica ningún valor individual (0%) en el propio objeto."
+msgstr "Valoración anual por defecto de los bienes inmuebles."
 
 msgid "Jährliche Wertminderung für Sachwerte (wie Autos). Wird nur verwendet, wenn am Objekt selbst kein individueller Wert (0%) hinterlegt ist. Tragen Sie hier positive Werte für Wertverlust ein."
-msgstr "Depreciación anual de activos físicos (como coches). Solo se usa si no se especifica ningún valor individual (0%) en el propio objeto. Introduzca aquí valores positivos para la pérdida de valor."
+msgstr "Depreciación anual de los activos físicos."
 
 msgid "Stichtag"
 msgstr "Fecha objetivo"
@@ -1758,3 +1746,11 @@ msgstr "Depreciación de activos físicos (%)"
 msgid "Reset to Defaults"
 msgstr "Restablecer"
 
+msgid "Target Date"
+msgstr "Fecha objetivo"
+
+msgid "Sachwerte"
+msgstr "Activos físicos"
+
+msgid "Immobilien"
+msgstr "Bienes inmuebles"

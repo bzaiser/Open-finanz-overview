@@ -312,25 +312,21 @@ msgstr ""
 msgid "One-Time Event Table"
 msgstr ""
 
-#: finance/views.py:27
 msgid "Current Assets"
-msgstr ""
+msgstr "Actifs actuels"
 
-#: finance/views.py:28
 msgid "Monthly Income"
-msgstr ""
+msgstr "Revenu mensuel"
 
-#: finance/views.py:29
 msgid "Monthly Expenses"
-msgstr ""
+msgstr "Dépenses mensuelles"
 
 #: finance/views.py:30
 msgid "Total Pensions"
 msgstr ""
 
-#: finance/views.py:261
 msgid "One-Time Events"
-msgstr ""
+msgstr "Événements ponctuels"
 
 #: finance/views.py:281
 msgid "Income"
@@ -533,9 +529,8 @@ msgstr ""
 msgid "Simulation"
 msgstr ""
 
-#: templates/finance/dashboard.html:44
 msgid "Changes here are temporary. Update your profile for permanent settings."
-msgstr ""
+msgstr "Modifications temporaires."
 
 #: templates/finance/dashboard.html:50
 #, python-format
@@ -552,9 +547,8 @@ msgstr ""
 msgid "Inv. Return Offset (%%)"
 msgstr ""
 
-#: templates/finance/dashboard.html:68
 msgid "Update Simulation"
-msgstr ""
+msgstr "Mettre à jour"
 
 #: templates/finance/dashboard.html:82
 msgid "Configure Dashboard"
@@ -1658,17 +1652,14 @@ msgstr ""
 msgid "Connect, get help, or contribute"
 msgstr ""
 
-
 msgid "Pension Capital"
-msgstr "Capital Retraite Épargné"
-
+msgstr "Capital de retraite"
 
 msgid "Target Monthly Pension"
-msgstr "Pension Mensuelle Cible"
-
+msgstr "Pension cible"
 
 msgid "Current Pension"
-msgstr "Pension Actuelle"
+msgstr "Pension actuelle"
 
 msgid "Liquid Assets"
 msgstr "Actifs Liquides"
@@ -1680,18 +1671,16 @@ msgid "Asset Allocation"
 msgstr "Allocation d'Actifs"
 
 msgid "Gesetzliche Rente"
-msgstr "Retraite d'État"
+msgstr "Pension publique"
 
 msgid "Private Kapital-Rente"
-msgstr "Retraite par capitalisation"
-
+msgstr "Pension de capital privée"
 
 msgid "Indexed (Inflation Adjustment)"
 msgstr "Indexé (Ajustement à l'inflation)"
 
 msgid "If checked, the payout will increase annually based on the global pension increase rate."
 msgstr "Si cette case est cochée, le versement augmentera annuellement en fonction du taux global d'augmentation des pensions."
-
 
 msgid "Contribution End Date"
 msgstr "Date de fin de cotisation"
@@ -1715,22 +1704,22 @@ msgid "Ankerdatum für die Simulation. Alle Berechnungen beziehen sich auf diese
 msgstr "Date d'ancrage pour la simulation. Tous les calculs se rapportent à ce mois."
 
 msgid "Jährliche Inflationsrate. Reduziert die reale Kaufkraft Ihres Vermögens über die Zeit."
-msgstr "Taux d'inflation annuel. Réduit le pouvoir d'achat réel de vos actifs au fil du temps."
+msgstr "Taux d'inflation annuel. Réduit le pouvoir d'achat réel."
 
 msgid "Voraussichtliche jährliche Gehaltssteigerung in Prozent."
-msgstr "Augmentation annuelle prévue des salaires en pourcentage."
+msgstr "Augmentation annuelle prévue du salaire."
 
 msgid "Jährliche Rentenanpassung. Standardmäßig oft niedriger als die Inflation."
-msgstr "Ajustement annuel des pensions. Souvent inférieur à l'inflation par défaut."
+msgstr "Revalorisation annuelle des pensions."
 
 msgid "Zusätzliche Rendite auf Ihr liquides Anlagevermögen (z.B. Aktien, ETFs)."
-msgstr "Rendement supplémentaire sur vos actifs de placement liquides (par ex. actions, ETF)."
+msgstr "Rendement supplémentaire sur vos actifs."
 
 msgid "Standardmäßige jährliche Wertsteigerung für Immobilien. Wird nur verwendet, wenn am Objekt selbst kein individueller Wert (0%) hinterlegt ist."
-msgstr "Plus-value annuelle par défaut pour l'immobilier. Utilisé uniquement si aucune valeur individuelle (0%) n'est spécifiée sur l'objet lui-même."
+msgstr "Plus-value annuelle par défaut pour l'immobilier."
 
 msgid "Jährliche Wertminderung für Sachwerte (wie Autos). Wird nur verwendet, wenn am Objekt selbst kein individueller Wert (0%) hinterlegt ist. Tragen Sie hier positive Werte für Wertverlust ein."
-msgstr "Amortissement annuel des actifs physiques (comme les voitures). Utilisé uniquement si aucune valeur individuelle (0%) n'est spécifiée sur l'objet lui-même. Saisissez ici des valeurs positives pour la perte de valeur."
+msgstr "Amortissement annuel des actifs physiques."
 
 msgid "Stichtag"
 msgstr "Date cible"
@@ -1756,3 +1745,11 @@ msgstr "Amortissement des actifs physiques (%)"
 msgid "Reset to Defaults"
 msgstr "Réinitialiser"
 
+msgid "Target Date"
+msgstr "Date cible"
+
+msgid "Sachwerte"
+msgstr "Actifs physiques"
+
+msgid "Immobilien"
+msgstr "Immobilier"
