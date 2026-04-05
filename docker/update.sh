@@ -41,9 +41,8 @@ docker compose --env-file ../.env up -d
 echo "Fixing permissions for data directory..."
 sudo chmod -R 777 ../data
 
-# Run database migrations
+# Run database migrations (from git)
 echo "Running database migrations..."
-docker compose --env-file ../.env exec web python3 manage.py makemigrations
 docker compose --env-file ../.env exec web python3 manage.py migrate
 docker compose --env-file ../.env exec web python3 manage.py createcachetable
 

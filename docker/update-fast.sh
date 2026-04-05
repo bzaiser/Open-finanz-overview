@@ -29,9 +29,12 @@ chmod -R 777 "$ROOT_DIR/data"
 # Move back to the docker folder for Docker operations
 cd "$SCRIPT_DIR"
 
-# Run database migrations (fast if no new ones)
+# Install potential new requirements (FAST update)
+echo "Syncing requirements..."
+docker compose --env-file ../.env exec web pip install -r requirements.txt
+
+# Run database migrations (from git)
 echo "Running database migrations..."
-docker compose --env-file ../.env exec web python3 manage.py makemigrations
 docker compose --env-file ../.env exec web python3 manage.py migrate
 docker compose --env-file ../.env exec web python3 manage.py createcachetable
 
