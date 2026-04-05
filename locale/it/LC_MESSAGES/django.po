@@ -546,10 +546,6 @@ msgstr ""
 #, python-format
 msgid "Inv. Return Offset (%%)"
 msgstr ""
-
-msgid "Update Simulation"
-msgstr "Aggiorna"
-
 #: templates/finance/dashboard.html:82
 msgid "Configure Dashboard"
 msgstr ""
@@ -1699,6 +1695,18 @@ msgstr "Data di vendita"
 
 msgid "Gesamtvermögen"
 msgstr "Patrimonio totale"
+msgid "Standardmäßige jährliche Wertsteigerung für Immobilien. Utilizzata solo se non è specificato alcun valore individuale (0%) sull'oggetto stesso."
+msgstr "Rivalutazione annua predefinita per gli immobili. Utilizzata solo se non è specificato alcun valore individuale (0%) sull'oggetto stesso."
+msgid "Stichtag"
+msgstr "Data obiettivo"
+msgid "Sachwerte"
+msgstr "Beni fisici"
+
+msgid "Immobilien"
+msgstr "Immobili"
+
+
+# --- Simulation Panel Translations ---
 
 msgid "Ankerdatum für die Simulation. Alle Berechnungen beziehen sich auf diesen Monat."
 msgstr "Data di ancoraggio per la simulazione. Tutti i calcoli si riferiscono a questo mese."
@@ -1710,18 +1718,18 @@ msgid "Voraussichtliche jährliche Gehaltssteigerung in Prozent."
 msgstr "Aumento salariale annuo previsto."
 
 msgid "Jährliche Rentenanpassung. Standardmäßig oft niedriger als die Inflation."
-msgstr "Rivalutazione annua delle pensioni."
+msgstr "Adeguamento annuo della pensione."
 
 msgid "Zusätzliche Rendite auf Ihr liquides Anlagevermögen (z.B. Aktien, ETFs)."
-msgstr "Rendimento aggiuntivo."
+msgstr "Rendimento aggiuntivo sulle vostre attività."
 
-msgid "Standardmäßige jährliche Wertsteigerung für Immobilien. Utilizzata solo se non è specificato alcun valore individuale (0%) sull'oggetto stesso."
-msgstr "Rivalutazione annua predefinita per gli immobili. Utilizzata solo se non è specificato alcun valore individuale (0%) sull'oggetto stesso."
+msgid "Standardmäßige jährliche Wertsteigerung für Immobilien. Wird nur verwendet, wenn am Objekt selbst kein individueller Wert (0%) hinterlegt ist."
+msgstr "Rivalutazione annua predefinita degli immobili."
 
 msgid "Jährliche Wertminderung für Sachwerte (wie Autos). Wird nur verwendet, wenn am Objekt selbst kein individueller Wert (0%) hinterlegt ist. Tragen Sie hier positive Werte für Wertverlust ein."
-msgstr "Ammortamento annuo per i beni fisici."
+msgstr "Deprezzamento annuo dei beni fisici."
 
-msgid "Stichtag"
+msgid "Target Date"
 msgstr "Data obiettivo"
 
 msgid "Inflation Rate (%)"
@@ -1731,28 +1739,19 @@ msgid "Salary Increase (%)"
 msgstr "Aumento salariale (%)"
 
 msgid "Pension Increase (%)"
-msgstr "Aumento della pensione (%)"
+msgstr "Aumento pensione (%)"
 
 msgid "Inv. Return Offset (%)"
-msgstr "Offset di rendimento (%)"
+msgstr "Offset rendimento (%)"
 
 msgid "Growth Real Estate (%)"
-msgstr "Rivalutazione immobiliare (%)"
+msgstr "Crescita immo (%)"
 
 msgid "Decline Physical Assets (%)"
-msgstr "Ammortamento beni fisici (%)"
+msgstr "Deprezzamento beni (%)"
+
+msgid "Update Simulation"
+msgstr "Aggiorna simulazione"
 
 msgid "Reset to Defaults"
 msgstr "Ripristina"
-
-msgid "Standardmäßige jährliche Wertsteigerung für Immobilien. Wird nur verwendet, wenn am Objekt selbst kein individueller Wert (0%) hinterlegt ist."
-msgstr "Rivalutazione annua predefinita per gli immobili."
-
-msgid "Target Date"
-msgstr "Data obiettivo"
-
-msgid "Sachwerte"
-msgstr "Beni fisici"
-
-msgid "Immobilien"
-msgstr "Immobili"

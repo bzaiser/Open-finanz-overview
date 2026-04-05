@@ -403,10 +403,6 @@ msgstr "About the Project"
 #: templates/core/about.html:23
 msgid "Personal Data Security"
 msgstr ""
-
-msgid "Update Simulation"
-msgstr "Update Simulation"
-
 #: templates/core/about.html:47
 msgid "Lead Developer & Architect"
 msgstr "Lead Developer & Architect"
@@ -1650,6 +1646,16 @@ msgstr "Sale Date"
 
 msgid "Gesamtvermögen"
 msgstr "Total Wealth"
+msgid "Stichtag"
+msgstr "Target Date"
+msgid "Sachwerte"
+msgstr "Physical Assets"
+
+msgid "Immobilien"
+msgstr "Real Estate"
+
+
+# --- Simulation Panel Translations ---
 
 msgid "Ankerdatum für die Simulation. Alle Berechnungen beziehen sich auf diesen Monat."
 msgstr "Anchor date for the simulation. All calculations refer to this month."
@@ -1667,12 +1673,12 @@ msgid "Zusätzliche Rendite auf Ihr liquides Anlagevermögen (z.B. Aktien, ETFs)
 msgstr "Additional return on your liquid investment assets (e.g. stocks, ETFs)."
 
 msgid "Standardmäßige jährliche Wertsteigerung für Immobilien. Wird nur verwendet, wenn am Objekt selbst kein individueller Wert (0%) hinterlegt ist."
-msgstr "Default annual appreciation for real estate. Only used if no individual value is specified."
+msgstr "Default annual appreciation for real estate. Only used if no individual value is set."
 
 msgid "Jährliche Wertminderung für Sachwerte (wie Autos). Wird nur verwendet, wenn am Objekt selbst kein individueller Wert (0%) hinterlegt ist. Tragen Sie hier positive Werte für Wertverlust ein."
-msgstr "Annual depreciation for physical assets (such as cars). Only used if no individual value is specified."
+msgstr "Annual depreciation for physical assets (e.g. cars). Only used if no individual value is set."
 
-msgid "Stichtag"
+msgid "Target Date"
 msgstr "Target Date"
 
 msgid "Inflation Rate (%)"
@@ -1693,14 +1699,8 @@ msgstr "Growth Real Estate (%)"
 msgid "Decline Physical Assets (%)"
 msgstr "Decline Physical Assets (%)"
 
+msgid "Update Simulation"
+msgstr "Update Simulation"
+
 msgid "Reset to Defaults"
 msgstr "Reset to Defaults"
-
-msgid "Target Date"
-msgstr "Target Date"
-
-msgid "Sachwerte"
-msgstr "Physical Assets"
-
-msgid "Immobilien"
-msgstr "Real Estate"

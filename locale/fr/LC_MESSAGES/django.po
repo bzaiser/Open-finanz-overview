@@ -546,10 +546,6 @@ msgstr ""
 #, python-format
 msgid "Inv. Return Offset (%%)"
 msgstr ""
-
-msgid "Update Simulation"
-msgstr "Mettre à jour"
-
 #: templates/finance/dashboard.html:82
 msgid "Configure Dashboard"
 msgstr ""
@@ -1699,12 +1695,22 @@ msgstr "Date de vente"
 
 msgid "Gesamtvermögen"
 msgstr "Patrimoine total"
+msgid "Stichtag"
+msgstr "Date cible"
+msgid "Sachwerte"
+msgstr "Actifs physiques"
+
+msgid "Immobilien"
+msgstr "Immobilier"
+
+
+# --- Simulation Panel Translations ---
 
 msgid "Ankerdatum für die Simulation. Alle Berechnungen beziehen sich auf diesen Monat."
 msgstr "Date d'ancrage pour la simulation. Tous les calculs se rapportent à ce mois."
 
 msgid "Jährliche Inflationsrate. Reduziert die reale Kaufkraft Ihres Vermögens über die Zeit."
-msgstr "Taux d'inflation annuel. Réduit le pouvoir d'achat réel."
+msgstr "Taux d'inflation annuel. Calcule la perte de pouvoir d'achat."
 
 msgid "Voraussichtliche jährliche Gehaltssteigerung in Prozent."
 msgstr "Augmentation annuelle prévue du salaire."
@@ -1721,35 +1727,29 @@ msgstr "Plus-value annuelle par défaut pour l'immobilier."
 msgid "Jährliche Wertminderung für Sachwerte (wie Autos). Wird nur verwendet, wenn am Objekt selbst kein individueller Wert (0%) hinterlegt ist. Tragen Sie hier positive Werte für Wertverlust ein."
 msgstr "Amortissement annuel des actifs physiques."
 
-msgid "Stichtag"
+msgid "Target Date"
 msgstr "Date cible"
 
 msgid "Inflation Rate (%)"
 msgstr "Taux d'inflation (%)"
 
 msgid "Salary Increase (%)"
-msgstr "Augmentation de salaire (%)"
+msgstr "Augmentation salaire (%)"
 
 msgid "Pension Increase (%)"
-msgstr "Augmentation de pension (%)"
+msgstr "Augmentation pension (%)"
 
 msgid "Inv. Return Offset (%)"
-msgstr "Offset de rendement (%)"
+msgstr "Offset rendement (%)"
 
 msgid "Growth Real Estate (%)"
-msgstr "Plus-value immobilière (%)"
+msgstr "Croissance immo (%)"
 
 msgid "Decline Physical Assets (%)"
-msgstr "Amortissement des actifs physiques (%)"
+msgstr "Amortissement actifs (%)"
+
+msgid "Update Simulation"
+msgstr "Actualiser la simulation"
 
 msgid "Reset to Defaults"
 msgstr "Réinitialiser"
-
-msgid "Target Date"
-msgstr "Date cible"
-
-msgid "Sachwerte"
-msgstr "Actifs physiques"
-
-msgid "Immobilien"
-msgstr "Immobilier"

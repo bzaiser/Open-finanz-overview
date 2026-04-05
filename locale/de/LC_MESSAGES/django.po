@@ -566,10 +566,6 @@ msgstr "Gehaltssteigerung (%%)"
 #, python-format
 msgid "Inv. Return Offset (%%)"
 msgstr "Anlage-Rendite Offset (%%)"
-
-msgid "Update Simulation"
-msgstr "Simulation aktualisieren"
-
 #: templates/finance/dashboard.html:88
 msgid "Configure Dashboard"
 msgstr "Dashboard konfigurieren"
@@ -1692,13 +1688,6 @@ msgstr "Ziel-Rente (Monat)"
 
 msgid "Current Pension"
 msgstr "Aktuelle Rente"
-
-msgid "Pension Increase (%)"
-msgstr "Rentensteigerung (%)"
-
-msgid "Inv. Return Offset (%)"
-msgstr "Rendite-Offset (%)"
-
 msgid "Stichtag"
 msgstr "Stichtag"
 
@@ -1806,15 +1795,22 @@ msgstr "Standard-Sachwertwachstum (%)"
 
 msgid "Sale Date"
 msgstr "Verkaufsdatum"
-
-msgid "Growth Real Estate (%)"
-msgstr "Immobilienwachstum (%)"
-
-msgid "Decline Physical Assets (%)"
-msgstr "Wertminderung Sachwerte (%)"
-
 msgid "Gesamtvermögen"
 msgstr "Gesamtvermögen"
+msgid "Sachwerte"
+msgstr "Sachwerte (Gesamt)"
+
+msgid "Immobilien"
+msgstr "Immobilien (Gesamt)"
+
+msgid "Gesetzliche Rente"
+msgstr "Gesetzliche Rente"
+
+msgid "Private Kapital-Rente"
+msgstr "Private Kapital-Rente"
+
+
+# --- Simulation Panel Translations ---
 
 msgid "Ankerdatum für die Simulation. Alle Berechnungen beziehen sich auf diesen Monat."
 msgstr "Ankerdatum für die Simulation. Alle Berechnungen beziehen sich auf diesen Monat."
@@ -1837,26 +1833,29 @@ msgstr "Standardmäßige jährliche Wertsteigerung für Immobilien. Wird nur ver
 msgid "Jährliche Wertminderung für Sachwerte (wie Autos). Wird nur verwendet, wenn am Objekt selbst kein individueller Wert (0%) hinterlegt ist. Tragen Sie hier positive Werte für Wertverlust ein."
 msgstr "Jährliche Wertminderung für Sachwerte (wie Autos). Wird nur verwendet, wenn am Objekt selbst kein individueller Wert (0%) hinterlegt ist."
 
+msgid "Target Date"
+msgstr "Stichtag"
+
 msgid "Inflation Rate (%)"
 msgstr "Inflationsrate (%)"
 
 msgid "Salary Increase (%)"
 msgstr "Gehaltssteigerung (%)"
 
+msgid "Pension Increase (%)"
+msgstr "Rentensteigerung (%)"
+
+msgid "Inv. Return Offset (%)"
+msgstr "Rendite-Offset (%)"
+
+msgid "Growth Real Estate (%)"
+msgstr "Immobilienwachstum (%)"
+
+msgid "Decline Physical Assets (%)"
+msgstr "Wertverlust Sachwerte (%)"
+
+msgid "Update Simulation"
+msgstr "Simulation aktualisieren"
+
 msgid "Reset to Defaults"
-msgstr "Auf Standardwerte zurücksetzen"
-
-msgid "Target Date"
-msgstr "Stichtag"
-
-msgid "Sachwerte"
-msgstr "Sachwerte (Gesamt)"
-
-msgid "Immobilien"
-msgstr "Immobilien (Gesamt)"
-
-msgid "Gesetzliche Rente"
-msgstr "Gesetzliche Rente"
-
-msgid "Private Kapital-Rente"
-msgstr "Private Kapital-Rente"
+msgstr "Auf Standard zurücksetzen"

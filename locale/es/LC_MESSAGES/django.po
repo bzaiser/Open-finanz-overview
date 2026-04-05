@@ -547,10 +547,6 @@ msgstr ""
 #, python-format
 msgid "Inv. Return Offset (%%)"
 msgstr ""
-
-msgid "Update Simulation"
-msgstr "Actualizar"
-
 #: templates/finance/dashboard.html:82
 msgid "Configure Dashboard"
 msgstr ""
@@ -1700,6 +1696,16 @@ msgstr "Fecha de venta"
 
 msgid "Gesamtvermögen"
 msgstr "Patrimonio total"
+msgid "Stichtag"
+msgstr "Fecha objetivo"
+msgid "Sachwerte"
+msgstr "Activos físicos"
+
+msgid "Immobilien"
+msgstr "Bienes inmuebles"
+
+
+# --- Simulation Panel Translations ---
 
 msgid "Ankerdatum für die Simulation. Alle Berechnungen beziehen sich auf diesen Monat."
 msgstr "Fecha de anclaje para la simulación. Todos los cálculos se refieren a este mes."
@@ -1708,21 +1714,21 @@ msgid "Jährliche Inflationsrate. Reduziert die reale Kaufkraft Ihres Vermögens
 msgstr "Tasa de inflación anual."
 
 msgid "Voraussichtliche jährliche Gehaltssteigerung in Prozent."
-msgstr "Aumento salarial anual previsto."
+msgstr "Aumento anual previsto del salario."
 
 msgid "Jährliche Rentenanpassung. Standardmäßig oft niedriger als die Inflation."
 msgstr "Ajuste anual de las pensiones."
 
 msgid "Zusätzliche Rendite auf Ihr liquides Anlagevermögen (z.B. Aktien, ETFs)."
-msgstr "Rendimiento adicional."
+msgstr "Rendimiento adicional de sus inversiones."
 
 msgid "Standardmäßige jährliche Wertsteigerung für Immobilien. Wird nur verwendet, wenn am Objekt selbst kein individueller Wert (0%) hinterlegt ist."
-msgstr "Valoración anual por defecto de los bienes inmuebles."
+msgstr "Aumento anual por defecto del valor de los bienes inmuebles."
 
 msgid "Jährliche Wertminderung für Sachwerte (wie Autos). Wird nur verwendet, wenn am Objekt selbst kein individueller Wert (0%) hinterlegt ist. Tragen Sie hier positive Werte für Wertverlust ein."
 msgstr "Depreciación anual de los activos físicos."
 
-msgid "Stichtag"
+msgid "Target Date"
 msgstr "Fecha objetivo"
 
 msgid "Inflation Rate (%)"
@@ -1732,25 +1738,19 @@ msgid "Salary Increase (%)"
 msgstr "Aumento salarial (%)"
 
 msgid "Pension Increase (%)"
-msgstr "Aumento de pensión (%)"
+msgstr "Aumento pensión (%)"
 
 msgid "Inv. Return Offset (%)"
-msgstr "Offset de rendimiento (%)"
+msgstr "Offset rendimiento (%)"
 
 msgid "Growth Real Estate (%)"
-msgstr "Plusvalía inmobiliaria (%)"
+msgstr "Crecimiento immo (%)"
 
 msgid "Decline Physical Assets (%)"
-msgstr "Depreciación de activos físicos (%)"
+msgstr "Depreciación activos (%)"
+
+msgid "Update Simulation"
+msgstr "Actualizar simulación"
 
 msgid "Reset to Defaults"
 msgstr "Restablecer"
-
-msgid "Target Date"
-msgstr "Fecha objetivo"
-
-msgid "Sachwerte"
-msgstr "Activos físicos"
-
-msgid "Immobilien"
-msgstr "Bienes inmuebles"
