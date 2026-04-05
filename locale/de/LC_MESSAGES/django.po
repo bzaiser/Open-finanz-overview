@@ -1849,10 +1849,10 @@ msgid "Inv. Return Offset (%)"
 msgstr "Rendite-Offset (%)"
 
 msgid "Growth Real Estate (%)"
-msgstr "Immobilienwachstum (%)"
+msgstr "Wertsteigerung Immobilien %"
 
 msgid "Decline Physical Assets (%)"
-msgstr "Wertverlust Sachwerte (%)"
+msgstr "Wertminderung Sachwerte %"
 
 msgid "Update Simulation"
 msgstr "Simulation aktualisieren"
