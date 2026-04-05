@@ -275,7 +275,7 @@ class SimulationEngine:
             physical_asset_total = sum(item['balance'] for item in physical_assets_state)
             real_estate_total = sum(item['balance'] for item in real_estates_state)
             
-            total_nominal = asset_total + pension_total + physical_asset_total + real_estate_total + accumulated_cash
+            total_nominal = asset_total + pension_total + accumulated_cash
             
             # Inflation Factor for Real Value (Purchasing Power relative to Stichtag)
             inflation_factor = (1 + self.inflation_rate) ** year_from_stichtag
