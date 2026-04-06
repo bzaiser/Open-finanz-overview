@@ -155,9 +155,8 @@ class ExcelParserService:
 
             # 3. Smart Grouping with user filters
             self._log(batch, "Gruppiere Buchungen nach Monat und Filtern...")
-            # Filter for expenses only as requested
-            df_expenses = df[df['amount'] < 0].copy()
-            groups = self._group_transactions(df_expenses)
+            # We take all transactions (income and expenses) for comprehensive reconciliation
+            groups = self._group_transactions(df)
             self._log(batch, f"Gruppierung abgeschlossen: {len(groups)} Monatssummen gebildet.")
 
             # 3. Create or use ImportBatch
@@ -173,14 +172,10 @@ class ExcelParserService:
 
             for idx, group in enumerate(groups):
                 is_income = group['total_amount'] > 0
-                is_ignored = False
                 ai_reasoning = f"Gruppiert aus {group['count']} Einzelbuchungen."
                 
                 # --- DUPLICATE DETECTION against CashFlowSource ---
-                # Check for same user, same category/name and approx same date (month/year)
-                # We check the entire month of group['latest_date']
                 m_start = group['latest_date'].replace(day=1)
-                
                 exists = CashFlowSource.objects.filter(
                     user=self.user,
                     name__icontains=group['base_desc'],
@@ -189,9 +184,9 @@ class ExcelParserService:
                 ).exists()
 
                 # --- AUTO-IGNORE logic ---
-                # Only mark as "not ignored" (i.e., selected for import) if a category is set
-                # or if it's explicitly matched by a filter.
-                is_selected = True if group.get('category') and not exists else False
+                # We ONLY ignore automatically if it definitely exists already (Duplicate).
+                # All other items (even unassigned) must stay visible for reconciliation.
+                is_ignored = True if exists else False
                 
                 pending = PendingTransaction(
                     batch=batch,
@@ -200,8 +195,8 @@ class ExcelParserService:
                     amount=group['total_amount'],
                     is_income=is_income,
                     category=group.get('category'),
-                    is_ignored=not is_selected, # If not selected, it's ignored
-                    is_recurring=True, # Default to recurring for CashFlowSource target
+                    is_ignored=is_ignored,
+                    is_recurring=True,
                     frequency='monthly',
                     ai_reasoning=ai_reasoning
                 )
