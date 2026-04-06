@@ -32,7 +32,6 @@ docker compose --env-file .env exec web pip install -q --no-cache-dir -r require
 
 # Run database migrations
 echo "Ensuring database migrations are up to date..."
-docker compose --env-file .env exec web python3 manage.py makemigrations --noinput --verbosity 0
 docker compose --env-file .env exec web python3 manage.py migrate --verbosity 0
 docker compose --env-file .env exec web python3 manage.py createcachetable --verbosity 0
 
