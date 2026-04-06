@@ -54,27 +54,27 @@
                     </div>
                 </div>
                 
-                <div id="mapping-pane">
-                    <!-- Quick Filter Chips -->
-                    {% if filters %}
-                    <div id="quick-filter-bar" class="px-3 py-2 bg-light border-bottom d-flex align-items-center bg-opacity-50">
-                        <span class="small text-muted me-3 fw-bold">{% trans "Filter-Vorschläge:" %}</span>
-                        <div id="quick-filter-container" class="d-flex flex-nowrap gap-2 overflow-auto py-1 scrollbar-thin" style="max-width: calc(100% - 100px);">
-                            {% for f in filters %}
-                            <button class="btn btn-sm badge-chip quick-filter-chip animate__animated animate__fadeIn"
-                                    type="button"
-                                    data-search="{{ f.search_query }}"
-                                    data-target-name="{{ f.target_name }}"
-                                    data-category-id="{{ f.category.id|default:'' }}"
-                                    style="--cat-color: {{ f.category.color|default:'#6c757d' }};"
-                                    onclick="applyQuickFilterFromButton(this)">
-                                <i class="bi bi-tag-fill me-1 small"></i>{{ f.target_name }}
-                            </button>
-                            {% endfor %}
-                        </div>
+                {% if filters %}
+                <!-- Quick Filter Chips (Persistent) -->
+                <div id="quick-filter-bar" class="px-3 py-2 bg-light border-bottom d-flex align-items-center bg-opacity-50">
+                    <span class="small text-muted me-3 fw-bold">{% trans "Filter-Vorschläge:" %}</span>
+                    <div id="quick-filter-container" class="d-flex flex-nowrap gap-2 overflow-auto py-1 scrollbar-thin" style="max-width: calc(100% - 100px);">
+                        {% for f in filters %}
+                        <button class="btn btn-sm badge-chip quick-filter-chip animate__animated animate__fadeIn"
+                                type="button"
+                                data-search="{{ f.search_query }}"
+                                data-target-name="{{ f.target_name }}"
+                                data-category-id="{{ f.category.id|default:'' }}"
+                                style="--cat-color: {{ f.category.color|default:'#6c757d' }};"
+                                onclick="applyQuickFilterFromButton(this)">
+                            <i class="bi bi-tag-fill me-1 small"></i>{{ f.target_name }}
+                        </button>
+                        {% endfor %}
                     </div>
-                    {% endif %}
-                    
+                </div>
+                {% endif %}
+
+                <div id="mapping-pane">
                     {% include 'finance/partials/import_mapping_pane.html' with transactions=mapping_list %}
                 </div>
             </div>
