@@ -57,16 +57,17 @@
                 <div id="mapping-pane">
                     <!-- Quick Filter Chips -->
                     {% if filters %}
-                    <div id="quick-filter-bar" class="px-3 py-2 bg-light border-bottom d-flex align-items-center bg-opacity-50" style="display: none !important;">
+                    <div id="quick-filter-bar" class="px-3 py-2 bg-light border-bottom d-flex align-items-center bg-opacity-50">
                         <span class="small text-muted me-3 fw-bold">{% trans "Filter-Vorschläge:" %}</span>
                         <div id="quick-filter-container" class="d-flex flex-nowrap gap-2 overflow-auto py-1 scrollbar-thin" style="max-width: calc(100% - 100px);">
                             {% for f in filters %}
                             <button class="btn btn-sm badge-chip quick-filter-chip animate__animated animate__fadeIn"
                                     type="button"
-                                    data-query="{{ f.search_query|lower }}"
-                                    data-target="{{ f.target_name|lower }}"
+                                    data-search="{{ f.search_query }}"
+                                    data-target-name="{{ f.target_name }}"
+                                    data-category-id="{{ f.category.id|default:'' }}"
                                     style="--cat-color: {{ f.category.color|default:'#6c757d' }};"
-                                    onclick="applyQuickFilter('{{ f.search_query|escapejs }}', '{{ f.target_name|escapejs }}', '{{ f.category.id|default:'' }}')">
+                                    onclick="applyQuickFilterFromButton(this)">
                                 <i class="bi bi-tag-fill me-1 small"></i>{{ f.target_name }}
                             </button>
                             {% endfor %}
@@ -174,26 +175,34 @@
         const q = (query || "").toLowerCase().trim();
         const chips = document.querySelectorAll('.quick-filter-chip');
         const bar = document.getElementById('quick-filter-bar');
-        let visibleCount = 0;
+        if (!bar) return;
 
+        let anyVisible = false;
         chips.forEach(chip => {
-            const terms = (chip.dataset.query + ' ' + chip.dataset.target).toLowerCase();
-            if (q && terms.includes(q)) {
+            const terms = (chip.dataset.search + ' ' + chip.dataset.targetName).toLowerCase();
+            if (!q || terms.includes(q)) {
                 chip.classList.remove('d-none');
-                visibleCount++;
+                anyVisible = true;
             } else {
                 chip.classList.add('d-none');
             }
         });
 
-        // Toggle bar visibility
-        if (bar) {
-            if (visibleCount > 0) {
-                bar.setAttribute('style', 'display: flex !important;');
-            } else {
-                bar.setAttribute('style', 'display: none !important;');
-            }
-        }
+        // Always show bar if there are chips at all? 
+        // User wants them "da", so we show the bar if any chip matches the search (or if search is empty)
+        bar.style.display = anyVisible ? 'flex' : 'none';
+        bar.style.setProperty('display', anyVisible ? 'flex' : 'none', 'important');
+    }
+
+    /**
+     * Helper for chip click
+     */
+    function applyQuickFilterFromButton(btn) {
+        applyQuickFilter(
+            btn.getAttribute('data-search'),
+            btn.getAttribute('data-target-name'),
+            btn.getAttribute('data-category-id')
+        );
     }
 
     /**
