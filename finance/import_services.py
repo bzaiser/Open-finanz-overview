@@ -188,10 +188,13 @@ class ExcelParserService:
                 # All other items (even unassigned) must stay visible for reconciliation.
                 is_ignored = True if exists else False
                 
+                # Use raw description for unassigned items, but grouped description for filtered ones
+                display_desc = group.get('raw_desc') if group.get('category') is None else group['description']
+                
                 pending = PendingTransaction(
                     batch=batch,
                     date=group['latest_date'],
-                    description=str(group['description'])[:500],
+                    description=str(display_desc)[:500],
                     amount=group['total_amount'],
                     is_income=is_income,
                     category=group.get('category'),
@@ -237,12 +240,17 @@ class ExcelParserService:
         df['_year'] = df['date'].dt.year
 
         groups_dict = {}
-        for _, row in df.iterrows():
+        for index, row in df.iterrows():
             # Use pd.isna to handle NaN values from pandas expansion
             cat = row['_group_category'] if pd.notna(row['_group_category']) else None
             desc_val = str(row['_group_key']) if pd.notna(row['_group_key']) else "Unkategorisiert"
             
-            key = (desc_val, row['_year'], row['_month'])
+            # UNIQUE KEY for unassigned items to avoid pre-grouping
+            if cat is None:
+                key = (f"RAW_{index}", row['_year'], row['_month'], desc_val)
+            else:
+                key = (desc_val, row['_year'], row['_month'])
+                
             if key not in groups_dict:
                 groups_dict[key] = {
                     'description': desc_val,
@@ -250,7 +258,8 @@ class ExcelParserService:
                     'total_amount': Decimal('0.00'),
                     'count': 0,
                     'latest_date': row['date'].date(),
-                    'category': cat
+                    'category': cat,
+                    'raw_desc': str(row['description']) # Keep raw for mapping
                 }
             
             groups_dict[key]['total_amount'] += Decimal(str(row['amount']))
