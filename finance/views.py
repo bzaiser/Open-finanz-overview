@@ -1310,3 +1310,36 @@ def delete_import_filter(request, filter_id):
     f.delete()
     messages.success(request, _("Filter gelöscht."))
     return redirect('import_filters_list')
+
+@login_required
+def quick_create_category(request):
+    """
+    HTMX view to create a category and return an OOB swap for all dropdowns.
+    """
+    if request.method == 'POST':
+        name = request.POST.get('name', '').strip()
+        color = request.POST.get('color', '#6c757d')
+        
+        if not name:
+            return HttpResponse('<div class="alert alert-danger small p-2">Name fehlt!</div>', status=400)
+            
+        category = Category.objects.create(name=name, color=color)
+        
+        # Build OOB response for ALL category dropdowns
+        # 1. Update the original dropdown (regular response)
+        # 2. Update OTHER dropdowns (OOB)
+        # We'll return a special fragment that hx-swap-oob="beforeend:.category-select"
+        
+        new_option = f'<option value="{category.id}" selected>{category.name}</option>'
+        
+        html = f'''
+            {new_option}
+            <div hx-swap-oob="beforeend:.category-select">
+                {new_option}
+            </div>
+            <div hx-swap-oob="innerHTML:#quick-cat-msg">
+                <span class="text-success small"><i class="bi bi-check-circle"></i> Kategorie "{name}" erstellt!</span>
+            </div>
+        '''
+        return HttpResponse(html)
+    return HttpResponse(status=405)

@@ -47,12 +47,17 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label small fw-bold">{% trans "Kategorie" %}</label>
-                            <select name="category" class="form-select">
-                                <option value="">---------</option>
-                                {% for cat in categories %}
-                                <option value="{{ cat.id }}">{{ cat.name }}</option>
-                                {% endfor %}
-                            </select>
+                            <div class="input-group">
+                                <select name="category" class="form-select category-select">
+                                    <option value="">---------</option>
+                                    {% for cat in categories %}
+                                    <option value="{{ cat.id }}">{{ cat.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#quickCategoryModal" title="{% trans 'Neue Kategorie anlegen' %}">
+                                    <i class="bi bi-plus-lg"></i>
+                                </button>
+                            </div>
                         </div>
                         <button type="submit" class="btn btn-primary w-100 fw-bold">
                             <i class="bi bi-plus-lg me-1"></i> {% trans "Filter speichern" %}
@@ -142,12 +147,17 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label small fw-bold">{% trans "Kategorie" %}</label>
-                        <select id="edit_category" name="category" class="form-select">
-                            <option value="">---------</option>
-                            {% for cat in categories %}
-                            <option value="{{ cat.id }}">{{ cat.name }}</option>
-                            {% endfor %}
-                        </select>
+                        <div class="input-group">
+                            <select id="edit_category" name="category" class="form-select category-select">
+                                <option value="">---------</option>
+                                {% for cat in categories %}
+                                <option value="{{ cat.id }}">{{ cat.name }}</option>
+                                {% endfor %}
+                            </select>
+                            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#quickCategoryModal" title="{% trans 'Neue Kategorie anlegen' %}">
+                                <i class="bi bi-plus-lg"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer bg-light">
@@ -201,4 +211,38 @@
     }
     .x-small { font-size: 0.75rem; }
 </style>
+
+<!-- Quick Category Modal -->
+<div class="modal fade" id="quickCategoryModal" tabindex="-1" aria-hidden="true" style="z-index: 1060;">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 15px; overflow: hidden;">
+            <form hx-post="{% url 'quick_create_category' %}" 
+                  hx-target=".category-select" 
+                  hx-swap="beforeend"
+                  hx-on::after-request="if(event.detail.successful) { bootstrap.Modal.getInstance(document.getElementById('quickCategoryModal')).hide(); this.reset(); }"
+                  hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+                <div class="modal-header bg-dark text-white py-2 border-0">
+                    <h6 class="modal-title fw-bold">{% trans "Neue Kategorie" %}</h6>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-3">
+                    <div id="quick-cat-msg"></div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">{% trans "Name" %}</label>
+                        <input type="text" name="name" class="form-control form-control-sm border-primary" placeholder="z.B. Sonstiges" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">{% trans "Farbe (Standard: Grau)" %}</label>
+                        <input type="color" name="color" class="form-control form-control-color w-100 border-0 p-0" style="height: 40px;" value="#6c757d" title="{% trans 'Farbe wählen' %}">
+                    </div>
+                </div>
+                <div class="modal-footer bg-light border-0 py-2">
+                    <button type="submit" class="btn btn-sm btn-primary w-100 fw-bold shadow-sm">
+                        <i class="bi bi-check2-circle me-1"></i> {% trans "Kategorie erstellen" %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}
