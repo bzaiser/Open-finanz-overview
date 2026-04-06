@@ -8,7 +8,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        # UserProfile fields
+        # UserProfile - Field additions
         migrations.AddField(
             model_name='userprofile',
             name='primary_color',
@@ -60,7 +60,7 @@ class Migration(migrations.Migration):
             field=models.DecimalField(decimal_places=2, default=0.0, max_digits=5, verbose_name='Default Real Estate Growth (%)'),
         ),
 
-        # Theme fields
+        # Theme - Field additions
         migrations.AddField(
             model_name='theme',
             name='primary_color',
@@ -100,5 +100,17 @@ class Migration(migrations.Migration):
             model_name='theme',
             name='table_border_color',
             field=models.CharField(default='#dee2e6', max_length=7, verbose_name='Table Border Color'),
+        ),
+
+        # Altering existing fields to match final model state (removing help_text if needed)
+        migrations.AlterField(
+            model_name='userprofile',
+            name='gradient_end',
+            field=models.CharField(default='#0d6efd', max_length=7, verbose_name='Gradient End Color'),
+        ),
+        migrations.AlterField(
+            model_name='userprofile',
+            name='gradient_start',
+            field=models.CharField(default='#6610f2', max_length=7, verbose_name='Gradient Start Color'),
         ),
     ]
