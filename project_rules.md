@@ -34,11 +34,19 @@
 - **Linearitäts-Gebot**: Beide Repositories müssen exakt dieselbe Migrations-Historie teilen. Wenn ein Repo voraus ist, muss das andere Repo erst auf denselben Stand gebracht werden.
 - **STRICT Push-First Rule**: Bevor dem Nutzer eine Antwort, Rückmeldung oder Erklärung gesendet wird, MÜSSEN alle Code-Änderungen zwingend auf allen oben genannten Branches/Remotes (`origin/main`, `origin/master`, `public/main`, `public/master`) erfolgreich gepusht sein. Erklärungen folgen immer ERST NACH dem erfolgreichen Push.
 
+## Standard-Workflow (Interne Agent-Regeln)
+Der Agent folgt bei JEDER Aufgabe strikt diesem Ablauf:
+1. **Research & Analyse**: Gründliches Verständnis des Problems und der Code-Basis.
+2. **Implementierung**: Durchführung der Code-Änderungen.
+3. **Commit & Push-First**:
+   - Änderungen committen.
+   - **ERST** Push auf alle 4 Ziele (`origin/main`, `origin/master`, `public/main`, `public/master`) erfolgreich abschließen.
+4. **Antwort an Nutzer**: Erst nach dem erfolgreichen Push erfolgt die Rückmeldung oder Erklärung an den Nutzer.
+
 ## Infrastructure & Environment
 - **STRICT: NO Local Docker**: Es darf NIEMALS versucht werden, `docker` oder `docker-compose` Befehle lokal auszuführen. Es darf auch NICHT nach einem lokalen Docker-Daemon gesucht werden. 
-- **Migrationen**: Datenbank-Migrationen (`makemigrations`, `migrate`) werden niemals lokal ausgeführt. Diese erfolgen ausschließlich auf dem Remote-System über die dortigen Update-Scripte.
-- **KEINE Lokalen Installationen**: Führe niemals `pip install`, `npm install`, `apt-get install` oder andere Installationsbefehle lokal aus. Abhängigkeiten werden ausschließlich über das Docker-System auf dem Zielserver verwaltet.
-- **NO Local Virtual Environment**: Es gibt keine lokale virtuelle Umgebung (`venv`). Python-Skripte dürfen nur direkt mit dem System-Python ausgeführt werden, falls nötig.
+- **Migrationen**: Datenbank-Migrationen (`makemigrations`, `migrate`) werden NIEMALS vom Agenten ausgeführt. Diese erfolgen ausschließlich durch den Nutzer auf dem Remote-System über die dortigen Update-Scripte (z.B. `update-fast.sh`).
+- **KEINE Lokalen Installationen**: Führe niemals `pip install`, `npm install`, `apt-get install` oder andere Installationsbefehle lokal aus. 
 - **Remote-Only Execution**: Alle produktiven Befehle (wie `update-fast.sh`) werden erst nach dem Push direkt auf dem Zielserver ausgeführt.
 
 ## Troubleshooting & Support
