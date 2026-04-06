@@ -100,8 +100,8 @@ def dashboard_view(request):
         return {**defaults, **user_data}
 
     # 0. Ensure specific categories exist for the split pension view
-    Category.objects.get_or_create(name=str(_('Gesetzliche Rente')), defaults={'color': '#0d6efd', 'slug': 'gesetzliche-rente'})
-    Category.objects.get_or_create(name=str(_('Private Kapital-Rente')), defaults={'color': '#0dcaf0', 'slug': 'private-kapital-rente'})
+    Category.objects.get_or_create(slug='gesetzliche-rente', defaults={'name': _('Gesetzliche Rente'), 'color': '#0d6efd', 'is_system': True})
+    Category.objects.get_or_create(slug='private-kapital-rente', defaults={'name': _('Private Kapital-Rente'), 'color': '#0dcaf0', 'is_system': True})
 
     # Initialize or get Dashboard Config
     dashboard_config = profile.dashboard_config or {}
