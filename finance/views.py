@@ -1301,8 +1301,8 @@ def add_import_filter(request):
         batch_id = request.POST.get('batch_id')
         cf_id = request.POST.get('linked_cash_flow')
         
-        category = Category.objects.filter(id=cat_id).first()
-        linked_cf = CashFlowSource.objects.filter(id=cf_id, user=request.user).first()
+        category = Category.objects.filter(id=cat_id).first() if cat_id else None
+        linked_cf = CashFlowSource.objects.filter(id=cf_id, user=request.user).first() if cf_id else None
         
         f = ImportFilter.objects.create(
             user=request.user,
@@ -1334,9 +1334,9 @@ def edit_import_filter(request, filter_id):
         f.search_query = request.POST.get('search_query')
         f.target_name = request.POST.get('target_name')
         cat_id = request.POST.get('category')
-        f.category = Category.objects.filter(id=cat_id).first()
+        f.category = Category.objects.filter(id=cat_id).first() if cat_id else None
         cf_id = request.POST.get('linked_cash_flow')
-        f.linked_cash_flow = CashFlowSource.objects.filter(id=cf_id, user=request.user).first()
+        f.linked_cash_flow = CashFlowSource.objects.filter(id=cf_id, user=request.user).first() if cf_id else None
         f.save()
         messages.success(request, _("Filter erfolgreich geändert."))
         
