@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse
 from django.template.loader import render_to_string
+from django.urls import reverse
 from django.core.cache import cache
 from django.utils import timezone, translation
 from django.utils.translation import gettext_lazy as _, gettext as _eager
@@ -1057,17 +1058,19 @@ def get_import_progress(request):
     '''
     
     if is_finished:
+        review_url = reverse('review_transactions', args=[latest_batch.id])
         html += f'''
         <p class="text-center mt-2 text-success fw-bold">
             <i class="bi bi-check-circle-fill me-1"></i>{_eager("Analyse abgeschlossen!")}
         </p>
         <div class="mt-4 animate__animated animate__bounceIn">
-            <a href="/finance/import/review/{latest_batch.id}/" class="btn btn-success fw-bold shadow-lg px-5 py-3">
+            <a href="{review_url}" class="btn btn-success fw-bold shadow-lg px-5 py-3">
                 <i class="bi bi-check-all me-2"></i>{_eager("Buchungen ansehen")}
             </a>
         </div>
         '''
     elif is_error:
+        upload_url = reverse('import_transactions')
         error_msg = cache.get(f"import_error_{request.user.id}", _eager("Unbekannter Fehler"))
         html += f'''
         <p class="text-center mt-2 text-danger fw-bold">{_eager("Analyse fehlgeschlagen")}</p>
@@ -1075,13 +1078,23 @@ def get_import_progress(request):
             <code>{error_msg}</code>
         </div>
         <div class="mt-3">
-            <a href="/finance/import/" class="btn btn-outline-danger btn-sm px-4">
+            <a href="{upload_url}" class="btn btn-outline-danger btn-sm px-4">
                 <i class="bi bi-arrow-left me-2"></i>{_eager("Zurück zum Upload")}
             </a>
         </div>
         '''
     else:
-        html += f'<p class="text-center mt-2 text-muted small fw-bold">{_eager("KI analysiert Daten...")} ({progress}%)</p>'
+        html += f'<p class="text-center mt-2 text-muted small fw-bold">{_eager("KI analysiert Daten...")} ({progress_val}%)</p>'
+
+    # IMPORTANT: Close the placeholder div!
+    html += f'''
+        </div>
+        <!-- Update the log window via OOB (Out of Band) swap -->
+        <div id="ai-log-stream" hx-swap-oob="innerHTML">
+            {log_content.replace("\n", "<br>")}
+        </div>
+    '''
+    return HttpResponse(html)
 
 @login_required
 def import_search_as_group(request, batch_id):
