@@ -188,10 +188,11 @@ class ExcelParserService:
                     start_date__month=m_start.month
                 ).exists()
 
-                if exists:
-                    is_ignored = True
-                    ai_reasoning = f"[DUBLETTE] Eintrag für {m_start.strftime('%m/%Y')} bereits vorhanden. {ai_reasoning}"
-
+                # --- AUTO-IGNORE logic ---
+                # Only mark as "not ignored" (i.e., selected for import) if a category is set
+                # or if it's explicitly matched by a filter.
+                is_selected = True if group.get('category') and not exists else False
+                
                 pending = PendingTransaction(
                     batch=batch,
                     date=group['latest_date'],
@@ -199,7 +200,7 @@ class ExcelParserService:
                     amount=group['total_amount'],
                     is_income=is_income,
                     category=group.get('category'),
-                    is_ignored=is_ignored,
+                    is_ignored=not is_selected, # If not selected, it's ignored
                     is_recurring=True, # Default to recurring for CashFlowSource target
                     frequency='monthly',
                     ai_reasoning=ai_reasoning
