@@ -21,13 +21,15 @@
 
 ## Git Deployment
 - **STRICT Push Targets**: Alle Änderungen MÜSSEN zwingend in zwei spezifische Remote-Ziele / Branches gepusht werden:
-  1. `https://github.com/bzaiser/finanzplan` (origin) $\rightarrow$ Branch: `master`
-  2. `https://github.com/bzaiser/Open-finanz-overview` (public) $\rightarrow$ Branch: `main`
+  1. `git@github.com:bzaiser/finanzplan.git` (origin) $\rightarrow$ Branch: `master`
+  2. `git@github.com:bzaiser/Open-finanz-overview.git` (public) $\rightarrow$ Branch: `main`
+- **SSH-Only**: Benutze ausschließlich SSH ohne Passwortabfrage für die Git-Kommunikation. KEINE HTTPS-URLs mit Tokens verwenden.
 - **Vorgehensweise**: Führe nach jedem Commit beide Pushes aus: `git push origin master:master` und `git push public master:main`.
 
 ## Infrastructure & Environment
 - **STRICT: NO Local Docker**: Es darf NIEMALS versucht werden, `docker` oder `docker-compose` Befehle lokal auszuführen. Es darf auch NICHT nach einem lokalen Docker-Daemon gesucht werden. 
 - **Migrationen**: Datenbank-Migrationen (`makemigrations`, `migrate`) werden niemals lokal ausgeführt. Diese erfolgen ausschließlich auf dem Remote-System über die dortigen Update-Scripte.
+- **KEINE Lokalen Installationen**: Führe niemals `pip install`, `npm install`, `apt-get install` oder andere Installationsbefehle lokal aus. Abhängigkeiten werden ausschließlich über das Docker-System auf dem Zielserver verwaltet.
 - **NO Local Virtual Environment**: Es gibt keine lokale virtuelle Umgebung (`venv`). Python-Skripte dürfen nur direkt mit dem System-Python ausgeführt werden, falls nötig.
 - **Remote-Only Execution**: Alle produktiven Befehle (wie `update-fast.sh`) werden erst nach dem Push direkt auf dem Zielserver ausgeführt.
 
