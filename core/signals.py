@@ -36,8 +36,8 @@ def sync_admin_theme(sender, instance, **kwargs):
     try:
         AdminTheme = apps.get_model('admin_interface', 'Theme')
         
-        # Use a predictable name for the 'live' theme, or match to the Harmony name if selected
-        theme_name = instance.theme.name if instance.theme else f"User {instance.user.username} Style"
+        # Consistent name for the user's personal admin theme
+        theme_name = f"Admin Theme ({instance.user.username})"
         
         admin_theme, created = AdminTheme.objects.get_or_create(name=theme_name)
         
