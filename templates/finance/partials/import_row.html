@@ -63,8 +63,8 @@
     <!-- Quick Filter Save -->
     <td class="text-end">
         <a href="{% url 'import_filters_list' %}?pre_query={{ t.description|urlencode }}&pre_name={{ t.description|urlencode }}&batch_id={{ t.batch.id }}" 
-           class="btn btn-sm btn-outline-secondary" title="{% trans 'Dauerhaften Filter erstellen' %}">
-            <i class="bi bi-funnel"></i>
+           class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-1" title="{% trans 'Dauerhaften Filter erstellen' %}">
+            <i class="bi bi-funnel"></i><span class="fw-bold small">+</span>
         </a>
     </td>
 </tr>
