@@ -5,12 +5,14 @@
     <div class="col-md-3 mb-3" style="order: {{ item.order }};">
         <div class="card shadow-sm h-100"
             style="background-color: {{ item.bg_color|default:'#ffffff' }}; color: {{ item.text_color|default:'#212529' }};">
-            <div class="card-body py-2">
-                <small class="text-uppercase opacity-75 d-block" style="font-size: 0.65rem; font-weight: 700; line-height: 1.2;">
-                    {% for k,v in summary_widgets.items %}
+            <div class="card-header py-1 px-2" style="font-size: 0.65rem;">
+                {% for k,v in summary_widgets.items %}
                     {% if k == item.id %}{{ v.title }}{% endif %}
-                    {% endfor %}
-                    <span class="d-block opacity-75" style="font-size: 0.6rem;">({{ simulation_params.stichtag|date:"d.m.Y" }})</span>
+                {% endfor %}
+            </div>
+            <div class="card-body py-2">
+                <small class="text-uppercase opacity-75 d-block" style="font-size: 0.6rem; font-weight: 700; line-height: 1.2;">
+                    <span class="d-block opacity-75">({{ simulation_params.stichtag|date:"d.m.Y" }})</span>
                 </small>
                 <h4 class="mb-0 fw-bold">
                     {% if item.id == 'current_assets' %}

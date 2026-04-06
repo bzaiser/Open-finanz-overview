@@ -8,8 +8,7 @@
     <div class="col-md-{{ item.width }} mb-4" style="order: {{ item.order }};">
         <div class="card shadow h-100"
             style="background-color: {{ item.bg_color|default:'#ffffff' }}; color: {{ item.text_color|default:'#212529' }};">
-            <div class="card-header d-flex justify-content-between align-items-center"
-                style="background: rgba(0,0,0,0.03); border-bottom: 1px solid rgba(0,0,0,0.125); color: inherit;">
+            <div class="card-header d-flex justify-content-between align-items-center">
                 <span class="fw-bold">
                     {% for k,v in available_charts.items %}
                     {% if k == item.id %}
