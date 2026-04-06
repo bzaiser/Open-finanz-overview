@@ -1026,7 +1026,7 @@ def apply_import_batch(request, batch_id):
         CashFlowSource.objects.create(
             user=request.user,
             name=t.description,
-            value=t.amount if t.is_income else abs(t.amount),
+            value=abs(t.amount), # Always store magnitude
             is_income=t.is_income,
             start_date=t.date.replace(day=1),
             # Set to last day of the same month for historical data
@@ -1239,6 +1239,7 @@ def import_search_as_group(request, batch_id):
                 date=month_matches[0].date, # Representative date
                 description=target_name,
                 amount=total_amount,
+                is_income=(total_amount > 0),
                 category=category,
                 integration_count=total_count,
                 matched_terms=all_terms,

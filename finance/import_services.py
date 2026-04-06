@@ -210,7 +210,7 @@ class ExcelParserService:
                     description=str(display_desc)[:500],
                     amount=group['total_amount'],
                     planned_amount=planned_amount, # Store the target plan value
-                    is_income=is_income,
+                    is_income=group['is_income'],
                     category=group.get('category'),
                     is_ignored=is_ignored,
                     is_recurring=True,
@@ -242,15 +242,14 @@ class ExcelParserService:
             for f in user_filters:
                 queries = [q.strip().upper() for q in f.search_query.split(';') if q.strip()]
                 if any(q in desc for q in queries):
-                    # Return (Display-Name, Category, Linked-CashFlow)
-                    return f.target_name, f.category, f.linked_cash_flow
-            return _normalize_description(row['description']), None, None
+                    # Return (Display-Name, Category, Linked-CashFlow, Is-Income)
+                    return f.target_name, f.category, f.linked_cash_flow, f.is_income
+            return _normalize_description(row['description']), None, None, (row['amount'] > 0)
 
         # Apply grouping key and potential category
         applied = df.apply(apply_filters, axis=1, result_type='expand')
-        df['_group_key'] = applied[0]
-        df['_group_category'] = applied[1]
         df['_group_linked_cf'] = applied[2]
+        df['_group_is_income'] = applied[3]
         
         df['_month'] = df['date'].dt.month
         df['_year'] = df['date'].dt.year
@@ -260,6 +259,7 @@ class ExcelParserService:
             # Use pd.isna to handle NaN values from pandas expansion
             cat = row['_group_category'] if pd.notna(row['_group_category']) else None
             linked_cf = row['_group_linked_cf'] if pd.notna(row['_group_linked_cf']) else None
+            is_income = row['_group_is_income'] if pd.notna(row['_group_is_income']) else (row['amount'] > 0)
             desc_val = str(row['_group_key']) if pd.notna(row['_group_key']) else "Unkategorisiert"
             
             # UNIQUE KEY for unassigned items to avoid pre-grouping
@@ -276,6 +276,7 @@ class ExcelParserService:
                     'count': 0,
                     'latest_date': row['date'].date(),
                     'category': cat,
+                    'is_income': is_income,
                     'linked_cash_flow': linked_cf,  # Store the plan link
                     'raw_desc': str(row['description']) # Keep raw for mapping
                 }
