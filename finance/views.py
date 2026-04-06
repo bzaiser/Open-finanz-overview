@@ -872,7 +872,7 @@ def review_bank_transactions(request, batch_id):
     batch = get_object_or_404(ImportBatch, id=batch_id, user=request.user)
     
     # 1. Search Query for Mapping Pane
-    q = request.GET.get('q', '').strip().lower()
+    q = request.GET.get('q', '').strip()
     
     # 2. Split into panes
     # Mapping: Not ignored, NO category
@@ -894,7 +894,9 @@ def review_bank_transactions(request, batch_id):
     if request.headers.get('HX-Request') and 'mapping-search' in request.GET.get('target', ''):
         return render(request, 'finance/partials/import_mapping_pane.html', {
             'transactions': mapping_list,
-            'categories': categories
+            'categories': categories,
+            'batch': batch,  # Pass missing context
+            'q': q
         })
 
     return render(request, 'finance/import_review.html', {
