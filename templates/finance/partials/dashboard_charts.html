@@ -8,7 +8,7 @@
     <div class="col-md-{{ item.width }} mb-4" style="order: {{ item.order }};">
         <div class="card shadow h-100"
             style="background-color: {{ item.bg_color|default:'#ffffff' }}; color: {{ item.text_color|default:'#212529' }};">
-            <div class="card-header d-flex justify-content-between align-items-center {% if item.id|slice:'-12:' == 'table_widget' %}px-3 border-0{% endif %}" style="color: {{ item.text_color|default:'#ffffff' }};">
+            <div class="card-header d-flex justify-content-between align-items-center {% if 'table' in item.id %}px-3 border-0{% endif %}" style="color: {{ item.text_color|default:'#ffffff' }};">
                 <span class="fw-bold">
                     {% for k,v in available_charts.items %}
                     {% if k == item.id %}
@@ -22,8 +22,9 @@
                     data-bs-title="{% trans 'Simulation Parameters' %}:&lt;br&gt;{% trans 'Inflation' %}: {{ simulation_params.inflation_rate }}%&lt;br&gt;{% trans 'Salary' %}: {{ simulation_params.salary_increase }}%&lt;br&gt;{% trans 'Return Offset' %}: {{ simulation_params.investment_return_offset }}%"></i>
                 {% endif %}
             </div>
-            <div class="card-body d-flex flex-column {% if item.id|slice:'-12:' == 'table_widget' %}p-0{% endif %}">
-                <div style="position:relative;{% if item.height == 'small' %}height:250px;{% elif item.height == 'medium' %}height:400px;{% else %}height:600px;{% endif %}">
+            <div class="card-body d-flex flex-column {% if 'table' in item.id %}p-0{% endif %}" 
+                style="{% if 'table' in item.id %}background-color: {{ profile.table_body_bg_color|default:'#ffffff' }} !important;{% endif %}">
+                <div style="position:relative;{% if 'table' in item.id %}background-color: {{ profile.table_body_bg_color|default:'#ffffff' }} !important;{% endif %};{% if item.height == 'small' %}height:250px;{% elif item.height == 'medium' %}height:400px;{% else %}height:600px;{% endif %}">
                     {% if item.id == 'income_table_widget' %}
                         {{ table_datasets.income_table_widget|json_script:item.id }}
                         {% include 'finance/partials/dashboard_table_simple.html' with widget_id=item.id %}
