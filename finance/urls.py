@@ -11,4 +11,7 @@ urlpatterns = [
     path('import/processing/', views.import_processing, name='import_processing'),
     path('import/delete-all/', views.delete_all_temporary_data, name='delete_all_temporary_data'),
     path('ai-status/', views.ai_status, name='ai_status'),
+    path('import/filters/', views.import_filters_list, name='import_filters_list'),
+    path('import/filters/add/', views.add_import_filter, name='add_import_filter'),
+    path('import/filters/delete/<int:filter_id>/', views.delete_import_filter, name='delete_import_filter'),
 ]

@@ -216,5 +216,17 @@ class LoanExtraRepayment(models.Model):
         verbose_name_plural = _("Extra Repayments")
         ordering = ['date']
 
+class ImportFilter(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='import_filters')
+    search_query = models.CharField(_("Search Query"), max_length=255, help_text=_("Separated by semicolon, e.g. EDEKA;REWE"))
+    target_name = models.CharField(_("Target Name"), max_length=100, help_text=_("e.g. Lebensmitteleinkäufe"))
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, verbose_name=_("Category"))
+    is_income = models.BooleanField(_("Is Income"), default=False)
+    is_active = models.BooleanField(_("Is Active"), default=True)
+
+    class Meta:
+        verbose_name = _("Import Filter")
+        verbose_name_plural = _("Import Filters")
+
     def __str__(self):
-        return f"{self.date}: {self.amount}"
+        return f"{self.target_name} ({self.search_query})"

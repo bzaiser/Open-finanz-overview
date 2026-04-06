@@ -13,7 +13,7 @@
         </div>
     </td>
     
-    <td class="text-nowrap small text-muted">{{ t.date|date:"d.m.Y" }}</td>
+    <td class="text-nowrap fw-bold">{{ t.date|date:"F Y" }}</td>
     
     <td class="text-truncate" style="max-width: 300px;" title="{{ t.description }}">
         {{ t.description }}
@@ -24,13 +24,19 @@
     </td>
     
     <td class="text-center">
-        <button class="btn btn-sm {% if t.is_income %}btn-success{% else %}btn-outline-danger{% endif %}"
-                hx-get="{% url 'confirm_transaction' t.id %}"
-                hx-target="#row-{{ t.id }}"
-                hx-swap="outerHTML"
-                hx-vals='{"field": "is_income", "value": "{% if t.is_income %}false{% else %}true{% endif %}"}'>
-            {% if t.is_income %}<i class="bi bi-arrow-down-left"></i>{% else %}<i class="bi bi-arrow-up-right"></i>{% endif %}
-        </button>
+        <div class="btn-group btn-group-sm">
+            <button class="btn {% if t.is_income %}btn-success{% else %}btn-outline-danger{% endif %}"
+                    hx-get="{% url 'confirm_transaction' t.id %}"
+                    hx-target="#row-{{ t.id }}"
+                    hx-swap="outerHTML"
+                    hx-vals='{"field": "is_income", "value": "{% if t.is_income %}false{% else %}true{% endif %}"}'>
+                {% if t.is_income %}<i class="bi bi-arrow-down-left"></i>{% else %}<i class="bi bi-arrow-up-right"></i>{% endif %}
+            </button>
+            <a href="{% url 'import_filters_list' %}?query={{ t.description|urlencode }}&name={{ t.description|urlencode }}" 
+               class="btn btn-outline-primary" title="{% trans 'Als Filter speichern' %}">
+                <i class="bi bi-funnel"></i>
+            </a>
+        </div>
     </td>
     
     <td>
@@ -47,8 +53,8 @@
             {% endfor %}
         </select>
         {% if t.ai_reasoning %}
-        <div class="mt-1 small text-muted italic" style="font-size: 0.75rem; line-height: 1.1;">
-            <i class="bi bi-robot"></i> <em>{{ t.ai_reasoning }}</em>
+        <div class="mt-1 small {% if '[DUBLETTE]' in t.ai_reasoning %}text-danger fw-bold{% else %}text-muted{% endif %} italic" style="font-size: 0.75rem; line-height: 1.1;">
+            <i class="bi bi-info-circle"></i> <em>{{ t.ai_reasoning }}</em>
         </div>
         {% endif %}
     </td>

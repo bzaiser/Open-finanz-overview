@@ -8,7 +8,7 @@ from django.contrib import messages
 from .services import SimulationEngine
 from .models import (
     Asset, CashFlowSource, OneTimeEvent, Pension, Category, 
-    ImportBatch, PendingTransaction
+    ImportBatch, PendingTransaction, ImportFilter
 )
 from .forms import BankImportForm
 from core.models import UserProfile
@@ -920,32 +920,26 @@ def apply_import_batch(request, batch_id):
     count_recurring = 0
     
     for t in transactions:
-        if t.is_recurring:
-            CashFlowSource.objects.create(
-                user=request.user,
-                name=t.description,
-                value=t.amount if t.is_income else abs(t.amount),
-                is_income=t.is_income,
-                start_date=t.date,
-                category=t.category,
-                frequency=t.frequency,
-                is_inflation_adjusted=True
-            )
-            count_recurring += 1
-        else:
-            OneTimeEvent.objects.create(
-                user=request.user,
-                name=t.description,
-                value=t.amount if t.is_income else -abs(t.amount),
-                date=t.date,
-                description=_("Importiert via Bank-Assistent")
-            )
-            count_one_time += 1
+        import calendar
+        last_day = calendar.monthrange(t.date.year, t.date.month)[1]
+        
+        CashFlowSource.objects.create(
+            user=request.user,
+            name=t.description,
+            value=t.amount if t.is_income else abs(t.amount),
+            is_income=t.is_income,
+            start_date=t.date.replace(day=1),
+            end_date=t.date.replace(day=last_day),
+            category=t.category,
+            frequency='monthly',
+            is_inflation_adjusted=False # Historical data usually doesn't need indexing
+        )
+        count_recurring += 1
             
     # Cleanup: Delete the batch and its pending transactions now that they are applied
     batch.delete()
     
-    messages.success(request, _(f"Import abgeschlossen: {count_one_time} Einzelbuchungen und {count_recurring} regelmäßige Zahlungen erstellt."))
+    messages.success(request, _(f"Import abgeschlossen: {count_recurring} Einträge unter Einnahmen/Ausgaben erstellt."))
     return redirect('dashboard')
 
 @login_required
@@ -1042,4 +1036,45 @@ def delete_all_temporary_data(request):
     cache.delete(cache_key)
     
     messages.success(request, _(f"{count} temporäre Import-Datensätze wurden gelöscht."))
-    return redirect('import_transactions')
+
+@login_required
+def import_filters_list(request):
+    filters = ImportFilter.objects.filter(user=request.user)
+    categories = Category.objects.all()
+    
+    # Pre-fill values from GET if redirected from review
+    pre_query = request.GET.get('query', '')
+    pre_name = request.GET.get('name', '')
+    
+    return render(request, 'finance/import_filters.html', {
+        'filters': filters,
+        'categories': categories,
+        'pre_query': pre_query,
+        'pre_name': pre_name
+    })
+
+@login_required
+def add_import_filter(request):
+    if request.method == 'POST':
+        query = request.POST.get('search_query')
+        name = request.POST.get('target_name')
+        cat_id = request.POST.get('category')
+        
+        category = Category.objects.filter(id=cat_id).first()
+        
+        ImportFilter.objects.create(
+            user=request.user,
+            search_query=query,
+            target_name=name,
+            category=category
+        )
+        messages.success(request, _("Filter erfolgreich hinzugefügt."))
+        
+    return redirect('import_filters_list')
+
+@login_required
+def delete_import_filter(request, filter_id):
+    f = get_object_or_404(ImportFilter, id=filter_id, user=request.user)
+    f.delete()
+    messages.success(request, _("Filter gelöscht."))
+    return redirect('import_filters_list')

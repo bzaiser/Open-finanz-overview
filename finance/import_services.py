@@ -3,7 +3,7 @@ import datetime
 import re
 from decimal import Decimal
 from django.utils import timezone
-from .models import Category, ImportBatch, PendingTransaction, CashFlowSource, OneTimeEvent
+from .models import Category, ImportBatch, PendingTransaction, CashFlowSource, OneTimeEvent, ImportFilter
 from .llm import classify_transactions
 from django.conf import settings
 from django.core.cache import cache
@@ -153,62 +153,8 @@ class ExcelParserService:
             if df.empty:
                 self._log(batch, "KRITISCH: Datei ist leer!")
 
-            # 3. Smart Grouping
-            groups = self._group_transactions(df)
-            self._log(batch, f"Gruppierung: {len(groups)} Buchungen zusammengefasst.")
-
-            # 3. Create or use ImportBatch
-            if not batch:
-                batch = ImportBatch.objects.create(user=self.user, filename=self.filename)
-            
-            categories = list(Category.objects.values('name', 'slug'))
-
-            # 4. Send UNIQUE groups to AI (not every raw row!)
-            transactions_for_ai = []
-            for idx, group in enumerate(groups):
-                transactions_for_ai.append({
-                    "id": idx,
-                    "description": group['description'],
-                    "amount": float(group['total_amount']),
-                    "total_amount": float(group['total_amount']),
-                    "occurrences": group['count'],
-                    "is_likely_recurring": group['is_recurring'],
-                })
-
-            # AI Categorization in chunks (Smaller for local LLMs/Ollama for better progress)
-            provider = getattr(settings, 'LLM_PROVIDER', 'hybrid').lower()
-            chunk_size = 10 if provider == 'ollama' else 50
-            ai_results = {}
-            error_logs = []
-            total_items = len(transactions_for_ai)
-            cache_key = f"import_progress_{self.user.id}"
-            cache.set(cache_key, 0, 300) # Initial 0%
-
-            if total_items == 0:
-                cache.set(cache_key, 100, 300)
-            else:
-                for i in range(0, total_items, chunk_size):
-                    self._log(batch, f"KI analysiert Chunk {i//chunk_size + 1}...")
-                    chunk = transactions_for_ai[i:i+chunk_size]
-                    results, status_msg, events = classify_transactions(chunk, categories)
-                    
-                    # Log all intermediate events/errors from the AI
-                    for event in events:
-                        self._log(batch, f"KI-Event: {event}")
-                    
-                    if results:
-                        ai_results.update(results)
-                        self._log(batch, f"KI-Status: {status_msg}")
-                    else:
-                        self._log(batch, f"FEHLER Chunk {i//chunk_size + 1}: {status_msg}")
-                    
-                    # Update progress in cache
-                    progress = int((min(i + chunk_size, total_items) / total_items) * 100)
-                    cache.set(cache_key, progress, 300)
-                    
-                    # Throttling: Small sleep to avoid AI Rate Limits (reduced for speed)
-                    import time
-                    time.sleep(0.2)
+            # AI analysis finished - progress will be marked 100 in the task caller
+            pass
 
             if error_logs:
                 self._log(batch, f"KI Fehler: {error_logs[0]}")
@@ -216,69 +162,63 @@ class ExcelParserService:
             # AI analysis finished - progress will be marked 100 in the task caller
             pass
 
-            # 5. Save PendingTransactions in chunks to avoid DB locks
-            self._log(batch, f"Starte Speichern von {len(groups)} Buchungen...")
+            # 3. Smart Grouping with user filters
+            self._log(batch, "Gruppiere Buchungen nach Monat und Filtern...")
+            # Filter for expenses only as requested
+            df_expenses = df[df['amount'] < 0].copy()
+            groups = self._group_transactions(df_expenses)
+            self._log(batch, f"Gruppierung abgeschlossen: {len(groups)} Monatssummen gebildet.")
+
+            # 3. Create or use ImportBatch
+            if not batch:
+                batch = ImportBatch.objects.create(user=self.user, filename=self.filename)
+
+            # 5. Save PendingTransactions in chunks
+            self._log(batch, f"Prüfe Dubletten für {len(groups)} Buchungen...")
             pending_list = []
+            
+            cache_key = f"import_progress_{self.user.id}"
+            cache.set(cache_key, 50, 300)
+
             for idx, group in enumerate(groups):
-                res = ai_results.get(str(idx), {})
-                cat_slug = res.get('category_slug', 'uncategorized')
-                category = Category.objects.filter(slug__iexact=cat_slug).first()
+                is_income = group['total_amount'] > 0
+                is_ignored = False
+                ai_reasoning = f"Gruppiert aus {group['count']} Einzelbuchungen."
+                
+                # --- DUPLICATE DETECTION against CashFlowSource ---
+                # Check for same user, same category/name and approx same date (month/year)
+                # We check the entire month of group['latest_date']
+                m_start = group['latest_date'].replace(day=1)
+                
+                exists = CashFlowSource.objects.filter(
+                    user=self.user,
+                    name__icontains=group['base_desc'],
+                    start_date__year=m_start.year,
+                    start_date__month=m_start.month
+                ).exists()
 
-                is_recurring = group['is_recurring'] or res.get('is_recurring', False)
-                is_income = res.get('is_income', group['total_amount'] > 0)
-                ai_reasoning = str(res.get('reasoning', ''))[:500]
-                is_ignored = (category is None)
-
-                # --- DUPLICATE DETECTION ---
-                is_duplicate = False
-                if is_recurring:
-                    # Check against existing CashFlowSource
-                    abs_val = abs(group['total_amount'])
-                    if CashFlowSource.objects.filter(
-                        user=self.user,
-                        is_income=is_income,
-                        value=abs_val,
-                        name__icontains=group['base_desc']
-                    ).exists():
-                        is_duplicate = True
-                else:
-                    # Check against existing OneTimeEvent
-                    db_amount = group['total_amount'] if is_income else -abs(group['total_amount'])
-                    if OneTimeEvent.objects.filter(
-                        user=self.user,
-                        date=group['latest_date'],
-                        value=db_amount
-                    ).exists():
-                        is_duplicate = True
-
-                if is_duplicate:
+                if exists:
                     is_ignored = True
-                    ai_reasoning = f"[DUPLIKAT] Existiert bereits in Datenbank. {ai_reasoning}"
+                    ai_reasoning = f"[DUBLETTE] Eintrag für {m_start.strftime('%m/%Y')} bereits vorhanden. {ai_reasoning}"
 
                 pending = PendingTransaction(
                     batch=batch,
                     date=group['latest_date'],
-                    description=str(group['description'])[:500], # Safety truncation
+                    description=str(group['description'])[:500],
                     amount=group['total_amount'],
                     is_income=is_income,
-                    category=category,
+                    category=group.get('category'),
                     is_ignored=is_ignored,
-                    is_recurring=is_recurring,
-                    frequency=res.get('frequency', 'monthly'),
+                    is_recurring=True, # Default to recurring for CashFlowSource target
+                    frequency='monthly',
                     ai_reasoning=ai_reasoning
                 )
                 pending_list.append(pending)
 
-            # Chunked save for reliability
-            total_saved = 0
-            chunk_size_db = 100
-            for i in range(0, len(pending_list), chunk_size_db):
-                chunk = pending_list[i:i+chunk_size_db]
-                PendingTransaction.objects.bulk_create(chunk)
-                total_saved += len(chunk)
-                self._log(batch, f"-> {total_saved} von {len(pending_list)} Buchungen gespeichert...")
+            # Bulk save
+            PendingTransaction.objects.bulk_create(pending_list)
             
-            cache.set(cache_key, 100, 300) # FINAL 100%
+            cache.set(cache_key, 100, 300)
             self._log(batch, "### ANALYSE ERFOLGREICH ABGESCHLOSSEN ###")
             return batch
 
@@ -288,34 +228,50 @@ class ExcelParserService:
 
     def _group_transactions(self, df):
         """
-        Groups transactions by normalized description AND month/year.
+        Groups transactions by user-defined filters first, 
+        then by normalized description AND month/year.
         """
-        df['_key'] = df['description'].apply(_normalize_description)
+        user_filters = list(ImportFilter.objects.filter(user=self.user, is_active=True).select_related('category'))
+        
+        def apply_filters(row):
+            desc = str(row['description']).upper()
+            for f in user_filters:
+                queries = [q.strip().upper() for q in f.search_query.split(';') if q.strip()]
+                if any(q in desc for q in queries):
+                    return f.target_name, f.category
+            return _normalize_description(row['description']), None
+
+        # Apply grouping key and potential category
+        applied = df.apply(apply_filters, axis=1, result_type='expand')
+        df['_group_key'] = applied[0]
+        df['_group_category'] = applied[1]
+        
         df['_month'] = df['date'].dt.month
         df['_year'] = df['date'].dt.year
 
-        groups = []
-        for (key, year, month), group_df in df.groupby(['_key', '_year', '_month'], dropna=False):
-            count = len(group_df)
-            total_amount = group_df['amount'].sum()
+        groups_dict = {}
+        for _, row in df.iterrows():
+            key = (row['_group_key'], row['_year'], row['_month'])
+            if key not in groups_dict:
+                groups_dict[key] = {
+                    'description': row['_group_key'],
+                    'base_desc': row['_group_key'],
+                    'total_amount': Decimal('0.00'),
+                    'count': 0,
+                    'latest_date': row['date'].date(),
+                    'category': row['_group_category']
+                }
             
-            valid_dates = group_df['date'].dropna()
-            latest_date = valid_dates.max().date() if not valid_dates.empty else datetime.date.today()
-            
-            modes = group_df['description'].mode()
-            base_desc = modes.iloc[0] if not modes.empty else (key if key else "Unbekannt")
-            display_desc = base_desc
-            if count > 1:
-                display_desc = f"{base_desc} ({count} Buchungen)"
+            groups_dict[key]['total_amount'] += row['amount']
+            groups_dict[key]['count'] += 1
+            if row['date'].date() > groups_dict[key]['latest_date']:
+                groups_dict[key]['latest_date'] = row['date'].date()
 
-            groups.append({
-                'description': str(display_desc),
-                'base_desc': str(base_desc),
-                'total_amount': Decimal(str(round(float(total_amount), 2))),
-                'count': count,
-                'latest_date': latest_date,
-                'is_recurring': count >= 2
-            })
+        groups = []
+        for key, data in groups_dict.items():
+            display_desc = f"{data['description']} ({data['count']} Buchungen)" if data['count'] > 1 else data['description']
+            data['description'] = display_desc
+            groups.append(data)
 
         groups.sort(key=lambda x: (x['latest_date'], -abs(float(x['total_amount']))), reverse=True)
         return groups
