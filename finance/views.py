@@ -1224,18 +1224,20 @@ def delete_all_temporary_data(request):
 
 @login_required
 def import_filters_list(request):
-    filters = ImportFilter.objects.filter(user=request.user)
+    filters = ImportFilter.objects.filter(user=request.user).order_by('target_name')
     categories = Category.objects.all()
     
     # Pre-fill values from GET if redirected from review
-    pre_query = request.GET.get('query', '')
-    pre_name = request.GET.get('name', '')
+    pre_query = request.GET.get('pre_query', '')
+    pre_name = request.GET.get('pre_name', '')
+    batch_id = request.GET.get('batch_id', '')
     
     return render(request, 'finance/import_filters.html', {
         'filters': filters,
         'categories': categories,
         'pre_query': pre_query,
-        'pre_name': pre_name
+        'pre_name': pre_name,
+        'batch_id': batch_id
     })
 
 @login_required
@@ -1244,6 +1246,7 @@ def add_import_filter(request):
         query = request.POST.get('search_query')
         name = request.POST.get('target_name')
         cat_id = request.POST.get('category')
+        batch_id = request.POST.get('batch_id')
         
         category = Category.objects.filter(id=cat_id).first()
         
@@ -1255,6 +1258,30 @@ def add_import_filter(request):
         )
         messages.success(request, _("Filter erfolgreich hinzugefügt."))
         
+        # Smart Redirect: Back to review if we came from there
+        if batch_id:
+            return redirect('review_transactions', batch_id=batch_id)
+            
+    return redirect('import_filters_list')
+
+@login_required
+def edit_import_filter(request, filter_id):
+    f = get_object_or_404(ImportFilter, id=filter_id, user=request.user)
+    batch_id = request.POST.get('batch_id') or request.GET.get('batch_id')
+    
+    if request.method == 'POST':
+        f.search_query = request.POST.get('search_query')
+        f.target_name = request.POST.get('target_name')
+        cat_id = request.POST.get('category')
+        f.category = Category.objects.filter(id=cat_id).first()
+        f.save()
+        messages.success(request, _("Filter erfolgreich geändert."))
+        
+        if batch_id:
+            return redirect('review_transactions', batch_id=batch_id)
+        return redirect('import_filters_list')
+
+    # This could be used for a separate page, but we'll use a Modal mostly
     return redirect('import_filters_list')
 
 @login_required

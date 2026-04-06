@@ -16,18 +16,34 @@
     <div class="row">
         <!-- Neuer Filter -->
         <div class="col-md-4">
+            {% if pre_query %}
+            <div class="alert alert-info shadow-sm border-0 mb-4 animate__animated animate__fadeIn">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="fw-bold mb-0 text-primary"><i class="bi bi-info-circle me-1"></i> {% trans "Kopiervorlage aus Buchung" %}</h6>
+                    <button class="btn btn-sm btn-outline-primary py-0" onclick="copyToClipboard('{{ pre_query|escapejs }}')">
+                        <i class="bi bi-clipboard"></i> {% trans "Alles kopieren" %}
+                    </button>
+                </div>
+                <div class="bg-white p-2 rounded border small text-break shadow-inner" style="max-height: 100px; overflow-y: auto; cursor: help;" title="{% trans 'Text markieren und oben einfügen' %}">
+                    {{ pre_query }}
+                </div>
+                <p class="mt-2 mb-0 x-small text-muted">{% trans "Markiere oben den Teil (z.B. 'REWE'), der für den Filter relevant ist." %}</p>
+            </div>
+            {% endif %}
+
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-body">
                     <h5 class="card-title fw-bold mb-3">{% trans "Neuen Filter erstellen" %}</h5>
                     <form action="{% url 'add_import_filter' %}" method="post">
                         {% csrf_token %}
+                        <input type="hidden" name="batch_id" value="{{ batch_id }}">
                         <div class="mb-3">
                             <label class="form-label small fw-bold">{% trans "Suchbegriffe (mit ; getrennt)" %}</label>
-                            <input type="text" name="search_query" class="form-control" placeholder="z.B. EDEKA;REWE;LIDL" value="{{ pre_query }}" required>
+                            <input type="text" id="id_search_query" name="search_query" class="form-control border-primary" placeholder="z.B. EDEKA;REWE;LIDL" value="" required autofocus>
                         </div>
                         <div class="mb-3">
                             <label class="form-label small fw-bold">{% trans "Ziel-Name" %}</label>
-                            <input type="text" name="target_name" class="form-control" placeholder="z.B. Lebensmitteleinkäufe" value="{{ pre_name }}" required>
+                            <input type="text" id="id_target_name" name="target_name" class="form-control" placeholder="z.B. Lebensmitteleinkäufe" value="{{ pre_name }}" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label small fw-bold">{% trans "Kategorie" %}</label>
@@ -75,9 +91,18 @@
                                     {% endif %}
                                 </td>
                                 <td class="text-end">
-                                    <a href="{% url 'delete_import_filter' f.id %}" class="btn btn-link text-danger p-0" title="{% trans 'Löschen' %}">
-                                        <i class="bi bi-trash"></i>
-                                    </a>
+                                    <div class="btn-group">
+                                        <button class="btn btn-link text-primary p-1" 
+                                                onclick="openEditModal('{{ f.id }}', '{{ f.target_name|escapejs }}', '{{ f.search_query|escapejs }}', '{{ f.category.id|default:'' }}')"
+                                                title="{% trans 'Bearbeiten' %}">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </button>
+                                        <a href="{% url 'delete_import_filter' f.id %}" class="btn btn-link text-danger p-1" 
+                                           onclick="return confirm('{% trans "Filter wirklich löschen?" %}')"
+                                           title="{% trans 'Löschen' %}">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                             {% empty %}
@@ -95,6 +120,68 @@
     </div>
 </div>
 
+<!-- Edit Modal -->
+<div class="modal fade" id="editFilterModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content border-0 shadow">
+            <form id="editFilterForm" method="post" action="">
+                {% csrf_token %}
+                <input type="hidden" name="batch_id" value="{{ batch_id }}">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-pencil-square me-2"></i>{% trans "Filter bearbeiten" %}</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">{% trans "Suchbegriffe (mit ; getrennt)" %}</label>
+                        <input type="text" id="edit_search_query" name="search_query" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">{% trans "Ziel-Name" %}</label>
+                        <input type="text" id="edit_target_name" name="target_name" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">{% trans "Kategorie" %}</label>
+                        <select id="edit_category" name="category" class="form-select">
+                            <option value="">---------</option>
+                            {% for cat in categories %}
+                            <option value="{{ cat.id }}">{{ cat.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{% trans "Abbrechen" %}</button>
+                    <button type="submit" class="btn btn-primary fw-bold">{% trans "Änderungen speichern" %}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            const btn = event.currentTarget;
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<i class="bi bi-check"></i> ' + "{% trans 'Kopiert!' %}";
+            setTimeout(() => { btn.innerHTML = originalHtml; }, 2000);
+        });
+    }
+
+    function openEditModal(id, name, query, categoryId) {
+        const form = document.getElementById('editFilterForm');
+        form.action = "{% url 'edit_import_filter' 0 %}".replace('0', id);
+        
+        document.getElementById('edit_target_name').value = name;
+        document.getElementById('edit_search_query').value = query;
+        document.getElementById('edit_category').value = categoryId;
+        
+        const modal = new bootstrap.Modal(document.getElementById('editFilterModal'));
+        modal.show();
+    }
+</script>
+
 <style>
     .text-gradient {
         background: linear-gradient(135deg, #0d6efd, #6610f2);
@@ -109,5 +196,9 @@
         border: 1px solid rgba(0,0,0,0.1);
         padding: 0.4em 0.8em;
     }
+    .shadow-inner {
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
+    }
+    .x-small { font-size: 0.75rem; }
 </style>
 {% endblock %}
