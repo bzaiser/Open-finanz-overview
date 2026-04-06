@@ -66,7 +66,8 @@ def sync_admin_theme(sender, instance, **kwargs):
         admin_theme.save()
         
         AdminTheme.objects.exclude(pk=admin_theme.pk).update(active=False)
+        print(f"DEBUG: Synchronized Admin Theme '{admin_theme.name}' (Active: {admin_theme.active})")
         
     except (LookupError, Exception) as e:
         # Gracefully handle if admin_interface is not installed or other DB issues
-        print(f"Error syncing admin theme: {e}")
+        print(f"DEBUG Error syncing admin theme: {e}")
