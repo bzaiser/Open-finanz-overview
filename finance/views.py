@@ -1286,7 +1286,7 @@ def add_import_filter(request):
 
         # Smart Redirect fallback
         if batch_id:
-            return redirect('review_transactions', batch_id=batch_id)
+            return redirect(f"{reverse('import_filters_list')}?batch_id={batch_id}")
             
     return redirect('import_filters_list')
 
@@ -1310,7 +1310,7 @@ def edit_import_filter(request, filter_id):
             return response
 
         if batch_id:
-            return redirect('review_transactions', batch_id=batch_id)
+            return redirect(f"{reverse('import_filters_list')}?batch_id={batch_id}")
         return redirect('import_filters_list')
 
     return redirect('import_filters_list')
@@ -1318,8 +1318,11 @@ def edit_import_filter(request, filter_id):
 @login_required
 def delete_import_filter(request, filter_id):
     f = get_object_or_404(ImportFilter, id=filter_id, user=request.user)
+    batch_id = request.GET.get('batch_id')
     f.delete()
     messages.success(request, _("Filter gelöscht."))
+    if batch_id:
+        return redirect(f"{reverse('import_filters_list')}?batch_id={batch_id}")
     return redirect('import_filters_list')
 
 @login_required

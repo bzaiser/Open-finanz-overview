@@ -21,7 +21,7 @@
                     title="{% trans 'Bearbeiten' %}">
                 <i class="bi bi-pencil-square"></i>
             </button>
-            <a href="{% url 'delete_import_filter' f.id %}" class="btn btn-link text-danger p-1" 
+            <a href="{% url 'delete_import_filter' f.id %}?batch_id={{ batch_id }}" class="btn btn-link text-danger p-1" 
                onclick="return confirm('{% trans "Filter wirklich löschen?" %}')"
                title="{% trans 'Löschen' %}">
                 <i class="bi bi-trash"></i>
