@@ -41,12 +41,12 @@
     }
 }" class="h-100 d-flex flex-column" x-init="init()">
     
-    <div class="flex-grow-1 overflow-auto px-2" style="background-color: {{ table_config.body_bg_color }} !important;">
+    <div class="flex-grow-1 overflow-auto px-0" style="background-color: {{ table_config.body_bg_color }} !important;">
         <table class="table table-sm table-hover align-middle mb-0" 
                style="font-size: 0.82rem; border-color: {{ table_config.border_color }} !important; --bs-table-bg: {{ table_config.body_bg_color }}; --bs-table-color: {{ table_config.body_text_color }};">
             <thead class="sticky-top" style="z-index: 10;">
                 <tr class="text-uppercase" style="font-size: 0.65rem;">
-                    <th class="py-2 px-2 border-0 cursor-pointer" @click="sortCol = 'name'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
+                    <th class="py-2 px-3 border-0 cursor-pointer" @click="sortCol = 'name'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
                         style="background-color: {{ table_config.header_bg_color }} !important; color: {{ table_config.header_text_color }} !important;">
                         {% trans 'Loan' %} <i class="bi" :class="sortCol === 'name' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
                     </th>
@@ -88,7 +88,7 @@
             <tbody>
                 <template x-for="row in filteredItems" :key="row.name">
                     <tr class="align-middle">
-                        <td class="fw-bold border-0" x-text="row.name"></td>
+                        <td class="fw-bold border-0 px-3" x-text="row.name"></td>
                         <td class="border-0 opacity-75" x-text="row.provider"></td>
                         <td class="text-end fw-bold border-0" x-text="new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ currency }}' }).format(row.current_balance)"></td>
                         <td class="text-end border-0 text-warning" x-text="new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ currency }}' }).format(row.total_interest)"></td>
@@ -101,7 +101,7 @@
         </table>
     </div>
     
-    <div class="mt-auto border-top p-2 rounded-bottom d-flex justify-content-between align-items-center" 
+    <div class="mt-auto border-top py-2 px-3 rounded-bottom d-flex justify-content-between align-items-center" 
          style="background-color: rgba(0,0,0,0.03); border-top-color: {{ table_config.border_color }} !important; font-size: 0.8rem;">
         <div>
             <span class="opacity-50 me-1">{% trans 'Total Balance' %}:</span>

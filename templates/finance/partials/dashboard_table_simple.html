@@ -94,33 +94,33 @@
     }
 }" class="h-100 d-flex flex-column" x-init="init()">
     
-    <div class="flex-grow-1 overflow-auto px-2" style="max-height: 100%; background-color: {{ table_config.body_bg_color }} !important;">
+    <div class="flex-grow-1 overflow-auto px-0" style="max-height: 100%; background-color: {{ table_config.body_bg_color }} !important;">
         <table class="table table-sm table-hover align-middle mb-0" 
                style="font-size: 0.85rem; border-color: {{ table_config.border_color }} !important; --bs-table-bg: {{ table_config.body_bg_color }}; --bs-table-color: {{ table_config.body_text_color }};">
             <thead class="sticky-top" style="z-index: 10;">
                 <tr class="text-uppercase" style="font-size: 0.70rem;">
-                    <th class="py-2 px-3 border-0 cursor-pointer" @click="sortCol = 'name'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
+                    <th class="py-2 px-2 border-0 cursor-pointer" @click="sortCol = 'name'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
                         style="background-color: {{ table_config.header_bg_color }} !important; color: {{ table_config.header_text_color }} !important;">
                         <div class="d-flex align-items-center justify-content-between">
                             <span>{% trans 'Name' %}</span>
                             <i class="bi" :class="sortCol === 'name' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
                         </div>
                     </th>
-                    <th class="py-2 px-3 border-0 cursor-pointer" @click="sortCol = (hasDate ? 'date' : 'category'); sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
+                    <th class="py-2 px-2 border-0 cursor-pointer" @click="sortCol = (hasDate ? 'date' : 'category'); sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
                         style="background-color: {{ table_config.header_bg_color }} !important; color: {{ table_config.header_text_color }} !important;">
                          <div class="d-flex align-items-center justify-content-between">
                             <span x-text="hasDate ? '{% trans 'Date' %}' : '{% trans 'Category' %}'"></span>
                             <i class="bi" :class="(sortCol === 'category' || sortCol === 'date') ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
                         </div>
                     </th>
-                    <th class="py-2 px-3 border-0 cursor-pointer" @click="sortCol = 'year'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
+                    <th class="py-2 px-2 border-0 cursor-pointer" @click="sortCol = 'year'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
                         style="background-color: {{ table_config.header_bg_color }} !important; color: {{ table_config.header_text_color }} !important;">
                         <div class="d-flex align-items-center justify-content-between">
                             <span>{% trans 'Year' %}</span>
                             <i class="bi" :class="sortCol === 'year' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
                         </div>
                     </th>
-                    <th class="py-2 px-3 border-0 text-end cursor-pointer" @click="sortCol = 'amount'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
+                    <th class="py-2 px-2 border-0 text-end cursor-pointer" @click="sortCol = 'amount'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
                         style="background-color: {{ table_config.header_bg_color }} !important; color: {{ table_config.header_text_color }} !important;">
                         <div class="d-flex align-items-center justify-content-end">
                             <span class="me-1">{% trans 'Amount' %}</span>
@@ -188,7 +188,7 @@
         </table>
     </div>
     
-    <div class="mt-auto border-top p-2 rounded-bottom d-flex justify-content-between align-items-center" 
+    <div class="mt-auto border-top py-2 px-3 rounded-bottom d-flex justify-content-between align-items-center" 
          style="background-color: rgba(0,0,0,0.03); border-top-color: {{ table_config.border_color }} !important;">
         <span class="small fw-bold opacity-75 text-uppercase">{% trans 'Total' %}</span>
         <span class="fw-bold text-primary" x-text="new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ currency }}' }).format(total)"></span>
