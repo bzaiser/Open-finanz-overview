@@ -34,14 +34,20 @@
                     
                     <!-- Search Box -->
                     <div class="input-group" style="width: 400px;">
-                        <span class="input-group-text bg-light border-end-0"><i class="bi bi-search"></i></span>
+                        <button class="input-group-text bg-light border-end-0" 
+                                hx-get="{% url 'review_transactions' batch.id %}"
+                                hx-target="#mapping-pane"
+                                hx-include="[name='q']"
+                                hx-vals='{"target": "mapping-search"}'>
+                            <i class="bi bi-search"></i>
+                        </button>
                         <input type="text" name="q" class="form-control border-start-0" 
                                placeholder="{% trans 'Suchen & Gruppieren (z.B. Aldi)...' %}"
                                hx-get="{% url 'review_transactions' batch.id %}"
-                               hx-trigger="keyup changed delay:300ms"
+                               hx-trigger="keyup changed delay:300ms, search"
                                hx-target="#mapping-pane"
                                hx-indicator=".search-spinner"
-                               hx-vals='js:{target: "mapping-search"}'>
+                               hx-vals='{"target": "mapping-search"}'>
                         <span class="input-group-text bg-white search-spinner htmx-indicator">
                             <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
                         </span>

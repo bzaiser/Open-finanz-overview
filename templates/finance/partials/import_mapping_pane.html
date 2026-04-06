@@ -39,9 +39,10 @@
                         <button class="btn btn-primary btn-sm fw-bold shadow-sm"
                                 hx-post="{% url 'import_search_as_group' batch.id %}"
                                 hx-include="[name='q'], [name='target_name'], [name='category_id']"
+                                hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
                                 hx-confirm="{% trans 'Möchtest du alle aktuell gefilterten Buchungen als eine Gruppe importieren?' %}"
-                                hx-target="closest div"
-                                hx-swap="none">
+                                hx-target="#mapping-rows"
+                                hx-swap="delete">
                             <i class="bi bi-collection-play-fill me-2"></i>{% trans "Alle gefilterten als GRUPPE übernehmen" %}
                         </button>
                     </div>
