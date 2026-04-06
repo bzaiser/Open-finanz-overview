@@ -1,0 +1,31 @@
+{% load i18n %}
+<tr id="filter-row-{{ f.id }}" 
+    class="transition-row animate__animated animate__fadeIn"
+    {% if hx_pob %}hx-swap-oob="outerHTML:#filter-row-{{ f.id }}"{% endif %}>
+    <td class="fw-bold">{{ f.target_name }}</td>
+    <td><code class="small text-primary">{{ f.search_query }}</code></td>
+    <td>
+        {% if f.category %}
+        <span class="badge rounded-pill badge-category" 
+              style="--cat-color: {{ f.category.color }};">
+            {{ f.category.name }}
+        </span>
+        {% else %}
+        <span class="text-muted small">{% trans "Keine" %}</span>
+        {% endif %}
+    </td>
+    <td class="text-end">
+        <div class="btn-group">
+            <button class="btn btn-link text-primary p-1" 
+                    onclick="openEditModal('{{ f.id }}', '{{ f.target_name|escapejs }}', '{{ f.search_query|escapejs }}', '{{ f.category.id|default:'' }}')"
+                    title="{% trans 'Bearbeiten' %}">
+                <i class="bi bi-pencil-square"></i>
+            </button>
+            <a href="{% url 'delete_import_filter' f.id %}" class="btn btn-link text-danger p-1" 
+               onclick="return confirm('{% trans "Filter wirklich löschen?" %}')"
+               title="{% trans 'Löschen' %}">
+                <i class="bi bi-trash"></i>
+            </a>
+        </div>
+    </td>
+</tr>

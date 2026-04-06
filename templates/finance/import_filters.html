@@ -8,9 +8,15 @@
             <h2 class="mb-0 fw-bold text-gradient"><i class="bi bi-funnel me-2"></i>{% trans "Import-Filter verwalten" %}</h2>
             <p class="text-muted">{% trans "Definiere Regeln, um Buchungen automatisch zusammenzufassen." %}</p>
         </div>
-        <a href="{% url 'import_transactions' %}" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left"></i> {% trans "Zurück zum Import" %}
+        {% if batch_id %}
+        <a href="{% url 'review_transactions' batch_id %}" class="btn btn-primary shadow-sm px-4 fw-bold">
+            <i class="bi bi-arrow-left me-2"></i> {% trans "Zurück zur Buchungsprüfung" %}
         </a>
+        {% else %}
+        <a href="{% url 'import_transactions' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> {% trans "Zurück zum Upload" %}
+        </a>
+        {% endif %}
     </div>
 
     <div class="row">
@@ -34,8 +40,11 @@
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-body">
                     <h5 class="card-title fw-bold mb-3">{% trans "Neuen Filter erstellen" %}</h5>
-                    <form action="{% url 'add_import_filter' %}" method="post">
-                        {% csrf_token %}
+                    <form hx-post="{% url 'add_import_filter' %}" 
+                          hx-target="#filter-rows" 
+                          hx-swap="afterbegin"
+                          hx-on::after-request="if(event.detail.successful) this.reset();"
+                          hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
                         <input type="hidden" name="batch_id" value="{{ batch_id }}">
                         <div class="mb-3">
                             <label class="form-label small fw-bold">{% trans "Suchbegriffe (mit ; getrennt)" %}</label>
@@ -80,38 +89,11 @@
                                 <th class="text-end">{% trans "Aktion" %}</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="filter-rows">
                             {% for f in filters %}
-                            <tr>
-                                <td class="fw-bold">{{ f.target_name }}</td>
-                                <td><code class="small text-primary">{{ f.search_query }}</code></td>
-                                <td>
-                                    {% if f.category %}
-                                    <span class="badge rounded-pill badge-category" 
-                                          style="--cat-color: {{ f.category.color }};">
-                                        {{ f.category.name }}
-                                    </span>
-                                    {% else %}
-                                    <span class="text-muted small">{% trans "Keine" %}</span>
-                                    {% endif %}
-                                </td>
-                                <td class="text-end">
-                                    <div class="btn-group">
-                                        <button class="btn btn-link text-primary p-1" 
-                                                onclick="openEditModal('{{ f.id }}', '{{ f.target_name|escapejs }}', '{{ f.search_query|escapejs }}', '{{ f.category.id|default:'' }}')"
-                                                title="{% trans 'Bearbeiten' %}">
-                                            <i class="bi bi-pencil-square"></i>
-                                        </button>
-                                        <a href="{% url 'delete_import_filter' f.id %}" class="btn btn-link text-danger p-1" 
-                                           onclick="return confirm('{% trans "Filter wirklich löschen?" %}')"
-                                           title="{% trans 'Löschen' %}">
-                                            <i class="bi bi-trash"></i>
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
+                                {% include 'finance/partials/import_filter_row.html' %}
                             {% empty %}
-                            <tr>
+                            <tr id="empty-row">
                                 <td colspan="4" class="text-center py-4 text-muted">
                                     <i class="bi bi-info-circle me-1"></i> {% trans "Noch keine Filter definiert." %}
                                 </td>
@@ -129,7 +111,11 @@
 <div class="modal fade" id="editFilterModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content border-0 shadow">
-            <form id="editFilterForm" method="post" action="">
+            <form id="editFilterForm" method="post" action=""
+                  hx-post="" 
+                  hx-target="" 
+                  hx-swap="outerHTML"
+                  hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
                 {% csrf_token %}
                 <input type="hidden" name="batch_id" value="{{ batch_id }}">
                 <div class="modal-header bg-primary text-white">
@@ -180,16 +166,36 @@
     }
 
     function openEditModal(id, name, query, categoryId) {
+        const modalEl = document.getElementById('editFilterModal');
         const form = document.getElementById('editFilterForm');
-        form.action = "{% url 'edit_import_filter' 0 %}".replace('0', id);
+        
+        const actionUrl = "{% url 'edit_import_filter' 0 %}".replace('0', id);
+        form.action = actionUrl;
+        form.setAttribute('hx-post', actionUrl);
+        form.setAttribute('hx-target', '#filter-row-' + id);
+        
+        // Re-initialize HTMX for this form
+        htmx.process(form);
         
         document.getElementById('edit_target_name').value = name;
         document.getElementById('edit_search_query').value = query;
         document.getElementById('edit_category').value = categoryId;
         
-        const modal = new bootstrap.Modal(document.getElementById('editFilterModal'));
+        const modal = new bootstrap.Modal(modalEl);
         modal.show();
     }
+
+    // Handle HTMX triggers to close modal
+    document.body.addEventListener('filterUpdated', function() {
+        const modal = bootstrap.Modal.getInstance(document.getElementById('editFilterModal'));
+        if(modal) modal.hide();
+    });
+
+    document.body.addEventListener('filterAdded', function() {
+        // Remove empty state if present
+        const empty = document.getElementById('empty-row');
+        if(empty) empty.remove();
+    });
 </script>
 
 <style>

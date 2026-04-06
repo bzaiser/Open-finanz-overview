@@ -1270,7 +1270,7 @@ def add_import_filter(request):
         
         category = Category.objects.filter(id=cat_id).first()
         
-        ImportFilter.objects.create(
+        f = ImportFilter.objects.create(
             user=request.user,
             search_query=query,
             target_name=name,
@@ -1278,7 +1278,13 @@ def add_import_filter(request):
         )
         messages.success(request, _("Filter erfolgreich hinzugefügt."))
         
-        # Smart Redirect: Back to review if we came from there
+        # HTMX support: Return the row and close modal
+        if request.headers.get('HX-Request'):
+            response = render(request, 'finance/partials/import_filter_row.html', {'f': f, 'hx_pob': True})
+            response['HX-Trigger'] = 'filterAdded'
+            return response
+
+        # Smart Redirect fallback
         if batch_id:
             return redirect('review_transactions', batch_id=batch_id)
             
@@ -1297,11 +1303,16 @@ def edit_import_filter(request, filter_id):
         f.save()
         messages.success(request, _("Filter erfolgreich geändert."))
         
+        # HTMX support: Update row and close modal
+        if request.headers.get('HX-Request'):
+            response = render(request, 'finance/partials/import_filter_row.html', {'f': f, 'hx_pob': True})
+            response['HX-Trigger'] = 'filterUpdated'
+            return response
+
         if batch_id:
             return redirect('review_transactions', batch_id=batch_id)
         return redirect('import_filters_list')
 
-    # This could be used for a separate page, but we'll use a Modal mostly
     return redirect('import_filters_list')
 
 @login_required
