@@ -243,11 +243,14 @@ class ExcelParserService:
                 queries = [q.strip().upper() for q in f.search_query.split(';') if q.strip()]
                 if any(q in desc for q in queries):
                     # Return (Display-Name, Category, Linked-CashFlow, Is-Income)
-                    return f.target_name, f.category, f.linked_cash_flow, f.is_income
+                    # Sign of row['amount'] is the source of truth for direction
+                    return f.target_name, f.category, f.linked_cash_flow, (row['amount'] > 0)
             return _normalize_description(row['description']), None, None, (row['amount'] > 0)
 
         # Apply grouping key and potential category
         applied = df.apply(apply_filters, axis=1, result_type='expand')
+        df['_group_key'] = applied[0]
+        df['_group_category'] = applied[1]
         df['_group_linked_cf'] = applied[2]
         df['_group_is_income'] = applied[3]
         
