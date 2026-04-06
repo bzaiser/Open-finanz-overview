@@ -410,7 +410,7 @@ msgstr "Hilfe"
 #: templates/base.html:59 templates/finance/dashboard.html:5
 #: templates/finance/dashboard.html:18
 msgid "Dashboard"
-msgstr "Übersicht"
+msgstr "Dashboard"
 
 #: templates/base.html:69 templates/core/about.html:4
 msgid "About"
@@ -1860,9 +1860,6 @@ msgstr "Restsaldo gesamt"
 
 msgid "Loan"
 msgstr "Kredit"
-
-msgid "Dashboard"
-msgstr "Dashboard"
 
 msgid "Settings"
 msgstr "Einstellungen"
