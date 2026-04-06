@@ -965,7 +965,7 @@ def confirm_bank_transaction(request, transaction_id):
             total_ready = sum(t.amount for t in transaction.batch.transactions.filter(is_ignored=False, category__isnull=False))
             from django.contrib.humanize.templatetags.humanize import intcomma
             total_str = f"{intcomma(round(total_ready, 2))} EUR"
-            response_html += f'<td id="total-ready-sum" hx-swap-oob="innerHTML">{total_str}</td>'
+            response_html += f'<span id="total-ready-sum" hx-swap-oob="innerHTML">{total_str}</span>'
             
             return HttpResponse(response_html)
             
@@ -989,7 +989,7 @@ def confirm_bank_transaction(request, transaction_id):
         total_ready = sum(t.amount for t in transaction.batch.transactions.filter(is_ignored=False, category__isnull=False))
         from django.contrib.humanize.templatetags.humanize import intcomma
         total_str = f"{intcomma(round(total_ready, 2))} EUR"
-        response_html += f'<td id="total-ready-sum" hx-swap-oob="innerHTML">{total_str}</td>'
+        response_html += f'<span id="total-ready-sum" hx-swap-oob="innerHTML">{total_str}</span>'
         
         return HttpResponse(response_html)
     else:
@@ -1001,7 +1001,7 @@ def confirm_bank_transaction(request, transaction_id):
         total_ready = sum(t.amount for t in transaction.batch.transactions.filter(is_ignored=False, category__isnull=False))
         from django.contrib.humanize.templatetags.humanize import intcomma
         total_str = f"{intcomma(round(total_ready, 2))} EUR"
-        response_html += f'<td id="total-ready-sum" hx-swap-oob="innerHTML">{total_str}</td>'
+        response_html += f'<span id="total-ready-sum" hx-swap-oob="innerHTML">{total_str}</span>'
         
         return HttpResponse(response_html)
 
@@ -1258,7 +1258,7 @@ def import_search_as_group(request, batch_id):
     total_ready = sum(t.amount for t in batch.transactions.filter(is_ignored=False, category__isnull=False))
     from django.contrib.humanize.templatetags.humanize import intcomma
     total_str = f"{intcomma(round(total_ready, 2))} EUR"
-    response_html += f'<td id="total-ready-sum" hx-swap-oob="innerHTML">{total_str}</td>'
+    response_html += f'<span id="total-ready-sum" hx-swap-oob="innerHTML">{total_str}</span>'
     
     # 4. Remove empty state message if any
     response_html += '<tr id="empty-ready-msg" hx-swap-oob="delete"></tr>'

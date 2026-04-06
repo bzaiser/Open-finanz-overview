@@ -1,5 +1,5 @@
 {% load i18n humanize %}
-<tr id="row-{{ t.id }}" 
+<tr id="ready-row-{{ t.id }}" 
     class="row-ready transition-row animate__animated animate__fadeIn"
     {% if hx_oob %}hx-swap-oob="beforeend:#ready-rows"{% endif %}>
     <td class="fw-bold text-success">
@@ -45,7 +45,7 @@
             <!-- Back to Mapping (Undo) -->
             <button class="btn btn-link text-warning p-1" 
                     hx-get="{% url 'confirm_transaction' t.id %}"
-                    hx-target="#row-{{ t.id }}"
+                    hx-target="#ready-row-{{ t.id }}"
                     hx-swap="outerHTML"
                     hx-vals='{"field": "category", "value": ""}'
                     title="{% trans 'Zurück nach oben verschieben' %}">
@@ -55,7 +55,7 @@
             <!-- Ignore -->
             <button class="btn btn-link text-danger p-1" 
                     hx-get="{% url 'confirm_transaction' t.id %}"
-                    hx-target="#row-{{ t.id }}"
+                    hx-target="#ready-row-{{ t.id }}"
                     hx-swap="outerHTML"
                     hx-vals='{"field": "is_ignored", "value": "true"}'
                     hx-confirm="{% trans 'Diesen zusammengefassten Posten wirklich verwerten?' %}"

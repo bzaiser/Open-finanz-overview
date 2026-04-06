@@ -1,10 +1,10 @@
 {% load i18n humanize %}
-<tr id="row-{{ t.id }}" class="row-mapping transition-row">
+<tr id="mapping-row-{{ t.id }}" class="row-mapping transition-row">
     <!-- Action: Ignore -->
     <td class="text-center">
         <button class="btn btn-link text-danger p-0" 
                 hx-get="{% url 'confirm_transaction' t.id %}"
-                hx-target="#row-{{ t.id }}"
+                hx-target="#mapping-row-{{ t.id }}"
                 hx-swap="outerHTML"
                 hx-vals='{"field": "is_ignored", "value": "true"}'
                 title="{% trans 'Ignorieren' %}">
@@ -47,7 +47,7 @@
         <div class="d-flex gap-1 align-items-center">
             <select class="form-select form-select-sm border-primary mapping-category-select" 
                     hx-get="{% url 'confirm_transaction' t.id %}"
-                    hx-target="#row-{{ t.id }}"
+                    hx-target="#mapping-row-{{ t.id }}"
                     hx-swap="outerHTML"
                     hx-trigger="change"
                     name="value"
@@ -61,7 +61,7 @@
             <!-- Type Toggle -->
             <button class="btn btn-sm {% if t.is_income %}btn-success{% else %}btn-outline-danger{% endif %}"
                     hx-get="{% url 'confirm_transaction' t.id %}"
-                    hx-target="#row-{{ t.id }}"
+                    hx-target="#mapping-row-{{ t.id }}"
                     hx-swap="outerHTML"
                     hx-vals='{"field": "is_income", "value": "{% if t.is_income %}false{% else %}true{% endif %}"}'
                     title="{% if t.is_income %}{% trans 'Zu Ausgabe machen' %}{% else %}{% trans 'Zu Einnahme machen' %}{% endif %}">

@@ -118,7 +118,9 @@
                         <tfoot class="bg-light">
                             <tr class="fw-bold">
                                 <td colspan="3" class="text-end">{% trans "GESAMTSUMME:" %}</td>
-                                <td class="text-end text-primary fs-5" id="total-ready-sum">{{ total_ready|floatformat:2|intcomma }} {{ profile.currency|default:"EUR" }}</td>
+                                <td class="text-end text-primary fs-5">
+                                    <span id="total-ready-sum">{{ total_ready|floatformat:2|intcomma }}</span> {{ profile.currency|default:"EUR" }}
+                                </td>
                                 <td colspan="3"></td>
                             </tr>
                         </tfoot>
