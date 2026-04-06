@@ -20,16 +20,19 @@
 - **Single Line Variables**: Always keep variables like `{{ currency }}` on the same line as the value they accompany.
 
 ## Git Deployment
-- **STRICT Push Targets**: Alle Änderungen MÜSSEN zwingend in zwei spezifische Remote-Ziele / Branches gepusht werden:
-  1. `bzaiser/finanzplan.git` (origin) $\rightarrow$ Branch: `master`
-  2. `bzaiser/Open-finanz-overview.git` (public) $\rightarrow$ Branch: `main`
-- **Vorgehensweise**: Führe nach jedem Commit beide Pushes aus: `git push origin main:master` und `git push public main:main`. (Falls lokal auf `main` gearbeitet wird).
+- **STRICT Push Targets (Dual-Branch/Dual-Repo)**: Alle Änderungen MÜSSEN zwingend in ZWEI Repositories auf jeweils ZWEI Branches gepusht werden:
+  1. `bzaiser/finanzplan.git` (origin) $\rightarrow$ Branches: `main` **UND** `master`
+  2. `bzaiser/Open-finanz-overview.git` (public) $\rightarrow$ Branches: `main` **UND** `master`
+- **Vorgehensweise**: Führe nach jedem Commit die Pushes für alle Zielkombinationen aus:
+  ```bash
+  git push origin main && git push origin master
+  git push public main && git push public master
+  ```
 - **Migration Synchronisation (CRITICAL)**: Bevor eine neue Datenbank-Migration erstellt wird, MUSS die KI den Stand in BEIDEN Remotes prüfen:
   - `git ls-tree -r origin/master finance/migrations/`
   - `git ls-tree -r public/main finance/migrations/`
-- **Linearitäts-Gebot**: Beide Repositories müssen exakt dieselbe Migrations-Historie teilen. Wenn ein Repo voraus ist (z.B. durch ältere Migrationen), muss das andere Repo erst auf denselben Stand gebracht werden, bevor neue Migrationen (z.B. `0016...`) hinzugefügt werden.
-- **Keine Alleingänge**: Erstelle niemals Migrationen, die nur in einem der beiden Repositories funktionieren würden. 
-- **STRICT Push-First Rule**: Bevor dem Nutzer gemeldet wird "Du kannst es jetzt probieren" oder Ähnliches, MÜSSEN alle Code-Änderungen zwingend mit `git commit` und `git push` auf beiden Remotes (origin & public) erfolgreich abgeschlossen sein.
+- **Linearitäts-Gebot**: Beide Repositories müssen exakt dieselbe Migrations-Historie teilen. Wenn ein Repo voraus ist, muss das andere Repo erst auf denselben Stand gebracht werden.
+- **STRICT Push-First Rule**: Bevor dem Nutzer gemeldet wird "Fertig" oder "Probier es aus", MÜSSEN alle Änderungen auf allen oben genannten Branches/Remotes erfolgreich gepusht sein.
 
 ## Infrastructure & Environment
 - **STRICT: NO Local Docker**: Es darf NIEMALS versucht werden, `docker` oder `docker-compose` Befehle lokal auszuführen. Es darf auch NICHT nach einem lokalen Docker-Daemon gesucht werden. 
