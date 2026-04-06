@@ -32,7 +32,7 @@
   - `git ls-tree -r origin/master finance/migrations/`
   - `git ls-tree -r public/main finance/migrations/`
 - **Linearitäts-Gebot**: Beide Repositories müssen exakt dieselbe Migrations-Historie teilen. Wenn ein Repo voraus ist, muss das andere Repo erst auf denselben Stand gebracht werden.
-- **STRICT Push-First Rule**: Bevor dem Nutzer gemeldet wird "Fertig" oder "Probier es aus", MÜSSEN alle Änderungen auf allen oben genannten Branches/Remotes erfolgreich gepusht sein.
+- **STRICT Push-First Rule**: Bevor dem Nutzer eine Antwort, Rückmeldung oder Erklärung gesendet wird, MÜSSEN alle Code-Änderungen zwingend auf allen oben genannten Branches/Remotes (`origin/main`, `origin/master`, `public/main`, `public/master`) erfolgreich gepusht sein. Erklärungen folgen immer ERST NACH dem erfolgreichen Push.
 
 ## Infrastructure & Environment
 - **STRICT: NO Local Docker**: Es darf NIEMALS versucht werden, `docker` oder `docker-compose` Befehle lokal auszuführen. Es darf auch NICHT nach einem lokalen Docker-Daemon gesucht werden. 
