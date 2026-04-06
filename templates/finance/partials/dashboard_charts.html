@@ -23,8 +23,8 @@
                 {% endif %}
             </div>
             <div class="card-body d-flex flex-column {% if 'table' in item.id %}p-0{% endif %}" 
-                style="{% if 'table' in item.id %}background-color: {{ profile.table_body_bg_color|default:'#ffffff' }} !important;{% endif %}">
-                <div style="position:relative;{% if 'table' in item.id %}background-color: {{ profile.table_body_bg_color|default:'#ffffff' }} !important;{% endif %};{% if item.height == 'small' %}height:250px;{% elif item.height == 'medium' %}height:400px;{% else %}height:600px;{% endif %}">
+                style="{% if 'table' in item.id %}background-color: {{ profile.table_body_bg_color|default:'#ffffff' }} !important;{% endif %} flex-grow: 1;">
+                <div style="position:relative;{% if 'table' in item.id %}background-color: {{ profile.table_body_bg_color|default:'#ffffff' }} !important; height: 100%; min-height: {% if item.height == 'small' %}250px{% elif item.height == 'medium' %}400px{% else %}600px{% endif %};{% else %}{% if item.height == 'small' %}height:250px;{% elif item.height == 'medium' %}height:400px;{% else %}height:600px;{% endif %}{% endif %}">
                     {% if item.id == 'income_table_widget' %}
                         {{ table_datasets.income_table_widget|json_script:item.id }}
                         {% include 'finance/partials/dashboard_table_simple.html' with widget_id=item.id %}
