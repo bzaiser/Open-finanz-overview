@@ -1,0 +1,68 @@
+{% load i18n humanize %}
+<div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+        <thead class="bg-light text-uppercase small fw-bold">
+            <tr>
+                <th style="width: 50px;">{% trans "Aktion" %}</th>
+                <th style="width: 150px;">{% trans "Datum" %}</th>
+                <th>{% trans "Buchungstext" %}</th>
+                <th style="width: 150px;" class="text-end">{% trans "Betrag" %}</th>
+                <th style="width: 250px;">{% trans "Kategorie zuweisen" %}</th>
+                <th style="width: 100px;"></th>
+            </tr>
+        </thead>
+        <tbody id="mapping-rows">
+            {% for t in transactions %}
+                {% include 'finance/partials/import_row.html' with t=t %}
+            {% endfor %}
+            {% if not transactions %}
+                <tr id="empty-mapping-msg">
+                    <td colspan="6" class="text-center py-5">
+                        <div class="animate__animated animate__fadeIn">
+                            <i class="bi bi-balloon-fill text-success fs-1 mb-3 d-block"></i>
+                            <h5 class="fw-bold text-success">{% trans "Alle Posten zugeordnet!" %}</h5>
+                            <p class="text-muted">{% trans "Du kannst jetzt den Import unten final prüfen und speichern." %}</p>
+                        </div>
+                    </td>
+                </tr>
+            {% endif %}
+        </tbody>
+        {% if transactions and transactions|length > 1 %}
+        <tfoot class="bg-white border-top">
+            <tr>
+                <td colspan="6" class="py-3 px-4">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="small text-muted">
+                            <i class="bi bi-info-circle me-1"></i> 
+                            {% blocktrans with count=transactions|length %}Gefilterte Ansicht: {{ count }} offene Buchungen.{% endblocktrans %}
+                        </div>
+                        <button class="btn btn-primary btn-sm fw-bold shadow-sm"
+                                hx-post="{% url 'import_search_as_group' batch.id %}"
+                                hx-include="[name='q'], [name='target_name'], [name='category_id']"
+                                hx-confirm="{% trans 'Möchtest du alle aktuell gefilterten Buchungen als eine Gruppe importieren?' %}"
+                                hx-target="closest div"
+                                hx-swap="none">
+                            <i class="bi bi-collection-play-fill me-2"></i>{% trans "Alle gefilterten als GRUPPE übernehmen" %}
+                        </button>
+                    </div>
+                    
+                    <!-- Hidden inputs for some context if needed -->
+                    <div class="mt-2 row g-2">
+                        <div class="col-md-6">
+                            <input type="text" name="target_name" class="form-control form-control-sm" placeholder="{% trans 'Ziel-Name (z.B. Lebensmittel)' %}">
+                        </div>
+                        <div class="col-md-6">
+                            <select name="category_id" class="form-select form-select-sm">
+                                <option value="">{% trans "-- Ziel-Kategorie --" %}</option>
+                                {% for cat in categories %}
+                                    <option value="{{ cat.id }}">{{ cat.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </tfoot>
+        {% endif %}
+    </table>
+</div>

@@ -43,6 +43,7 @@ class CashFlowSource(models.Model):
     is_inflation_adjusted = models.BooleanField(_("Indexed (Inflation Adjustment)"), default=True, help_text=_("If checked, the payout will increase annually based on the global pension increase rate."))
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, verbose_name=_("Category"))
     frequency = models.CharField(_("Frequency"), max_length=20, default='monthly', choices=FREQUENCY_CHOICES)
+    notes = models.TextField(_("Notes"), blank=True, null=True)
     
     class Meta:
         verbose_name = _("Cash Flow Source")
@@ -130,6 +131,10 @@ class PendingTransaction(models.Model):
     
     # User Review state
     is_ignored = models.BooleanField(_("Ignore"), default=False)
+    
+    # Consolidation Fields
+    matched_terms = models.TextField(_("Matched Terms (Notes)"), blank=True, null=True)
+    integration_count = models.IntegerField(_("Integration Count"), default=1)
 
     class Meta:
         verbose_name = _("Pending Transaction")

@@ -3,12 +3,13 @@
 {% load humanize %}
 
 {% block content %}
-<div class="container-fluid py-4 min-vh-100">
+<div class="container-fluid py-4 min-vh-100" style="background-color: #f4f7f9;">
+    <!-- HEADER -->
     <div class="row mb-4">
         <div class="col-12 d-flex justify-content-between align-items-center">
             <div>
-                <h2 class="mb-0 fw-bold"><i class="bi bi-shield-check me-2 text-primary"></i>{% trans "Monatswerte überprüfen" %}</h2>
-                <p class="text-muted mb-0">{% trans "Überprüfe die zusammengefassten Monatsbuchungen, bevor du sie unter Einnahmen/Ausgaben übernimmst." %}</p>
+                <h2 class="mb-0 fw-bold"><i class="bi bi-shield-check me-2 text-primary"></i>{% trans "Abstimmung & Import" %}</h2>
+                <p class="text-muted mb-0">{% trans "Bereinige die offenen Posten oben, bis sie in der Import-Vorschau unten korrekt zusammengefasst sind." %}</p>
             </div>
             <div class="d-flex gap-2">
                 <a href="{% url 'import_filters_list' %}" class="btn btn-outline-primary">
@@ -17,63 +18,100 @@
                 <a href="{% url 'import_transactions' %}" class="btn btn-outline-secondary">
                     <i class="bi bi-trash"></i> {% trans "Abbrechen" %}
                 </a>
-                <a href="{% url 'apply_import' batch.id %}" class="btn btn-success px-4 fw-bold shadow-sm">
-                    <i class="bi bi-check-circle-fill"></i> {% trans "Bestätigte importieren" %}
+                <a href="{% url 'apply_import' batch.id %}" class="btn btn-success px-5 fw-bold shadow-sm">
+                    <i class="bi bi-cloud-arrow-down-fill me-2"></i>{% trans "Jetzt importieren" %}
                 </a>
             </div>
         </div>
     </div>
 
-    <div class="row">
+    <!-- PANE 1: MAPPING (TOP) -->
+    <div class="row mb-5">
         <div class="col-12">
-            <div class="alert alert-primary shadow-sm border-0 mb-4 d-flex align-items-center" style="background: linear-gradient(135deg, #0d6efd, #6610f2); color: white;" role="alert">
-                <i class="bi bi-funnel-fill fs-4 me-3"></i> 
-                <div>
-                    <strong>{% trans "Filter-basierte Gruppierung aktiv:" %}</strong> 
-                    {% trans "Die Buchungen wurden nach deinen Filtern und Monat zusammengefasst. Nur Ausgaben (< 0) werden angezeigt." %}
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center border-bottom">
+                    <h5 class="mb-0 fw-bold text-primary"><i class="bi bi-question-circle-fill me-2"></i>{% trans "1. Offene Posten (Noch zuordnen)" %}</h5>
+                    
+                    <!-- Search Box -->
+                    <div class="input-group" style="width: 400px;">
+                        <span class="input-group-text bg-light border-end-0"><i class="bi bi-search"></i></span>
+                        <input type="text" name="q" class="form-control border-start-0" 
+                               placeholder="{% trans 'Suchen & Gruppieren (z.B. Aldi)...' %}"
+                               hx-get="{% url 'review_transactions' batch.id %}"
+                               hx-trigger="keyup changed delay:300ms"
+                               hx-target="#mapping-pane"
+                               hx-indicator=".search-spinner"
+                               hx-vals='js:{target: "mapping-search"}'>
+                        <span class="input-group-text bg-white search-spinner htmx-indicator">
+                            <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                        </span>
+                    </div>
+                </div>
+                
+                <div id="mapping-pane">
+                    {% include 'finance/partials/import_mapping_pane.html' with transactions=mapping_list %}
                 </div>
             </div>
-
-            <div class="card shadow-sm border-0 overflow-hidden">
-                <div class="card-header py-3">
-            <div class="row align-items-center">
-                <div class="col">
-                    <span class="badge bg-secondary px-3 py-2 rounded-pill">
-                        <i class="bi bi-file-earmark-text"></i> {{ batch.filename }}
-                    </span>
-                    <span class="ms-2 small text-muted"><i class="bi bi-clock"></i> {{ batch.date|date:"d.m.Y H:i" }}</span>
-                </div>
-            </div>
-        </div>
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="bg-opacity-10 bg-secondary text-uppercase small fw-bold">
-                    <tr>
-                        <th style="width: 50px;">{% trans "Aktion" %}</th>
-                        <th style="width: 150px;">{% trans "Monat / Jahr" %}</th>
-                        <th>{% trans "Gruppierung / Filter" %}</th>
-                        <th style="width: 150px;" class="text-end">{% trans "Summe" %}</th>
-                        <th style="width: 120px;" class="text-center">{% trans "Typ" %}</th>
-                        <th style="width: 250px;">{% trans "Kategorie & Info" %}</th>
-                    </tr>
-                </thead>
-                <tbody id="import-rows">
-                    {% for t in transactions %}
-                        {% include 'finance/partials/import_row.html' %}
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
         </div>
     </div>
-    </div> <!-- Close col-12 -->
-    </div> <!-- Close row -->
+
+    <!-- PANE 2: READY (BOTTOM) -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow border-0 overflow-hidden" style="border-top: 5px solid #198754 !important;">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 fw-bold text-success"><i class="bi bi-check-all me-2"></i>{% trans "2. Vorschau: Import-Bereit (Zusammengefasst)" %}</h5>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light text-uppercase small fw-bold">
+                            <tr>
+                                <th style="width: 200px;">{% trans "Ziel-Name" %}</th>
+                                <th style="width: 150px;">{% trans "Zeitraum" %}</th>
+                                <th>{% trans "Details / Notiz" %}</th>
+                                <th style="width: 180px;" class="text-end">{% trans "Summe" %}</th>
+                                <th style="width: 100px;" class="text-center">{% trans "Anzahl" %}</th>
+                                <th style="width: 150px;">{% trans "Kategorie" %}</th>
+                                <th style="width: 50px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="ready-rows">
+                            {% for t in ready_list %}
+                                {% include 'finance/partials/import_ready_row.html' with t=t %}
+                            {% endfor %}
+                            {% if not ready_list %}
+                                <tr id="empty-ready-msg">
+                                    <td colspan="7" class="text-center py-5 text-muted">
+                                        <i class="bi bi-info-circle fs-4 mb-2 d-block"></i>
+                                        {% trans "Noch keine Buchungen zur Übernahme bereit. Ordne oben Filter zu." %}
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                        <tfoot class="bg-light">
+                            <tr class="fw-bold">
+                                <td colspan="3" class="text-end">{% trans "GESAMTSUMME:" %}</td>
+                                <td class="text-end text-primary fs-5" id="total-ready-sum">{{ total_ready|floatformat:2|intcomma }} {{ profile.currency|default:"EUR" }}</td>
+                                <td colspan="3"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <style>
     .transition-row { transition: background-color 0.3s ease; }
+    .row-mapping { background-color: #fff; }
+    .row-ready { background-color: #fdfdfd; border-left: 4px solid #198754; }
     .row-ignored { opacity: 0.5; background-color: #f8f9fa !important; }
-    .row-income { border-left: 4px solid #198754; }
-    .row-expense { border-left: 4px solid #dc3545; }
+    .htmx-indicator { display: none; }
+    .htmx-request .htmx-indicator { display: inline-block; }
+    .htmx-request.htmx-indicator { display: inline-block; }
+    .mapping-category-select:focus { box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25); }
 </style>
+{% endblock %}
 {% endblock %}

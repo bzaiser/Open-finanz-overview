@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse
+from django.template.loader import render_to_string
 from django.core.cache import cache
 from django.utils import timezone, translation
 from django.utils.translation import gettext_lazy as _, gettext as _eager
@@ -868,13 +869,40 @@ def import_processing(request):
 @login_required
 def review_bank_transactions(request, batch_id):
     batch = get_object_or_404(ImportBatch, id=batch_id, user=request.user)
-    transactions = batch.transactions.all().order_by('date')
+    
+    # 1. Search Query for Mapping Pane
+    q = request.GET.get('q', '').strip().lower()
+    
+    # 2. Split into panes
+    # Mapping: Not ignored, NO category
+    mapping_qs = batch.transactions.filter(is_ignored=False, category__isnull=True)
+    if q:
+        mapping_qs = mapping_qs.filter(description__icontains=q)
+    
+    mapping_list = mapping_qs.order_by('date')
+    
+    # Ready: Not ignored, HAS category
+    ready_list = batch.transactions.filter(is_ignored=False, category__isnull=False).order_by('date', '-amount')
+    
+    # Total sum for Ready Pane
+    total_ready = sum(t.amount for t in ready_list)
+    
     categories = Category.objects.all()
     
+    # Check if this is an HTMX request for the Mapping Pane only
+    if request.headers.get('HX-Request') and 'mapping-search' in request.GET.get('target', ''):
+        return render(request, 'finance/partials/import_mapping_pane.html', {
+            'transactions': mapping_list,
+            'categories': categories
+        })
+
     return render(request, 'finance/import_review.html', {
         'batch': batch,
-        'transactions': transactions,
+        'mapping_list': mapping_list,
+        'ready_list': ready_list,
+        'total_ready': total_ready,
         'categories': categories,
+        'q': q,
         'ai_active': bool(settings.GEMINI_API_KEY or settings.GROQ_API_KEY)
     })
 
@@ -882,11 +910,14 @@ def review_bank_transactions(request, batch_id):
 def confirm_bank_transaction(request, transaction_id):
     """
     HTMX endpoint to toggle fields.
+    Now supports moving rows between Mapping and Ready panes.
     """
     transaction = get_object_or_404(PendingTransaction, id=transaction_id, batch__user=request.user)
     
     field = request.GET.get('field')
     value = request.GET.get('value')
+    
+    was_mapping = (transaction.category is None and not transaction.is_ignored)
     
     if field == 'is_ignored':
         transaction.is_ignored = (value == 'true')
@@ -901,11 +932,50 @@ def confirm_bank_transaction(request, transaction_id):
         
     transaction.save()
     
-    # Return the partial for this row
-    return render(request, 'finance/partials/import_row.html', {
-        't': transaction, 
-        'categories': Category.objects.all()
-    })
+    is_mapping = (transaction.category is None and not transaction.is_ignored)
+    is_ready = (transaction.category is not None and not transaction.is_ignored)
+    
+    categories = Category.objects.all()
+    
+    # If the state changed (mapping -> ready or vice versa), we might need to remove from one and add to another
+    # Using HTMX Out-of-Band Swaps
+    response_html = ""
+    
+    if is_mapping:
+        # Just return the updated mapping row
+        return render(request, 'finance/partials/import_row.html', {'t': transaction, 'categories': categories})
+    elif is_ready:
+        # The row moved to "Ready". We remove it from Mapping and ADD to Ready
+        # 1. Remove from mapping pane (empty response for the current target)
+        # 2. Append/Update in ready pane (OOB)
+        response_html = f'<tr id="row-{transaction.id}" hx-swap-oob="delete"></tr>'
+        
+        # Add to ready pane
+        ready_row_html = render_to_string('finance/partials/import_ready_row.html', {
+            't': transaction, 
+            'categories': categories,
+            'hx_oob': True
+        })
+        response_html += ready_row_html
+        
+        # 3. Update the Total Sum OOB
+        total_ready = sum(t.amount for t in transaction.batch.transactions.filter(is_ignored=False, category__isnull=False))
+        from django.contrib.humanize.templatetags.humanize import intcomma
+        total_str = f"{intcomma(round(total_ready, 2))} EUR"
+        response_html += f'<td id="total-ready-sum" hx-swap-oob="innerHTML">{total_str}</td>'
+        
+        return HttpResponse(response_html)
+    else:
+        # It's ignored. Delete from whatever pane it was in.
+        response_html = f'<tr id="row-{transaction.id}" hx-swap-oob="delete"></tr>'
+        
+        # Update sum just in case it was in ready
+        total_ready = sum(t.amount for t in transaction.batch.transactions.filter(is_ignored=False, category__isnull=False))
+        from django.contrib.humanize.templatetags.humanize import intcomma
+        total_str = f"{intcomma(round(total_ready, 2))} EUR"
+        response_html += f'<td id="total-ready-sum" hx-swap-oob="innerHTML">{total_str}</td>'
+        
+        return HttpResponse(response_html)
 
 @login_required
 def apply_import_batch(request, batch_id):
@@ -932,7 +1002,8 @@ def apply_import_batch(request, batch_id):
             end_date=t.date.replace(day=last_day),
             category=t.category,
             frequency='monthly',
-            is_inflation_adjusted=False # Historical data usually doesn't need indexing
+            is_inflation_adjusted=False, # Historical data usually doesn't need indexing
+            notes=t.matched_terms # Save the consolidation notes
         )
         count_recurring += 1
             
@@ -1012,14 +1083,112 @@ def get_import_progress(request):
     else:
         html += f'<p class="text-center mt-2 text-muted small fw-bold">{_eager("KI analysiert Daten...")} ({progress}%)</p>'
 
-    html += f'''
-        <!-- Update the log window via OOB (Out of Band) swap -->
-        <div id="ai-log-stream" hx-swap-oob="innerHTML">
-            {log_content.replace("\\n", "<br>")}
-        </div>
-    </div>
-    '''
-    return HttpResponse(html)
+@login_required
+def import_search_as_group(request, batch_id):
+    """
+    Takes a search query and merges all matching (mapping) transactions 
+    into a single 'Ready' transaction, while also learning the filter.
+    """
+    batch = get_object_or_404(ImportBatch, id=batch_id, user=request.user)
+    q = request.POST.get('q', '').strip()
+    target_name = request.POST.get('target_name', '').strip()
+    category_id = request.POST.get('category_id')
+    
+    if not (q and target_name and category_id):
+        return HttpResponse('<div class="alert alert-danger small">Bitte alle Felder ausfüllen.</div>', status=400)
+    
+    category = get_object_or_404(Category, id=category_id)
+    
+    # 1. Update/Create Filter
+    filt, created = ImportFilter.objects.get_or_create(
+        user=request.user,
+        target_name=target_name,
+        defaults={'category': category, 'search_query': q}
+    )
+    if not created:
+        terms = [t.strip() for t in filt.search_query.split(';') if t.strip()]
+        if q not in terms:
+            filt.search_query = f"{filt.search_query};{q}"
+            filt.save()
+
+    # 2. Find matching transactions (Mapping Only)
+    matches = batch.transactions.filter(
+        is_ignored=False, 
+        category__isnull=True, 
+        description__icontains=q
+    )
+    
+    if not matches.exists():
+        return HttpResponse('<div class="alert alert-warning small">Keine passenden Buchungen gefunden.</div>')
+
+    # 3. Create or Update Consolidated Record (Ready Pane)
+    from collections import defaultdict
+    months_map = defaultdict(list)
+    for m in matches:
+        key = (m.date.year, m.date.month)
+        months_map[key].append(m)
+        
+    response_html = ""
+    for month_key, month_matches in months_map.items():
+        total_amount = sum(m.amount for m in month_matches)
+        total_count = sum(m.integration_count for m in month_matches)
+        all_terms = "; ".join(set(m.description for m in month_matches))
+        
+        # Look for existing Ready record for this target/month
+        ready_rec = batch.transactions.filter(
+            description=target_name,
+            date__year=month_key[0],
+            date__month=month_key[1],
+            category=category,
+            is_ignored=False
+        ).first()
+
+        if ready_rec:
+            ready_rec.amount += total_amount
+            ready_rec.integration_count += total_count
+            if ready_rec.matched_terms:
+                ready_rec.matched_terms = f"{ready_rec.matched_terms}; {all_terms}"
+            else:
+                ready_rec.matched_terms = all_terms
+            ready_rec.save()
+            
+            # Since it already exists, we UPDATE it OOB instead of appending
+            response_html += render_to_string('finance/partials/import_ready_row.html', {
+                't': ready_rec, 
+                'categories': Category.objects.all(),
+                'hx_oob': True # This will swap by ID since it's already there? No, need special care.
+            }).replace('hx-swap-oob="beforeend:#ready-rows"', f'hx-swap-oob="outerHTML:#row-{ready_rec.id}"')
+        else:
+            ready_rec = PendingTransaction.objects.create(
+                batch=batch,
+                date=month_matches[0].date, # Representative date
+                description=target_name,
+                amount=total_amount,
+                category=category,
+                integration_count=total_count,
+                matched_terms=all_terms,
+                is_ignored=False
+            )
+            response_html += render_to_string('finance/partials/import_ready_row.html', {
+                't': ready_rec, 
+                'categories': Category.objects.all(),
+                'hx_oob': True
+            })
+        
+        # OOB Swaps to delete all matches
+        for m in month_matches:
+            response_html += f'<tr id="row-{m.id}" hx-swap-oob="delete"></tr>'
+    
+    # 3. Update the Total Sum OOB
+    total_ready = sum(t.amount for t in batch.transactions.filter(is_ignored=False, category__isnull=False))
+    from django.contrib.humanize.templatetags.humanize import intcomma
+    total_str = f"{intcomma(round(total_ready, 2))} EUR"
+    response_html += f'<td id="total-ready-sum" hx-swap-oob="innerHTML">{total_str}</td>'
+    
+    # 4. Remove empty state message if any
+    response_html += '<tr id="empty-ready-msg" hx-swap-oob="delete"></tr>'
+
+    return HttpResponse(response_html)
 
 @login_required
 def delete_all_temporary_data(request):

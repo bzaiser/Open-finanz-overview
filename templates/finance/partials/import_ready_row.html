@@ -1,0 +1,43 @@
+{% load i18n humanize %}
+<tr id="row-{{ t.id }}" 
+    class="row-ready transition-row animate__animated animate__fadeIn"
+    {% if hx_oob %}hx-swap-oob="beforeend:#ready-rows"{% endif %}>
+    <td class="fw-bold text-success">
+        <i class="bi bi-check-circle-fill me-1"></i> {{ t.description }}
+    </td>
+    <td class="text-nowrap small fw-bold">
+        {{ t.date|date:"F Y" }}
+    </td>
+    <td>
+        {% if t.matched_terms %}
+            <div class="small text-muted" title="{{ t.matched_terms }}">
+                <i class="bi bi-info-circle me-1"></i> <em>{{ t.matched_terms }}</em>
+            </div>
+        {% else %}
+            <span class="text-muted small">---</span>
+        {% endif %}
+    </td>
+    <td class="text-end fw-bold {% if t.is_income %}text-success{% else %}text-danger{% endif %} text-nowrap">
+        {{ t.amount|floatformat:2|intcomma }} {{ profile.currency|default:"EUR" }}
+    </td>
+    <td class="text-center">
+        <span class="badge bg-light text-dark border">{{ t.integration_count }}</span>
+    </td>
+    <td>
+        {% if t.category %}
+            <span class="badge rounded-pill" style="background-color: {{ t.category.color }}; border: 1px solid rgba(0,0,0,0.1);">
+                {{ t.category.name }}
+            </span>
+        {% endif %}
+    </td>
+    <td class="text-end">
+        <button class="btn btn-link text-danger p-0" 
+                hx-get="{% url 'confirm_transaction' t.id %}"
+                hx-target="#row-{{ t.id }}"
+                hx-swap="outerHTML"
+                hx-vals='{"field": "is_ignored", "value": "true"}'
+                hx-confirm="{% trans 'Diesen zusammengefassten Posten wirklich verwerfen?' %}">
+            <i class="bi bi-x-circle"></i>
+        </button>
+    </td>
+</tr>

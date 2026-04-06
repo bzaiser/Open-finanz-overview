@@ -1,86 +1,70 @@
 {% load i18n humanize %}
-<tr id="row-{{ t.id }}" 
-    class="transition-row {% if t.is_ignored %}row-ignored{% else %}{% if t.is_income %}row-income{% else %}row-expense{% endif %}{% endif %}">
-    
+<tr id="row-{{ t.id }}" class="row-mapping transition-row">
+    <!-- Action: Ignore -->
     <td class="text-center">
-        <div class="form-check form-switch d-inline-block">
-            <input class="form-check-input" type="checkbox" 
-                   {% if not t.is_ignored %}checked{% endif %}
-                   hx-get="{% url 'confirm_transaction' t.id %}"
-                   hx-target="#row-{{ t.id }}"
-                   hx-swap="outerHTML"
-                   hx-vals='{"field": "is_ignored", "value": "{% if t.is_ignored %}false{% else %}true{% endif %}"}'>
-        </div>
+        <button class="btn btn-link text-danger p-0" 
+                hx-get="{% url 'confirm_transaction' t.id %}"
+                hx-target="#row-{{ t.id }}"
+                hx-swap="outerHTML"
+                hx-vals='{"field": "is_ignored", "value": "true"}'
+                title="{% trans 'Ignorieren' %}">
+            <i class="bi bi-trash fs-5"></i>
+        </button>
     </td>
     
-    <td class="text-nowrap fw-bold">{{ t.date|date:"F Y" }}</td>
+    <!-- Date -->
+    <td class="text-nowrap small text-muted">
+        <i class="bi bi-calendar3 me-1"></i> {{ t.date|date:"d.m.Y" }}
+    </td>
     
-    <td class="text-truncate" style="max-width: 300px;" title="{{ t.description }}">
+    <!-- Description -->
+    <td class="text-truncate fw-bold" style="max-width: 350px;" title="{{ t.description }}">
         {{ t.description }}
+        {% if t.ai_reasoning %}
+            <div class="small fw-normal text-muted mt-1" style="font-size: 0.75rem;">
+                <i class="bi bi-magic me-1"></i> {{ t.ai_reasoning }}
+            </div>
+        {% endif %}
     </td>
     
+    <!-- Amount -->
     <td class="text-end fw-bold {% if t.is_income %}text-success{% else %}text-danger{% endif %} text-nowrap">
         {{ t.amount|floatformat:2|intcomma }} {{ profile.currency|default:"EUR" }}
     </td>
     
-    <td class="text-center">
-        <div class="btn-group btn-group-sm">
-            <button class="btn {% if t.is_income %}btn-success{% else %}btn-outline-danger{% endif %}"
+    <!-- Category Assignment -->
+    <td>
+        <div class="d-flex gap-1 align-items-center">
+            <select class="form-select form-select-sm border-primary mapping-category-select" 
                     hx-get="{% url 'confirm_transaction' t.id %}"
                     hx-target="#row-{{ t.id }}"
                     hx-swap="outerHTML"
-                    hx-vals='{"field": "is_income", "value": "{% if t.is_income %}false{% else %}true{% endif %}"}'>
-                {% if t.is_income %}<i class="bi bi-arrow-down-left"></i>{% else %}<i class="bi bi-arrow-up-right"></i>{% endif %}
+                    hx-trigger="change"
+                    name="value"
+                    hx-vals='{"field": "category"}'>
+                <option value="">{% trans "Wähle Kategorie..." %}</option>
+                {% for cat in categories %}
+                    <option value="{{ cat.id }}" {% if t.category == cat %}selected{% endif %}>{{ cat.name }}</option>
+                {% endfor %}
+            </select>
+            
+            <!-- Type Toggle -->
+            <button class="btn btn-sm {% if t.is_income %}btn-success{% else %}btn-outline-danger{% endif %}"
+                    hx-get="{% url 'confirm_transaction' t.id %}"
+                    hx-target="#row-{{ t.id }}"
+                    hx-swap="outerHTML"
+                    hx-vals='{"field": "is_income", "value": "{% if t.is_income %}false{% else %}true{% endif %}"}'
+                    title="{% if t.is_income %}{% trans 'Zu Ausgabe machen' %}{% else %}{% trans 'Zu Einnahme machen' %}{% endif %}">
+                {% if t.is_income %}<i class="bi bi-plus-lg"></i>{% else %}<i class="bi bi-dash-lg"></i>{% endif %}
             </button>
-            <a href="{% url 'import_filters_list' %}?query={{ t.description|urlencode }}&name={{ t.description|urlencode }}" 
-               class="btn btn-outline-primary" title="{% trans 'Als Filter speichern' %}">
-                <i class="bi bi-funnel"></i>
-            </a>
         </div>
     </td>
-    
-    <td>
-        <select class="form-select form-select-sm" 
-                hx-get="{% url 'confirm_transaction' t.id %}"
-                hx-target="#row-{{ t.id }}"
-                hx-swap="outerHTML"
-                hx-trigger="change"
-                name="value"
-                hx-vals='{"field": "category"}'>
-            <option value="">---</option>
-            {% for cat in categories %}
-                <option value="{{ cat.id }}" {% if t.category == cat %}selected{% endif %}>{{ cat.name }}</option>
-            {% endfor %}
-        </select>
-        {% if t.ai_reasoning %}
-        <div class="mt-1 small {% if '[DUBLETTE]' in t.ai_reasoning %}text-danger fw-bold{% else %}text-muted{% endif %} italic" style="font-size: 0.75rem; line-height: 1.1;">
-            <i class="bi bi-info-circle"></i> <em>{{ t.ai_reasoning }}</em>
-        </div>
-        {% endif %}
-    </td>
-    
-    <td class="text-center">
-        <div class="form-check d-inline-block">
-            <input class="form-check-input" type="checkbox" 
-                   {% if t.is_recurring %}checked{% endif %}
-                   hx-get="{% url 'confirm_transaction' t.id %}"
-                   hx-target="#row-{{ t.id }}"
-                   hx-swap="outerHTML"
-                   hx-vals='{"field": "is_recurring", "value": "{% if t.is_recurring %}false{% else %}true{% endif %}"}'>
-        </div>
-    </td>
-    
-    <td>
-        <select class="form-select form-select-sm" 
-                {% if not t.is_recurring %}disabled{% endif %}
-                hx-get="{% url 'confirm_transaction' t.id %}"
-                hx-target="#row-{{ t.id }}"
-                hx-swap="outerHTML"
-                hx-trigger="change"
-                name="value"
-                hx-vals='{"field": "frequency"}'>
-            <option value="monthly" {% if t.frequency == 'monthly' %}selected{% endif %}>{% trans "Monatlich" %}</option>
-            <option value="yearly" {% if t.frequency == 'yearly' %}selected{% endif %}>{% trans "Jährlich" %}</option>
-        </select>
+
+    <!-- Quick Filter Save -->
+    <td class="text-end">
+        <a href="{% url 'import_filters_list' %}?pre_query={{ t.description|urlencode }}&pre_name={{ t.description|urlencode }}" 
+           class="btn btn-sm btn-outline-secondary" title="{% trans 'Dauerhaften Filter erstellen' %}">
+            <i class="bi bi-funnel"></i>
+        </a>
     </td>
 </tr>
