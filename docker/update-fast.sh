@@ -32,16 +32,16 @@ docker compose --env-file .env exec web pip install -q --no-cache-dir -r require
 
 # Run database migrations
 echo "Ensuring database migrations are up to date..."
-docker compose --env-file .env exec web python3 manage.py migrate --verbosity 0
-docker compose --env-file .env exec web python3 manage.py createcachetable --verbosity 0
+docker compose --env-file .env exec web python3 manage.py migrate
+docker compose --env-file .env exec web python3 manage.py createcachetable
 
 # Compile translations
 echo "Compiling translations..."
-docker compose --env-file .env exec web python3 manage.py compilemessages --verbosity 0
+docker compose --env-file .env exec web python3 manage.py compilemessages
 
 # Collect static files
 echo "Collecting static files..."
-docker compose --env-file .env exec web python3 manage.py collectstatic --noinput --verbosity 0
+docker compose --env-file .env exec web python3 manage.py collectstatic --noinput
 
 # Update/Restart the services
 echo "Updating containers..."

@@ -43,13 +43,13 @@ docker compose --env-file .env exec web pip install -q --no-cache-dir -r require
 
 # Database migrations
 echo "Database migrations..."
-docker compose --env-file .env exec web python3 manage.py migrate --verbosity 0
-docker compose --env-file .env exec web python3 manage.py createcachetable --verbosity 0
+docker compose --env-file .env exec web python3 manage.py migrate
+docker compose --env-file .env exec web python3 manage.py createcachetable
 
 # Build frontend & translations
 echo "Processing assets..."
-docker compose --env-file .env exec web python3 manage.py compilemessages --verbosity 0
-docker compose --env-file .env exec web python3 manage.py collectstatic --noinput --verbosity 0
+docker compose --env-file .env exec web python3 manage.py compilemessages
+docker compose --env-file .env exec web python3 manage.py collectstatic --noinput
 
 echo "-----------------------------------"
 echo "Update complete! Application is running."
