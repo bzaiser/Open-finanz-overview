@@ -1220,6 +1220,7 @@ def delete_all_temporary_data(request):
     cache.delete(cache_key)
     
     messages.success(request, _(f"{count} temporäre Import-Datensätze wurden gelöscht."))
+    return redirect('import_transactions')
 
 @login_required
 def import_filters_list(request):
