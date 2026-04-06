@@ -25,21 +25,20 @@ def get_brightness(hex_color):
 @receiver(post_save, sender=UserProfile)
 def sync_admin_theme(sender, instance, **kwargs):
     """
-    Synchronizes the user's dashboard theme with the django-admin-interface theme.
-    Only maps basic colors to keep the admin clean but harmonious.
+    Synchronizes the user's current profile colors with the django-admin-interface theme.
+    This follows the 'live' state of the profile fields, including manual overrides.
     """
-    if not instance.theme:
-        return
-
     try:
         AdminTheme = apps.get_model('admin_interface', 'Theme')
         
-        # Get or create an admin theme with the same name as the profile's theme
-        admin_theme, created = AdminTheme.objects.get_or_create(name=instance.theme.name)
+        # Use a predictable name for the 'live' theme, or match to the Harmony name if selected
+        theme_name = instance.theme.name if instance.theme else f"User {instance.user.username} Style"
         
-        # Mapping primary colors
-        primary = instance.theme.primary_color
-        secondary = instance.theme.secondary_color
+        admin_theme, created = AdminTheme.objects.get_or_create(name=theme_name)
+        
+        # Mapping colors DIRECTLY from UserProfile fields
+        primary = instance.primary_color or "#0d6efd"
+        secondary = instance.secondary_color or "#6c757d"
         is_dark = get_brightness(primary) < 128
         text_color = "#ffffff" if is_dark else "#212529"
 
@@ -57,8 +56,6 @@ def sync_admin_theme(sender, instance, **kwargs):
         admin_theme.css_generic_link_color = primary
         admin_theme.css_save_button_background_color = primary
         admin_theme.css_save_button_text_color = text_color
-        
-        # Optimization: Use secondary color for interactive elements
         admin_theme.css_save_button_background_hover_color = secondary
         
         # Activate this theme and deactivate all others
@@ -66,8 +63,7 @@ def sync_admin_theme(sender, instance, **kwargs):
         admin_theme.save()
         
         AdminTheme.objects.exclude(pk=admin_theme.pk).update(active=False)
-        print(f"DEBUG: Synchronized Admin Theme '{admin_theme.name}' (Active: {admin_theme.active})")
+        print(f"DEBUG: Synchronized Admin Theme '{admin_theme.name}' (Colors: {primary}, {secondary})")
         
     except (LookupError, Exception) as e:
-        # Gracefully handle if admin_interface is not installed or other DB issues
         print(f"DEBUG Error syncing admin theme: {e}")
