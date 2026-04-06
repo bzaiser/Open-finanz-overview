@@ -242,18 +242,22 @@ class ExcelParserService:
 
         groups_dict = {}
         for _, row in df.iterrows():
-            key = (row['_group_key'], row['_year'], row['_month'])
+            # Use pd.isna to handle NaN values from pandas expansion
+            cat = row['_group_category'] if pd.notna(row['_group_category']) else None
+            desc_val = str(row['_group_key']) if pd.notna(row['_group_key']) else "Unkategorisiert"
+            
+            key = (desc_val, row['_year'], row['_month'])
             if key not in groups_dict:
                 groups_dict[key] = {
-                    'description': row['_group_key'],
-                    'base_desc': row['_group_key'],
+                    'description': desc_val,
+                    'base_desc': desc_val,
                     'total_amount': Decimal('0.00'),
                     'count': 0,
                     'latest_date': row['date'].date(),
-                    'category': row['_group_category']
+                    'category': cat
                 }
             
-            groups_dict[key]['total_amount'] += row['amount']
+            groups_dict[key]['total_amount'] += Decimal(str(row['amount']))
             groups_dict[key]['count'] += 1
             if row['date'].date() > groups_dict[key]['latest_date']:
                 groups_dict[key]['latest_date'] = row['date'].date()
