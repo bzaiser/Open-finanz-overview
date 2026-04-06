@@ -1860,3 +1860,9 @@ msgstr "Restsaldo gesamt"
 
 msgid "Loan"
 msgstr "Kredit"
+
+msgid "Dashboard"
+msgstr "Dashboard"
+
+msgid "Settings"
+msgstr "Einstellungen"
