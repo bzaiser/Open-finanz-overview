@@ -8,7 +8,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('finance', '0008_alter_category_slug'),
+        ('finance', '0015_category_is_system'),
     ]
 
     operations = [
