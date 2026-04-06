@@ -188,9 +188,9 @@
         </table>
     </div>
     
-    <div class="mt-auto border-top py-2 px-3 rounded-bottom d-flex justify-content-between align-items-center" 
-         style="background-color: rgba(0,0,0,0.03); border-top-color: {{ table_config.border_color }} !important;">
+    <div class="mt-auto border-top py-2 px-3 d-flex justify-content-between align-items-center" 
+         style="background-color: {{ table_config.header_bg_color }} !important; color: {{ table_config.header_text_color }} !important; border-top-color: {{ table_config.border_color }} !important;">
         <span class="small fw-bold opacity-75 text-uppercase">{% trans 'Total' %}</span>
-        <span class="fw-bold text-primary" x-text="new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ currency }}' }).format(total)"></span>
+        <span class="fw-bold" x-text="new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ currency }}' }).format(total)"></span>
     </div>
 </div>

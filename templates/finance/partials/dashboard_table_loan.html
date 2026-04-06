@@ -101,15 +101,15 @@
         </table>
     </div>
     
-    <div class="mt-auto border-top py-2 px-3 rounded-bottom d-flex justify-content-between align-items-center" 
-         style="background-color: rgba(0,0,0,0.03); border-top-color: {{ table_config.border_color }} !important; font-size: 0.8rem;">
+    <div class="mt-auto border-top py-2 px-3 d-flex justify-content-between align-items-center" 
+         style="background-color: {{ table_config.header_bg_color }} !important; color: {{ table_config.header_text_color }} !important; border-top-color: {{ table_config.border_color }} !important; font-size: 0.8rem;">
         <div>
-            <span class="opacity-50 me-1">{% trans 'Total Balance' %}:</span>
+            <span class="opacity-75 me-1">{% trans 'Total Balance' %}:</span>
             <span class="fw-bold" x-text="new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ currency }}' }).format(totalBalance)"></span>
         </div>
         <div>
-            <span class="opacity-50 me-1">{% trans 'Total Interest' %}:</span>
-            <span class="fw-bold text-warning" x-text="new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ currency }}' }).format(totalInterest)"></span>
+            <span class="opacity-75 me-1">{% trans 'Total Interest' %}:</span>
+            <span class="fw-bold" x-text="new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ currency }}' }).format(totalInterest)"></span>
         </div>
     </div>
 </div>
