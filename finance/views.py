@@ -889,6 +889,7 @@ def review_bank_transactions(request, batch_id):
     total_ready = sum(t.amount for t in ready_list)
     
     categories = Category.objects.all()
+    filters = ImportFilter.objects.filter(user=request.user).order_by('target_name')
     
     # Check if this is an HTMX request for the Mapping Pane only
     if request.headers.get('HX-Request') and 'mapping-search' in request.GET.get('target', ''):
@@ -905,6 +906,7 @@ def review_bank_transactions(request, batch_id):
         'ready_list': ready_list,
         'total_ready': total_ready,
         'categories': categories,
+        'filters': filters,
         'q': q,
         'ai_active': bool(settings.GEMINI_API_KEY or settings.GROQ_API_KEY)
     })

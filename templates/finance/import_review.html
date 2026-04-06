@@ -55,6 +55,25 @@
                 </div>
                 
                 <div id="mapping-pane">
+                    <!-- Quick Filter Chips -->
+                    {% if filters %}
+                    <div id="quick-filter-bar" class="px-3 py-2 bg-light border-bottom d-flex align-items-center bg-opacity-50" style="display: none !important;">
+                        <span class="small text-muted me-3 fw-bold">{% trans "Filter-Vorschläge:" %}</span>
+                        <div id="quick-filter-container" class="d-flex flex-nowrap gap-2 overflow-auto py-1 scrollbar-thin" style="max-width: calc(100% - 100px);">
+                            {% for f in filters %}
+                            <button class="btn btn-sm badge-chip quick-filter-chip animate__animated animate__fadeIn"
+                                    type="button"
+                                    data-query="{{ f.search_query|lower }}"
+                                    data-target="{{ f.target_name|lower }}"
+                                    style="--cat-color: {{ f.category.color|default:'#6c757d' }};"
+                                    onclick="applyQuickFilter('{{ f.search_query|escapejs }}', '{{ f.target_name|escapejs }}', '{{ f.category.id|default:'' }}')">
+                                <i class="bi bi-tag-fill me-1 small"></i>{{ f.target_name }}
+                            </button>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    
                     {% include 'finance/partials/import_mapping_pane.html' with transactions=mapping_list %}
                 </div>
             </div>
@@ -118,5 +137,103 @@
     .htmx-request .htmx-indicator { display: inline-block; }
     .htmx-request.htmx-indicator { display: inline-block; }
     .mapping-category-select:focus { box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25); }
+    
+    .scrollbar-thin::-webkit-scrollbar { height: 4px; }
+    .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+    .scrollbar-thin::-webkit-scrollbar-thumb { background: #dee2e6; border-radius: 10px; }
+    
+    .badge-chip {
+        background-color: white;
+        border: 1px solid #dee2e6;
+        color: #343a40 !important;
+        white-space: nowrap;
+        padding: 0.25rem 0.75rem;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 0.75rem;
+        transition: all 0.2s ease;
+        border-left: 5px solid var(--cat-color) !important;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .badge-chip:hover {
+        background-color: var(--cat-color);
+        color: white !important;
+        border-color: var(--cat-color);
+        transform: translateY(-1px);
+        box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    }
 </style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    /**
+     * Filter the quick-filter chips based on the search query
+     */
+    function filterQuickChips(query) {
+        const q = (query || "").toLowerCase().trim();
+        const chips = document.querySelectorAll('.quick-filter-chip');
+        const bar = document.getElementById('quick-filter-bar');
+        let visibleCount = 0;
+
+        chips.forEach(chip => {
+            const terms = (chip.dataset.query + ' ' + chip.dataset.target).toLowerCase();
+            if (q && terms.includes(q)) {
+                chip.classList.remove('d-none');
+                visibleCount++;
+            } else {
+                chip.classList.add('d-none');
+            }
+        });
+
+        // Toggle bar visibility
+        if (bar) {
+            if (visibleCount > 0) {
+                bar.setAttribute('style', 'display: flex !important;');
+            } else {
+                bar.setAttribute('style', 'display: none !important;');
+            }
+        }
+    }
+
+    /**
+     * Apply a quick filter
+     */
+    function applyQuickFilter(query, targetName, categoryId) {
+        const searchInput = document.querySelector('input[name="q"]');
+        if (searchInput) {
+            // Use the full search query or first term if multiple
+            const firstTerm = query.split(';')[0].trim();
+            searchInput.value = firstTerm;
+            
+            // Trigger HTMX search
+            searchInput.dispatchEvent(new Event('search', { bubbles: true }));
+            
+            // Delay to allow HTMX result to land and footer to appear
+            setTimeout(() => {
+                const targetInput = document.querySelector('input[name="target_name"]');
+                const catSelect = document.querySelector('select[name="category_id"]');
+                if (targetInput) targetInput.value = targetName;
+                if (catSelect) catSelect.value = categoryId;
+            }, 600);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.querySelector('input[name="q"]');
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => filterQuickChips(e.target.value));
+            // Run initially
+            filterQuickChips(searchInput.value);
+        }
+    });
+
+    // Also listen for HTMX swaps
+    document.addEventListener('htmx:afterSwap', function(evt) {
+        const searchInput = document.querySelector('input[name="q"]');
+        if (searchInput && (evt.detail.target.id === 'mapping-pane' || evt.detail.target.id === 'mapping-rows')) {
+             filterQuickChips(searchInput.value);
+        }
+    });
+</script>
 {% endblock %}
