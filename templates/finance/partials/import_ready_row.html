@@ -31,13 +31,27 @@
         {% endif %}
     </td>
     <td class="text-end">
-        <button class="btn btn-link text-danger p-0" 
-                hx-get="{% url 'confirm_transaction' t.id %}"
-                hx-target="#row-{{ t.id }}"
-                hx-swap="outerHTML"
-                hx-vals='{"field": "is_ignored", "value": "true"}'
-                hx-confirm="{% trans 'Diesen zusammengefassten Posten wirklich verwerfen?' %}">
-            <i class="bi bi-x-circle"></i>
-        </button>
+        <div class="d-flex justify-content-end gap-2">
+            <!-- Back to Mapping (Undo) -->
+            <button class="btn btn-link text-warning p-1" 
+                    hx-get="{% url 'confirm_transaction' t.id %}"
+                    hx-target="#row-{{ t.id }}"
+                    hx-swap="outerHTML"
+                    hx-vals='{"field": "category", "value": ""}'
+                    title="{% trans 'Zurück nach oben verschieben' %}">
+                <i class="bi bi-arrow-90deg-up"></i>
+            </button>
+            
+            <!-- Ignore -->
+            <button class="btn btn-link text-danger p-1" 
+                    hx-get="{% url 'confirm_transaction' t.id %}"
+                    hx-target="#row-{{ t.id }}"
+                    hx-swap="outerHTML"
+                    hx-vals='{"field": "is_ignored", "value": "true"}'
+                    hx-confirm="{% trans 'Diesen zusammengefassten Posten wirklich verwerten?' %}"
+                    title="{% trans 'Löschen' %}">
+                <i class="bi bi-trash"></i>
+            </button>
+        </div>
     </td>
 </tr>

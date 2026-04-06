@@ -945,15 +945,35 @@ def confirm_bank_transaction(request, transaction_id):
     response_html = ""
     
     if is_mapping:
-        # Just return the updated mapping row
+        # If it was in "Ready" before, we need a special OOB response to move it back
+        if not was_mapping:
+            response_html = f'<tr id="row-{transaction.id}" hx-swap-oob="delete"></tr>'
+            
+            # Add back to mapping pane (Top)
+            mapping_row_html = render_to_string('finance/partials/import_row.html', {
+                't': transaction, 
+                'categories': categories,
+                'hx_oob': True
+            })
+            response_html += f'<div hx-swap-oob="afterbegin:#mapping-rows">{mapping_row_html}</div>'
+            
+            # Update the Total Sum in Ready Pane OOB
+            total_ready = sum(t.amount for t in transaction.batch.transactions.filter(is_ignored=False, category__isnull=False))
+            from django.contrib.humanize.templatetags.humanize import intcomma
+            total_str = f"{intcomma(round(total_ready, 2))} EUR"
+            response_html += f'<td id="total-ready-sum" hx-swap-oob="innerHTML">{total_str}</td>'
+            
+            return HttpResponse(response_html)
+            
+        # Standard case (staying in mapping or just updating field)
         return render(request, 'finance/partials/import_row.html', {'t': transaction, 'categories': categories})
+
     elif is_ready:
-        # The row moved to "Ready". We remove it from Mapping and ADD to Ready
-        # 1. Remove from mapping pane (empty response for the current target)
-        # 2. Append/Update in ready pane (OOB)
+        # The row moved to "Ready" (Bottom). 
+        # 1. Remove from mapping pane
         response_html = f'<tr id="row-{transaction.id}" hx-swap-oob="delete"></tr>'
         
-        # Add to ready pane
+        # 2. Add to ready pane
         ready_row_html = render_to_string('finance/partials/import_ready_row.html', {
             't': transaction, 
             'categories': categories,
