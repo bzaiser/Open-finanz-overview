@@ -1394,3 +1394,44 @@ def quick_create_category(request):
         '''
         return HttpResponse(html)
     return HttpResponse(status=405)
+
+@login_required
+def quick_create_cash_flow(request):
+    """
+    HTMX view to quickly create a CashFlowSource and return it as an <option>.
+    """
+    if request.method == 'POST':
+        name = request.POST.get('name', '').strip()
+        value = request.POST.get('value', '0').replace(',', '.')
+        is_income = request.POST.get('is_income') == 'on'
+        
+        if not name:
+            return HttpResponse('<div class="alert alert-danger small p-2">Name fehlt!</div>', status=400)
+            
+        try:
+            val = Decimal(value)
+        except:
+            val = Decimal('0.00')
+
+        cf = CashFlowSource.objects.create(
+            user=request.user,
+            name=name,
+            value=val,
+            is_income=is_income,
+            frequency='monthly'
+        )
+        
+        # Build OOB response for ALL CashFlow dropdowns
+        new_option = f'<option value="{cf.id}" selected>{cf.name} ({cf.value} €)</option>'
+        
+        html = f'''
+            {new_option}
+            <div hx-swap-oob="beforeend:.cashflow-select">
+                {new_option}
+            </div>
+            <div hx-swap-oob="innerHTML:#quick-cf-msg">
+                <span class="text-success small"><i class="bi bi-check-circle"></i> Plan-Eintrag "{name}" erstellt!</span>
+            </div>
+        '''
+        return HttpResponse(html)
+    return HttpResponse(status=405)

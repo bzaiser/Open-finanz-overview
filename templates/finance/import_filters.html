@@ -70,12 +70,17 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label small fw-bold text-primary"><i class="bi bi-link-45deg me-1"></i>{% trans "Verknüpfung mit Finanzplan (Abgleich)" %}</label>
-                            <select name="linked_cash_flow" class="form-select border-primary-subtle">
-                                <option value="">{% trans "-- Kein Plan-Abgleich --" %}</option>
-                                {% for cf in cash_flows %}
-                                <option value="{{ cf.id }}">{{ cf.name }} ({{ cf.value }} €)</option>
-                                {% endfor %}
-                            </select>
+                            <div class="input-group">
+                                <select name="linked_cash_flow" class="form-select border-primary-subtle cashflow-select">
+                                    <option value="">{% trans "-- Kein Plan-Abgleich --" %}</option>
+                                    {% for cf in cash_flows %}
+                                    <option value="{{ cf.id }}">{{ cf.name }} ({{ cf.value }} €)</option>
+                                    {% endfor %}
+                                </select>
+                                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#quickCashFlowModal" title="{% trans 'Neuen Plan-Eintrag anlegen' %}">
+                                    <i class="bi bi-plus-lg"></i>
+                                </button>
+                            </div>
                             <div class="form-text x-small">{% trans "Falls verknüpft, warnt das System bei Preisabweichungen > 2%." %}</div>
                         </div>
                         <button type="submit" class="btn btn-primary w-100 fw-bold">
@@ -157,12 +162,17 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label small fw-bold text-primary">{% trans "Verknüpfung mit Finanzplan (Abgleich)" %}</label>
-                        <select id="edit_linked_cash_flow" name="linked_cash_flow" class="form-select">
-                            <option value="">{% trans "-- Kein Plan-Abgleich --" %}</option>
-                            {% for cf in cash_flows %}
-                            <option value="{{ cf.id }}">{{ cf.name }} ({{ cf.value }} €)</option>
-                            {% endfor %}
-                        </select>
+                        <div class="input-group">
+                            <select id="edit_linked_cash_flow" name="linked_cash_flow" class="form-select cashflow-select">
+                                <option value="">{% trans "-- Kein Plan-Abgleich --" %}</option>
+                                {% for cf in cash_flows %}
+                                <option value="{{ cf.id }}">{{ cf.name }} ({{ cf.value }} €)</option>
+                                {% endfor %}
+                            </select>
+                            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#quickCashFlowModal" title="{% trans 'Neuen Plan-Eintrag anlegen' %}">
+                                <i class="bi bi-plus-lg"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer bg-light">
@@ -274,6 +284,44 @@
                 <div class="modal-footer bg-light border-0 py-2">
                     <button type="submit" class="btn btn-sm btn-primary w-100 fw-bold shadow-sm">
                         <i class="bi bi-check2-circle me-1"></i> {% trans "Kategorie erstellen" %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Quick CashFlow Modal -->
+<div class="modal fade" id="quickCashFlowModal" tabindex="-1" aria-hidden="true" style="z-index: 1060;">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 15px; overflow: hidden;">
+            <form hx-post="{% url 'quick_create_cash_flow' %}" 
+                  hx-target=".cashflow-select" 
+                  hx-swap="beforeend"
+                  hx-on::after-request="if(event.detail.successful) { bootstrap.Modal.getInstance(document.getElementById('quickCashFlowModal')).hide(); this.reset(); }"
+                  hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+                <div class="modal-header bg-primary text-white py-2 border-0">
+                    <h6 class="modal-title fw-bold">{% trans "Neuer Plan-Eintrag" %}</h6>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-3">
+                    <div id="quick-cf-msg"></div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">{% trans "Name" %}</label>
+                        <input type="text" name="name" class="form-control form-control-sm border-primary" placeholder="z.B. Tanzkurs" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">{% trans "Betrag (€)" %}</label>
+                        <input type="text" name="value" class="form-control form-control-sm" placeholder="0.00" value="0.00">
+                    </div>
+                    <div class="form-check form-switch small mb-3">
+                        <input class="form-check-input" type="checkbox" name="is_income" id="quickCFIncome">
+                        <label class="form-check-label" for="quickCFIncome">{% trans "Einnahme?" %}</label>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light border-0 py-2">
+                    <button type="submit" class="btn btn-sm btn-primary w-100 fw-bold shadow-sm">
+                        <i class="bi bi-check2-circle me-1"></i> {% trans "Plan-Eintrag erstellen" %}
                     </button>
                 </div>
             </form>

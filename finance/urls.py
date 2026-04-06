@@ -17,4 +17,5 @@ urlpatterns = [
     path('import/filters/delete/<int:filter_id>/', views.delete_import_filter, name='delete_import_filter'),
     path('import/group/<int:batch_id>/', views.import_search_as_group, name='import_search_as_group'),
     path('category/quick-create/', views.quick_create_category, name='quick_create_category'),
+    path('cash-flow/quick-create/', views.quick_create_cash_flow, name='quick_create_cash_flow'),
 ]
