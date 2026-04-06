@@ -153,15 +153,6 @@ class ExcelParserService:
             if df.empty:
                 self._log(batch, "KRITISCH: Datei ist leer!")
 
-            # AI analysis finished - progress will be marked 100 in the task caller
-            pass
-
-            if error_logs:
-                self._log(batch, f"KI Fehler: {error_logs[0]}")
-            
-            # AI analysis finished - progress will be marked 100 in the task caller
-            pass
-
             # 3. Smart Grouping with user filters
             self._log(batch, "Gruppiere Buchungen nach Monat und Filtern...")
             # Filter for expenses only as requested
