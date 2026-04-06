@@ -84,6 +84,22 @@
             --bs-table-hover-bg: rgba(0,0,0,0.05) !important;
         }
         
+        /* Navbar Polishing */
+        .navbar-dark .navbar-nav .nav-link {
+            color: rgba(255,255,255,0.95) !important;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        .navbar-dark .navbar-nav .nav-link:hover {
+            color: #ffffff !important;
+            transform: translateY(-1px);
+            text-shadow: 0 0 10px rgba(255,255,255,0.3);
+        }
+        .navbar-dark .navbar-nav .nav-link.active {
+            color: #ffffff !important;
+            font-weight: 700;
+        }
+        
         /* Sidebar layout placeholder */
         .sidebar {
             display: none;

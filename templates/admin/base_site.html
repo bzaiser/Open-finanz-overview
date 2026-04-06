@@ -1,0 +1,50 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block extrastyle %}
+<style>
+    /* Admin Header Bar Customization */
+    #header {
+        background: {{ user.profile.primary_color|default:"#0d6efd" }} !important;
+        background: linear-gradient(135deg, {{ user.profile.gradient_start|default:"#6610f2" }} 0%, {{ user.profile.gradient_end|default:"#0d6efd" }} 100%) !important;
+        color: #ffffff !important;
+    }
+
+    /* Admin Table Headers with Gradient */
+    .module thead th, 
+    .results table thead th {
+        background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0.1) 100%), 
+                    {{ user.profile.table_header_bg_color|default:"#212529" }} !important;
+        color: {{ user.profile.table_header_text_color|default:"#ffffff" }} !important;
+        border-bottom: 1px solid rgba(0,0,0,0.1) !important;
+        font-weight: 600 !important;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.5px;
+    }
+
+    /* Module Headers (e.g. "Finance") */
+    .module h2, .module caption {
+        background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0.1) 100%), 
+                    {{ user.profile.primary_color|default:"#0d6efd" }} !important;
+        color: #ffffff !important;
+    }
+
+    /* Sidebar Fixes if applicable */
+    #changelist-filter h2 {
+        background: {{ user.profile.primary_color|default:"#0d6efd" }} !important;
+        filter: brightness(0.9);
+        color: #ffffff !important;
+    }
+
+    /* Breadcrumbs contrast */
+    .breadcrumbs {
+        background: var(--bs-body-bg, #ffffff) !important;
+        color: var(--bs-body-color, #212529) !important;
+    }
+</style>
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'admin:index' %}">{% trans "Finanzplan Admin" %}</a></h1>
+{% endblock %}
