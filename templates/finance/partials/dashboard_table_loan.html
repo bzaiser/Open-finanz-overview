@@ -70,19 +70,19 @@
                         style="background-color: {{ table_config.header_bg_color }} !important; color: {{ table_config.header_text_color }} !important;">
                         {% trans 'Monthly' %}
                     </th>
-                    <th class="py-2 px-2 border-0 text-center cursor-pointer" @click="sortCol = 'year'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
+                    <th class="py-2 px-3 border-0 text-center cursor-pointer" @click="sortCol = 'year'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
                         style="background-color: {{ table_config.header_bg_color }} !important; color: {{ table_config.header_text_color }} !important;">
                         {% trans 'End' %}
                     </th>
                 </tr>
                 <tr>
-                    <td class="p-1 border-0" style="background-color: {{ table_config.filter_bg_color }} !important;">
+                    <td class="p-1 px-3 border-0" style="background-color: {{ table_config.filter_bg_color }} !important;">
                         <input type="text" x-model="colFilters.name" class="form-control form-control-xs py-0 border-0 shadow-none" style="font-size: 0.65rem;" placeholder="Filter...">
                     </td>
                     <td class="p-1 border-0" style="background-color: {{ table_config.filter_bg_color }} !important;">
                         <input type="text" x-model="colFilters.provider" class="form-control form-control-xs py-0 border-0 shadow-none" style="font-size: 0.65rem;" placeholder="Filter...">
                     </td>
-                    <td class="p-1 border-0" colspan="5" style="background-color: {{ table_config.filter_bg_color }} !important;"></td>
+                    <td class="p-1 px-3 border-0" colspan="5" style="background-color: {{ table_config.filter_bg_color }} !important;"></td>
                 </tr>
             </thead>
             <tbody>
@@ -94,7 +94,7 @@
                         <td class="text-end border-0 text-warning" x-text="new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ currency }}' }).format(row.total_interest)"></td>
                         <td class="text-center border-0 small" x-text="row.rate"></td>
                         <td class="text-end border-0" x-text="new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ currency }}' }).format(row.monthly)"></td>
-                        <td class="text-center border-0 small opacity-75" x-text="row.year"></td>
+                        <td class="text-center border-0 small opacity-75 px-3" x-text="row.year"></td>
                     </tr>
                 </template>
             </tbody>

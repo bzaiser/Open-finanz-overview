@@ -99,7 +99,7 @@
                style="font-size: 0.85rem; border-color: {{ table_config.border_color }} !important; --bs-table-bg: {{ table_config.body_bg_color }}; --bs-table-color: {{ table_config.body_text_color }};">
             <thead class="sticky-top" style="z-index: 10;">
                 <tr class="text-uppercase" style="font-size: 0.70rem;">
-                    <th class="py-2 px-2 border-0 cursor-pointer" @click="sortCol = 'name'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
+                    <th class="py-2 px-3 border-0 cursor-pointer" @click="sortCol = 'name'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
                         style="background-color: {{ table_config.header_bg_color }} !important; color: {{ table_config.header_text_color }} !important;">
                         <div class="d-flex align-items-center justify-content-between">
                             <span>{% trans 'Name' %}</span>
@@ -120,7 +120,7 @@
                             <i class="bi" :class="sortCol === 'year' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
                         </div>
                     </th>
-                    <th class="py-2 px-2 border-0 text-end cursor-pointer" @click="sortCol = 'amount'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
+                    <th class="py-2 px-3 border-0 text-end cursor-pointer" @click="sortCol = 'amount'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
                         style="background-color: {{ table_config.header_bg_color }} !important; color: {{ table_config.header_text_color }} !important;">
                         <div class="d-flex align-items-center justify-content-end">
                             <span class="me-1">{% trans 'Amount' %}</span>
@@ -129,7 +129,7 @@
                     </th>
                 </tr>
                 <tr>
-                    <td class="p-1 border-0" style="background-color: {{ table_config.filter_bg_color }} !important;">
+                    <td class="p-1 px-3 border-0" style="background-color: {{ table_config.filter_bg_color }} !important;">
                         <input type="text" x-model="colFilters.name" class="form-control form-control-xs py-0 border-secondary-subtle shadow-sm" style="font-size: 0.7rem;" placeholder="{% trans 'Filter...' %}">
                     </td>
                     <td class="p-1 border-0" style="background-color: {{ table_config.filter_bg_color }} !important;">
@@ -138,7 +138,7 @@
                     <td class="p-1 border-0" style="background-color: {{ table_config.filter_bg_color }} !important;">
                         <input type="text" x-model="colFilters.year" class="form-control form-control-xs py-0 border-secondary-subtle shadow-sm text-center" style="font-size: 0.7rem;" placeholder="{% trans 'Filter...' %}">
                     </td>
-                    <td class="p-1 border-0" style="background-color: {{ table_config.filter_bg_color }} !important;">
+                    <td class="p-1 px-3 border-0" style="background-color: {{ table_config.filter_bg_color }} !important;">
                         <input type="text" x-model="colFilters.amount" class="form-control form-control-xs py-0 text-end border-secondary-subtle shadow-sm" style="font-size: 0.7rem;" placeholder="{% trans 'Filter...' %}">
                     </td>
                 </tr>
@@ -149,20 +149,20 @@
                         :style="row.isGroupHeader ? 'background-color: rgba(0,0,0,0.05);' : ''"
                         @click="if(row.isGroupHeader) collapsedGroups[row.year] = !collapsedGroups[row.year]">
                         <template x-if="row.isGroupHeader">
-                            <td class="p-2 border-0" colspan="3">
+                            <td class="p-2 px-3 border-0" colspan="3">
                                 <i class="bi me-2 opacity-75" :class="collapsedGroups[row.year] ? 'bi-chevron-right' : 'bi-chevron-down'"></i>
                                 <span class="badge bg-secondary" style="font-size: 0.75rem;" x-text="row.year"></span>
                             </td>
                         </template>
                         <template x-if="row.isGroupHeader">
-                            <td class="text-end p-2 border-0">
+                            <td class="text-end p-2 px-3 border-0">
                                 <div class="small opacity-75 text-uppercase" style="font-size: 0.6rem;">{% trans 'Group Sum' %}</div>
                                 <div class="fw-bold h6 mb-0" x-text="new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ currency }}' }).format(row.subtotal)"></div>
                             </td>
                         </template>
                         
                         <template x-if="!row.isGroupHeader">
-                            <td class="fw-medium text-truncate border-0" style="max-width: 150px;" :title="row.name" x-text="row.name"></td>
+                            <td class="fw-medium text-truncate border-0 px-3" style="max-width: 150px;" :title="row.name" x-text="row.name"></td>
                         </template>
                         <template x-if="!row.isGroupHeader">
                             <td class="border-0">
@@ -177,7 +177,7 @@
                             <td class="text-center opacity-75 border-0" style="font-size: 0.75rem" x-text="row.year"></td>
                         </template>
                         <template x-if="!row.isGroupHeader">
-                            <td class="text-end fw-bold border-0" x-text="new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ currency }}' }).format(row.amount)"></td>
+                            <td class="text-end fw-bold border-0 px-3" x-text="new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ currency }}' }).format(row.amount)"></td>
                         </template>
                     </tr>
                 </template>
