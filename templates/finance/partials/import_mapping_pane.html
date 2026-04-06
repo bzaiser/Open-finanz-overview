@@ -38,7 +38,7 @@
                         </div>
                         <button class="btn btn-primary btn-sm fw-bold shadow-sm"
                                 hx-post="{% url 'import_search_as_group' batch.id %}"
-                                hx-include="[name='q'], [name='target_name'], [name='category_id']"
+                                hx-include="[name='q'], [name='target_name'], [name='category_id'], [name='make_recurring']"
                                 hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
                                 hx-confirm="{% trans 'Möchtest du alle aktuell gefilterten Buchungen als eine Gruppe importieren?' %}"
                                 hx-target="#mapping-rows"
@@ -47,18 +47,26 @@
                         </button>
                     </div>
                     
-                    <!-- Hidden inputs for some context if needed -->
-                    <div class="mt-2 row g-2">
-                        <div class="col-md-6">
+                    <!-- Grouping Controls -->
+                    <div class="mt-2 row g-2 align-items-center">
+                        <div class="col-md-4">
                             <input type="text" name="target_name" class="form-control form-control-sm" placeholder="{% trans 'Ziel-Name (z.B. Lebensmittel)' %}">
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <select name="category_id" class="form-select form-select-sm">
                                 <option value="">{% trans "-- Ziel-Kategorie --" %}</option>
                                 {% for cat in categories %}
                                     <option value="{{ cat.id }}">{{ cat.name }}</option>
                                 {% endfor %}
                             </select>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check form-switch small">
+                                <input class="form-check-input" type="checkbox" name="make_recurring" id="makeRecurringSwitch">
+                                <label class="form-check-label fw-bold text-primary" for="makeRecurringSwitch">
+                                    <i class="bi bi-calendar2-week me-1"></i>{% trans "In Finanzplan übernehmen" %}
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </td>

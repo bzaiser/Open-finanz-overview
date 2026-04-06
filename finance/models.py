@@ -124,6 +124,9 @@ class PendingTransaction(models.Model):
     is_income = models.BooleanField(_("Is Income"), default=True)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, verbose_name=_("Suggested Category"))
     
+    # Matching against Finance Plan
+    planned_amount = models.DecimalField(_("Planned Amount"), max_digits=12, decimal_places=2, null=True, blank=True)
+    
     # AI/Heuristic Suggestions
     is_recurring = models.BooleanField(_("Is Recurring"), default=False)
     frequency = models.CharField(_("Frequency"), max_length=20, default='monthly', choices=CashFlowSource.FREQUENCY_CHOICES)
@@ -228,6 +231,10 @@ class ImportFilter(models.Model):
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, verbose_name=_("Category"))
     is_income = models.BooleanField(_("Is Income"), default=False)
     is_active = models.BooleanField(_("Is Active"), default=True)
+    
+    # Bridge to Finance Plan
+    linked_cash_flow = models.ForeignKey(CashFlowSource, on_delete=models.SET_NULL, null=True, blank=True, 
+                                        related_name='import_filters', verbose_name=_("Linked Cash Flow Source"))
 
     class Meta:
         verbose_name = _("Import Filter")

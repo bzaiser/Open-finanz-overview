@@ -1132,6 +1132,7 @@ def import_search_as_group(request, batch_id):
     q = request.POST.get('q', '').strip()
     target_name = request.POST.get('target_name', '').strip()
     category_id = request.POST.get('category_id')
+    make_recurring = request.POST.get('make_recurring') == 'on'  # Checkbox value
     
     if not (q and target_name and category_id):
         return HttpResponse('<div class="alert alert-danger small">Bitte alle Felder ausfüllen.</div>', status=400)
@@ -1145,10 +1146,36 @@ def import_search_as_group(request, batch_id):
         defaults={'category': category, 'search_query': q}
     )
     if not created:
-        terms = [t.strip() for t in filt.search_query.split(';') if t.strip()]
-        if q not in terms:
+        terms = [t.strip().upper() for t in filt.search_query.split(';') if t.strip()]
+        if q.upper() not in terms:
             filt.search_query = f"{filt.search_query};{q}"
             filt.save()
+            
+    # --- Bridge to Finance Plan ---
+    if make_recurring:
+        # Create/Update CashFlowSource
+        cf, cf_created = CashFlowSource.objects.get_or_create(
+            user=request.user,
+            name=target_name,
+            defaults={
+                'value': Decimal('0.00'),
+                'category': category,
+                'is_income': False
+            }
+        )
+        # Update amount if new or zero
+        if cf_created or cf.value == 0:
+            # Re-sum the matches
+            matches_for_sum = batch.transactions.filter(
+                is_ignored=False, 
+                category__isnull=True, 
+                description__icontains=q
+            )
+            cf.value = abs(sum(m.amount for m in matches_for_sum))
+            cf.save()
+            
+        filt.linked_cash_flow = cf
+        filt.save()
 
     # 2. Find matching transactions (Mapping Only)
     matches = batch.transactions.filter(
@@ -1261,7 +1288,8 @@ def import_filters_list(request):
         'categories': categories,
         'pre_query': pre_query,
         'pre_name': pre_name,
-        'batch_id': batch_id
+        'batch_id': batch_id,
+        'cash_flows': CashFlowSource.objects.filter(user=request.user).order_by('name')
     })
 
 @login_required
@@ -1271,14 +1299,17 @@ def add_import_filter(request):
         name = request.POST.get('target_name')
         cat_id = request.POST.get('category')
         batch_id = request.POST.get('batch_id')
+        cf_id = request.POST.get('linked_cash_flow')
         
         category = Category.objects.filter(id=cat_id).first()
+        linked_cf = CashFlowSource.objects.filter(id=cf_id, user=request.user).first()
         
         f = ImportFilter.objects.create(
             user=request.user,
             search_query=query,
             target_name=name,
-            category=category
+            category=category,
+            linked_cash_flow=linked_cf
         )
         messages.success(request, _("Filter erfolgreich hinzugefügt."))
         
@@ -1304,6 +1335,8 @@ def edit_import_filter(request, filter_id):
         f.target_name = request.POST.get('target_name')
         cat_id = request.POST.get('category')
         f.category = Category.objects.filter(id=cat_id).first()
+        cf_id = request.POST.get('linked_cash_flow')
+        f.linked_cash_flow = CashFlowSource.objects.filter(id=cf_id, user=request.user).first()
         f.save()
         messages.success(request, _("Filter erfolgreich geändert."))
         

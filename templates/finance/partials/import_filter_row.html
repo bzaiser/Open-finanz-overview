@@ -10,20 +10,25 @@
               style="--cat-color: {{ f.category.color }};">
             {{ f.category.name }}
         </span>
-        {% else %}
-        <span class="text-muted small">{% trans "Keine" %}</span>
+        {% endif %}
+        {% if f.linked_cash_flow %}
+        <div class="small text-primary mt-1" title="{% trans 'Verknüpft mit Finanzplan' %}">
+            <i class="bi bi-link-45deg"></i> {{ f.linked_cash_flow.name }}
+        </div>
         {% endif %}
     </td>
     <td class="text-end">
         <div class="btn-group">
             <button class="btn btn-link text-primary p-1" 
-                    onclick="openEditModal('{{ f.id }}', '{{ f.target_name|escapejs }}', '{{ f.search_query|escapejs }}', '{{ f.category.id|default:'' }}')"
-                    title="{% trans 'Bearbeiten' %}">
+                    data-filter-id="{{ f.id }}" data-filter-name="{{ f.target_name }}" 
+                    data-filter-query="{{ f.search_query }}" data-filter-category="{{ f.category.id|default:'' }}"
+                    data-filter-cf="{{ f.linked_cash_flow.id|default:'' }}"
+                    onclick="openEditModalFromButton(this)" title="{% trans 'Bearbeiten' %}">
                 <i class="bi bi-pencil-square"></i>
             </button>
-            <a href="{% url 'delete_import_filter' f.id %}?batch_id={{ batch_id }}" class="btn btn-link text-danger p-1" 
-               onclick="return confirm('{% trans "Filter wirklich löschen?" %}')"
-               title="{% trans 'Löschen' %}">
+            <a href="{% url 'delete_import_filter' f.id %}?batch_id={{ batch_id }}" 
+               class="btn btn-link text-danger p-1" title="{% trans 'Löschen' %}"
+               onclick='return confirm("{% trans 'Filter wirklich löschen?' %}")'>
                 <i class="bi bi-trash"></i>
             </a>
         </div>

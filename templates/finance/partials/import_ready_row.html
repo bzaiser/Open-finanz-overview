@@ -18,6 +18,16 @@
         {% endif %}
     </td>
     <td class="text-end fw-bold {% if t.is_income %}text-success{% else %}text-danger{% endif %} text-nowrap">
+        {% if t.planned_amount and t.planned_amount != t.amount %}
+            <span class="badge bg-warning text-dark me-1 animate__animated animate__pulse animate__infinite" 
+                  title="{% trans 'Plan-Abweichung!' %} {% trans 'Geplant:' %} {{ t.planned_amount|floatformat:2 }} €">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+            </span>
+        {% elif t.planned_amount %}
+            <span class="text-success me-1" title="{% trans 'Entspricht Plan' %}">
+                <i class="bi bi-check-circle-fill"></i>
+            </span>
+        {% endif %}
         {{ t.amount|floatformat:2|intcomma }} {{ profile.currency|default:"EUR" }}
     </td>
     <td class="text-center">

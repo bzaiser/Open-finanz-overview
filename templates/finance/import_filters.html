@@ -68,6 +68,16 @@
                                 </button>
                             </div>
                         </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-primary"><i class="bi bi-link-45deg me-1"></i>{% trans "Verknüpfung mit Finanzplan (Abgleich)" %}</label>
+                            <select name="linked_cash_flow" class="form-select border-primary-subtle">
+                                <option value="">{% trans "-- Kein Plan-Abgleich --" %}</option>
+                                {% for cf in cash_flows %}
+                                <option value="{{ cf.id }}">{{ cf.name }} ({{ cf.value }} €)</option>
+                                {% endfor %}
+                            </select>
+                            <div class="form-text x-small">{% trans "Falls verknüpft, warnt das System bei Preisabweichungen > 2%." %}</div>
+                        </div>
                         <button type="submit" class="btn btn-primary w-100 fw-bold">
                             <i class="bi bi-plus-lg me-1"></i> {% trans "Filter speichern" %}
                         </button>
@@ -145,6 +155,15 @@
                             </button>
                         </div>
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-primary">{% trans "Verknüpfung mit Finanzplan (Abgleich)" %}</label>
+                        <select id="edit_linked_cash_flow" name="linked_cash_flow" class="form-select">
+                            <option value="">{% trans "-- Kein Plan-Abgleich --" %}</option>
+                            {% for cf in cash_flows %}
+                            <option value="{{ cf.id }}">{{ cf.name }} ({{ cf.value }} €)</option>
+                            {% endfor %}
+                        </select>
+                    </div>
                 </div>
                 <div class="modal-footer bg-light">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{% trans "Abbrechen" %}</button>
@@ -165,7 +184,16 @@
         });
     }
 
-    function openEditModal(id, name, query, categoryId) {
+    function openEditModalFromButton(btn) {
+        const id = btn.getAttribute('data-filter-id');
+        const name = btn.getAttribute('data-filter-name');
+        const query = btn.getAttribute('data-filter-query');
+        const categoryId = btn.getAttribute('data-filter-category');
+        const cashFlowId = btn.getAttribute('data-filter-cf');
+        openEditModal(id, name, query, categoryId, cashFlowId);
+    }
+
+    function openEditModal(id, name, query, categoryId, cashFlowId) {
         const modalEl = document.getElementById('editFilterModal');
         const form = document.getElementById('editFilterForm');
         
@@ -180,6 +208,7 @@
         document.getElementById('edit_target_name').value = name;
         document.getElementById('edit_search_query').value = query;
         document.getElementById('edit_category').value = categoryId;
+        document.getElementById('edit_linked_cash_flow').value = cashFlowId;
         
         const modal = new bootstrap.Modal(modalEl);
         modal.show();

@@ -191,11 +191,25 @@ class ExcelParserService:
                 # Use raw description for unassigned items, but grouped description for filtered ones
                 display_desc = group.get('raw_desc') if group.get('category') is None else group['description']
                 
+                # --- PLAN DEVIATION Check (2% Tolerance) ---
+                planned_amount = None
+                if group.get('linked_cash_flow'):
+                    planned_amount = group['linked_cash_flow'].value
+                    # If it's an expense but is_income is true in models, we handle signage logic if needed.
+                    # Here we assume both are magnitude-based for comparison.
+                    diff = abs(abs(group['total_amount']) - abs(planned_amount))
+                    # Check tolerance (2%)
+                    tolerance = abs(planned_amount) * Decimal('0.02')
+                    if diff <= tolerance:
+                        # If within tolerance, we treat it as exactly matched to hide alerts
+                        planned_amount = group['total_amount']
+
                 pending = PendingTransaction(
                     batch=batch,
                     date=group['latest_date'],
                     description=str(display_desc)[:500],
                     amount=group['total_amount'],
+                    planned_amount=planned_amount, # Store the target plan value
                     is_income=is_income,
                     category=group.get('category'),
                     is_ignored=is_ignored,
@@ -228,13 +242,15 @@ class ExcelParserService:
             for f in user_filters:
                 queries = [q.strip().upper() for q in f.search_query.split(';') if q.strip()]
                 if any(q in desc for q in queries):
-                    return f.target_name, f.category
-            return _normalize_description(row['description']), None
+                    # Return (Display-Name, Category, Linked-CashFlow)
+                    return f.target_name, f.category, f.linked_cash_flow
+            return _normalize_description(row['description']), None, None
 
         # Apply grouping key and potential category
         applied = df.apply(apply_filters, axis=1, result_type='expand')
         df['_group_key'] = applied[0]
         df['_group_category'] = applied[1]
+        df['_group_linked_cf'] = applied[2]
         
         df['_month'] = df['date'].dt.month
         df['_year'] = df['date'].dt.year
@@ -243,6 +259,7 @@ class ExcelParserService:
         for index, row in df.iterrows():
             # Use pd.isna to handle NaN values from pandas expansion
             cat = row['_group_category'] if pd.notna(row['_group_category']) else None
+            linked_cf = row['_group_linked_cf'] if pd.notna(row['_group_linked_cf']) else None
             desc_val = str(row['_group_key']) if pd.notna(row['_group_key']) else "Unkategorisiert"
             
             # UNIQUE KEY for unassigned items to avoid pre-grouping
@@ -259,6 +276,7 @@ class ExcelParserService:
                     'count': 0,
                     'latest_date': row['date'].date(),
                     'category': cat,
+                    'linked_cash_flow': linked_cf,  # Store the plan link
                     'raw_desc': str(row['description']) # Keep raw for mapping
                 }
             
