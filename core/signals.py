@@ -15,12 +15,17 @@ def save_user_profile(sender, instance, **kwargs):
         instance.profile.save()
 
 def get_brightness(hex_color):
-    """Calculates the brightness of a hex color (0-255)."""
-    if not hex_color or len(hex_color) < 7:
+    """Calculates brightness, robust against invalid hex strings."""
+    if not hex_color or not isinstance(hex_color, str) or not hex_color.startswith('#') or len(hex_color) < 7:
         return 255
-    hex_color = hex_color.lstrip('#')
-    r, g, b = tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
-    return (r * 299 + g * 587 + b * 114) / 1000
+    try:
+        hex_color = hex_color.lstrip('#')
+        r = int(hex_color[0:2], 16)
+        g = int(hex_color[2:4], 16)
+        b = int(hex_color[4:6], 16)
+        return (r * 299 + g * 587 + b * 114) / 1000
+    except (ValueError, IndexError):
+        return 255
 
 @receiver(post_save, sender=UserProfile)
 def sync_admin_theme(sender, instance, **kwargs):
