@@ -68,16 +68,16 @@ AVAILABLE_CHARTS = {
 }
 
 SUMMARY_WIDGETS = {
-    'current_assets': {'title': _('Current Assets'), 'default_bg': '#0d6efd', 'default_text': '#ffffff'},
-    'monthly_income': {'title': _('Monthly Income'), 'default_bg': '#198754', 'default_text': '#ffffff'},
-    'monthly_expenses': {'title': _('Monthly Expenses'), 'default_bg': '#dc3545', 'default_text': '#ffffff'},
-    'total_pensions': {'title': _('Pension Capital'), 'default_bg': '#0dcaf0', 'default_text': '#ffffff'},
-    'expected_payout': {'title': _('Target Monthly Pension'), 'default_bg': '#6f42c1', 'default_text': '#ffffff'},
-    'current_pension_payout': {'title': _('Current Pension'), 'default_bg': '#fd7e14', 'default_text': '#ffffff'},
-    'total_physical_assets': {'title': _('Sachwerte'), 'default_bg': '#8a2be2', 'default_text': '#ffffff'},
-    'total_real_estate': {'title': _('Immobilien'), 'default_bg': '#20c997', 'default_text': '#ffffff'},
-    'total_combined_assets': {'title': _('Gesamtvermögen'), 'default_bg': '#ffc107', 'default_text': '#212529'},
-    'total_debts': {'title': _('Gesamtschulden'), 'default_bg': '#343a40', 'default_text': '#ffffff'},
+    'current_assets': {'title': _('Current Assets'), 'default_bg': '#0d6efd', 'default_text': '#ffffff', 'icon': 'bi-wallet2'},
+    'monthly_income': {'title': _('Monthly Income'), 'default_bg': '#198754', 'default_text': '#ffffff', 'icon': 'bi-graph-up-arrow'},
+    'monthly_expenses': {'title': _('Monthly Expenses'), 'default_bg': '#dc3545', 'default_text': '#ffffff', 'icon': 'bi-graph-down-arrow'},
+    'total_pensions': {'title': _('Pension Capital'), 'default_bg': '#0dcaf0', 'default_text': '#ffffff', 'icon': 'bi-bank'},
+    'expected_payout': {'title': _('Target Monthly Pension'), 'default_bg': '#6f42c1', 'default_text': '#ffffff', 'icon': 'bi-target'},
+    'current_pension_payout': {'title': _('Current Pension'), 'default_bg': '#fd7e14', 'default_text': '#ffffff', 'icon': 'bi-cash-stack'},
+    'total_physical_assets': {'title': _('Sachwerte'), 'default_bg': '#8a2be2', 'default_text': '#ffffff', 'icon': 'bi-car-front'},
+    'total_real_estate': {'title': _('Immobilien'), 'default_bg': '#20c997', 'default_text': '#ffffff', 'icon': 'bi-house-heart'},
+    'total_combined_assets': {'title': _('Gesamtvermögen'), 'default_bg': '#ffc107', 'default_text': '#212529', 'icon': 'bi-pie-chart'},
+    'total_debts': {'title': _('Gesamtschulden'), 'default_bg': '#343a40', 'default_text': '#ffffff', 'icon': 'bi-credit-card-2-front'},
 }
 
 DEFAULT_LAYOUT = [
