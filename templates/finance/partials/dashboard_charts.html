@@ -8,7 +8,7 @@
     <div class="col-md-{{ item.width }} mb-4" style="order: {{ item.order }};">
         <div class="card shadow h-100"
             style="background-color: {{ item.bg_color|default:'#ffffff' }}; color: {{ item.text_color|default:'#212529' }};">
-            <div class="card-header d-flex justify-content-between align-items-center">
+            <div class="card-header d-flex justify-content-between align-items-center" style="color: {{ item.text_color|default:'#ffffff' }};">
                 <span class="fw-bold">
                     {% for k,v in available_charts.items %}
                     {% if k == item.id %}
@@ -70,6 +70,8 @@
                 const data = chartData['{{ item.id }}'];
                 const stichtagIdx = data.stichtag_index !== undefined ? data.stichtag_index : -1;
                 
+                const textColor = '{{ item.text_color|default:"#212529" }}';
+                
                 let config = {
                     type: 'line',
                     data: { labels: data.labels, datasets: data.datasets },
@@ -77,6 +79,9 @@
                         responsive: true,
                         maintainAspectRatio: false,
                         plugins: {
+                            legend: {
+                                labels: { color: textColor }
+                            },
                             tooltip: { 
                                 mode: 'index', 
                                 intersect: false,
@@ -105,13 +110,20 @@
                             }
                         },
                         scales: {
-                            x: { grid: { color: function(context) {
-                                if (stichtagIdx >= 0 && context.index === stichtagIdx) return 'rgba(255, 193, 7, 0.8)';
-                                return 'rgba(0, 0, 0, 0.05)';
-                            }, lineWidth: function(context) {
-                                if (stichtagIdx >= 0 && context.index === stichtagIdx) return 2;
-                                return 1;
-                            }}}
+                            x: { 
+                                ticks: { color: textColor },
+                                grid: { color: function(context) {
+                                    if (stichtagIdx >= 0 && context.index === stichtagIdx) return 'rgba(255, 193, 7, 0.8)';
+                                    return 'rgba(0, 0, 0, 0.05)';
+                                }, lineWidth: function(context) {
+                                    if (stichtagIdx >= 0 && context.index === stichtagIdx) return 2;
+                                    return 1;
+                                }}
+                            },
+                            y: {
+                                ticks: { color: textColor },
+                                grid: { color: 'rgba(0, 0, 0, 0.05)' }
+                            }
                         }
                     },
                     plugins: [{

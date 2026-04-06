@@ -131,12 +131,12 @@ def dashboard_view(request):
                 'order': len(summary_layout) + 1
             })
 
-    simulation_config = safe_merge(dashboard_config.get('simulation_panel'), {
-        'bg_color': 'var(--app-card-bg)', 
-        'text_color': 'var(--app-card-color)',
-        'header_bg_color': 'var(--app-primary)',
+    simulation_config = {
+        'bg_color': profile.background_color or '#ffffff', 
+        'text_color': profile.text_color or '#212529',
+        'header_bg_color': profile.primary_color or '#0d6efd',
         'header_text_color': '#ffffff'
-    })
+    }
 
     table_config = {
         'header_bg_color': profile.table_header_bg_color or 'var(--app-primary)', 

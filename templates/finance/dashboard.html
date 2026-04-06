@@ -42,8 +42,8 @@
 
 <!-- Simulation Offcanvas -->
 <div class="offcanvas offcanvas-end" tabindex="-1" id="simulationOffcanvas" aria-labelledby="simulationOffcanvasLabel" 
-     style="background-color: {{ simulation_config.bg_color|default:'#ffffff' }}; color: {{ simulation_config.text_color|default:'#212529' }}; border-left: 1px solid rgba(0,0,0,.125); z-index: 1100;">
-    <div class="offcanvas-header shadow-sm" style="background-color: {{ simulation_config.header_bg_color|default:'#ffc107' }}; color: {{ simulation_config.header_text_color|default:'#212529' }};">
+     style="background-color: var(--app-card-bg); color: var(--app-card-color); border-left: 1px solid rgba(0,0,0,.125); z-index: 1100;">
+    <div class="offcanvas-header shadow-sm" style="background: var(--app-gradient); color: #ffffff;">
         <h5 class="offcanvas-title" id="simulationOffcanvasLabel">
             <i class="bi bi-magic"></i> {% trans "Simulation" %}
         </h5>
@@ -191,23 +191,6 @@
                         <small><i class="bi bi-info-circle"></i> {% trans "Customize colors and visibility for all dashboard components." %}</small>
                     </div>
 
-                    <h6 class="mb-2 fw-bold text-primary">{% trans "Simulation Panel" %}</h6>
-                    <div class="row g-3 mb-4 p-2 border rounded bg-light mx-0">
-                        <div class="col-md-6">
-                            <label class="form-label small mb-1">{% trans "Header Background & Text" %}</label>
-                            <div class="d-flex gap-2">
-                                <input type="color" id="sim-header-bg" class="form-control form-control-color" value="{{ simulation_config.header_bg_color }}">
-                                <input type="color" id="sim-header-text" class="form-control form-control-color" value="{{ simulation_config.header_text_color }}">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label small mb-1">{% trans "Panel Background & Text" %}</label>
-                            <div class="d-flex gap-2">
-                                <input type="color" id="sim-panel-bg" class="form-control form-control-color" value="{{ simulation_config.bg_color }}">
-                                <input type="color" id="sim-panel-text" class="form-control form-control-color" value="{{ simulation_config.text_color }}">
-                            </div>
-                        </div>
-                    </div>
 
                     <h6 class="mb-3">{% trans "Summary Cards" %}</h6>
                     <table class="table table-sm align-middle mb-4">
@@ -342,15 +325,8 @@
                     order: index + 1
                 });
             });
-            var simConfig = {
-                bg_color: document.getElementById('sim-panel-bg').value,
-                text_color: document.getElementById('sim-panel-text').value,
-                header_bg_color: document.getElementById('sim-header-bg').value,
-                header_text_color: document.getElementById('sim-header-text').value
-            };
             document.getElementById('layout_json').value = JSON.stringify(layout);
             document.getElementById('summary_layout_json').value = JSON.stringify(summaryLayout);
-            document.getElementById('simulation_panel_json').value = JSON.stringify(simConfig);
             document.getElementById('config-form').submit();
         });
     });
