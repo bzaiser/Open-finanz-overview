@@ -21,10 +21,15 @@
 
 ## Git Deployment
 - **STRICT Push Targets**: Alle Änderungen MÜSSEN zwingend in zwei spezifische Remote-Ziele / Branches gepusht werden:
-  1. `git@github.com:bzaiser/finanzplan.git` (origin) $\rightarrow$ Branch: `master`
-  2. `git@github.com:bzaiser/Open-finanz-overview.git` (public) $\rightarrow$ Branch: `main`
-- **SSH-Only**: Benutze ausschließlich SSH ohne Passwortabfrage für die Git-Kommunikation. KEINE HTTPS-URLs mit Tokens verwenden.
-- **Vorgehensweise**: Führe nach jedem Commit beide Pushes aus: `git push origin master:master` und `git push public master:main`.
+  1. `bzaiser/finanzplan.git` (origin) $\rightarrow$ Branch: `master`
+  2. `bzaiser/Open-finanz-overview.git` (public) $\rightarrow$ Branch: `main`
+- **Vorgehensweise**: Führe nach jedem Commit beide Pushes aus: `git push origin main:master` und `git push public main:main`. (Falls lokal auf `main` gearbeitet wird).
+- **Migration Synchronisation (CRITICAL)**: Bevor eine neue Datenbank-Migration erstellt wird, MUSS die KI den Stand in BEIDEN Remotes prüfen:
+  - `git ls-tree -r origin/master finance/migrations/`
+  - `git ls-tree -r public/main finance/migrations/`
+- **Linearitäts-Gebot**: Beide Repositories müssen exakt dieselbe Migrations-Historie teilen. Wenn ein Repo voraus ist (z.B. durch ältere Migrationen), muss das andere Repo erst auf denselben Stand gebracht werden, bevor neue Migrationen (z.B. `0016...`) hinzugefügt werden.
+- **Keine Alleingänge**: Erstelle niemals Migrationen, die nur in einem der beiden Repositories funktionieren würden. 
+- **STRICT Push-First Rule**: Bevor dem Nutzer gemeldet wird "Du kannst es jetzt probieren" oder Ähnliches, MÜSSEN alle Code-Änderungen zwingend mit `git commit` und `git push` auf beiden Remotes (origin & public) erfolgreich abgeschlossen sein.
 
 ## Infrastructure & Environment
 - **STRICT: NO Local Docker**: Es darf NIEMALS versucht werden, `docker` oder `docker-compose` Befehle lokal auszuführen. Es darf auch NICHT nach einem lokalen Docker-Daemon gesucht werden. 
