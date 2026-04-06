@@ -951,7 +951,7 @@ def confirm_bank_transaction(request, transaction_id):
     if is_mapping:
         # If it was in "Ready" before, we need a special OOB response to move it back
         if not was_mapping:
-            response_html = f'<tr id="row-{transaction.id}" hx-swap-oob="delete"></tr>'
+            response_html = f'<tr id="ready-row-{transaction.id}" hx-swap-oob="delete"></tr>'
             
             # Add back to mapping pane (Top)
             mapping_row_html = render_to_string('finance/partials/import_row.html', {
@@ -975,7 +975,7 @@ def confirm_bank_transaction(request, transaction_id):
     elif is_ready:
         # The row moved to "Ready" (Bottom). 
         # 1. Remove from mapping pane
-        response_html = f'<tr id="row-{transaction.id}" hx-swap-oob="delete"></tr>'
+        response_html = f'<tr id="mapping-row-{transaction.id}" hx-swap-oob="delete"></tr>'
         
         # 2. Add to ready pane
         ready_row_html = render_to_string('finance/partials/import_ready_row.html', {
@@ -994,7 +994,8 @@ def confirm_bank_transaction(request, transaction_id):
         return HttpResponse(response_html)
     else:
         # It's ignored. Delete from whatever pane it was in.
-        response_html = f'<tr id="row-{transaction.id}" hx-swap-oob="delete"></tr>'
+        response_html = f'<tr id="mapping-row-{transaction.id}" hx-swap-oob="delete"></tr>'
+        response_html += f'<tr id="ready-row-{transaction.id}" hx-swap-oob="delete"></tr>'
         
         # Update sum just in case it was in ready
         total_ready = sum(t.amount for t in transaction.batch.transactions.filter(is_ignored=False, category__isnull=False))
@@ -1011,7 +1012,9 @@ def apply_import_batch(request, batch_id):
         messages.warning(request, _("Dieser Import wurde bereits angewendet."))
         return redirect('dashboard')
         
-    transactions = batch.transactions.filter(is_ignored=False)
+    # Only import transactions that have a category assigned (Ready pane)
+    transactions = batch.transactions.filter(is_ignored=False, category__isnull=False)
+    total_unassigned = batch.transactions.filter(is_ignored=False, category__isnull=True).count()
     
     count_one_time = 0
     count_recurring = 0
@@ -1026,18 +1029,24 @@ def apply_import_batch(request, batch_id):
             value=t.amount if t.is_income else abs(t.amount),
             is_income=t.is_income,
             start_date=t.date.replace(day=1),
+            # Set to last day of the same month for historical data
             end_date=t.date.replace(day=last_day),
             category=t.category,
             frequency='monthly',
-            is_inflation_adjusted=False, # Historical data usually doesn't need indexing
-            notes=t.matched_terms # Save the consolidation notes
+            is_inflation_adjusted=False,
+            notes=t.matched_terms
         )
         count_recurring += 1
             
     # Cleanup: Delete the batch and its pending transactions now that they are applied
+    # (We always delete the batch to avoid double-processing, even if some were skipped)
     batch.delete()
     
-    messages.success(request, _(f"Import abgeschlossen: {count_recurring} Einträge unter Einnahmen/Ausgaben erstellt."))
+    msg = _(f"Import abgeschlossen: {count_recurring} Einträge erstellt.")
+    if total_unassigned > 0:
+        msg += " " + _(f"{total_unassigned} unzugeordnete Posten wurden verworfen.")
+    
+    messages.success(request, msg)
     return redirect('dashboard')
 
 @login_required
@@ -1222,8 +1231,8 @@ def import_search_as_group(request, batch_id):
             response_html += render_to_string('finance/partials/import_ready_row.html', {
                 't': ready_rec, 
                 'categories': Category.objects.all(),
-                'hx_oob': True # This will swap by ID since it's already there? No, need special care.
-            }).replace('hx-swap-oob="beforeend:#ready-rows"', f'hx-swap-oob="outerHTML:#row-{ready_rec.id}"')
+                'hx_oob': True
+            }).replace(f'id="ready-row-{ready_rec.id}"', f'id="ready-row-{ready_rec.id}" hx-swap-oob="outerHTML:#ready-row-{ready_rec.id}"')
         else:
             ready_rec = PendingTransaction.objects.create(
                 batch=batch,
@@ -1241,9 +1250,9 @@ def import_search_as_group(request, batch_id):
                 'hx_oob': True
             })
         
-        # OOB Swaps to delete all matches
+        # OOB Swaps to delete all matches from Mapping Pane
         for m in month_matches:
-            response_html += f'<tr id="row-{m.id}" hx-swap-oob="delete"></tr>'
+            response_html += f'<tr id="mapping-row-{m.id}" hx-swap-oob="delete"></tr>'
     
     # 3. Update the Total Sum OOB
     total_ready = sum(t.amount for t in batch.transactions.filter(is_ignored=False, category__isnull=False))
