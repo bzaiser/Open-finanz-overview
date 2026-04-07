@@ -876,32 +876,39 @@ def _ensure_category_filters(user):
     """
     Robust synchronization: Ensures each category has exactly one ImportFilter.
     Prevents duplicates and re-links filters orphaned by category deletion.
+    Atomic approach with IntegrityError handling to support multi-instance environments.
     """
+    from django.db import IntegrityError
     all_categories = Category.objects.all()
     for cat in all_categories:
-        # 1. Does a filter with this specific category link exist?
+        # 1. Fast check: is it already correctly linked?
         if ImportFilter.objects.filter(user=user, category=cat).exists():
             continue
             
-        # 2. Is there an orphaned filter with the same name?
-        orphaned = ImportFilter.objects.filter(
-            user=user, 
-            category__isnull=True, 
-            target_name=cat.name
-        ).first()
-        
-        if orphaned:
-            orphaned.category = cat
-            orphaned.save()
-        else:
-            # 3. Create fresh filter
-            ImportFilter.objects.create(
-                user=user,
-                category=cat,
-                target_name=cat.name,
-                search_query='',
-                is_active=True
-            )
+        try:
+            # 2. Try to re-link an orphaned filter (category=NULL) with same name
+            orphaned = ImportFilter.objects.filter(
+                user=user, 
+                category__isnull=True, 
+                target_name=cat.name
+            ).first()
+            
+            if orphaned:
+                orphaned.category = cat
+                orphaned.save()
+            else:
+                # 3. Create a fresh filter
+                ImportFilter.objects.create(
+                    user=user,
+                    category=cat,
+                    target_name=cat.name,
+                    search_query='', # Field will be filled during review
+                    is_active=True
+                )
+        except IntegrityError:
+            # Collision occurred (another instance was faster or duplicate found).
+            # We ignore this as the goal (filter existence) is fulfilled.
+            pass
 
 @login_required
 def review_bank_transactions(request, batch_id):
