@@ -182,7 +182,40 @@ class ExcelParserService:
             if not batch:
                 batch = ImportBatch.objects.create(user=self.user, filename=self.filename)
 
-            # 5. Pre-fetch Plan Data to avoid N+1 queries (massive speedup)
+            # 4. Optional AI Categorization for unassigned items
+            # To stay FAST, we only send groups that didn't match a manual filter.
+            unassigned = [g for g in groups if g.get('category') is None]
+            provider = getattr(settings, 'LLM_PROVIDER', 'hybrid').lower()
+            
+            # Check if any AI provider is active
+            ai_configured = (provider == 'ollama' and settings.OLLAMA_BASE_URL) or \
+                            (settings.GEMINI_API_KEY or settings.GROQ_API_KEY)
+
+            if unassigned and ai_configured:
+                self._log(batch, f"KI-Analyse für {len(unassigned)} unbekannte Gruppen wird vorbereitet...")
+                
+                # Prepare data for LLM
+                llm_input = [{"id": i, "description": g['description'], "amount": float(g['total_amount'])} for i, g in enumerate(unassigned)]
+                all_categories = list(Category.objects.all())
+                cat_list = [{"id": c.id, "name": c.name, "slug": c.slug} for c in all_categories]
+                
+                # Call central AI dispatcher
+                results, status_msg, events = classify_transactions(llm_input, cat_list)
+                self._log(batch, f"KI-Status: {status_msg}")
+                
+                # Map results back to groups
+                cat_map = {c.slug: c for c in all_categories}
+                for i, group in enumerate(unassigned):
+                    res = results.get(str(i))
+                    if res and res.get('category_slug') != 'uncategorized':
+                        cat = cat_map.get(res['category_slug'])
+                        if cat:
+                            group['category'] = cat
+                            group['ai_reasoning'] = res.get('reasoning', "Automatisch von KI kategorisiert")
+                            if 'is_income' in res:
+                                group['is_income'] = res['is_income']
+
+            # 5. Pre-fetch Plan Data to avoid N+1 queries (AFTER AI Step!)
             self._log(batch, "Abgleich mit Finanzplan wird vorbereitet...")
             years_to_check = {g['latest_date'].year for g in groups if g.get('category')}
             plan_items = CashFlowSource.objects.filter(
