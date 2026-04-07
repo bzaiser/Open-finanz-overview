@@ -251,9 +251,8 @@ def classify_transactions(transactions, categories, progress_callback=None, is_c
         chunk = remaining_all[i:i + chunk_size]
         current_block = (i // chunk_size) + 1
         
-        # Progress (45% -> 98%)
-        p = 45 + int(((i + len(chunk)) / total_transactions) * 53)
-        if progress_callback: progress_callback(p)
+        # call progress callback with current and total chunks
+        if progress_callback: progress_callback(current_block, total_chunks)
         
         # Call Ollama
         results, error = classify_with_ollama(chunk, categories)
