@@ -18,7 +18,23 @@
         {% endif %}
     </td>
     <td class="text-end fw-bold {% if t.is_income %}text-success{% else %}text-danger{% endif %} text-nowrap">
-        {% if t.planned_amount and t.planned_amount != t.amount %}
+        {% if t.has_conflict %}
+            <div class="d-inline-flex flex-column align-items-end me-2">
+                <span class="badge bg-danger text-white mb-1" 
+                      title="{% trans 'Konflikt: Ein Eintrag für dieses Jahr existiert bereits im Plan!' %}">
+                    <i class="bi bi-exclamation-triangle-fill"></i> {% trans "Plan-Konflikt" %}
+                </span>
+                <div class="form-check form-switch small">
+                    <input class="form-check-input" type="checkbox" role="switch" 
+                           id="confirm-{{ t.id }}"
+                           {% if t.is_confirmed %}checked{% endif %}
+                           hx-get="{% url 'confirm_transaction' t.id %}"
+                           hx-vals='js:{"field": "is_confirmed", "value": event.target.checked ? "true" : "false"}'
+                           hx-swap="none">
+                    <label class="form-check-label text-muted x-small" for="confirm-{{ t.id }}">{% trans "Überschreiben?" %}</label>
+                </div>
+            </div>
+        {% elif t.planned_amount and t.planned_amount != t.amount %}
             <span class="badge bg-warning text-dark me-1 animate__animated animate__pulse animate__infinite" 
                   title="{% trans 'Plan-Abweichung!' %} {% trans 'Geplant:' %} {{ t.planned_amount|floatformat:2 }} €">
                 <i class="bi bi-exclamation-triangle-fill"></i>

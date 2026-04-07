@@ -9,6 +9,9 @@ from django.conf import settings
 from django.core.cache import cache
 import logging
 
+import logging
+import hashlib
+
 logger = logging.getLogger(__name__)
 
 
@@ -149,6 +152,23 @@ class ExcelParserService:
             # Final check
             initial_count = len(df)
             self._log(batch, f"Bereinigung fertig: {initial_count} Zeilen verarbeitet.")
+            
+            # --- ROW-LEVEL DUPLICATE DETECTION ---
+            self._log(batch, "Prüfe Dateiinhalte auf bereits importierte Buchungen...")
+            existing_sigs = set(PendingTransaction.objects.filter(batch__user=self.user).values_list('signature', flat=True))
+            
+            def make_sig(row):
+                # Hash of date, amount, and description
+                data = f"{row['date']}|{row['amount']}|{row['description']}"
+                return hashlib.md5(data.encode()).hexdigest()
+            
+            df['signature'] = df.apply(make_sig, axis=1)
+            duplicates_mask = df['signature'].isin(existing_sigs)
+            duplicate_count = duplicates_mask.sum()
+            
+            if duplicate_count > 0:
+                self._log(batch, f"INFO: {duplicate_count} bereits bekannte Buchungen in dieser Datei werden übersprungen.")
+                df = df[~duplicates_mask]
 
             if df.empty:
                 self._log(batch, "KRITISCH: Datei ist leer!")
@@ -174,14 +194,21 @@ class ExcelParserService:
                 is_income = group['total_amount'] > 0
                 ai_reasoning = f"Gruppiert aus {group['count']} Einzelbuchungen."
                 
-                # --- DUPLICATE DETECTION against CashFlowSource ---
+                # --- DUPLICATE DETECTION at Group Level ---
                 m_start = group['latest_date'].replace(day=1)
-                exists = CashFlowSource.objects.filter(
-                    user=self.user,
-                    name__icontains=group['base_desc'],
-                    start_date__year=m_start.year,
-                    start_date__month=m_start.month
-                ).exists()
+                
+                # Check for plan conflict (Same Category, Same Year)
+                existing_source = None
+                has_conflict = False
+                if group.get('category'):
+                    existing_source = CashFlowSource.objects.filter(
+                        user=self.user,
+                        category=group['category'],
+                        start_date__year=group['latest_date'].year
+                    ).first()
+                    if existing_source:
+                        has_conflict = True
+                        self._log(batch, f"KONFLIKT: '{group['description']}' existiert bereits für {group['latest_date'].year} im Plan.")
 
                 # --- AUTO-IGNORE logic ---
                 # We ONLY ignore automatically if it definitely exists already (Duplicate).
@@ -212,10 +239,13 @@ class ExcelParserService:
                     planned_amount=planned_amount, # Store the target plan value
                     is_income=group['is_income'],
                     category=group.get('category'),
-                    is_ignored=is_ignored,
+                    is_ignored=False, # We don't auto-ignore grouped items anymore, we use conflict status
                     is_recurring=True,
-                    frequency='monthly',
-                    ai_reasoning=ai_reasoning
+                    has_conflict=has_conflict,
+                    existing_source=existing_source,
+                    # For grouped items, signature is less critical but we can store the group key 
+                    # as a secondary signature if needed. For now, we mainly use it at row level.
+                    signature=hashlib.md5(str(group).encode()).hexdigest()
                 )
                 pending_list.append(pending)
 
@@ -267,9 +297,12 @@ class ExcelParserService:
             
             # UNIQUE KEY for unassigned items to avoid pre-grouping
             if cat is None:
-                key = (f"RAW_{index}", row['_year'], row['_month'], desc_val)
+                # Still group unassigned items by description + month/year to avoid exploding the list,
+                # but keep them semi-granular for individual mapping.
+                key = (f"RAW_{desc_val}", row['_year'], row['_month'])
             else:
-                key = (desc_val, row['_year'], row['_month'])
+                # YEARLY AGGREGATION for categorized items
+                key = (desc_val, row['_year'], "YEARLY")
                 
             if key not in groups_dict:
                 groups_dict[key] = {

@@ -18,7 +18,15 @@
                 <a href="{% url 'import_transactions' %}" class="btn btn-outline-secondary">
                     <i class="bi bi-trash"></i> {% trans "Abbrechen" %}
                 </a>
-                <a href="{% url 'apply_import' batch.id %}" class="btn btn-success px-5 fw-bold shadow-sm">
+                {% if conflict_count > 0 %}
+                    <div class="alert alert-warning py-1 px-2 border-0 small mb-0 me-2 animate__animated animate__shakeX" 
+                         title="{% trans 'Nicht markierte Konflikte werden beim Import übersprungen.' %}">
+                        <i class="bi bi-exclamation-triangle-fill"></i> 
+                        <strong>{{ conflict_count }}</strong> {% trans "Konflikte (werden übersprungen)" %}
+                    </div>
+                {% endif %}
+                <a href="{% url 'apply_import' batch.id %}" 
+                   class="btn btn-success px-5 fw-bold shadow-sm">
                     <i class="bi bi-cloud-arrow-down-fill me-2"></i>{% trans "Jetzt importieren" %}
                 </a>
             </div>
@@ -41,14 +49,21 @@
                                 hx-vals='{"target": "mapping-search"}'>
                             <i class="bi bi-search"></i>
                         </button>
-                        <input type="text" name="q" class="form-control border-start-0" 
+                        <input type="text" name="q" class="form-control border-start-0 border-end-0" 
+                               id="mapping-search-input"
                                placeholder="{% trans 'Suchen & Gruppieren (z.B. Aldi)...' %}"
                                hx-get="{% url 'review_transactions' batch.id %}"
                                hx-trigger="keyup changed delay:300ms, search"
                                hx-target="#mapping-pane"
                                hx-indicator=".search-spinner"
                                hx-vals='{"target": "mapping-search"}'>
-                        <span class="input-group-text bg-white search-spinner htmx-indicator">
+                        <button class="input-group-text bg-white border-start-0 text-muted" 
+                                type="button"
+                                onclick="clearMappingSearch()"
+                                title="{% trans 'Suche zurücksetzen' %}">
+                            <i class="bi bi-x-circle"></i>
+                        </button>
+                        <span class="input-group-text bg-white search-spinner htmx-indicator border-start-0">
                             <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
                         </span>
                     </div>
@@ -59,6 +74,14 @@
                 <div id="quick-filter-bar" class="px-3 py-2 bg-light border-bottom d-flex align-items-center bg-opacity-50">
                     <span class="small text-muted me-3 fw-bold">{% trans "Filter-Vorschläge:" %}</span>
                     <div id="quick-filter-container" class="d-flex flex-nowrap gap-2 overflow-auto py-1 scrollbar-thin" style="max-width: calc(100% - 100px);">
+                        <!-- Show All button -->
+                        <button class="btn btn-sm btn-outline-secondary px-3 rounded-pill fw-bold" 
+                                type="button"
+                                onclick="clearMappingSearch()"
+                                style="font-size: 0.75rem;">
+                            <i class="bi bi-asterisk me-1"></i>{% trans "Alle anzeigen" %}
+                        </button>
+                        
                         {% for f in filters %}
                         <button class="btn btn-sm badge-chip quick-filter-chip animate__animated animate__fadeIn"
                                 type="button"
@@ -170,6 +193,20 @@
 
 {% block extra_js %}
 <script>
+    /**
+     * Resets the search input and triggers HTMX update
+     */
+    function clearMappingSearch() {
+        const input = document.getElementById('mapping-search-input');
+        if (input) {
+            input.value = '';
+            // Trigger both the 'search' event for HTMX and the 'input' event for the chip filtering
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+            input.dispatchEvent(new Event('search', { bubbles: true }));
+            input.focus();
+        }
+    }
+
     /**
      * Filter the quick-filter chips based on the search query
      */

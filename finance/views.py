@@ -801,6 +801,7 @@ def upload_bank_transactions(request):
         # 0. Cleanup old unapplied batches - gracefully
         try:
             cutoff = timezone.now() - datetime.timedelta(hours=24)
+            # Only cleanup batches that are neither applied nor very recent
             ImportBatch.objects.filter(user=request.user, is_applied=False, date__lt=cutoff).delete()
         except Exception as e:
             import logging
@@ -842,9 +843,12 @@ def upload_bank_transactions(request):
         form = BankImportForm()
     
     ai_active = bool(settings.GEMINI_API_KEY) or bool(getattr(settings, 'GROQ_API_KEY', None))
+    batches = ImportBatch.objects.filter(user=request.user).order_by('-date')
+    
     return render(request, 'finance/import_upload.html', {
         'form': form,
-        'ai_active': ai_active
+        'ai_active': ai_active,
+        'batches': batches
     })
 
 @login_required
@@ -908,7 +912,8 @@ def review_bank_transactions(request, batch_id):
         'categories': categories,
         'filters': filters,
         'q': q,
-        'ai_active': bool(settings.GEMINI_API_KEY or settings.GROQ_API_KEY)
+        'ai_active': bool(settings.GEMINI_API_KEY or settings.GROQ_API_KEY),
+        'conflict_count': ready_list.filter(has_conflict=True, is_confirmed=False).count()
     })
 
 @login_required
@@ -936,6 +941,8 @@ def confirm_bank_transaction(request, transaction_id):
             transaction.is_ignored = False
     elif field == 'frequency':
         transaction.frequency = value
+    elif field == 'is_confirmed':
+        transaction.is_confirmed = (value == 'true')
         
     transaction.save()
     
@@ -1016,33 +1023,70 @@ def apply_import_batch(request, batch_id):
     transactions = batch.transactions.filter(is_ignored=False, category__isnull=False)
     total_unassigned = batch.transactions.filter(is_ignored=False, category__isnull=True).count()
     
+    # 1. Automatic Historical Alignment: 
+    # For each category being imported, set end_date for previous years if still open.
+    applied_categories = transactions.values_list('category', flat=True).distinct()
+    import datetime
+    
+    for cat_id in applied_categories:
+        # For each year in the current import
+        import_years = transactions.filter(category_id=cat_id).values_list('date__year', flat=True).distinct()
+        for yr in import_years:
+            # Find the MOST RECENT entry for this category that was before this year and is still "open"
+            old_entry = CashFlowSource.objects.filter(
+                user=request.user,
+                category_id=cat_id,
+                start_date__year__lt=yr,
+                end_date__isnull=True
+            ).order_by('-start_date').first()
+            
+            if old_entry:
+                # Set end_date to end of previous year
+                old_entry.end_date = datetime.date(yr - 1, 12, 31)
+                old_entry.save(update_fields=['end_date'])
+
+    # 2. Process Transactions (NOW AGGREGATED per YEAR and CATEGORY)
     count_one_time = 0
     count_recurring = 0
     
+    # We group rows by (Category, Year) to create or update yearly plan entries
+    # The PendingTransactions already represent the years
     for t in transactions:
-        import calendar
-        last_day = calendar.monthrange(t.date.year, t.date.month)[1]
-        
-        CashFlowSource.objects.create(
-            user=request.user,
-            name=t.description,
-            value=abs(t.amount), # Always store magnitude
-            is_income=t.is_income,
-            start_date=t.date.replace(day=1),
-            # Set to last day of the same month for historical data
-            end_date=t.date.replace(day=last_day),
-            category=t.category,
-            frequency='monthly',
-            is_inflation_adjusted=False,
-            notes=t.matched_terms
-        )
-        count_recurring += 1
+            # Check for same-year update (Conflict)
+            if t.has_conflict:
+                if not t.is_confirmed:
+                    # Skip if conflict exists but user hasn't explicitly clicked "Overwrite"
+                    continue
+                
+                # Overwrite existing source
+                source = t.existing_source
+                if source:
+                    source.value = abs(t.amount)
+                    source.name = t.description
+                    source.is_income = t.is_income
+                    source.notes = t.matched_terms
+                    source.save()
+                    count_recurring += 1
+            else:
+                # Create NEW yearly entry
+                CashFlowSource.objects.create(
+                    user=request.user,
+                    name=t.description,
+                    value=abs(t.amount),
+                    is_income=t.is_income,
+                    start_date=datetime.date(t.date.year, 1, 1),
+                    category=t.category,
+                    frequency='yearly',
+                    is_inflation_adjusted=False,
+                    notes=t.matched_terms
+                )
+                count_recurring += 1
             
-    # Cleanup: Delete the batch and its pending transactions now that they are applied
-    # (We always delete the batch to avoid double-processing, even if some were skipped)
-    batch.delete()
+    # Mark as applied instead of deleting
+    batch.is_applied = True
+    batch.save(update_fields=['is_applied'])
     
-    msg = _(f"Import abgeschlossen: {count_recurring} Einträge erstellt.")
+    msg = _(f"Import erfolgreich: {count_recurring} Plan-Einträge erstellt/aktualisiert.")
     if total_unassigned > 0:
         msg += " " + _(f"{total_unassigned} unzugeordnete Posten wurden verworfen.")
     
@@ -1445,3 +1489,10 @@ def quick_create_cash_flow(request):
         '''
         return HttpResponse(html)
     return HttpResponse(status=405)
+
+@login_required
+def delete_import_batch(request, batch_id):
+    batch = get_object_or_404(ImportBatch, id=batch_id, user=request.user)
+    batch.delete()
+    messages.success(request, _("Import-Batch gelöscht."))
+    return redirect('finance:import_list')

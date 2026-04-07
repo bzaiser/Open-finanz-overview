@@ -49,18 +49,69 @@
                         <p class="text-muted">{% trans "Bitte warten, die Daten werden zum Server übertragen." %}</p>
                     </div>
 
-                    <!-- Clean-up / Emergency Button -->
+                    </div>
+
+                    {% if batches %}
+                    <!-- Batch History -->
                     <div class="mt-5 border-top pt-4">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <small class="text-danger fw-bold text-uppercase">{% trans "Fehlersuche & Wartung" %}</small>
+                        <h5 class="fw-bold mb-3"><i class="bi bi-clock-history me-2"></i>{% trans "Bisherige Importe" %}</h5>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover align-middle border-0">
+                                <thead class="bg-light">
+                                    <tr class="small text-muted text-uppercase">
+                                        <th class="border-0">{% trans "Datum" %}</th>
+                                        <th class="border-0">{% trans "Datei" %}</th>
+                                        <th class="border-0 text-center">{% trans "Status" %}</th>
+                                        <th class="border-0 text-end">{% trans "Aktion" %}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for b in batches %}
+                                    <tr>
+                                        <td>{{ b.date|date:"d.m.Y H:i" }}</td>
+                                        <td class="fw-bold small">{{ b.filename }}</td>
+                                        <td class="text-center">
+                                            {% if b.is_applied %}
+                                                <span class="badge bg-success-light text-success border border-success border-opacity-25">
+                                                    <i class="bi bi-check-circle-fill"></i> {% trans "Angewendet" %}
+                                                </span>
+                                            {% else %}
+                                                <span class="badge bg-warning-light text-warning border border-warning border-opacity-25">
+                                                    <i class="bi bi-hourglass-split"></i> {% trans "Offen" %}
+                                                </span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="text-end">
+                                            <div class="d-flex justify-content-end gap-1">
+                                                {% if not b.is_applied %}
+                                                    <a href="{% url 'review_transactions' b.id %}" class="btn btn-sm btn-outline-primary" title="{% trans 'Prüfen & Zuordnen' %}">
+                                                        <i class="bi bi-search"></i>
+                                                    </a>
+                                                {% endif %}
+                                                <a href="{% url 'delete_import_batch' b.id %}" class="btn btn-sm btn-outline-danger" 
+                                                   onclick="return confirm('Möchtest du diesen Batch wirklich löschen?')" 
+                                                   title="{% trans 'Löschen' %}">
+                                                    <i class="bi bi-trash"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
                         </div>
-                        <p class="small text-muted mb-3">
-                            {% trans "Falls ein Vorgang hängen bleibt, kannst du hier alle unfertigen Importe löschen und den Cache leeren." %}
-                        </p>
+                    </div>
+                    {% endif %}
+
+                    <!-- Clean-up / Emergency Button -->
+                    <div class="mt-4 pt-4 border-top">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <small class="text-danger fw-bold text-uppercase">{% trans "Cache & Wartung" %}</small>
+                        </div>
                         <form method="post" action="{% url 'delete_all_temporary_data' %}" onsubmit="return confirm('Möchtest du wirklich alle nicht übernommenen Importe löschen?');">
                             {% csrf_token %}
-                            <button type="submit" class="btn btn-outline-danger btn-sm">
-                                <i class="bi bi-trash me-2"></i>{% trans "Alle temporären Daten löschen" %}
+                            <button type="submit" class="btn btn-link text-danger btn-sm p-0 text-decoration-none">
+                                <i class="bi bi-trash-fill me-1"></i>{% trans "Alle temporären Daten löschen" %}
                             </button>
                         </form>
                     </div>

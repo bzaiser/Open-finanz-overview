@@ -135,9 +135,15 @@ class PendingTransaction(models.Model):
     # User Review state
     is_ignored = models.BooleanField(_("Ignore"), default=False)
     
-    # Consolidation Fields
+    # Consolidation & Duplicate Detection
     matched_terms = models.TextField(_("Matched Terms (Notes)"), blank=True, null=True)
     integration_count = models.IntegerField(_("Integration Count"), default=1)
+    signature = models.CharField(_("Transaction Signature"), max_length=255, blank=True, null=True, db_index=True)
+    
+    # Conflict state with Plan
+    has_conflict = models.BooleanField(_("Has Plan Conflict"), default=False)
+    is_confirmed = models.BooleanField(_("Confirmed Conflict"), default=False) # For manual overwrite approval
+    existing_source = models.ForeignKey(CashFlowSource, on_delete=models.SET_NULL, null=True, blank=True, related_name='conflicting_transactions')
 
     class Meta:
         verbose_name = _("Pending Transaction")
