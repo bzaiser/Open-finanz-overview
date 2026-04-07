@@ -16,7 +16,7 @@ def signup(request):
             # Create profile
             UserProfile.objects.get_or_create(user=user)
             login(request, user)
-            return redirect('dashboard')
+            return redirect('finance:dashboard')
     else:
         form = CustomUserCreationForm()
     return render(request, 'core/signup.html', {'form': form})

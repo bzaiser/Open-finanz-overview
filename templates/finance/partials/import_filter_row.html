@@ -26,7 +26,7 @@
                     onclick="openEditModalFromButton(this)" title="{% trans 'Bearbeiten' %}">
                 <i class="bi bi-pencil-square"></i>
             </button>
-            <a href="{% url 'delete_import_filter' f.id %}?batch_id={{ batch_id }}" 
+            <a href="{% url 'finance:delete_import_filter' f.id %}?batch_id={{ batch_id }}" 
                class="btn btn-link text-danger p-1" title="{% trans 'Löschen' %}"
                onclick='return confirm("{% trans 'Filter wirklich löschen?' %}")'>
                 <i class="bi bi-trash"></i>

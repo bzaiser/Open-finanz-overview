@@ -27,13 +27,13 @@
                             <p class="mb-3 text-break">
                                 <code>{{ error_msg|default:"Unbekannter Fehler im Hintergrund-Task" }}</code>
                             </p>
-                            <a href="{% url 'import_transactions' %}" class="btn btn-outline-danger btn-sm px-4">
+                            <a href="{% url 'finance:import_transactions' %}" class="btn btn-outline-danger btn-sm px-4">
                                 <i class="bi bi-arrow-left me-2"></i>{% trans "Zurück zum Upload" %}
                             </a>
                         </div>
                     {% else %}
                         <div id="progress-bar-placeholder" 
-                             hx-get="{% url 'import_progress' %}" 
+                             hx-get="{% url 'finance:import_progress' %}" 
                              hx-trigger="every 1.5s"
                              hx-swap="outerHTML">
                             <div class="progress shadow-sm" style="height: 25px; border-radius: 12px;">
@@ -42,7 +42,7 @@
                             <p class="text-center mt-2 text-muted small fw-bold">{% trans "KI analysiert Daten..." %} ({{ progress|default:0 }}%)</p>
                             {% if progress >= 100 %}
                                 <div class="mt-3 animate__animated animate__bounceIn">
-                                    <a href="{% url 'review_transactions' batch.id %}" class="btn btn-success fw-bold shadow-lg px-5 py-3">
+                                    <a href="{% url 'finance:review_transactions' batch.id %}" class="btn btn-success fw-bold shadow-lg px-5 py-3">
                                         <i class="bi bi-check-all me-2"></i>{% trans "Analyse fertig – Buchungen ansehen" %}
                                     </a>
                                 </div>

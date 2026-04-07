@@ -17,7 +17,7 @@
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h1>{% trans "Dashboard" %}</h1>
             <div>
-                <a href="{% url 'import_transactions' %}" class="btn btn-primary me-2 shadow-sm" style="background: var(--app-gradient); border: none;">
+                <a href="{% url 'finance:import_transactions' %}" class="btn btn-primary me-2 shadow-sm" style="background: var(--app-gradient); border: none;">
                     <i class="bi bi-magic"></i>
                     {% trans "Smart Import" %}
                 </a>
@@ -53,7 +53,7 @@
         <div class="alert alert-info py-2 small mb-3 shadow-sm" style="font-size: 0.8rem; border-left: 4px solid #0dcaf0;">
             <i class="bi bi-info-circle"></i> {% trans "Changes here are temporary. Update your profile for permanent settings." %}
         </div>
-        <form id="simulation-form" hx-post="{% url 'dashboard' %}" hx-target="#dashboard-charts"
+        <form id="simulation-form" hx-post="{% url 'finance:dashboard' %}" hx-target="#dashboard-charts"
             hx-trigger="submit" hx-indicator="#sim-loading">
             {% csrf_token %}
             <div class="mb-3">
@@ -124,7 +124,7 @@
                     <i class="bi bi-arrow-repeat"></i>
                     {% trans "Update Simulation" %}
                 </button>
-                <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary btn-sm border-0 py-2">
+                <a href="{% url 'finance:dashboard' %}" class="btn btn-outline-secondary btn-sm border-0 py-2">
                     <i class="bi bi-x-circle"></i> {% trans "Reset to Defaults" %}
                 </a>
             </div>

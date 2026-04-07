@@ -9,11 +9,11 @@
             <p class="text-muted">{% trans "Definiere Regeln, um Buchungen automatisch zusammenzufassen." %}</p>
         </div>
         {% if batch_id %}
-        <a href="{% url 'review_transactions' batch_id %}" class="btn btn-primary shadow-sm px-4 fw-bold">
+        <a href="{% url 'finance:review_transactions' batch_id %}" class="btn btn-primary shadow-sm px-4 fw-bold">
             <i class="bi bi-arrow-left me-2"></i> {% trans "Zurück zur Buchungsprüfung" %}
         </a>
         {% else %}
-        <a href="{% url 'import_transactions' %}" class="btn btn-outline-secondary">
+        <a href="{% url 'finance:import_transactions' %}" class="btn btn-outline-secondary">
             <i class="bi bi-arrow-left"></i> {% trans "Zurück zum Upload" %}
         </a>
         {% endif %}
@@ -40,7 +40,7 @@
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-body">
                     <h5 class="card-title fw-bold mb-3">{% trans "Neuen Filter erstellen" %}</h5>
-                    <form hx-post="{% url 'add_import_filter' %}" 
+                    <form hx-post="{% url 'finance:add_import_filter' %}" 
                           hx-target="#filter-rows" 
                           hx-swap="afterbegin"
                           hx-on::after-request="if(event.detail.successful) this.reset();"
@@ -207,7 +207,7 @@
         const modalEl = document.getElementById('editFilterModal');
         const form = document.getElementById('editFilterForm');
         
-        const actionUrl = "{% url 'edit_import_filter' 0 %}".replace('0', id);
+        const actionUrl = "{% url 'finance:edit_import_filter' 0 %}".replace('0', id);
         form.action = actionUrl;
         form.setAttribute('hx-post', actionUrl);
         form.setAttribute('hx-target', '#filter-row-' + id);
@@ -261,7 +261,7 @@
 <div class="modal fade" id="quickCategoryModal" tabindex="-1" aria-hidden="true" style="z-index: 1060;">
     <div class="modal-dialog modal-sm modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg" style="border-radius: 15px; overflow: hidden;">
-            <form hx-post="{% url 'quick_create_category' %}" 
+            <form hx-post="{% url 'finance:quick_create_category' %}" 
                   hx-target=".category-select" 
                   hx-swap="beforeend"
                   hx-on::after-request="if(event.detail.successful) { bootstrap.Modal.getInstance(document.getElementById('quickCategoryModal')).hide(); this.reset(); }"
@@ -295,7 +295,7 @@
 <div class="modal fade" id="quickCashFlowModal" tabindex="-1" aria-hidden="true" style="z-index: 1060;">
     <div class="modal-dialog modal-sm modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg" style="border-radius: 15px; overflow: hidden;">
-            <form hx-post="{% url 'quick_create_cash_flow' %}" 
+            <form hx-post="{% url 'finance:quick_create_cash_flow' %}" 
                   hx-target=".cashflow-select" 
                   hx-swap="beforeend"
                   hx-on::after-request="if(event.detail.successful) { bootstrap.Modal.getInstance(document.getElementById('quickCashFlowModal')).hide(); this.reset(); }"

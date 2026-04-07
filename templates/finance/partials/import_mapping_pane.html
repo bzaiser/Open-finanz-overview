@@ -37,7 +37,7 @@
                             {% blocktrans with count=transactions|length %}Gefilterte Ansicht: {{ count }} offene Buchungen.{% endblocktrans %}
                         </div>
                         <button class="btn btn-primary btn-sm fw-bold shadow-sm"
-                                hx-post="{% url 'import_search_as_group' batch.id %}"
+                                hx-post="{% url 'finance:import_search_as_group' batch.id %}"
                                 hx-include="[name='q'], [name='target_name'], [name='category_id'], [name='make_recurring']"
                                 hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
                                 hx-confirm="{% trans 'Möchtest du alle aktuell gefilterten Buchungen als eine Gruppe importieren?' %}"

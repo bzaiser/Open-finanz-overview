@@ -3,7 +3,7 @@
     <!-- Action: Ignore -->
     <td class="text-center">
         <button class="btn btn-link text-danger p-0" 
-                hx-get="{% url 'confirm_transaction' t.id %}"
+                hx-get="{% url 'finance:confirm_transaction' t.id %}"
                 hx-target="#mapping-row-{{ t.id }}"
                 hx-swap="outerHTML"
                 hx-vals='{"field": "is_ignored", "value": "true"}'
@@ -46,7 +46,7 @@
     <td>
         <div class="d-flex gap-1 align-items-center">
             <select class="form-select form-select-sm border-primary mapping-category-select" 
-                    hx-get="{% url 'confirm_transaction' t.id %}"
+                    hx-get="{% url 'finance:confirm_transaction' t.id %}"
                     hx-target="#mapping-row-{{ t.id }}"
                     hx-swap="outerHTML"
                     hx-trigger="change"
@@ -60,7 +60,7 @@
             
             <!-- Type Toggle -->
             <button class="btn btn-sm {% if t.is_income %}btn-success{% else %}btn-outline-danger{% endif %}"
-                    hx-get="{% url 'confirm_transaction' t.id %}"
+                    hx-get="{% url 'finance:confirm_transaction' t.id %}"
                     hx-target="#mapping-row-{{ t.id }}"
                     hx-swap="outerHTML"
                     hx-vals='{"field": "is_income", "value": "{% if t.is_income %}false{% else %}true{% endif %}"}'
@@ -72,7 +72,7 @@
 
     <!-- Quick Filter Save -->
     <td class="text-end">
-        <a href="{% url 'import_filters_list' %}?pre_query={{ t.description|urlencode }}&pre_name={{ t.description|urlencode }}&batch_id={{ t.batch.id }}" 
+        <a href="{% url 'finance:import_filters_list' %}?pre_query={{ t.description|urlencode }}&pre_name={{ t.description|urlencode }}&batch_id={{ t.batch.id }}" 
            class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-1" title="{% trans 'Dauerhaften Filter erstellen' %}">
             <i class="bi bi-funnel"></i><span class="fw-bold small">+</span>
         </a>

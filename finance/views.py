@@ -209,7 +209,7 @@ def dashboard_view(request):
                 
                 profile.dashboard_config = dashboard_config
                 profile.save()
-                return redirect('dashboard')
+                return redirect('finance:dashboard')
             except json.JSONDecodeError:
                 pass
         else:
@@ -838,7 +838,7 @@ def upload_bank_transactions(request):
             thread.daemon = True
             thread.start()
 
-            return redirect('import_processing')
+            return redirect('finance:import_processing')
     else:
         form = BankImportForm()
     
@@ -1017,7 +1017,7 @@ def apply_import_batch(request, batch_id):
     batch = get_object_or_404(ImportBatch, id=batch_id, user=request.user)
     if batch.is_applied:
         messages.warning(request, _("Dieser Import wurde bereits angewendet."))
-        return redirect('dashboard')
+        return redirect('finance:dashboard')
         
     # Only import transactions that have a category assigned (Ready pane)
     transactions = batch.transactions.filter(is_ignored=False, category__isnull=False)
@@ -1091,7 +1091,7 @@ def apply_import_batch(request, batch_id):
         msg += " " + _(f"{total_unassigned} unzugeordnete Posten wurden verworfen.")
     
     messages.success(request, msg)
-    return redirect('dashboard')
+    return redirect('finance:dashboard')
 
 @login_required
 def get_import_progress(request):
@@ -1377,7 +1377,7 @@ def add_import_filter(request):
         if batch_id:
             return redirect(f"{reverse('import_filters_list')}?batch_id={batch_id}")
             
-    return redirect('import_filters_list')
+    return redirect('finance:import_filters_list')
 
 @login_required
 def edit_import_filter(request, filter_id):
@@ -1402,9 +1402,9 @@ def edit_import_filter(request, filter_id):
 
         if batch_id:
             return redirect(f"{reverse('import_filters_list')}?batch_id={batch_id}")
-        return redirect('import_filters_list')
+        return redirect('finance:import_filters_list')
 
-    return redirect('import_filters_list')
+    return redirect('finance:import_filters_list')
 
 @login_required
 def delete_import_filter(request, filter_id):
@@ -1414,7 +1414,7 @@ def delete_import_filter(request, filter_id):
     messages.success(request, _("Filter gelöscht."))
     if batch_id:
         return redirect(f"{reverse('import_filters_list')}?batch_id={batch_id}")
-    return redirect('import_filters_list')
+    return redirect('finance:import_filters_list')
 
 @login_required
 def quick_create_category(request):
