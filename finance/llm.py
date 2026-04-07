@@ -145,11 +145,11 @@ def classify_with_ollama(transactions, categories):
     category_list = ", ".join([f"{c['name']} (slug: {c['slug']})" for c in categories])
     url = f"{settings.OLLAMA_BASE_URL.rstrip('/')}/api/chat"
     
-    system_prompt = "Du bist ein präziser Finanz-Experte. Antworte NUR im JSON-Format (Array of Objects). Absolut kein Text vor oder nach dem JSON!"
+    system_prompt = "Antworte NUR mit JSON-Array. Kein Chat!"
     user_prompt = (
         f"Kategorien: {category_list}\n"
-        f"Buchungen: {json.dumps(transactions)}\n"
-        f"Antworte NUR mit einem JSON-Array. Felder: id (string), category_slug (string), is_income (bool), is_recurring (bool)."
+        f"Items: {json.dumps(transactions)}\n"
+        "Output JSON fields: id, category_slug, is_income, is_recurring, frequency."
     )
     
     payload = {
@@ -233,8 +233,8 @@ def classify_transactions(transactions, categories, progress_callback=None, is_c
     if not remaining_all:
         return final_results, "KI-Status: 100% lokal erkannt.", events
 
-    # 1. Batching (Ollama Turbo v3)
-    chunk_size = 15
+    # 1. Batching (Turbo: Larger chunks reduce startup overhead)
+    chunk_size = 40
     total_transactions = len(remaining_all)
     total_chunks = (total_transactions + chunk_size - 1) // chunk_size
     
@@ -264,8 +264,7 @@ def classify_transactions(transactions, categories, progress_callback=None, is_c
             # Fallback
             for t in chunk:
                 final_results[str(t['id'])] = {
-                    "category_slug": "uncategorized",
-                    "reasoning": f"Fehler: {error}"
+                    "category_slug": "uncategorized"
                 }
             continue
             
