@@ -74,7 +74,7 @@ SUMMARY_WIDGETS = {
     'monthly_income': {'title': _('Monthly Income'), 'default_bg': '#198754', 'default_text': '#ffffff', 'icon': 'bi-graph-up-arrow'},
     'monthly_expenses': {'title': _('Monthly Expenses'), 'default_bg': '#dc3545', 'default_text': '#ffffff', 'icon': 'bi-graph-down-arrow'},
     'total_pensions': {'title': _('Pension Capital'), 'default_bg': '#0dcaf0', 'default_text': '#ffffff', 'icon': 'bi-bank'},
-    'expected_payout': {'title': _('Target Monthly Pension'), 'default_bg': '#6f42c1', 'default_text': '#ffffff', 'icon': 'bi-target'},
+    'expected_payout': {'title': _('Target Monthly Pension'), 'default_bg': '#6f42c1', 'default_text': '#ffffff', 'icon': 'bi-bullseye'},
     'current_pension_payout': {'title': _('Current Pension'), 'default_bg': '#fd7e14', 'default_text': '#ffffff', 'icon': 'bi-cash-stack'},
     'total_physical_assets': {'title': _('Sachwerte'), 'default_bg': '#8a2be2', 'default_text': '#ffffff', 'icon': 'bi-car-front'},
     'total_real_estate': {'title': _('Immobilien'), 'default_bg': '#20c997', 'default_text': '#ffffff', 'icon': 'bi-house-heart'},

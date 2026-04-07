@@ -72,9 +72,13 @@ class ExcelParserService:
     def parse_and_categorize(self, batch=None):
         try:
             # 1. Read Excel
+            cache_key = f"import_progress_{self.user.id}"
+            cache.set(cache_key, 5, 300) # Start!
+            
             df = pd.read_excel(self.file_path)
             self._log(batch, f"### START ANALYSE: {self.filename} ###")
             self._log(batch, f"Datei eingelesen: {len(df)} Zeilen Rohdaten gefunden.")
+            cache.set(cache_key, 15, 300) # Read done
             self._log(batch, f"Rohspalten: {list(df.columns)}")
             
             if not df.empty:
@@ -162,6 +166,7 @@ class ExcelParserService:
                 return hashlib.md5(data.encode()).hexdigest()
             
             df['signature'] = df.apply(make_sig, axis=1)
+            cache.set(cache_key, 25, 300) # Signatures done
             duplicates_mask = df['signature'].isin(existing_sigs)
             duplicate_count = duplicates_mask.sum()
             
@@ -173,10 +178,11 @@ class ExcelParserService:
                 self._log(batch, "KRITISCH: Datei ist leer!")
 
             # 3. Smart Grouping with user filters
-            self._log(batch, "Gruppiere Buchungen nach Monat und Filtern...")
+            self._log(batch, "Gruppiere Buchungen nach Jahr und Filtern...")
             # We take all transactions (income and expenses) for comprehensive reconciliation
             groups = self._group_transactions(df)
-            self._log(batch, f"Gruppierung abgeschlossen: {len(groups)} Monatssummen gebildet.")
+            self._log(batch, f"Gruppierung abgeschlossen: {len(groups)} Jahressummen gebildet.")
+            cache.set(cache_key, 40, 300) # Grouping done
 
             # 3. Create or use ImportBatch
             if not batch:
