@@ -205,7 +205,7 @@ class ExcelParserService:
                 all_categories = list(Category.objects.all())
                 cat_list = [{"id": c.id, "name": c.name, "slug": c.slug} for c in all_categories]
                 
-                # Call central AI dispatcher with live progress callback
+                # Call central AI dispatcher with live progress & cancellation check
                 cache_key = f"import_progress_{self.user.id}"
                 
                 def ai_progress(current, total):
@@ -215,8 +215,14 @@ class ExcelParserService:
                     # We also log it to the batch log for the live console
                     self._log(batch, f"KI-Analyse: Paket {current} von {total} verarbeitet ({p}%)...")
 
+                def ai_cancelled():
+                    # Prüfen, ob der Batch in der Zwischenzeit gelöscht wurde
+                    return not ImportBatch.objects.filter(id=batch.id).exists()
+
                 results, status_msg, events = classify_transactions(
-                    llm_input, cat_list, progress_callback=ai_progress
+                    llm_input, cat_list, 
+                    progress_callback=ai_progress,
+                    is_cancelled_callback=ai_cancelled
                 )
                 self._log(batch, f"KI-Status: {status_msg}")
                 

@@ -204,12 +204,13 @@ def classify_with_ollama(transactions, categories):
         return None, f"Ollama Fehler: {str(e) or type(e).__name__}"
 
 
-def classify_transactions(transactions, categories, progress_callback=None):
+def classify_transactions(transactions, categories, progress_callback=None, is_cancelled_callback=None):
     """
     Kategorisiert eine Liste von Transaktionen.
     Verwendet Batching (Chunking), um Timeouts bei großen Importen zu verhindern.
     
-    progress_callback(current_chunk, total_chunks) -> optionaler Aufruf pro Block.
+    progress_callback(current, total) -> Fortschritts-Update
+    is_cancelled_callback() -> True, wenn abgebrochen werden soll
     """
     provider = getattr(settings, 'LLM_PROVIDER', 'hybrid').lower()
     final_results = {}
@@ -236,10 +237,15 @@ def classify_transactions(transactions, categories, progress_callback=None):
     self_results = {}
     
     for i in range(0, total_transactions, chunk_size):
+        # Abbruch-Check
+        if is_cancelled_callback and is_cancelled_callback():
+            logger.info("KI-Analyse vom Benutzer abgebrochen.")
+            break
+
         chunk = remaining_all[i:i + chunk_size]
         current_block = (i // chunk_size) + 1
         
-        block_msg = f"KI-Analyse: Block {current_block}/{total_chunks} ({len(chunk)} Zeilen)..."
+        block_msg = f"KI-Analyse: Paket {current_block}/{total_chunks} ({len(chunk)} Zeilen)..."
         logger.info(block_msg)
         events.append(block_msg)
         
