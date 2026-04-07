@@ -204,104 +204,111 @@ def classify_with_ollama(transactions, categories):
         return None, f"Ollama Fehler: {str(e) or type(e).__name__}"
 
 
-def classify_transactions(transactions, categories):
+def classify_transactions(transactions, categories, progress_callback=None):
     """
-    Zentrale Einstiegsfunktion für die Kategorisierung.
-    Returns: (final_results, status_msg, events)
+    Kategorisiert eine Liste von Transaktionen.
+    Verwendet Batching (Chunking), um Timeouts bei großen Importen zu verhindern.
+    
+    progress_callback(current_chunk, total_chunks) -> optionaler Aufruf pro Block.
     """
     provider = getattr(settings, 'LLM_PROVIDER', 'hybrid').lower()
     final_results = {}
-    remaining_transactions = []
-    error = None
+    remaining_all = []
     events = []
     
-    # 0. Lokaler Keyword-Check
+    # 0. Lokaler Keyword-Check (Sofort-Ergebnisse ohne KI)
     for t in transactions:
         local_match = simple_keyword_classify(t['description'], categories)
         if local_match:
             final_results[str(t['id'])] = local_match
         else:
-            remaining_transactions.append(t)
+            remaining_all.append(t)
             
-    if not remaining_transactions:
+    if not remaining_all:
         return final_results, "KI-Status: 100% lokal (Keywords) erkannt.", events
 
-    # 1. Ollama (Lokal)
-    if provider == 'ollama':
-        results, error = classify_with_ollama(remaining_transactions, categories)
-        if results:
-            final_results.update(results)
-            return final_results, f"KI aktiv via Ollama ({settings.OLLAMA_MODEL}).", events
+    # 1. Batching Logic (Chunking)
+    # Wir teilen große Mengen (z.B. 500 Zeilen) in handliche Blöcke auf.
+    chunk_size = 25 # Stabil für Ollama und Cloud-APIs
+    total_transactions = len(remaining_all)
+    total_chunks = (total_transactions + chunk_size - 1) // chunk_size
+    
+    self_results = {}
+    
+    for i in range(0, total_transactions, chunk_size):
+        chunk = remaining_all[i:i + chunk_size]
+        current_block = (i // chunk_size) + 1
         
-        # Strikte Provider-Wahl: Wenn Ollama eingestellt ist und fehlschlägt -> kein Fallback auf Cloud
-        events.append(f"Ollama fehlgeschlagen: {error}")
-        return final_results, f"Ollama fehlgeschlagen: {error}. Kein Fallback konfiguriert (DSGVO-Modus).", events
+        block_msg = f"KI-Analyse: Block {current_block}/{total_chunks} ({len(chunk)} Zeilen)..."
+        logger.info(block_msg)
+        events.append(block_msg)
+        
+        # Provider Dispatching pro Block
+        block_results = {}
+        error = None
 
-    # 2. Groq (API - Llama 3)
-    if provider == 'groq' or (provider == 'hybrid' and getattr(settings, 'GROQ_API_KEY', None)):
-        results, error = classify_with_groq(remaining_transactions, categories)
-        if results:
-            final_results.update(results)
-            events.append("Groq erfolgreich abgeschlossen.")
-            if provider == 'groq':
-                return final_results, "KI aktiv via Groq (Llama-3).", events
-            # Für Hybrid: Update remaining für Gemini
-            remaining_transactions = [t for t in remaining_transactions if str(t['id']) not in final_results]
-            if not remaining_transactions:
-                return final_results, "KI aktiv via Groq.", events
-        else:
-            events.append(f"Groq fehlgeschlagen: {error}")
-            if provider == 'groq':
-                return final_results, f"Groq fehlgeschlagen: {error}", events
+        # A. Ollama (Strikt lokal)
+        if provider == 'ollama':
+            results, err = classify_with_ollama(chunk, categories)
+            if results:
+                block_results.update(results)
+            else:
+                error = err
 
-    # 3. Gemini (API - Google)
-    if provider == 'gemini' or (provider == 'hybrid' and getattr(settings, 'GEMINI_API_KEY', None)):
-        client = get_gemini_client()
-        if client:
-            try:
+        # B. Groq (Hybrid / Cloud)
+        elif provider == 'groq' or (provider == 'hybrid' and getattr(settings, 'GROQ_API_KEY', None)):
+            results, err = classify_with_groq(chunk, categories)
+            if results:
+                block_results.update(results)
+            else:
+                error = err
+                
+        # C. Gemini (Hybrid / Cloud Fallback)
+        if not block_results and (provider == 'gemini' or (provider == 'hybrid' and getattr(settings, 'GEMINI_API_KEY', None))):
+             try:
                 category_list = ", ".join([f"{c['name']} (slug: {c['slug']})" for c in categories])
                 prompt = (
                     f"Kategorisiere bitte diese Bankbuchungen als JSON (Kategorien: {category_list}): "
-                    f"{json.dumps(remaining_transactions)}"
+                    f"{json.dumps(chunk)}"
                 )
-                time.sleep(0.5) 
-                response = client.models.generate_content(
-                    model='gemini-1.5-flash',
-                    contents=prompt
-                )
-                text = response.text.strip()
-                if "```json" in text:
-                    text = text.split("```json")[1].split("```")[0].strip()
-                data = json.loads(text)
-                ai_data = {str(item['id']): item for item in data}
-                final_results.update(ai_data)
-                events.append("Gemini erfolgreich abgeschlossen.")
-                return final_results, "KI aktiv via Gemini (Google).", events
-            except Exception as e:
-                events.append(f"Gemini fehlgeschlagen: {e}")
-                logger.error(f"Gemini failed: {e}")
-        
-        if provider == 'gemini':
-            return final_results, "Gemini fehlgeschlagen (Key/Connection).", events
+                # Client holen
+                client = get_gemini_client()
+                if client:
+                    response = client.models.generate_content(model='gemini-1.5-flash', contents=prompt)
+                    text = response.text.strip()
+                    if "```json" in text:
+                        text = text.split("```json")[1].split("```")[0].strip()
+                    data = json.loads(text)
+                    block_results = {str(item['id']): item for item in data}
+             except Exception as e:
+                logger.error(f"Gemini in Block {current_block} fehlgeschlagen: {e}")
+                error = str(e)
 
-    # 4. Finaler Fallback für nicht erkannte Zeilen
-    num_fallback = 0
-    for t in remaining_transactions:
-        if str(t['id']) not in final_results:
-            num_fallback += 1
-            error_info = error if error else "Alle KI-Anbieter (Ollama/Google) antworteten nicht."
-            final_results[str(t['id'])] = {
-                "category_slug": "uncategorized",
-                "is_income": t['amount'] > 0,
-                "is_recurring": False,
-                "frequency": "monthly",
-                "reasoning": f"Standard (KI Fehler): {error_info}"
-            }
+        # Block-Ergebnisse konsolidieren
+        if block_results:
+            self_results.update(block_results)
+        else:
+            # Fallback für diesen spezifischen Block
+            for t in chunk:
+                self_results[str(t['id'])] = {
+                    "category_slug": "uncategorized",
+                    "is_income": t['amount'] > 0,
+                    "is_recurring": False,
+                    "frequency": "monthly",
+                    "reasoning": f"Standard (KI Fehler in Block {current_block}): {error}"
+                }
+        
+        # Live-Feedback über Callback (optional)
+        if progress_callback:
+            progress_callback(current_block, total_chunks)
+
+    final_results.update(self_results)
     
-    if num_fallback > 0:
-        events.append(f"{num_fallback} Zeilen via Standard-Zuweisung (Fehler/Limit).")
-            
-    return final_results, "Hybrid-Modus (Abgeschlossen).", events
+    summary_msg = f"KI-Analyse abgeschlossen ({len(final_results)} Posten)."
+    if provider == 'ollama':
+        summary_msg = f"KI aktiv via Ollama ({settings.OLLAMA_MODEL})."
+        
+    return final_results, summary_msg, events
 
 def get_pension_forecast():
     # Use Gemini for general knowledge (better than small Llama sometimes)

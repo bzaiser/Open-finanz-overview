@@ -199,8 +199,19 @@ class ExcelParserService:
                 all_categories = list(Category.objects.all())
                 cat_list = [{"id": c.id, "name": c.name, "slug": c.slug} for c in all_categories]
                 
-                # Call central AI dispatcher
-                results, status_msg, events = classify_transactions(llm_input, cat_list)
+                # Call central AI dispatcher with live progress callback
+                cache_key = f"import_progress_{self.user.id}"
+                
+                def ai_progress(current, total):
+                    # AI Phase is approx 40% to 90% of total progress
+                    p = 40 + int((current / total) * 50)
+                    cache.set(cache_key, p, 300)
+                    # We also log it to the batch log for the live console
+                    self._log(batch, f"KI-Analyse: Paket {current} von {total} verarbeitet ({p}%)...")
+
+                results, status_msg, events = classify_transactions(
+                    llm_input, cat_list, progress_callback=ai_progress
+                )
                 self._log(batch, f"KI-Status: {status_msg}")
                 
                 # Map results back to groups
