@@ -233,46 +233,58 @@ def classify_transactions(transactions, categories, progress_callback=None, is_c
     if not remaining_all:
         return final_results, "KI-Status: 100% lokal erkannt.", events
 
-    # 1. Batching (Turbo: Larger chunks reduce startup overhead)
+    # 1. Parallel Batch Processing (Parallel Turbo v4)
+    from concurrent.futures import ThreadPoolExecutor
+    import time
+    
     chunk_size = 40
     total_transactions = len(remaining_all)
-    total_chunks = (total_transactions + chunk_size - 1) // chunk_size
+    chunks = [remaining_all[i:i + chunk_size] for i in range(0, total_transactions, chunk_size)]
+    total_chunks = len(chunks)
     
-    import time
-    events.append(f"KI startet. {total_transactions} Gruppen in {total_chunks} Paketen...")
+    events.append(f"Parallel-KI startet. {total_transactions} Gruppen in {total_chunks} Paketen...")
     
-    for i in range(0, total_transactions, chunk_size):
-        # Cancel check
+    finished_count = 0
+    from threading import Lock
+    progress_lock = Lock()
+
+    def process_chunk(chunk_data):
+        nonlocal finished_count
+        
+        # Cancel check (rough check inside thread)
         if is_cancelled_callback and is_cancelled_callback():
-            events.append("ABGEBROCHEN.")
-            break
+            return None, "Cancelled"
+
+        results, error = classify_with_ollama(chunk_data, categories)
+        
+        with progress_lock:
+            finished_count += 1
+            if progress_callback:
+                progress_callback(finished_count, total_chunks)
+        
+        return results, error
+
+    with ThreadPoolExecutor(max_workers=min(4, total_chunks)) as executor:
+        futures = [executor.submit(process_chunk, c) for c in chunks]
+        
+        for idx, future in enumerate(futures):
+            chunk_results, error = future.result()
+            current_block = idx + 1
             
-        start_time = time.time()
-        chunk = remaining_all[i:i + chunk_size]
-        current_block = (i // chunk_size) + 1
-        
-        # call progress callback with current and total chunks
-        if progress_callback: progress_callback(current_block, total_chunks)
-        
-        # Call Ollama
-        results, error = classify_with_ollama(chunk, categories)
-        duration = time.time() - start_time
-        
-        if error:
-            logger.error(f"Error {current_block}: {error}")
-            events.append(f"LOG: Fehler in Paket {current_block}")
-            # Fallback
-            for t in chunk:
-                final_results[str(t['id'])] = {
-                    "category_slug": "uncategorized"
-                }
-            continue
-            
-        if results:
-            final_results.update(results)
-            events.append(f"Paket {current_block}/{total_chunks} fertig ({duration:.1f}s)")
-        
-    return final_results, f"KI Analyse fertig ({len(final_results)} Gruppen).", events
+            if error:
+                if error == "Cancelled":
+                    events.append(f"Paket {current_block} ABGEBROCHEN.")
+                else:
+                    logger.error(f"Error in Paket {current_block}: {error}")
+                    events.append(f"LOG: Fehler in Paket {current_block}")
+                    # Fallback for this chunk
+                    for t in chunks[idx]:
+                        final_results[str(t['id'])] = {"category_slug": "uncategorized"}
+            elif chunk_results:
+                final_results.update(chunk_results)
+                events.append(f"Paket {current_block}/{total_chunks} fertig.")
+
+    return final_results, f"Parallel-KI fertig ({len(final_results)} Gruppen).", events
 
 def get_pension_forecast():
     # Use Gemini for general knowledge (better than small Llama sometimes)

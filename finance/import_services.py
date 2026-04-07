@@ -244,13 +244,15 @@ class ExcelParserService:
                 cat_map = {c.slug: c for c in all_categories}
                 for i, group in enumerate(unassigned):
                     res = results.get(str(i))
-                    if res and res.get('category_slug') != 'uncategorized':
-                        cat = cat_map.get(res['category_slug'])
-                        if cat:
-                            group['category'] = cat
-                            group['ai_reasoning'] = res.get('reasoning', "Automatisch von KI kategorisiert")
-                            if 'is_income' in res:
-                                group['is_income'] = res['is_income']
+                    if res:
+                        slug = res.get('category_slug')
+                        if slug and slug != 'uncategorized':
+                            cat = cat_map.get(slug)
+                            if cat:
+                                group['category'] = cat
+                                group['ai_reasoning'] = res.get('reasoning', "Automatisch von KI kategorisiert")
+                                if 'is_income' in res:
+                                    group['is_income'] = res['is_income']
 
             # 5. Pre-fetch Plan Data to avoid N+1 queries (AFTER AI Step!)
             self._log(batch, "Abgleich mit Finanzplan wird vorbereitet...")
