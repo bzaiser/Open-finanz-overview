@@ -229,8 +229,8 @@ def classify_transactions(transactions, categories, progress_callback=None, is_c
         return final_results, "KI-Status: 100% lokal (Keywords) erkannt.", events
 
     # 1. Batching Logic (Chunking)
-    # Wir teilen große Mengen (z.B. 500 Zeilen) in handliche Blöcke auf.
-    chunk_size = 25 # Stabil für Ollama und Cloud-APIs
+    # Wir nutzen kleinere Häppchen (10 statt 25), damit Ollama auf Windows schneller antwortet.
+    chunk_size = 10 
     total_transactions = len(remaining_all)
     total_chunks = (total_transactions + chunk_size - 1) // chunk_size
     

@@ -18,11 +18,11 @@ logger = logging.getLogger(__name__)
 def _normalize_description(text: str) -> str:
     """
     Normalize a transaction description for grouping.
-    Aggressively strips reference numbers, IDs, and timestamps to allow better aggregation.
+    Hyper-Aggressive Noise Suppression.
     """
     text = str(text).upper().strip()
     
-    # Common brands to aggregate (High-level grouping)
+    # 1. Major brands always prevail
     brands = [
         'EDEKA', 'REWE', 'ALDI', 'LIDL', 'PENNY', 'NETTO', 'KAUFLAND',
         'TEGUT', 'DM-MARKT', 'ROSSMANN', 'MUELLER', 'AMAZON', 'PAYPAL',
@@ -30,32 +30,36 @@ def _normalize_description(text: str) -> str:
         'APPLE.COM', 'GOOGLE *', 'MICROSOFT *', 'SHELL', 'ARAL', 'TOTAL',
         'ESSO', 'JET ', 'VODAFONE', 'TELEKOM', 'O2 ', 'STRATO', 'IONOS'
     ]
-    
     for brand in brands:
-        if brand in text:
-            return brand
+        if brand in text: return brand
 
-    # Remove varying technical noise
-    text = re.sub(r'GIROCARD\W+', '', text)
-    text = re.sub(r'KARTENZAHLUNG\W+', '', text)
-    text = re.sub(r'ENTGELT\W+', '', text)
+    # 2. Strip standard bank clutter prefixes
+    text = re.sub(r'^(GIROCARD|KARTENZAHLUNG|ENTGELT|UMS|SEPA|ZALUNG)\W+', '', text)
     
-    # Remove long alphanumeric blocks (Transaction IDs, references)
-    text = re.sub(r'\b[A-Z0-9]{8,}\b', '', text) 
-    # Remove IBANs
+    # 3. Strip alphanumeric codes (5+ chars with at least one digit) — likely IDs
+    # e.g. REWR-12345, ABS99XYZ, etc.
+    text = re.sub(r'\b(?=.*\d)[A-HJ-NP-Z0-9]{5,}\b', '', text)
+    
+    # 4. Strip long digits and IBANs
+    text = re.sub(r'\b\d{6,}\b', '', text)
     text = re.sub(r'\bDE\d{20}\b', '', text)
-    # Remove all dates/timestamps (various formats)
-    text = re.sub(r'\b\d{2,4}[-./]\d{2}[-./]\d{2,4}\b', '', text)
+    
+    # 5. Strip all dates/timestamps
+    text = re.sub(r'\b\d{1,4}[-./]\d{1,4}[-./]\d{1,4}\b', '', text)
     text = re.sub(r'\b\d{2}:\d{2}(:\d{2})?\b', '', text)
-    
-    # Generic keywords and following garbage
-    text = re.sub(r'\b(DATUM|REFERENZ|REF|NR|BUCHUNGS|MANDATS|ID|GLÄUBIGER|PURCHASE|TERMINAL)[:\s#]?\S+\b', '', text)
 
-    # Cleanup whitespace
-    text = re.sub(r'\s+', ' ', text).strip()
+    # 6. Cut everything after structural separators that often indicate garbage
+    # e.g. "CITY-POINT / XYZ-CODE" -> "CITY-POINT"
+    text = text.split(' / ')[0].split(' - ')[0].split(' // ')[0].split(': ')[0]
     
-    # If nothing left, keep original (safe fallback)
-    return text[:60] if len(text) > 3 else "SONSTIGE BUCHUNGEN"
+    # 7. Generic keyword cleanup
+    text = re.sub(r'\b(DATUM|REFERENZ|REF|NR|BUCH|MAND|ID|GLÄUB|PURCH|TERM|DOC|AWV|VAL)\S*\b', '', text)
+
+    # 8. Final cleanup
+    text = re.sub(r'\s+', ' ', text).strip()
+    text = re.sub(r'[^\w\s\*\.]', '', text) # Strip symbols except dot and asterisk
+    
+    return text[:50] if len(text) > 2 else "SONSTIGE BUCHUNGEN"
 
 
 class ExcelParserService:
