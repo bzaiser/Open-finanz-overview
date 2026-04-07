@@ -213,7 +213,7 @@ class ExcelParserService:
                 # --- AUTO-IGNORE logic ---
                 # We ONLY ignore automatically if it definitely exists already (Duplicate).
                 # All other items (even unassigned) must stay visible for reconciliation.
-                is_ignored = True if exists else False
+                is_ignored = has_conflict
                 
                 # Use raw description for unassigned items, but grouped description for filtered ones
                 display_desc = group.get('raw_desc') if group.get('category') is None else group['description']
