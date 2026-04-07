@@ -18,14 +18,14 @@ logger = logging.getLogger(__name__)
 def _normalize_description(text: str) -> str:
     """
     Normalize a transaction description for grouping.
-    Hyper-Aggressive Noise Suppression.
+    Hyper-Aggressive Noise Suppression v2 (The Sharpest Knife).
     """
     text = str(text).upper().strip()
     
-    # 1. Major brands always prevail
+    # 1. Major brands always prevail (Full match)
     brands = [
         'EDEKA', 'REWE', 'ALDI', 'LIDL', 'PENNY', 'NETTO', 'KAUFLAND',
-        'TEGUT', 'DM-MARKT', 'ROSSMANN', 'MUELLER', 'AMAZON', 'PAYPAL',
+        'TEGUT', 'DM-MARKKT', 'ROSSMANN', 'MUELLER', 'AMAZON', 'PAYPAL',
         'NETFLIX', 'SPOTIFY', 'DISNEY PLUS', 'DAZN', 'SKY', 'DB VERTRIEB',
         'APPLE.COM', 'GOOGLE *', 'MICROSOFT *', 'SHELL', 'ARAL', 'TOTAL',
         'ESSO', 'JET ', 'VODAFONE', 'TELEKOM', 'O2 ', 'STRATO', 'IONOS'
@@ -33,33 +33,35 @@ def _normalize_description(text: str) -> str:
     for brand in brands:
         if brand in text: return brand
 
-    # 2. Strip standard bank clutter prefixes
-    text = re.sub(r'^(GIROCARD|KARTENZAHLUNG|ENTGELT|UMS|SEPA|ZALUNG)\W+', '', text)
+    # 2. Strip technical prefixes (Girocard, etc.)
+    text = re.sub(r'^(GIROCARD|KARTENZAHLUNG|ENTGELT|UMS|SEPA|ZALUNG|LASTSCHRIFT|GUTSCHRIFT)\W+', '', text)
     
-    # 3. Strip alphanumeric codes (5+ chars with at least one digit) — likely IDs
-    # e.g. REWR-12345, ABS99XYZ, etc.
-    text = re.sub(r'\b(?=.*\d)[A-HJ-NP-Z0-9]{5,}\b', '', text)
-    
-    # 4. Strip long digits and IBANs
-    text = re.sub(r'\b\d{6,}\b', '', text)
-    text = re.sub(r'\bDE\d{20}\b', '', text)
-    
-    # 5. Strip all dates/timestamps
-    text = re.sub(r'\b\d{1,4}[-./]\d{1,4}[-./]\d{1,4}\b', '', text)
-    text = re.sub(r'\b\d{2}:\d{2}(:\d{2})?\b', '', text)
+    # 3. Strip ALL tokens that contain both letters and numbers (Technical IDs like ABS123, 12X34, etc.)
+    # This is the most effective way to collapse groups.
+    words = text.split()
+    clean_words = []
+    for w in words:
+        # If word has both digit and alpha, it's almost certainly garbage
+        if any(c.isdigit() for c in w) and any(c.isalpha() for c in w):
+            continue
+        # If word is just a long number (6+), it's likely a reference
+        if w.isdigit() and len(w) >= 6:
+            continue
+        clean_words.append(w)
+    text = " ".join(clean_words)
 
-    # 6. Cut everything after structural separators that often indicate garbage
-    # e.g. "CITY-POINT / XYZ-CODE" -> "CITY-POINT"
-    text = text.split(' / ')[0].split(' - ')[0].split(' // ')[0].split(': ')[0]
-    
-    # 7. Generic keyword cleanup
-    text = re.sub(r'\b(DATUM|REFERENZ|REF|NR|BUCH|MAND|ID|GLÄUB|PURCH|TERM|DOC|AWV|VAL)\S*\b', '', text)
+    # 4. Strip everything after common "End of Meaningful Info" keywords
+    # Often everything after "PURCHASE" or "REFERENZ" is unique garbage.
+    for stop_word in ['PURCHASE', 'REFERENZ', 'REF', 'DATUM', 'ID', 'TERMINAL', 'MANDAT', 'GLÄUBIGER']:
+        if stop_word in text:
+            text = text.split(stop_word)[0].strip()
 
-    # 8. Final cleanup
+    # 5. Generic symbol and space cleanup
     text = re.sub(r'\s+', ' ', text).strip()
-    text = re.sub(r'[^\w\s\*\.]', '', text) # Strip symbols except dot and asterisk
+    text = re.sub(r'[^\w\s\*\.]', '', text) 
     
-    return text[:50] if len(text) > 2 else "SONSTIGE BUCHUNGEN"
+    # Take first 40 chars for the key (usually enough for "EDEKA BERLIN")
+    return text[:40] if len(text) > 3 else "SONSTIGE BUCHUNGEN"
 
 
 class ExcelParserService:
