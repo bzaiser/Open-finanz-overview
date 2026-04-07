@@ -5,8 +5,6 @@
 
 **The Personal Financial Cockpit** — A realistic, long-term financial forecasting tool designed to give you clarity on your future net worth.
 
-![Finance Dashboard Mockup](docs/images/hero.png)
-
 ## Overview
 
 This project is a personal finance dashboard that simulates your financial future over 30+ years. It accounts for assets, recurring cash flows (income/expenses), one-time events, and pensions, all while factoring in the impact of inflation on your purchasing power.
@@ -17,15 +15,16 @@ This project is a personal finance dashboard that simulates your financial futur
 - **Inflation Monitor**: Visualizes the gap between nominal value and real purchasing power.
 - **Dynamic Dashboards**: Customizable chart layouts, colors, and widget sizes.
 - **Multi-Language Support**: Fully translated into **German, English, French, Spanish, and Italian**.
-- **Collapsible Tables**: Grouped yearly views with Alpine.js-powered interactivity.
-- **Privacy First**: Self-hosted, your data stays in your personal database.
+- **Smart Bank Import (Optimized)**: Fast import (1s analysis) with grouping, duplicate detection, and plan conflict alerts.
+- **Privacy First (Local AI)**: Categorize transactions using a local **Ollama** instance (100% self-hosted) or cloud providers (Gemini, Groq).
+- **Multi-Instance Support**: Easily distinguish between 'Private' and 'Open' instances in the header.
 
 ## 🛠 Tech Stack
 
-- **Backend**: Django 6.0.2
-- **Frontend**: Bootstrap 5, Alpine.js, Chart.js
-- **Database**: SQLite (default) / PostgreSQL compatible
-- **Deployment**: Docker & Docker Compose
+- **Backend**: Django 6.0.2 (Single-Branch `main` strategy)
+- **Frontend**: Bootstrap 5, HTMX, Chart.js
+- **Database**: SQLite (default)
+- **Deployment**: Docker & Docker Compose (Root-level orchestration)
 
 ## 🚀 Getting Started
 
@@ -34,61 +33,50 @@ This project is a personal finance dashboard that simulates your financial futur
 - Python 3.10+
 - (Optional) Docker & Docker Compose
 
-### Local Installation
+### Fast Deployment (Recommended)
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/bzaiser/Open-finanz-overview.git
-   cd Open-finanz-overview
+   git clone https://github.com/bzaiser/finanzplan.git
+   cd finanzplan
    ```
 
-2. **Set up virtual environment**:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # Linux/macOS
-   # venv\Scripts\activate  # Windows
-   ```
-
-3. **Install dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Set up environment variables**:
+2. **Set up environment variables**:
    ```bash
    cp .env.example .env
-   # Edit .env and add your SECRET_KEY and (optional) GEMINI_API_KEY
+   # Edit .env and set your APP_INSTANCE_NAME, LLM_PROVIDER etc.
    ```
 
-5. **Initialize database & Demo data**:
+3. **Start the containers**:
    ```bash
-   python3 manage.py migrate
-   python3 manage.py seed_demo_data
+   ./update-fast.sh
+   # This will build, migrate, and start the app in Docker.
    ```
-   *This creates a user **demo** with password **demo** pre-filled with realistic financial data.*
+   Access at `http://localhost:8000`.
 
-6. **Run server**:
-   ```bash
-   python3 manage.py runserver
-   ```
-   Access at `http://127.0.0.1:8000` (Login: `demo` / `demo`).
+### 🤖 Smart Import & AI
 
-### 🤖 Smart Import (New Feature)
-This project now includes an **AI-powered bank statement import**. Use an Excel export from your bank, and the Google Gemini AI will automatically categorize transactions and detect recurring patterns (subscriptions, salaries) for easy database entry.
+This project includes an **AI-powered bank statement import**. You can choose between different providers in your `.env`:
 
-### Docker Deployment (Recommended)
+#### Local AI (Privacy-Modus)
+Use **Ollama** for 100% local categorization. No financial data leaves your network!
+```bash
+LLM_PROVIDER=ollama
+OLLAMA_BASE_URL=http://your-ip:11434
+OLLAMA_MODEL=llama3
+```
 
-1. **Build and start**:
-   ```bash
-   docker-compose -f docker/docker-compose.yml up -d
-   ```
-2. **Access**:
-   The dashboard is available at `http://localhost:8000`.
+#### Cloud AI (Performance-Modus)
+Use **Gemini** or **Groq** for high-quality, external categorization.
+```bash
+LLM_PROVIDER=gemini # or groq
+GEMINI_API_KEY=your-key
+```
 
-## 🔒 Security
+## 🔒 Security & Identification
 
-- Authenticated users are granted `is_staff` access automatically to manage their own data via the Admin panel.
-- Shared session cookies between Frontend and Admin for a seamless experience.
+- **Instance Branding**: Set `APP_INSTANCE_NAME=Private` to see it in the header.
+- **Admin Access**: Authenticated users can manage their data via the integrated Admin panel.
 
 ## 📄 License
 
