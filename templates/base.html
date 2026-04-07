@@ -166,33 +166,39 @@
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'finance:dashboard' %}">
-                           <i class="bi bi-speedometer2 me-1"></i>{% trans 'Dashboard' %}
+                           <i class="bi bi-speedometer2 me-1"></i>
+                           {% trans 'Dashboard' %}
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'profile' %}">
-                            <i class="bi bi-person-gear me-1"></i>{% trans 'Settings' %}
+                            <i class="bi bi-person-gear me-1"></i>
+                            {% trans 'Settings' %}
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'finance:import_transactions' %}">
-                            <i class="bi bi-magic me-1"></i>{% trans 'Bank Import' %}
+                            <i class="bi bi-magic me-1"></i>
+                            {% trans 'Bank Import' %}
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'help' %}">
-                            <i class="bi bi-question-circle me-1"></i>{% trans 'Help' %}
+                            <i class="bi bi-question-circle me-1"></i>
+                            {% trans 'Help' %}
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'about' %}">
-                            <i class="bi bi-info-circle me-1"></i>{% trans 'About' %}
+                            <i class="bi bi-info-circle me-1"></i>
+                            {% trans 'About' %}
                         </a>
                     </li>
                     {% if user.is_staff %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'admin:index' %}">
-                            <i class="bi bi-shield-lock me-1"></i>{% trans 'Admin' %}
+                            <i class="bi bi-shield-lock me-1"></i>
+                            {% trans 'Admin' %}
                         </a>
                     </li>
                     {% endif %}
