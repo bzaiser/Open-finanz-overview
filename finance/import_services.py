@@ -247,12 +247,11 @@ class ExcelParserService:
                     planned_amount=planned_amount, # Store the target plan value
                     is_income=group['is_income'],
                     category=group.get('category'),
-                    is_ignored=False, # We don't auto-ignore grouped items anymore, we use conflict status
+                    is_ignored=is_ignored, # Auto-ignore if it's already in the plan
                     is_recurring=True,
                     has_conflict=has_conflict,
                     existing_source=existing_source,
-                    # For grouped items, signature is less critical but we can store the group key 
-                    # as a secondary signature if needed. For now, we mainly use it at row level.
+                    integration_count=group['count'], # Store how many rows were grouped
                     signature=hashlib.md5(str(group).encode()).hexdigest()
                 )
                 pending_list.append(pending)

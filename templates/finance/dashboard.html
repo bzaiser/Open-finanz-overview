@@ -17,10 +17,6 @@
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h1>{% trans "Dashboard" %}</h1>
             <div>
-                <a href="{% url 'finance:import_transactions' %}" class="btn btn-primary me-2 shadow-sm" style="background: var(--app-gradient); border: none;">
-                    <i class="bi bi-magic"></i>
-                    {% trans "Smart Import" %}
-                </a>
                 <button class="btn btn-primary me-2 shadow-sm" style="background: var(--app-gradient); border: none;" data-bs-toggle="modal" data-bs-target="#configModal">
                     <i class="bi bi-layout-text-window-reverse"></i>
                     {% trans "Configure Layout" %}
