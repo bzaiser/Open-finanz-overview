@@ -195,9 +195,13 @@ def classify_with_ollama(transactions, categories):
              return {str(k): v for k, v in result_data.items() if isinstance(v, dict)}, None
         
         return None, "Ollama lieferte kein gültiges JSON-Array."
+    except requests.exceptions.Timeout:
+        return None, "Ollama Timeout (Server braucht zu lange). Erhöhe ggf. den Timeout."
+    except requests.exceptions.ConnectionError:
+        return None, f"Verbindung zu Ollama unter {url} fehlgeschlagen. Ist die IP korrekt und die Firewall offen?"
     except Exception as e:
         logger.error(f"Ollama failed: {e}")
-        return None, str(e)
+        return None, f"Ollama Fehler: {str(e) or type(e).__name__}"
 
 
 def classify_transactions(transactions, categories):
