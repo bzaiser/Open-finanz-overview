@@ -216,17 +216,13 @@ def classify_with_ollama(transactions, categories):
 def classify_transactions(transactions, categories, progress_callback=None, is_cancelled_callback=None):
     """
     Kategorisiert eine Liste von Transaktionen.
-    Verwendet Batching (Chunking), um Timeouts bei großen Importen zu verhindern.
-    
-    progress_callback(current, total) -> Fortschritts-Update
-    is_cancelled_callback() -> True, wenn abgebrochen werden soll
+    Verwendet Batching (Chunking), um Timeouts zu verhindern.
     """
-    provider = getattr(settings, 'LLM_PROVIDER', 'hybrid').lower()
     final_results = {}
     remaining_all = []
     events = []
     
-    # 0. Lokaler Keyword-Check (Sofort-Ergebnisse ohne KI)
+    # 0. Lokaler Keyword-Check
     for t in transactions:
         local_match = simple_keyword_classify(t['description'], categories)
         if local_match:
@@ -235,95 +231,50 @@ def classify_transactions(transactions, categories, progress_callback=None, is_c
             remaining_all.append(t)
             
     if not remaining_all:
-        return final_results, "KI-Status: 100% lokal (Keywords) erkannt.", events
+        return final_results, "KI-Status: 100% lokal erkannt.", events
 
-    # 1. Batching Logic (Chunking)
-    # Wir nutzen kleinere Häppchen (10 statt 25), damit Ollama auf Windows schneller antwortet.
-    chunk_size = 10 
+    # 1. Batching (Ollama Turbo v3)
+    chunk_size = 15
     total_transactions = len(remaining_all)
     total_chunks = (total_transactions + chunk_size - 1) // chunk_size
     
-    self_results = {}
+    import time
+    events.append(f"KI startet. {total_transactions} Gruppen in {total_chunks} Paketen...")
     
     for i in range(0, total_transactions, chunk_size):
-        # Abbruch-Check
+        # Cancel check
         if is_cancelled_callback and is_cancelled_callback():
-            logger.info("KI-Analyse vom Benutzer abgebrochen.")
+            events.append("ABGEBROCHEN.")
             break
-
+            
+        start_time = time.time()
         chunk = remaining_all[i:i + chunk_size]
         current_block = (i // chunk_size) + 1
         
-        block_msg = f"KI-Analyse: Paket {current_block}/{total_chunks} ({len(chunk)} Zeilen)..."
-        logger.info(block_msg)
-        events.append(block_msg)
+        # Progress (45% -> 98%)
+        p = 45 + int(((i + len(chunk)) / total_transactions) * 53)
+        if progress_callback: progress_callback(p)
         
-        # Provider Dispatching pro Block
-        block_results = {}
-        error = None
-
-        # A. Ollama (Strikt lokal)
-        if provider == 'ollama':
-            results, err = classify_with_ollama(chunk, categories)
-            if results:
-                block_results.update(results)
-            else:
-                error = err
-
-        # B. Groq (Hybrid / Cloud)
-        elif provider == 'groq' or (provider == 'hybrid' and getattr(settings, 'GROQ_API_KEY', None)):
-            results, err = classify_with_groq(chunk, categories)
-            if results:
-                block_results.update(results)
-            else:
-                error = err
-                
-        # C. Gemini (Hybrid / Cloud Fallback)
-        if not block_results and (provider == 'gemini' or (provider == 'hybrid' and getattr(settings, 'GEMINI_API_KEY', None))):
-             try:
-                category_list = ", ".join([f"{c['name']} (slug: {c['slug']})" for c in categories])
-                prompt = (
-                    f"Kategorisiere bitte diese Bankbuchungen als JSON (Kategorien: {category_list}): "
-                    f"{json.dumps(chunk)}"
-                )
-                # Client holen
-                client = get_gemini_client()
-                if client:
-                    response = client.models.generate_content(model='gemini-1.5-flash', contents=prompt)
-                    text = response.text.strip()
-                    if "```json" in text:
-                        text = text.split("```json")[1].split("```")[0].strip()
-                    data = json.loads(text)
-                    block_results = {str(item['id']): item for item in data}
-             except Exception as e:
-                logger.error(f"Gemini in Block {current_block} fehlgeschlagen: {e}")
-                error = str(e)
-
-        # Block-Ergebnisse konsolidieren
-        if block_results:
-            self_results.update(block_results)
-        else:
-            # Fallback für diesen spezifischen Block
+        # Call Ollama
+        results, error = classify_with_ollama(chunk, categories)
+        duration = time.time() - start_time
+        
+        if error:
+            logger.error(f"Error {current_block}: {error}")
+            events.append(f"LOG: Fehler in Paket {current_block}")
+            # Fallback
             for t in chunk:
-                self_results[str(t['id'])] = {
+                final_results[str(t['id'])] = {
                     "category_slug": "uncategorized",
-                    "is_income": t['amount'] > 0,
-                    "is_recurring": False,
-                    "frequency": "monthly",
-                    "reasoning": f"Standard (KI Fehler in Block {current_block}): {error}"
+                    "reasoning": f"Fehler: {error}"
                 }
+            continue
+            
+        if results:
+            final_results.update(results)
+            events.append(f"Paket {current_block}/{total_chunks} fertig ({duration:.1f}s)")
         
-        # Live-Feedback über Callback (optional)
-        if progress_callback:
-            progress_callback(current_block, total_chunks)
-
-    final_results.update(self_results)
-    
-    summary_msg = f"KI-Analyse abgeschlossen ({len(final_results)} Posten)."
-    if provider == 'ollama':
-        summary_msg = f"KI aktiv via Ollama ({settings.OLLAMA_MODEL})."
-        
-    return final_results, summary_msg, events
+    return final_results, f"KI Analyse fertig ({len(final_results)} Gruppen).", events
 
 def get_pension_forecast():
     # Use Gemini for general knowledge (better than small Llama sometimes)

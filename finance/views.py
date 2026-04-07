@@ -1114,7 +1114,21 @@ def get_import_progress(request):
     # IMPORTANT: We only include hx-get if NOT finished/error to STOP polling
     polling_attrs = ""
     if not (is_finished or is_error):
-        polling_attrs = f'hx-get="/finance/import/progress/" hx-trigger="every 1.5s" hx-swap="outerHTML"'
+        polling_attrs = f'hx-get="{reverse("finance:import_progress")}" hx-trigger="every 1.5s" hx-swap="outerHTML"'
+
+    # We include a 'Cancel' button while the process is NOT finished or error.
+    cancel_html = ""
+    if not (is_finished or is_error) and latest_batch:
+        cancel_url = reverse('finance:delete_import_batch', args=[latest_batch.id])
+        cancel_html = f'''
+        <div class="mt-3">
+            <a href="{cancel_url}" 
+               class="btn btn-outline-danger btn-sm px-4 w-100"
+               onclick="return confirm('{_eager("Möchtest du die Analyse wirklich abbrechen? Alle Daten dieses Imports werden gelöscht.")}')">
+                <i class="bi bi-x-circle me-1"></i> {_eager("Analyse abbrechen & Löschen")}
+            </a>
+        </div>
+        '''
 
     html = f'''
     <div id="progress-bar-placeholder" {polling_attrs}>
@@ -1128,6 +1142,7 @@ def get_import_progress(request):
                  {progress_val}%
             </div>
         </div>
+        {cancel_html}
     '''
     
     if is_finished:

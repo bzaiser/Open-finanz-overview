@@ -12,20 +12,17 @@ import logging
 import logging
 import hashlib
 
-logger = logging.getLogger(__name__)
-
-
 def _normalize_description(text: str) -> str:
     """
     Normalize a transaction description for grouping.
-    Hyper-Aggressive Noise Suppression v2 (The Sharpest Knife).
+    Hyper-Aggressive Noise Suppression v3 (Nuclear Cleaning).
     """
     text = str(text).upper().strip()
     
-    # 1. Major brands always prevail (Full match)
+    # 1. Major brands always prevail
     brands = [
         'EDEKA', 'REWE', 'ALDI', 'LIDL', 'PENNY', 'NETTO', 'KAUFLAND',
-        'TEGUT', 'DM-MARKKT', 'ROSSMANN', 'MUELLER', 'AMAZON', 'PAYPAL',
+        'TEGUT', 'DM-MARKT', 'ROSSMANN', 'MUELLER', 'AMAZON', 'PAYPAL',
         'NETFLIX', 'SPOTIFY', 'DISNEY PLUS', 'DAZN', 'SKY', 'DB VERTRIEB',
         'APPLE.COM', 'GOOGLE *', 'MICROSOFT *', 'SHELL', 'ARAL', 'TOTAL',
         'ESSO', 'JET ', 'VODAFONE', 'TELEKOM', 'O2 ', 'STRATO', 'IONOS'
@@ -36,31 +33,19 @@ def _normalize_description(text: str) -> str:
     # 2. Strip technical prefixes (Girocard, etc.)
     text = re.sub(r'^(GIROCARD|KARTENZAHLUNG|ENTGELT|UMS|SEPA|ZALUNG|LASTSCHRIFT|GUTSCHRIFT)\W+', '', text)
     
-    # 3. Strip ALL tokens that contain both letters and numbers (Technical IDs like ABS123, 12X34, etc.)
-    # This is the most effective way to collapse groups.
+    # 3. Nuclear Action: Strip everything that is not a letter or space
+    # This removes all IDs, Dates, Store Numbers, IBANs in one go.
+    text = re.sub(r'[^A-Z\s]', ' ', text)
+    
+    # 4. Cleanup whitespace and keep only first 3 words
     words = text.split()
-    clean_words = []
-    for w in words:
-        # If word has both digit and alpha, it's almost certainly garbage
-        if any(c.isdigit() for c in w) and any(c.isalpha() for c in w):
-            continue
-        # If word is just a long number (6+), it's likely a reference
-        if w.isdigit() and len(w) >= 6:
-            continue
-        clean_words.append(w)
-    text = " ".join(clean_words)
+    text = " ".join(words[:3])
 
-    # 4. Strip everything after common "End of Meaningful Info" keywords
-    # Often everything after "PURCHASE" or "REFERENZ" is unique garbage.
-    for stop_word in ['PURCHASE', 'REFERENZ', 'REF', 'DATUM', 'ID', 'TERMINAL', 'MANDAT', 'GLÄUBIGER']:
+    # 5. Generic cleanup of common bank noise keywords
+    for stop_word in ['PURCHASE', 'REFERENZ', 'REF', 'DATUM', 'ID', 'TERMINAL', 'MANDAT', 'GLÄUBIGER', 'NR']:
         if stop_word in text:
             text = text.split(stop_word)[0].strip()
 
-    # 5. Generic symbol and space cleanup
-    text = re.sub(r'\s+', ' ', text).strip()
-    text = re.sub(r'[^\w\s\*\.]', '', text) 
-    
-    # Take first 40 chars for the key (usually enough for "EDEKA BERLIN")
     return text[:40] if len(text) > 3 else "SONSTIGE BUCHUNGEN"
 
 
