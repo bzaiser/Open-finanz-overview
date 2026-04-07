@@ -55,16 +55,15 @@ class ExcelParserService:
         self._last_save_time = time.time()
 
     def _log(self, batch, message):
-        """Helper to append log and save immediately for live UI update."""
+        """Helper to append log and save immediately for live UI update with debouncing."""
         import time
         self._log_messages.append(message)
         
-        # Only save to DB if it's a major milestone or at least 1.5s since last save
-        # This prevents SQLite "database is locked" during heavy parallel processing
-        is_milestone = any(x in message for x in ["###", "FEHLER", "KRITISCH", "Speichere", "KI analysiert"])
+        # INCREASED DEBOUNCE: Only save to DB every 4 seconds or on major milestones
+        is_milestone = any(x in message for x in ["###", "FEHLER", "KRITISCH"])
         current_time = time.time()
         
-        if batch and (is_milestone or (current_time - self._last_save_time > 1.5)):
+        if batch and (is_milestone or (current_time - self._last_save_time > 4.0)):
             batch.ai_log = "\n".join(self._log_messages)
             batch.save(update_fields=['ai_log'])
             self._last_save_time = current_time
@@ -183,8 +182,17 @@ class ExcelParserService:
             if not batch:
                 batch = ImportBatch.objects.create(user=self.user, filename=self.filename)
 
-            # 5. Save PendingTransactions in chunks
-            self._log(batch, f"Prüfe Dubletten für {len(groups)} Buchungen...")
+            # 5. Pre-fetch Plan Data to avoid N+1 queries (massive speedup)
+            self._log(batch, "Abgleich mit Finanzplan wird vorbereitet...")
+            years_to_check = {g['latest_date'].year for g in groups if g.get('category')}
+            plan_items = CashFlowSource.objects.filter(
+                user=self.user, 
+                start_date__year__in=years_to_check
+            ).select_related('category')
+            plan_map = {(p.category_id, p.start_date.year): p for p in plan_items}
+
+            # 6. Save PendingTransactions in chunks
+            self._log(batch, f"Erstelle Buchungsvorschläge für {len(groups)} Gruppen...")
             pending_list = []
             
             cache_key = f"import_progress_{self.user.id}"
@@ -197,18 +205,18 @@ class ExcelParserService:
                 # --- DUPLICATE DETECTION at Group Level ---
                 m_start = group['latest_date'].replace(day=1)
                 
-                # Check for plan conflict (Same Category, Same Year)
+                # Check for plan conflict using pre-fetched map
                 existing_source = None
                 has_conflict = False
                 if group.get('category'):
-                    existing_source = CashFlowSource.objects.filter(
-                        user=self.user,
-                        category=group['category'],
-                        start_date__year=group['latest_date'].year
-                    ).first()
+                    lookup_key = (group['category'].id, group['latest_date'].year)
+                    existing_source = plan_map.get(lookup_key)
+
                     if existing_source:
                         has_conflict = True
-                        self._log(batch, f"KONFLIKT: '{group['description']}' existiert bereits für {group['latest_date'].year} im Plan.")
+                        # We only log progress, not every single conflict, to avoid DB overhead
+                        if idx % 50 == 0:
+                            self._log(batch, f"Abgleich läuft ({idx}/{len(groups)})...")
 
                 # --- AUTO-IGNORE logic ---
                 # We ONLY ignore automatically if it definitely exists already (Duplicate).
