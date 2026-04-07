@@ -1,3 +1,4 @@
+import logging
 import pandas as pd
 import datetime
 import re
@@ -7,10 +8,9 @@ from .models import Category, ImportBatch, PendingTransaction, CashFlowSource, O
 from .llm import classify_transactions
 from django.conf import settings
 from django.core.cache import cache
-import logging
-
-import logging
 import hashlib
+
+logger = logging.getLogger(__name__)
 
 def _normalize_description(text: str) -> str:
     """
