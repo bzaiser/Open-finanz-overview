@@ -18,8 +18,7 @@ logger = logging.getLogger(__name__)
 def _normalize_description(text: str) -> str:
     """
     Normalize a transaction description for grouping.
-    Detects major brands and returns a clean brand name if found.
-    Otherwise, strips reference numbers, dates, and extra whitespace.
+    Aggressively strips reference numbers, IDs, and timestamps to allow better aggregation.
     """
     text = str(text).upper().strip()
     
@@ -36,13 +35,27 @@ def _normalize_description(text: str) -> str:
         if brand in text:
             return brand
 
-    # Remove common noise: long digit sequences, dates like 2024-01-01, reference codes
-    text = re.sub(r'\b\d{6,}\b', '', text)           # long numbers (account/ref IDs)
-    text = re.sub(r'\b\d{2}[./]\d{2}[./]\d{2,4}\b', '', text)  # dates
-    text = re.sub(r'\b(DATUM|REFERENZ|REF|NR|BUCHUNGS|MANDATS|ID|GLÄUBIGER)[:\s#]?\w+\b', '', text)
+    # Remove varying technical noise
+    text = re.sub(r'GIROCARD\W+', '', text)
+    text = re.sub(r'KARTENZAHLUNG\W+', '', text)
+    text = re.sub(r'ENTGELT\W+', '', text)
+    
+    # Remove long alphanumeric blocks (Transaction IDs, references)
+    text = re.sub(r'\b[A-Z0-9]{8,}\b', '', text) 
+    # Remove IBANs
+    text = re.sub(r'\bDE\d{20}\b', '', text)
+    # Remove all dates/timestamps (various formats)
+    text = re.sub(r'\b\d{2,4}[-./]\d{2}[-./]\d{2,4}\b', '', text)
+    text = re.sub(r'\b\d{2}:\d{2}(:\d{2})?\b', '', text)
+    
+    # Generic keywords and following garbage
+    text = re.sub(r'\b(DATUM|REFERENZ|REF|NR|BUCHUNGS|MANDATS|ID|GLÄUBIGER|PURCHASE|TERMINAL)[:\s#]?\S+\b', '', text)
+
+    # Cleanup whitespace
     text = re.sub(r'\s+', ' ', text).strip()
-    # Take first 60 chars as the "key" — the meaningful part is usually front-loaded
-    return text[:60]
+    
+    # If nothing left, keep original (safe fallback)
+    return text[:60] if len(text) > 3 else "SONSTIGE BUCHUNGEN"
 
 
 class ExcelParserService:
