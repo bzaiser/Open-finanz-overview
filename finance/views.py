@@ -1137,7 +1137,7 @@ def get_import_progress(request):
     '''
     
     if is_finished:
-        review_url = reverse('review_transactions', args=[latest_batch.id])
+        review_url = reverse('finance:review_transactions', args=[latest_batch.id])
         html += f'''
         <p class="text-center mt-2 text-success fw-bold">
             <i class="bi bi-check-circle-fill me-1"></i>{_eager("Analyse abgeschlossen!")}
@@ -1375,7 +1375,7 @@ def add_import_filter(request):
 
         # Smart Redirect fallback
         if batch_id:
-            return redirect(f"{reverse('import_filters_list')}?batch_id={batch_id}")
+            return redirect(f"{reverse('finance:import_filters_list')}?batch_id={batch_id}")
             
     return redirect('finance:import_filters_list')
 
@@ -1401,7 +1401,7 @@ def edit_import_filter(request, filter_id):
             return response
 
         if batch_id:
-            return redirect(f"{reverse('import_filters_list')}?batch_id={batch_id}")
+            return redirect(f"{reverse('finance:import_filters_list')}?batch_id={batch_id}")
         return redirect('finance:import_filters_list')
 
     return redirect('finance:import_filters_list')
@@ -1413,7 +1413,7 @@ def delete_import_filter(request, filter_id):
     f.delete()
     messages.success(request, _("Filter gelöscht."))
     if batch_id:
-        return redirect(f"{reverse('import_filters_list')}?batch_id={batch_id}")
+        return redirect(f"{reverse('finance:import_filters_list')}?batch_id={batch_id}")
     return redirect('finance:import_filters_list')
 
 @login_required
