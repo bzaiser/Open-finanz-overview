@@ -1325,7 +1325,7 @@ def delete_all_temporary_data(request):
     cache.delete(cache_key)
     
     messages.success(request, _(f"{count} temporäre Import-Datensätze wurden gelöscht."))
-    return redirect('import_transactions')
+    return redirect('finance:import_transactions')
 
 @login_required
 def import_filters_list(request):
@@ -1495,4 +1495,21 @@ def delete_import_batch(request, batch_id):
     batch = get_object_or_404(ImportBatch, id=batch_id, user=request.user)
     batch.delete()
     messages.success(request, _("Import-Batch gelöscht."))
-    return redirect('finance:import_list')
+    return redirect('finance:import_transactions')
+
+@login_required
+def delete_all_import_history(request):
+    """
+    Deletes ALL ImportBatch objects (and cascading PendingTransactions) 
+    for the current user, including applied ones.
+    """
+    batches = ImportBatch.objects.filter(user=request.user)
+    count = batches.count()
+    batches.delete()
+    
+    # Also clear any stuck progress indicators in the cache
+    cache_key = f"import_progress_{request.user.id}"
+    cache.delete(cache_key)
+    
+    messages.success(request, _(f"Gesamte Import-Historie ({count} Batches) wurde gelöscht."))
+    return redirect('finance:import_transactions')
