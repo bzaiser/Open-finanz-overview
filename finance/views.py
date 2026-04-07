@@ -967,16 +967,14 @@ def confirm_bank_transaction(request, transaction_id):
             # 1. Delete from Ready Pane (OOB)
             response_html = f'<tr id="ready-row-{transaction.id}" hx-swap-oob="delete"></tr>'
             
-            # 2. Add back to mapping pane (OOB)
+            # 2. Add back to mapping pane (OOB) - using outerHTML for the new row with oob target
             mapping_row_html = render_to_string('finance/partials/import_row.html', {
                 't': transaction, 
                 'categories': categories,
-                'hx_oob': True
-            })
-            response_html += f'<div hx-swap-oob="afterbegin:#mapping-rows">{mapping_row_html}</div>'
-            response_html += oob_sum
+            }).replace(f'id="mapping-row-{transaction.id}"', f'id="mapping-row-{transaction.id}" hx-swap-oob="afterbegin:#mapping-rows"')
             
-            # Primary response is empty to satisfy the swap if it exists
+            response_html += mapping_row_html
+            response_html += oob_sum
             return HttpResponse(response_html)
             
         # Standard case (staying in mapping or just updating field)
@@ -991,19 +989,16 @@ def confirm_bank_transaction(request, transaction_id):
         ready_row_html = render_to_string('finance/partials/import_ready_row.html', {
             't': transaction, 
             'categories': categories,
-            'hx_oob': True
-        })
+        }).replace(f'id="ready-row-{transaction.id}"', f'id="ready-row-{transaction.id}" hx-swap-oob="afterbegin:#ready-rows"')
+        
         response_html += ready_row_html
         response_html += oob_sum
-        
         return HttpResponse(response_html)
     else:
         # It's ignored. Delete from BOTH panes via OOB.
         response_html = f'<tr id="mapping-row-{transaction.id}" hx-swap-oob="delete"></tr>'
         response_html += f'<tr id="ready-row-{transaction.id}" hx-swap-oob="delete"></tr>'
         response_html += oob_sum
-        
-        # Also return empty for primary target if it was called directly
         return HttpResponse(response_html)
 
 @login_required
@@ -1240,6 +1235,7 @@ def import_search_as_group(request, batch_id):
         filt.save()
 
     # 2. Find matching transactions (Mapping Only)
+    # CRITICAL: We skip transactions that already have a category (manually assigned)
     matches = batch.transactions.filter(
         is_ignored=False, 
         category__isnull=True, 
@@ -1247,7 +1243,7 @@ def import_search_as_group(request, batch_id):
     )
     
     if not matches.exists():
-        return HttpResponse('<div class="alert alert-warning small">Keine passenden Buchungen gefunden.</div>')
+        return HttpResponse('<div class="alert alert-warning small p-2 m-0 border-0">Keine weiteren unkategorisierten Buchungen gefunden.</div>')
 
     # 3. Create or Update Consolidated Record (Ready Pane)
     from collections import defaultdict
@@ -1284,7 +1280,6 @@ def import_search_as_group(request, batch_id):
             response_html += render_to_string('finance/partials/import_ready_row.html', {
                 't': ready_rec, 
                 'categories': Category.objects.all(),
-                'hx_oob': True
             }).replace(f'id="ready-row-{ready_rec.id}"', f'id="ready-row-{ready_rec.id}" hx-swap-oob="outerHTML:#ready-row-{ready_rec.id}"')
         else:
             ready_rec = PendingTransaction.objects.create(
@@ -1316,6 +1311,9 @@ def import_search_as_group(request, batch_id):
     
     # 4. Remove empty state message if any
     response_html += '<tr id="empty-ready-msg" hx-swap-oob="delete"></tr>'
+    
+    # 5. Reset the Search Box and UI elements (Hide Quick Action)
+    response_html += '<script>document.getElementById("quick-action-area").style.display = "none";</script>'
 
     return HttpResponse(response_html)
 

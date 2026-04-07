@@ -4,7 +4,7 @@ import datetime
 import re
 from decimal import Decimal
 from django.utils import timezone
-from .models import Category, ImportBatch, PendingTransaction, CashFlowSource, OneTimeEvent, ImportFilter
+from .models import Category, ImportBatch, PendingTransaction, CashFlowSource, OneTimeEvent, ImportFilter, ProcessedTransactionHash
 from .llm import classify_transactions
 from django.conf import settings
 from django.core.cache import cache
@@ -82,6 +82,19 @@ class ExcelParserService:
             self._log(batch, "### ANALYSE INITIALISIERT ###")
             self._log(batch, f"Lese Datei: {self.filename}")
             
+            # 1.5 File Hash Check (Prevention of exact same file upload)
+            file_content = open(self.file_path, 'rb').read()
+            file_sha256 = hashlib.sha256(file_content).hexdigest()
+            
+            existing_batch = ImportBatch.objects.filter(user=self.user, file_hash=file_sha256).first()
+            if existing_batch:
+                self._log(batch, f"FEHLER: Diese Datei wurde bereits am {existing_batch.date.strftime('%d.%m.%Y')} importiert!")
+                raise ValueError(f"Datei-Duplikat erkannt! (Batch ID: {existing_batch.id})")
+            
+            if batch:
+                batch.file_hash = file_sha256
+                batch.save(update_fields=['file_hash'])
+
             df = pd.read_excel(self.file_path)
             self._log(batch, f"Datei eingelesen: {len(df)} Zeilen Rohdaten gefunden.")
             cache.set(cache_key, 10, 300) 
@@ -165,8 +178,10 @@ class ExcelParserService:
             self._log(batch, f"Bereinigung fertig: {initial_count} Zeilen verarbeitet.")
             
             # --- ROW-LEVEL DUPLICATE DETECTION ---
-            self._log(batch, "Prüfe Dateisignatur auf bereits importierte Buchungen...")
-            existing_sigs = set(PendingTransaction.objects.filter(batch__user=self.user).values_list('signature', flat=True))
+            # --- ROW-LEVEL DUPLICATE DETECTION ---
+            self._log(batch, "Prüfe Transaktionen auf Dubletten (Persistent)...")
+            # We check against ALL hashes ever processed by this user
+            processed_sigs = set(ProcessedTransactionHash.objects.filter(user=self.user).values_list('hash', flat=True))
             
             def make_sig(row):
                 # Hash of date, amount, and description
@@ -176,14 +191,14 @@ class ExcelParserService:
             df['signature'] = df.apply(make_sig, axis=1)
             cache.set(cache_key, 30, 300)
             
-            duplicates_mask = df['signature'].isin(existing_sigs)
+            duplicates_mask = df['signature'].isin(processed_sigs)
             duplicate_count = duplicates_mask.sum()
             
             if duplicate_count > 0:
-                self._log(batch, f"Dubletten-Check: {duplicate_count} bekannte Buchungen werden übersprungen.")
-                df = df[~duplicates_mask]
+                self._log(batch, f"Dubletten-Check: {duplicate_count} bereits verarbeitete Buchungen werden übersprungen.")
+                df = df[~duplicates_mask].copy()
             else:
-                self._log(batch, "Dubletten-Check: Keine bekannten Buchungen in dieser Datei gefunden.")
+                self._log(batch, "Dubletten-Check: Keine bekannten Buchungen gefunden.")
 
             cache.set(cache_key, 35, 300) # Signatures checked
 
@@ -328,8 +343,16 @@ class ExcelParserService:
                 )
                 pending_list.append(pending)
 
-            # Bulk save
+            # Bulk save Pending transactions
             PendingTransaction.objects.bulk_create(pending_list)
+
+            # Create Persistent Hashes for this batch (to prevent re-importing in future files)
+            # These are tied to the batch, so if the batch is deleted, the "memory" of these transactions is cleared too.
+            hash_objs = [
+                ProcessedTransactionHash(user=self.user, hash=p.signature, batch=batch)
+                for p in pending_list if p.signature
+            ]
+            ProcessedTransactionHash.objects.bulk_create(hash_objs, ignore_conflicts=True)
             
             cache.set(cache_key, 100, 300)
             self._log(batch, "### ANALYSE ERFOLGREICH ABGESCHLOSSEN ###")
@@ -342,8 +365,22 @@ class ExcelParserService:
     def _group_transactions(self, df):
         """
         Groups transactions by user-defined filters first, 
-        then by normalized description AND month/year.
+        groups by normalized description AND month/year.
         """
+        # --- AUTO-FILTER SYNC ---
+        # User requested exactly one filter per category
+        all_categories = Category.objects.all()
+        for cat in all_categories:
+            ImportFilter.objects.get_or_create(
+                user=self.user, 
+                category=cat, 
+                defaults={
+                    'target_name': cat.name,
+                    'search_query': '', # User will fill this later
+                    'is_active': True
+                }
+            )
+
         user_filters = list(ImportFilter.objects.filter(user=self.user, is_active=True).select_related('category'))
         
         def apply_filters(row):

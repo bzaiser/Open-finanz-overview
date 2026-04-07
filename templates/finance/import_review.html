@@ -3,6 +3,23 @@
 {% load humanize %}
 
 {% block content %}
+{% block extra_css %}
+<style>
+    /* Premium Visual Feedback for Bank Import */
+    tr.htmx-request {
+        opacity: 0.5;
+        filter: grayscale(1);
+        pointer-events: none;
+        transition: all 0.3s ease;
+    }
+    .badge-chip.htmx-request {
+        background-color: #6c757d !important;
+        transform: scale(0.95);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
 <div class="container-fluid py-4 min-vh-100" style="background-color: #f4f7f9;">
     <!-- HEADER -->
     <div class="row mb-4">

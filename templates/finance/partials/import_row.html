@@ -6,6 +6,7 @@
                 hx-get="{% url 'finance:confirm_transaction' t.id %}"
                 hx-target="#mapping-row-{{ t.id }}"
                 hx-swap="outerHTML"
+                hx-indicator="closest tr"
                 hx-vals='{"field": "is_ignored", "value": "true"}'
                 title="{% trans 'Ignorieren' %}">
             <i class="bi bi-trash fs-5"></i>
@@ -50,6 +51,7 @@
                     hx-target="#mapping-row-{{ t.id }}"
                     hx-swap="outerHTML"
                     hx-trigger="change"
+                    hx-indicator="closest tr"
                     name="value"
                     hx-vals='{"field": "category"}'>
                 <option value="">{% trans "Wähle Kategorie..." %}</option>
@@ -63,6 +65,7 @@
                     hx-get="{% url 'finance:confirm_transaction' t.id %}"
                     hx-target="#mapping-row-{{ t.id }}"
                     hx-swap="outerHTML"
+                    hx-indicator="closest tr"
                     hx-vals='{"field": "is_income", "value": "{% if t.is_income %}false{% else %}true{% endif %}"}'
                     title="{% if t.is_income %}{% trans 'Zu Ausgabe machen' %}{% else %}{% trans 'Zu Einnahme machen' %}{% endif %}">
                 {% if t.is_income %}<i class="bi bi-plus-lg"></i>{% else %}<i class="bi bi-dash-lg"></i>{% endif %}

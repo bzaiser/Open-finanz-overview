@@ -106,6 +106,7 @@ class ImportBatch(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='import_batches')
     date = models.DateTimeField(auto_now_add=True)
     filename = models.CharField(max_length=255)
+    file_hash = models.CharField(max_length=128, blank=True, null=True, db_index=True) # SHA256 of the file content
     is_applied = models.BooleanField(default=False)
     ai_log = models.TextField(_("AI Log / Errors"), blank=True, null=True)
 
@@ -151,6 +152,23 @@ class PendingTransaction(models.Model):
 
     def __str__(self):
         return f"{self.description} ({self.amount})"
+
+
+class ProcessedTransactionHash(models.Model):
+    """
+    Stores a persistent MD5 hash of an individual transaction row
+    to prevent re-importing the same transaction in future files.
+    Linked to a batch for easy cleanup if needed.
+    """
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='processed_hashes')
+    hash = models.CharField(max_length=64, db_index=True)
+    batch = models.ForeignKey(ImportBatch, on_delete=models.CASCADE, related_name='row_hashes')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'hash')
+        verbose_name = _("Processed Transaction Hash")
+        verbose_name_plural = _("Processed Transaction Hashes")
 
 
 class PhysicalAsset(models.Model):
