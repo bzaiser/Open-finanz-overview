@@ -145,11 +145,11 @@ def classify_with_ollama(transactions, categories):
     category_list = ", ".join([f"{c['name']} (slug: {c['slug']})" for c in categories])
     url = f"{settings.OLLAMA_BASE_URL.rstrip('/')}/api/chat"
     
-    system_prompt = "Du bist ein präziser Finanz-Experte. Antworte AUSSCHLIESSLICH als JSON-Array von Objekten."
+    system_prompt = "Du bist ein präziser Finanz-Experte. Antworte NUR im JSON-Format (Array of Objects). Absolut kein Text vor oder nach dem JSON!"
     user_prompt = (
         f"Kategorien: {category_list}\n"
         f"Buchungen: {json.dumps(transactions)}\n"
-        f"JSON-Felder pro Objekt: id (string), category_slug, is_income (bool), is_recurring (bool)."
+        f"Antworte NUR mit einem JSON-Array. Felder: id (string), category_slug (string), is_income (bool), is_recurring (bool)."
     )
     
     payload = {
@@ -178,11 +178,20 @@ def classify_with_ollama(transactions, categories):
         # Bei /api/chat kommt die Antwort in data['message']['content']
         text = data.get('message', {}).get('content', '')
         
-        # Bereinigen von potentiellem Markdown-Output falls 'format':'json' ignoriert wurde
-        if "```json" in text:
+        # Bereinigen: Falls die KI doch mal plaudert ("Categories: ...")
+        # Wir suchen den Anfang [ und das Ende ] des JSON-Arrays
+        start_idx = text.find('[')
+        end_idx = text.rfind(']')
+        if start_idx != -1 and end_idx != -1:
+            text = text[start_idx:end_idx + 1]
+        elif "```json" in text:
             text = text.split("```json")[1].split("```")[0].strip()
         
-        result_data = json.loads(text)
+        try:
+            result_data = json.loads(text)
+        except json.JSONDecodeError as e:
+            logger.error(f"JSON Parse Error für: {text}")
+            return None, f"JSON Analyse fehlgeschlagen: {e}"
         
         # Normalisierung des Outputs (Liste von Objekten erwartet)
         if isinstance(result_data, list):
