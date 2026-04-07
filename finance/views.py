@@ -1149,7 +1149,7 @@ def get_import_progress(request):
         </div>
         '''
     elif is_error:
-        upload_url = reverse('import_transactions')
+        upload_url = reverse('finance:import_transactions')
         error_msg = cache.get(f"import_error_{request.user.id}", _eager("Unbekannter Fehler"))
         html += f'''
         <p class="text-center mt-2 text-danger fw-bold">{_eager("Analyse fehlgeschlagen")}</p>
