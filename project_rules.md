@@ -20,19 +20,19 @@
 - **Single Line Variables**: Always keep variables like `{{ currency }}` on the same line as the value they accompany.
 
 ## Git Deployment
-- **STRICT Push Targets (Dual-Branch/Dual-Repo)**: Alle Änderungen MÜSSEN zwingend in ZWEI Repositories auf jeweils ZWEI Branches gepusht werden:
-  1. `bzaiser/finanzplan.git` (origin) $\rightarrow$ Branches: `main` **UND** `master`
-  2. `bzaiser/Open-finanz-overview.git` (public) $\rightarrow$ Branches: `main` **UND** `master`
+- **STRICT Push Targets (Dual-Repo / Single-Branch)**: Alle Änderungen MÜSSEN zwingend in ZWEI Repositories auf dem `main`-Branch gepusht werden:
+  1. `bzaiser/finanzplan.git` (origin) $\rightarrow$ Branch: `main`
+  2. `bzaiser/Open-finanz-overview.git` (overview) $\rightarrow$ Branch: `main`
 - **Vorgehensweise**: Führe nach jedem Commit die Pushes für alle Zielkombinationen aus:
   ```bash
-  git push origin main && git push origin master
-  git push public main && git push public master
+  git push origin main
+  git push overview main
   ```
 - **Migration Synchronisation (CRITICAL)**: Bevor eine neue Datenbank-Migration erstellt wird, MUSS die KI den Stand in BEIDEN Remotes prüfen:
-  - `git ls-tree -r origin/master finance/migrations/`
-  - `git ls-tree -r public/main finance/migrations/`
-- **Linearitäts-Gebot**: Beide Repositories müssen exakt dieselbe Migrations-Historie teilen. Wenn ein Repo voraus ist, muss das andere Repo erst auf denselben Stand gebracht werden.
-- **STRICT Push-First Rule**: Bevor dem Nutzer eine Antwort, Rückmeldung oder Erklärung gesendet wird, MÜSSEN alle Code-Änderungen zwingend auf allen oben genannten Branches/Remotes (`origin/main`, `origin/master`, `public/main`, `public/master`) erfolgreich gepusht sein. Erklärungen folgen immer ERST NACH dem erfolgreichen Push.
+  - `git ls-tree -r origin/main finance/migrations/`
+  - `git ls-tree -r overview/main finance/migrations/`
+- **Linearitäts-Gebot**: Beide Repositories müssen exakt dieselbe Migrations-Historie teilen.
+- **STRICT Push-First Rule**: Bevor dem Nutzer eine Antwort, Rückmeldung oder Erklärung gesendet wird, MÜSSEN alle Code-Änderungen zwingend auf allen oben genannten Remotes (`origin/main`, `overview/main`) erfolgreich gepusht sein. Erklärungen folgen immer ERST NACH dem erfolgreichen Push.
 
 ## Standard-Workflow (Interne Agent-Regeln)
 Der Agent folgt bei JEDER Aufgabe strikt diesem Ablauf:
@@ -40,7 +40,7 @@ Der Agent folgt bei JEDER Aufgabe strikt diesem Ablauf:
 2. **Implementierung**: Durchführung der Code-Änderungen.
 3. **Commit & Push-First**:
    - Änderungen committen.
-   - **ERST** Push auf alle 4 Ziele (`origin/main`, `origin/master`, `public/main`, `public/master`) erfolgreich abschließen.
+   - **ERST** Push auf beide Ziele (`origin/main`, `overview/main`) erfolgreich abschließen.
 4. **Antwort an Nutzer**: Erst nach dem erfolgreichen Push erfolgt die Rückmeldung oder Erklärung an den Nutzer.
 
 ## Infrastructure & Environment
