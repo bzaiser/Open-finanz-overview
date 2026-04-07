@@ -371,15 +371,14 @@ class ExcelParserService:
         # User requested exactly one filter per category
         all_categories = Category.objects.all()
         for cat in all_categories:
-            ImportFilter.objects.get_or_create(
-                user=self.user, 
-                category=cat, 
-                defaults={
-                    'target_name': cat.name,
-                    'search_query': '', # User will fill this later
-                    'is_active': True
-                }
-            )
+            if not ImportFilter.objects.filter(user=self.user, category=cat).exists():
+                ImportFilter.objects.create(
+                    user=self.user, 
+                    category=cat, 
+                    target_name=cat.name,
+                    search_query='', # User will fill this later
+                    is_active=True
+                )
 
         user_filters = list(ImportFilter.objects.filter(user=self.user, is_active=True).select_related('category'))
         

@@ -263,6 +263,13 @@ class ImportFilter(models.Model):
     class Meta:
         verbose_name = _("Import Filter")
         verbose_name_plural = _("Import Filters")
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'category'], 
+                name='unique_filter_per_category',
+                condition=models.Q(category__isnull=False)
+            )
+        ]
 
     def __str__(self):
         return f"{self.target_name} ({self.search_query})"

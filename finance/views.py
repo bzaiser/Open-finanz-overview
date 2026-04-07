@@ -1197,11 +1197,16 @@ def import_search_as_group(request, batch_id):
     category = get_object_or_404(Category, id=category_id)
     
     # 1. Update/Create Filter
-    filt, created = ImportFilter.objects.get_or_create(
-        user=request.user,
-        target_name=target_name,
-        defaults={'category': category, 'search_query': q}
-    )
+    filt = ImportFilter.objects.filter(user=request.user, target_name=target_name).first()
+    created = False
+    if not filt:
+        filt = ImportFilter.objects.create(
+            user=request.user,
+            target_name=target_name,
+            category=category,
+            search_query=q
+        )
+        created = True
     if not created:
         terms = [t.strip().upper() for t in filt.search_query.split(';') if t.strip()]
         if q.upper() not in terms:
