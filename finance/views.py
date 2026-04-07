@@ -872,7 +872,42 @@ def import_processing(request):
     })
 
 @login_required
+def _ensure_category_filters(user):
+    """
+    Robust synchronization: Ensures each category has exactly one ImportFilter.
+    Prevents duplicates and re-links filters orphaned by category deletion.
+    """
+    all_categories = Category.objects.all()
+    for cat in all_categories:
+        # 1. Does a filter with this specific category link exist?
+        if ImportFilter.objects.filter(user=user, category=cat).exists():
+            continue
+            
+        # 2. Is there an orphaned filter with the same name?
+        orphaned = ImportFilter.objects.filter(
+            user=user, 
+            category__isnull=True, 
+            target_name=cat.name
+        ).first()
+        
+        if orphaned:
+            orphaned.category = cat
+            orphaned.save()
+        else:
+            # 3. Create fresh filter
+            ImportFilter.objects.create(
+                user=user,
+                category=cat,
+                target_name=cat.name,
+                search_query='',
+                is_active=True
+            )
+
+@login_required
 def review_bank_transactions(request, batch_id):
+    # Ensure filters are synced before rendering the review page
+    _ensure_category_filters(request.user)
+    
     batch = get_object_or_404(ImportBatch, id=batch_id, user=request.user)
     
     # 1. Search Query for Mapping Pane
