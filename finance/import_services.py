@@ -75,14 +75,18 @@ class ExcelParserService:
             cache_key = f"import_progress_{self.user.id}"
             cache.set(cache_key, 5, 300) # Start!
             
-            df = pd.read_excel(self.file_path)
-            self._log(batch, f"### START ANALYSE: {self.filename} ###")
-            self._log(batch, f"Datei eingelesen: {len(df)} Zeilen Rohdaten gefunden.")
-            cache.set(cache_key, 15, 300) # Read done
-            self._log(batch, f"Rohspalten: {list(df.columns)}")
+            self._log(batch, "### ANALYSE INITIALISIERT ###")
+            self._log(batch, f"Lese Datei: {self.filename}")
             
-            if not df.empty:
-                self._log(batch, f"Probe (Zeile 1): {df.iloc[0].to_dict()}")
+            df = pd.read_excel(self.file_path)
+            self._log(batch, f"Datei eingelesen: {len(df)} Zeilen Rohdaten gefunden.")
+            cache.set(cache_key, 10, 300) 
+            
+            self._log(batch, "Analysiere Spalten-Struktur...")
+            # Find the best header row (deep scan)
+            col_map, header_row = self._detect_columns(df)
+            cache.set(cache_key, 15, 300)
+            self._log(batch, f"Spalten-Zuordnung abgeschlossen (Header in Zeile {header_row}).")
 
             # Find the best header row (deep scan)
             col_map, header_row = self._detect_columns(df)
@@ -102,13 +106,13 @@ class ExcelParserService:
             for i, col_name in enumerate(row_to_check):
                 if not final_mapping.get('date') and any(k in col_name for k in ['datum', 'date', 'buchungstag', 'valuta', 'wertstellung', 'tag']):
                     final_mapping['date'] = i
-                    self._log(batch, f"-> 'Datum' in Spalte {i} ('{df.columns[i]}') erkannt.")
-                elif not final_mapping.get('desc') and any(k in col_name for k in ['zweck', 'beschreibung', 'text', 'info', 'verwendungszweck', 'empfänger', 'name']):
+                    self._log(batch, "-> Spalte 'Datum' erkannt.")
+                elif not final_mapping.get('desc') and any(k in col_name for k in ['zweck', 'beschreibung', 'text', 'info', 'verwendungszweck', 'empfänger', 'auftraggeber', 'name']):
                     final_mapping['desc'] = i
-                    self._log(batch, f"-> 'Beschreibung' in Spalte {i} ('{df.columns[i]}') erkannt.")
+                    self._log(batch, "-> Spalte 'Beschreibung' erkannt.")
                 elif not final_mapping.get('amount') and any(k in col_name for k in ['betrag', 'amount', 'wert', 'summe', 'umsatz', 'soll', 'haben', 'eur', 'euro']):
                     final_mapping['amount'] = i
-                    self._log(batch, f"-> 'Betrag' in Spalte {i} ('{df.columns[i]}') erkannt.")
+                    self._log(batch, "-> Spalte 'Betrag' erkannt.")
 
             if 'date' not in final_mapping or 'amount' not in final_mapping:
                 available = [str(c) for c in df.columns]
@@ -157,7 +161,7 @@ class ExcelParserService:
             self._log(batch, f"Bereinigung fertig: {initial_count} Zeilen verarbeitet.")
             
             # --- ROW-LEVEL DUPLICATE DETECTION ---
-            self._log(batch, "Prüfe Dateiinhalte auf bereits importierte Buchungen...")
+            self._log(batch, "Prüfe Dateisignatur auf bereits importierte Buchungen...")
             existing_sigs = set(PendingTransaction.objects.filter(batch__user=self.user).values_list('signature', flat=True))
             
             def make_sig(row):
@@ -166,13 +170,18 @@ class ExcelParserService:
                 return hashlib.md5(data.encode()).hexdigest()
             
             df['signature'] = df.apply(make_sig, axis=1)
-            cache.set(cache_key, 25, 300) # Signatures done
+            cache.set(cache_key, 30, 300)
+            
             duplicates_mask = df['signature'].isin(existing_sigs)
             duplicate_count = duplicates_mask.sum()
             
             if duplicate_count > 0:
-                self._log(batch, f"INFO: {duplicate_count} bereits bekannte Buchungen in dieser Datei werden übersprungen.")
+                self._log(batch, f"Dubletten-Check: {duplicate_count} bekannte Buchungen werden übersprungen.")
                 df = df[~duplicates_mask]
+            else:
+                self._log(batch, "Dubletten-Check: Keine bekannten Buchungen in dieser Datei gefunden.")
+
+            cache.set(cache_key, 35, 300) # Signatures checked
 
             if df.empty:
                 self._log(batch, "KRITISCH: Datei ist leer!")
@@ -198,7 +207,8 @@ class ExcelParserService:
                             (settings.GEMINI_API_KEY or settings.GROQ_API_KEY)
 
             if unassigned and ai_configured:
-                self._log(batch, f"KI-Analyse für {len(unassigned)} unbekannte Gruppen wird vorbereitet...")
+                self._log(batch, "### KI-ANALYSE WIRD VORBEREITET ###")
+                self._log(batch, f"Sende {len(unassigned)} Jahressummen an Ollama (Windows)...")
                 
                 # Prepare data for LLM
                 llm_input = [{"id": i, "description": g['description'], "amount": float(g['total_amount'])} for i, g in enumerate(unassigned)]
