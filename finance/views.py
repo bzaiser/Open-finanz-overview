@@ -955,25 +955,28 @@ def confirm_bank_transaction(request, transaction_id):
     # Using HTMX Out-of-Band Swaps
     response_html = ""
     
+    # Pre-calculate sums for OOB updates
+    total_ready = sum(t.amount for t in transaction.batch.transactions.filter(is_ignored=False, category__isnull=False))
+    from django.contrib.humanize.templatetags.humanize import intcomma
+    total_str = f"{intcomma(round(total_ready, 2))} EUR"
+    oob_sum = f'<span id="total-ready-sum" hx-swap-oob="innerHTML">{total_str}</span>'
+    
     if is_mapping:
         # If it was in "Ready" before, we need a special OOB response to move it back
         if not was_mapping:
+            # 1. Delete from Ready Pane (OOB)
             response_html = f'<tr id="ready-row-{transaction.id}" hx-swap-oob="delete"></tr>'
             
-            # Add back to mapping pane (Top)
+            # 2. Add back to mapping pane (OOB)
             mapping_row_html = render_to_string('finance/partials/import_row.html', {
                 't': transaction, 
                 'categories': categories,
                 'hx_oob': True
             })
             response_html += f'<div hx-swap-oob="afterbegin:#mapping-rows">{mapping_row_html}</div>'
+            response_html += oob_sum
             
-            # Update the Total Sum in Ready Pane OOB
-            total_ready = sum(t.amount for t in transaction.batch.transactions.filter(is_ignored=False, category__isnull=False))
-            from django.contrib.humanize.templatetags.humanize import intcomma
-            total_str = f"{intcomma(round(total_ready, 2))} EUR"
-            response_html += f'<span id="total-ready-sum" hx-swap-oob="innerHTML">{total_str}</span>'
-            
+            # Primary response is empty to satisfy the swap if it exists
             return HttpResponse(response_html)
             
         # Standard case (staying in mapping or just updating field)
@@ -981,35 +984,26 @@ def confirm_bank_transaction(request, transaction_id):
 
     elif is_ready:
         # The row moved to "Ready" (Bottom). 
-        # 1. Remove from mapping pane
+        # 1. Remove from mapping pane (OOB)
         response_html = f'<tr id="mapping-row-{transaction.id}" hx-swap-oob="delete"></tr>'
         
-        # 2. Add to ready pane
+        # 2. Add to ready pane (OOB)
         ready_row_html = render_to_string('finance/partials/import_ready_row.html', {
             't': transaction, 
             'categories': categories,
             'hx_oob': True
         })
         response_html += ready_row_html
-        
-        # 3. Update the Total Sum OOB
-        total_ready = sum(t.amount for t in transaction.batch.transactions.filter(is_ignored=False, category__isnull=False))
-        from django.contrib.humanize.templatetags.humanize import intcomma
-        total_str = f"{intcomma(round(total_ready, 2))} EUR"
-        response_html += f'<span id="total-ready-sum" hx-swap-oob="innerHTML">{total_str}</span>'
+        response_html += oob_sum
         
         return HttpResponse(response_html)
     else:
-        # It's ignored. Delete from whatever pane it was in.
+        # It's ignored. Delete from BOTH panes via OOB.
         response_html = f'<tr id="mapping-row-{transaction.id}" hx-swap-oob="delete"></tr>'
         response_html += f'<tr id="ready-row-{transaction.id}" hx-swap-oob="delete"></tr>'
+        response_html += oob_sum
         
-        # Update sum just in case it was in ready
-        total_ready = sum(t.amount for t in transaction.batch.transactions.filter(is_ignored=False, category__isnull=False))
-        from django.contrib.humanize.templatetags.humanize import intcomma
-        total_str = f"{intcomma(round(total_ready, 2))} EUR"
-        response_html += f'<span id="total-ready-sum" hx-swap-oob="innerHTML">{total_str}</span>'
-        
+        # Also return empty for primary target if it was called directly
         return HttpResponse(response_html)
 
 @login_required

@@ -348,9 +348,8 @@ class ExcelParserService:
             
             # UNIQUE KEY for unassigned items to avoid pre-grouping
             if cat is None:
-                # Still group unassigned items by description + month/year to avoid exploding the list,
-                # but keep them semi-granular for individual mapping.
-                key = (f"RAW_{desc_val}", row['_year'], row['_month'])
+                # Aggregieren pro Jahr (statt pro Monat) für maximale Performance
+                key = (f"RAW_{desc_val}", row['_year'], "YEARLY")
             else:
                 # YEARLY AGGREGATION for categorized items
                 key = (desc_val, row['_year'], "YEARLY")

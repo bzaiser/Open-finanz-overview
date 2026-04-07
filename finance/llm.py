@@ -145,11 +145,11 @@ def classify_with_ollama(transactions, categories):
     category_list = ", ".join([f"{c['name']} (slug: {c['slug']})" for c in categories])
     url = f"{settings.OLLAMA_BASE_URL.rstrip('/')}/api/chat"
     
-    system_prompt = "Du bist ein präziser Finanz-Experte. Kategorisiere Bankbuchungen und antworte AUSSCHLIESSLICH im JSON-Format."
+    system_prompt = "Du bist ein präziser Finanz-Experte. Antworte AUSSCHLIESSLICH als JSON-Array von Objekten."
     user_prompt = (
-        f"Mögliche Kategorien (mit Slugs): {category_list}\n\n"
-        f"Transaktionen: {json.dumps(transactions)}\n\n"
-        f"Antworte mit einem JSON-Array von Objekten, jedes mit: id (als String), category_slug, is_income (boolean), is_recurring (boolean), frequency (monthly/yearly/once), reasoning (kurz)."
+        f"Kategorien: {category_list}\n"
+        f"Buchungen: {json.dumps(transactions)}\n"
+        f"JSON-Felder pro Objekt: id (string), category_slug, is_income (bool), is_recurring (bool)."
     )
     
     payload = {
