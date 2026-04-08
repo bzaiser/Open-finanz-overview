@@ -42,6 +42,11 @@
             --bs-tertiary-bg: var(--app-card-bg);
             --bs-card-bg: var(--app-card-bg);
             --bs-card-color: var(--app-card-color);
+            
+            /* Input & Form Variables */
+            --app-input-bg: {{ user.profile.table_body_bg_color|default:"var(--app-card-bg)" }};
+            --app-input-color: {{ user.profile.table_body_text_color|default:"var(--app-card-color)" }};
+            --app-input-border: {{ user.profile.table_border_color|default:"rgba(0,0,0,0.1)" }};
         }
     </style>
     {% else %}

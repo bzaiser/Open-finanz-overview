@@ -23,7 +23,7 @@
                 <div class="glass-card shadow-sm p-4 mb-4">
                     <h4 class="mb-4 fw-bold"><i class="bi bi-person-badge me-2 text-primary"></i>{% trans "Identität & Kern" %}</h4>
                     
-                    <div class="d-flex align-items-center mb-4 p-3 rounded-4 bg-light bg-opacity-50 border border-white">
+                    <div class="d-flex align-items-center mb-4 p-3 rounded-4 border border-primary border-opacity-10" style="background-color: var(--app-table-filter-bg);">
                         <div class="me-4 position-relative">
                             {% if user.profile.avatar %}
                                 <img src="{{ user.profile.avatar.url }}" class="rounded-circle shadow-sm object-fit-cover" width="100" height="100" style="border: 3px solid white;">
@@ -109,7 +109,7 @@
                                 </button>
                             </h2>
                             <div id="collapseStudio" class="accordion-collapse collapse" data-bs-parent="#designAccordion">
-                                <div class="accordion-body bg-light bg-opacity-50 border-top">
+                                <div class="accordion-body border-top" style="background-color: var(--app-table-filter-bg);">
                                     <div class="row g-3">
                                         <div class="col-md-6"><label class="form-label small fw-bold">{% trans "Primärfarbe" %}</label>{{ form.primary_color }}</div>
                                         <div class="col-md-6"><label class="form-label small fw-bold">{% trans "Hintergrund" %}</label>{{ form.background_color }}</div>
@@ -192,9 +192,10 @@
 
 <style>
     .glass-card {
-        background: rgba(255, 255, 255, 0.7);
+        background: var(--app-card-bg);
+        background-color: color-mix(in srgb, var(--app-card-bg), transparent 30%);
         backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.3);
+        border: 1px solid var(--app-table-border-color);
         border-radius: 20px;
     }
     .preset-pill {
