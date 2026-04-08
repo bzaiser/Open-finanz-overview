@@ -62,8 +62,8 @@
             </div>
 
             <!-- Rechts: Design Studio -->
-            <div class="col-lg-5 h-100">
-                <div class="glass-card shadow-lg p-4 border-primary border-opacity-25 h-100" style="border-width: 2px;">
+            <div class="col-lg-5">
+                <div class="glass-card shadow-lg p-4 border-primary border-opacity-25 h-100 d-flex flex-column" style="border-width: 2px;">
                     <h4 class="mb-4 fw-bold"><i class="bi bi-magic me-2 text-primary"></i>{% trans "Design" %}</h4>
                     
                     <div id="harmonyPreview" class="rounded-4 p-4 text-white shadow-gradient d-flex flex-column justify-content-center text-center mb-4"
@@ -212,7 +212,7 @@
             Object.keys(inputs).forEach(key => { if (nightConfig[key]) inputs[key].value = nightConfig[key]; });
             
             label.innerText = "{% trans 'Zurück zum Tag-Design' %}";
-            btn.classList.replace('btn-outline-primary', 'btn-primary');
+            btn.style.background = "var(--app-primary)"; // Solid color for active state
             studioHeader.classList.add('border-primary', 'border-2');
             preview.classList.add('border', 'border-3', 'border-warning');
         } else {
@@ -223,6 +223,7 @@
             Object.keys(inputs).forEach(key => inputs[key].value = dayConfig[key]);
             
             label.innerText = "{% trans 'Nachtdesign anwenden' %}";
+            btn.style.background = "var(--app-gradient)"; // Restore gradient
             studioHeader.classList.remove('border-primary', 'border-2');
             preview.classList.remove('border', 'border-3', 'border-warning');
         }
