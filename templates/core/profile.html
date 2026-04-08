@@ -126,7 +126,8 @@
                             <button type="button" id="toggleNightEdit" class="btn btn-primary d-flex align-items-center justify-content-center gap-2 shadow-sm rounded-pill py-2 w-100" style="background: var(--app-gradient); border: none;">
                                 <i class="bi bi-moon-stars"></i> <span id="editModeLabel">{% trans "Nachtdesign anwenden" %}</span>
                             </button>
-                            <input type="hidden" name="dark_mode_config" id="dark_mode_config_input" value="{{ user.profile.dark_mode_config|default:"{}" }}">
+                            {{ user.profile.dark_mode_config|json_script:"dark_mode_config_data" }}
+                            <input type="hidden" name="dark_mode_config" id="dark_mode_config_input">
                         </div>
                     </div>
 
@@ -207,6 +208,12 @@
         
         function getNightConfig() {
             try {
+                const scriptTag = document.getElementById('dark_mode_config_data');
+                // First-load initialization from script tag
+                if (scriptTag && !darkModeInput.value) {
+                    const data = JSON.parse(scriptTag.textContent || '{}');
+                    darkModeInput.value = typeof data === 'string' ? data : JSON.stringify(data);
+                }
                 return JSON.parse(darkModeInput.value || '{}') || {};
             } catch (e) {
                 showDebugError("Parkfehler im Nacht-Design (JSON)", e);
