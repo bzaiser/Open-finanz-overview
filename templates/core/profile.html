@@ -168,7 +168,11 @@
             try {
                 const elements = profileForm.querySelectorAll(`[name="${name}"]`);
                 elements.forEach(el => {
-                    if (el.value !== value) el.value = value;
+                    if (el.value !== value) {
+                        el.value = value;
+                        // Trigger 'input' event to ensure color pickers refresh visually
+                        el.dispatchEvent(new Event('input', { bubbles: true }));
+                    }
                 });
             } finally {
                 setTimeout(() => { isSyncing = false; }, 50);
@@ -191,23 +195,27 @@
                 table_border_color: getPrimaryValue('table_border_color')
             };
 
-            // Inject into Root for real-time preview of the WHOLE page
+            // Enhanced Live Sync for the WHOLE Page
             html.style.setProperty('--bs-primary', config.primary_color);
+            html.style.setProperty('--app-primary', config.primary_color);
             html.style.setProperty('--app-gradient', `linear-gradient(135deg, ${config.gradient_start} 0%, ${config.gradient_end} 100%)`);
+            
             html.style.setProperty('--app-card-bg', config.background_color);
             html.style.setProperty('--app-card-color', config.text_color);
             html.style.setProperty('--bs-body-bg', config.background_color);
             html.style.setProperty('--bs-body-color', config.text_color);
+            
             html.style.setProperty('--app-sidebar-bg', config.sidebar_bg_color);
             html.style.setProperty('--app-table-header-bg', config.table_header_bg_color);
             html.style.setProperty('--app-table-header-text', config.table_header_text_color);
             html.style.setProperty('--app-table-body-bg', config.table_body_bg_color);
             html.style.setProperty('--app-table-body-text', config.table_body_text_color);
             html.style.setProperty('--app-table-border-color', config.table_border_color);
+            
             html.style.setProperty('--app-input-bg', config.background_color);
             html.style.setProperty('--app-input-color', config.text_color);
-            html.style.setProperty('--app-primary', config.primary_color);
 
+            // Special: Update the small preview box too
             if (preview) {
                 preview.style.background = `linear-gradient(135deg, ${config.gradient_start} 0%, ${config.gradient_end} 100%)`;
             }
