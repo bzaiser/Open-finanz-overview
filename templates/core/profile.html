@@ -174,7 +174,13 @@
     </form>
     <script>
     (function() {
-        // Safe configuration management
+        // Essential Configuration
+        const THEME_KEYS = [
+            'gradient_start', 'gradient_end', 'primary_color', 'background_color',
+            'sidebar_bg_color', 'text_color', 'table_header_bg_color', 'table_header_text_color',
+            'table_filter_bg_color', 'table_body_bg_color', 'table_body_text_color', 'table_border_color'
+        ];
+
         let isEditingNightMode = false;
         let dayConfig = {};
         
@@ -183,6 +189,7 @@
         const jsErrorContainer = document.getElementById('js-debug-error');
         const jsErrorMsg = document.getElementById('js-debug-msg');
 
+        // 1. Debugging Utility
         function logDebug(msg, isError = false) {
             console.log(msg);
             {% if debug %}
@@ -199,21 +206,27 @@
             logDebug(`${msg}: ${err ? err.message : 'Unbekannter Fehler'}`, true);
         }
 
-        function getInputs() {
-            const keys = [
-                'gradient_start', 'gradient_end', 'primary_color', 'background_color',
-                'sidebar_bg_color', 'text_color', 'table_header_bg_color', 'table_header_text_color',
-                'table_filter_bg_color', 'table_body_bg_color', 'table_body_text_color', 'table_border_color'
-            ];
-            const inputs = {};
-            // Look specifically within the profile form to avoid duplicates
-            const form = document.getElementById('profileForm');
-            keys.forEach(key => {
-                inputs[key] = form ? form.querySelector(`[name="${key}"]`) : document.querySelector(`[name="${key}"]`);
-            });
-            return inputs;
+        // 2. Multi-Element Syncing Utilities
+        function getPrimaryValue(name) {
+            const form = document.getElementById('profileForm') || document;
+            const el = form.querySelector(`input[name="${name}"][type="color"]`) || 
+                       form.querySelector(`[name="${name}"]`);
+            return el ? el.value : null;
         }
 
+        function setAllValues(name, value) {
+            const form = document.getElementById('profileForm') || document;
+            const elements = form.querySelectorAll(`[name="${name}"]`);
+            elements.forEach(el => {
+                try {
+                    el.value = value;
+                    el.dispatchEvent(new Event('input', { bubbles: true }));
+                    el.dispatchEvent(new Event('change', { bubbles: true }));
+                } catch (e) { console.error(`Error context ${name}`, e); }
+            });
+        }
+
+        // 3. Night Mode Configuration
         function getNightConfig() {
             try {
                 const scriptTag = document.getElementById('dark_mode_config_data');
@@ -231,6 +244,7 @@
             }
         }
 
+        // 4. Preview Sync
         function updatePreview() {
             try {
                 const s = getPrimaryValue('gradient_start') || '#212529';
@@ -241,69 +255,72 @@
             } catch (e) { showDebugError("Vorschau-Fehler", e); }
         }
 
-        // Toggle Night Edit Mode
-        document.getElementById('toggleNightEdit').addEventListener('click', function() {
-            try {
-                isEditingNightMode = !isEditingNightMode;
-                const btn = this;
-                const label = document.getElementById('editModeLabel');
-                const studioHeader = document.querySelector('#collapseStudio .accordion-body');
-                
-                logDebug(`Modus-Wechsel: Editier-Modus ist jetzt <b>${isEditingNightMode ? 'NACHT' : 'TAG'}</b>`);
-                
-                if (isEditingNightMode) {
-                    // Capture Day values
-                    THEME_KEYS.forEach(key => { 
-                        dayConfig[key] = getPrimaryValue(key);
-                    });
-                    logDebug(`Tages-Farben gesichert.`);
+        // 5. Mode Toggle
+        const toggleBtn = document.getElementById('toggleNightEdit');
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', function() {
+                try {
+                    isEditingNightMode = !isEditingNightMode;
+                    const btn = this;
+                    const label = document.getElementById('editModeLabel');
+                    const studioHeader = document.querySelector('#collapseStudio .accordion-body');
                     
-                    // Load Night values
-                    let nightConfig = getNightConfig();
-                    if (Object.keys(nightConfig).length === 0) {
-                        nightConfig = {
-                            gradient_start: '#212529', gradient_end: '#495057', primary_color: '#343a40',
-                            background_color: '#121212', sidebar_bg_color: '#1a1a1a', text_color: '#e9ecef',
-                            table_header_bg_color: '#343a40', table_header_text_color: '#ffffff',
-                            table_filter_bg_color: '#2a2a2a', table_body_bg_color: '#121212',
-                            table_body_text_color: '#e9ecef', table_border_color: '#333333'
-                        };
+                    logDebug(`Modus-Wechsel: Editier-Modus ist jetzt <b>${isEditingNightMode ? 'NACHT' : 'TAG'}</b>`);
+                    
+                    if (isEditingNightMode) {
+                        // Capture Day values
+                        THEME_KEYS.forEach(key => { 
+                            dayConfig[key] = getPrimaryValue(key);
+                        });
+                        logDebug(`Tages-Farben gesichert.`);
+                        
+                        // Load Night values
+                        let nightConfig = getNightConfig();
+                        if (Object.keys(nightConfig).length === 0) {
+                            nightConfig = {
+                                gradient_start: '#212529', gradient_end: '#495057', primary_color: '#343a40',
+                                background_color: '#121212', sidebar_bg_color: '#1a1a1a', text_color: '#e9ecef',
+                                table_header_bg_color: '#343a40', table_header_text_color: '#ffffff',
+                                table_filter_bg_color: '#2a2a2a', table_body_bg_color: '#121212',
+                                table_body_text_color: '#e9ecef', table_border_color: '#333333'
+                            };
+                        }
+                        
+                        THEME_KEYS.forEach(key => { 
+                            if (nightConfig[key]) setAllValues(key, nightConfig[key]);
+                        });
+                        logDebug(`Nacht-Werte aktiv.`);
+                        
+                        label.innerText = "{% trans 'Zurück zum Tag-Design' %}";
+                        btn.classList.replace('btn-primary', 'btn-dark');
+                        btn.style.boxShadow = "0 0 15px rgba(0,0,0,0.5)";
+                        if (studioHeader) studioHeader.classList.add('border-primary', 'border-2');
+                        if (preview) preview.classList.add('border', 'border-3', 'border-warning');
+                        
+                    } else {
+                        // Save Night values
+                        let nightConfig = {};
+                        THEME_KEYS.forEach(key => { nightConfig[key] = getPrimaryValue(key); });
+                        if (darkModeInput) darkModeInput.value = JSON.stringify(nightConfig);
+                        
+                        // Restore Day values
+                        THEME_KEYS.forEach(key => { 
+                            if(dayConfig[key]) setAllValues(key, dayConfig[key]);
+                        });
+                        
+                        label.innerText = "{% trans 'Nachtdesign anwenden' %}";
+                        btn.classList.replace('btn-dark', 'btn-primary');
+                        btn.style.boxShadow = "";
+                        if (studioHeader) studioHeader.classList.remove('border-primary', 'border-2');
+                        if (preview) preview.classList.remove('border', 'border-3', 'border-warning');
+                        logDebug("Tages-Design wiederhergestellt.");
                     }
-                    
-                    THEME_KEYS.forEach(key => { 
-                        if (nightConfig[key]) setAllValues(key, nightConfig[key]);
-                    });
-                    logDebug(`Nacht-Werte aktiv.`);
-                    
-                    label.innerText = "{% trans 'Zurück zum Tag-Design' %}";
-                    btn.classList.replace('btn-primary', 'btn-dark');
-                    btn.style.boxShadow = "0 0 15px rgba(0,0,0,0.5)";
-                    if (studioHeader) studioHeader.classList.add('border-primary', 'border-2');
-                    if (preview) preview.classList.add('border', 'border-3', 'border-warning');
-                    
-                } else {
-                    // Save Night values
-                    let nightConfig = {};
-                    THEME_KEYS.forEach(key => { nightConfig[key] = getPrimaryValue(key); });
-                    if (darkModeInput) darkModeInput.value = JSON.stringify(nightConfig);
-                    
-                    // Restore Day values
-                    THEME_KEYS.forEach(key => { 
-                        if(dayConfig[key]) setAllValues(key, dayConfig[key]);
-                    });
-                    
-                    label.innerText = "{% trans 'Nachtdesign anwenden' %}";
-                    btn.classList.replace('btn-dark', 'btn-primary');
-                    btn.style.boxShadow = "";
-                    if (studioHeader) studioHeader.classList.remove('border-primary', 'border-2');
-                    if (preview) preview.classList.remove('border', 'border-3', 'border-warning');
-                    logDebug("Tages-Design wiederhergestellt.");
-                }
-                updatePreview();
-            } catch (e) { showDebugError("Toggle-Fehler", e); }
-        });
+                    updatePreview();
+                } catch (e) { showDebugError("Toggle-Fehler", e); }
+            });
+        }
 
-        // Monitor inputs
+        // 6. Global Event Delegation
         document.addEventListener('input', (e) => {
             if (e.target.matches('[type="color"]') || e.target.classList.contains('form-control-color')) {
                 if (isEditingNightMode) {
@@ -315,7 +332,6 @@
             }
         });
 
-        // Presets
         document.addEventListener('click', (e) => {
             const preset = e.target.closest('.gradient-preset');
             if (preset) {
@@ -348,19 +364,23 @@
             }
         });
 
-        document.getElementById('profileForm').addEventListener('submit', function() {
-            try {
-                if (isEditingNightMode) {
-                    let nightConfig = {};
-                    THEME_KEYS.forEach(key => { nightConfig[key] = getPrimaryValue(key); });
-                    if (darkModeInput) darkModeInput.value = JSON.stringify(nightConfig);
-                    THEME_KEYS.forEach(key => { 
-                        if (dayConfig[key]) setAllValues(key, dayConfig[key]); 
-                    });
-                }
-            } catch (e) { console.error("Submit-Error", e); }
-        });
+        const profileForm = document.getElementById('profileForm');
+        if (profileForm) {
+            profileForm.addEventListener('submit', function() {
+                try {
+                    if (isEditingNightMode) {
+                        let nightConfig = {};
+                        THEME_KEYS.forEach(key => { nightConfig[key] = getPrimaryValue(key); });
+                        if (darkModeInput) darkModeInput.value = JSON.stringify(nightConfig);
+                        THEME_KEYS.forEach(key => { 
+                            if (dayConfig[key]) setAllValues(key, dayConfig[key]); 
+                        });
+                    }
+                } catch (e) { console.error("Submit-Error", e); }
+            });
+        }
 
+        // Initial preview
         updatePreview();
     })();
 </script>
