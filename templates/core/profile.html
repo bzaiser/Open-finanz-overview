@@ -65,10 +65,9 @@
 
                         <hr class="my-4 opacity-50">
                         
-                        <h5 class="mb-3 small fw-bold text-uppercase text-muted">{% trans "Privatsphäre" %}</h5>
-                        <div class="p-3 rounded-4 bg-light border">
-                            <i class="bi bi-moon-stars me-2"></i>
-                            {% trans "Nachtmodus wird über den Schalter im Header gesteuert." %}
+                        <div class="p-3 d-flex align-items-center justify-content-between rounded-4 bg-primary bg-opacity-10 border border-primary border-opacity-10 mb-2">
+                            <span class="small fw-bold text-primary text-uppercase">{% trans "Status" %}</span>
+                            <span class="badge bg-success rounded-pill px-3">{% trans "Bereit" %}</span>
                         </div>
                     </div>
                 </div>
@@ -80,7 +79,7 @@
                         
                         <!-- Premium Preview Box -->
                         <div id="harmonyPreview" class="rounded-4 p-4 text-white shadow-gradient d-flex flex-column justify-content-center text-center mb-4"
-                             style="background: var(--app-gradient); min-height: 120px; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);">
+                             style="background: var(--app-preview-gradient); min-height: 120px; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);">
                             <div class="fs-3 fw-bold shadow-text">{% trans "Design Harmonie" %}</div>
                             <div class="small opacity-75">{% trans "Echtzeit Live-Vorschau" %}</div>
                         </div>
@@ -205,6 +204,9 @@
             Object.entries(config).forEach(([key, value]) => {
                 html.style.setProperty('--app-' + key, value);
             });
+            // Also sync the persistent preview gradient for the button & box
+            html.style.setProperty('--app-preview-gradient', config['gradient']);
+
             html.style.setProperty('--bs-primary', config['primary']);
             html.style.setProperty('--bs-body-bg', config['card-bg']);
             html.style.setProperty('--bs-body-color', config['card-color']);

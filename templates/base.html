@@ -36,7 +36,10 @@
             --app-table-body-text: {{ user.profile.table_body_text_color|default:"var(--app-card-color)" }};
             --app-table-border-color: {{ user.profile.table_border_color|default:"rgba(0,0,0,0.1)" }};
             
-            /* Bootstrap Variable Overrides */
+            /* Static/Preview variables (not overridden by Night Mode) */
+            --app-preview-gradient: linear-gradient(135deg, {{ user.profile.gradient_start|default:"#6610f2" }} 0%, {{ user.profile.gradient_end|default:"#0d6efd" }} 100%);
+            
+            /* Theme overrides */
             --bs-modal-bg: var(--app-card-bg);
             --bs-modal-color: var(--app-card-color);
             --bs-tertiary-bg: var(--app-card-bg);
@@ -52,7 +55,8 @@
     {% else %}
     <style>
         :root { 
-            --app-gradient: linear-gradient(135deg, #6610f2 0%, #0d6efd 100%);
+            --app-preview-gradient: linear-gradient(135deg, #6610f2 0%, #0d6efd 100%);
+            --app-gradient: var(--app-preview-gradient);
             --app-primary: #0d6efd;
         }
     </style>
@@ -200,9 +204,9 @@
             --bs-table-bg: transparent !important;
         }
 
-        /* Premium Save Button Styled like the Preview */
-        .btn-preview-styled {
-            background: var(--app-gradient) !important;
+        /* Premium Save Button Styled like the Preview (Persistent Brightness) */
+        .btn-preview-styled, #harmonyPreview {
+            background: var(--app-preview-gradient) !important;
             border: none !important;
             color: white !important;
             font-weight: 600 !important;
