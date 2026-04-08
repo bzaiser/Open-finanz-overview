@@ -974,6 +974,8 @@ def confirm_bank_transaction(request, transaction_id):
     value = request.GET.get('value')
     
     was_mapping = (transaction.category is None and not transaction.is_ignored)
+    was_ready = (transaction.category is not None and not transaction.is_ignored)
+    was_ignored = transaction.is_ignored
     
     if field == 'is_ignored':
         transaction.is_ignored = (value == 'true')
@@ -992,63 +994,77 @@ def confirm_bank_transaction(request, transaction_id):
         transaction.frequency = value
     elif field == 'is_confirmed':
         transaction.is_confirmed = (value == 'true')
-        
     transaction.save()
     
     is_mapping = (transaction.category is None and not transaction.is_ignored)
     is_ready = (transaction.category is not None and not transaction.is_ignored)
+    is_ignored = transaction.is_ignored
     
     categories = Category.objects.all()
+    batch = transaction.batch
     
-    # If the state changed (mapping -> ready or vice versa), we might need to remove from one and add to another
-    # Using HTMX Out-of-Band Swaps
-    response_html = ""
+    # Recalculate states for OOB updates
+    mapping_count = batch.transactions.filter(is_ignored=False, category__isnull=True).count()
+    ready_count = batch.transactions.filter(is_ignored=False, category__isnull=False).count()
+    total_ready = sum(t.amount for t in batch.transactions.filter(is_ignored=False, category__isnull=False))
     
-    # Pre-calculate sums for OOB updates
-    total_ready = sum(t.amount for t in transaction.batch.transactions.filter(is_ignored=False, category__isnull=False))
     from django.contrib.humanize.templatetags.humanize import intcomma
-    total_str = f"{intcomma(round(total_ready, 2))} EUR"
-    oob_sum = f'<span id="total-ready-sum" hx-swap-oob="innerHTML">{total_str}</span>'
+    total_str = f"{intcomma(round(total_ready, 2))}"
     
-    if is_mapping:
-        # If it was in "Ready" before, we need a special OOB response to move it back
-        if not was_mapping:
-            # 1. Delete from Ready Pane (OOB)
-            response_html = f'<tr id="ready-row-{transaction.id}" hx-swap-oob="delete"></tr>'
-            
-            # 2. Add back to mapping pane (OOB) - using outerHTML for the new row with oob target
-            mapping_row_html = render_to_string('finance/partials/import_row.html', {
-                't': transaction, 
-                'categories': categories,
-            }).replace(f'id="mapping-row-{transaction.id}"', f'id="mapping-row-{transaction.id}" hx-swap-oob="afterbegin:#mapping-rows"')
-            
-            response_html += mapping_row_html
-            response_html += oob_sum
-            return HttpResponse(response_html)
-            
-        # Standard case (staying in mapping or just updating field)
-        return render(request, 'finance/partials/import_row.html', {'t': transaction, 'categories': categories})
+    # Build OOB Components
+    oob_elements = []
+    
+    # 1. Total Sum update
+    oob_elements.append(f'<span id="total-ready-sum" hx-swap-oob="innerHTML">{total_str}</span>')
+    
+    # 2. Empty Message Toggles
+    if mapping_count == 0:
+        # Show empty mapping message if not present
+        empty_mapping_html = render_to_string('finance/partials/import_mapping_pane.html', {'transactions': [], 'batch': batch})
+        # Extract only the empty message row part if possible, or just re-render the whole tbody
+        oob_elements.append(f'<tbody id="mapping-rows" hx-swap-oob="innerHTML">{render_to_string("finance/partials/import_row_empty_msg.html") if "import_row_empty_msg.html" in locals() else "<tr><td colspan=\"6\" class=\"text-center py-5\"><h5 class=\"text-success\">Alle Posten zugeordnet!</h5></td></tr>"}</tbody>')
+    elif was_mapping and mapping_count == 1:
+        # If it was empty before (not really possible if we just moved one OUT, but if we moved one IN)
+        pass 
 
-    elif is_ready:
-        # The row moved to "Ready" (Bottom). 
-        # 1. Remove from mapping pane (OOB)
-        response_html = f'<tr id="mapping-row-{transaction.id}" hx-swap-oob="delete"></tr>'
-        
-        # 2. Add to ready pane (OOB)
-        ready_row_html = render_to_string('finance/partials/import_ready_row.html', {
-            't': transaction, 
-            'categories': categories,
-        }).replace(f'id="ready-row-{transaction.id}"', f'id="ready-row-{transaction.id}" hx-swap-oob="afterbegin:#ready-rows"')
-        
-        response_html += ready_row_html
-        response_html += oob_sum
-        return HttpResponse(response_html)
-    else:
-        # It's ignored. Delete from BOTH panes via OOB.
-        response_html = f'<tr id="mapping-row-{transaction.id}" hx-swap-oob="delete"></tr>'
-        response_html += f'<tr id="ready-row-{transaction.id}" hx-swap-oob="delete"></tr>'
-        response_html += oob_sum
-        return HttpResponse(response_html)
+    # 3. Handle Pane Transitions
+    main_response = ""
+    
+    if was_mapping:
+        if is_ready:
+            # Move Mapping -> Ready
+            # Main response: empty (deletes the row from mapping via hx-swap="outerHTML")
+            main_response = ""
+            # OOB: Add to ready
+            ready_row_html = render_to_string('finance/partials/import_ready_row.html', {'t': transaction, 'categories': categories})
+            oob_elements.append(ready_row_html.replace(f'id="ready-row-{transaction.id}"', f'id="ready-row-{transaction.id}" hx-swap-oob="afterbegin:#ready-rows"'))
+            # OOB: Check if mapping is now empty
+            if mapping_count == 0:
+                 oob_elements.append(f'<tr id="empty-mapping-msg" hx-swap-oob="afterbegin:#mapping-rows"></tr>') # This is a bit complex, let's keep it simpler
+        elif is_ignored:
+            # Move Mapping -> Ignored
+            main_response = ""
+        else:
+            # Stay in Mapping (e.g. type toggle)
+            main_response = render_to_string('finance/partials/import_row.html', {'t': transaction, 'categories': categories})
+            
+    elif was_ready:
+        if is_mapping:
+            # Move Ready -> Mapping
+            main_response = ""
+            # OOB: Add to mapping
+            mapping_row_html = render_to_string('finance/partials/import_row.html', {'t': transaction, 'categories': categories})
+            oob_elements.append(mapping_row_html.replace(f'id="mapping-row-{transaction.id}"', f'id="mapping-row-{transaction.id}" hx-swap-oob="afterbegin:#mapping-rows"'))
+        elif is_ignored:
+            # Move Ready -> Ignored
+            main_response = ""
+        else:
+            # Stay in Ready (e.g. confirmation toggle)
+            main_response = render_to_string('finance/partials/import_ready_row.html', {'t': transaction, 'categories': categories})
+
+    # Final construction
+    response_content = main_response + "".join(oob_elements)
+    return HttpResponse(response_content)
 
 @login_required
 def apply_import_batch(request, batch_id):
