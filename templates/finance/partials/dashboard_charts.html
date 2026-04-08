@@ -7,8 +7,8 @@
     {% if item.visible %}
     <div class="col-md-{{ item.width }} mb-4" style="order: {{ item.order }};">
         <div class="card shadow h-100"
-            style="background-color: {{ item.bg_color|default:'#ffffff' }}; color: {{ item.text_color|default:'#212529' }};">
-            <div class="card-header d-flex justify-content-between align-items-center {% if 'table' in item.id %}px-3 border-0{% endif %}" style="color: {{ item.text_color|default:'#ffffff' }};">
+            style="background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color);">
+            <div class="card-header d-flex justify-content-between align-items-center {% if 'table' in item.id %}px-3 border-0{% endif %}" style="color: var(--app-card-color);">
                 <span class="fw-bold">
                     {% for k,v in available_charts.items %}
                     {% if k == item.id %}
@@ -23,8 +23,8 @@
                 {% endif %}
             </div>
             <div class="card-body d-flex flex-column {% if 'table' in item.id %}p-0{% endif %}" 
-                style="{% if 'table' in item.id %}background-color: {{ profile.table_body_bg_color|default:'#ffffff' }} !important;{% endif %} flex-grow: 1;">
-                <div style="position:relative;{% if 'table' in item.id %}background-color: {{ profile.table_body_bg_color|default:'#ffffff' }} !important; height: 100%; min-height: {% if item.height == 'small' %}250px{% elif item.height == 'medium' %}400px{% else %}600px{% endif %};{% else %}{% if item.height == 'small' %}height:250px;{% elif item.height == 'medium' %}height:400px;{% else %}height:600px;{% endif %}{% endif %}">
+                style="{% if 'table' in item.id %}background-color: var(--app-table-body-bg) !important;{% endif %} flex-grow: 1;">
+                <div style="position:relative;{% if 'table' in item.id %}background-color: var(--app-table-body-bg) !important; height: 100%; min-height: {% if item.height == 'small' %}250px{% elif item.height == 'medium' %}400px{% else %}600px{% endif %};{% else %}{% if item.height == 'small' %}height:250px;{% elif item.height == 'medium' %}height:400px;{% else %}height:600px;{% endif %}{% endif %}">
                     {% if item.id == 'income_table_widget' %}
                         {{ table_datasets.income_table_widget|json_script:item.id }}
                         {% include 'finance/partials/dashboard_table_simple.html' with widget_id=item.id %}
@@ -62,7 +62,19 @@
             return;
         }
         const chartData = JSON.parse(dataElement.textContent);
-        console.log('Initializing charts with data:', chartData);
+        
+        // Helper to get theme-aware colors for Chart.js
+        const getThemeColors = () => {
+            const style = getComputedStyle(document.documentElement);
+            const isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark';
+            return {
+                text: style.getPropertyValue('--app-card-color').trim() || (isDark ? '#e9ecef' : '#212529'),
+                grid: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)',
+                stichtag: '#ffc107'
+            };
+        };
+        const theme = getThemeColors();
+
         {% for item in layout %}
         {% if item.visible %}
         if (chartData['{{ item.id }}']) {
@@ -106,13 +118,23 @@
                             }
                         },
                         scales: {
-                            x: { grid: { color: function(context) {
-                                if (stichtagIdx >= 0 && context.index === stichtagIdx) return 'rgba(255, 193, 7, 0.8)';
-                                return 'rgba(0, 0, 0, 0.05)';
-                            }, lineWidth: function(context) {
-                                if (stichtagIdx >= 0 && context.index === stichtagIdx) return 2;
-                                return 1;
-                            }}}
+                            x: { 
+                                grid: { 
+                                    color: function(context) {
+                                        if (stichtagIdx >= 0 && context.index === stichtagIdx) return 'rgba(255, 193, 7, 0.8)';
+                                        return theme.grid;
+                                    }, 
+                                    lineWidth: function(context) {
+                                        if (stichtagIdx >= 0 && context.index === stichtagIdx) return 2;
+                                        return 1;
+                                    }
+                                },
+                                ticks: { color: theme.text }
+                            },
+                            y: {
+                                grid: { color: theme.grid },
+                                ticks: { color: theme.text }
+                            }
                         }
                     },
                     plugins: [{

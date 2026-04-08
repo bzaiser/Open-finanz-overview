@@ -16,6 +16,12 @@ class UserProfileForm(forms.ModelForm):
         label=_("Birth Date")
     )
     
+    auto_night_mode = forms.BooleanField(
+        required=False,
+        label=_("Nachtmodus Einstellungen vom System übernehmen"),
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+    )
+    
     # Design & Colors (Explicit overrides)
     gradient_start = forms.CharField(
         widget=forms.TextInput(attrs={'type': 'color', 'class': 'form-control form-control-color'}),

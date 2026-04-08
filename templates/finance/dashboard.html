@@ -225,29 +225,27 @@
                         <thead>
                             <tr>
                                 <th style="width: 40px;"></th>
-                                <th>{% trans "Chart" %}</th>
                                 <th>{% trans "Visible" %}</th>
+                                <th>{% trans "Chart" %}</th>
                                 <th>{% trans "Width" %}</th>
                                 <th>{% trans "Height" %}</th>
-                                <th>{% trans "Colors" %}</th>
                             </tr>
                         </thead>
                         <tbody id="layout-table-body">
                             {% for item in layout %}
-                            <tr data-id="{{ item.id }}" data-width="{{ item.width }}" data-height="{{ item.height }}"
-                                data-bg="{{ item.bg_color }}" data-text="{{ item.text_color }}"
-                                data-visible="{{ item.visible|yesno:'true,false' }}" data-order="{{ item.order }}">
-                                <td><i class="bi bi-grip-vertical drag-handle" style="cursor: move; font-size: 1.2em;"></i></td>
+                            <tr data-id="{{ item.id }}">
+                                <td class="drag-handle" style="cursor: move;"><i class="bi bi-grip-vertical"></i></td>
+                                <td><input type="checkbox" class="form-check-input layout-visible" {{ item.visible|yesno:"checked," }}></td>
                                 <td>
                                     {% for k,v in available_charts.items %}
-                                    {% if k == item.id %}{{ v.title }}{% endif %}
+                                        {% if k == item.id %}{{ v.title }}{% endif %}
                                     {% endfor %}
                                 </td>
-                                <td><input type="checkbox" class="form-check-input layout-visible" {{ item.visible|yesno:"checked," }}></td>
                                 <td>
                                     <select class="form-select form-select-sm layout-width">
                                         <option value="4" {% if item.width == 4 %}selected{% endif %}>1/3</option>
                                         <option value="6" {% if item.width == 6 %}selected{% endif %}>1/2</option>
+                                        <option value="8" {% if item.width == 8 %}selected{% endif %}>2/3</option>
                                         <option value="12" {% if item.width == 12 %}selected{% endif %}>Full</option>
                                     </select>
                                 </td>
@@ -257,12 +255,6 @@
                                         <option value="medium" {% if item.height == 'medium' %}selected{% endif %}>{% trans "Medium" %}</option>
                                         <option value="large" {% if item.height == 'large' %}selected{% endif %}>{% trans "Large" %}</option>
                                     </select>
-                                </td>
-                                <td>
-                                    <div class="d-flex gap-1">
-                                        <input type="color" class="form-control form-control-color form-control-sm layout-bg" value="{{ item.bg_color }}">
-                                        <input type="color" class="form-control form-control-color form-control-sm layout-text" value="{{ item.text_color }}">
-                                    </div>
                                 </td>
                             </tr>
                             {% endfor %}
@@ -316,9 +308,7 @@
                     visible: row.querySelector('.layout-visible').checked,
                     width: parseInt(row.querySelector('.layout-width').value),
                     height: row.querySelector('.layout-height').value,
-                    bg_color: row.querySelector('.layout-bg').value,
-                    text_color: row.querySelector('.layout-text').value,
-                    order: index + 1
+                    order: index
                 });
             });
             document.getElementById('layout_json').value = JSON.stringify(layout);
