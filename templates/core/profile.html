@@ -18,9 +18,20 @@
             </div>
         </div>
 
+        {% if form.errors %}
+        <div class="alert alert-danger bg-danger bg-opacity-10 border-danger border-opacity-25 rounded-4 mb-4 shadow-sm">
+            <h5 class="alert-heading fw-bold"><i class="bi bi-exclamation-triangle-fill me-2"></i>{% trans "Hinweis" %}</h5>
+            <p class="mb-0">{% trans "Einige Felder konnten nicht gespeichert werden. Bitte prüfe deine Eingaben:" %}</p>
+            <ul class="mt-2 mb-0">
+                {% for field, errors in form.errors.items %}
+                    <li><strong>{{ field|title }}:</strong> {{ errors|join:", " }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
         <form method="post" enctype="multipart/form-data" id="profileForm">
             {% csrf_token %}
-            <!-- Hidden state preservation -->
             {{ form.auto_night_mode.as_hidden }}
             {{ form.dark_mode_config.as_hidden }}
             
@@ -32,7 +43,7 @@
                         <div class="row g-3">
                             <div class="col-12 mb-3">
                                 <label class="form-label small fw-bold">{% trans "Profilbild" %}</label>
-                                <div class="d-flex align-items-center gap-3 p-3 rounded-4 border border-dashed">
+                                <div class="d-flex align-items-center gap-3 p-3 rounded-4 border border-dashed text-center justify-content-center">
                                     {% if user.profile.avatar %}
                                         <img src="{{ user.profile.avatar.url }}" class="rounded-circle shadow-sm" width="60" height="60" style="object-fit: cover;">
                                     {% else %}
@@ -40,33 +51,24 @@
                                             <i class="bi bi-person fs-2"></i>
                                         </div>
                                     {% endif %}
-                                    <div class="flex-grow-1">
+                                    <div class="flex-grow-1 text-start">
                                         {{ form.avatar }}
                                     </div>
                                 </div>
                             </div>
-                            <!-- Profil Informationen -->
-                            <div class="p-3 rounded-4 bg-light bg-opacity-10 border border-white border-opacity-10 mb-4">
-                                <div class="row g-3">
-                                    <div class="col-6">
-                                        <label class="form-label small fw-bold opacity-75">{% trans "Benutzername" %}</label>
-                                        <div class="fw-bold">{{ user.username }}</div>
-                                    </div>
-                                    <div class="col-6">
-                                        <label class="form-label small fw-bold opacity-75">{% trans "E-Mail" %}</label>
-                                        <div class="small text-truncate">{{ user.email }}</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="form-label small fw-bold"><i class="bi bi-person-badge me-2"></i>{% trans "Anzeigename" %}</label>
+                            
+                            <div class="col-md-12">
+                                <label class="form-label small fw-bold">{% trans "Anzeigename" %}</label>
                                 {{ form.display_name }}
                             </div>
                             
-                            <div class="mb-4">
-                                <label class="form-label small fw-bold"><i class="bi bi-currency-euro me-2"></i>{% trans "Währung" %}</label>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">{% trans "Währung" %}</label>
                                 {{ form.currency }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">{% trans "Sprache" %}</label>
+                                {{ form.language }}
                             </div>
 
                             <div class="col-md-6">
@@ -74,22 +76,22 @@
                                 {{ form.birth_date }}
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label small fw-bold">{% trans "Sprache" %}</label>
-                                {{ form.language }}
-                            </div>
-                            <div class="col-md-6">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label small fw-bold">{% trans "Simulation Max. Alter" %}</label>
+                                <label class="form-label small fw-bold">{% trans "Sim. Max Alter" %}</label>
                                 {{ form.simulation_max_age }}
                             </div>
                         </div>
 
                         <hr class="my-4 opacity-50">
                         
-                        <div class="p-3 d-flex align-items-center justify-content-between rounded-4 bg-primary bg-opacity-10 border border-primary border-opacity-10 mb-2">
-                            <span class="small fw-bold text-primary text-uppercase">{% trans "Status" %}</span>
-                            <span class="badge bg-success rounded-pill px-3">{% trans "Bereit" %}</span>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">{% trans "Inflation (%)" %}</label>
+                                {{ form.inflation_rate }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">{% trans "Gehaltsplus (%)" %}</label>
+                                {{ form.salary_increase }}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -108,58 +110,36 @@
 
                         <label class="form-label small fw-bold mb-3">{% trans "Wähle eine Farbzusammenstellung" %}</label>
                         <div class="d-flex flex-wrap gap-3 mb-4">
-                            <div class="preset-pill shadow-sm gradient-preset" 
-                                 data-start="#6610f2" data-end="#0d6efd" data-primary="#0d6efd" data-bg="#ffffff" data-sidebar="#f8f9fa" data-text="#212529"
-                                 style="background: linear-gradient(135deg, #6610f2 0%, #0d6efd 100%);" title="Vibrant Blue"></div>
-                            <div class="preset-pill shadow-sm gradient-preset" 
-                                 data-start="#198754" data-end="#20c997" data-primary="#198754" data-bg="#ffffff" data-sidebar="#f5fff9" data-text="#0a5c2d"
-                                 style="background: linear-gradient(135deg, #198754 0%, #20c997 100%);" title="Nature Green"></div>
-                            <div class="preset-pill shadow-sm gradient-preset" 
-                                 data-start="#fd7e14" data-end="#ffc107" data-primary="#fd7e14" data-bg="#ffffff" data-sidebar="#fffef5" data-text="#854000"
-                                 style="background: linear-gradient(135deg, #fd7e14 0%, #ffc107 100%);" title="Sunset Orange"></div>
-                            <div class="preset-pill shadow-sm gradient-preset" 
-                                 data-start="#d63384" data-end="#6610f2" data-primary="#d63384" data-bg="#ffffff" data-sidebar="#fcf5f8" data-text="#a10056"
-                                 style="background: linear-gradient(135deg, #d63384 0%, #6610f2 100%);" title="Berry Punch"></div>
-                            <div class="preset-pill shadow-sm gradient-preset" 
-                                 data-start="#212529" data-end="#495057" data-primary="#343a40" data-bg="#ffffff" data-sidebar="#f8f9fa" data-text="#212529"
-                                 style="background: linear-gradient(135deg, #212529 0%, #495057 100%); border: 1px solid #dee2e6;" title="Onyx Grey"></div>
-                            <div class="preset-pill shadow-sm gradient-preset" 
-                                 data-start="#4e54c8" data-end="#8f94fb" data-primary="#4e54c8" data-bg="#ffffff" data-sidebar="#f5f6ff" data-text="#1a237e"
-                                 style="background: linear-gradient(135deg, #4e54c8 0%, #8f94fb 100%);" title="Electric Indigo"></div>
-                            <div class="preset-pill shadow-sm gradient-preset" 
-                                 data-start="#11998e" data-end="#38ef7d" data-primary="#11998e" data-bg="#ffffff" data-sidebar="#f4fff9" data-text="#0a5228"
-                                 style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);" title="Emerald Sea"></div>
-                            <div class="preset-pill shadow-sm gradient-preset" 
-                                 data-start="#373b44" data-end="#4286f4" data-primary="#4286f4" data-bg="#ffffff" data-sidebar="#f0f5ff" data-text="#001d4d"
-                                 style="background: linear-gradient(135deg, #373b44 0%, #4286f4 100%);" title="Corporate Blue"></div>
+                            {% include "core/partials/harmony_presets.html" %}
                         </div>
 
-                        <div class="d-flex align-items-center justify-content-between pt-3 border-top">
-                            <p class="small text-muted mb-0">{% trans "Nutze das Präzisions-Studio für eigene Farbcodes." %}</p>
-                            <button type="button" class="btn btn-outline-primary btn-sm rounded-pill px-3" data-bs-toggle="collapse" data-bs-target="#precisionStudio">
-                                <i class="bi bi-sliders me-1"></i> {% trans "Detail-Einstellungen" %}
-                            </button>
+                        <!-- Precision Studio (Accordion) -->
+                        <div class="accordion accordion-flush rounded-4 overflow-hidden border" id="precisionStudio">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed py-3 fw-bold bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePrecision">
+                                        <i class="bi bi-sliders me-2 text-primary"></i> {% trans "Präzisions-Studio (Farben manuell anpassen)" %}
+                                    </button>
+                                </h2>
+                                <div id="collapsePrecision" class="accordion-collapse collapse" data-bs-parent="#precisionStudio">
+                                    <div class="accordion-body bg-light bg-opacity-10">
+                                        <div class="row g-3">
+                                            <div class="col-md-3"><label class="form-label small fw-bold">{% trans "Primär" %}</label>{{ form.primary_color }}</div>
+                                            <div class="col-md-3"><label class="form-label small fw-bold">{% trans "Start" %}</label>{{ form.gradient_start }}</div>
+                                            <div class="col-md-3"><label class="form-label small fw-bold">{% trans "Ende" %}</label>{{ form.gradient_end }}</div>
+                                            <div class="col-md-3"><label class="form-label small fw-bold">{% trans "Hintergrund" %}</label>{{ form.background_color }}</div>
+                                            <div class="col-md-3"><label class="form-label small fw-bold">{% trans "Sidebar BG" %}</label>{{ form.sidebar_bg_color }}</div>
+                                            <div class="col-md-3"><label class="form-label small fw-bold">{% trans "Text" %}</label>{{ form.text_color }}</div>
+                                            <div class="col-md-3"><label class="form-label small fw-bold">{% trans "Tab. Header BG" %}</label>{{ form.table_header_bg_color }}</div>
+                                            <div class="col-md-3"><label class="form-label small fw-bold">{% trans "Tab. Header Text" %}</label>{{ form.table_header_text_color }}</div>
+                                            <div class="col-md-3"><label class="form-label small fw-bold">{% trans "Tab. Body BG" %}</label>{{ form.table_body_bg_color }}</div>
+                                            <div class="col-md-3"><label class="form-label small fw-bold">{% trans "Tab. Body Text" %}</label>{{ form.table_body_text_color }}</div>
+                                            <div class="col-md-3"><label class="form-label small fw-bold">{% trans "Tab. Border" %}</label>{{ form.table_border_color }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Präzisions-Studio Collapse -->
-            <div class="collapse mb-4" id="precisionStudio">
-                <div class="glass-card shadow-lg p-4 border-primary border-opacity-10">
-                    <h5 class="mb-4 text-primary fw-bold">{% trans "Feineinstellungen" %}</h5>
-                    <div class="row g-4">
-                        <div class="col-md-3"><label class="form-label small fw-bold">{% trans "Verlauf Start" %}</label>{{ form.gradient_start }}</div>
-                        <div class="col-md-3"><label class="form-label small fw-bold">{% trans "Verlauf Ende" %}</label>{{ form.gradient_end }}</div>
-                        <div class="col-md-3"><label class="form-label small fw-bold">{% trans "Primärfarbe" %}</label>{{ form.primary_color }}</div>
-                        <div class="col-md-3"><label class="form-label small fw-bold">{% trans "Hintergrund" %}</label>{{ form.background_color }}</div>
-                        <div class="col-md-3"><label class="form-label small fw-bold">{% trans "Sidebar Hintergrund" %}</label>{{ form.sidebar_bg_color }}</div>
-                        <div class="col-md-3"><label class="form-label small fw-bold">{% trans "Text Farbe" %}</label>{{ form.text_color }}</div>
-                        <div class="col-md-3"><label class="form-label small fw-bold">{% trans "Tabellen Header BG" %}</label>{{ form.table_header_bg_color }}</div>
-                        <div class="col-md-3"><label class="form-label small fw-bold">{% trans "Tabellen Header Text" %}</label>{{ form.table_header_text_color }}</div>
-                        <div class="col-md-3"><label class="form-label small fw-bold">{% trans "Tabellen Body BG" %}</label>{{ form.table_body_bg_color }}</div>
-                        <div class="col-md-3"><label class="form-label small fw-bold">{% trans "Tabellen Body Text" %}</label>{{ form.table_body_text_color }}</div>
-                        <div class="col-md-3"><label class="form-label small fw-bold">{% trans "Tabellen Rahmen" %}</label>{{ form.table_border_color }}</div>
                     </div>
                 </div>
             </div>
@@ -184,7 +164,6 @@
         function getPrimaryValue(name) {
             const el = profileForm.querySelector(`input[name="${name}"][type="color"]`) || 
                        profileForm.querySelector(`[name="${name}"]`);
-            // Robust fallback to prevent white-out if element is missing during transition
             if (!el || !el.value) {
                 if (name.includes('color') || name.includes('bg')) return '#ffffff';
                 if (name.includes('text')) return '#212529';
@@ -226,40 +205,26 @@
                 'table-border-color': getPrimaryValue('table_border_color')
             };
 
-            // Update local preview box
-            if (preview) {
-                preview.style.background = config['gradient'];
-            }
+            if (preview) { preview.style.background = config['gradient']; }
 
-            // Apply GLOABLLY for instant feedback (even in Night Mode session)
             Object.entries(config).forEach(([key, value]) => {
-                // If in Night Mode, only override the surface if 'forceBackground' is true
                 if (isNight && !forceBackground) {
-                    if (['card-bg', 'sidebar-bg', 'table-body-bg'].includes(key)) {
-                        return; // Keep it black
-                    }
+                    if (['card-bg', 'sidebar-bg', 'table-body-bg'].includes(key)) return;
                 }
                 html.style.setProperty('--app-' + key, value);
             });
-            // Also sync the persistent preview gradient for the button & box
             html.style.setProperty('--app-preview-gradient', config['gradient']);
 
-            // Only override Bootstrap body globals if forced or NOT in night mode
             if (!isNight || forceBackground) {
                 html.style.setProperty('--bs-primary', config['primary']);
                 html.style.setProperty('--bs-body-bg', config['card-bg']);
                 html.style.setProperty('--bs-body-color', config['card-color']);
                 html.style.setProperty('--bs-tertiary-bg', config['card-bg']);
                 html.style.setProperty('--bs-card-bg', config['card-bg']);
-                
-                // If forced background in Night Mode, we technically "break out" of dark theme visually
-                if (isNight && forceBackground) {
-                    html.removeAttribute('data-bs-theme');
-                }
+                if (isNight && forceBackground) { html.removeAttribute('data-bs-theme'); }
             }
         }
 
-        // Harmony Click Listener
         document.addEventListener('click', (e) => {
             const preset = e.target.closest('.gradient-preset');
             if (preset) {
@@ -272,16 +237,13 @@
                     table_header_text_color: '#ffffff',
                     table_body_bg_color: d.bg || '#ffffff',
                     table_body_text_color: d.text || '#212529',
-                    table_border_color: (d.bg && (d.bg === '#121212' || d.bg === '#0d1117')) ? '#333333' : '#dee2e6'
+                    table_border_color: (d.bg === '#121212' || d.bg === '#0d1117') ? '#333333' : '#dee2e6'
                 };
                 Object.keys(updateList).forEach(key => setAllValues(key, updateList[key], true));
-                isSyncing = true;
-                applyLiveTheme(false); // Do NOT force background on harmony click
-                setTimeout(() => { isSyncing = false; }, 50);
+                applyLiveTheme(false);
             }
         });
 
-        // Manual Input Listener
         if (profileForm) {
             profileForm.addEventListener('input', (e) => {
                 if (isSyncing) return;
@@ -290,9 +252,7 @@
                     const name = target.getAttribute('name');
                     if (name) {
                         setAllValues(name, target.value);
-                        // If user explicitly touches background, force it!
-                        const force = (name === 'background_color');
-                        applyLiveTheme(force);
+                        applyLiveTheme(name === 'background_color');
                     }
                 }
             });
@@ -309,23 +269,10 @@
         border-radius: 20px;
     }
     .preset-pill {
-        width: 42px;
-        height: 42px;
-        border-radius: 12px;
-        cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        border: 3px solid white;
+        width: 42px; height: 42px; border-radius: 12px;
+        cursor: pointer; transition: all 0.3s; border: 3px solid white;
     }
-    .preset-pill:hover { 
-        transform: scale(1.15) translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-    }
-    .shadow-text { text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
-    .shadow-gradient {
-        box-shadow: 0 15px 45px -10px rgba(var(--app-primary-rgb, 13, 110, 253), 0.4);
-    }
-    .border-dashed {
-        border: 2px dashed rgba(0,0,0,0.1) !important;
-    }
+    .preset-pill:hover { transform: scale(1.15) translateY(-5px); }
+    .shadow-gradient { box-shadow: 0 15px 45px -10px rgba(13, 110, 253, 0.4); }
 </style>
 {% endblock %}
