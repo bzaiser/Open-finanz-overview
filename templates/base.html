@@ -63,6 +63,76 @@
             color: var(--bs-body-color, #212529);
         }
 
+        /* Global Form Control Harmonization */
+        .form-control, .form-select {
+            background-color: var(--app-input-bg) !important;
+            color: var(--app-input-color) !important;
+            border: 1px solid var(--app-input-border) !important;
+        }
+        .form-control:focus, .form-select:focus {
+            background-color: var(--app-input-bg) !important;
+            color: var(--app-input-color) !important;
+            border-color: var(--app-primary) !important;
+            box-shadow: 0 0 0 0.25rem rgba(var(--app-primary-rgb, 13, 110, 253), 0.25);
+        }
+        .form-label {
+            color: var(--app-card-color) !important;
+            opacity: 0.8;
+            margin-bottom: 0.4rem;
+        }
+    </style>
+
+    <script>
+        (function() {
+            // Theme Synchronizer Logic
+            const autoNightMode = {% if user.is_authenticated and user.profile.auto_night_mode %}true{% else %}false{% endif %};
+            const nightConfig = {{ user.profile.dark_mode_config|safe|default:"{}" }};
+            
+            function applyTheme() {
+                const isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                const html = document.documentElement;
+                
+                if (autoNightMode && isSystemDark) {
+                    html.setAttribute('data-bs-theme', 'dark');
+                    // Inject Night Harmony Overrides
+                    if (nightConfig.background_color) {
+                        html.style.setProperty('--bs-body-bg', nightConfig.background_color);
+                        html.style.setProperty('--app-card-bg', nightConfig.background_color);
+                        html.style.setProperty('--app-table-body-bg', nightConfig.background_color);
+                    }
+                    if (nightConfig.text_color) {
+                        html.style.setProperty('--bs-body-color', nightConfig.text_color);
+                        html.style.setProperty('--app-card-color', nightConfig.text_color);
+                        html.style.setProperty('--app-table-body-text', nightConfig.text_color);
+                    }
+                    if (nightConfig.primary_color) {
+                        html.style.setProperty('--app-primary', nightConfig.primary_color);
+                        html.style.setProperty('--bs-primary', nightConfig.primary_color);
+                    }
+                    if (nightConfig.gradient_start && nightConfig.gradient_end) {
+                        html.style.setProperty('--app-gradient', `linear-gradient(135deg, ${nightConfig.gradient_start} 0%, ${nightConfig.gradient_end} 100%)`);
+                    }
+                    if (nightConfig.sidebar_bg_color) {
+                        html.style.setProperty('--app-sidebar-bg', nightConfig.sidebar_bg_color);
+                    }
+                    // Harmonized Inputs for Dark Mode
+                    html.style.setProperty('--app-input-bg', nightConfig.background_color || '#121212');
+                    html.style.setProperty('--app-input-color', nightConfig.text_color || '#e9ecef');
+                } else {
+                    // Fallback to Profile Default (is handled by Django-Template variables in CSS block above)
+                    html.removeAttribute('style'); // Clear overrides
+                }
+            }
+
+            // Watch for system changes
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
+            // Apply on load
+            document.addEventListener('DOMContentLoaded', applyTheme);
+            applyTheme(); // Early application to prevent flash
+        })();
+    </script>
+
+    <style>
         .modal-content {
             background-color: var(--bs-modal-bg, #ffffff);
             color: var(--bs-modal-color, #212529);

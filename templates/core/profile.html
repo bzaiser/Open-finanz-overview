@@ -100,6 +100,22 @@
                              style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);" title="Cherry Blossom"></div>
                     </div>
 
+                    <!-- System Sync & Mode Toggle -->
+                    <div class="mb-4 p-3 rounded-4 border border-primary border-opacity-10 bg-light bg-opacity-25">
+                        <div class="form-check form-switch mb-2">
+                            {{ form.auto_night_mode }}
+                            <label class="form-check-label fw-bold small" for="{{ form.auto_night_mode.id_for_label }}">
+                                <i class="bi bi-display me-1"></i> {% trans "System-Design automatisch folgen" %}
+                            </label>
+                        </div>
+                        <div class="mt-3">
+                            <button type="button" id="toggleNightEdit" class="btn btn-outline-primary btn-sm rounded-pill px-3 w-100 d-flex align-items-center justify-content-center gap-2">
+                                <i class="bi bi-moon-stars"></i> <span id="editModeLabel">{% trans "Nacht-Design anpassen" %}</span>
+                            </button>
+                            <input type="hidden" name="dark_mode_config" id="dark_mode_config_input" value="{{ user.profile.dark_mode_config|safe|default:"{}" }}">
+                        </div>
+                    </div>
+
                     <!-- Präzisions-Studio (Advanced Settings) -->
                     <div class="accordion mb-4" id="designAccordion">
                         <div class="accordion-item border-0 shadow-sm rounded-4 overflow-hidden">
@@ -159,14 +175,69 @@
 
     const preview = document.getElementById('harmonyPreview');
 
+    let isEditingNightMode = false;
+    let dayConfig = {};
+    const darkModeInput = document.getElementById('dark_mode_config_input');
+    let nightConfig = JSON.parse(darkModeInput.value || '{}');
+
+    // Initialize Night Config with Midnight preset if it's empty
+    if (Object.keys(nightConfig).length === 0) {
+        nightConfig = {
+            gradient_start: '#212529', gradient_end: '#495057', primary_color: '#343a40',
+            background_color: '#121212', sidebar_bg_color: '#1a1a1a', text_color: '#e9ecef',
+            table_header_bg_color: '#343a40', table_header_text_color: '#ffffff',
+            table_filter_bg_color: '#2a2a2a', table_body_bg_color: '#121212',
+            table_body_text_color: '#e9ecef', table_border_color: '#333333'
+        };
+    }
+
     function updatePreview() {
         const s = inputs.gradient_start?.value || '#6610f2';
         const e = inputs.gradient_end?.value || '#0d6efd';
         if (preview) preview.style.background = `linear-gradient(135deg, ${s} 0%, ${e} 100%)`;
     }
 
-    if (inputs.gradient_start) inputs.gradient_start.addEventListener('input', updatePreview);
-    if (inputs.gradient_end) inputs.gradient_end.addEventListener('input', updatePreview);
+    document.getElementById('toggleNightEdit').addEventListener('click', function() {
+        isEditingNightMode = !isEditingNightMode;
+        const btn = this;
+        const label = document.getElementById('editModeLabel');
+        const studioHeader = document.querySelector('#collapseStudio .accordion-body');
+        
+        if (isEditingNightMode) {
+            // Store current day values
+            Object.keys(inputs).forEach(key => dayConfig[key] = inputs[key].value);
+            // Swapping to night values
+            Object.keys(inputs).forEach(key => { if (nightConfig[key]) inputs[key].value = nightConfig[key]; });
+            
+            label.innerText = "{% trans 'Zurück zum Tag-Design' %}";
+            btn.classList.replace('btn-outline-primary', 'btn-primary');
+            studioHeader.classList.add('border-primary', 'border-2');
+            preview.classList.add('border', 'border-3', 'border-warning');
+        } else {
+            // Save current state back to nightConfig before switching
+            Object.keys(inputs).forEach(key => nightConfig[key] = inputs[key].value);
+            darkModeInput.value = JSON.stringify(nightConfig);
+            // Restore day values
+            Object.keys(inputs).forEach(key => inputs[key].value = dayConfig[key]);
+            
+            label.innerText = "{% trans 'Nacht-Design anpassen' %}";
+            btn.classList.replace('btn-primary', 'btn-outline-primary');
+            studioHeader.classList.remove('border-primary', 'border-2');
+            preview.classList.remove('border', 'border-3', 'border-warning');
+        }
+        updatePreview();
+    });
+
+    // Capture changes to nightConfig live if in night mode
+    Object.values(inputs).forEach(input => {
+        input.addEventListener('input', () => {
+            if (isEditingNightMode) {
+                Object.keys(inputs).forEach(key => nightConfig[key] = inputs[key].value);
+                darkModeInput.value = JSON.stringify(nightConfig);
+            }
+            updatePreview();
+        });
+    });
 
     document.querySelectorAll('.gradient-preset').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -178,11 +249,16 @@
             if (inputs.sidebar_bg_color) inputs.sidebar_bg_color.value = data.sidebar;
             if (inputs.text_color) inputs.text_color.value = data.text;
             if (inputs.table_header_bg_color) inputs.table_header_bg_color.value = data.primary;
-            if (inputs.table_header_text_color) inputs.table_header_text_color.value = (data.bg === '#121212' ? '#ffffff' : '#ffffff');
-            if (inputs.table_filter_bg_color) inputs.table_filter_bg_color.value = (data.bg === '#121212' ? '#2a2a2a' : '#f1f3f5');
+            if (inputs.table_header_text_color) inputs.table_header_text_color.value = (data.bg === '#121212' || data.bg === '#0d1117' ? '#ffffff' : '#ffffff');
+            if (inputs.table_filter_bg_color) inputs.table_filter_bg_color.value = (data.bg === '#121212' || data.bg === '#0d1117' ? '#2a2a2a' : '#f1f3f5');
             if (inputs.table_body_bg_color) inputs.table_body_bg_color.value = data.bg;
             if (inputs.table_body_text_color) inputs.table_body_text_color.value = data.text;
-            if (inputs.table_border_color) inputs.table_border_color.value = (data.bg === '#121212' ? '#333333' : '#dee2e6');
+            if (inputs.table_border_color) inputs.table_border_color.value = (data.bg === '#121212' || data.bg === '#0d1117' ? '#333333' : '#dee2e6');
+            
+            if (isEditingNightMode) {
+                Object.keys(inputs).forEach(key => nightConfig[key] = inputs[key].value);
+                darkModeInput.value = JSON.stringify(nightConfig);
+            }
             updatePreview();
         });
     });

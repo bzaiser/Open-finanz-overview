@@ -47,6 +47,10 @@ class UserProfile(models.Model):
     real_estate_growth_rate = models.DecimalField(_("Default Real Estate Growth (%)"), max_digits=5, decimal_places=2, default=0.0)
     physical_asset_growth_rate = models.DecimalField(_("Default Physical Asset Growth (%)"), max_digits=5, decimal_places=2, default=0.0)
     dashboard_config = models.JSONField(_("Dashboard Configuration"), default=dict, blank=True)
+    
+    # Night Mode / System Sync
+    auto_night_mode = models.BooleanField(_("Follow System Design"), default=False)
+    dark_mode_config = models.JSONField(_("Night Mode Colors"), default=dict, blank=True)
 
     # Gradient & Unified Design Fields
     gradient_start = models.CharField(_("Gradient Start Color"), max_length=7, default="#6610f2")
