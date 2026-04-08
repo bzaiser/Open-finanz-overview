@@ -58,139 +58,86 @@
             return 0;
         });
     },
-    get displayRows() {
-        const sorted = this.filteredItems;
-        const rows = [];
-        let currentYear = null;
-        
-        const yearSums = {};
-        sorted.forEach(i => {
-            yearSums[i.year] = (yearSums[i.year] || 0) + (parseFloat(i.amount) || 0);
-        });
-
-        sorted.forEach(item => {
-            if (item.year !== currentYear) {
-                currentYear = item.year;
-                rows.push({
-                    isGroupHeader: true,
-                    year: currentYear,
-                    subtotal: yearSums[currentYear]
-                });
-            }
-            if (!this.collapsedGroups[currentYear]) {
-                rows.push({
-                    isGroupHeader: false,
-                    ...item
-                });
-            }
-        });
-        return rows;
-    },
-    get hasDate() {
-        return this.items.some(i => i.date);
-    },
     get total() {
         return this.filteredItems.reduce((sum, i) => sum + (parseFloat(i.amount) || 0), 0);
     }
-}" class="h-100 d-flex flex-column" x-init="init()" style="background-color: {{ table_config.body_bg_color }} !important;">
+}" class="h-100 d-flex flex-column" x-init="init()" style="background-color: var(--app-table-body-bg) !important;">
     
-    <div class="flex-grow-1 overflow-auto px-0" style="max-height: 100%; background-color: {{ table_config.body_bg_color }} !important;">
+    <div class="flex-grow-1 overflow-auto px-0" style="background-color: var(--app-table-body-bg) !important;">
         <table class="table table-sm table-hover align-middle mb-0" 
-               style="font-size: 0.85rem; border-color: {{ table_config.border_color }} !important; --bs-table-bg: {{ table_config.body_bg_color }}; --bs-table-color: {{ table_config.body_text_color }};">
+               style="font-size: 0.82rem; border-color: var(--app-table-border-color) !important; --bs-table-bg: var(--app-table-body-bg); --bs-table-color: var(--app-table-body-text);">
             <thead class="sticky-top" style="z-index: 10;">
-                <tr class="text-uppercase" style="font-size: 0.70rem;">
+                <tr class="text-uppercase" style="font-size: 0.65rem;">
                     <th class="py-2 px-3 border-0 cursor-pointer" @click="sortCol = 'name'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
-                        style="background-color: {{ table_config.header_bg_color }} !important; color: {{ table_config.header_text_color }} !important;">
+                        style="background-color: var(--app-table-header-bg) !important; color: var(--app-table-header-text) !important;">
                         <div class="d-flex align-items-center justify-content-between">
                             <span>{% trans 'Name' %}</span>
                             <i class="bi" :class="sortCol === 'name' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
                         </div>
                     </th>
-                    <th class="py-2 px-2 border-0 cursor-pointer" @click="sortCol = (hasDate ? 'date' : 'category'); sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
-                        style="background-color: {{ table_config.header_bg_color }} !important; color: {{ table_config.header_text_color }} !important;">
-                         <div class="d-flex align-items-center justify-content-between">
-                            <span x-text="hasDate ? '{% trans 'Date' %}' : '{% trans 'Category' %}'"></span>
-                            <i class="bi" :class="(sortCol === 'category' || sortCol === 'date') ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                    <th class="py-2 px-3 border-0 cursor-pointer" @click="sortCol = 'category'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
+                        style="background-color: var(--app-table-header-bg) !important; color: var(--app-table-header-text) !important;">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <span>{% trans 'Kategorie/Datum' %}</span>
+                            <i class="bi" :class="sortCol === 'category' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
                         </div>
                     </th>
-                    <th class="py-2 px-2 border-0 cursor-pointer" @click="sortCol = 'year'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
-                        style="background-color: {{ table_config.header_bg_color }} !important; color: {{ table_config.header_text_color }} !important;">
+                    <th class="py-2 px-3 border-0 cursor-pointer" @click="sortCol = 'year'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
+                        style="background-color: var(--app-table-header-bg) !important; color: var(--app-table-header-text) !important;">
                         <div class="d-flex align-items-center justify-content-between">
-                            <span>{% trans 'Year' %}</span>
+                            <span>{% trans 'Jahr' %}</span>
                             <i class="bi" :class="sortCol === 'year' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
                         </div>
                     </th>
                     <th class="py-2 px-3 border-0 text-end cursor-pointer" @click="sortCol = 'amount'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
-                        style="background-color: {{ table_config.header_bg_color }} !important; color: {{ table_config.header_text_color }} !important;">
+                        style="background-color: var(--app-table-header-bg) !important; color: var(--app-table-header-text) !important;">
                         <div class="d-flex align-items-center justify-content-end">
-                            <span class="me-1">{% trans 'Amount' %}</span>
+                            <span class="me-2">{% trans 'Betrag' %}</span>
                             <i class="bi" :class="sortCol === 'amount' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
                         </div>
                     </th>
                 </tr>
+                <!-- Inline Filters -->
                 <tr>
-                    <td class="p-1 px-3 border-0" style="background-color: {{ table_config.filter_bg_color }} !important;">
-                        <input type="text" x-model="colFilters.name" class="form-control form-control-xs py-0 border-secondary-subtle shadow-sm" style="font-size: 0.7rem;" placeholder="{% trans 'Filter...' %}">
+                    <td class="p-1 px-3 border-0" style="background-color: var(--app-table-filter-bg) !important;">
+                        <input type="text" x-model="colFilters.name" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-white" style="font-size: 0.75rem;" placeholder="Filter...">
                     </td>
-                    <td class="p-1 border-0" style="background-color: {{ table_config.filter_bg_color }} !important;">
-                        <input type="text" x-model="colFilters.cat" class="form-control form-control-xs py-0 border-secondary-subtle shadow-sm" style="font-size: 0.7rem;" placeholder="{% trans 'Filter...' %}">
+                    <td class="p-1 border-0" style="background-color: var(--app-table-filter-bg) !important;">
+                        <input type="text" x-model="colFilters.cat" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-white" style="font-size: 0.75rem;" placeholder="Filter...">
                     </td>
-                    <td class="p-1 border-0" style="background-color: {{ table_config.filter_bg_color }} !important;">
-                        <input type="text" x-model="colFilters.year" class="form-control form-control-xs py-0 border-secondary-subtle shadow-sm text-center" style="font-size: 0.7rem;" placeholder="{% trans 'Filter...' %}">
+                    <td class="p-1 border-0" style="background-color: var(--app-table-filter-bg) !important;">
+                        <input type="text" x-model="colFilters.year" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-white" style="font-size: 0.75rem;" placeholder="Jahr...">
                     </td>
-                    <td class="p-1 px-3 border-0" style="background-color: {{ table_config.filter_bg_color }} !important;">
-                        <input type="text" x-model="colFilters.amount" class="form-control form-control-xs py-0 text-end border-secondary-subtle shadow-sm" style="font-size: 0.7rem;" placeholder="{% trans 'Filter...' %}">
+                    <td class="p-1 px-3 border-0" style="background-color: var(--app-table-filter-bg) !important;">
+                        <input type="text" x-model="colFilters.amount" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-white text-end" style="font-size: 0.75rem;" placeholder="Betrag...">
                     </td>
                 </tr>
             </thead>
-            <tbody style="border-top: 1px solid {{ table_config.border_color }} !important;">
-                <template x-for="(row, idx) in displayRows" :key="'row-' + idx">
-                    <tr :class="row.isGroupHeader ? 'border-top border-bottom cursor-pointer' : 'align-middle'"
-                        :style="row.isGroupHeader ? 'background-color: rgba(0,0,0,0.05);' : ''"
-                        @click="if(row.isGroupHeader) collapsedGroups[row.year] = !collapsedGroups[row.year]">
-                        <template x-if="row.isGroupHeader">
-                            <td class="p-2 px-3 border-0" colspan="3">
-                                <i class="bi me-2 opacity-75" :class="collapsedGroups[row.year] ? 'bi-chevron-right' : 'bi-chevron-down'"></i>
-                                <span class="badge bg-secondary" style="font-size: 0.75rem;" x-text="row.year"></span>
-                            </td>
-                        </template>
-                        <template x-if="row.isGroupHeader">
-                            <td class="text-end p-2 px-3 border-0">
-                                <div class="small opacity-75 text-uppercase" style="font-size: 0.6rem;">{% trans 'Group Sum' %}</div>
-                                <div class="fw-bold h6 mb-0" x-text="new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ currency }}' }).format(row.subtotal)"></div>
-                            </td>
-                        </template>
-                        
-                        <template x-if="!row.isGroupHeader">
-                            <td class="fw-medium text-truncate border-0 px-3" style="max-width: 150px;" :title="row.name" x-text="row.name"></td>
-                        </template>
-                        <template x-if="!row.isGroupHeader">
-                            <td class="border-0">
-                                <div class="d-flex flex-wrap gap-1">
-                                    <span x-show="row.date" class="opacity-75 small" x-text="row.date"></span>
-                                    <span x-show="!row.date" class="badge bg-light text-dark border" x-text="row.category"></span>
-                                    <span x-show="row.type && row.type !== '{% trans 'Manual' %}'" class="badge bg-info-subtle text-info border-info-subtle" style="font-size: 0.6rem;" x-text="row.type"></span>
-                                </div>
-                            </td>
-                        </template>
-                        <template x-if="!row.isGroupHeader">
-                            <td class="text-center opacity-75 border-0" style="font-size: 0.75rem" x-text="row.year"></td>
-                        </template>
-                        <template x-if="!row.isGroupHeader">
-                            <td class="text-end fw-bold border-0 px-3" x-text="new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ currency }}' }).format(row.amount)"></td>
-                        </template>
+            <tbody style="border-top: 1px solid var(--app-table-border-color) !important;">
+                <template x-for="(item, index) in filteredItems" :key="index">
+                    <tr>
+                        <td class="py-2 px-3 border-0" x-text="item.name"></td>
+                        <td class="py-2 px-3 border-0">
+                            <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill mb-1 d-block" style="font-size: 0.65rem;" x-text="item.category"></span>
+                            <span class="small opacity-75 d-block" style="font-size: 0.65rem;" x-text="item.date"></span>
+                        </td>
+                        <td class="py-2 px-3 border-0 font-monospace text-center" style="font-size: 0.7rem;" x-text="item.year"></td>
+                        <td class="py-2 px-3 border-0 text-end font-monospace fw-bold" 
+                            :class="item.amount < 0 ? 'text-danger' : 'text-success'"
+                            x-text="(item.amount || 0).toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })">
+                        </td>
                     </tr>
                 </template>
-                <tr x-show="filteredItems.length === 0">
-                    <td colspan="4" class="text-center opacity-75 py-4">{% trans 'No items found' %}</td>
-                </tr>
             </tbody>
         </table>
     </div>
-    
-    <div class="mt-auto border-top py-2 px-3 d-flex justify-content-between align-items-center" 
-         style="background-color: {{ table_config.header_bg_color }} !important; color: {{ table_config.header_text_color }} !important; border-top-color: {{ table_config.border_color }} !important;">
-        <span class="small fw-bold opacity-75 text-uppercase">{% trans 'Total' %}</span>
-        <span class="fw-bold" x-text="new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ currency }}' }).format(total)"></span>
+
+    <!-- Summary Footer -->
+    <div class="p-3 d-flex justify-content-between align-items-center" 
+         style="background-color: var(--app-table-header-bg) !important; color: var(--app-table-header-text) !important; border-top-color: var(--app-table-border-color) !important;">
+        <span class="small opacity-75 text-uppercase fw-bold" style="letter-spacing: 0.05rem;">
+            {% trans 'Summe' %} (<span x-text="filteredItems.length"></span>)
+        </span>
+        <span class="fs-5 fw-bold font-monospace" x-text="total.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })"></span>
     </div>
 </div>

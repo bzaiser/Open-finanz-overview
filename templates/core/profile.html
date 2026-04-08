@@ -162,7 +162,15 @@
         function getPrimaryValue(name) {
             const el = profileForm.querySelector(`input[name="${name}"][type="color"]`) || 
                        profileForm.querySelector(`[name="${name}"]`);
-            return el ? el.value : null;
+            // Robust fallback to prevent white-out if element is missing during transition
+            if (!el || !el.value) {
+                if (name.includes('color') || name.includes('bg')) return '#ffffff';
+                if (name.includes('text')) return '#212529';
+                if (name.includes('start')) return '#6610f2';
+                if (name.includes('end')) return '#0d6efd';
+                return '#0d6efd';
+            }
+            return el.value;
         }
 
         function setAllValues(name, value, isBulk = false) {

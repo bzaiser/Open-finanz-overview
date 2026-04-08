@@ -95,7 +95,6 @@
                 if (autoNight) {
                     html.setAttribute('data-bs-theme', 'dark');
                     const config = {
-                        'primary': '#1e293b',
                         'gradient': 'linear-gradient(135deg, #020617 0%, #000000 100%)',
                         'card-bg': '#000000',
                         'card-color': '#f8fafc',
@@ -114,7 +113,6 @@
                         html.style.setProperty('--app-' + key, value);
                     }
                     // System overrides for Bootstrap
-                    html.style.setProperty('--bs-primary', config['primary']);
                     html.style.setProperty('--bs-body-bg', config['card-bg']);
                     html.style.setProperty('--bs-body-color', config['card-color']);
                     html.style.setProperty('--bs-tertiary-bg', config['card-bg']);

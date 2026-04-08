@@ -39,77 +39,95 @@
     get totalInterest() {
         return this.filteredItems.reduce((sum, i) => sum + (parseFloat(i.total_interest) || 0), 0);
     }
-}" class="h-100 d-flex flex-column" x-init="init()" style="background-color: {{ table_config.body_bg_color }} !important;">
+}" class="h-100 d-flex flex-column" x-init="init()" style="background-color: var(--app-table-body-bg) !important;">
     
-    <div class="flex-grow-1 overflow-auto px-0" style="background-color: {{ table_config.body_bg_color }} !important;">
+    <div class="flex-grow-1 overflow-auto px-0" style="background-color: var(--app-table-body-bg) !important;">
         <table class="table table-sm table-hover align-middle mb-0" 
-               style="font-size: 0.82rem; border-color: {{ table_config.border_color }} !important; --bs-table-bg: {{ table_config.body_bg_color }}; --bs-table-color: {{ table_config.body_text_color }};">
+               style="font-size: 0.82rem; border-color: var(--app-table-border-color) !important; --bs-table-bg: var(--app-table-body-bg); --bs-table-color: var(--app-table-body-text);">
             <thead class="sticky-top" style="z-index: 10;">
                 <tr class="text-uppercase" style="font-size: 0.65rem;">
                     <th class="py-2 px-3 border-0 cursor-pointer" @click="sortCol = 'name'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
-                        style="background-color: {{ table_config.header_bg_color }} !important; color: {{ table_config.header_text_color }} !important;">
-                        {% trans 'Loan' %} <i class="bi" :class="sortCol === 'name' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                        style="background-color: var(--app-table-header-bg) !important; color: var(--app-table-header-text) !important;">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <span>{% trans 'Kredit Name' %}</span>
+                            <i class="bi" :class="sortCol === 'name' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                        </div>
                     </th>
-                    <th class="py-2 px-2 border-0 cursor-pointer" @click="sortCol = 'provider'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
-                        style="background-color: {{ table_config.header_bg_color }} !important; color: {{ table_config.header_text_color }} !important;">
-                        {% trans 'Provider' %}
+                    <th class="py-2 px-3 border-0 cursor-pointer" @click="sortCol = 'provider'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
+                        style="background-color: var(--app-table-header-bg) !important; color: var(--app-table-header-text) !important;">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <span>{% trans 'Anbieter' %}</span>
+                            <i class="bi" :class="sortCol === 'provider' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                        </div>
                     </th>
-                    <th class="py-2 px-2 border-0 text-end cursor-pointer" @click="sortCol = 'current_balance'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
-                        style="background-color: {{ table_config.header_bg_color }} !important; color: {{ table_config.header_text_color }} !important;">
-                        {% trans 'Balance' %} <i class="bi" :class="sortCol === 'current_balance' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                    <th class="py-2 px-3 border-0 cursor-pointer" @click="sortCol = 'interest_rate'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
+                        style="background-color: var(--app-table-header-bg) !important; color: var(--app-table-header-text) !important;">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <span>{% trans 'Zins' %}</span>
+                            <i class="bi" :class="sortCol === 'interest_rate' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                        </div>
                     </th>
-                    <th class="py-2 px-2 border-0 text-end cursor-pointer text-warning" @click="sortCol = 'total_interest'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
-                        style="background-color: {{ table_config.header_bg_color }} !important; color: {{ table_config.header_text_color }} !important;">
-                        {% trans 'Sum Interest' %}
+                    <th class="py-2 px-3 border-0 text-end cursor-pointer" @click="sortCol = 'current_balance'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
+                        style="background-color: var(--app-table-header-bg) !important; color: var(--app-table-header-text) !important;">
+                        <div class="d-flex align-items-center justify-content-end">
+                            <span class="me-2">{% trans 'Saldo' %}</span>
+                            <i class="bi" :class="sortCol === 'current_balance' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                        </div>
                     </th>
-                    <th class="py-2 px-2 border-0 text-center"
-                        style="background-color: {{ table_config.header_bg_color }} !important; color: {{ table_config.header_text_color }} !important;">
-                        %
-                    </th>
-                    <th class="py-2 px-2 border-0 text-end"
-                        style="background-color: {{ table_config.header_bg_color }} !important; color: {{ table_config.header_text_color }} !important;">
-                        {% trans 'Monthly' %}
-                    </th>
-                    <th class="py-2 px-3 border-0 text-center cursor-pointer" @click="sortCol = 'year'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
-                        style="background-color: {{ table_config.header_bg_color }} !important; color: {{ table_config.header_text_color }} !important;">
-                        {% trans 'End' %}
+                    <th class="py-2 px-3 border-0 text-end cursor-pointer" @click="sortCol = 'monthly_payment'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
+                        style="background-color: var(--app-table-header-bg) !important; color: var(--app-table-header-text) !important;">
+                        <div class="d-flex align-items-center justify-content-end">
+                            <span class="me-2">{% trans 'Rate' %}</span>
+                            <i class="bi" :class="sortCol === 'monthly_payment' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                        </div>
                     </th>
                 </tr>
+                <!-- Inline Filters -->
                 <tr>
-                    <td class="p-1 px-3 border-0" style="background-color: {{ table_config.filter_bg_color }} !important;">
-                        <input type="text" x-model="colFilters.name" class="form-control form-control-xs py-0 border-0 shadow-none" style="font-size: 0.65rem;" placeholder="Filter...">
+                    <td class="p-1 px-3 border-0" style="background-color: var(--app-table-filter-bg) !important;">
+                        <input type="text" x-model="colFilters.name" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-white" style="font-size: 0.75rem;" placeholder="Filter...">
                     </td>
-                    <td class="p-1 border-0" style="background-color: {{ table_config.filter_bg_color }} !important;">
-                        <input type="text" x-model="colFilters.provider" class="form-control form-control-xs py-0 border-0 shadow-none" style="font-size: 0.65rem;" placeholder="Filter...">
+                    <td class="p-1 border-0" style="background-color: var(--app-table-filter-bg) !important;">
+                        <input type="text" x-model="colFilters.provider" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-white" style="font-size: 0.75rem;" placeholder="Filter...">
                     </td>
-                    <td class="p-1 px-3 border-0" colspan="5" style="background-color: {{ table_config.filter_bg_color }} !important;"></td>
+                    <td class="p-1 px-3 border-0" colspan="3" style="background-color: var(--app-table-filter-bg) !important;"></td>
                 </tr>
             </thead>
-            <tbody>
-                <template x-for="row in filteredItems" :key="row.name">
-                    <tr class="align-middle">
-                        <td class="fw-bold border-0 px-3" x-text="row.name"></td>
-                        <td class="border-0 opacity-75" x-text="row.provider"></td>
-                        <td class="text-end fw-bold border-0" x-text="new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ currency }}' }).format(row.current_balance)"></td>
-                        <td class="text-end border-0 text-warning" x-text="new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ currency }}' }).format(row.total_interest)"></td>
-                        <td class="text-center border-0 small" x-text="row.rate"></td>
-                        <td class="text-end border-0" x-text="new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ currency }}' }).format(row.monthly)"></td>
-                        <td class="text-center border-0 small opacity-75 px-3" x-text="row.year"></td>
+            <tbody style="border-top: 1px solid var(--app-table-border-color) !important;">
+                <template x-for="(item, index) in filteredItems" :key="index">
+                    <tr>
+                        <td class="py-2 px-3 border-0">
+                            <span class="fw-bold d-block" x-text="item.name"></span>
+                            <span class="small opacity-75" x-text="item.type_display"></span>
+                        </td>
+                        <td class="py-2 px-3 border-0" x-text="item.provider"></td>
+                        <td class="py-2 px-3 border-0 font-monospace text-center" x-text="parseFloat(item.interest_rate).toFixed(2) + '%'"></td>
+                        <td class="py-2 px-3 border-0 text-end font-monospace fw-bold text-danger" 
+                            x-text="(item.current_balance || 0).toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })">
+                        </td>
+                        <td class="py-2 px-3 border-0 text-end font-monospace" 
+                            x-text="(item.monthly_payment || 0).toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })">
+                        </td>
                     </tr>
                 </template>
             </tbody>
         </table>
     </div>
-    
-    <div class="mt-auto border-top py-2 px-3 d-flex justify-content-between align-items-center" 
-         style="background-color: {{ table_config.header_bg_color }} !important; color: {{ table_config.header_text_color }} !important; border-top-color: {{ table_config.border_color }} !important; font-size: 0.8rem;">
-        <div>
-            <span class="opacity-75 me-1">{% trans 'Total Balance' %}:</span>
-            <span class="fw-bold" x-text="new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ currency }}' }).format(totalBalance)"></span>
+
+    <!-- Summary Footer -->
+    <div class="p-3 d-flex justify-content-between align-items-center" 
+         style="background-color: var(--app-table-header-bg) !important; color: var(--app-table-header-text) !important; border-top-color: var(--app-table-border-color) !important; font-size: 0.8rem;">
+        <div class="d-flex gap-4">
+            <span class="small opacity-75 text-uppercase fw-bold">
+                {% trans 'Kredite' %}: <span class="text-white" x-text="filteredItems.length"></span>
+            </span>
+            <span class="small opacity-75 text-uppercase fw-bold">
+                {% trans 'Zinsen' %}: <span class="text-white" x-text="totalInterest.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })"></span>
+            </span>
         </div>
         <div>
-            <span class="opacity-75 me-1">{% trans 'Total Interest' %}:</span>
-            <span class="fw-bold" x-text="new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ currency }}' }).format(totalInterest)"></span>
+            <span class="small opacity-75 text-uppercase fw-bold me-2">{% trans 'Gesaumtschulden' %}:</span>
+            <span class="fs-5 fw-bold font-monospace text-danger" x-text="totalBalance.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })"></span>
         </div>
     </div>
 </div>
