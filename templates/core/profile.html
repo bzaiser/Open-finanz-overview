@@ -215,6 +215,7 @@
 
         function getPrimaryValue(name) {
             const form = document.getElementById('profileForm') || document;
+            // Prefer color pickers as they are the source of truth for UI
             const el = form.querySelector(`input[name="${name}"][type="color"]`) || 
                        form.querySelector(`[name="${name}"]`);
             return el ? el.value : null;
@@ -224,15 +225,20 @@
             const form = document.getElementById('profileForm') || document;
             const elements = form.querySelectorAll(`[name="${name}"]`);
             let count = 0;
+            let types = [];
             elements.forEach(el => {
                 try {
                     el.value = value;
-                    el.dispatchEvent(new Event('input', { bubbles: true }));
-                    el.dispatchEvent(new Event('change', { bubbles: true }));
+                    // Force UI update for standard inputs
+                    if (el.tagName === 'INPUT') {
+                        el.dispatchEvent(new Event('input', { bubbles: true }));
+                        el.dispatchEvent(new Event('change', { bubbles: true }));
+                    }
+                    types.push(el.type || el.tagName);
                     count++;
                 } catch (e) { console.error(`Sync-Error ${name}`, e); }
             });
-            return count;
+            return { count, types: [...new Set(types)] };
         }
 
         function getNightConfig() {
@@ -246,7 +252,6 @@
                     if (darkModeInput) darkModeInput.value = currentVal;
                 }
                 const parsed = JSON.parse(currentVal || '{}') || {};
-                logDebug(`Nacht-Config geladen: ${Object.keys(parsed).length} Werte gefunden.`);
                 return parsed;
             } catch (e) {
                 showDebugError("Parkfehler Nacht-JSON", e);
@@ -260,7 +265,6 @@
                 const e = getPrimaryValue('gradient_end') || '#495057';
                 if (preview) {
                     preview.style.background = `linear-gradient(135deg, ${s} 0%, ${e} 100%)`;
-                    logDebug(`Vorschau aktualisiert (Start: ${s})`);
                 }
             } catch (e) { showDebugError("Vorschau-Fehler", e); }
         }
@@ -275,16 +279,19 @@
                     const label = document.getElementById('editModeLabel');
                     const studioHeader = document.querySelector('#collapseStudio .accordion-body');
                     
-                    logDebug(`Wechsel zu: <b>${isEditingNightMode ? 'NACHT-EDITOR' : 'TAG-EDITOR'}</b>`);
+                    logDebug(`Modus: <b>${isEditingNightMode ? 'NACHT' : 'TAG'}</b>`);
                     
                     if (isEditingNightMode) {
                         // Capture Day values
                         THEME_KEYS.forEach(key => { dayConfig[key] = getPrimaryValue(key); });
-                        logDebug(`Tag-Design im Zwischenspeicher gesichert.`);
                         
                         let nightConfig = getNightConfig();
-                        if (Object.keys(nightConfig).length === 0) {
-                            logDebug("Nutze Standard-Nachtwerte (Midnight).");
+                        const isDuplicate = (nightConfig.gradient_start === dayConfig.gradient_start);
+                        
+                        if (Object.keys(nightConfig).length === 0 || isDuplicate) {
+                            if (isDuplicate) logDebug("Nacht-Werte identisch mit Tag. Lade Defaults.");
+                            else logDebug("Keine Nacht-Werte gefunden. Lade Defaults.");
+                            
                             nightConfig = {
                                 gradient_start: '#0f172a', gradient_end: '#020617', primary_color: '#334155',
                                 background_color: '#020617', sidebar_bg_color: '#0f172a', text_color: '#f8fafc',
@@ -294,11 +301,10 @@
                             };
                         }
                         
-                        let fieldCount = 0;
                         THEME_KEYS.forEach(key => { 
-                            if (nightConfig[key]) fieldCount += setAllValues(key, nightConfig[key]);
+                            if (nightConfig[key]) setAllValues(key, nightConfig[key]);
                         });
-                        logDebug(`${fieldCount} Felder auf Nacht-Design umgestellt.`);
+                        logDebug(`Nacht-Design aktiv.`);
                         
                         label.innerText = "{% trans 'Zurück zum Tag-Design' %}";
                         btn.classList.replace('btn-primary', 'btn-dark');
@@ -308,11 +314,10 @@
                         THEME_KEYS.forEach(key => { nightConfig[key] = getPrimaryValue(key); });
                         if (darkModeInput) darkModeInput.value = JSON.stringify(nightConfig);
                         
-                        let restoreCount = 0;
                         THEME_KEYS.forEach(key => { 
-                            if(dayConfig[key]) restoreCount += setAllValues(key, dayConfig[key]);
+                            if(dayConfig[key]) setAllValues(key, dayConfig[key]);
                         });
-                        logDebug(`${restoreCount} Felder auf Tag-Design zurückgestellt.`);
+                        logDebug(`Tag-Design wieder aktiv.`);
                         
                         label.innerText = "{% trans 'Nachtdesign anwenden' %}";
                         btn.classList.replace('btn-dark', 'btn-primary');
@@ -329,28 +334,34 @@
             if (preset) {
                 try {
                     const data = preset.dataset;
-                    logDebug(`Wende Harmonie "${preset.title || 'unbenannt'}" an...`);
+                    logDebug(`Harmony "${preset.title || 'Harmony'}"...`);
                     
-                    setAllValues('gradient_start', data.start);
-                    setAllValues('gradient_end', data.end);
-                    setAllValues('primary_color', data.primary || data.start);
-                    setAllValues('background_color', data.bg || '#ffffff');
-                    setAllValues('sidebar_bg_color', data.sidebar || data.bg);
-                    setAllValues('text_color', data.text || '#212529');
+                    const updateList = {
+                        gradient_start: data.start,
+                        gradient_end: data.end,
+                        primary_color: data.primary || data.start,
+                        background_color: data.bg || '#ffffff',
+                        sidebar_bg_color: data.sidebar || data.bg,
+                        text_color: data.text || '#212529'
+                    };
                     
                     const isDark = (data.bg === '#121212' || data.bg === '#0d1117');
-                    setAllValues('table_header_bg_color', data.primary || data.start);
-                    setAllValues('table_header_text_color', '#ffffff');
-                    setAllValues('table_filter_bg_color', isDark ? '#2a2a2a' : '#f1f3f5');
-                    setAllValues('table_body_bg_color', data.bg || '#ffffff');
-                    setAllValues('table_body_text_color', data.text || '#212529');
-                    setAllValues('table_border_color', isDark ? '#333333' : '#dee2e6');
+                    updateList.table_header_bg_color = data.primary || data.start;
+                    updateList.table_header_text_color = '#ffffff';
+                    updateList.table_filter_bg_color = isDark ? '#2a2a2a' : '#f1f3f5';
+                    updateList.table_body_bg_color = data.bg || '#ffffff';
+                    updateList.table_body_text_color = data.text || '#212529';
+                    updateList.table_border_color = isDark ? '#333333' : '#dee2e6';
+                    
+                    Object.keys(updateList).forEach(key => {
+                        const info = setAllValues(key, updateList[key]);
+                        if (info.count === 0) console.warn(`Kein Feld für ${key} gefunden!`);
+                    });
                     
                     if (isEditingNightMode) {
                         let nightConfig = {};
                         THEME_KEYS.forEach(key => { nightConfig[key] = getPrimaryValue(key); });
                         if (darkModeInput) darkModeInput.value = JSON.stringify(nightConfig);
-                        logDebug("Harmony im Nacht-Speicher abgelegt.");
                     }
                     updatePreview();
                 } catch (e) { showDebugError("Preset-Fehler", e); }
@@ -359,7 +370,12 @@
 
         // Track manual changes
         document.addEventListener('input', (e) => {
-            if (e.target.matches('[type="color"]') || e.target.classList.contains('form-control-color')) {
+            const target = e.target;
+            if (target.matches('[type="color"]') || target.classList.contains('form-control-color')) {
+                // If the user changed a color picker, sync all other elements with same name
+                const name = target.getAttribute('name');
+                if (name) setAllValues(name, target.value);
+                
                 if (isEditingNightMode) {
                     let nightConfig = {};
                     THEME_KEYS.forEach(key => { nightConfig[key] = getPrimaryValue(key); });
@@ -377,16 +393,18 @@
                         let nightConfig = {};
                         THEME_KEYS.forEach(key => { nightConfig[key] = getPrimaryValue(key); });
                         if (darkModeInput) darkModeInput.value = JSON.stringify(nightConfig);
+                        // IMPORTANT: Before sending, switch inputs back to Day values 
+                        // so the server saves Day colors in main fields and Night in JSON field
                         THEME_KEYS.forEach(key => { 
                             if (dayConfig[key]) setAllValues(key, dayConfig[key]); 
                         });
-                        logDebug("Form-Submit: Nachtdesign in JSON transformiert.");
                     }
                 } catch (e) { console.error("Submit-Error", e); }
             });
         }
 
-        getNightConfig();
+        // Initial preview and data sync
+        getNightConfig(); 
         updatePreview();
     })();
 </script>
