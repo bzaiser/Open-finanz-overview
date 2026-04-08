@@ -53,7 +53,7 @@
             hx-trigger="submit" hx-indicator="#sim-loading">
             {% csrf_token %}
             <div class="mb-3">
-                <label class="form-label fw-bold small text-muted text-uppercase d-flex align-items-center justify-content-between" style="font-size: 0.7rem;">
+                <label class="form-label fw-bold small text-uppercase d-flex align-items-center justify-content-between" style="font-size: 0.7rem;">
                     {% trans "Target Date" %}
                     <i class="bi bi-info-circle ms-1 text-primary cursor-pointer" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-container="body"
                        data-bs-title="{% trans 'Ankerdatum für die Simulation. Alle Berechnungen beziehen sich auf diesen Monat.' %}"></i>
@@ -61,7 +61,7 @@
                 <input type="date" name="stichtag" value="{{ simulation_params.stichtag|date:'Y-m-d' }}" class="form-control form-control-sm ">
             </div>
             <div class="mb-3">
-                <label class="form-label fw-bold small text-muted text-uppercase d-flex align-items-center justify-content-between" style="font-size: 0.7rem;">
+                <label class="form-label fw-bold small text-uppercase d-flex align-items-center justify-content-between" style="font-size: 0.7rem;">
                     {% trans "Inflation Rate" %}
                     <i class="bi bi-info-circle ms-1 text-primary cursor-pointer" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-container="body"
                        data-bs-title="{% trans 'Jährliche Inflationsrate. Reduziert die reale Kaufkraft Ihres Vermögens über die Zeit.' %}"></i>
@@ -70,7 +70,7 @@
                     value="{{ simulation_params.inflation_rate|stringformat:'.2f' }}" class="form-control form-control-sm ">
             </div>
             <div class="mb-4">
-                <label class="form-label fw-bold small text-muted text-uppercase d-flex align-items-center justify-content-between" style="font-size: 0.7rem;">
+                <label class="form-label fw-bold small text-uppercase d-flex align-items-center justify-content-between" style="font-size: 0.7rem;">
                     {% trans "Salary Increase" %}
                     <i class="bi bi-info-circle ms-1 text-primary cursor-pointer" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-container="body"
                        data-bs-title="{% trans 'Voraussichtliche jährliche Gehaltssteigerung in Prozent.' %}"></i>
@@ -79,7 +79,7 @@
                     value="{{ simulation_params.salary_increase|stringformat:'.2f' }}" class="form-control form-control-sm ">
             </div>
             <div class="mb-4">
-                <label class="form-label fw-bold small text-muted text-uppercase d-flex align-items-center justify-content-between" style="font-size: 0.7rem;">
+                <label class="form-label fw-bold small text-uppercase d-flex align-items-center justify-content-between" style="font-size: 0.7rem;">
                     {% trans "Pension Increase" %}
                     <i class="bi bi-info-circle ms-1 text-primary cursor-pointer" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-container="body"
                        data-bs-title="{% trans 'Jährliche Rentenanpassung. Standardmäßig oft niedriger als die Inflation.' %}"></i>
@@ -88,7 +88,7 @@
                     value="{{ simulation_params.pension_increase|stringformat:'.2f' }}" class="form-control form-control-sm ">
             </div>
             <div class="mb-4">
-                <label class="form-label fw-bold small text-muted text-uppercase d-flex align-items-center justify-content-between" style="font-size: 0.7rem;">
+                <label class="form-label fw-bold small text-uppercase d-flex align-items-center justify-content-between" style="font-size: 0.7rem;">
                     {% trans "Investment Return" %}
                     <i class="bi bi-info-circle ms-1 text-primary cursor-pointer" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-container="body"
                        data-bs-title="{% trans 'Zusätzliche Rendite auf Ihr liquides Anlagevermögen (z.B. Aktien, ETFs).' %}"></i>
@@ -97,7 +97,7 @@
                     value="{{ simulation_params.investment_return_offset|stringformat:'.2f' }}" class="form-control form-control-sm ">
             </div>
             <div class="mb-4 border-top pt-3">
-                <label class="form-label fw-bold small text-muted text-uppercase d-flex align-items-center justify-content-between" style="font-size: 0.7rem;">
+                <label class="form-label fw-bold small text-uppercase d-flex align-items-center justify-content-between" style="font-size: 0.7rem;">
                     {% trans "Growth Real Estate" %}
                     <i class="bi bi-info-circle ms-1 text-primary cursor-pointer" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-container="body"
                        data-bs-title="{% trans 'Standardmäßige jährliche Wertsteigerung für Immobilien. Wird nur verwendet, wenn am Objekt selbst kein individueller Wert (0%) hinterlegt ist.' %}"></i>
@@ -106,7 +106,7 @@
                     value="{{ simulation_params.real_estate_growth_rate|stringformat:'.2f' }}" class="form-control form-control-sm ">
             </div>
             <div class="mb-4">
-                <label class="form-label fw-bold small text-muted text-uppercase d-flex align-items-center justify-content-between" style="font-size: 0.7rem;">
+                <label class="form-label fw-bold small text-uppercase d-flex align-items-center justify-content-between" style="font-size: 0.7rem;">
                     {% trans "Decline Physical Assets" %}
                     <i class="bi bi-info-circle ms-1 text-primary cursor-pointer" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-container="body"
                        data-bs-title="{% trans 'Jährliche Wertminderung für Sachwerte (wie Autos). Wird nur verwendet, wenn am Objekt selbst kein individueller Wert (0%) hinterlegt ist. Tragen Sie hier positive Werte für Wertverlust ein.' %}"></i>
