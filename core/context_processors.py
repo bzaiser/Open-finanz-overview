@@ -1,10 +1,12 @@
 import os
 
+from django.conf import settings
+
 def app_instance_info(request):
     """
-    Injects the APP_INSTANCE_NAME from environment variables into all templates.
-    Used to distinguish between 'Private' and 'Open' server instances in the UI.
+    Injects configuration into all templates.
     """
     return {
-        'APP_INSTANCE_NAME': os.getenv('APP_INSTANCE_NAME', '')
+        'APP_INSTANCE_NAME': os.getenv('APP_INSTANCE_NAME', ''),
+        'debug': settings.DEBUG
     }
