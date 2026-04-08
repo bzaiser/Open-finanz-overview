@@ -206,8 +206,10 @@
                 'table_filter_bg_color', 'table_body_bg_color', 'table_body_text_color', 'table_border_color'
             ];
             const inputs = {};
+            // Look specifically within the profile form to avoid duplicates
+            const form = document.getElementById('profileForm');
             keys.forEach(key => {
-                inputs[key] = document.querySelector(`[name="${key}"]`);
+                inputs[key] = form ? form.querySelector(`[name="${key}"]`) : document.querySelector(`[name="${key}"]`);
             });
             return inputs;
         }
@@ -242,6 +244,16 @@
             } catch (e) { showDebugError("Vorschau-Fehler", e); }
         }
 
+        function setInputValue(input, value) {
+            if (!input) return;
+            try {
+                input.value = value;
+                // Force browser to recognize the change
+                input.dispatchEvent(new Event('input', { bubbles: true }));
+                input.dispatchEvent(new Event('change', { bubbles: true }));
+            } catch (e) { console.error("Error setting input value", e); }
+        }
+
         // Toggle Night Edit Mode
         document.getElementById('toggleNightEdit').addEventListener('click', function() {
             try {
@@ -251,7 +263,7 @@
                 const studioHeader = document.querySelector('#collapseStudio .accordion-body');
                 const inputs = getInputs();
                 
-                logDebug(`Modus-Wechsel: Editier-Modus ist jetzt ${isEditingNightMode ? 'NACHT' : 'TAG'}`);
+                logDebug(`Modus-Wechsel: Editier-Modus ist jetzt <b>${isEditingNightMode ? 'NACHT' : 'TAG'}</b>`);
                 
                 if (isEditingNightMode) {
                     // Capture Day values
@@ -262,12 +274,12 @@
                             count++;
                         }
                     });
-                    logDebug(`${count} Tages-Farben zwischengespeichert.`);
+                    logDebug(`${count} Tages-Farben gesichert.`);
                     
                     // Load Night values
                     nightConfig = getNightConfig();
                     if (Object.keys(nightConfig).length === 0) {
-                        logDebug("Nacht-Config leer, lade Midnight-Standard.");
+                        logDebug("Nacht-Config leer, lade Standard.");
                         nightConfig = {
                             gradient_start: '#212529', gradient_end: '#495057', primary_color: '#343a40',
                             background_color: '#121212', sidebar_bg_color: '#1a1a1a', text_color: '#e9ecef',
@@ -277,11 +289,14 @@
                         };
                     }
                     
+                    let updateCount = 0;
                     Object.keys(inputs).forEach(key => { 
                         if (inputs[key] && nightConfig[key]) {
-                            inputs[key].value = nightConfig[key]; 
+                            setInputValue(inputs[key], nightConfig[key]);
+                            updateCount++;
                         }
                     });
+                    logDebug(`${updateCount} Felder auf Nacht-Werte umgestellt.`);
                     
                     label.innerText = "{% trans 'Zurück zum Tag-Design' %}";
                     btn.classList.replace('btn-primary', 'btn-dark');
@@ -299,11 +314,14 @@
                     logDebug("Nacht-Farben in Konfiguration gesichert.");
                     
                     // Restore Day values
+                    let restoreCount = 0;
                     Object.keys(inputs).forEach(key => { 
                         if(inputs[key] && dayConfig[key]) {
-                            inputs[key].value = dayConfig[key]; 
+                            setInputValue(inputs[key], dayConfig[key]);
+                            restoreCount++;
                         }
                     });
+                    logDebug(`${restoreCount} Tages-Farben wiederhergestellt.`);
                     
                     label.innerText = "{% trans 'Nachtdesign anwenden' %}";
                     btn.classList.replace('btn-dark', 'btn-primary');
@@ -311,7 +329,6 @@
                     
                     if (studioHeader) studioHeader.classList.remove('border-primary', 'border-2');
                     if (preview) preview.classList.remove('border', 'border-3', 'border-warning');
-                    logDebug("Tages-Design wiederhergestellt.");
                 }
                 updatePreview();
             } catch (e) { showDebugError("Toggle-Fehler", e); }
