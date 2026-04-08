@@ -226,10 +226,20 @@ class ExcelParserService:
 
             if unassigned and ai_configured:
                 self._log(batch, "### KI-ANALYSE WIRD VORBEREITET ###")
-                self._log(batch, f"Sende {len(unassigned)} Jahressummen an Ollama (Windows)...")
+                
+                # NEW: Deduplicate by base_desc and sign (inflow/outflow) to optimize for multi-year imports
+                unique_unassigned_map = {}
+                for g in unassigned:
+                    # Key is (normalized description, is_income_sign)
+                    key = (g['base_desc'], g['total_amount'] > 0)
+                    if key not in unique_unassigned_map:
+                        unique_unassigned_map[key] = g
+                
+                llm_representative_items = list(unique_unassigned_map.values())
+                self._log(batch, f"Sende {len(llm_representative_items)} Händler-Pakete (bündelt {len(unassigned)} Jahre) an Ollama...")
                 
                 # Prepare data for LLM
-                llm_input = [{"id": i, "description": g['description'], "amount": float(g['total_amount'])} for i, g in enumerate(unassigned)]
+                llm_input = [{"id": i, "description": item['description'], "amount": float(item['total_amount'])} for i, item in enumerate(llm_representative_items)]
                 all_categories = list(Category.objects.all())
                 cat_list = [{"id": c.id, "name": c.name, "slug": c.slug} for c in all_categories]
                 
@@ -254,10 +264,19 @@ class ExcelParserService:
                 )
                 self._log(batch, f"KI-Status: {status_msg}")
                 
-                # Map results back to groups (case-insensitive)
+                # Map results back to ALL relevant groups (case-insensitive)
                 cat_map_lower = {c.slug.lower(): c for c in all_categories}
-                for i, group in enumerate(unassigned):
+                
+                # Create a temporary lookup for results by (base_desc, sign)
+                unique_results_cache = {}
+                for i, item in enumerate(llm_representative_items):
                     res = results.get(str(i))
+                    if res:
+                        unique_results_cache[(item['base_desc'], item['total_amount'] > 0)] = res
+                
+                # Now apply the cached results to ALL original unassigned groups
+                for group in unassigned:
+                    res = unique_results_cache.get((group['base_desc'], group['total_amount'] > 0))
                     if res:
                         slug = res.get('category_slug', '').lower()
                         if slug and slug != 'uncategorized':
