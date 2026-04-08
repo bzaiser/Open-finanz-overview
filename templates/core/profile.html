@@ -223,21 +223,42 @@
 
             if (preview) { preview.style.background = config['gradient']; }
 
+            // Apply GLOABLLY for instant feedback (even in Night Mode session)
             Object.entries(config).forEach(([key, value]) => {
+                // If in Night Mode, only override the surface with a TINTED version
                 if (isNight && !forceBackground) {
-                    if (['card-bg', 'sidebar-bg', 'table-body-bg'].includes(key)) return;
+                    if (['card-bg', 'sidebar-bg', 'table-body-bg'].includes(key)) {
+                        const tintedValue = `color-mix(in srgb, var(--app-primary), black 94%)`;
+                        if (key === 'sidebar-bg') {
+                            html.style.setProperty('--app-' + key, `color-mix(in srgb, var(--app-primary), black 96%)`);
+                        } else {
+                            html.style.setProperty('--app-' + key, tintedValue);
+                        }
+                        return;
+                    }
                 }
                 html.style.setProperty('--app-' + key, value);
             });
+            // Also sync the persistent preview gradient for the button & box
             html.style.setProperty('--app-preview-gradient', config['gradient']);
 
+            // Only override Bootstrap body globals if forced or NOT in night mode
             if (!isNight || forceBackground) {
                 html.style.setProperty('--bs-primary', config['primary']);
                 html.style.setProperty('--bs-body-bg', config['card-bg']);
                 html.style.setProperty('--bs-body-color', config['card-color']);
                 html.style.setProperty('--bs-tertiary-bg', config['card-bg']);
                 html.style.setProperty('--bs-card-bg', config['card-bg']);
-                if (isNight && forceBackground) { html.removeAttribute('data-bs-theme'); }
+                
+                // If forced background in Night Mode, we technically "break out" of dark theme visually
+                if (isNight && forceBackground) {
+                    html.removeAttribute('data-bs-theme');
+                }
+            } else {
+                // Ensure Bootstrap globals also use the tint in night mode
+                html.style.setProperty('--bs-body-bg', 'color-mix(in srgb, var(--app-primary), black 98%)');
+                html.style.setProperty('--bs-tertiary-bg', 'color-mix(in srgb, var(--app-primary), black 94%)');
+                html.style.setProperty('--bs-card-bg', 'color-mix(in srgb, var(--app-primary), black 94%)');
             }
         }
 
