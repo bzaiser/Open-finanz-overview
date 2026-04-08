@@ -82,20 +82,24 @@
         }
     </style>
 
+    <script id="theme-config-data" type="application/json">
+        {{ user.profile.dark_mode_config|safe|default:"{}" }}
+    </script>
     <script>
         (function() {
-            // Theme Synchronizer Logic
-            const autoNightMode = {% if user.is_authenticated and user.profile.auto_night_mode %}true{% else %}false{% endif %};
-            const nightConfig = {{ user.profile.dark_mode_config|safe|default:"{}" }};
-            
             function applyTheme() {
-                const isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                const autoNight = {% if user.is_authenticated and user.profile.auto_night_mode %}true{% else %}false{% endif %};
                 const html = document.documentElement;
+                const isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
                 
-                if (autoNightMode && isSystemDark) {
+                if (autoNight && isSystemDark) {
                     html.setAttribute('data-bs-theme', 'dark');
-                    
-                    // Use Deep Midnight Defaults if config is empty
+                    let nightConfig = {};
+                    try {
+                        const el = document.getElementById('theme-config-data');
+                        nightConfig = JSON.parse(el.textContent || '{}');
+                    } catch (e) { console.error("Theme Error", e); }
+
                     const config = {
                         gradient_start: nightConfig.gradient_start || '#020617',
                         gradient_end: nightConfig.gradient_end || '#000000',
@@ -111,28 +115,24 @@
                         table_border_color: nightConfig.table_border_color || '#1e293b'
                     };
 
-                    // Apply all properties to root
-                    html.style.setProperty('--bs-body-bg', config.background_color);
-                    html.style.setProperty('--app-card-bg', config.background_color);
-                    html.style.setProperty('--app-sidebar-bg', config.sidebar_bg_color);
-                    html.style.setProperty('--bs-body-color', config.text_color);
-                    html.style.setProperty('--app-card-color', config.text_color);
-                    html.style.setProperty('--app-primary', config.primary_color);
+                    // Root Theme Properties
                     html.style.setProperty('--bs-primary', config.primary_color);
                     html.style.setProperty('--app-gradient', `linear-gradient(135deg, ${config.gradient_start} 0%, ${config.gradient_end} 100%)`);
+                    html.style.setProperty('--app-card-bg', config.background_color);
+                    html.style.setProperty('--app-card-color', config.text_color);
+                    html.style.setProperty('--bs-body-bg', config.background_color);
+                    html.style.setProperty('--bs-body-color', config.text_color);
                     
-                    // Table Sync
+                    // Specific components
+                    html.style.setProperty('--app-sidebar-bg', config.sidebar_bg_color);
                     html.style.setProperty('--app-table-header-bg', config.table_header_bg_color);
                     html.style.setProperty('--app-table-header-text', config.table_header_text_color);
                     html.style.setProperty('--app-table-body-bg', config.table_body_bg_color);
                     html.style.setProperty('--app-table-body-text', config.table_body_text_color);
                     html.style.setProperty('--app-table-border-color', config.table_border_color);
-                    
-                    // Unified Input Rendering
                     html.style.setProperty('--app-input-bg', config.background_color);
                     html.style.setProperty('--app-input-color', config.text_color);
-                    html.style.setProperty('--app-input-border', config.table_border_color);
-
+                    html.style.setProperty('--app-primary', config.primary_color);
                 } else {
                     // Fallback to Profile Default (handled by Django-Template variables in CSS)
                     html.removeAttribute('style'); // Clear overrides
