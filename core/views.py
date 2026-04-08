@@ -22,6 +22,13 @@ def signup(request):
     return render(request, 'core/signup.html', {'form': form})
 
 @login_required
+def toggle_night_mode(request):
+    profile = request.user.profile
+    profile.auto_night_mode = not profile.auto_night_mode
+    profile.save()
+    return redirect(request.META.get('HTTP_REFERER', 'profile'))
+
+@login_required
 def profile_view(request):
     profile, created = UserProfile.objects.get_or_create(user=request.user)
     if request.method == 'POST':

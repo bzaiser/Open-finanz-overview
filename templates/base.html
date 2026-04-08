@@ -82,69 +82,32 @@
         }
     </style>
 
-    <script id="theme-config-data" type="application/json">
-        {{ user.profile.dark_mode_config|safe|default:"{}" }}
-    </script>
     <script>
         (function() {
             function applyTheme() {
                 const autoNight = {% if user.is_authenticated and user.profile.auto_night_mode %}true{% else %}false{% endif %};
                 const html = document.documentElement;
-                const isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
                 
-                if (autoNight && isSystemDark) {
+                if (autoNight) {
                     html.setAttribute('data-bs-theme', 'dark');
-                    let nightConfig = {};
-                    try {
-                        const el = document.getElementById('theme-config-data');
-                        nightConfig = JSON.parse(el.textContent || '{}');
-                    } catch (e) { console.error("Theme Error", e); }
-
                     const config = {
-                        gradient_start: nightConfig.gradient_start || '#020617',
-                        gradient_end: nightConfig.gradient_end || '#000000',
-                        primary_color: nightConfig.primary_color || '#1e293b',
-                        background_color: nightConfig.background_color || '#000000',
-                        sidebar_bg_color: nightConfig.sidebar_bg_color || '#020617',
-                        text_color: nightConfig.text_color || '#f8fafc',
-                        table_header_bg_color: nightConfig.table_header_bg_color || '#0f172a',
-                        table_header_text_color: nightConfig.table_header_text_color || '#ffffff',
-                        table_filter_bg_color: nightConfig.table_filter_bg_color || '#020617',
-                        table_body_bg_color: nightConfig.table_body_bg_color || '#000000',
-                        table_body_text_color: nightConfig.table_body_text_color || '#cbd5e1',
-                        table_border_color: nightConfig.table_border_color || '#1e293b'
+                        gradient_start: '#020617', gradient_end: '#000000', primary_color: '#1e293b',
+                        background_color: '#000000', sidebar_bg_color: '#020617', text_color: '#f8fafc',
+                        table_header_bg_color: '#0f172a', table_header_text_color: '#ffffff',
+                        table_filter_bg_color: '#020617', table_body_bg_color: '#000000',
+                        table_body_text_color: '#cbd5e1', table_border_color: '#1e293b'
                     };
-
-                    // Root Theme Properties
+                    Object.entries(config).forEach(([k, v]) => {
+                        html.style.setProperty(`--app-${k.replace(/_/g, '-')}`, v);
+                    });
                     html.style.setProperty('--bs-primary', config.primary_color);
-                    html.style.setProperty('--app-gradient', `linear-gradient(135deg, ${config.gradient_start} 0%, ${config.gradient_end} 100%)`);
-                    html.style.setProperty('--app-card-bg', config.background_color);
-                    html.style.setProperty('--app-card-color', config.text_color);
-                    html.style.setProperty('--bs-body-bg', config.background_color);
-                    html.style.setProperty('--bs-body-color', config.text_color);
-                    
-                    // Specific components
-                    html.style.setProperty('--app-sidebar-bg', config.sidebar_bg_color);
-                    html.style.setProperty('--app-table-header-bg', config.table_header_bg_color);
-                    html.style.setProperty('--app-table-header-text', config.table_header_text_color);
-                    html.style.setProperty('--app-table-body-bg', config.table_body_bg_color);
-                    html.style.setProperty('--app-table-body-text', config.table_body_text_color);
-                    html.style.setProperty('--app-table-border-color', config.table_border_color);
-                    html.style.setProperty('--app-input-bg', config.background_color);
-                    html.style.setProperty('--app-input-color', config.text_color);
-                    html.style.setProperty('--app-primary', config.primary_color);
                 } else {
-                    // Fallback to Profile Default (handled by Django-Template variables in CSS)
-                    html.removeAttribute('style'); // Clear overrides
-                    html.setAttribute('data-bs-theme', 'light');
+                    html.removeAttribute('data-bs-theme');
+                    html.removeAttribute('style');
                 }
             }
-
-            // Watch for system changes
-            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
-            // Apply on load
             document.addEventListener('DOMContentLoaded', applyTheme);
-            applyTheme(); // Early application to prevent flash
+            applyTheme();
         })();
     </script>
 
@@ -298,6 +261,15 @@
                 </ul>
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     {% if user.is_authenticated %}
+                    <!-- Global Night Toggle -->
+                    <li class="nav-item d-flex align-items-center me-3">
+                        <a href="{% url 'toggle_night_mode' %}" class="nav-link d-flex align-items-center gap-2 p-0" title="{% trans 'Nachtmodus umschalten' %}">
+                            <i class="bi bi-moon-stars{% if user.profile.auto_night_mode %}-fill text-warning{% endif %}"></i>
+                            <div class="form-check form-switch m-0">
+                                <input class="form-check-input" type="checkbox" role="switch" {% if user.profile.auto_night_mode %}checked{% endif %} style="cursor: pointer; pointer-events: none;">
+                            </div>
+                        </a>
+                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false">
