@@ -232,10 +232,6 @@
                     try {
                         if (el.value !== value) {
                             el.value = value;
-                            if (el.tagName === 'INPUT') {
-                                el.dispatchEvent(new Event('input', { bubbles: true }));
-                                el.dispatchEvent(new Event('change', { bubbles: true }));
-                            }
                         }
                         types.push(el.type || el.tagName);
                         count++;
@@ -243,39 +239,27 @@
                 });
                 return { count, types: [...new Set(types)] };
             } finally {
-                isSyncing = false;
+                // Keep syncing flag for 50ms to allow event bubbling to clear
+                setTimeout(() => { isSyncing = false; }, 50);
             }
         }
 
-        function getNightConfig() {
-            try {
-                const scriptTag = document.getElementById('dark_mode_config_data');
-                let currentVal = darkModeInput ? darkModeInput.value : '';
-                
-                if (scriptTag && !currentVal) {
-                    const data = JSON.parse(scriptTag.textContent || '{}');
-                    currentVal = typeof data === 'object' ? JSON.stringify(data) : data;
-                    if (darkModeInput) darkModeInput.value = currentVal;
-                }
-                const parsed = JSON.parse(currentVal || '{}') || {};
-                return parsed;
-            } catch (e) {
-                showDebugError("Parkfehler Nacht-JSON", e);
-                return {};
-            }
-        }
-
+        let previewTimeout;
         function updatePreview() {
-            requestAnimationFrame(() => {
-                try {
-                    const s = getPrimaryValue('gradient_start') || '#212529';
-                    const e = getPrimaryValue('gradient_end') || '#495057';
-                    if (preview) {
-                        preview.style.background = `linear-gradient(135deg, ${s} 0%, ${e} 100%)`;
-                        logDebug(`Vorschau-Sync: ${s}`);
-                    }
-                } catch (e) { showDebugError("Vorschau-Fehler", e); }
-            });
+            clearTimeout(previewTimeout);
+            previewTimeout = setTimeout(() => {
+                requestAnimationFrame(() => {
+                    try {
+                        const s = getPrimaryValue('gradient_start') || '#212529';
+                        const e = getPrimaryValue('gradient_end') || '#495057';
+                        if (preview) {
+                            preview.style.background = `linear-gradient(135deg, ${s} 0%, ${e} 100%)`;
+                            // Minimal logging to prevent UI lag
+                            console.log(`Preview: ${s}`);
+                        }
+                    } catch (err) { console.error("Vorschau-Fehler", err); }
+                });
+            }, 20); // Small debounce
         }
 
         // Toggle Night Edit Mode
@@ -287,7 +271,7 @@
                     const btn = this;
                     const label = document.getElementById('editModeLabel');
                     
-                    logDebug(`Modus-Wechsel: <b>${isEditingNightMode ? 'NACHT' : 'TAG'}</b>`);
+                    logDebug(`Modus: <b>${isEditingNightMode ? 'NACHT' : 'TAG'}</b>`);
                     
                     if (isEditingNightMode) {
                         THEME_KEYS.forEach(key => { dayConfig[key] = getPrimaryValue(key); });
@@ -296,7 +280,7 @@
                         const isDuplicate = (nightConfig.gradient_start === dayConfig.gradient_start && Object.keys(nightConfig).length > 0);
                         
                         if (Object.keys(nightConfig).length === 0 || isDuplicate) {
-                            if (isDuplicate) logDebug("Nacht-Werte identisch mit Tag. Erzwinge Reset auf Midnight.");
+                            if (isDuplicate) logDebug("Nacht-Werte identisch mit Tag. Erzwinge Reset.");
                             nightConfig = {
                                 gradient_start: '#0f172a', gradient_end: '#020617', primary_color: '#334155',
                                 background_color: '#020617', sidebar_bg_color: '#0f172a', text_color: '#f8fafc',
@@ -367,24 +351,24 @@
             }
         });
 
-        document.addEventListener('input', (e) => {
-            if (isSyncing) return;
-            const target = e.target;
-            if (target.matches('[type="color"]') || target.classList.contains('form-control-color')) {
-                const name = target.getAttribute('name');
-                if (name) setAllValues(name, target.value);
-                
-                if (isEditingNightMode) {
-                    let nightConfig = {};
-                    THEME_KEYS.forEach(key => { nightConfig[key] = getPrimaryValue(key); });
-                    if (darkModeInput) darkModeInput.value = JSON.stringify(nightConfig);
-                }
-                updatePreview();
-            }
-        });
-
-        const profileForm = document.getElementById('profileForm');
+        // Use targeted form listener instead of global document listener
         if (profileForm) {
+            profileForm.addEventListener('input', (e) => {
+                if (isSyncing) return;
+                const target = e.target;
+                if (target.matches('[type="color"]') || target.classList.contains('form-control-color')) {
+                    const name = target.getAttribute('name');
+                    if (name) setAllValues(name, target.value);
+                    
+                    if (isEditingNightMode) {
+                        let nightConfig = {};
+                        THEME_KEYS.forEach(key => { nightConfig[key] = getPrimaryValue(key); });
+                        if (darkModeInput) darkModeInput.value = JSON.stringify(nightConfig);
+                    }
+                    updatePreview();
+                }
+            });
+
             profileForm.addEventListener('submit', function() {
                 try {
                     if (isEditingNightMode) {
