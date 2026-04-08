@@ -338,20 +338,13 @@ class ExcelParserService:
                     has_conflict=has_conflict,
                     existing_source=existing_source,
                     integration_count=group['count'], # Store how many rows were grouped
-                    signature=hashlib.md5(str(group).encode()).hexdigest()
+                    signature=hashlib.md5(str(group).encode()).hexdigest(),
+                    raw_signatures=";".join(group.get('raw_sigs', []))
                 )
                 pending_list.append(pending)
 
             # Bulk save Pending transactions
             PendingTransaction.objects.bulk_create(pending_list)
-
-            # Create Persistent Hashes for this batch (to prevent re-importing in future files)
-            # These are tied to the batch, so if the batch is deleted, the "memory" of these transactions is cleared too.
-            hash_objs = [
-                ProcessedTransactionHash(user=self.user, hash=p.signature, batch=batch)
-                for p in pending_list if p.signature
-            ]
-            ProcessedTransactionHash.objects.bulk_create(hash_objs, ignore_conflicts=True)
             
             cache.set(cache_key, 100, 300)
             self._log(batch, "### ANALYSE ERFOLGREICH ABGESCHLOSSEN ###")
@@ -416,11 +409,13 @@ class ExcelParserService:
                     'category': cat,
                     'is_income': is_income,
                     'linked_cash_flow': linked_cf,  # Store the plan link
-                    'raw_desc': str(row['description']) # Keep raw for mapping
+                    'raw_desc': str(row['description']), # Keep raw for mapping
+                    'raw_sigs': [] # Store individual row hashes
                 }
             
             groups_dict[key]['total_amount'] += Decimal(str(row['amount']))
             groups_dict[key]['count'] += 1
+            groups_dict[key]['raw_sigs'].append(row['signature'])
             if row['date'].date() > groups_dict[key]['latest_date']:
                 groups_dict[key]['latest_date'] = row['date'].date()
 

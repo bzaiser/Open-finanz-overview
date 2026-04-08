@@ -146,6 +146,9 @@ class PendingTransaction(models.Model):
     is_confirmed = models.BooleanField(_("Confirmed Conflict"), default=False) # For manual overwrite approval
     existing_source = models.ForeignKey(CashFlowSource, on_delete=models.SET_NULL, null=True, blank=True, related_name='conflicting_transactions')
 
+    # Row Tracking (Fingerprints)
+    raw_signatures = models.TextField(_("Raw Row Fingerprints"), blank=True, null=True, help_text=_("Semicolon-separated MD5 hashes of original Excel rows"))
+
     class Meta:
         verbose_name = _("Pending Transaction")
         verbose_name_plural = _("Pending Transactions")

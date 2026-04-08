@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.db import models
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse
 from django.template.loader import render_to_string
@@ -10,7 +11,7 @@ from django.contrib import messages
 from .services import SimulationEngine
 from .models import (
     Asset, CashFlowSource, OneTimeEvent, Pension, Category, 
-    ImportBatch, PendingTransaction, ImportFilter
+    ImportBatch, PendingTransaction, ImportFilter, ProcessedTransactionHash
 )
 from .forms import BankImportForm
 from core.models import UserProfile
@@ -1110,7 +1111,20 @@ def apply_import_batch(request, batch_id):
                 )
                 count_recurring += 1
             
-    # Mark as applied instead of deleting
+    # 3. Persistent Memory: Remember which rows were handled (assigned or ignored)
+    processed_transactions = batch.transactions.filter(
+        models.Q(category__isnull=False) | models.Q(is_ignored=True)
+    )
+    for trans in processed_transactions:
+        if trans.raw_signatures:
+            sigs = [s for s in trans.raw_signatures.split(';') if s]
+            hash_objs = [
+                ProcessedTransactionHash(user=request.user, hash=sig, batch=batch)
+                for sig in sigs
+            ]
+            ProcessedTransactionHash.objects.bulk_create(hash_objs, ignore_conflicts=True)
+
+    # Mark as applied
     batch.is_applied = True
     batch.save(update_fields=['is_applied'])
     
