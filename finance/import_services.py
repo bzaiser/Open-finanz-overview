@@ -88,8 +88,7 @@ class ExcelParserService:
             
             existing_batch = ImportBatch.objects.filter(user=self.user, file_hash=file_sha256).first()
             if existing_batch:
-                self._log(batch, f"FEHLER: Diese Datei wurde bereits am {existing_batch.date.strftime('%d.%m.%Y')} importiert!")
-                raise ValueError(f"Datei-Duplikat erkannt! (Batch ID: {existing_batch.id})")
+                self._log(batch, f"HINWEIS: Eine Datei mit identischem Inhalt wurde bereits unter Batch ID {existing_batch.id} eingelesen. Ich fahre trotzdem fort...")
             
             if batch:
                 batch.file_hash = file_sha256
