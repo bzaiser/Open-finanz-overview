@@ -94,33 +94,49 @@
                 
                 if (autoNightMode && isSystemDark) {
                     html.setAttribute('data-bs-theme', 'dark');
-                    // Inject Night Harmony Overrides
-                    if (nightConfig.background_color) {
-                        html.style.setProperty('--bs-body-bg', nightConfig.background_color);
-                        html.style.setProperty('--app-card-bg', nightConfig.background_color);
-                        html.style.setProperty('--app-table-body-bg', nightConfig.background_color);
-                    }
-                    if (nightConfig.text_color) {
-                        html.style.setProperty('--bs-body-color', nightConfig.text_color);
-                        html.style.setProperty('--app-card-color', nightConfig.text_color);
-                        html.style.setProperty('--app-table-body-text', nightConfig.text_color);
-                    }
-                    if (nightConfig.primary_color) {
-                        html.style.setProperty('--app-primary', nightConfig.primary_color);
-                        html.style.setProperty('--bs-primary', nightConfig.primary_color);
-                    }
-                    if (nightConfig.gradient_start && nightConfig.gradient_end) {
-                        html.style.setProperty('--app-gradient', `linear-gradient(135deg, ${nightConfig.gradient_start} 0%, ${nightConfig.gradient_end} 100%)`);
-                    }
-                    if (nightConfig.sidebar_bg_color) {
-                        html.style.setProperty('--app-sidebar-bg', nightConfig.sidebar_bg_color);
-                    }
-                    // Harmonized Inputs for Dark Mode
-                    html.style.setProperty('--app-input-bg', nightConfig.background_color || '#121212');
-                    html.style.setProperty('--app-input-color', nightConfig.text_color || '#e9ecef');
+                    
+                    // Use Deep Midnight Defaults if config is empty
+                    const config = {
+                        gradient_start: nightConfig.gradient_start || '#0f172a',
+                        gradient_end: nightConfig.gradient_end || '#020617',
+                        primary_color: nightConfig.primary_color || '#334155',
+                        background_color: nightConfig.background_color || '#020617',
+                        sidebar_bg_color: nightConfig.sidebar_bg_color || '#0f172a',
+                        text_color: nightConfig.text_color || '#f8fafc',
+                        table_header_bg_color: nightConfig.table_header_bg_color || '#1e293b',
+                        table_header_text_color: nightConfig.table_header_text_color || '#ffffff',
+                        table_filter_bg_color: nightConfig.table_filter_bg_color || '#0f172a',
+                        table_body_bg_color: nightConfig.table_body_bg_color || '#020617',
+                        table_body_text_color: nightConfig.table_body_text_color || '#cbd5e1',
+                        table_border_color: nightConfig.table_border_color || '#334155'
+                    };
+
+                    // Apply all properties to root
+                    html.style.setProperty('--bs-body-bg', config.background_color);
+                    html.style.setProperty('--app-card-bg', config.background_color);
+                    html.style.setProperty('--app-sidebar-bg', config.sidebar_bg_color);
+                    html.style.setProperty('--bs-body-color', config.text_color);
+                    html.style.setProperty('--app-card-color', config.text_color);
+                    html.style.setProperty('--app-primary', config.primary_color);
+                    html.style.setProperty('--bs-primary', config.primary_color);
+                    html.style.setProperty('--app-gradient', `linear-gradient(135deg, ${config.gradient_start} 0%, ${config.gradient_end} 100%)`);
+                    
+                    // Table Sync
+                    html.style.setProperty('--app-table-header-bg', config.table_header_bg_color);
+                    html.style.setProperty('--app-table-header-text', config.table_header_text_color);
+                    html.style.setProperty('--app-table-body-bg', config.table_body_bg_color);
+                    html.style.setProperty('--app-table-body-text', config.table_body_text_color);
+                    html.style.setProperty('--app-table-border-color', config.table_border_color);
+                    
+                    // Unified Input Rendering
+                    html.style.setProperty('--app-input-bg', config.background_color);
+                    html.style.setProperty('--app-input-color', config.text_color);
+                    html.style.setProperty('--app-input-border', config.table_border_color);
+
                 } else {
-                    // Fallback to Profile Default (is handled by Django-Template variables in CSS block above)
+                    // Fallback to Profile Default (handled by Django-Template variables in CSS)
                     html.removeAttribute('style'); // Clear overrides
+                    html.setAttribute('data-bs-theme', 'light');
                 }
             }
 
