@@ -181,6 +181,7 @@
         ];
 
         let isEditingNightMode = false;
+        let isSyncing = false; // Guard against infinite loops
         let dayConfig = {};
         
         const preview = document.getElementById('harmonyPreview');
@@ -204,7 +205,7 @@
                     <span style="color:#aaa; font-size:10px;">[${ts}]</span> 
                     <span style="color:${color}">${msg}</span>
                 </div>`;
-                jsErrorMsg.innerHTML = newMsg + jsErrorMsg.innerHTML;
+                jsErrorMsg.innerHTML = newMsg + jsErrorMsg.innerHTML.substring(0, 5000); // Limit size
             }
             {% endif %}
         }
@@ -215,30 +216,36 @@
 
         function getPrimaryValue(name) {
             const form = document.getElementById('profileForm') || document;
-            // Prefer color pickers as they are the source of truth for UI
             const el = form.querySelector(`input[name="${name}"][type="color"]`) || 
                        form.querySelector(`[name="${name}"]`);
             return el ? el.value : null;
         }
 
         function setAllValues(name, value) {
-            const form = document.getElementById('profileForm') || document;
-            const elements = form.querySelectorAll(`[name="${name}"]`);
-            let count = 0;
-            let types = [];
-            elements.forEach(el => {
-                try {
-                    el.value = value;
-                    // Force UI update for standard inputs
-                    if (el.tagName === 'INPUT') {
-                        el.dispatchEvent(new Event('input', { bubbles: true }));
-                        el.dispatchEvent(new Event('change', { bubbles: true }));
-                    }
-                    types.push(el.type || el.tagName);
-                    count++;
-                } catch (e) { console.error(`Sync-Error ${name}`, e); }
-            });
-            return { count, types: [...new Set(types)] };
+            if (isSyncing) return { count: 0, types: [] };
+            isSyncing = true;
+            try {
+                const form = document.getElementById('profileForm') || document;
+                const elements = form.querySelectorAll(`[name="${name}"]`);
+                let count = 0;
+                let types = [];
+                elements.forEach(el => {
+                    try {
+                        if (el.value !== value) {
+                            el.value = value;
+                            if (el.tagName === 'INPUT') {
+                                el.dispatchEvent(new Event('input', { bubbles: true }));
+                                el.dispatchEvent(new Event('change', { bubbles: true }));
+                            }
+                        }
+                        types.push(el.type || el.tagName);
+                        count++;
+                    } catch (e) { console.error(`Sync-Error ${name}`, e); }
+                });
+                return { count, types: [...new Set(types)] };
+            } finally {
+                isSyncing = false;
+            }
         }
 
         function getNightConfig() {
@@ -260,7 +267,6 @@
         }
 
         function updatePreview() {
-            // Use requestAnimationFrame to ensure DOM values are committed
             requestAnimationFrame(() => {
                 try {
                     const s = getPrimaryValue('gradient_start') || '#212529';
@@ -285,11 +291,9 @@
                     logDebug(`Modus-Wechsel: <b>${isEditingNightMode ? 'NACHT' : 'TAG'}</b>`);
                     
                     if (isEditingNightMode) {
-                        // Capture Day values
                         THEME_KEYS.forEach(key => { dayConfig[key] = getPrimaryValue(key); });
                         
                         let nightConfig = getNightConfig();
-                        // Check if night config is just a duplicate of day (bug recovery)
                         const isDuplicate = (nightConfig.gradient_start === dayConfig.gradient_start && Object.keys(nightConfig).length > 0);
                         
                         if (Object.keys(nightConfig).length === 0 || isDuplicate) {
@@ -326,7 +330,6 @@
             });
         }
 
-        // Global Event Delegation for Presets
         document.addEventListener('click', (e) => {
             const preset = e.target.closest('.gradient-preset');
             if (preset) {
@@ -352,8 +355,7 @@
                     updateList.table_border_color = isDark ? '#333333' : '#dee2e6';
                     
                     Object.keys(updateList).forEach(key => {
-                        const info = setAllValues(key, updateList[key]);
-                        if (info.count === 0) console.warn(`Kein Feld für ${key} gefunden!`);
+                        setAllValues(key, updateList[key]);
                     });
                     
                     if (isEditingNightMode) {
@@ -366,11 +368,10 @@
             }
         });
 
-        // Track manual changes
         document.addEventListener('input', (e) => {
+            if (isSyncing) return;
             const target = e.target;
             if (target.matches('[type="color"]') || target.classList.contains('form-control-color')) {
-                // If the user changed a color picker, sync all other elements with same name
                 const name = target.getAttribute('name');
                 if (name) setAllValues(name, target.value);
                 
@@ -391,8 +392,6 @@
                         let nightConfig = {};
                         THEME_KEYS.forEach(key => { nightConfig[key] = getPrimaryValue(key); });
                         if (darkModeInput) darkModeInput.value = JSON.stringify(nightConfig);
-                        // IMPORTANT: Before sending, switch inputs back to Day values 
-                        // so the server saves Day colors in main fields and Night in JSON field
                         THEME_KEYS.forEach(key => { 
                             if (dayConfig[key]) setAllValues(key, dayConfig[key]); 
                         });
@@ -401,8 +400,7 @@
             });
         }
 
-        // Initial preview and data sync
-        getNightConfig(); 
+        getNightConfig();
         updatePreview();
     })();
 </script>
