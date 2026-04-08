@@ -1,5 +1,5 @@
 {% load i18n static %}
-<html lang="{{ request.LANGUAGE_CODE }}" data-bs-theme="{% if user.is_authenticated and user.profile.theme and user.profile.theme.background_color == '#212529' or user.profile.theme.background_color == '#1a1a2e' or user.profile.theme.background_color == '#0d1117' or user.profile.theme.background_color == '#1e1e2e' %}dark{% else %}light{% endif %}">
+<html lang="{{ request.LANGUAGE_CODE }}" data-bs-theme="{% if user.is_authenticated and user.profile.background_color == '#212529' or user.profile.background_color == '#1a1a2e' or user.profile.background_color == '#0d1117' or user.profile.background_color == '#1e1e2e' %}dark{% else %}light{% endif %}">
 
 <head>
     <meta charset="UTF-8">

@@ -910,8 +910,9 @@ def _ensure_category_filters(user):
 
 @login_required
 def review_bank_transactions(request, batch_id):
-    # Ensure filters are synced before rendering the review page
-    _ensure_category_filters(request.user)
+    user = request.user
+    profile = user.profile
+    _ensure_category_filters(user)
     
     batch = get_object_or_404(ImportBatch, id=batch_id, user=request.user)
     
@@ -952,6 +953,7 @@ def review_bank_transactions(request, batch_id):
         'categories': categories,
         'filters': filters,
         'q': q,
+        'profile': profile,
         'ai_active': bool(settings.GEMINI_API_KEY or settings.GROQ_API_KEY),
         'conflict_count': ready_list.filter(has_conflict=True, is_confirmed=False).count()
     })
