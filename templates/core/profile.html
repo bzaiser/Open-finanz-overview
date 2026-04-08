@@ -265,6 +265,16 @@
         });
     });
 
+    document.getElementById('profileForm').addEventListener('submit', function() {
+        if (isEditingNightMode) {
+            // Ensure night config is captured
+            Object.keys(inputs).forEach(key => nightConfig[key] = inputs[key].value);
+            darkModeInput.value = JSON.stringify(nightConfig);
+            // RESTORE day values before submit so they are saved correctly in the main fields
+            Object.keys(inputs).forEach(key => { if (dayConfig[key]) inputs[key].value = dayConfig[key]; });
+        }
+    });
+
     updatePreview();
 </script>
 
