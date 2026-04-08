@@ -65,26 +65,32 @@ def simple_keyword_classify(description, categories):
     # Helper to find a matching category slug from user's list
     def find_best_slug(search_terms):
         for term in search_terms:
+            term_lower = term.lower()
             for cat in categories:
-                if term in cat['slug'].lower() or term in cat['name'].lower():
+                # Search in slug AND name
+                cat_slug = cat.get('slug', '').lower()
+                cat_name = cat.get('name', '').lower()
+                if term_lower in cat_slug or term_lower in cat_name:
                     return cat['slug']
-        return "uncategorized"
+        return None  # Fallback to LLM
 
     import re
     for key, search_terms in keyword_map.items():
-        # Match only full words to avoid false positives (e.g. 'Apple' matching in 'Kapple')
         pattern = rf"\b{re.escape(key)}\b"
         match = re.search(pattern, desc, re.IGNORECASE)
         if match:
             matched_substring = match.group(0)
             matching_slug = find_best_slug(search_terms)
-            return {
-                "category_slug": matching_slug,
-                "is_income": 'gehalt' in desc or 'lohn' in desc,
-                "is_recurring": True,
-                "frequency": "monthly",
-                "reasoning": f"Stichwort-Treffer '{matched_substring}' in Buchung gefunden"
-            }
+            
+            # ONLY return if we actually matched a real category slug
+            if matching_slug and matching_slug != "uncategorized":
+                return {
+                    "category_slug": matching_slug,
+                    "is_income": 'gehalt' in desc or 'lohn' in desc,
+                    "is_recurring": True,
+                    "frequency": "monthly",
+                    "reasoning": f"Stichwort-Treffer '{matched_substring}' in Buchung gefunden"
+                }
     return None
 
 def classify_with_groq(transactions, categories):
