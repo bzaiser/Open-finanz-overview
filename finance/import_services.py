@@ -4,7 +4,9 @@ import datetime
 import re
 from decimal import Decimal
 from django.utils import timezone
-from .models import Category, ImportBatch, PendingTransaction, CashFlowSource, OneTimeEvent, ImportFilter, ProcessedTransactionHash
+from django.utils.translation import gettext_lazy as _
+from django.db import models
+from .models import Category, ImportBatch, PendingTransaction, CashFlowSource, OneTimeEvent, ImportFilter, ProcessedTransactionHash, CategorizationMemory
 from .llm import classify_transactions
 from django.conf import settings
 from django.core.cache import cache
@@ -225,18 +227,49 @@ class ExcelParserService:
                             (settings.GEMINI_API_KEY or settings.GROQ_API_KEY)
 
             if unassigned and ai_configured:
-                self._log(batch, "### KI-ANALYSE WIRD VORBEREITET ###")
+                self._log(batch, "### KI-ANALYSE & GEDÄCHTNIS-LOOKUP ###")
                 
-                # NEW: Deduplicate by base_desc and sign (inflow/outflow) to optimize for multi-year imports
-                unique_unassigned_map = {}
+                # NEW: Pre-check CategorizationMemory for unassigned items
+                from .llm import clean_description
+                
+                still_unassigned = []
+                memory_matches = 0
+                
+                # Get all memories for this user once to avoid N+1
+                all_memories = {m.description: m for m in CategorizationMemory.objects.filter(user=self.user).select_related('category')}
+                
                 for g in unassigned:
-                    # Key is (normalized description, is_income_sign)
-                    key = (g['base_desc'], g['total_amount'] > 0)
-                    if key not in unique_unassigned_map:
-                        unique_unassigned_map[key] = g
+                    cleaned = clean_description(g['description'])
+                    g['cleaned_desc'] = cleaned
+                    
+                    if cleaned in all_memories:
+                        mem = all_memories[cleaned]
+                        g['category'] = mem.category
+                        g['ai_reasoning'] = _("Aus deinem Gedächtnis gelernt")
+                        g['ai_confidence'] = 1.0
+                        memory_matches += 1
+                        # Increment usage count (background)
+                        from django.db import models as dj_models
+                        CategorizationMemory.objects.filter(id=mem.id).update(usage_count=dj_models.F('usage_count') + 1)
+                    else:
+                        still_unassigned.append(g)
                 
-                llm_representative_items = list(unique_unassigned_map.values())
-                self._log(batch, f"Sende {len(llm_representative_items)} Händler-Pakete (bündelt {len(unassigned)} Jahre) an Ollama...")
+                if memory_matches > 0:
+                    self._log(batch, f"Lerneffekt: {memory_matches} Buchungen aus deinem Gedächtnis wiedererkannt.")
+
+                if not still_unassigned:
+                    self._log(batch, "Alle restlichen Buchungen via Gedächtnis erkannt.")
+                else:
+                    # NEW: Deduplicate by cleaned_desc and sign (inflow/outflow)
+                    unique_unassigned_map = {}
+                    for g in still_unassigned:
+                        # Key is (normalized description, is_income_sign)
+                        key = (g['cleaned_desc'], g['total_amount'] > 0)
+                        if key not in unique_unassigned_map:
+                            unique_unassigned_map[key] = g
+                    
+                    llm_representative_items = list(unique_unassigned_map.values())
+                    self._log(batch, f"Sende {len(llm_representative_items)} neue Händler-Pakete an die KI...")
                 
                 # Prepare data for LLM
                 llm_input = [{"id": i, "description": item['description'], "amount": float(item['total_amount'])} for i, item in enumerate(llm_representative_items)]
@@ -283,7 +316,8 @@ class ExcelParserService:
                             cat = cat_map_lower.get(slug)
                             if cat:
                                 group['category'] = cat
-                                group['ai_reasoning'] = res.get('reasoning', "Automatisch von KI kategorisiert")
+                                group['ai_reasoning'] = res.get('reasoning', _("Automatisch von KI kategorisiert"))
+                                group['ai_confidence'] = res.get('confidence', 0.8)
                                 if 'is_income' in res:
                                     group['is_income'] = res['is_income']
 
@@ -352,8 +386,11 @@ class ExcelParserService:
                     planned_amount=planned_amount, # Store the target plan value
                     is_income=group['is_income'],
                     category=group.get('category'),
+                    is_recurring=group.get('is_recurring', False),
+                    frequency=group.get('frequency', 'monthly'),
+                    ai_reasoning=group.get('ai_reasoning', ''),
+                    ai_confidence=group.get('ai_confidence', 1.0),
                     is_ignored=is_ignored, # Auto-ignore if it's already in the plan
-                    is_recurring=True,
                     has_conflict=has_conflict,
                     existing_source=existing_source,
                     integration_count=group['count'], # Store how many rows were grouped

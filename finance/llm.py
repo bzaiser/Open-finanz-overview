@@ -138,13 +138,11 @@ def classify_with_groq(transactions, categories):
             text = data['choices'][0]['message']['content']
             result_data = json.loads(text)
             
-            if isinstance(result_data, dict):
-                for key, val in result_data.items():
-                    if isinstance(val, list):
-                        result_data = val
-                        break
-            
-            return {str(item['id']): item for item in result_data}, None
+            return {str(item['id']): {
+                'category_slug': item.get('category_slug'),
+                'reasoning': item.get('reasoning'),
+                'confidence': float(item.get('confidence', 0.8))
+            } for item in result_data}, None
         except Exception as e:
             if attempt == 2:
                 key_preview = settings.GROQ_API_KEY[:4] + "..." if settings.GROQ_API_KEY else "KEIN_KEY"
@@ -182,8 +180,12 @@ def classify_with_ollama(transactions, categories):
         "- 'EDEKA MARKT': category_slug='lebensmittel', reasoning='Supermarkt'\n"
         "- 'AEGEAN AIRLINES': category_slug='reisen' (oder passend), reasoning='Fluggesellschaft'\n"
         "- 'ALLIANZ': category_slug='versicherung', reasoning='Versicherungsdienstleister'\n\n"
+        "Verwende für Reasoning maximal 15 Wörter.\n"
+        "Gib id, category_slug, confidence (0.00 bis 1.00) und reasoning für jedes Item zurück.\n"
+        "Confidence sollte hoch sein (0.9+) wenn der Händler eindeutig ist, und niedrig (<0.6) wenn du raten musst.\n"
+        "WICHTIG: Antworte NUR mit dem JSON-Objekt, absolut kein Text davor oder danach.\n"
+        f"Verfügbare Kategorien: {json.dumps(categories)}\n"
         f"Transaktionen: {json.dumps(transactions)}\n"
-        "Gib id, category_slug und reasoning für jedes Item zurück."
     )
     
     payload = {
@@ -229,13 +231,25 @@ def classify_with_ollama(transactions, categories):
         
         # Normalisierung des Outputs (Liste von Objekten erwartet)
         if isinstance(result_data, list):
-            return {str(item['id']): item for item in result_data}, None
+            return {str(item['id']): {
+                'category_slug': item.get('category_slug'),
+                'reasoning': item.get('reasoning'),
+                'confidence': float(item.get('confidence', 0.8))
+            } for item in result_data}, None
         elif isinstance(result_data, dict):
              # Falls die KI die Liste in ein Feld wie 'transactions' packt
              if 'transactions' in result_data:
-                 return {str(item['id']): item for item in result_data['transactions']}, None
+                 return {str(item['id']): {
+                    'category_slug': item.get('category_slug'),
+                    'reasoning': item.get('reasoning'),
+                    'confidence': float(item.get('confidence', 0.8))
+                } for item in result_data['transactions']}, None
              # Falls das oberste Level direkt die IDs sind
-             return {str(k): v for k, v in result_data.items() if isinstance(v, dict)}, None
+             return {str(k): {
+                'category_slug': v.get('category_slug'),
+                'reasoning': v.get('reasoning'),
+                'confidence': float(v.get('confidence', 0.8))
+            } for k, v in result_data.items() if isinstance(v, dict)}, None
         
         return None, "Ollama lieferte kein gültiges JSON-Array."
     except requests.exceptions.Timeout:
@@ -247,7 +261,24 @@ def classify_with_ollama(transactions, categories):
         return None, f"Ollama Fehler: {str(e) or type(e).__name__}"
 
 
-def classify_transactions(transactions, categories, progress_callback=None, is_cancelled_callback=None):
+def clean_description(text):
+    """
+    Remove dates, transaction IDs, TANs, and other noise from bank description.
+    """
+    if not text:
+        return ""
+    import re
+    # Remove dates (DD.MM.YYYY, DD.MM.YY, DD.MM)
+    text = re.sub(r'\d{1,2}\.\d{1,2}\.(\d{4}|\d{2})?', '', text)
+    # Remove TANs (6 digits)
+    text = re.sub(r'TAN \d{6}', '', text)
+    # Remove long ID strings (8+ chars of hex/digits)
+    text = re.sub(r'[A-Z0-9]{8,}', '', text)
+    # Remove multiple spaces
+    text = re.sub(r'\s+', ' ', text).strip()
+    return text
+
+def classify_transactions(transactions, categories, provider=None, progress_callback=None, is_cancelled_callback=None):
     """
     Kategorisiert eine Liste von Transaktionen.
     Verwendet Batching (Chunking), um Timeouts zu verhindern.
@@ -258,10 +289,13 @@ def classify_transactions(transactions, categories, progress_callback=None, is_c
     
     # 0. Lokaler Keyword-Check
     for t in transactions:
-        local_match = simple_keyword_classify(t['description'], categories)
+        cleaned_desc = clean_description(t['description'])
+        local_match = simple_keyword_classify(cleaned_desc, categories)
         if local_match:
+            local_match['confidence'] = 1.0 # Lokale Keywords sind 100% sicher
             final_results[str(t['id'])] = local_match
         else:
+            t['description'] = cleaned_desc # Send clean text to LLM
             remaining_all.append(t)
             
     if not remaining_all:

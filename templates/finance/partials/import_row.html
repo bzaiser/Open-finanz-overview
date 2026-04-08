@@ -5,7 +5,8 @@
         <button class="btn btn-link text-danger p-0" 
                 hx-get="{% url 'finance:confirm_transaction' t.id %}"
                 hx-target="#mapping-row-{{ t.id }}"
-                hx-swap="outerHTML"
+                hx-swap="none"
+                hx-on::after-request="if(event.detail.successful) this.remove()"
                 hx-indicator="closest tr"
                 hx-vals='{"field": "is_ignored", "value": "true"}'
                 title="{% trans 'Ignorieren' %}">
@@ -22,9 +23,19 @@
     <td class="text-truncate fw-bold" style="max-width: 350px;" title="{{ t.description }}">
         {{ t.description }}
         {% if t.ai_reasoning %}
-            <div class="small fw-normal text-muted mt-1" style="font-size: 0.75rem;">
-                <i class="bi bi-magic me-1"></i> {{ t.ai_reasoning }}
+            <div class="d-flex align-items-center gap-2 mt-1">
+                <div class="small fw-normal text-muted" style="font-size: 0.75rem;">
+                    <i class="bi bi-magic me-1"></i> {{ t.ai_reasoning }}
+                </div>
+                <span class="badge {% if t.ai_confidence > 0.8 %}bg-success-subtle text-success{% elif t.ai_confidence > 0.6 %}bg-warning-subtle text-warning{% else %}bg-danger-subtle text-danger{% endif %}" 
+                      style="font-size: 0.65rem;" title="{% trans 'KI-Vertrauen' %}">
+                    {% widthratio t.ai_confidence 1 100 %}%
+                </span>
             </div>
+        {% elif t.ai_confidence == 1.0 %}
+             <span class="badge bg-info-subtle text-info" style="font-size: 0.65rem;" title="{% trans 'Gelernt / Filter' %}">
+                <i class="bi bi-check-all"></i>
+            </span>
         {% endif %}
     </td>
     
@@ -49,7 +60,8 @@
             <select class="form-select form-select-sm border-primary mapping-category-select" 
                     hx-get="{% url 'finance:confirm_transaction' t.id %}"
                     hx-target="#mapping-row-{{ t.id }}"
-                    hx-swap="outerHTML"
+                    hx-swap="none"
+                    hx-on::after-request="if(event.detail.successful && event.detail.elt.value !== '') this.closest('tr').remove()"
                     hx-trigger="change"
                     hx-indicator="closest tr"
                     name="value"

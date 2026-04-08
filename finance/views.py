@@ -986,12 +986,34 @@ def confirm_bank_transaction(request, transaction_id):
     elif field == 'is_income':
         transaction.is_income = (value == 'true')
     elif field == 'category':
-        if value:
-            transaction.category = Category.objects.filter(id=value).first()
-        else:
-            transaction.category = None
-        if transaction.category:
-            transaction.is_ignored = False
+        try:
+            transaction = PendingTransaction.objects.get(id=transaction_id, batch__user=request.user)
+            batch = transaction.batch
+            was_mapping = not transaction.is_ready and not transaction.is_ignored
+            was_ready = transaction.is_ready and not transaction.is_ignored
+            
+            from .llm import clean_description
+            from .models import CategorizationMemory
+            
+            if value:
+                cat = Category.objects.get(id=value)
+                transaction.category = cat
+                transaction.is_ready = True
+                transaction.is_ignored = False
+                
+                # LEARNING: Save to categorization memory
+                cleaned = clean_description(transaction.description)
+                CategorizationMemory.objects.update_or_create(
+                    user=request.user, 
+                    description=cleaned,
+                    defaults={'category': cat}
+                )
+            else:
+                transaction.category = None
+                transaction.is_ready = False
+                transaction.is_ignored = False
+        except:
+            pass
     elif field == 'frequency':
         transaction.frequency = value
     elif field == 'is_confirmed':

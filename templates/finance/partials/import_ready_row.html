@@ -62,7 +62,8 @@
             <button class="btn btn-link text-warning p-1" 
                     hx-get="{% url 'finance:confirm_transaction' t.id %}"
                     hx-target="#ready-row-{{ t.id }}"
-                    hx-swap="outerHTML"
+                    hx-swap="none"
+                    hx-on::after-request="if(event.detail.successful) this.closest('tr').remove()"
                     hx-indicator="closest tr"
                     hx-vals='{"field": "category", "value": ""}'
                     title="{% trans 'Zurück nach oben verschieben' %}">
@@ -73,7 +74,8 @@
             <button class="btn btn-link text-danger p-1" 
                     hx-get="{% url 'finance:confirm_transaction' t.id %}"
                     hx-target="#ready-row-{{ t.id }}"
-                    hx-swap="outerHTML"
+                    hx-swap="none"
+                    hx-on::after-request="if(event.detail.successful) this.closest('tr').remove()"
                     hx-indicator="closest tr"
                     hx-vals='{"field": "is_ignored", "value": "true"}'
                     hx-confirm="{% trans 'Diesen zusammengefassten Posten wirklich verwerten?' %}"

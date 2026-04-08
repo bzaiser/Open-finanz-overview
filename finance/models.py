@@ -132,6 +132,7 @@ class PendingTransaction(models.Model):
     is_recurring = models.BooleanField(_("Is Recurring"), default=False)
     frequency = models.CharField(_("Frequency"), max_length=20, default='monthly', choices=CashFlowSource.FREQUENCY_CHOICES)
     ai_reasoning = models.TextField(_("AI Reasoning"), blank=True, null=True)
+    ai_confidence = models.FloatField(_("AI Confidence"), default=1.0, help_text=_("0.0 to 1.0"))
     
     # User Review state
     is_ignored = models.BooleanField(_("Ignore"), default=False)
@@ -276,3 +277,24 @@ class ImportFilter(models.Model):
 
     def __str__(self):
         return f"{self.target_name} ({self.search_query})"
+
+class CategorizationMemory(models.Model):
+    """
+    Learned categorization memory based on user confirmation.
+    Stores clean_description -> category mapping.
+    """
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='cat_memories')
+    description = models.CharField(_("Description"), max_length=255) # Cleaned version
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name=_("Category"))
+    last_used = models.DateTimeField(auto_now=True)
+    usage_count = models.PositiveIntegerField(default=1)
+
+    class Meta:
+        verbose_name = _("Categorization Memory")
+        verbose_name_plural = _("Categorization Memories")
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'description'], name='unique_memory_per_desc')
+        ]
+
+    def __str__(self):
+        return f"{self.description} -> {self.category.name}"
