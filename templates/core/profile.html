@@ -62,8 +62,8 @@
             </div>
 
             <!-- Rechts: Design Studio -->
-            <div class="col-lg-5">
-                <div class="glass-card shadow-lg p-4 border-primary border-opacity-25 h-100 d-flex flex-column" style="border-width: 2px;">
+            <div class="col-lg-5 d-flex flex-column">
+                <div class="glass-card shadow-lg p-4 border-primary border-opacity-25 flex-grow-1 d-flex flex-column" style="border-width: 2px;">
                     <h4 class="mb-4 fw-bold"><i class="bi bi-magic me-2 text-primary"></i>{% trans "Design" %}</h4>
                     
                     <div id="harmonyPreview" class="rounded-4 p-4 text-white shadow-gradient d-flex flex-column justify-content-center text-center mb-4"
@@ -114,7 +114,7 @@
                             <button type="button" id="toggleNightEdit" class="btn btn-primary d-flex align-items-center justify-content-center gap-2 shadow-sm rounded-pill py-2 w-100" style="background: var(--app-gradient); border: none;">
                                 <i class="bi bi-moon-stars"></i> <span id="editModeLabel">{% trans "Nachtdesign anwenden" %}</span>
                             </button>
-                            <input type="hidden" name="dark_mode_config" id="dark_mode_config_input" value="{{ user.profile.dark_mode_config|safe|default:"{}" }}">
+                            <input type="hidden" name="dark_mode_config" id="dark_mode_config_input" value="{{ user.profile.dark_mode_config|default:"{}" }}">
                         </div>
                     </div>
 
@@ -207,9 +207,9 @@
         
         if (isEditingNightMode) {
             // Store current day values
-            Object.keys(inputs).forEach(key => dayConfig[key] = inputs[key].value);
+            Object.keys(inputs).forEach(key => { if(inputs[key]) dayConfig[key] = inputs[key].value; });
             // Swapping to night values
-            Object.keys(inputs).forEach(key => { if (nightConfig[key]) inputs[key].value = nightConfig[key]; });
+            Object.keys(inputs).forEach(key => { if (inputs[key] && nightConfig[key]) inputs[key].value = nightConfig[key]; });
             
             label.innerText = "{% trans 'Zurück zum Tag-Design' %}";
             btn.style.background = "var(--app-primary)"; // Solid color for active state
@@ -217,10 +217,10 @@
             preview.classList.add('border', 'border-3', 'border-warning');
         } else {
             // Save current state back to nightConfig before switching
-            Object.keys(inputs).forEach(key => nightConfig[key] = inputs[key].value);
+            Object.keys(inputs).forEach(key => { if(inputs[key]) nightConfig[key] = inputs[key].value; });
             darkModeInput.value = JSON.stringify(nightConfig);
             // Restore day values
-            Object.keys(inputs).forEach(key => inputs[key].value = dayConfig[key]);
+            Object.keys(inputs).forEach(key => { if(inputs[key] && dayConfig[key]) inputs[key].value = dayConfig[key]; });
             
             label.innerText = "{% trans 'Nachtdesign anwenden' %}";
             btn.style.background = "var(--app-gradient)"; // Restore gradient
@@ -232,13 +232,15 @@
 
     // Capture changes to nightConfig live if in night mode
     Object.values(inputs).forEach(input => {
-        input.addEventListener('input', () => {
-            if (isEditingNightMode) {
-                Object.keys(inputs).forEach(key => nightConfig[key] = inputs[key].value);
-                darkModeInput.value = JSON.stringify(nightConfig);
-            }
-            updatePreview();
-        });
+        if (input) {
+            input.addEventListener('input', () => {
+                if (isEditingNightMode) {
+                    Object.keys(inputs).forEach(key => { if(inputs[key]) nightConfig[key] = inputs[key].value; });
+                    darkModeInput.value = JSON.stringify(nightConfig);
+                }
+                updatePreview();
+            });
+        }
     });
 
     document.querySelectorAll('.gradient-preset').forEach(btn => {
@@ -268,10 +270,10 @@
     document.getElementById('profileForm').addEventListener('submit', function() {
         if (isEditingNightMode) {
             // Ensure night config is captured
-            Object.keys(inputs).forEach(key => nightConfig[key] = inputs[key].value);
+            Object.keys(inputs).forEach(key => { if(inputs[key]) nightConfig[key] = inputs[key].value; });
             darkModeInput.value = JSON.stringify(nightConfig);
             // RESTORE day values before submit so they are saved correctly in the main fields
-            Object.keys(inputs).forEach(key => { if (dayConfig[key]) inputs[key].value = dayConfig[key]; });
+            Object.keys(inputs).forEach(key => { if (inputs[key] && dayConfig[key]) inputs[key].value = dayConfig[key]; });
         }
     });
 
