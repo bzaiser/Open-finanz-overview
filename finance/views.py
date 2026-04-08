@@ -885,19 +885,20 @@ def _ensure_category_filters(user):
         if ImportFilter.objects.filter(user=user, category=cat).exists():
             continue
             
-        try:
-            # 2. Try to re-link an orphaned filter (category=NULL) with same name
-            orphaned = ImportFilter.objects.filter(
-                user=user, 
-                category__isnull=True, 
-                target_name=cat.name
-            ).first()
-            
-            if orphaned:
-                orphaned.category = cat
-                orphaned.save()
-            else:
-                # 3. Create a fresh filter
+        # 2. Try to re-link an orphaned filter (category=NULL) with same name
+        orphaned = ImportFilter.objects.filter(
+            user=user, 
+            category__isnull=True, 
+            target_name=cat.name
+        ).first()
+        
+        if orphaned:
+            orphaned.category = cat
+            orphaned.save()
+        else:
+            # 3. Double-check again right before creation to prevent race conditions
+            if not ImportFilter.objects.filter(user=user, category=cat).exists():
+                # 4. Create a fresh filter
                 ImportFilter.objects.create(
                     user=user,
                     category=cat,
@@ -905,10 +906,6 @@ def _ensure_category_filters(user):
                     search_query='', # Field will be filled during review
                     is_active=True
                 )
-        except IntegrityError:
-            # Collision occurred (another instance was faster or duplicate found).
-            # We ignore this as the goal (filter existence) is fulfilled.
-            pass
 
 @login_required
 def review_bank_transactions(request, batch_id):
@@ -1482,7 +1479,11 @@ def quick_create_category(request):
         if not name:
             return HttpResponse('<div class="alert alert-danger small p-2">Name fehlt!</div>', status=400)
             
-        category = Category.objects.create(name=name, color=color)
+        # 1. Prevent duplicate categories (case-insensitive check)
+        category, created = Category.objects.get_or_create(
+            name__iexact=name,
+            defaults={'name': name, 'color': color}
+        )
         
         # Build OOB response for ALL category dropdowns
         # 1. Update the original dropdown (regular response)
