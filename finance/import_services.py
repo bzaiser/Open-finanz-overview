@@ -254,14 +254,14 @@ class ExcelParserService:
                 )
                 self._log(batch, f"KI-Status: {status_msg}")
                 
-                # Map results back to groups
-                cat_map = {c.slug: c for c in all_categories}
+                # Map results back to groups (case-insensitive)
+                cat_map_lower = {c.slug.lower(): c for c in all_categories}
                 for i, group in enumerate(unassigned):
                     res = results.get(str(i))
                     if res:
-                        slug = res.get('category_slug')
+                        slug = res.get('category_slug', '').lower()
                         if slug and slug != 'uncategorized':
-                            cat = cat_map.get(slug)
+                            cat = cat_map_lower.get(slug)
                             if cat:
                                 group['category'] = cat
                                 group['ai_reasoning'] = res.get('reasoning', "Automatisch von KI kategorisiert")
