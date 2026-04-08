@@ -7,14 +7,13 @@
 <div class="container mt-4 mb-5 animate__animated animate__fadeIn">
     {% if debug %}
     <!-- Debug Error Output (hidden by default) -->
-    <div id="js-debug-error" class="alert alert-danger d-none fixed-top m-3 shadow-lg rounded-4" style="z-index: 9999;">
-        <div class="d-flex align-items-center">
-            <i class="bi bi-exclamation-triangle-fill me-2 fs-4"></i>
-            <div class="flex-grow-1">
-                <strong class="d-block">JavaScript Fehler erkannt:</strong>
-                <span id="js-debug-msg" class="small"></span>
+    <div id="js-debug-error" class="position-fixed bottom-0 start-0 w-100 bg-danger text-white p-2 d-none" style="z-index: 9999; max-height: 300px; overflow-y: auto; font-family: monospace; font-size: 13px; box-shadow: 0 -5px 15px rgba(0,0,0,0.3); border-top: 2px solid white;">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+                <strong class="d-flex align-items-center"><i class="bi bi-bug-fill me-2"></i> Design-Studio Debug-Logs</strong>
+                <button type="button" class="btn btn-sm btn-outline-light py-0" onclick="document.getElementById('js-debug-msg').innerHTML=''"><i class="bi bi-trash"></i></button>
             </div>
-            <button type="button" class="btn-close ms-2" onclick="this.parentElement.parentElement.classList.add('d-none')"></button>
+            <div id="js-debug-msg"></div>
         </div>
     </div>
     {% endif %}
