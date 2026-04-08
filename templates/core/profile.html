@@ -228,9 +228,9 @@
                 // If in Night Mode, only override the surface with a TINTED version
                 if (isNight && !forceBackground) {
                     if (['card-bg', 'sidebar-bg', 'table-body-bg'].includes(key)) {
-                        const tintedValue = `color-mix(in srgb, var(--app-primary), black 94%)`;
+                        const tintedValue = `color-mix(in srgb, var(--app-primary), black 88%)`;
                         if (key === 'sidebar-bg') {
-                            html.style.setProperty('--app-' + key, `color-mix(in srgb, var(--app-primary), black 96%)`);
+                            html.style.setProperty('--app-' + key, `color-mix(in srgb, var(--app-primary), black 92%)`);
                         } else {
                             html.style.setProperty('--app-' + key, tintedValue);
                         }
@@ -256,9 +256,9 @@
                 }
             } else {
                 // Ensure Bootstrap globals also use the tint in night mode
-                html.style.setProperty('--bs-body-bg', 'color-mix(in srgb, var(--app-primary), black 98%)');
-                html.style.setProperty('--bs-tertiary-bg', 'color-mix(in srgb, var(--app-primary), black 94%)');
-                html.style.setProperty('--bs-card-bg', 'color-mix(in srgb, var(--app-primary), black 94%)');
+                html.style.setProperty('--bs-body-bg', 'color-mix(in srgb, var(--app-primary), black 95%)');
+                html.style.setProperty('--bs-tertiary-bg', 'color-mix(in srgb, var(--app-primary), black 88%)');
+                html.style.setProperty('--bs-card-bg', 'color-mix(in srgb, var(--app-primary), black 88%)');
             }
         }
 
