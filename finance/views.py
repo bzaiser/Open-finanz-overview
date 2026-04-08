@@ -872,7 +872,6 @@ def import_processing(request):
         'batch': latest_batch
     })
 
-@login_required
 def _ensure_category_filters(user):
     """
     Robust synchronization: Ensures each category has exactly one ImportFilter.
@@ -910,8 +909,7 @@ def _ensure_category_filters(user):
 
 @login_required
 def review_bank_transactions(request, batch_id):
-    # Force resolution of the lazy request.user object to prevent 'CustomUser' object has no attribute 'user'
-    user = request.user._wrapped if hasattr(request.user, '_wrapped') else request.user
+    user = request.user
     if not user.is_authenticated:
         from django.shortcuts import redirect
         return redirect('login')
