@@ -185,6 +185,20 @@
         .dropdown-item:hover {
             background-color: rgba(0,0,0,0.05) !important;
         }
+        .glass-card {
+            background: var(--app-card-bg);
+            background-color: color-mix(in srgb, var(--app-card-bg), transparent 30%);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--app-table-border-color);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        /* Ensure tables are transparent to show the card background/blur */
+        .glass-card .table, .glass-card .table-responsive {
+            background-color: transparent !important;
+            --bs-table-bg: transparent !important;
+        }
 
         /* Premium Metric Cards */
         .metric-card {

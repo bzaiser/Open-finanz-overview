@@ -183,43 +183,39 @@
 
         function applyLiveTheme() {
             const config = {
-                gradient_start: getPrimaryValue('gradient_start'),
-                gradient_end: getPrimaryValue('gradient_end'),
-                primary_color: getPrimaryValue('primary_color'),
-                background_color: getPrimaryValue('background_color'),
-                sidebar_bg_color: getPrimaryValue('sidebar_bg_color'),
-                text_color: getPrimaryValue('text_color'),
-                table_header_bg_color: getPrimaryValue('table_header_bg_color'),
-                table_header_text_color: getPrimaryValue('table_header_text_color'),
-                table_filter_bg_color: getPrimaryValue('table_filter_bg_color'),
-                table_body_bg_color: getPrimaryValue('table_body_bg_color'),
-                table_body_text_color: getPrimaryValue('table_body_text_color'),
-                table_border_color: getPrimaryValue('table_border_color')
+                'primary': getPrimaryValue('primary_color'),
+                'gradient': `linear-gradient(135deg, ${getPrimaryValue('gradient_start')} 0%, ${getPrimaryValue('gradient_end')} 100%)`,
+                'card-bg': getPrimaryValue('background_color'),
+                'card-color': getPrimaryValue('text_color'),
+                'sidebar-bg': getPrimaryValue('sidebar_bg_color'),
+                'table-header-bg': getPrimaryValue('table_header_bg_color'),
+                'table-header-text': getPrimaryValue('table_header_text_color'),
+                'table-body-bg': getPrimaryValue('table_body_bg_color'),
+                'table-body-text': getPrimaryValue('table_body_text_color'),
+                'table-border-color': getPrimaryValue('table_border_color')
             };
 
-            // Enhanced Live Sync for the WHOLE Page
-            html.style.setProperty('--bs-primary', config.primary_color);
-            html.style.setProperty('--app-primary', config.primary_color);
-            html.style.setProperty('--app-gradient', `linear-gradient(135deg, ${config.gradient_start} 0%, ${config.gradient_end} 100%)`);
-            
-            html.style.setProperty('--app-card-bg', config.background_color);
-            html.style.setProperty('--app-card-color', config.text_color);
-            html.style.setProperty('--bs-body-bg', config.background_color);
-            html.style.setProperty('--bs-body-color', config.text_color);
-            
-            html.style.setProperty('--app-sidebar-bg', config.sidebar_bg_color);
-            html.style.setProperty('--app-table-header-bg', config.table_header_bg_color);
-            html.style.setProperty('--app-table-header-text', config.table_header_text_color);
-            html.style.setProperty('--app-table-body-bg', config.table_body_bg_color);
-            html.style.setProperty('--app-table-body-text', config.table_body_text_color);
-            html.style.setProperty('--app-table-border-color', config.table_border_color);
-            
-            html.style.setProperty('--app-input-bg', config.background_color);
-            html.style.setProperty('--app-input-color', config.text_color);
-
-            // Special: Update the small preview box too
+            // Update the small preview box ALWAYS
             if (preview) {
-                preview.style.background = `linear-gradient(135deg, ${config.gradient_start} 0%, ${config.gradient_end} 100%)`;
+                preview.style.background = config['gradient'];
+            }
+
+            // ONLY apply to the whole page if we are NOT currently in Night Mode
+            const isNight = (html.getAttribute('data-bs-theme') === 'dark');
+            if (!isNight) {
+                Object.entries(config).forEach(([key, value]) => {
+                    html.style.setProperty('--app-' + key, value);
+                });
+                html.style.setProperty('--bs-primary', config['primary']);
+                html.style.setProperty('--bs-body-bg', config['card-bg']);
+                html.style.setProperty('--bs-body-color', config['card-color']);
+                html.style.setProperty('--bs-tertiary-bg', config['card-bg']);
+                html.style.setProperty('--bs-card-bg', config['card-bg']);
+                
+                // Extra sync for inputs
+                html.style.setProperty('--app-input-bg', config['table-body-bg']);
+                html.style.setProperty('--app-input-color', config['table-body-text']);
+                html.style.setProperty('--app-input-border', config['table-border-color']);
             }
         }
 
