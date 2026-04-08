@@ -982,7 +982,10 @@ def confirm_bank_transaction(request, transaction_id):
     elif field == 'is_income':
         transaction.is_income = (value == 'true')
     elif field == 'category':
-        transaction.category = Category.objects.filter(id=value).first()
+        if value:
+            transaction.category = Category.objects.filter(id=value).first()
+        else:
+            transaction.category = None
         if transaction.category:
             transaction.is_ignored = False
     elif field == 'frequency':
