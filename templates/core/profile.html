@@ -1,160 +1,164 @@
 {% extends "base.html" %}
-{% load i18n crispy_forms_tags %}
+{% load i18n %}
+
+{% block title %}{% trans "Profil & Design Studio" %}{% endblock %}
 
 {% block content %}
-<div class="container mt-4 mb-5 animate__animated animate__fadeIn">
-    <div class="row mb-5 text-center">
-        <div class="col-12">
-            <h1 class="fw-bold display-5 text-gradient">
-                <i class="bi bi-person-circle me-3"></i>{% trans "Deine Dashboard-Konfiguration" %}
-            </h1>
-            <p class="text-muted lead mt-2">{% trans "Gestalte dein persönliches Dashboard-Erlebnis mit präzisen Farben und harmonischen Verläufen." %}</p>
-        </div>
-    </div>
-
-    <form method="post" enctype="multipart/form-data" id="profileForm">
-        {% csrf_token %}
-        <div class="row g-5 align-items-stretch">
-            <!-- Links: Basis-Einstellungen -->
-            <div class="col-lg-7 h-100">
-                <!-- Identität & Kern -->
-                <div class="glass-card shadow-sm p-4 mb-4">
-                    <h4 class="mb-4 fw-bold"><i class="bi bi-person-badge me-2 text-primary"></i>{% trans "Identität & Kern" %}</h4>
-                    
-                    <div class="d-flex align-items-center mb-4 p-3 rounded-4 border border-primary border-opacity-10" style="background-color: var(--app-table-filter-bg);">
-                        <div class="me-4 position-relative">
-                            {% if user.profile.avatar %}
-                                <img src="{{ user.profile.avatar.url }}" class="rounded-circle shadow-sm object-fit-cover" width="100" height="100" style="border: 3px solid white;">
-                            {% else %}
-                                <div class="rounded-circle bg-white shadow-sm d-flex align-items-center justify-content-center" style="width: 100px; height: 100px; border: 3px solid #eee;">
-                                    <i class="bi bi-person text-secondary fs-1"></i>
-                                </div>
-                            {% endif %}
-                        </div>
-                        <div>
-                            <p class="mb-1 text-muted small">{% trans "Aktueller Avatar" %}</p>
-                            <h5 class="fw-bold mb-0 text-primary">{{ user.username }}</h5>
-                            <span class="badge bg-primary bg-opacity-10 text-primary mt-2">{% trans "Mitglied seit" %} {{ user.date_joined|date:"M Y" }}</span>
-                        </div>
-                    </div>
-
-                    <div class="row g-3">
-                        <div class="col-md-6">{{ form.avatar|as_crispy_field }}</div>
-                        <div class="col-md-6">{{ form.birth_date|as_crispy_field }}</div>
-                        <div class="col-md-6">{{ form.language|as_crispy_field }}</div>
-                        <div class="col-md-6">{{ form.currency|as_crispy_field }}</div>
-                    </div>
-                </div>
-
-                <!-- Simulation -->
-                <div class="glass-card shadow-sm p-4 h-100">
-                    <h4 class="mb-4 fw-bold"><i class="bi bi-cpu me-2 text-primary"></i>{% trans "Parameter für Vorhersagen" %}</h4>
-                    <div class="row g-3">
-                        <div class="col-md-6">{{ form.simulation_max_age|as_crispy_field }}</div>
-                        <div class="col-md-6">{{ form.inflation_rate|as_crispy_field }}</div>
-                        <div class="col-md-6">{{ form.salary_increase|as_crispy_field }}</div>
-                        <div class="col-md-6">{{ form.pension_increase|as_crispy_field }}</div>
-                        <div class="col-md-6">{{ form.investment_return_offset|as_crispy_field }}</div>
-                    </div>
-                </div>
+<div class="row justify-content-center">
+    <div class="col-xl-11">
+        <div class="d-flex justify-content-between align-items-end mb-4">
+            <div>
+                <h2 class="display-5 fw-bold mb-0">{% trans "Einstellungen" %}</h2>
+                <p class="text-muted">{% trans "Personalisiere dein Erlebnis und dein Dashboard-Design." %}</p>
             </div>
+            <div class="text-end">
+                <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill">
+                    <i class="bi bi-person-check me-1"></i> {{ user.username }}
+                </span>
+            </div>
+        </div>
 
-            <!-- Rechts: Design Studio -->
-            <div class="col-lg-5 d-flex flex-column">
-                <div class="glass-card shadow-lg p-4 border-primary border-opacity-25 flex-grow-1 d-flex flex-column" style="border-width: 2px;">
-                    <h4 class="mb-4 fw-bold"><i class="bi bi-magic me-2 text-primary"></i>{% trans "Design Studio" %}</h4>
-                    
-                    <div id="harmonyPreview" class="rounded-4 p-4 text-white shadow-gradient d-flex flex-column justify-content-center text-center mb-4"
-                         style="background: var(--app-gradient); min-height: 120px; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);">
-                        <div class="fs-4 fw-bold shadow-text">{% trans "Visuelle Harmonie" %}</div>
-                        <div class="small opacity-75">{% trans "Live-Vorschau" %}</div>
-                    </div>
-
-                    <label class="form-label small fw-bold mb-3">{% trans "Schnelle Harmonien" %}</label>
-                    <div class="d-flex flex-wrap gap-2 mb-4">
-                        <div class="preset-pill shadow-sm gradient-preset" 
-                             data-start="#6610f2" data-end="#0d6efd" data-primary="#0d6efd" data-bg="#ffffff" data-sidebar="#f8f9fa" data-text="#212529"
-                             style="background: linear-gradient(135deg, #6610f2 0%, #0d6efd 100%);" title="Vibrant Blue"></div>
-                        <div class="preset-pill shadow-sm gradient-preset" 
-                             data-start="#198754" data-end="#20c997" data-primary="#198754" data-bg="#f8fff9" data-sidebar="#e9f5ed" data-text="#0f5132"
-                             style="background: linear-gradient(135deg, #198754 0%, #20c997 100%);" title="Nature Green"></div>
-                        <div class="preset-pill shadow-sm gradient-preset" 
-                             data-start="#fd7e14" data-end="#ffc107" data-primary="#fd7e14" data-bg="#fff9f2" data-sidebar="#fdf2e2" data-text="#854000"
-                             style="background: linear-gradient(135deg, #fd7e14 0%, #ffc107 100%);" title="Sunset Orange"></div>
-                        <div class="preset-pill shadow-sm gradient-preset" 
-                             data-start="#d63384" data-end="#6610f2" data-primary="#d63384" data-bg="#fff5f8" data-sidebar="#f8e9f0" data-text="#a10056"
-                             style="background: linear-gradient(135deg, #d63384 0%, #6610f2 100%);" title="Deep Purple"></div>
-                        <div class="preset-pill shadow-sm gradient-preset" 
-                             data-start="#212529" data-end="#495057" data-primary="#343a40" data-bg="#121212" data-sidebar="#1a1a1a" data-text="#e9ecef"
-                             style="background: linear-gradient(135deg, #212529 0%, #495057 100%);" title="Midnight Classic"></div>
-                        <div class="preset-pill shadow-sm gradient-preset" 
-                             data-start="#f2994a" data-end="#f2c94c" data-primary="#f2994a" data-bg="#fffaf0" data-sidebar="#fef6e0" data-text="#92400e"
-                             style="background: linear-gradient(135deg, #f2994a 0%, #f2c94c 100%);" title="Golden Autumn"></div>
-                        <div class="preset-pill shadow-sm gradient-preset" 
-                             data-start="#2980b9" data-end="#6dd5fa" data-primary="#2980b9" data-bg="#f0faff" data-sidebar="#e1f5fe" data-text="#0c4a6e"
-                             style="background: linear-gradient(135deg, #2980b9 0%, #6dd5fa 100%);" title="Arctic Frost"></div>
-                        <div class="preset-pill shadow-sm gradient-preset" 
-                             data-start="#f093fb" data-end="#f5576c" data-primary="#f5576c" data-bg="#fff5f7" data-sidebar="#ffe4e8" data-text="#9f1239"
-                             style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);" title="Cherry Blossom"></div>
-                    </div>
-
-                    <div class="alert alert-info py-2 rounded-4 border-0 small mb-4">
-                        <i class="bi bi-info-circle me-1"></i> {% trans "Nachtmodus kann jetzt oben im Header umgeschaltet werden." %}
-                    </div>
-
-                    <!-- Präzisions-Studio -->
-                    <div class="accordion mb-4" id="designAccordion">
-                        <div class="accordion-item border-0 shadow-sm rounded-4 overflow-hidden">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed py-3 fw-bold small" type="button" data-bs-toggle="collapse" data-bs-target="#collapseStudio">
-                                    <i class="bi bi-sliders me-2 text-primary"></i> {% trans "Präzisions-Studio" %}
-                                </button>
-                            </h2>
-                            <div id="collapseStudio" class="accordion-collapse collapse" data-bs-parent="#designAccordion">
-                                <div class="accordion-body border-top" style="background-color: var(--app-table-filter-bg);">
-                                    <div class="row g-3">
-                                        <div class="col-md-6"><label class="form-label small fw-bold">{% trans "Primärfarbe" %}</label>{{ form.primary_color }}</div>
-                                        <div class="col-md-6"><label class="form-label small fw-bold">{% trans "Hintergrund" %}</label>{{ form.background_color }}</div>
-                                        <div class="col-md-6"><label class="form-label small fw-bold">{% trans "Sidebar BG" %}</label>{{ form.sidebar_bg_color }}</div>
-                                        <div class="col-md-6"><label class="form-label small fw-bold">{% trans "Text Farbe" %}</label>{{ form.text_color }}</div>
-                                        <div class="col-12"><hr class="my-2"></div>
-                                        <div class="col-md-6"><label class="form-label small fw-bold">{% trans "Tabellenkopf BG" %}</label>{{ form.table_header_bg_color }}</div>
-                                        <div class="col-md-6"><label class="form-label small fw-bold">{% trans "Tabellenkopf Text" %}</label>{{ form.table_header_text_color }}</div>
-                                        <div class="col-md-6"><label class="form-label small fw-bold">{% trans "Tabellenfilter BG" %}</label>{{ form.table_filter_bg_color }}</div>
-                                        <div class="col-md-6"><label class="form-label small fw-bold">{% trans "Tabellenrahmen" %}</label>{{ form.table_border_color }}</div>
-                                        <div class="col-12"><hr class="my-2"></div>
-                                        <div class="col-md-6"><label class="form-label small fw-bold">{% trans "Tabelleninhalt BG" %}</label>{{ form.table_body_bg_color }}</div>
-                                        <div class="col-md-6"><label class="form-label small fw-bold">{% trans "Tabelleninhalt Text" %}</label>{{ form.table_body_text_color }}</div>
-                                        <div class="col-12"><hr class="my-2"></div>
-                                        <div class="col-md-6"><label class="form-label small fw-bold">{% trans "Verlauf Start" %}</label>{{ form.gradient_start }}</div>
-                                        <div class="col-md-6"><label class="form-label small fw-bold">{% trans "Verlauf Ende" %}</label>{{ form.gradient_end }}</div>
+        <form method="post" enctype="multipart/form-data" id="profileForm">
+            {% csrf_token %}
+            <!-- Hidden state preservation -->
+            {{ form.auto_night_mode.as_hidden }}
+            {{ form.dark_mode_config.as_hidden }}
+            
+            <div class="row g-4 mb-4">
+                <!-- Links: Stammdaten -->
+                <div class="col-lg-5">
+                    <div class="glass-card shadow-lg p-4 h-100">
+                        <h4 class="mb-4 fw-bold"><i class="bi bi-person-vcard me-2 text-primary"></i>{% trans "Profil & Stammdaten" %}</h4>
+                        <div class="row g-3">
+                            <div class="col-12 mb-3">
+                                <label class="form-label small fw-bold">{% trans "Profilbild" %}</label>
+                                <div class="d-flex align-items-center gap-3 p-3 rounded-4 border border-dashed">
+                                    {% if user.profile.avatar %}
+                                        <img src="{{ user.profile.avatar.url }}" class="rounded-circle shadow-sm" width="60" height="60" style="object-fit: cover;">
+                                    {% else %}
+                                        <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                            <i class="bi bi-person fs-2"></i>
+                                        </div>
+                                    {% endif %}
+                                    <div class="flex-grow-1">
+                                        {{ form.avatar }}
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">{% trans "Geburtsdatum" %}</label>
+                                {{ form.birth_date }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">{% trans "Sprache" %}</label>
+                                {{ form.language }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">{% trans "Währung" %}</label>
+                                {{ form.currency }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">{% trans "Simulation Max. Alter" %}</label>
+                                {{ form.simulation_max_age }}
+                            </div>
+                        </div>
+
+                        <hr class="my-4 opacity-50">
+                        
+                        <h5 class="mb-3 small fw-bold text-uppercase text-muted">{% trans "Privatsphäre" %}</h5>
+                        <div class="p-3 rounded-4 bg-light border">
+                            <i class="bi bi-moon-stars me-2"></i>
+                            {% trans "Nachtmodus wird über den Schalter im Header gesteuert." %}
                         </div>
                     </div>
+                </div>
 
-                    <button type="submit" class="btn btn-gradient btn-lg w-100 py-3 mt-auto fw-bold rounded-4 shadow-lg text-white" style="background: var(--app-gradient); border: none;">
-                        <i class="bi bi-check2-circle me-2"></i>{% trans "Design & Profil speichern" %}
-                    </button>
+                <!-- Rechts: Design Studio -->
+                <div class="col-lg-7">
+                    <div class="glass-card shadow-lg p-4 h-100 border-primary border-opacity-25" style="border-width: 2px;">
+                        <h4 class="mb-4 fw-bold"><i class="bi bi-magic me-2 text-primary"></i>{% trans "Design Studio" %}</h4>
+                        
+                        <!-- Premium Preview Box -->
+                        <div id="harmonyPreview" class="rounded-4 p-4 text-white shadow-gradient d-flex flex-column justify-content-center text-center mb-4"
+                             style="background: var(--app-gradient); min-height: 120px; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);">
+                            <div class="fs-3 fw-bold shadow-text">{% trans "Design Harmonie" %}</div>
+                            <div class="small opacity-75">{% trans "Echtzeit Live-Vorschau" %}</div>
+                        </div>
+
+                        <label class="form-label small fw-bold mb-3">{% trans "Wähle eine Farbzusammenstellung" %}</label>
+                        <div class="d-flex flex-wrap gap-3 mb-4">
+                            <div class="preset-pill shadow-sm gradient-preset" 
+                                 data-start="#6610f2" data-end="#0d6efd" data-primary="#0d6efd" data-bg="#ffffff" data-sidebar="#f8f9fa" data-text="#212529"
+                                 style="background: linear-gradient(135deg, #6610f2 0%, #0d6efd 100%);" title="Vibrant Blue"></div>
+                            <div class="preset-pill shadow-sm gradient-preset" 
+                                 data-start="#198754" data-end="#20c997" data-primary="#198754" data-bg="#ffffff" data-sidebar="#f5fff9" data-text="#0a5c2d"
+                                 style="background: linear-gradient(135deg, #198754 0%, #20c997 100%);" title="Nature Green"></div>
+                            <div class="preset-pill shadow-sm gradient-preset" 
+                                 data-start="#fd7e14" data-end="#ffc107" data-primary="#fd7e14" data-bg="#ffffff" data-sidebar="#fffef5" data-text="#854000"
+                                 style="background: linear-gradient(135deg, #fd7e14 0%, #ffc107 100%);" title="Sunset Orange"></div>
+                            <div class="preset-pill shadow-sm gradient-preset" 
+                                 data-start="#d63384" data-end="#6610f2" data-primary="#d63384" data-bg="#ffffff" data-sidebar="#fcf5f8" data-text="#a10056"
+                                 style="background: linear-gradient(135deg, #d63384 0%, #6610f2 100%);" title="Berry Punch"></div>
+                            <div class="preset-pill shadow-sm gradient-preset" 
+                                 data-start="#212529" data-end="#495057" data-primary="#343a40" data-bg="#ffffff" data-sidebar="#f8f9fa" data-text="#212529"
+                                 style="background: linear-gradient(135deg, #212529 0%, #495057 100%); border: 1px solid #dee2e6;" title="Onyx Grey"></div>
+                            <div class="preset-pill shadow-sm gradient-preset" 
+                                 data-start="#4e54c8" data-end="#8f94fb" data-primary="#4e54c8" data-bg="#ffffff" data-sidebar="#f5f6ff" data-text="#1a237e"
+                                 style="background: linear-gradient(135deg, #4e54c8 0%, #8f94fb 100%);" title="Electric Indigo"></div>
+                            <div class="preset-pill shadow-sm gradient-preset" 
+                                 data-start="#11998e" data-end="#38ef7d" data-primary="#11998e" data-bg="#ffffff" data-sidebar="#f4fff9" data-text="#0a5228"
+                                 style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);" title="Emerald Sea"></div>
+                            <div class="preset-pill shadow-sm gradient-preset" 
+                                 data-start="#373b44" data-end="#4286f4" data-primary="#4286f4" data-bg="#ffffff" data-sidebar="#f0f5ff" data-text="#001d4d"
+                                 style="background: linear-gradient(135deg, #373b44 0%, #4286f4 100%);" title="Corporate Blue"></div>
+                        </div>
+
+                        <div class="d-flex align-items-center justify-content-between pt-3 border-top">
+                            <p class="small text-muted mb-0">{% trans "Nutze das Präzisions-Studio für eigene Farbcodes." %}</p>
+                            <button type="button" class="btn btn-outline-primary btn-sm rounded-pill px-3" data-bs-toggle="collapse" data-bs-target="#precisionStudio">
+                                <i class="bi bi-sliders me-1"></i> {% trans "Detail-Einstellungen" %}
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </form>
+
+            <!-- Präzisions-Studio Collapse -->
+            <div class="collapse mb-4" id="precisionStudio">
+                <div class="glass-card shadow-lg p-4 border-primary border-opacity-10">
+                    <h5 class="mb-4 text-primary fw-bold">{% trans "Feineinstellungen" %}</h5>
+                    <div class="row g-4">
+                        <div class="col-md-3"><label class="form-label small fw-bold">{% trans "Verlauf Start" %}</label>{{ form.gradient_start }}</div>
+                        <div class="col-md-3"><label class="form-label small fw-bold">{% trans "Verlauf Ende" %}</label>{{ form.gradient_end }}</div>
+                        <div class="col-md-3"><label class="form-label small fw-bold">{% trans "Primärfarbe" %}</label>{{ form.primary_color }}</div>
+                        <div class="col-md-3"><label class="form-label small fw-bold">{% trans "Hintergrund" %}</label>{{ form.background_color }}</div>
+                        <div class="col-md-3"><label class="form-label small fw-bold">{% trans "Sidebar Hintergrund" %}</label>{{ form.sidebar_bg_color }}</div>
+                        <div class="col-md-3"><label class="form-label small fw-bold">{% trans "Text Farbe" %}</label>{{ form.text_color }}</div>
+                        <div class="col-md-3"><label class="form-label small fw-bold">{% trans "Tabellen Header BG" %}</label>{{ form.table_header_bg_color }}</div>
+                        <div class="col-md-3"><label class="form-label small fw-bold">{% trans "Tabellen Header Text" %}</label>{{ form.table_header_text_color }}</div>
+                        <div class="col-md-3"><label class="form-label small fw-bold">{% trans "Tabellen Body BG" %}</label>{{ form.table_body_bg_color }}</div>
+                        <div class="col-md-3"><label class="form-label small fw-bold">{% trans "Tabellen Body Text" %}</label>{{ form.table_body_text_color }}</div>
+                        <div class="col-md-3"><label class="form-label small fw-bold">{% trans "Tabellen Rahmen" %}</label>{{ form.table_border_color }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-center mb-5 mt-2">
+                <button type="submit" class="btn btn-primary btn-lg px-5 shadow-lg rounded-pill btn-preview-styled py-3">
+                    <i class="bi bi-check2-circle me-2 fs-4"></i>
+                    <span class="fs-5 fw-bold">{% trans "Änderungen & Design speichern" %}</span>
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
 
 <script>
     (function() {
-        const THEME_KEYS = [
-            'gradient_start', 'gradient_end', 'primary_color', 'background_color',
-            'sidebar_bg_color', 'text_color', 'table_header_bg_color', 'table_header_text_color',
-            'table_filter_bg_color', 'table_body_bg_color', 'table_body_text_color', 'table_border_color'
-        ];
-
-        let isSyncing = false; 
         const profileForm = document.getElementById('profileForm');
         const preview = document.getElementById('harmonyPreview');
         const html = document.documentElement;
+        let isSyncing = false;
 
         function getPrimaryValue(name) {
             const el = profileForm.querySelector(`input[name="${name}"][type="color"]`) || 
@@ -170,14 +174,11 @@
                 elements.forEach(el => {
                     if (el.value !== value) {
                         el.value = value;
-                        // Trigger 'input' event to ensure color pickers refresh visually
                         el.dispatchEvent(new Event('input', { bubbles: true }));
                     }
                 });
             } finally {
-                if (!isBulk) {
-                    setTimeout(() => { isSyncing = false; }, 50);
-                }
+                if (!isBulk) { setTimeout(() => { isSyncing = false; }, 50); }
             }
         }
 
@@ -195,31 +196,23 @@
                 'table-border-color': getPrimaryValue('table_border_color')
             };
 
-            // Update the small preview box ALWAYS
+            // Update local preview box
             if (preview) {
                 preview.style.background = config['gradient'];
             }
 
-            // ONLY apply to the whole page if we are NOT currently in Night Mode
-            const isNight = (html.getAttribute('data-bs-theme') === 'dark');
-            if (!isNight) {
-                Object.entries(config).forEach(([key, value]) => {
-                    html.style.setProperty('--app-' + key, value);
-                });
-                html.style.setProperty('--bs-primary', config['primary']);
-                html.style.setProperty('--bs-body-bg', config['card-bg']);
-                html.style.setProperty('--bs-body-color', config['card-color']);
-                html.style.setProperty('--bs-tertiary-bg', config['card-bg']);
-                html.style.setProperty('--bs-card-bg', config['card-bg']);
-                
-                // Extra sync for inputs
-                html.style.setProperty('--app-input-bg', config['table-body-bg']);
-                html.style.setProperty('--app-input-color', config['table-body-text']);
-                html.style.setProperty('--app-input-border', config['table-border-color']);
-            }
+            // Apply GLOABLLY for instant feedback (even in Night Mode session)
+            Object.entries(config).forEach(([key, value]) => {
+                html.style.setProperty('--app-' + key, value);
+            });
+            html.style.setProperty('--bs-primary', config['primary']);
+            html.style.setProperty('--bs-body-bg', config['card-bg']);
+            html.style.setProperty('--bs-body-color', config['card-color']);
+            html.style.setProperty('--bs-tertiary-bg', config['card-bg']);
+            html.style.setProperty('--bs-card-bg', config['card-bg']);
         }
 
-        // Harmony Click
+        // Harmony Click Listener
         document.addEventListener('click', (e) => {
             const preset = e.target.closest('.gradient-preset');
             if (preset) {
@@ -230,20 +223,18 @@
                     sidebar_bg_color: d.sidebar || d.bg, text_color: d.text || '#212529',
                     table_header_bg_color: d.primary || d.start,
                     table_header_text_color: '#ffffff',
-                    table_filter_bg_color: (d.bg && (d.bg === '#121212' || d.bg === '#0d1117')) ? '#2a2a2a' : '#f1f3f5',
                     table_body_bg_color: d.bg || '#ffffff',
                     table_body_text_color: d.text || '#212529',
                     table_border_color: (d.bg && (d.bg === '#121212' || d.bg === '#0d1117')) ? '#333333' : '#dee2e6'
                 };
-                
                 Object.keys(updateList).forEach(key => setAllValues(key, updateList[key], true));
-                // Final sync and preview
                 isSyncing = true;
                 applyLiveTheme();
                 setTimeout(() => { isSyncing = false; }, 50);
             }
         });
 
+        // Manual Input Listener
         if (profileForm) {
             profileForm.addEventListener('input', (e) => {
                 if (isSyncing) return;
@@ -267,23 +258,23 @@
         border-radius: 20px;
     }
     .preset-pill {
-        width: 36px;
-        height: 36px;
-        border-radius: 10px;
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
         cursor: pointer;
-        transition: transform 0.2s;
-        border: 2px solid white;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 3px solid white;
     }
-    .preset-pill:hover { transform: scale(1.15); }
-    .shadow-text { text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+    .preset-pill:hover { 
+        transform: scale(1.15) translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+    .shadow-text { text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
     .shadow-gradient {
-        box-shadow: 0 10px 40px -10px rgba(0,0,0,0.3);
+        box-shadow: 0 15px 45px -10px rgba(var(--app-primary-rgb, 13, 110, 253), 0.4);
     }
-    .text-gradient {
-        background: var(--app-gradient);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
+    .border-dashed {
+        border: 2px dashed rgba(0,0,0,0.1) !important;
     }
 </style>
 {% endblock %}

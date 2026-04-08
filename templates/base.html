@@ -185,9 +185,9 @@
         .dropdown-item:hover {
             background-color: rgba(0,0,0,0.05) !important;
         }
-        .glass-card {
-            background: var(--app-card-bg);
-            background-color: color-mix(in srgb, var(--app-card-bg), transparent 30%);
+        .glass-card, .card.glass-card {
+            background: var(--app-card-bg) !important;
+            background-color: color-mix(in srgb, var(--app-card-bg), transparent 30%) !important;
             backdrop-filter: blur(10px);
             border: 1px solid var(--app-table-border-color);
             border-radius: 20px;
@@ -195,9 +195,29 @@
         }
 
         /* Ensure tables are transparent to show the card background/blur */
-        .glass-card .table, .glass-card .table-responsive {
+        .glass-card .table, .glass-card .table-responsive, .card.glass-card .table {
             background-color: transparent !important;
             --bs-table-bg: transparent !important;
+        }
+
+        /* Premium Save Button Styled like the Preview */
+        .btn-preview-styled {
+            background: var(--app-gradient) !important;
+            border: none !important;
+            color: white !important;
+            font-weight: 600 !important;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-preview-styled:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3) !important;
+            filter: brightness(1.1);
+        }
+        .btn-preview-styled:active {
+            transform: translateY(0);
         }
 
         /* Premium Metric Cards */
