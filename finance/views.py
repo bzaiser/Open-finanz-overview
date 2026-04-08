@@ -5,6 +5,8 @@ from django.http import JsonResponse, HttpResponse
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.core.cache import cache
+from django.utils.html import format_html
+from django.utils.formats import number_format
 from django.utils import timezone, translation
 from django.utils.translation import gettext_lazy as _, gettext as _eager
 from django.contrib import messages
@@ -1033,16 +1035,27 @@ def confirm_bank_transaction(request, transaction_id):
     if was_mapping:
         if is_ready:
             # Move Mapping -> Ready
-            # Main response: empty (deletes the row from mapping via hx-swap="outerHTML")
-            main_response = ""
-            # OOB: Add to ready
-            ready_row_html = render_to_string('finance/partials/import_ready_row.html', {'t': transaction, 'categories': categories}).strip()
-            oob_elements.append(ready_row_html.replace(f'id="ready-row-{transaction.id}"', f'id="ready-row-{transaction.id}" hx-swap-oob="afterbegin:#ready-rows"'))
+            main_response = "" # Deletes the row via hx-swap="delete" in template
             
-            # OOB: Dynamic Empty Messages
+            # OOB: Render ready row with built-in OOB logic
+            oob_elements.append(render_to_string('finance/partials/import_ready_row.html', {
+                't': transaction, 
+                'categories': categories,
+                'hx_oob': True
+            }).strip())
+            
+            # OOB: Re-render total sum
+            total_ready = sum(t.amount for t in PendingTransaction.objects.filter(batch=batch, is_ready=True, is_ignored=False))
+            total_str = format_html('{}', number_format(total_ready, 2))
+            oob_elements.append(f'<span id="total-ready-sum" hx-swap-oob="innerHTML">{total_str}</span>')
+
+            # OOB: Empty Mapping Message
             if mapping_count == 0:
-                oob_elements.append('<div id="empty-mapping-msg" hx-swap-oob="outerHTML" class="alert alert-info border-0 shadow-sm rounded-4 mb-0"><i class="fa-solid fa-check-circle me-2"></i>Alle Buchungen sind kategorisiert!</div>')
-            oob_elements.append('<div id="empty-ready-msg" hx-swap-oob="outerHTML" style="display:none;"></div>')
+                msg = _("Alle Posten zugeordnet!")
+                oob_elements.append(f'<tr id="empty-mapping-msg" hx-swap-oob="afterbegin:#mapping-rows"><td colspan="6" class="text-center py-5 text-success fw-bold"><i class="bi bi-check-circle me-2"></i>{msg}</td></tr>')
+            
+            # OOB: Hide Empty Ready Message
+            oob_elements.append('<tr id="empty-ready-msg" hx-swap-oob="delete"></tr>')
         elif is_ignored:
             # Move Mapping -> Ignored
             main_response = ""
@@ -1053,15 +1066,22 @@ def confirm_bank_transaction(request, transaction_id):
     elif was_ready:
         if is_mapping:
             # Move Ready -> Mapping
-            main_response = ""
-            # OOB: Add to mapping
-            mapping_row_html = render_to_string('finance/partials/import_row.html', {'t': transaction, 'categories': categories}).strip()
-            oob_elements.append(mapping_row_html.replace(f'id="mapping-row-{transaction.id}"', f'id="mapping-row-{transaction.id}" hx-swap-oob="afterbegin:#mapping-rows"'))
+            main_response = "" # Deletes the row via hx-swap="delete" in template
             
-            # OOB: Dynamic Empty Messages
+            # OOB: Render mapping row with built-in OOB logic
+            oob_elements.append(render_to_string('finance/partials/import_row.html', {
+                't': transaction, 
+                'categories': categories,
+                'hx_oob': True
+            }).strip())
+            
+            # OOB: Empty Ready Message
             if ready_count == 0:
-                oob_elements.append('<div id="empty-ready-msg" hx-swap-oob="outerHTML" class="alert alert-light border shadow-sm rounded-4 mb-0 text-center text-muted py-4"><i class="fa-solid fa-cloud-arrow-up d-block fs-3 mb-2 opacity-50"></i>Noch keine Buchungen zur Übernahme bereit.</div>')
-            oob_elements.append('<div id="empty-mapping-msg" hx-swap-oob="outerHTML" style="display:none;"></div>')
+                msg = _("Noch keine Buchungen bereit.")
+                oob_elements.append(f'<tr id="empty-ready-msg" hx-swap-oob="afterbegin:#ready-rows"><td colspan="7" class="text-center py-5 text-muted"><i class="bi bi-info-circle me-2"></i>{msg}</td></tr>')
+            
+            # OOB: Hide Empty Mapping Message
+            oob_elements.append('<tr id="empty-mapping-msg" hx-swap-oob="delete"></tr>')
         elif is_ignored:
             # Move Ready -> Ignored
             main_response = ""
