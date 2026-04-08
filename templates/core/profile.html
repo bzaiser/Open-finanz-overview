@@ -45,6 +45,30 @@
                                     </div>
                                 </div>
                             </div>
+                            <!-- Profil Informationen -->
+                            <div class="p-3 rounded-4 bg-light bg-opacity-10 border border-white border-opacity-10 mb-4">
+                                <div class="row g-3">
+                                    <div class="col-6">
+                                        <label class="form-label small fw-bold opacity-75">{% trans "Benutzername" %}</label>
+                                        <div class="fw-bold">{{ user.username }}</div>
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label small fw-bold opacity-75">{% trans "E-Mail" %}</label>
+                                        <div class="small text-truncate">{{ user.email }}</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label small fw-bold"><i class="bi bi-person-badge me-2"></i>{% trans "Anzeigename" %}</label>
+                                {{ form.display_name }}
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label small fw-bold"><i class="bi bi-currency-euro me-2"></i>{% trans "Währung" %}</label>
+                                {{ form.currency }}
+                            </div>
+
                             <div class="col-md-6">
                                 <label class="form-label small fw-bold">{% trans "Geburtsdatum" %}</label>
                                 {{ form.birth_date }}
@@ -54,8 +78,6 @@
                                 {{ form.language }}
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label small fw-bold">{% trans "Währung" %}</label>
-                                {{ form.currency }}
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label small fw-bold">{% trans "Simulation Max. Alter" %}</label>
@@ -189,7 +211,8 @@
             }
         }
 
-        function applyLiveTheme() {
+        function applyLiveTheme(forceBackground = false) {
+            const isNight = html.hasAttribute('data-bs-theme');
             const config = {
                 'primary': getPrimaryValue('primary_color'),
                 'gradient': `linear-gradient(135deg, ${getPrimaryValue('gradient_start')} 0%, ${getPrimaryValue('gradient_end')} 100%)`,
@@ -210,16 +233,30 @@
 
             // Apply GLOABLLY for instant feedback (even in Night Mode session)
             Object.entries(config).forEach(([key, value]) => {
+                // If in Night Mode, only override the surface if 'forceBackground' is true
+                if (isNight && !forceBackground) {
+                    if (['card-bg', 'sidebar-bg', 'table-body-bg'].includes(key)) {
+                        return; // Keep it black
+                    }
+                }
                 html.style.setProperty('--app-' + key, value);
             });
             // Also sync the persistent preview gradient for the button & box
             html.style.setProperty('--app-preview-gradient', config['gradient']);
 
-            html.style.setProperty('--bs-primary', config['primary']);
-            html.style.setProperty('--bs-body-bg', config['card-bg']);
-            html.style.setProperty('--bs-body-color', config['card-color']);
-            html.style.setProperty('--bs-tertiary-bg', config['card-bg']);
-            html.style.setProperty('--bs-card-bg', config['card-bg']);
+            // Only override Bootstrap body globals if forced or NOT in night mode
+            if (!isNight || forceBackground) {
+                html.style.setProperty('--bs-primary', config['primary']);
+                html.style.setProperty('--bs-body-bg', config['card-bg']);
+                html.style.setProperty('--bs-body-color', config['card-color']);
+                html.style.setProperty('--bs-tertiary-bg', config['card-bg']);
+                html.style.setProperty('--bs-card-bg', config['card-bg']);
+                
+                // If forced background in Night Mode, we technically "break out" of dark theme visually
+                if (isNight && forceBackground) {
+                    html.removeAttribute('data-bs-theme');
+                }
+            }
         }
 
         // Harmony Click Listener
@@ -239,7 +276,7 @@
                 };
                 Object.keys(updateList).forEach(key => setAllValues(key, updateList[key], true));
                 isSyncing = true;
-                applyLiveTheme();
+                applyLiveTheme(false); // Do NOT force background on harmony click
                 setTimeout(() => { isSyncing = false; }, 50);
             }
         });
@@ -251,8 +288,12 @@
                 const target = e.target;
                 if (target.matches('[type="color"]') || target.classList.contains('form-control-color')) {
                     const name = target.getAttribute('name');
-                    if (name) setAllValues(name, target.value);
-                    applyLiveTheme();
+                    if (name) {
+                        setAllValues(name, target.value);
+                        // If user explicitly touches background, force it!
+                        const force = (name === 'background_color');
+                        applyLiveTheme(force);
+                    }
                 }
             });
         }
