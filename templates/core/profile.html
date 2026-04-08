@@ -112,7 +112,7 @@
                         </div>
                         <div class="mt-3">
                             <button type="button" id="toggleNightEdit" class="btn btn-primary d-flex align-items-center justify-content-center gap-2 shadow-sm rounded-pill py-2 w-100" style="background: var(--app-gradient); border: none;">
-                                <i class="bi bi-moon-stars"></i> <span id="editModeLabel">{% trans "Nacht-Design anpassen" %}</span>
+                                <i class="bi bi-moon-stars"></i> <span id="editModeLabel">{% trans "Nachtdesign anwenden" %}</span>
                             </button>
                             <input type="hidden" name="dark_mode_config" id="dark_mode_config_input" value="{{ user.profile.dark_mode_config|safe|default:"{}" }}">
                         </div>
@@ -222,8 +222,7 @@
             // Restore day values
             Object.keys(inputs).forEach(key => inputs[key].value = dayConfig[key]);
             
-            label.innerText = "{% trans 'Nacht-Design anpassen' %}";
-            btn.classList.replace('btn-primary', 'btn-outline-primary');
+            label.innerText = "{% trans 'Nachtdesign anwenden' %}";
             studioHeader.classList.remove('border-primary', 'border-2');
             preview.classList.remove('border', 'border-3', 'border-warning');
         }
