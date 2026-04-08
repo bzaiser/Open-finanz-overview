@@ -38,15 +38,28 @@ def simple_keyword_classify(description, categories):
         'netto': ['lebensmittel', 'groceries', 'einkauf'],
         'amazon': ['shopping', 'einkauf'],
         'paypal': ['shopping', 'einkauf'],
-        'netflix': ['freizeit', 'entertainment', 'abo'],
-        'spotify': ['freizeit', 'entertainment', 'abo'],
-        'apple': ['services', 'it', 'software'],
-        'google': ['services', 'it', 'software'],
+        'netflix': ['freizeit', 'entertainment', 'abo', 'streaming'],
+        'spotify': ['freizeit', 'entertainment', 'abo', 'streaming'],
+        'apple': ['services', 'it', 'software', 'electronics'],
+        'google': ['services', 'it', 'software', 'electronics'],
         'versicherung': ['versicherung', 'insurance'],
+        'allianz': ['versicherung', 'insurance'],
+        'huk24': ['versicherung', 'insurance'],
+        'huk-coburg': ['versicherung', 'insurance'],
+        'ergo': ['versicherung', 'insurance'],
+        'debeka': ['versicherung', 'insurance'],
         'tankstelle': ['verkehr', 'tanken', 'transport', 'auto'],
         'aral': ['verkehr', 'tanken', 'transport', 'auto'],
         'shell': ['verkehr', 'tanken', 'transport', 'auto'],
+        'esso': ['verkehr', 'tanken', 'transport', 'auto'],
         'db bahn': ['verkehr', 'bahn', 'transport'],
+        'airline': ['reisen', 'travel', 'hobby', 'urlaub'],
+        'airlines': ['reisen', 'travel', 'hobby', 'urlaub'],
+        'lufthansa': ['reisen', 'travel', 'hobby', 'urlaub'],
+        'aegean': ['reisen', 'travel', 'hobby', 'urlaub'],
+        'booking.com': ['reisen', 'travel', 'hobby', 'urlaub'],
+        'airbnb': ['reisen', 'travel', 'hobby', 'urlaub'],
+        'zug': ['verkehr', 'bahn', 'transport'],
     }
 
     # Helper to find a matching category slug from user's list
@@ -145,11 +158,26 @@ def classify_with_ollama(transactions, categories):
     category_list = ", ".join([f"{c['name']} (slug: {c['slug']})" for c in categories])
     url = f"{settings.OLLAMA_BASE_URL.rstrip('/')}/api/chat"
     
-    system_prompt = "Antworte NUR mit JSON-Array. Kein Chat!"
+    system_prompt = (
+        "Du bist ein präziser Finanz-Experte für private Buchhaltung. "
+        "Deine Aufgabe ist es, Bank-Transaktionen in vorgegebene Kategorien einzuordnen. "
+        "Regeln: "
+        "1. Nutze NUR die bereitgestellten Slugs. "
+        "2. Wenn du nicht sicher bist, antworte mit 'uncategorized'. "
+        "3. Flüge, Airlines (z.B. Aegean, Lufthansa) und Hotels gehören IMMER zu Reisen/Hobby/Urlaub, NIEMALS zu Renten. "
+        "4. 'Beiträge' (Fees) sind meist Versicherungen, Vereine oder Gebühren, KEINE Rentenzahlungen. "
+        "5. Analysiere den Händler-Namen genau. Airlines sind Reisekosten. "
+        "6. Antworte AUSSCHLIESSLICH als JSON-Array von Objekten."
+    )
+    
     user_prompt = (
-        f"Kategorien: {category_list}\n"
-        f"Items: {json.dumps(transactions)}\n"
-        "Output JSON fields: id, category_slug, is_income, is_recurring, frequency."
+        f"Kategorien (Nutze nur diese Slugs): {category_list}\n\n"
+        "Beispiele:\n"
+        "- 'EDEKA MARKT': category_slug='lebensmittel', reasoning='Supermarkt'\n"
+        "- 'AEGEAN AIRLINES': category_slug='reisen' (oder passend), reasoning='Fluggesellschaft'\n"
+        "- 'ALLIANZ': category_slug='versicherung', reasoning='Versicherungsdienstleister'\n\n"
+        f"Transaktionen: {json.dumps(transactions)}\n"
+        "Gib id, category_slug und reasoning für jedes Item zurück."
     )
     
     payload = {
