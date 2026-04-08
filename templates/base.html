@@ -91,16 +91,30 @@
                 if (autoNight) {
                     html.setAttribute('data-bs-theme', 'dark');
                     const config = {
-                        gradient_start: '#020617', gradient_end: '#000000', primary_color: '#1e293b',
-                        background_color: '#000000', sidebar_bg_color: '#020617', text_color: '#f8fafc',
-                        table_header_bg_color: '#0f172a', table_header_text_color: '#ffffff',
-                        table_filter_bg_color: '#020617', table_body_bg_color: '#000000',
-                        table_body_text_color: '#cbd5e1', table_border_color: '#1e293b'
+                        'primary': '#1e293b',
+                        'gradient': 'linear-gradient(135deg, #020617 0%, #000000 100%)',
+                        'card-bg': '#000000',
+                        'card-color': '#f8fafc',
+                        'sidebar-bg': '#020617',
+                        'table-header-bg': '#0f172a',
+                        'table-header-text': '#ffffff',
+                        'table-filter-bg': '#020617',
+                        'table-body-bg': '#000000',
+                        'table-body-text': '#cbd5e1',
+                        'table-border-color': '#1e293b',
+                        'input-bg': '#000000',
+                        'input-color': '#cbd5e1',
+                        'input-border': '#1e293b'
                     };
-                    Object.entries(config).forEach(([k, v]) => {
-                        html.style.setProperty(`--app-${k.replace(/_/g, '-')}`, v);
-                    });
-                    html.style.setProperty('--bs-primary', config.primary_color);
+                    for (const [key, value] of Object.entries(config)) {
+                        html.style.setProperty('--app-' + key, value);
+                    }
+                    // System overrides for Bootstrap
+                    html.style.setProperty('--bs-primary', config['primary']);
+                    html.style.setProperty('--bs-body-bg', config['card-bg']);
+                    html.style.setProperty('--bs-body-color', config['card-color']);
+                    html.style.setProperty('--bs-tertiary-bg', config['card-bg']);
+                    html.style.setProperty('--bs-card-bg', config['card-bg']);
                 } else {
                     html.removeAttribute('data-bs-theme');
                     html.removeAttribute('style');

@@ -162,9 +162,9 @@
             return el ? el.value : null;
         }
 
-        function setAllValues(name, value) {
-            if (isSyncing) return;
-            isSyncing = true;
+        function setAllValues(name, value, isBulk = false) {
+            if (isSyncing && !isBulk) return;
+            if (!isBulk) isSyncing = true;
             try {
                 const elements = profileForm.querySelectorAll(`[name="${name}"]`);
                 elements.forEach(el => {
@@ -175,7 +175,9 @@
                     }
                 });
             } finally {
-                setTimeout(() => { isSyncing = false; }, 50);
+                if (!isBulk) {
+                    setTimeout(() => { isSyncing = false; }, 50);
+                }
             }
         }
 
@@ -238,8 +240,11 @@
                     table_border_color: (d.bg && (d.bg === '#121212' || d.bg === '#0d1117')) ? '#333333' : '#dee2e6'
                 };
                 
-                Object.keys(updateList).forEach(key => setAllValues(key, updateList[key]));
+                Object.keys(updateList).forEach(key => setAllValues(key, updateList[key], true));
+                // Final sync and preview
+                isSyncing = true;
                 applyLiveTheme();
+                setTimeout(() => { isSyncing = false; }, 50);
             }
         });
 
