@@ -1,177 +1,144 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% load i18n crispy_forms_tags %}
-
-{% block title %}{% trans "Benutzerprofil" %}{% endblock %}
 
 {% block content %}
 <div class="container mt-4 mb-5 animate__animated animate__fadeIn">
-    {% if debug %}
-    <!-- Debug Error Output (hidden by default) -->
-    <div id="js-debug-error" class="position-fixed bottom-0 start-0 w-100 bg-danger text-white p-2 d-none" style="z-index: 9999; max-height: 300px; overflow-y: auto; font-family: monospace; font-size: 13px; box-shadow: 0 -5px 15px rgba(0,0,0,0.3); border-top: 2px solid white;">
-        <div class="container-fluid">
-            <div class="d-flex justify-content-between align-items-center mb-1">
-                <strong class="d-flex align-items-center"><i class="bi bi-bug-fill me-2"></i> Design-Studio Debug-Logs</strong>
-                <button type="button" class="btn btn-sm btn-outline-light py-0" onclick="document.getElementById('js-debug-msg').innerHTML=''"><i class="bi bi-trash"></i></button>
-            </div>
-            <div id="js-debug-msg"></div>
-        </div>
-    </div>
-    {% endif %}
-
-    <div class="row mb-5 text-center">
-        <div class="col-12">
-            <h1 class="fw-bold display-5 text-gradient">
-                <i class="bi bi-person-circle me-3"></i>{% trans "Deine Dashboard-Konfiguration" %}
-            </h1>
-            <p class="text-muted lead mt-2">{% trans "Gestalte dein persönliches Dashboard-Erlebnis mit präzisen Farben und harmonischen Verläufen." %}</p>
-        </div>
-    </div>
-
-    <form method="post" enctype="multipart/form-data" id="profileForm">
-        {% csrf_token %}
-        <div class="row g-5 align-items-stretch">
-            <!-- Links: Basis-Einstellungen -->
-            <div class="col-lg-7 h-100">
-                <!-- Identität -->
-                <div class="glass-card shadow-sm p-4 mb-4 h-100">
-                    <h4 class="mb-4 fw-bold"><i class="bi bi-person-badge me-2 text-primary"></i>{% trans "Identität & Kern" %}</h4>
-                    
-                    <div class="d-flex align-items-center mb-4 p-3 rounded-4 border border-primary border-opacity-10" style="background-color: var(--app-table-filter-bg);">
-                        <div class="me-4 position-relative">
-                            {% if user.profile.avatar %}
-                                <img src="{{ user.profile.avatar.url }}" class="rounded-circle shadow-sm object-fit-cover" width="100" height="100" style="border: 3px solid white;">
-                            {% else %}
-                                <div class="rounded-circle bg-white shadow-sm d-flex align-items-center justify-content-center" style="width: 100px; height: 100px; border: 3px solid #eee;">
-                                    <i class="bi bi-person text-secondary fs-1"></i>
-                                </div>
-                            {% endif %}
-                        </div>
-                        <div>
-                            <p class="mb-1 text-muted small">{% trans "Aktueller Avatar" %}</p>
-                            <h5 class="fw-bold mb-0 text-primary">{{ user.username }}</h5>
-                            <span class="badge bg-primary bg-opacity-10 text-primary mt-2">{% trans "Mitglied seit" %} {{ user.date_joined|date:"M Y" }}</span>
-                        </div>
-                    </div>
-
-                    <div class="row g-3">
-                        <div class="col-md-6">{{ form.avatar|as_crispy_field }}</div>
-                        <div class="col-md-6">{{ form.birth_date|as_crispy_field }}</div>
-                        <div class="col-md-6">{{ form.language|as_crispy_field }}</div>
-                        <div class="col-md-6">{{ form.currency|as_crispy_field }}</div>
-                    </div>
-                </div>
-
-                <!-- Simulation -->
-                <div class="glass-card shadow-sm p-4">
-                    <h4 class="mb-4 fw-bold"><i class="bi bi-cpu me-2 text-primary"></i>{% trans "Parameter für Vorhersagen" %}</h4>
-                    <div class="row g-3">
-                        <div class="col-md-6">{{ form.simulation_max_age|as_crispy_field }}</div>
-                        <div class="col-md-6">{{ form.inflation_rate|as_crispy_field }}</div>
-                        <div class="col-md-6">{{ form.salary_increase|as_crispy_field }}</div>
-                        <div class="col-md-6">{{ form.pension_increase|as_crispy_field }}</div>
-                        <div class="col-md-6">{{ form.investment_return_offset|as_crispy_field }}</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Rechts: Design Studio -->
-            <div class="col-lg-5 d-flex flex-column">
-                <div class="glass-card shadow-lg p-4 border-primary border-opacity-25 flex-grow-1 d-flex flex-column" style="border-width: 2px;">
-                    <h4 class="mb-4 fw-bold"><i class="bi bi-magic me-2 text-primary"></i>{% trans "Design" %}</h4>
-                    
-                    <div id="harmonyPreview" class="rounded-4 p-4 text-white shadow-gradient d-flex flex-column justify-content-center text-center mb-4"
-                         style="background: var(--app-gradient); min-height: 120px; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);">
-                        <div class="fs-4 fw-bold shadow-text">{% trans "Visuelle Harmonie" %}</div>
-                        <div class="small opacity-75">{% trans "Design & Farben vereint" %}</div>
-                    </div>
-
-                    <label class="form-label small fw-bold mb-3">{% trans "Schnelle Harmonien" %}</label>
-                    <div class="d-flex flex-wrap gap-2 mb-4">
-                        <div class="preset-pill shadow-sm gradient-preset" 
-                             data-start="#6610f2" data-end="#0d6efd" data-primary="#0d6efd" data-bg="#ffffff" data-sidebar="#f8f9fa" data-text="#212529"
-                             style="background: linear-gradient(135deg, #6610f2 0%, #0d6efd 100%);" title="Vibrant Blue"></div>
-                        <div class="preset-pill shadow-sm gradient-preset" 
-                             data-start="#198754" data-end="#20c997" data-primary="#198754" data-bg="#f8fff9" data-sidebar="#e9f5ed" data-text="#0f5132"
-                             style="background: linear-gradient(135deg, #198754 0%, #20c997 100%);" title="Nature Green"></div>
-                        <div class="preset-pill shadow-sm gradient-preset" 
-                             data-start="#fd7e14" data-end="#ffc107" data-primary="#fd7e14" data-bg="#fff9f2" data-sidebar="#fdf2e2" data-text="#854000"
-                             style="background: linear-gradient(135deg, #fd7e14 0%, #ffc107 100%);" title="Sunset Orange"></div>
-                        <div class="preset-pill shadow-sm gradient-preset" 
-                             data-start="#d63384" data-end="#6610f2" data-primary="#d63384" data-bg="#fff5f8" data-sidebar="#f8e9f0" data-text="#a10056"
-                             style="background: linear-gradient(135deg, #d63384 0%, #6610f2 100%);" title="Deep Purple"></div>
-                        <div class="preset-pill shadow-sm gradient-preset" 
-                             data-start="#212529" data-end="#495057" data-primary="#343a40" data-bg="#121212" data-sidebar="#1a1a1a" data-text="#e9ecef"
-                             style="background: linear-gradient(135deg, #212529 0%, #495057 100%);" title="Midnight"></div>
-                        <div class="preset-pill shadow-sm gradient-preset" 
-                             data-start="#f2994a" data-end="#f2c94c" data-primary="#f2994a" data-bg="#fffaf0" data-sidebar="#fef6e0" data-text="#92400e"
-                             style="background: linear-gradient(135deg, #f2994a 0%, #f2c94c 100%);" title="Golden Autumn"></div>
-                        <div class="preset-pill shadow-sm gradient-preset" 
-                             data-start="#2980b9" data-end="#6dd5fa" data-primary="#2980b9" data-bg="#f0faff" data-sidebar="#e1f5fe" data-text="#0c4a6e"
-                             style="background: linear-gradient(135deg, #2980b9 0%, #6dd5fa 100%);" title="Arctic Frost"></div>
-                        <div class="preset-pill shadow-sm gradient-preset" 
-                             data-start="#f093fb" data-end="#f5576c" data-primary="#f5576c" data-bg="#fff5f7" data-sidebar="#ffe4e8" data-text="#9f1239"
-                             style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);" title="Cherry Blossom"></div>
-                    </div>
-
-                    <!-- System Sync & Mode Toggle -->
-                    <div class="mb-4 p-3 rounded-4 border border-primary border-opacity-10 bg-light bg-opacity-25">
-                        <div class="d-flex align-items-center mb-1">
-                            <div class="form-check form-switch me-2 mb-0">
-                                {{ form.auto_night_mode }}
+    <div class="row">
+        <!-- Links: Profil-Status & Stammdaten -->
+        <div class="col-lg-7">
+            <div class="glass-card shadow-lg p-5 mb-4 border-0 position-relative overflow-hidden">
+                <div class="d-flex align-items-center mb-4">
+                    <div class="position-relative me-4">
+                        {% if user.profile.avatar %}
+                            <img src="{{ user.profile.avatar.url }}" class="rounded-circle shadow-lg border border-4 border-white" style="width: 120px; height: 120px; object-fit: cover;">
+                        {% else %}
+                            <div class="rounded-circle bg-primary bg-opacity-10 d-flex align-items-center justify-content-center border border-4 border-white shadow" style="width: 120px; height: 120px;">
+                                <i class="bi bi-person-fill text-primary display-4"></i>
                             </div>
-                            <label class="form-check-label fw-bold small mb-0" for="{{ form.auto_night_mode.id_for_label }}">
-                                <i class="bi bi-display me-1"></i> {{ form.auto_night_mode.label }}
-                            </label>
-                        </div>
-                        <div class="mt-3">
-                            <button type="button" id="toggleNightEdit" class="btn btn-primary d-flex align-items-center justify-content-center gap-2 shadow-sm rounded-pill py-2 w-100" style="background: var(--app-gradient); border: none;">
-                                <i class="bi bi-moon-stars"></i> <span id="editModeLabel">{% trans "Nachtdesign anwenden" %}</span>
-                            </button>
-                            {{ user.profile.dark_mode_config|json_script:"dark_mode_config_data" }}
-                            <input type="hidden" name="dark_mode_config" id="dark_mode_config_input">
-                        </div>
+                        {% endif %}
                     </div>
+                    <div>
+                        <h5 class="fw-bold mb-0 text-primary">{{ user.username }}</h5>
+                        <span class="badge bg-primary bg-opacity-10 text-primary mt-2">{% trans "Mitglied seit" %} {{ user.date_joined|date:"M Y" }}</span>
+                    </div>
+                </div>
 
-                    <!-- Präzisions-Studio (Advanced Settings) -->
-                    <div class="accordion mb-4" id="designAccordion">
-                        <div class="accordion-item border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="row g-3">
+                    <div class="col-md-6">{{ form.avatar|as_crispy_field }}</div>
+                    <div class="col-md-6">{{ form.birth_date|as_crispy_field }}</div>
+                    <div class="col-md-6">{{ form.language|as_crispy_field }}</div>
+                    <div class="col-md-6">{{ form.currency|as_crispy_field }}</div>
+                </div>
+            </div>
+
+            <!-- Simulation -->
+            <div class="glass-card shadow-sm p-4">
+                <h4 class="mb-4 fw-bold"><i class="bi bi-cpu me-2 text-primary"></i>{% trans "Parameter für Vorhersagen" %}</h4>
+                <div class="row g-3">
+                    <div class="col-md-6">{{ form.simulation_max_age|as_crispy_field }}</div>
+                    <div class="col-md-6">{{ form.inflation_rate|as_crispy_field }}</div>
+                    <div class="col-md-6">{{ form.salary_increase|as_crispy_field }}</div>
+                    <div class="col-md-6">{{ form.pension_increase|as_crispy_field }}</div>
+                    <div class="col-md-6">{{ form.investment_return_offset|as_crispy_field }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rechts: Design Studio -->
+        <div class="col-lg-5 d-flex flex-column">
+            <div class="glass-card shadow-lg p-4 border-primary border-opacity-25 flex-grow-1 d-flex flex-column" style="border-width: 2px;">
+                <h4 class="mb-4 fw-bold"><i class="bi bi-magic me-2 text-primary"></i>{% trans "Design" %}</h4>
+                
+                <div id="harmonyPreview" class="rounded-4 p-4 text-white shadow-gradient d-flex flex-column justify-content-center text-center mb-4"
+                     style="background: var(--app-gradient); min-height: 120px; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);">
+                    <div class="fs-4 fw-bold shadow-text">{% trans "Visuelle Harmonie" %}</div>
+                    <div class="small opacity-75">{% trans "Design & Farben vereint" %}</div>
+                </div>
+
+                <label class="form-label small fw-bold mb-3">{% trans "Schnelle Harmonien" %}</label>
+                <div class="d-flex flex-wrap gap-2 mb-4">
+                    <div class="preset-pill shadow-sm gradient-preset" 
+                         data-start="#6610f2" data-end="#0d6efd" data-primary="#0d6efd" data-bg="#ffffff" data-sidebar="#f8f9fa" data-text="#212529"
+                         style="background: linear-gradient(135deg, #6610f2 0%, #0d6efd 100%);" title="Vibrant Blue"></div>
+                    <div class="preset-pill shadow-sm gradient-preset" 
+                         data-start="#198754" data-end="#20c997" data-primary="#198754" data-bg="#f8fff9" data-sidebar="#e9f5ed" data-text="#0f5132"
+                         style="background: linear-gradient(135deg, #198754 0%, #20c997 100%);" title="Nature Green"></div>
+                    <div class="preset-pill shadow-sm gradient-preset" 
+                         data-start="#fd7e14" data-end="#ffc107" data-primary="#fd7e14" data-bg="#fff9f2" data-sidebar="#fdf2e2" data-text="#854000"
+                         style="background: linear-gradient(135deg, #fd7e14 0%, #ffc107 100%);" title="Sunset Orange"></div>
+                    <div class="preset-pill shadow-sm gradient-preset" 
+                         data-start="#d63384" data-end="#6610f2" data-primary="#d63384" data-bg="#fff5f8" data-sidebar="#f8e9f0" data-text="#a10056"
+                         style="background: linear-gradient(135deg, #d63384 0%, #6610f2 100%);" title="Deep Purple"></div>
+                    <div class="preset-pill shadow-sm gradient-preset" 
+                         data-start="#0f172a" data-end="#020617" data-primary="#334155" data-bg="#020617" data-sidebar="#0f172a" data-text="#f8fafc"
+                         style="background: linear-gradient(135deg, #0f172a 0%, #020617 100%);" title="Deep Midnight"></div>
+                </div>
+
+                <form id="profileForm" method="post" enctype="multipart/form-data" class="flex-grow-1 d-flex flex-column">
+                    {% csrf_token %}
+                    <div class="accordion accordion-flush mb-4 flex-grow-1" id="accordionStudio">
+                        <div class="accordion-item bg-transparent">
                             <h2 class="accordion-header">
-                                <button class="accordion-button collapsed py-3 fw-bold small" type="button" data-bs-toggle="collapse" data-bs-target="#collapseStudio">
-                                    <i class="bi bi-sliders me-2 text-primary"></i> {% trans "Präzisions-Studio" %}
+                                <button class="accordion-button collapsed bg-transparent text-primary fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseStudio">
+                                    <i class="bi bi-sliders2-vertical me-2"></i>{% trans "Präzisions-Studio" %}
                                 </button>
                             </h2>
-                            <div id="collapseStudio" class="accordion-collapse collapse" data-bs-parent="#designAccordion">
-                                <div class="accordion-body border-top" style="background-color: var(--app-table-filter-bg);">
-                                    <div class="row g-3">
-                                        <div class="col-md-6"><label class="form-label small fw-bold">{% trans "Primärfarbe" %}</label>{{ form.primary_color }}</div>
-                                        <div class="col-md-6"><label class="form-label small fw-bold">{% trans "Hintergrund" %}</label>{{ form.background_color }}</div>
-                                        <div class="col-md-6"><label class="form-label small fw-bold">{% trans "Sidebar BG" %}</label>{{ form.sidebar_bg_color }}</div>
-                                        <div class="col-md-6"><label class="form-label small fw-bold">{% trans "Text Farbe" %}</label>{{ form.text_color }}</div>
-                                        <div class="col-12"><hr class="my-2"></div>
-                                        <div class="col-md-6"><label class="form-label small fw-bold">{% trans "Tabellenkopf BG" %}</label>{{ form.table_header_bg_color }}</div>
-                                        <div class="col-md-6"><label class="form-label small fw-bold">{% trans "Tabellenkopf Text" %}</label>{{ form.table_header_text_color }}</div>
-                                        <div class="col-md-6"><label class="form-label small fw-bold">{% trans "Tabellenfilter BG" %}</label>{{ form.table_filter_bg_color }}</div>
-                                        <div class="col-md-6"><label class="form-label small fw-bold">{% trans "Tabellenrahmen" %}</label>{{ form.table_border_color }}</div>
-                                        <div class="col-12"><hr class="my-2"></div>
-                                        <div class="col-md-6"><label class="form-label small fw-bold">{% trans "Tabelleninhalt BG" %}</label>{{ form.table_body_bg_color }}</div>
-                                        <div class="col-md-6"><label class="form-label small fw-bold">{% trans "Tabelleninhalt Text" %}</label>{{ form.table_body_text_color }}</div>
-                                        <div class="col-12"><hr class="my-2"></div>
-                                        <div class="col-md-6"><label class="form-label small fw-bold">{% trans "Verlauf Start" %}</label>{{ form.gradient_start }}</div>
-                                        <div class="col-md-6"><label class="form-label small fw-bold">{% trans "Verlauf Ende" %}</label>{{ form.gradient_end }}</div>
+                            <div id="collapseStudio" class="accordion-collapse collapse" data-bs-parent="#accordionStudio">
+                                <div class="accordion-body px-0 py-3">
+                                    <div class="row g-2">
+                                        <div class="col-6">{{ form.gradient_start|as_crispy_field }}</div>
+                                        <div class="col-6">{{ form.gradient_end|as_crispy_field }}</div>
+                                        <div class="col-6">{{ form.primary_color|as_crispy_field }}</div>
+                                        <div class="col-6">{{ form.background_color|as_crispy_field }}</div>
+                                        <div class="col-6">{{ form.sidebar_bg_color|as_crispy_field }}</div>
+                                        <div class="col-6">{{ form.text_color|as_crispy_field }}</div>
+                                        <div class="col-12"><hr class="my-2 opacity-10"></div>
+                                        <div class="col-6">{{ form.table_header_bg_color|as_crispy_field }}</div>
+                                        <div class="col-6">{{ form.table_header_text_color|as_crispy_field }}</div>
+                                        <div class="col-6">{{ form.table_body_bg_color|as_crispy_field }}</div>
+                                        <div class="col-6">{{ form.table_body_text_color|as_crispy_field }}</div>
+                                        <div class="col-6">{{ form.table_filter_bg_color|as_crispy_field }}</div>
+                                        <div class="col-6">{{ form.table_border_color|as_crispy_field }}</div>
+                                    </div>
+                                    
+                                    <div class="mt-4 pt-3 border-top border-opacity-10">
+                                        <div class="form-check form-switch mb-3">
+                                            {{ form.auto_night_mode }}
+                                            <label class="form-check-label fw-bold small mb-0" for="{{ form.auto_night_mode.id_for_label }}">
+                                                <i class="bi bi-display me-1"></i> {{ form.auto_night_mode.label }}
+                                            </label>
+                                        </div>
+                                        <div class="d-grid">
+                                            <button type="button" id="toggleNightEdit" class="btn btn-sm btn-primary rounded-pill">
+                                                <i class="bi bi-moon-stars-fill me-1"></i> <span id="editModeLabel">{% trans "Nachtdesign anwenden" %}</span>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-gradient btn-lg w-100 py-3 mt-2 fw-bold rounded-4 shadow-sm" style="background: var(--app-gradient); border: none; color: white;">
-                        <i class="bi bi-check2-circle me-2"></i>{% trans "Design & Profil speichern" %}
-                    </button>
-                </div>
+                    <!-- Hidden JSON Field -->
+                    <div class="d-none">
+                        {{ form.dark_mode_config }}
+                        <script id="dark_mode_config_data" type="application/json">
+                            {{ user.profile.dark_mode_config|safe|default:"{}" }}
+                        </script>
+                    </div>
+
+                    <div class="d-grid mt-auto">
+                        <button type="submit" class="btn btn-primary btn-lg rounded-pill shadow-lg py-3 fw-bold">
+                            <i class="bi bi-check-circle-fill me-2"></i>{% trans "Änderungen speichern" %}
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
-    </form>
-    <script>
+    </div>
+</div>
+
+<script>
     (function() {
         const THEME_KEYS = [
             'gradient_start', 'gradient_end', 'primary_color', 'background_color',
@@ -180,67 +147,49 @@
         ];
 
         let isEditingNightMode = false;
-        let isSyncing = false; // Guard against infinite loops
+        let isSyncing = false; 
         let dayConfig = {};
         
         const preview = document.getElementById('harmonyPreview');
-        const darkModeInput = document.getElementById('dark_mode_config_input');
-        const jsErrorContainer = document.getElementById('js-debug-error');
-        const jsErrorMsg = document.getElementById('js-debug-msg');
-
-        // Global Error Catching
-        window.addEventListener('error', function(event) {
-            logDebug(`KRITISCHER FEHLER: ${event.message} (Zeile ${event.lineno})`, true);
-        });
-
-        function logDebug(msg, isError = false) {
-            console.log(msg);
-            {% if debug %}
-            if (jsErrorContainer && jsErrorMsg) {
-                jsErrorContainer.classList.remove('d-none');
-                const color = isError ? '#ff4444' : '#ffffff';
-                const ts = new Date().toLocaleTimeString();
-                const newMsg = `<div style="border-bottom:1px solid rgba(255,255,255,0.1); padding:2px 0;">
-                    <span style="color:#aaa; font-size:10px;">[${ts}]</span> 
-                    <span style="color:${color}">${msg}</span>
-                </div>`;
-                jsErrorMsg.innerHTML = newMsg + jsErrorMsg.innerHTML.substring(0, 5000); // Limit size
-            }
-            {% endif %}
-        }
-
-        function showDebugError(msg, err) {
-            logDebug(`${msg}: ${err ? err.message : 'Unbekannter Fehler'}`, true);
-        }
+        const profileForm = document.getElementById('profileForm');
+        const darkModeInput = document.getElementById('id_dark_mode_config') || document.querySelector('[name="dark_mode_config"]');
 
         function getPrimaryValue(name) {
-            const form = document.getElementById('profileForm') || document;
-            const el = form.querySelector(`input[name="${name}"][type="color"]`) || 
-                       form.querySelector(`[name="${name}"]`);
+            if (!profileForm) return null;
+            const el = profileForm.querySelector(`input[name="${name}"][type="color"]`) || 
+                       profileForm.querySelector(`[name="${name}"]`);
             return el ? el.value : null;
         }
 
         function setAllValues(name, value) {
-            if (isSyncing) return { count: 0, types: [] };
+            if (isSyncing || !profileForm) return;
             isSyncing = true;
             try {
-                const form = document.getElementById('profileForm') || document;
-                const elements = form.querySelectorAll(`[name="${name}"]`);
-                let count = 0;
-                let types = [];
+                const elements = profileForm.querySelectorAll(`[name="${name}"]`);
                 elements.forEach(el => {
-                    try {
-                        if (el.value !== value) {
-                            el.value = value;
-                        }
-                        types.push(el.type || el.tagName);
-                        count++;
-                    } catch (e) { console.error(`Sync-Error ${name}`, e); }
+                    if (el.value !== value) {
+                        el.value = value;
+                    }
                 });
-                return { count, types: [...new Set(types)] };
             } finally {
-                // Keep syncing flag for 50ms to allow event bubbling to clear
                 setTimeout(() => { isSyncing = false; }, 50);
+            }
+        }
+
+        function getNightConfig() {
+            try {
+                const scriptTag = document.getElementById('dark_mode_config_data');
+                let currentVal = darkModeInput ? darkModeInput.value : '';
+                
+                if (scriptTag && !currentVal) {
+                    const data = JSON.parse(scriptTag.textContent || '{}');
+                    currentVal = (typeof data === 'object') ? JSON.stringify(data) : data;
+                    if (darkModeInput) darkModeInput.value = currentVal;
+                }
+                return JSON.parse(currentVal || '{}') || {};
+            } catch (e) {
+                console.error("Nacht-Config Fehler:", e);
+                return {};
             }
         }
 
@@ -249,109 +198,88 @@
             clearTimeout(previewTimeout);
             previewTimeout = setTimeout(() => {
                 requestAnimationFrame(() => {
-                    try {
-                        const s = getPrimaryValue('gradient_start') || '#212529';
-                        const e = getPrimaryValue('gradient_end') || '#495057';
-                        if (preview) {
-                            preview.style.background = `linear-gradient(135deg, ${s} 0%, ${e} 100%)`;
-                            // Minimal logging to prevent UI lag
-                            console.log(`Preview: ${s}`);
-                        }
-                    } catch (err) { console.error("Vorschau-Fehler", err); }
+                    const s = getPrimaryValue('gradient_start') || '#212529';
+                    const e = getPrimaryValue('gradient_end') || '#495057';
+                    if (preview) {
+                        preview.style.background = `linear-gradient(135deg, ${s} 0%, ${e} 100%)`;
+                    }
                 });
-            }, 20); // Small debounce
+            }, 20);
         }
 
         // Toggle Night Edit Mode
         const toggleBtn = document.getElementById('toggleNightEdit');
         if (toggleBtn) {
             toggleBtn.addEventListener('click', function() {
-                try {
-                    isEditingNightMode = !isEditingNightMode;
-                    const btn = this;
-                    const label = document.getElementById('editModeLabel');
+                isEditingNightMode = !isEditingNightMode;
+                const label = document.getElementById('editModeLabel');
+                const btn = this;
+                
+                console.log(`Modus-Wechsel: ${isEditingNightMode ? 'NACHT' : 'TAG'}`);
+                
+                if (isEditingNightMode) {
+                    THEME_KEYS.forEach(key => { dayConfig[key] = getPrimaryValue(key); });
                     
-                    logDebug(`Modus: <b>${isEditingNightMode ? 'NACHT' : 'TAG'}</b>`);
+                    let nightConfig = getNightConfig();
+                    const isDuplicate = (nightConfig.gradient_start === dayConfig.gradient_start && Object.keys(nightConfig).length > 0);
                     
-                    if (isEditingNightMode) {
-                        THEME_KEYS.forEach(key => { dayConfig[key] = getPrimaryValue(key); });
-                        
-                        let nightConfig = getNightConfig();
-                        const isDuplicate = (nightConfig.gradient_start === dayConfig.gradient_start && Object.keys(nightConfig).length > 0);
-                        
-                        if (Object.keys(nightConfig).length === 0 || isDuplicate) {
-                            if (isDuplicate) logDebug("Nacht-Werte identisch mit Tag. Erzwinge Reset.");
-                            nightConfig = {
-                                gradient_start: '#0f172a', gradient_end: '#020617', primary_color: '#334155',
-                                background_color: '#020617', sidebar_bg_color: '#0f172a', text_color: '#f8fafc',
-                                table_header_bg_color: '#1e293b', table_header_text_color: '#ffffff',
-                                table_filter_bg_color: '#0f172a', table_body_bg_color: '#020617',
-                                table_body_text_color: '#cbd5e1', table_border_color: '#334155'
-                            };
-                        }
-                        
-                        THEME_KEYS.forEach(key => { 
-                            if (nightConfig[key]) setAllValues(key, nightConfig[key]);
-                        });
-                        logDebug(`Nacht-Design geladen.`);
-                        label.innerText = "{% trans 'Zurück zum Tag-Design' %}";
-                        btn.classList.replace('btn-primary', 'btn-dark');
-                    } else {
-                        let nightConfig = {};
-                        THEME_KEYS.forEach(key => { nightConfig[key] = getPrimaryValue(key); });
-                        if (darkModeInput) darkModeInput.value = JSON.stringify(nightConfig);
-                        
-                        THEME_KEYS.forEach(key => { 
-                            if(dayConfig[key]) setAllValues(key, dayConfig[key]);
-                        });
-                        logDebug(`Tag-Design wiederhergestellt.`);
-                        label.innerText = "{% trans 'Nachtdesign anwenden' %}";
-                        btn.classList.replace('btn-dark', 'btn-primary');
+                    if (Object.keys(nightConfig).length === 0 || isDuplicate) {
+                        nightConfig = {
+                            gradient_start: '#0f172a', gradient_end: '#020617', primary_color: '#334155',
+                            background_color: '#020617', sidebar_bg_color: '#0f172a', text_color: '#f8fafc',
+                            table_header_bg_color: '#1e293b', table_header_text_color: '#ffffff',
+                            table_filter_bg_color: '#0f172a', table_body_bg_color: '#020617',
+                            table_body_text_color: '#cbd5e1', table_border_color: '#334155'
+                        };
                     }
-                    updatePreview();
-                } catch (e) { showDebugError("Toggle-Fehler", e); }
+                    
+                    THEME_KEYS.forEach(key => { if (nightConfig[key]) setAllValues(key, nightConfig[key]); });
+                    label.innerText = "{% trans 'Zurück zum Tag-Design' %}";
+                    btn.classList.replace('btn-primary', 'btn-dark');
+                } else {
+                    let nightConfig = {};
+                    THEME_KEYS.forEach(key => { nightConfig[key] = getPrimaryValue(key); });
+                    if (darkModeInput) darkModeInput.value = JSON.stringify(nightConfig);
+                    
+                    THEME_KEYS.forEach(key => { if(dayConfig[key]) setAllValues(key, dayConfig[key]); });
+                    label.innerText = "{% trans 'Nachtdesign anwenden' %}";
+                    btn.classList.replace('btn-dark', 'btn-primary');
+                }
+                updatePreview();
             });
         }
 
+        // Harmony Presets
         document.addEventListener('click', (e) => {
             const preset = e.target.closest('.gradient-preset');
             if (preset) {
-                try {
-                    const data = preset.dataset;
-                    logDebug(`Harmony "${preset.title || 'Harmony'}"...`);
-                    
-                    const updateList = {
-                        gradient_start: data.start,
-                        gradient_end: data.end,
-                        primary_color: data.primary || data.start,
-                        background_color: data.bg || '#ffffff',
-                        sidebar_bg_color: data.sidebar || data.bg,
-                        text_color: data.text || '#212529'
-                    };
-                    
-                    const isDark = (data.bg === '#121212' || data.bg === '#0d1117');
-                    updateList.table_header_bg_color = data.primary || data.start;
-                    updateList.table_header_text_color = '#ffffff';
-                    updateList.table_filter_bg_color = isDark ? '#2a2a2a' : '#f1f3f5';
-                    updateList.table_body_bg_color = data.bg || '#ffffff';
-                    updateList.table_body_text_color = data.text || '#212529';
-                    updateList.table_border_color = isDark ? '#333333' : '#dee2e6';
-                    
-                    Object.keys(updateList).forEach(key => {
-                        setAllValues(key, updateList[key]);
-                    });
-                    
-                    if (isEditingNightMode) {
-                        let nightConfig = {};
-                        THEME_KEYS.forEach(key => { nightConfig[key] = getPrimaryValue(key); });
-                        if (darkModeInput) darkModeInput.value = JSON.stringify(nightConfig);
-                    }
-                    updatePreview();
-                } catch (e) { showDebugError("Preset-Fehler", e); }
+                const d = preset.dataset;
+                const updateList = {
+                    gradient_start: d.start, gradient_end: d.end,
+                    primary_color: d.primary || d.start, background_color: d.bg || '#ffffff',
+                    sidebar_bg_color: d.sidebar || d.bg, text_color: d.text || '#212529'
+                };
+                
+                const isDark = (d.bg === '#121212' || d.bg === '#0d1117');
+                updateList.table_header_bg_color = d.primary || d.start;
+                updateList.table_header_text_color = '#ffffff';
+                updateList.table_filter_bg_color = isDark ? '#2a2a2a' : '#f1f3f5';
+                updateList.table_body_bg_color = d.bg || '#ffffff';
+                updateList.table_body_text_color = d.text || '#212529';
+                updateList.table_border_color = isDark ? '#333333' : '#dee2e6';
+                
+                Object.keys(updateList).forEach(key => setAllValues(key, updateList[key]));
+                
+                if (isEditingNightMode) {
+                    let nightConfig = {};
+                    THEME_KEYS.forEach(key => { nightConfig[key] = getPrimaryValue(key); });
+                    if (darkModeInput) darkModeInput.value = JSON.stringify(nightConfig);
+                }
+                updatePreview();
             }
         });
 
-        // Use targeted form listener instead of global document listener
+        // Manual Input sync
         if (profileForm) {
             profileForm.addEventListener('input', (e) => {
                 if (isSyncing) return;
@@ -370,24 +298,18 @@
             });
 
             profileForm.addEventListener('submit', function() {
-                try {
-                    if (isEditingNightMode) {
-                        let nightConfig = {};
-                        THEME_KEYS.forEach(key => { nightConfig[key] = getPrimaryValue(key); });
-                        if (darkModeInput) darkModeInput.value = JSON.stringify(nightConfig);
-                        THEME_KEYS.forEach(key => { 
-                            if (dayConfig[key]) setAllValues(key, dayConfig[key]); 
-                        });
-                    }
-                } catch (e) { console.error("Submit-Error", e); }
+                if (isEditingNightMode) {
+                    let nightConfig = {};
+                    THEME_KEYS.forEach(key => { nightConfig[key] = getPrimaryValue(key); });
+                    if (darkModeInput) darkModeInput.value = JSON.stringify(nightConfig);
+                    THEME_KEYS.forEach(key => { if (dayConfig[key]) setAllValues(key, dayConfig[key]); });
+                }
             });
         }
 
-        getNightConfig();
         updatePreview();
     })();
 </script>
-</div>
 
 <style>
     .glass-card {
@@ -409,12 +331,6 @@
     .shadow-text { text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
     .shadow-gradient {
         box-shadow: 0 10px 40px -10px rgba(0,0,0,0.3);
-    }
-    .text-gradient {
-        background: var(--app-gradient);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
     }
 </style>
 {% endblock %}
