@@ -28,7 +28,9 @@ def get_brightness(hex_color):
         return 255
 
 @receiver(post_save, sender=UserProfile)
-def sync_admin_theme(sender, instance, **kwargs):
+def sync_admin_theme(sender, instance, created, **kwargs):
+    if not getattr(settings, 'SYNC_ADMIN_INTERFACE_THEME', False):
+        return
     """
     Synchronizes the user's current profile colors with the django-admin-interface theme.
     This follows the 'live' state of the profile fields, including manual overrides.

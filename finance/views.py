@@ -910,7 +910,12 @@ def _ensure_category_filters(user):
 
 @login_required
 def review_bank_transactions(request, batch_id):
-    user = request.user
+    # Force resolution of the lazy request.user object to prevent 'CustomUser' object has no attribute 'user'
+    user = request.user._wrapped if hasattr(request.user, '_wrapped') else request.user
+    if not user.is_authenticated:
+        from django.shortcuts import redirect
+        return redirect('login')
+    
     profile = user.profile
     _ensure_category_filters(user)
     
@@ -941,8 +946,9 @@ def review_bank_transactions(request, batch_id):
         return render(request, 'finance/partials/import_mapping_pane.html', {
             'transactions': mapping_list,
             'categories': categories,
-            'batch': batch,  # Pass missing context
-            'q': q
+            'batch': batch,
+            'q': q,
+            'profile': profile
         })
 
     return render(request, 'finance/import_review.html', {
