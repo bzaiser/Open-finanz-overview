@@ -277,14 +277,17 @@
                         // Load Night values
                         let nightConfig = getNightConfig();
                         if (Object.keys(nightConfig).length === 0) {
+                            logDebug("Keine Nacht-Konfiguration gefunden. Lade 'Deep Midnight' Defaults.");
                             nightConfig = {
-                                gradient_start: '#212529', gradient_end: '#495057', primary_color: '#343a40',
-                                background_color: '#121212', sidebar_bg_color: '#1a1a1a', text_color: '#e9ecef',
-                                table_header_bg_color: '#343a40', table_header_text_color: '#ffffff',
-                                table_filter_bg_color: '#2a2a2a', table_body_bg_color: '#121212',
-                                table_body_text_color: '#e9ecef', table_border_color: '#333333'
+                                gradient_start: '#0f172a', gradient_end: '#020617', primary_color: '#334155',
+                                background_color: '#020617', sidebar_bg_color: '#0f172a', text_color: '#f8fafc',
+                                table_header_bg_color: '#1e293b', table_header_text_color: '#ffffff',
+                                table_filter_bg_color: '#0f172a', table_body_bg_color: '#020617',
+                                table_body_text_color: '#cbd5e1', table_border_color: '#334155'
                             };
                         }
+                        
+                        logDebug(`Wende Nacht-Farben an (Start: ${nightConfig.gradient_start})`);
                         
                         THEME_KEYS.forEach(key => { 
                             if (nightConfig[key]) setAllValues(key, nightConfig[key]);
@@ -380,7 +383,8 @@
             });
         }
 
-        // Initial preview
+        // Initial preview and data sync
+        getNightConfig(); 
         updatePreview();
     })();
 </script>

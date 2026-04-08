@@ -50,7 +50,7 @@ class UserProfile(models.Model):
     
     # Night Mode / System Sync
     auto_night_mode = models.BooleanField(_("Follow System Design"), default=False)
-    dark_mode_config = models.JSONField(_("Night Mode Colors"), default=dict, blank=True)
+    dark_mode_config = models.JSONField(_("Night Mode Colors"), default=dict, blank=True, null=True)
 
     # Gradient & Unified Design Fields
     gradient_start = models.CharField(_("Gradient Start Color"), max_length=7, default="#6610f2")
