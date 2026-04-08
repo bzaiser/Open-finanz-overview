@@ -130,10 +130,10 @@
                         </div>
 
                         <!-- Precision Studio (Accordion) -->
-                        <div class="accordion accordion-flush rounded-4 overflow-hidden border" id="precisionStudio">
-                            <div class="accordion-item">
+                        <div class="accordion accordion-flush rounded-4 overflow-hidden border border-white border-opacity-10" id="precisionStudio">
+                            <div class="accordion-item bg-transparent">
                                 <h2 class="accordion-header">
-                                    <button class="accordion-button collapsed py-3 fw-bold bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePrecision">
+                                    <button class="accordion-button collapsed py-3 fw-bold bg-transparent text-inherit" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePrecision" style="color: inherit !important;">
                                         <i class="bi bi-sliders me-2 text-primary"></i> {% trans "Präzisions-Studio (Farben manuell anpassen)" %}
                                     </button>
                                 </h2>
@@ -290,5 +290,18 @@
     }
     .preset-pill:hover { transform: scale(1.15) translateY(-5px); }
     .shadow-gradient { box-shadow: 0 15px 45px -10px rgba(13, 110, 253, 0.4); }
+    
+    /* Accordion Refinement */
+    .accordion-button:not(.collapsed) {
+        background-color: transparent !important;
+        box-shadow: none !important;
+    }
+    .accordion-button:focus {
+        box-shadow: none !important;
+        border-color: rgba(255,255,255,0.1) !important;
+    }
+    .accordion-button::after {
+        filter: brightness(0.5) invert(1);
+    }
 </style>
 {% endblock %}
