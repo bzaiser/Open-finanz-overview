@@ -212,7 +212,7 @@ def dashboard_view(request):
                 
                 profile.dashboard_config = dashboard_config
                 profile.save()
-                return redirect('finance:dashboard')
+                #FALLTHROUGH to let HTMX handle the refresh naturally
             except json.JSONDecodeError:
                 pass
         else:
@@ -940,15 +940,25 @@ def review_bank_transactions(request, batch_id):
     categories = Category.objects.all()
     filters = ImportFilter.objects.filter(user=request.user).order_by('target_name')
     
-    # Check if this is an HTMX request for the Mapping Pane only
-    if request.headers.get('HX-Request') and 'mapping-search' in request.GET.get('target', ''):
-        return render(request, 'finance/partials/import_mapping_pane.html', {
-            'transactions': mapping_list,
-            'categories': categories,
-            'batch': batch,
-            'q': q,
-            'profile': profile
-        })
+    # Check if this is an HTMX request for specific panes
+    if request.headers.get('HX-Request'):
+        target = request.GET.get('target', '')
+        if 'mapping-search' in target:
+            return render(request, 'finance/partials/import_mapping_pane.html', {
+                'transactions': mapping_list,
+                'categories': categories,
+                'batch': batch,
+                'q': q,
+                'profile': profile
+            })
+        elif 'ready-pane' in target:
+            return render(request, 'finance/partials/import_ready_pane.html', {
+                'ready_list': ready_list,
+                'total_ready': total_ready,
+                'profile': profile,
+                'conflict_count': ready_list.filter(has_conflict=True, is_confirmed=False).count(),
+                'batch': batch
+            })
 
     return render(request, 'finance/import_review.html', {
         'batch': batch,
@@ -1102,9 +1112,10 @@ def confirm_bank_transaction(request, transaction_id):
             # Stay in Ready (e.g. confirmation toggle)
             main_response = render_to_string('finance/partials/import_ready_row.html', {'t': transaction, 'categories': categories}).strip()
 
-    # Final construction
-    response_content = main_response + "".join(oob_elements)
-    return HttpResponse(response_content)
+    # Final construction: No more manual OOB buildup, just trigger a global refresh
+    response = HttpResponse(main_response)
+    response['HX-Trigger'] = 'import-updated'
+    return response
 
 @login_required
 def apply_import_batch(request, batch_id):
@@ -1375,62 +1386,10 @@ def import_search_as_group(request, batch_id):
         key = (m.date.year, m.date.month)
         months_map[key].append(m)
         
-    response_html = ""
-    for month_key, month_matches in months_map.items():
-        total_amount = sum(m.amount for m in month_matches)
-        total_count = sum(m.integration_count for m in month_matches)
-        all_terms = "; ".join(set(m.description for m in month_matches))
-        
-        # Look for existing Ready record for this target/month
-        ready_rec = batch.transactions.filter(
-            description=target_name,
-            date__year=month_key[0],
-            date__month=month_key[1],
-            category=category,
-            is_ignored=False
-        ).first()
-
-        if ready_rec:
-            ready_rec.amount += total_amount
-            ready_rec.integration_count += total_count
-            if ready_rec.matched_terms:
-                ready_rec.matched_terms = f"{ready_rec.matched_terms}; {all_terms}"
-            else:
-                ready_rec.matched_terms = all_terms
-            ready_rec.save()
-            
-            # Since it already exists, we UPDATE it OOB instead of appending
-            response_html += render_to_string('finance/partials/import_ready_row.html', {
-                't': ready_rec, 
-                'categories': Category.objects.all(),
-            }).replace(f'id="ready-row-{ready_rec.id}"', f'id="ready-row-{ready_rec.id}" hx-swap-oob="outerHTML:#ready-row-{ready_rec.id}"')
-        else:
-            ready_rec = PendingTransaction.objects.create(
-                batch=batch,
-                date=month_matches[0].date, # Representative date
-                description=target_name,
-                amount=total_amount,
-                is_income=(total_amount > 0),
-                category=category,
-                integration_count=total_count,
-                matched_terms=all_terms,
-                is_ignored=False
-            )
-            response_html += render_to_string('finance/partials/import_ready_row.html', {
-                't': ready_rec, 
-                'categories': Category.objects.all(),
-                'hx_oob': True
-            })
-        
-        # OOB Swaps to delete all matches from Mapping Pane
-        for m in month_matches:
-            response_html += f'<tr id="mapping-row-{m.id}" hx-swap-oob="delete"></tr>'
-    
-    # 3. Update the Total Sum OOB
-    total_ready = sum(t.amount for t in batch.transactions.filter(is_ignored=False, category__isnull=False))
-    from django.contrib.humanize.templatetags.humanize import intcomma
-    total_str = f"{intcomma(round(total_ready, 2))} EUR"
-    response_html += f'<span id="total-ready-sum" hx-swap-oob="innerHTML">{total_str}</span>'
+    # 5. Return success and trigger global refresh
+    response = HttpResponse('<div class="alert alert-success small">Gruppe erfolgreich übernommen.</div>')
+    response['HX-Trigger'] = 'import-updated'
+    return response
     
     # 4. Remove empty state message if any
     response_html += '<tr id="empty-ready-msg" hx-swap-oob="delete"></tr>'
