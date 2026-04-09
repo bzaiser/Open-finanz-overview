@@ -19,6 +19,11 @@ class UserProfileForm(forms.ModelForm):
             self.fields['first_name'].initial = self.instance.user.first_name
             self.fields['last_name'].initial = self.instance.user.last_name
             self.fields['email'].initial = self.instance.user.email
+            
+            # Set placeholder for display_name based on fallback
+            fallback_name = self.instance.user.first_name or self.instance.user.last_name or self.instance.user.username
+            self.fields['display_name'].widget.attrs['placeholder'] = fallback_name
+            self.fields['display_name'].widget.attrs['class'] = 'form-control'
 
     def save(self, commit=True):
         profile = super().save(commit=False)
