@@ -758,9 +758,6 @@ def _async_import_task(batch_id, file_path, filename):
     """
     Background worker that performs the long-running AI categorization.
     """
-    # Give the main request a moment to finish its DB commit
-    time.sleep(0.5)
-    
     from django.db import connections
     from .models import ImportBatch
     from .import_services import ExcelParserService

@@ -106,9 +106,6 @@ class ExcelParserService:
             cache.set(cache_key, 15, 300)
             self._log(batch, f"Spalten-Zuordnung abgeschlossen (Header in Zeile {header_row}).")
 
-            # Find the best header row (deep scan)
-            col_map, header_row = self._detect_columns(df)
-            
             # Re-align DataFrame if header was not in row 0
             if header_row > 0:
                 self._log(batch, f"Kopfzeile in Zeile {header_row} gefunden. Richte Daten neu aus...")
@@ -181,8 +178,6 @@ class ExcelParserService:
             # --- ROW-LEVEL DUPLICATE DETECTION ---
             # --- ROW-LEVEL DUPLICATE DETECTION ---
             self._log(batch, "Prüfe Transaktionen auf Dubletten (Persistent)...")
-            # We check against ALL hashes ever processed by this user
-            processed_sigs = set(ProcessedTransactionHash.objects.filter(user=self.user).values_list('hash', flat=True))
             
             def make_sig(row):
                 # Hash of date, amount, and description
@@ -190,6 +185,13 @@ class ExcelParserService:
                 return hashlib.md5(data.encode()).hexdigest()
             
             df['signature'] = df.apply(make_sig, axis=1)
+             # Row-level check: Only fetch signatures that are actually present in this file
+            all_sigs = df['signature'].unique().tolist()
+            processed_sigs = set(ProcessedTransactionHash.objects.filter(
+                user=self.user, 
+                hash__in=all_sigs
+            ).values_list('hash', flat=True))
+            
             cache.set(cache_key, 30, 300)
             
             duplicates_mask = df['signature'].isin(processed_sigs)
@@ -235,11 +237,18 @@ class ExcelParserService:
                 still_unassigned = []
                 memory_matches = 0
                 
-                # Get all memories for this user once to avoid N+1
-                all_memories = {m.description: m for m in CategorizationMemory.objects.filter(user=self.user).select_related('category')}
+                # Pre-clean all descriptions to find target memories
+                unassigned_cleaned_map = {g['description']: clean_description(g['description']) for g in unassigned}
+                target_cleaned_descs = list(set(unassigned_cleaned_map.values()))
+                
+                # Get ONLY relevant memories for this user
+                all_memories = {m.description: m for m in CategorizationMemory.objects.filter(
+                    user=self.user, 
+                    description__in=target_cleaned_descs
+                ).select_related('category')}
                 
                 for g in unassigned:
-                    cleaned = clean_description(g['description'])
+                    cleaned = unassigned_cleaned_map[g['description']]
                     g['cleaned_desc'] = cleaned
                     
                     if cleaned in all_memories:
