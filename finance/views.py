@@ -1386,8 +1386,8 @@ def import_search_as_group(request, batch_id):
         key = (m.date.year, m.date.month)
         months_map[key].append(m)
         
-    # 5. Return success and trigger global refresh
-    response = HttpResponse('<div class="alert alert-success small">Gruppe erfolgreich übernommen.</div>')
+    # 5. Return success trigger. The front-end handles the actual re-render via HTMX events.
+    response = HttpResponse("") 
     response['HX-Trigger'] = 'import-updated'
     return response
     

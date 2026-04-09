@@ -113,7 +113,10 @@
                 </div>
                 {% endif %}
 
-                <div id="mapping-pane">
+                <div id="mapping-pane"
+                     hx-get="{% url 'finance:review_transactions' batch.id %}?target=mapping-search"
+                     hx-trigger="import-updated from:body"
+                     hx-include="[name='q']">
                     {% include 'finance/partials/import_mapping_pane.html' with transactions=mapping_list %}
                 </div>
             </div>
