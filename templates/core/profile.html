@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block title %}{% trans "Profil & Design Studio" %}{% endblock %}
+{% block title %}{% trans "Profile & Design Studio" %}{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-xl-11">
         <div class="d-flex justify-content-between align-items-end mb-4">
             <div>
-                <h2 class="display-5 fw-bold mb-0">{% trans "Einstellungen" %}</h2>
-                <p class="text-muted">{% trans "Personalisiere dein Erlebnis und dein Dashboard-Design." %}</p>
+                <h2 class="display-5 fw-bold mb-0">{% trans "Settings" % Noahs "Settings" %}</h2>
+                <p class="text-muted">{% trans "Personalize your experience and your dashboard design." % Noahs "Personalize your experience and your dashboard design." %}</p>
             </div>
             <div class="text-end">
                 <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill">
@@ -20,8 +20,8 @@
 
         {% if form.errors %}
         <div class="alert alert-danger bg-danger bg-opacity-10 border-danger border-opacity-25 rounded-4 mb-4 shadow-sm">
-            <h5 class="alert-heading fw-bold"><i class="bi bi-exclamation-triangle-fill me-2"></i>{% trans "Hinweis" %}</h5>
-            <p class="mb-0">{% trans "Einige Felder konnten nicht gespeichert werden. Bitte prüfe deine Eingaben:" %}</p>
+            <h5 class="alert-heading fw-bold"><i class="bi bi-exclamation-triangle-fill me-2"></i>{% trans "Notification" %}</h5>
+            <p class="mb-0">{% trans "Some fields could not be saved. Please check your input:" %}</p>
             <ul class="mt-2 mb-0">
                 {% for field, errors in form.errors.items %}
                     <li><strong>{{ field|title }}:</strong> {{ errors|join:", " }}</li>
@@ -38,11 +38,11 @@
             <div class="row g-4 mb-4">                <!-- Links: Stammdaten -->
                 <div class="col-lg-6">
                     <div class="glass-card shadow-lg p-3 h-100">
-                        <h5 class="mb-3 fw-bold"><i class="bi bi-person-vcard me-2 text-primary"></i>{% trans "Profil & Stammdaten" %}</h5>
+                        <h5 class="mb-3 fw-bold"><i class="bi bi-person-vcard me-2 text-primary"></i>{% trans "Profile & Basic Data" %}</h5>
                         <div class="row g-2">
                             <!-- Prominent Top Fields -->
                             <div class="col-12 mb-1">
-                                <label class="form-label fw-bold mb-0 d-block" style="font-size: 0.75rem;">{% trans "Anzeigename" %}</label>
+                                <label class="form-label fw-bold mb-0 d-block" style="font-size: 0.75rem;">{% trans "Display Name" %}</label>
                                 {{ form.display_name }}
                             </div>
                             
@@ -66,7 +66,7 @@
                                         {% endif %}
                                     </div>
                                     <div class="flex-grow-1">
-                                        <label class="form-label fw-bold mb-0 d-block" style="font-size: 0.65rem;">{% trans "Profilbild" %}</label>
+                                        <label class="form-label fw-bold mb-0 d-block" style="font-size: 0.65rem;">{% trans "Profile Picture" %}</label>
                                         {{ form.avatar }}
                                     </div>
                                 </div>
@@ -74,35 +74,35 @@
                             
                             <!-- Identification Data -->
                             <div class="col-md-6 mb-1">
-                                <label class="form-label fw-bold mb-0 d-block" style="font-size: 0.7rem;">{% trans "Vorname" %}</label>
+                                <label class="form-label fw-bold mb-0 d-block" style="font-size: 0.7rem;">{% trans "First Name" %}</label>
                                 {{ form.first_name }}
                             </div>
                             <div class="col-md-6 mb-1">
-                                <label class="form-label fw-bold mb-0 d-block" style="font-size: 0.7rem;">{% trans "Nachname" %}</label>
+                                <label class="form-label fw-bold mb-0 d-block" style="font-size: 0.7rem;">{% trans "Last Name" %}</label>
                                 {{ form.last_name }}
                             </div>
                             
                             <div class="col-12 mb-2">
-                                <label class="form-label fw-bold mb-0 d-block" style="font-size: 0.7rem;">{% trans "E-Mail-Adresse" %}</label>
+                                <label class="form-label fw-bold mb-0 d-block" style="font-size: 0.7rem;">{% trans "Email Address" %}</label>
                                 {{ form.email }}
                             </div>
 
                             <!-- Metadata Grid -->
                             <div class="col-md-6 mb-1">
-                                <label class="form-label fw-bold mb-0 d-block" style="font-size: 0.7rem;">{% trans "Sprache" %}</label>
+                                <label class="form-label fw-bold mb-0 d-block" style="font-size: 0.7rem;">{% trans "Language" %}</label>
                                 {{ form.language }}
                             </div>
                             <div class="col-md-6 mb-1">
-                                <label class="form-label fw-bold mb-0 d-block" style="font-size: 0.7rem;">{% trans "Währung" %}</label>
+                                <label class="form-label fw-bold mb-0 d-block" style="font-size: 0.7rem;">{% trans "Currency" %}</label>
                                 {{ form.currency }}
                             </div>
 
                             <div class="col-md-6 mb-1">
-                                <label class="form-label fw-bold mb-0 d-block" style="font-size: 0.7rem;">{% trans "Geburtsdatum" %}</label>
+                                <label class="form-label fw-bold mb-0 d-block" style="font-size: 0.7rem;">{% trans "Birth Date" %}</label>
                                 {{ form.birth_date }}
                             </div>
                             <div class="col-md-6 mb-1">
-                                <label class="form-label fw-bold mb-0 d-block" style="font-size: 0.7rem;">{% trans "Sim. Max Alter" %}</label>
+                                <label class="form-label fw-bold mb-0 d-block" style="font-size: 0.7rem;">{% trans "Sim. Max Age" %}</label>
                                 {{ form.simulation_max_age }}
                             </div>
                         </div>
@@ -115,23 +115,23 @@
                                 {{ form.inflation_rate }}
                             </div>
                             <div class="col-md-6 mb-1">
-                                <label class="form-label fw-bold d-block mb-0" style="font-size: 0.7rem;">{% trans "Gehaltsplus (%)" %}</label>
+                                <label class="form-label fw-bold d-block mb-0" style="font-size: 0.7rem;">{% trans "Salary Increase (%)" %}</label>
                                 {{ form.salary_increase }}
                             </div>
                             <div class="col-md-6 mb-1">
-                                <label class="form-label fw-bold d-block mb-0" style="font-size: 0.7rem;">{% trans "Rentenplus (%)" %}</label>
+                                <label class="form-label fw-bold d-block mb-0" style="font-size: 0.7rem;">{% trans "Pension Increase (%)" %}</label>
                                 {{ form.pension_increase }}
                             </div>
                             <div class="col-md-6 mb-2">
-                                <label class="form-label fw-bold d-block mb-0" style="font-size: 0.7rem;">{% trans "Zins-Puffer (%)" %}</label>
+                                <label class="form-label fw-bold d-block mb-0" style="font-size: 0.7rem;">{% trans "Interest Buffer (%)" %}</label>
                                 {{ form.investment_return_offset }}
                             </div>
                             <div class="col-md-6 mb-2">
-                                <label class="form-label fw-bold d-block mb-0" style="font-size: 0.7rem;">{% trans "Immobilien (%)" %}</label>
+                                <label class="form-label fw-bold d-block mb-0" style="font-size: 0.7rem;">{% trans "Real Estate (%)" %}</label>
                                 {{ form.real_estate_growth_rate }}
                             </div>
                             <div class="col-md-6 mb-2">
-                                <label class="form-label fw-bold d-block mb-0" style="font-size: 0.7rem;">{% trans "Sachwerte (%)" %}</label>
+                                <label class="form-label fw-bold d-block mb-0" style="font-size: 0.7rem;">{% trans "Physical Assets (%)" %}</label>
                                 {{ form.physical_asset_growth_rate }}
                             </div>
                         </div>
@@ -146,11 +146,11 @@
                         <!-- Premium Preview Box -->
                         <div id="harmonyPreview" class="rounded-4 p-4 text-white shadow-gradient d-flex flex-column justify-content-center text-center mb-4"
                              style="background: var(--app-preview-gradient); min-height: 120px; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);">
-                            <div class="fs-3 fw-bold shadow-text">{% trans "Design Harmonie" %}</div>
-                            <div class="small opacity-75">{% trans "Echtzeit Live-Vorschau" %}</div>
+                            <div class="fs-3 fw-bold shadow-text">{% trans "Design Harmony" %}</div>
+                            <div class="small opacity-75">{% trans "Real-time Live Preview" %}</div>
                         </div>
 
-                        <label class="form-label small fw-bold mb-3">{% trans "Wähle eine Farbzusammenstellung" %}</label>
+                        <label class="form-label small fw-bold mb-3">{% trans "Select a Color Harmony" %}</label>
                         <div class="d-flex flex-wrap gap-3 mb-4">
                             {% include "core/partials/harmony_presets.html" %}
                         </div>
@@ -160,16 +160,16 @@
                             <div class="accordion-item bg-transparent">
                                 <h2 class="accordion-header">
                                     <button class="accordion-button collapsed py-3 fw-bold bg-transparent text-inherit" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePrecision" style="color: inherit !important;">
-                                        <i class="bi bi-sliders me-2 text-primary"></i> {% trans "Präzisions-Studio (Farben manuell anpassen)" %}
+                                        <i class="bi bi-sliders me-2 text-primary"></i> {% trans "Precision Studio (Manual Color Adjustment)" %}
                                     </button>
                                 </h2>
                                 <div id="collapsePrecision" class="accordion-collapse collapse" data-bs-parent="#precisionStudio">
                                     <div class="accordion-body bg-light bg-opacity-10">
                                         <div class="row g-3">
-                                            <div class="col-md-3"><label class="form-label small fw-bold">{% trans "Primär" %}</label>{{ form.primary_color }}</div>
+                                            <div class="col-md-3"><label class="form-label small fw-bold">{% trans "Primary" %}</label>{{ form.primary_color }}</div>
                                             <div class="col-md-3"><label class="form-label small fw-bold">{% trans "Start" %}</label>{{ form.gradient_start }}</div>
-                                            <div class="col-md-3"><label class="form-label small fw-bold">{% trans "Ende" %}</label>{{ form.gradient_end }}</div>
-                                            <div class="col-md-3"><label class="form-label small fw-bold">{% trans "Hintergrund" %}</label>{{ form.background_color }}</div>
+                                            <div class="col-md-3"><label class="form-label small fw-bold">{% trans "End" %}</label>{{ form.gradient_end }}</div>
+                                            <div class="col-md-3"><label class="form-label small fw-bold">{% trans "Background" %}</label>{{ form.background_color }}</div>
                                             <div class="col-md-3"><label class="form-label small fw-bold">{% trans "Sidebar BG" %}</label>{{ form.sidebar_bg_color }}</div>
                                             <div class="col-md-3"><label class="form-label small fw-bold">{% trans "Text" %}</label>{{ form.text_color }}</div>
                                             <div class="col-md-3"><label class="form-label small fw-bold">{% trans "Tab. Header BG" %}</label>{{ form.table_header_bg_color }}</div>
@@ -189,7 +189,7 @@
             <div class="d-flex justify-content-center mb-5 mt-2">
                 <button type="submit" class="btn btn-primary btn-lg px-5 shadow-lg rounded-pill btn-preview-styled py-3">
                     <i class="bi bi-check2-circle me-2 fs-4"></i>
-                    <span class="fs-5 fw-bold">{% trans "Änderungen & Design speichern" %}</span>
+                    <span class="fs-5 fw-bold">{% trans "Save Changes & Design" %}</span>
                 </button>
             </div>
         </form>

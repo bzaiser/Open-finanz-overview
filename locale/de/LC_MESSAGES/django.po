@@ -1912,3 +1912,78 @@ msgstr "Kreditrate"
 
 msgid "Total Combined Assets"
 msgstr "Gesamtvermögen"
+
+msgid "Profile & Design Studio"
+msgstr "Profil & Design Studio"
+
+msgid "Personalize your experience and your dashboard design."
+msgstr "Personalisiere dein Erlebnis und dein Dashboard-Design."
+
+msgid "Notification"
+msgstr "Hinweis"
+
+msgid "Some fields could not be saved. Please check your input:"
+msgstr "Einige Felder konnten nicht gespeichert werden. Bitte prüfe deine Eingaben:"
+
+msgid "Profile & Basic Data"
+msgstr "Profil & Stammdaten"
+
+msgid "Display Name"
+msgstr "Anzeigename"
+
+msgid "Profile Picture"
+msgstr "Profilbild"
+
+msgid "First Name"
+msgstr "Vorname"
+
+msgid "Last Name"
+msgstr "Nachname"
+
+msgid "Email Address"
+msgstr "E-Mail-Adresse"
+
+msgid "Sim. Max Age"
+msgstr "Sim. Max Alter"
+
+msgid "Salary Increase (%)"
+msgstr "Gehaltsplus (%)"
+
+msgid "Pension Increase (%)"
+msgstr "Rentenplus (%)"
+
+msgid "Interest Buffer (%)"
+msgstr "Zins-Puffer (%)"
+
+msgid "Real Estate (%)"
+msgstr "Immobilien (%)"
+
+msgid "Physical Assets (%)"
+msgstr "Sachwerte (%)"
+
+msgid "Design Harmony"
+msgstr "Design Harmonie"
+
+msgid "Real-time Live Preview"
+msgstr "Echtzeit Live-Vorschau"
+
+msgid "Select a Color Harmony"
+msgstr "Wähle eine Farbzusammenstellung"
+
+msgid "Precision Studio (Manual Color Adjustment)"
+msgstr "Präzisions-Studio (Farben manuell anpassen)"
+
+msgid "Primary"
+msgstr "Primär"
+
+msgid "End"
+msgstr "Ende"
+
+msgid "Background"
+msgstr "Hintergrund"
+
+msgid "Save Changes & Design"
+msgstr "Änderungen & Design speichern"
+
+msgid "Toggle Night Mode"
+msgstr "Nachtmodus umschalten"

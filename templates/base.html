@@ -325,7 +325,7 @@
                     {% if user.is_authenticated %}
                     <!-- Global Night Toggle -->
                     <li class="nav-item d-flex align-items-center me-3">
-                        <a href="{% url 'toggle_night_mode' %}" class="nav-link d-flex align-items-center gap-2 p-0" title="{% trans 'Nachtmodus umschalten' %}">
+                        <a href="{% url 'toggle_night_mode' %}" class="nav-link d-flex align-items-center gap-2 p-0" title="{% trans 'Toggle Night Mode' %}">
                             <i class="bi bi-moon-stars{% if user.profile.auto_night_mode %}-fill text-warning{% endif %}"></i>
                             <div class="form-check form-switch m-0">
                                 <input class="form-check-input" type="checkbox" role="switch" {% if user.profile.auto_night_mode %}checked{% endif %} style="cursor: pointer; pointer-events: none;">
