@@ -79,10 +79,10 @@ SUMMARY_WIDGETS = {
     'total_pensions': {'title': _('Pension Capital'), 'default_bg': '#0dcaf0', 'default_text': '#ffffff', 'icon': 'bi-bank'},
     'expected_payout': {'title': _('Target Monthly Pension'), 'default_bg': '#6f42c1', 'default_text': '#ffffff', 'icon': 'bi-bullseye'},
     'current_pension_payout': {'title': _('Current Pension'), 'default_bg': '#fd7e14', 'default_text': '#ffffff', 'icon': 'bi-cash-stack'},
-    'total_physical_assets': {'title': _('Sachwerte'), 'default_bg': '#8a2be2', 'default_text': '#ffffff', 'icon': 'bi-car-front'},
-    'total_real_estate': {'title': _('Immobilien'), 'default_bg': '#20c997', 'default_text': '#ffffff', 'icon': 'bi-house-heart'},
-    'total_combined_assets': {'title': _('Gesamtvermögen'), 'default_bg': '#ffc107', 'default_text': '#212529', 'icon': 'bi-pie-chart'},
-    'total_debts': {'title': _('Gesamtschulden'), 'default_bg': '#343a40', 'default_text': '#ffffff', 'icon': 'bi-credit-card-2-front'},
+    'total_physical_assets': {'title': _('Physical Assets'), 'default_bg': '#8a2be2', 'default_text': '#ffffff', 'icon': 'bi-car-front'},
+    'total_real_estate': {'title': _('Real Estate'), 'default_bg': '#20c997', 'default_text': '#ffffff', 'icon': 'bi-house-heart'},
+    'total_combined_assets': {'title': _('Total Wealth'), 'default_bg': '#ffc107', 'default_text': '#212529', 'icon': 'bi-pie-chart'},
+    'total_debts': {'title': _('Total Debts'), 'default_bg': '#343a40', 'default_text': '#ffffff', 'icon': 'bi-credit-card-2-front'},
 }
 
 DEFAULT_LAYOUT = [
@@ -103,8 +103,8 @@ def dashboard_view(request):
         return {**defaults, **user_data}
 
     # 0. Ensure specific categories exist for the split pension view
-    Category.objects.get_or_create(slug='gesetzliche-rente', defaults={'name': _('Gesetzliche Rente'), 'color': '#0d6efd', 'is_system': True})
-    Category.objects.get_or_create(slug='private-kapital-rente', defaults={'name': _('Private Kapital-Rente'), 'color': '#0dcaf0', 'is_system': True})
+    Category.objects.get_or_create(slug='gesetzliche-rente', defaults={'name': _('State Pension'), 'color': '#0d6efd', 'is_system': True})
+    Category.objects.get_or_create(slug='private-kapital-rente', defaults={'name': _('Private Pension'), 'color': '#0dcaf0', 'is_system': True})
 
     # Initialize or get Dashboard Config
     dashboard_config = profile.dashboard_config or {}
@@ -441,10 +441,10 @@ def dashboard_view(request):
             'net_worth_chart': {
                 'labels': labels_yearly,
                 'datasets': [
-                    {'label': _eager('Nominal Gesamtwert'), 'data': net_worth_nominal, 'borderColor': 'blue'},
-                    {'label': _eager('Real Gesamtwert'), 'data': net_worth_real, 'borderColor': 'green', 'borderDash': [5, 5]},
-                    {'label': _eager('Sachwerte'), 'data': physical_asset_yearly, 'borderColor': '#8a2be2', 'backgroundColor': 'rgba(138, 43, 226, 0.1)', 'fill': True},
-                    {'label': _eager('Immobilien'), 'data': real_estate_yearly, 'borderColor': '#20c997', 'backgroundColor': 'rgba(32, 201, 151, 0.1)', 'fill': True},
+                    {'label': _eager('Nominal Net Worth'), 'data': net_worth_nominal, 'borderColor': 'blue'},
+                    {'label': _eager('Real Net Worth'), 'data': net_worth_real, 'borderColor': 'green', 'borderDash': [5, 5]},
+                    {'label': _eager('Physical Assets'), 'data': physical_asset_yearly, 'borderColor': '#8a2be2', 'backgroundColor': 'rgba(138, 43, 226, 0.1)', 'fill': True},
+                    {'label': _eager('Real Estate'), 'data': real_estate_yearly, 'borderColor': '#20c997', 'backgroundColor': 'rgba(32, 201, 151, 0.1)', 'fill': True},
                 ],
                 'stichtag_index': stichtag_year_index
             },
@@ -569,8 +569,8 @@ def dashboard_view(request):
             table_data_income.append({
                 'name': cf.name, 
                 'amount': float(amt), 
-                'category': cf.category.name if cf.category else _('Einnahme'),
-                'type': _('Manuell'),
+                'category': cf.category.name if cf.category else _('Income'),
+                'type': _('Manual'),
                 'year': str(cf.start_date.year) if cf.start_date else continuous_label
             })
     
@@ -578,9 +578,9 @@ def dashboard_view(request):
     for a in user.assets.all():
         if a.withdrawal_start_date and a.withdrawal_start_date.replace(day=1) <= target_date:
             table_data_income.append({
-                'name': f"{_('Entnahme')}: {a.name}", 
+                'name': f"{_('Withdrawal')}: {a.name}", 
                 'amount': float(a.withdrawal_amount or 0), 
-                'category': _('Vermögen'),
+                'category': _('Assets'),
                 'type': _('Simulation'),
                 'year': str(a.withdrawal_start_date.year)
             })
@@ -589,10 +589,10 @@ def dashboard_view(request):
     for p in user.pensions.all():
         if p.start_payout_date and p.start_payout_date.replace(day=1) <= target_date:
             table_data_income.append({
-                'name': f"{_('Rente')}: {p.provider}", 
+                'name': f"{_('Pension')}: {p.provider}", 
                 'amount': float(p.expected_payout_at_retirement or 0), 
-                'category': _('Rente'),
-                'type': _('Vertrag'),
+                'category': _('Pension'),
+                'type': _('Contract'),
                 'year': str(p.start_payout_date.year)
             })
 
@@ -605,8 +605,8 @@ def dashboard_view(request):
             table_data_expense.append({
                 'name': cf.name, 
                 'amount': float(amt), 
-                'category': cf.category.name if cf.category else _('Ausgabe'),
-                'type': _('Manuell'),
+                'category': cf.category.name if cf.category else _('Expense'),
+                'type': _('Manual'),
                 'year': str(cf.start_date.year) if cf.start_date else continuous_label
             })
 
@@ -615,10 +615,10 @@ def dashboard_view(request):
         if p.monthly_contribution and p.monthly_contribution > 0:
             if not p.contribution_end_date or p.contribution_end_date.replace(day=1) > target_date:
                 table_data_expense.append({
-                    'name': f"{_('Beitrag')}: {p.provider}", 
+                    'name': f"{_('Contribution')}: {p.provider}", 
                     'amount': float(p.monthly_contribution or 0), 
-                    'category': _('Sparen'),
-                    'type': _('Vertrag'),
+                    'category': _('Savings'),
+                    'type': _('Contract'),
                     'year': str(p.contribution_end_date.year) if p.contribution_end_date else continuous_label
                 })
 
@@ -627,10 +627,10 @@ def dashboard_view(request):
         l_state = next((item for item in forecast_data if item['date'] == target_date), None)
         if (not l.end_date or l.end_date.replace(day=1) >= target_date) and (l.start_date.replace(day=1) <= target_date):
             table_data_expense.append({
-                'name': f"{_('Kreditrate')}: {l.name}", 
+                'name': f"{_('Loan Installment')}: {l.name}", 
                 'amount': float(l.monthly_installment), 
-                'category': _('Kredit'),
-                'type': _('Vertrag'),
+                'category': _('Loan'),
+                'type': _('Contract'),
                 'year': str(l.end_date.year) if l.end_date else continuous_label
             })
 
@@ -646,9 +646,9 @@ def dashboard_view(request):
 
     for p in user.pensions.all():
         table_data_asset.append({
-            'name': f"{_('Rente')}: {p.provider}", 
+            'name': f"{_('Pension')}: {p.provider}", 
             'amount': float(p.current_value or 0), 
-            'category': _('Rente'),
+            'category': _('Pension'),
             'rate': f"{p.growth_rate or 0}%",
             'year': continuous_label
         })
@@ -659,7 +659,7 @@ def dashboard_view(request):
         table_data_pension.append({
             'name': p.provider, 
             'amount': float(p.current_value or 0), 
-            'category': _('Rente'),
+            'category': _('Pension'),
             'contribution': float(p.monthly_contribution or 0),
             'year': year
         })

@@ -1863,3 +1863,52 @@ msgstr "Kredit"
 
 msgid "Settings"
 msgstr "Einstellungen"
+
+
+msgid "Profile updated successfully!"
+msgstr "Profil erfolgreich aktualisiert!"
+
+msgid "Total Wealth"
+msgstr "Gesamtvermögen"
+
+msgid "Physical Assets"
+msgstr "Sachwerte"
+
+msgid "Real Estate"
+msgstr "Immobilien"
+
+msgid "Real Net Worth"
+msgstr "Real Gesamtwert"
+
+msgid "Nominal Net Worth"
+msgstr "Nominal Gesamtwert"
+
+msgid "State Pension"
+msgstr "Gesetzliche Rente"
+
+msgid "Private Pension"
+msgstr "Private Pension"
+
+msgid "Username (Login)"
+msgstr "Benutzername (Login)"
+
+msgid "Expense"
+msgstr "Ausgabe"
+
+msgid "Contract"
+msgstr "Vertrag"
+
+msgid "Contribution"
+msgstr "Beitrag"
+
+msgid "Savings"
+msgstr "Sparen"
+
+msgid "Withdrawal"
+msgstr "Entnahme"
+
+msgid "Loan Installment"
+msgstr "Kreditrate"
+
+msgid "Total Combined Assets"
+msgstr "Gesamtvermögen"

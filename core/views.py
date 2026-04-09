@@ -37,7 +37,7 @@ def profile_view(request):
         form = UserProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             form.save()
-            messages.success(request, _("Profil erfolgreich aktualisiert!"))
+            messages.success(request, _("Profile updated successfully!"))
             return redirect('finance:dashboard')
     else:
         form = UserProfileForm(instance=profile)
