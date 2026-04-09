@@ -320,10 +320,15 @@
                 }
             });
 
-            // Prevent Enter key from submitting the form (keep it deliberate via Button)
+            // Keydown listener: Focus save button on Enter instead of immediate submit
             profileForm.addEventListener('keydown', function(e) {
                 if (e.key === 'Enter' && e.target.tagName === 'INPUT') {
                     e.preventDefault();
+                    const saveBtn = profileForm.querySelector('button[type="submit"]');
+                    if (saveBtn) {
+                        saveBtn.focus();
+                        saveBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
                     return false;
                 }
             });

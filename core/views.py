@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.conf import settings
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
+from django.utils.translation import gettext as _
 from django.utils import translation
 from .forms import CustomUserCreationForm, UserProfileForm
 from .models import UserProfile
