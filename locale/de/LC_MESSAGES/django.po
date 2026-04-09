@@ -2011,3 +2011,129 @@ msgstr "Kredite"
 
 msgid "Total Debt"
 msgstr "Gesamtschulden"
+
+msgid "Help & Knowledge Base"
+msgstr "Hilfe & Wissensdatenbank"
+
+msgid "Expert Knowledge Base"
+msgstr "Experten-Wissensdatenbank"
+
+msgid "Master your financial future. Detailed insights into our simulation engine, AI logic, and design philosophy."
+msgstr "Meistere deine finanzielle Zukunft. Detaillierte Einblicke in unsere Simulations-Engine, KI-Logik und Design-Philosophie."
+
+msgid "Show Expert Insights"
+msgstr "Experten-Einblicke anzeigen"
+
+msgid "Learn how our pattern recognition and learned memory automate your data entry while maintaining 100% control."
+msgstr "Erfahre, wie unsere Mustererkennung und das gelernte Gedächtnis deine Dateneingabe automatisieren und du dabei 100% Kontrolle behältst."
+
+msgid "Expert Deep Dive"
+msgstr "Experten-Deepdive"
+
+msgid "Simulation Engine"
+msgstr "Simulations-Engine"
+
+msgid "Understand the math behind real vs. nominal value, inflation buffers, and how growth rates impact your 30-year forecast."
+msgstr "Verstehe die Mathematik hinter Real- vs. Nominalwert, Zinspuffer und wie Wachstumsraten deine 30-Jahres-Prognose beeinflussen."
+
+msgid "Master the Art of Design Harmony. Explore how our color engine ensures your dashboard always looks premium."
+msgstr "Meistere die Kunst der Design-Harmonie. Erfahre, wie unsere Farb-Engine dafür sorgt, dass dein Dashboard immer hochwertig aussieht."
+
+msgid "Advanced FAQ"
+msgstr "Erweiterte FAQ"
+
+msgid "Why does my net worth decrease although my cash flow is positive?"
+msgstr "Warum sinkt mein Netto-Vermögen, obwohl mein Cashflow positiv ist?"
+
+msgid "This is likely due to the Inflation Monitor. While your nominal wealth increases, higher inflation rates can \"eat\" your purchasing power faster than you save. Check your \"Real Value\" vs \"Nominal Value\" in the charts."
+msgstr "Das liegt wahrscheinlich am Inflations-Monitor. Während dein nominales Vermögen steigt, kann eine hohe Inflationsrate deine Kaufkraft schneller \"auffressen\", als du sparst. Prüfe den \"Realwert\" im Vergleich zum \"Nominalwert\" in den Diagrammen."
+
+msgid "How does the \"Stichtag\" (Simulation Date) work?"
+msgstr "Wie funktioniert der \"Stichtag\" (Simulationsdatum)?"
+
+msgid "The Stichtag is the \"fictional today\". Moving it allows you to travel through time. The dashboard will recalculate all active income, expenses, and asset values for that specific point in your life."
+msgstr "Der Stichtag ist das \"fiktive Heute\". Durch das Verschieben kannst du durch die Zeit reisen. Das Dashboard berechnet alle aktiven Einnahmen, Ausgaben und Vermögenswerte für genau diesen Zeitpunkt in deinem Leben neu."
+
+msgid "Are my bank details and financial data safe?"
+msgstr "Sind meine Bankdaten und Finanzinfos sicher?"
+
+msgid "Yes. Your data stays in your instance. Our AI processing for bank imports is designed to respect your privacy, and no financial secrets ever leave your dedicated environment."
+msgstr "Ja. Deine Daten bleiben in deiner Instanz. Unsere KI-Verarbeitung für Bank-Importe ist darauf ausgelegt, deine Privatsphäre zu respektieren. Keine Finanzgeheimnisse verlassen jemals deine dedizierte Umgebung."
+
+msgid "AI-Assisted Bank Import"
+msgstr "KI-gestützter Bank-Import"
+
+msgid "1. Pattern Recognition"
+msgstr "1. Mustererkennung"
+
+msgid "Our system cleans bank descriptions and searches for repeating patterns. It remembers your previous manual categorizations and applies them to new imports automatically."
+msgstr "Unser System bereinigt Bank-Beschreibungen und sucht nach sich wiederholenden Mustern. Es merkt sich deine früheren manuellen Kategorisierungen und wendet sie automatisch auf neue Importe an."
+
+msgid "2. Duplicate Protection"
+msgstr "2. Dubletten-Schutz"
+
+msgid "Every imported row gets a unique fingerprint. If you upload the same file twice, or overlapping files, the system will detect and ignore already existing transactions."
+msgstr "Jede importierte Zeile erhält einen eindeutigen Fingerabdruck. Wenn du dieselbe Datei doppelt hochlädst, erkennt das System dies und ignoriert bereits vorhandene Transaktionen."
+
+msgid "3. Bridge to Plan"
+msgstr "3. Brücke zum Plan"
+
+msgid "Detected transactions can be \"Linked\" to your financial plan. This allows you to track if your reality (Bank) matches your expectations (Plan)."
+msgstr "Erkannte Transaktionen können mit deinem Finanzplan \"verknüpft\" werden. So kannst du verfolgen, ob deine Realität (Bank) mit deinen Erwartungen (Plan) übereinstimmt."
+
+msgid "4. The Review Process"
+msgstr "4. Der Prüfprozess"
+
+msgid "Nothing is saved directly. You always have a \"Pending Transactions\" area where you can verify, correct, or ignore rows before they impact your history."
+msgstr "Nichts wird direkt gespeichert. Du hast immer einen Bereich für \"ausstehende Transaktionen\", in dem du Zeilen prüfen, korrigieren oder ignorieren kannst, bevor sie deine Historie beeinflussen."
+
+msgid "The Simulation Engine"
+msgstr "Die Simulations-Engine"
+
+msgid "Mathematical Foundations"
+msgstr "Mathematische Grundlagen"
+
+msgid "Formula:"
+msgstr "Formel:"
+
+msgid "Real Value = Nominal Value / (1 + Inflation)^Years"
+msgstr "Realwert = Nominalwert / (1 + Inflation)^Jahre"
+
+msgid "Compound Interest"
+msgstr "Zinseszins"
+
+msgid "We calculate growth for each asset class individually. A 5% growth on a 100k asset is calculated monthly to account for the compound effect over 30+ years."
+msgstr "Wir berechnen das Wachstum für jede Anlageklasse einzeln. Ein Wachstum von 5 % auf ein 100.000 € Guthaben wird monatlich kalkuliert, um den Zinseszinseffekt über 30+ Jahre genau abzubilden."
+
+msgid "Dynamics (Pensions & Salary)"
+msgstr "Dynamiken (Renten & Gehalt)"
+
+msgid "If you set a 2% \"Dynamics\" rate, your income doesn't stay level. It grows every year, simulating career growth or contract-based indexing."
+msgstr "Wenn du eine \"Dynamik\" von 2 % einstellst, bleibt dein Einkommen nicht gleich. Es wächst jedes Jahr und simuliert so Karriereschritte oder vertragliche Anpassungen."
+
+msgid "Why 30 Years?"
+msgstr "Warum 30 Jahre?"
+
+msgid "Retirement planning is a marathon. We chose a 30-year horizon to visualize the late-stage effects of inflation and interest, where small differences today become massive gaps tomorrow."
+msgstr "Altersvorsorge ist ein Marathon. Wir haben einen 30-Jahres-Horizont gewählt, um die Spätfolgen von Inflation und Zinsen sichtbar zu machen, wo kleine Unterschiede heute zu massiven Lücken morgen führen."
+
+msgid "The Design Philosophy"
+msgstr "Die Design-Philosophie"
+
+msgid "Color Harmonies"
+msgstr "Farbharmonien"
+
+msgid "A \"Harmony\" isn't just a set of colors. It's a mathematical relationship (Complementary, Analogous, etc.) based on your Primary Color choice."
+msgstr "Eine \"Harmonie\" ist nicht nur ein Set von Farben. Es ist eine mathematische Beziehung (komplementär, analog etc.) basierend auf deiner Wahl der Primärfarbe."
+
+msgid "Glassmorphism"
+msgstr "Glassmorphismus"
+
+msgid "We use backdrop filters and translucency to create depth. This allows your personalized brand color to shine through while keeping the interface readable."
+msgstr "Wir nutzen Filter und Transparenz, um Tiefe zu erzeugen. So schimmert dein personalisiertes Design durch, während das Interface perfekt lesbar bleibt."
+
+msgid "Pro Tip:"
+msgstr "Profi-Tipp:"
+
+msgid "Use a Darker background and high-vibrancy primary colors for the absolute premium \"High-End\" look."
+msgstr "Nutze einen dunkleren Hintergrund und kräftige Primärfarben für den absoluten Premium-\"High-End\"-Look."

@@ -1,100 +1,117 @@
 {% extends 'base.html' %}
 {% load i18n %}
 
-{% block title %}{% trans 'Help' %} - Finanzplan{% endblock %}
+{% block title %}{% trans 'Help & Knowledge Base' %} - Finanzplan{% endblock %}
 
 {% block content %}
 <div class="container py-4">
-    <div class="row mb-4">
+    <div class="row mb-5">
         <div class="col-12 text-center">
-            <h1 class="display-4 fw-bold">{% trans 'How can we help you?' %}</h1>
-            <p class="lead text-muted">{% trans 'Find answers and tips to get the most out of your financial planning.' %}</p>
+            <h1 class="display-4 fw-bold mb-3">{% trans 'Expert Knowledge Base' %}</h1>
+            <p class="lead text-muted mx-auto" style="max-width: 700px;">
+                {% trans 'Master your financial future. Detailed insights into our simulation engine, AI logic, and design philosophy.' %}
+            </p>
         </div>
     </div>
 
-    <div class="row g-4">
-        <!-- Quick Start -->
+    <!-- Main Categories -->
+    <div class="row g-4 mb-5">
+        <!-- AI & Import -->
         <div class="col-md-6 col-lg-4">
-            <div class="card h-100 border-0 shadow-sm">
-                <div class="card-body p-4 text-center">
-                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
-                        <i class="bi bi-rocket-takeoff fs-3"></i>
+            <div class="card h-100 border-0 shadow-sm transition-hover">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-primary bg-opacity-10 text-primary rounded-3 p-3 me-3">
+                            <i class="bi bi-robot fs-3"></i>
+                        </div>
+                        <h3 class="h5 mb-0">{% trans 'AI Bank Import' %}</h3>
                     </div>
-                    <h3 class="h5 mb-3">{% trans 'Quick Start' %}</h3>
-                    <p class="text-muted small">{% trans 'New here? Learn the basics of how to set up your profile and your first cash flow sources.' %}</p>
-                    <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#quickStartModal">{% trans 'Learn More' %}</button>
+                    <p class="text-muted small mb-4">{% trans 'Learn how our pattern recognition and learned memory automate your data entry while maintaining 100% control.' %}</p>
+                    <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#aiHelpModal">{% trans 'Expert Deep Dive' %}</button>
                 </div>
             </div>
         </div>
 
-        <!-- Dashboard Customization -->
+        <!-- Simulation Logic -->
         <div class="col-md-6 col-lg-4">
-            <div class="card h-100 border-0 shadow-sm">
-                <div class="card-body p-4 text-center">
-                    <div class="bg-success bg-opacity-10 text-success rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
-                        <i class="bi bi-grid-3x3-gap fs-3"></i>
+            <div class="card h-100 border-0 shadow-sm transition-hover">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-warning bg-opacity-10 text-warning rounded-3 p-3 me-3">
+                            <i class="bi bi-cpu fs-3"></i>
+                        </div>
+                        <h3 class="h5 mb-0">{% trans 'Simulation Engine' %}</h3>
                     </div>
-                    <h3 class="h5 mb-3">{% trans 'Personal Dashboard' %}</h3>
-                    <p class="text-muted small">{% trans 'Rearrange charts, change colors, and hide widgets to suit your personal financial overview.' %}</p>
-                    <button class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#dashboardHelpModal">{% trans 'Learn More' %}</button>
+                    <p class="text-muted small mb-4">{% trans 'Understand the math behind real vs. nominal value, inflation buffers, and how growth rates impact your 30-year forecast.' %}</p>
+                    <button class="btn btn-warning w-100" data-bs-toggle="modal" data-bs-target="#simHelpModal">{% trans 'Expert Deep Dive' %}</button>
                 </div>
             </div>
         </div>
 
-        <!-- Calculations & Inflation -->
+        <!-- Design Philosophy -->
         <div class="col-md-6 col-lg-4">
-            <div class="card h-100 border-0 shadow-sm">
-                <div class="card-body p-4 text-center">
-                    <div class="bg-warning bg-opacity-10 text-warning rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
-                        <i class="bi bi-graph-up-arrow fs-3"></i>
+            <div class="card h-100 border-0 shadow-sm transition-hover">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-info bg-opacity-10 text-info rounded-3 p-3 me-3">
+                            <i class="bi bi-palette2 fs-3"></i>
+                        </div>
+                        <h3 class="h5 mb-0">{% trans 'Design Studio' %}</h3>
                     </div>
-                    <h3 class="h5 mb-3">{% trans 'Calculations' %}</h3>
-                    <p class="text-muted small">{% trans 'Understand how we calculate your net worth forecast and how inflation affects your future purchasing power.' %}</p>
-                    <button class="btn btn-outline-warning btn-sm" data-bs-toggle="modal" data-bs-target="#calcHelpModal">{% trans 'Learn More' %}</button>
-                </div>
-            </div>
-        </div>
-        <!-- Glossary -->
-        <div class="col-md-6 col-lg-4">
-            <div class="card h-100 border-0 shadow-sm">
-                <div class="card-body p-4 text-center">
-                    <div class="bg-info bg-opacity-10 text-info rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
-                        <i class="bi bi-journal-text fs-3"></i>
-                    </div>
-                    <h3 class="h5 mb-3">{% trans 'Glossary & Charts' %}</h3>
-                    <p class="text-muted small">{% trans 'Do you want to know what "Pension Capital" or the "Inflation Monitor" is? Find all definitions here.' %}</p>
-                    <button class="btn btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#glossaryModal">{% trans 'Learn More' %}</button>
+                    <p class="text-muted small mb-4">{% trans 'Master the Art of Design Harmony. Explore how our color engine ensures your dashboard always looks premium.' %}</p>
+                    <button class="btn btn-info w-100 text-white" data-bs-toggle="modal" data-bs-target="#designHelpModal">{% trans 'Expert Deep Dive' %}</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- FAQ Accordion -->
+    <!-- FAQ Section -->
     <div class="row mt-5">
-        <div class="col-lg-8 mx-auto">
-            <h2 class="text-center mb-4">{% trans 'Frequently Asked Questions' %}</h2>
-            <div class="accordion accordion-flush" id="faqAccordion">
-                <div class="accordion-item shadow-sm rounded mb-2 border-0">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
-                            {% trans 'How do I add a new recurring expense?' %}
-                        </button>
-                    </h2>
-                    <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                        <div class="accordion-body">
-                            {% trans 'Go to the Admin panel, select "Cash Flow Sources", and click "Add". Set the frequency to "Monthly" and provide a start date.' %}
-                        </div>
-                    </div>
+        <div class="col-lg-10 mx-auto">
+            <div class="card border-0 shadow-lg overflow-hidden" style="border-radius: 20px;">
+                <div class="card-header bg-dark text-white p-4 border-0">
+                    <h2 class="h4 mb-0"><i class="bi bi-patch-question me-2"></i>{% trans 'Advanced FAQ' %}</h2>
                 </div>
-                <div class="accordion-item shadow-sm rounded mb-2 border-0">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
-                            {% trans 'What is the "Inflation Monitor"?' %}
-                        </button>
-                    </h2>
-                    <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                        <div class="accordion-body">
-                            {% trans 'This chart shows the gap between your nominal net worth and your real purchasing power over time based on the inflation rate set in your profile.' %}
+                <div class="card-body p-0">
+                    <div class="accordion accordion-flush" id="advancedFaq">
+                        <!-- Q1 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed px-4 py-4 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faqQ1">
+                                    {% trans 'Why does my net worth decrease although my cash flow is positive?' %}
+                                </button>
+                            </h2>
+                            <div id="faqQ1" class="accordion-collapse collapse" data-bs-parent="#advancedFaq">
+                                <div class="accordion-body px-4 pb-4 text-muted">
+                                    {% trans 'This is likely due to the Inflation Monitor. While your nominal wealth increases, higher inflation rates can "eat" your purchasing power faster than you save. Check your "Real Value" vs "Nominal Value" in the charts.' %}
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Q2 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed px-4 py-4 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faqQ2">
+                                    {% trans 'How does the "Stichtag" (Simulation Date) work?' %}
+                                </button>
+                            </h2>
+                            <div id="faqQ2" class="accordion-collapse collapse" data-bs-parent="#advancedFaq">
+                                <div class="accordion-body px-4 pb-4 text-muted">
+                                    {% trans 'The Stichtag is the "fictional today". Moving it allows you to travel through time. The dashboard will recalculate all active income, expenses, and asset values for that specific point in your life.' %}
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Q3 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed px-4 py-4 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faqQ3">
+                                    {% trans 'Are my bank details and financial data safe?' %}
+                                </button>
+                            </h2>
+                            <div id="faqQ3" class="accordion-collapse collapse" data-bs-parent="#advancedFaq">
+                                <div class="accordion-body px-4 pb-4 text-muted">
+                                    {% trans 'Yes. Your data stays in your instance. Our AI processing for bank imports is designed to respect your privacy, and no financial secrets ever leave your dedicated environment.' %}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -103,127 +120,116 @@
     </div>
 </div>
 
-<!-- Modals for details -->
-<div class="modal fade" id="quickStartModal" tabindex="-1">
+<!-- Expert Modals -->
+
+<!-- AI Modal -->
+<div class="modal fade" id="aiHelpModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header border-0">
-                <h5 class="modal-title fw-bold">{% trans 'Quick Start Guide' %}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <div class="modal-content glass-card overflow-hidden">
+            <div class="modal-header border-0 bg-primary text-white p-4">
+                <h5 class="modal-title fw-bold"><i class="bi bi-robot me-2"></i>{% trans 'AI-Assisted Bank Import' %}</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body p-4">
-                <ol class="list-group list-group-numbered border-0">
-                    <li class="list-group-item border-0">{% trans 'Go to your Profile and set your default currency and inflation rate.' %}</li>
-                    <li class="list-group-item border-0">{% trans 'Add your current Assets (bank accounts, investments, real estate).' %}</li>
-                    <li class="list-group-item border-0">{% trans 'Enter your regular Income and Expenses in the Cash Flow section.' %}</li>
-                    <li class="list-group-item border-0">{% trans 'Check the Dashboard to see your 30-year financial forecast!' %}</li>
-                </ol>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="dashboardHelpModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header border-0">
-                <h5 class="modal-title fw-bold">{% trans 'Dashboard Customization' %}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body p-4">
-                <p>{% trans 'Click the gear icon on the dashboard to open the configuration panel. Here you can:' %}</p>
-                <ul>
-                    <li>{% trans 'Drag and drop widgets to change their order.' %}</li>
-                    <li>{% trans 'Resize widgets (Small/Medium/Large).' %}</li>
-                    <li>{% trans 'Change background and text colors of individual charts.' %}</li>
-                    <li>{% trans 'Toggle visibility of widgets you don\'t need.' %}</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="calcHelpModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header border-0">
-                <h5 class="modal-title fw-bold">{% trans 'How calculations work' %}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body p-4">
-                <h6>{% trans 'Net Worth Forecast' %}</h6>
-                <p class="small text-muted">{% trans 'We take your starting assets and simulate growth based on your specified return rates, adding/subtracting your monthly cash flow until your target age.' %}</p>
-                <h6>{% trans 'Inflation Adjustment' %}</h6>
-                <p class="small text-muted">{% trans 'We discount future values using the inflation rate in your profile to show you what that money will be worth in today\'s purchasing power.' %}</p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="glossaryModal" tabindex="-1">
-    <div class="modal-dialog modal-lg modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header border-0 pb-0">
-                <h5 class="modal-title fw-bold">{% trans 'Glossary of Dashboard Terms & Charts' %}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body p-4 pt-3">
-                <h6 class="fw-bold text-primary mb-3"><i class="bi bi-card-heading me-2"></i>{% trans 'Summary Widgets' %}</h6>
-                <div class="mb-4">
-                    <dl class="row mb-0">
-                        <dt class="col-sm-4 text-dark mb-2">{% trans 'Current Assets' %}</dt>
-                        <dd class="col-sm-8 text-muted mb-3">{% trans 'The accumulated value of all your bank accounts, properties, and investments, excluding pensions.' %}</dd>
-
-                        <dt class="col-sm-4 text-dark mb-2">{% trans 'Monthly Income' %}</dt>
-                        <dd class="col-sm-8 text-muted mb-3">{% trans 'Your total active regular incoming cash flow (e.g., salary, rent income) at the selected date.' %}</dd>
-
-                        <dt class="col-sm-4 text-dark mb-2">{% trans 'Monthly Expenses' %}</dt>
-                        <dd class="col-sm-8 text-muted mb-3">{% trans 'Your total active regular outgoing cash flow at the selected date.' %}</dd>
-                        
-                        <dt class="col-sm-4 text-dark mb-2">{% trans 'Pension Capital' %}</dt>
-                        <dd class="col-sm-8 text-muted mb-3">{% trans 'The accumulated lump sum balance (savings) sitting in all your pension and retirement accounts.' %}</dd>
-
-                        <dt class="col-sm-4 text-dark mb-2">{% trans 'Target Monthly Pension' %}</dt>
-                        <dd class="col-sm-8 text-muted mb-3">{% trans 'Your desired retirement income. This is simply the raw total of the target payouts you defined in your pension contracts.' %}</dd>
-
-                        <dt class="col-sm-4 text-dark mb-2">{% trans 'Current Pension' %}</dt>
-                        <dd class="col-sm-8 text-muted mb-3">{% trans 'The actual cash flow being paid out to you by active pensions at the selected simulation date. (0 EUR if not retired yet).' %}</dd>
-                    </dl>
-                </div>
-
-                <hr class="text-muted opacity-25">
-
-                <h6 class="fw-bold text-primary mb-3 mt-4"><i class="bi bi-bar-chart-fill me-2"></i>{% trans 'Interactive Charts' %}</h6>
-                <div>
-                    <dl class="row mb-0">
-                        <dt class="col-sm-4 text-dark mb-2">{% trans 'Net Worth Development' %}</dt>
-                        <dd class="col-sm-8 text-muted mb-3">{% trans 'A line chart showing how your total wealth grows over time, comparing nominal values to inflation-adjusted purchasing power.' %}</dd>
-
-                        <dt class="col-sm-4 text-dark mb-2">{% trans 'Cash Flow Forecast' %}</dt>
-                        <dd class="col-sm-8 text-muted mb-3">{% trans 'Visualizes the evolution of your monthly income versus your monthly expenses over the years.' %}</dd>
-
-                        <dt class="col-sm-4 text-dark mb-2">{% trans 'Wealth Breakdown' %}</dt>
-                        <dd class="col-sm-8 text-muted mb-3">{% trans 'An area chart illustrating the composition of your total wealth, comparing liquid assets and locked pension capital.' %}</dd>
-
-                        <dt class="col-sm-4 text-dark mb-2">{% trans 'Income vs Expenses' %}</dt>
-                        <dd class="col-sm-8 text-muted mb-3">{% trans 'A direct bar chart comparison of money coming in versus money going out.' %}</dd>
-
-                        <dt class="col-sm-4 text-dark mb-2">{% trans 'Category Breakdown' %}</dt>
-                        <dd class="col-sm-8 text-muted mb-3">{% trans 'A pie chart dividing your cash flow into individual categories (e.g., Housing, Food, Transport).' %}</dd>
-
-                        <dt class="col-sm-4 text-dark mb-2">{% trans 'Inflation Monitor' %}</dt>
-                        <dd class="col-sm-8 text-muted mb-3">{% trans 'Highlights the expanding gap between the absolute money you have and its real value due to inflation.' %}</dd>
-
-                        <dt class="col-sm-4 text-dark mb-2">{% trans 'Event Impact' %}</dt>
-                        <dd class="col-sm-8 text-muted mb-3">{% trans 'Visualizes the financial spikes caused by configured one-time events, like buying a car or receiving an inheritance.' %}</dd>
-
-                        <dt class="col-sm-4 text-dark mb-2">{% trans 'Asset Allocation' %}</dt>
-                        <dd class="col-sm-8 text-muted mb-3">{% trans 'A snapshot donut chart showing the percentage distribution of your assets.' %}</dd>
-                    </dl>
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <h6 class="fw-bold text-primary">{% trans '1. Pattern Recognition' %}</h6>
+                        <p class="small text-muted">{% trans 'Our system cleans bank descriptions and searches for repeating patterns. It remembers your previous manual categorizations and applies them to new imports automatically.' %}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="fw-bold text-primary">{% trans '2. Duplicate Protection' %}</h6>
+                        <p class="small text-muted">{% trans 'Every imported row gets a unique fingerprint. If you upload the same file twice, or overlapping files, the system will detect and ignore already existing transactions.' %}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="fw-bold text-primary">{% trans '3. Bridge to Plan' %}</h6>
+                        <p class="small text-muted">{% trans 'Detected transactions can be "Linked" to your financial plan. This allows you to track if your reality (Bank) matches your expectations (Plan).' %}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="fw-bold text-primary">{% trans '4. The Review Process' %}</h6>
+                        <p class="small text-muted">{% trans 'Nothing is saved directly. You always have a "Pending Transactions" area where you can verify, correct, or ignore rows before they impact your history.' %}</p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Sim Modal -->
+<div class="modal fade" id="simHelpModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content glass-card overflow-hidden">
+            <div class="modal-header border-0 bg-warning text-dark p-4">
+                <h5 class="modal-title fw-bold"><i class="bi bi-cpu me-2"></i>{% trans 'The Simulation Engine' %}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <h6 class="fw-bold fs-5 mb-3">{% trans 'Mathematical Foundations' %}</h6>
+                <div class="alert alert-warning bg-opacity-10 border-warning text-dark small mb-4">
+                    <strong>{% trans 'Formula:' %}</strong> {% trans 'Real Value = Nominal Value / (1 + Inflation)^Years' %}
+                </div>
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <h6 class="fw-bold">{% trans 'Compound Interest' %}</h6>
+                        <p class="small text-muted">{% trans 'We calculate growth for each asset class individually. A 5% growth on a 100k asset is calculated monthly to account for the compound effect over 30+ years.' %}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="fw-bold">{% trans 'Dynamics (Pensions & Salary)' %}</h6>
+                        <p class="small text-muted">{% trans 'If you set a 2% "Dynamics" rate, your income doesn\'t stay level. It grows every year, simulating career growth or contract-based indexing.' %}</p>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="card bg-light border-0">
+                            <div class="card-body p-3">
+                                <h6 class="fw-bold mb-1">{% trans 'Why 30 Years?' %}</h6>
+                                <p class="small text-muted mb-0">{% trans 'Retirement planning is a marathon. We chose a 30-year horizon to visualize the late-stage effects of inflation and interest, where small differences today become massive gaps tomorrow.' %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Design Modal -->
+<div class="modal fade" id="designHelpModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content glass-card overflow-hidden">
+            <div class="modal-header border-0 bg-info text-white p-4">
+                <h5 class="modal-title fw-bold"><i class="bi bi-palette2 me-2"></i>{% trans 'The Design Philosophy' %}</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <h6 class="fw-bold">{% trans 'Color Harmonies' %}</h6>
+                <p class="small text-muted">{% trans 'A "Harmony" isn\'t just a set of colors. It\'s a mathematical relationship (Complementary, Analogous, etc.) based on your Primary Color choice.' %}</p>
+                <h6 class="fw-bold mt-4">{% trans 'Glassmorphism' %}</h6>
+                <p class="small text-muted">{% trans 'We use backdrop filters and translucency to create depth. This allows your personalized brand color to shine through while keeping the interface readable.' %}</p>
+                <div class="mt-4 pt-3 border-top">
+                    <p class="small fw-bold mb-1">{% trans 'Pro Tip:' %}</p>
+                    <p class="small text-muted">{% trans 'Use a Darker background and high-vibrancy primary colors for the absolute premium "High-End" look.' %}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .transition-hover {
+        transition: all 0.3s ease;
+    }
+    .transition-hover:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 1rem 3rem rgba(0,0,0,0.1) !important;
+    }
+    .glass-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(0,0,0,0.05);
+        border-radius: 24px;
+    }
+    [data-bs-theme="dark"] .glass-card {
+        background: rgba(30, 30, 50, 0.95);
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+</style>
 
 {% endblock %}
