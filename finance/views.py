@@ -1386,18 +1386,48 @@ def import_search_as_group(request, batch_id):
         key = (m.date.year, m.date.month)
         months_map[key].append(m)
         
+    for month_key, month_matches in months_map.items():
+        total_amount = sum(m.amount for m in month_matches)
+        total_count = sum(m.integration_count for m in month_matches)
+        all_terms = "; ".join(set(m.description for m in month_matches))
+        
+        # Look for existing Ready record for this target/month
+        ready_rec = batch.transactions.filter(
+            description=target_name,
+            date__year=month_key[0],
+            date__month=month_key[1],
+            category=category,
+            is_ignored=False
+        ).first()
+
+        if ready_rec:
+            ready_rec.amount += total_amount
+            ready_rec.integration_count += total_count
+            if ready_rec.matched_terms:
+                ready_rec.matched_terms = f"{ready_rec.matched_terms}; {all_terms}"
+            else:
+                ready_rec.matched_terms = all_terms
+            ready_rec.save()
+        else:
+            PendingTransaction.objects.create(
+                batch=batch,
+                date=month_matches[0].date, # Representative date
+                description=target_name,
+                amount=total_amount,
+                is_income=(total_amount > 0),
+                category=category,
+                integration_count=total_count,
+                matched_terms=all_terms,
+                is_ignored=False
+            )
+            
+    # 4. Mark originals as handled/hidden so they disappear from search results
+    matches.update(is_ignored=True)
+    
     # 5. Return success trigger. The front-end handles the actual re-render via HTMX events.
     response = HttpResponse("") 
     response['HX-Trigger'] = 'import-updated'
     return response
-    
-    # 4. Remove empty state message if any
-    response_html += '<tr id="empty-ready-msg" hx-swap-oob="delete"></tr>'
-    
-    # 5. Reset the Search Box and UI elements (Hide Quick Action)
-    response_html += '<script>document.getElementById("quick-action-area").style.display = "none";</script>'
-
-    return HttpResponse(response_html)
 
 @login_required
 def delete_all_temporary_data(request):
