@@ -101,5 +101,6 @@ class UserProfileForm(forms.ModelForm):
             'table_body_bg_color', 'table_body_text_color', 'table_border_color'
         ]
         widgets = {
+            'avatar': forms.FileInput(attrs={'class': 'form-control form-control-sm'}),
             'dark_mode_config': forms.HiddenInput(),
         }
