@@ -337,7 +337,7 @@
                             data-bs-toggle="dropdown" aria-expanded="false">
                             {% if user.profile.avatar %}<img src="{{ user.profile.avatar.url }}" class="rounded-circle"
                                 height="30" width="30">{% else %}<i class="bi bi-person-circle"></i>{% endif %}
-                            {{ user.username }}
+                            {{ user.best_name }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end shadow border-0" style="z-index: 1050;">
                             <li><a class="dropdown-item" href="{% url 'admin:index' %}">{% trans 'Admin' %}</a></li>

@@ -115,7 +115,7 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = [
-            'avatar', 'birth_date', 'language', 'currency', 'simulation_max_age',
+            'display_name', 'avatar', 'birth_date', 'language', 'currency', 'simulation_max_age',
             'inflation_rate', 'salary_increase', 'pension_increase', 'investment_return_offset',
             'real_estate_growth_rate', 'physical_asset_growth_rate',
             'auto_night_mode', 'dark_mode_config',
