@@ -1728,3 +1728,9 @@ msgstr "We use backdrop filters and translucency to create depth. This allows yo
 
 msgid "HELP_DESIGN_PROTIP_DESC"
 msgstr "Use a Darker background and high-vibrancy primary colors for the absolute premium \"High-End\" look."
+
+msgid "HELP_HEADER_TITLE"
+msgstr "Help & Details"
+
+msgid "HELP_HEADER_SUBTEXT"
+msgstr "Insights into calculations, bank import and dashboard configuration."

@@ -2146,3 +2146,9 @@ msgstr "Wir nutzen Filter und Transparenz, um Tiefe zu erzeugen. So schimmert de
 
 msgid "HELP_DESIGN_PROTIP_DESC"
 msgstr "Nutze einen dunkleren Hintergrund und kräftige Primärfarben für den absoluten Premium-\"High-End\"-Look."
+
+msgid "HELP_HEADER_TITLE"
+msgstr "Hilfe & Details"
+
+msgid "HELP_HEADER_SUBTEXT"
+msgstr "Hintergründe zu den Berechnungen, dem Bank-Import und der Dashboard-Konfiguration."
