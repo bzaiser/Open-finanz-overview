@@ -49,35 +49,35 @@
                     <th class="py-2 px-3 border-0 cursor-pointer" @click="sortCol = 'name'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
                         style="background-color: var(--app-table-header-bg) !important; color: var(--app-table-header-text) !important;">
                         <div class="d-flex align-items-center justify-content-between">
-                            <span>{% trans 'Kredit Name' %}</span>
+                            <span>{% trans 'Loan Name' %}</span>
                             <i class="bi" :class="sortCol === 'name' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
                         </div>
                     </th>
                     <th class="py-2 px-3 border-0 cursor-pointer" @click="sortCol = 'provider'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
                         style="background-color: var(--app-table-header-bg) !important; color: var(--app-table-header-text) !important;">
                         <div class="d-flex align-items-center justify-content-between">
-                            <span>{% trans 'Anbieter' %}</span>
+                            <span>{% trans 'Provider' %}</span>
                             <i class="bi" :class="sortCol === 'provider' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
                         </div>
                     </th>
                     <th class="py-2 px-3 border-0 cursor-pointer" @click="sortCol = 'interest_rate'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
                         style="background-color: var(--app-table-header-bg) !important; color: var(--app-table-header-text) !important;">
                         <div class="d-flex align-items-center justify-content-between">
-                            <span>{% trans 'Zins' %}</span>
+                            <span>{% trans 'Interest' %}</span>
                             <i class="bi" :class="sortCol === 'interest_rate' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
                         </div>
                     </th>
                     <th class="py-2 px-3 border-0 text-end cursor-pointer" @click="sortCol = 'current_balance'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
                         style="background-color: var(--app-table-header-bg) !important; color: var(--app-table-header-text) !important;">
                         <div class="d-flex align-items-center justify-content-end">
-                            <span class="me-2">{% trans 'Saldo' %}</span>
+                            <span class="me-2">{% trans 'Balance' %}</span>
                             <i class="bi" :class="sortCol === 'current_balance' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
                         </div>
                     </th>
                     <th class="py-2 px-3 border-0 text-end cursor-pointer" @click="sortCol = 'monthly_payment'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
                         style="background-color: var(--app-table-header-bg) !important; color: var(--app-table-header-text) !important;">
                         <div class="d-flex align-items-center justify-content-end">
-                            <span class="me-2">{% trans 'Rate' %}</span>
+                            <span class="me-2">{% trans 'Installment' %}</span>
                             <i class="bi" :class="sortCol === 'monthly_payment' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
                         </div>
                     </th>
@@ -119,14 +119,14 @@
          style="background-color: var(--app-table-header-bg) !important; color: var(--app-table-header-text) !important; border-top-color: var(--app-table-border-color) !important; font-size: 0.8rem;">
         <div class="d-flex gap-4">
             <span class="small opacity-75 text-uppercase fw-bold">
-                {% trans 'Kredite' %}: <span class="text-white" x-text="filteredItems.length"></span>
+                {% trans 'Loans' %}: <span class="text-white" x-text="filteredItems.length"></span>
             </span>
             <span class="small opacity-75 text-uppercase fw-bold">
-                {% trans 'Zinsen' %}: <span class="text-white" x-text="totalInterest.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })"></span>
+                {% trans 'Interest' %}: <span class="text-white" x-text="totalInterest.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })"></span>
             </span>
         </div>
         <div>
-            <span class="small opacity-75 text-uppercase fw-bold me-2">{% trans 'Gesaumtschulden' %}:</span>
+            <span class="small opacity-75 text-uppercase fw-bold me-2">{% trans 'Total Debt' %}:</span>
             <span class="fs-5 fw-bold font-monospace text-danger" x-text="totalBalance.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })"></span>
         </div>
     </div>

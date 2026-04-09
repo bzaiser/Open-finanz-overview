@@ -1987,3 +1987,27 @@ msgstr "Änderungen & Design speichern"
 
 msgid "Toggle Night Mode"
 msgstr "Nachtmodus umschalten"
+
+msgid "Category/Date"
+msgstr "Kategorie/Datum"
+
+msgid "Loan Name"
+msgstr "Kredit Name"
+
+msgid "Provider"
+msgstr "Anbieter"
+
+msgid "Interest"
+msgstr "Zins"
+
+msgid "Balance"
+msgstr "Saldo"
+
+msgid "Installment"
+msgstr "Rate"
+
+msgid "Loans"
+msgstr "Kredite"
+
+msgid "Total Debt"
+msgstr "Gesamtschulden"
