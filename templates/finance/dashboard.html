@@ -46,7 +46,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
-        <div class="alert alert-info py-2 small mb-4 shadow-sm" style="font-size: 0.8rem; border-left: 4px solid #0dcaf0;">
+        <div class="alert alert-info py-2 small mb-4 shadow-sm" style="font-size: 0.8rem; border-left: 4px solid var(--app-primary);">
             <i class="bi bi-info-circle"></i> {% trans "Changes here are temporary. Update your profile for permanent settings." %}
         </div>
         <form id="simulation-form" hx-post="{% url 'finance:dashboard' %}" hx-target="#dashboard-charts"
