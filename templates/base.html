@@ -254,6 +254,18 @@
             background: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
             pointer-events: none;
         }
+
+        /* Simulation Blinker Effect */
+        @keyframes blinker {
+            0% { opacity: 1; filter: brightness(1); transform: scale(1); }
+            50% { opacity: 0.8; filter: brightness(2.2) drop-shadow(0 0 10px var(--app-primary)); transform: scale(1.2); }
+            100% { opacity: 1; filter: brightness(1); transform: scale(1); }
+        }
+        .simulation-glow {
+            animation: blinker 1.5s ease-in-out infinite;
+            color: var(--app-primary) !important;
+            display: inline-block;
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     {% block extra_css %}{% endblock %}

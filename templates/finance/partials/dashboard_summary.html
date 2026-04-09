@@ -13,10 +13,12 @@
                             {% if k == item.id %}{{ v.title }}{% endif %}
                         {% endfor %}
                     </div>
-                    <div class="fs-4" style="color: var(--app-primary) !important; opacity: 0.9;">
-                        {% for k,v in summary_widgets.items %}
-                            {% if k == item.id %}<i class="bi {{ v.icon }}"></i>{% endif %}
-                        {% endfor %}
+                    <div class="simulation-glow-wrapper">
+                        <div class="ms-2 {% if is_simulation_active %}{% if item.id == 'net_worth' or item.id == 'monthly_savings' %}simulation-glow{% endif %}{% endif %}">
+                            {% for k,v in summary_widgets.items %}
+                                {% if k == item.id %}<i class="bi {{ v.icon }} fs-5"></i>{% endif %}
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
                 

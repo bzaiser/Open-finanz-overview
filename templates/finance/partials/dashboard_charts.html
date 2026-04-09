@@ -17,8 +17,8 @@
                     {% endfor %}
                 </span>
                 {% if item.id in affected_charts %}
-                <i class="bi bi-sliders {% if is_simulation_active %}text-warning{% else %}text-secondary{% endif %}"
-                    style="cursor:help;" data-bs-toggle="tooltip" data-bs-html="true"
+                <i class="bi bi-sliders {% if is_simulation_active %}simulation-glow{% endif %}"
+                    style="color: var(--app-primary); cursor:help;" data-bs-toggle="tooltip" data-bs-html="true"
                     data-bs-title="{% trans 'Simulation Parameters' %}:&lt;br&gt;{% trans 'Inflation' %}: {{ simulation_params.inflation_rate }}%&lt;br&gt;{% trans 'Salary' %}: {{ simulation_params.salary_increase }}%&lt;br&gt;{% trans 'Return Offset' %}: {{ simulation_params.investment_return_offset }}%"></i>
                 {% endif %}
             </div>
