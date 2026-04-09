@@ -117,6 +117,7 @@ class UserProfileForm(forms.ModelForm):
         fields = [
             'avatar', 'birth_date', 'language', 'currency', 'simulation_max_age',
             'inflation_rate', 'salary_increase', 'pension_increase', 'investment_return_offset',
+            'real_estate_growth_rate', 'physical_asset_growth_rate',
             'auto_night_mode', 'dark_mode_config',
             'gradient_start', 'gradient_end', 'primary_color', 'secondary_color',
             'background_color', 'text_color', 'sidebar_bg_color',

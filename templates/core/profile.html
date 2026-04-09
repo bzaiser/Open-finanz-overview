@@ -40,15 +40,22 @@
                 <div class="col-lg-5">
                     <div class="glass-card shadow-lg p-4 h-100">
                         <h4 class="mb-4 fw-bold"><i class="bi bi-person-vcard me-2 text-primary"></i>{% trans "Profil & Stammdaten" %}</h4>
-                        <div class="row g-3">
-                            <!-- Prominent Top Field -->
-                            <div class="col-12 mb-3">
+                        <div class="row g-3 gx-4">
+                            <!-- Prominent Top Fields -->
+                            <div class="col-12 mb-2">
                                 <label class="form-label small fw-bold mb-1 d-block">{% trans "Anzeigename" %}</label>
                                 {{ form.display_name }}
                             </div>
+                            
+                            <div class="col-12 mb-3">
+                                <div class="bg-light bg-opacity-10 rounded-3 p-2 border border-white border-opacity-10">
+                                    <div class="text-muted" style="font-size: 0.65rem;">{% trans "Benutzername (Login)" %}</div>
+                                    <div class="fw-bold fs-6">{{ user.username }}</div>
+                                </div>
+                            </div>
 
                             <!-- Avatar Section -->
-                            <div class="col-12 mb-3">
+                            <div class="col-12 mb-4">
                                 <label class="form-label small fw-bold mb-1 d-block">{% trans "Profilbild" %}</label>
                                 <div class="d-flex align-items-center gap-3 p-3 rounded-4 border border-dashed bg-light bg-opacity-10">
                                     <div class="flex-shrink-0">
@@ -82,7 +89,7 @@
                                 {{ form.email }}
                             </div>
 
-                            <!-- Metadata Grid (2 Columns) -->
+                            <!-- Metadata Grid (2 Columns with horizontal spacing) -->
                             <div class="col-md-6 mb-3">
                                 <label class="form-label small fw-bold mb-1 d-block">{% trans "Währung" %}</label>
                                 {{ form.currency }}
@@ -100,41 +107,33 @@
                                 <label class="form-label small fw-bold mb-1 d-block">{% trans "Sim. Max Alter" %}</label>
                                 {{ form.simulation_max_age }}
                             </div>
-
-                            <!-- Read-only Info -->
-                            <div class="col-12">
-                                <div class="bg-light bg-opacity-10 rounded-3 p-2 border border-white border-opacity-10">
-                                    <div class="text-muted" style="font-size: 0.65rem;">{% trans "Benutzername (Login)" %}</div>
-                                    <div class="fw-bold fs-6">{{ user.username }}</div>
-                                </div>
-                            </div>
                         </div>
 
                         <hr class="my-4 opacity-50">
                         
-                        <div class="row g-3">
+                        <div class="row g-3 gx-4">
                             <div class="col-md-6 mb-3">
-                                <label class="form-label small fw-bold">{% trans "Inflation (%)" %}</label>
+                                <label class="form-label small fw-bold d-block mb-1">{% trans "Inflation (%)" %}</label>
                                 {{ form.inflation_rate }}
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label small fw-bold">{% trans "Gehaltsplus (%)" %}</label>
+                                <label class="form-label small fw-bold d-block mb-1">{% trans "Gehaltsplus (%)" %}</label>
                                 {{ form.salary_increase }}
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label small fw-bold">{% trans "Rentenplus (%)" %}</label>
+                                <label class="form-label small fw-bold d-block mb-1">{% trans "Rentenplus (%)" %}</label>
                                 {{ form.pension_increase }}
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label small fw-bold">{% trans "Zins-Puffer (%)" %}</label>
+                                <label class="form-label small fw-bold d-block mb-1">{% trans "Zins-Puffer (%)" %}</label>
                                 {{ form.investment_return_offset }}
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label small fw-bold">{% trans "Immobilien (%)" %}</label>
+                                <label class="form-label small fw-bold d-block mb-1">{% trans "Immobilien (%)" %}</label>
                                 {{ form.real_estate_growth_rate }}
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label small fw-bold">{% trans "Sachwerte (%)" %}</label>
+                                <label class="form-label small fw-bold d-block mb-1">{% trans "Sachwerte (%)" %}</label>
                                 {{ form.physical_asset_growth_rate }}
                             </div>
                         </div>
