@@ -18,7 +18,7 @@ class CustomUser(AbstractUser):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='profile')
-    display_name = models.CharField(_("Anzeigename"), max_length=100, blank=True, null=True)
+    display_name = models.CharField(_("Display Name"), max_length=100, blank=True, null=True)
     avatar = models.ImageField(_("Avatar"), upload_to='avatars/', blank=True, null=True)
     birth_date = models.DateField(_("Birth Date"), blank=True, null=True)
     CURRENCY_CHOICES = [

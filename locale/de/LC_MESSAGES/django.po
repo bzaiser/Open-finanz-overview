@@ -2027,8 +2027,6 @@ msgstr "Experten-Einblicke anzeigen"
 msgid "Learn how our pattern recognition and learned memory automate your data entry while maintaining 100% control."
 msgstr "Erfahre, wie unsere Mustererkennung und das gelernte Gedächtnis deine Dateneingabe automatisieren und du dabei 100% Kontrolle behältst."
 
-msgid "Expert Deep Dive"
-msgstr "Experten-Deepdive"
 
 msgid "Simulation Engine"
 msgstr "Simulations-Engine"
