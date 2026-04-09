@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.contrib import messages
 from django.conf import settings
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
@@ -35,7 +36,8 @@ def profile_view(request):
         form = UserProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             form.save()
-            return redirect('profile')
+            messages.success(request, _("Profil erfolgreich aktualisiert!"))
+            return redirect('finance:dashboard')
     else:
         form = UserProfileForm(instance=profile)
     return render(request, 'core/profile.html', {

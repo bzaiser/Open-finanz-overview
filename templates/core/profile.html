@@ -319,6 +319,14 @@
                     }
                 }
             });
+
+            // Prevent Enter key from submitting the form (keep it deliberate via Button)
+            profileForm.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && e.target.tagName === 'INPUT') {
+                    e.preventDefault();
+                    return false;
+                }
+            });
         }
     })();
 </script>
