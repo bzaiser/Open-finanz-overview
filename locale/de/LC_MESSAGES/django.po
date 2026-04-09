@@ -2122,3 +2122,9 @@ msgstr "Profi-Tipp:"
 
 msgid "Use a Darker background and high-vibrancy primary colors for the absolute premium \"High-End\" look."
 msgstr "Nutze einen dunkleren Hintergrund und kräftige Primärfarben für den absoluten Premium-\"High-End\"-Look."
+
+msgid "HELP_AI_IMPORT_TITLE"
+msgstr "KI Bank-Import"
+
+msgid "HELP_AI_IMPORT_DESC"
+msgstr "Erfahre, wie unsere Mustererkennung und das gelernte Gedächtnis deine Dateneingabe automatisieren und du dabei 100% Kontrolle behältst."

@@ -1704,3 +1704,9 @@ msgstr "Update Simulation"
 
 msgid "Reset to Defaults"
 msgstr "Reset to Defaults"
+
+msgid "HELP_AI_IMPORT_TITLE"
+msgstr "AI Bank Import"
+
+msgid "HELP_AI_IMPORT_DESC"
+msgstr "Learn how our pattern recognition and learned memory automate your data entry while maintaining 100% control."
