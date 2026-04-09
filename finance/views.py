@@ -911,7 +911,8 @@ def _ensure_category_filters(user):
 
 @login_required
 def review_bank_transactions(request, batch_id):
-    user = request.user
+    # Force resolution of the lazy request.user object to prevent 'CustomUser' object has no attribute 'user'
+    user = request.user._wrapped if hasattr(request.user, '_wrapped') else request.user
     if not user.is_authenticated:
         from django.shortcuts import redirect
         return redirect('login')
