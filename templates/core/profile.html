@@ -39,24 +39,23 @@
                 <!-- Links: Stammdaten -->
                 <div class="col-lg-5">
                     <div class="glass-card shadow-lg p-4 h-100">
-                        <div class="badge bg-danger mb-2">DEBUG: NEUES LAYOUT AKTIV</div>
                         <h4 class="mb-4 fw-bold"><i class="bi bi-person-vcard me-2 text-primary"></i>{% trans "Profil & Stammdaten" %}</h4>
-                        <div class="row g-2">
+                        <div class="row g-3">
                             <!-- Prominent Top Field -->
                             <div class="col-12 mb-3">
-                                <label class="form-label small fw-bold mb-1">{% trans "Anzeigename" %}</label>
+                                <label class="form-label small fw-bold mb-1 d-block">{% trans "Anzeigename" %}</label>
                                 {{ form.display_name }}
                             </div>
 
                             <!-- Avatar Section -->
-                            <div class="col-12 mb-4">
-                                <label class="form-label small fw-bold mb-1">{% trans "Profilbild" %}</label>
+                            <div class="col-12 mb-3">
+                                <label class="form-label small fw-bold mb-1 d-block">{% trans "Profilbild" %}</label>
                                 <div class="d-flex align-items-center gap-3 p-3 rounded-4 border border-dashed bg-light bg-opacity-10">
                                     <div class="flex-shrink-0">
                                         {% if user.profile.avatar %}
-                                            <img src="{{ user.profile.avatar.url }}" class="rounded-circle shadow-sm border border-2 border-white" width="64" height="64" style="object-fit: cover;">
+                                            <img src="{{ user.profile.avatar.url }}" class="rounded-circle shadow-sm border border-2 border-white" width="60" height="60" style="object-fit: cover;">
                                         {% else %}
-                                            <div class="bg-primary bg-opacity-20 text-primary rounded-circle d-flex align-items-center justify-content-center shadow-inner" style="width: 64px; height: 64px;">
+                                            <div class="bg-primary bg-opacity-20 text-primary rounded-circle d-flex align-items-center justify-content-center shadow-inner" style="width: 60px; height: 60px;">
                                                 <i class="bi bi-person fs-3"></i>
                                             </div>
                                         {% endif %}
@@ -68,36 +67,45 @@
                                 </div>
                             </div>
                             
-                            <!-- Compact Metadata Grid (2 Columns) -->
-                            <div class="col-6 mb-2">
-                                <label class="form-label small fw-bold mb-1" style="font-size: 0.75rem;">{% trans "Währung" %}</label>
+                            <!-- Identification Data -->
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label small fw-bold mb-1 d-block">{% trans "Vorname" %}</label>
+                                {{ form.first_name }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label small fw-bold mb-1 d-block">{% trans "Nachname" %}</label>
+                                {{ form.last_name }}
+                            </div>
+                            
+                            <div class="col-12 mb-3">
+                                <label class="form-label small fw-bold mb-1 d-block">{% trans "E-Mail-Adresse" %}</label>
+                                {{ form.email }}
+                            </div>
+
+                            <!-- Metadata Grid (2 Columns) -->
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label small fw-bold mb-1 d-block">{% trans "Währung" %}</label>
                                 {{ form.currency }}
                             </div>
-                            <div class="col-6 mb-2">
-                                <label class="form-label small fw-bold mb-1" style="font-size: 0.75rem;">{% trans "Sprache" %}</label>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label small fw-bold mb-1 d-block">{% trans "Sprache" %}</label>
                                 {{ form.language }}
                             </div>
 
-                            <div class="col-6 mb-2">
-                                <label class="form-label small fw-bold mb-1" style="font-size: 0.75rem;">{% trans "Geburtsdatum" %}</label>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label small fw-bold mb-1 d-block">{% trans "Geburtsdatum" %}</label>
                                 {{ form.birth_date }}
                             </div>
-                            <div class="col-6 mb-2">
-                                <label class="form-label small fw-bold mb-1" style="font-size: 0.75rem;">{% trans "Sim. Max Alter" %}</label>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label small fw-bold mb-1 d-block">{% trans "Sim. Max Alter" %}</label>
                                 {{ form.simulation_max_age }}
                             </div>
 
-                            <!-- Read-only Info Fields -->
+                            <!-- Read-only Info -->
                             <div class="col-12">
-                                <div class="d-flex gap-2 mt-2">
-                                    <div class="bg-light bg-opacity-10 rounded-3 p-2 flex-grow-1 border border-white border-opacity-10">
-                                        <div class="text-muted" style="font-size: 0.65rem;">{% trans "Benutzername" %}</div>
-                                        <div class="small fw-bold">{{ user.username }}</div>
-                                    </div>
-                                    <div class="bg-light bg-opacity-10 rounded-3 p-2 flex-grow-1 border border-white border-opacity-10">
-                                        <div class="text-muted" style="font-size: 0.65rem;">{% trans "E-Mail" %}</div>
-                                        <div class="small fw-bold">{{ user.email|default:"-" }}</div>
-                                    </div>
+                                <div class="bg-light bg-opacity-10 rounded-3 p-2 border border-white border-opacity-10">
+                                    <div class="text-muted" style="font-size: 0.65rem;">{% trans "Benutzername (Login)" %}</div>
+                                    <div class="fw-bold fs-6">{{ user.username }}</div>
                                 </div>
                             </div>
                         </div>

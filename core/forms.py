@@ -9,6 +9,29 @@ class CustomUserCreationForm(UserCreationForm):
         fields = ('username', 'email')
 
 class UserProfileForm(forms.ModelForm):
+    first_name = forms.CharField(label=_("Vorname"), required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    last_name = forms.CharField(label=_("Nachname"), required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    email = forms.EmailField(label=_("E-Mail-Adresse"), required=False, widget=forms.EmailInput(attrs={'class': 'form-control'}))
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.user:
+            self.fields['first_name'].initial = self.instance.user.first_name
+            self.fields['last_name'].initial = self.instance.user.last_name
+            self.fields['email'].initial = self.instance.user.email
+
+    def save(self, commit=True):
+        profile = super().save(commit=False)
+        if profile.user:
+            profile.user.first_name = self.cleaned_data.get('first_name', '')
+            profile.user.last_name = self.cleaned_data.get('last_name', '')
+            profile.user.email = self.cleaned_data.get('email', '')
+            if commit:
+                profile.user.save()
+        if commit:
+            profile.save()
+        return profile
+
     birth_date = forms.DateField(
         widget=forms.DateInput(attrs={'type': 'date'}, format='%Y-%m-%d'),
         input_formats=['%Y-%m-%d', '%d.%m.%Y', '%d/%m/%Y'],
