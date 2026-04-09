@@ -1,39 +1,63 @@
 # Finance Overview 🚀
 
+[![Language: Multi-5](https://img.shields.io/badge/Language-Multi--5-blue)](#-internationalization)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-![Language: 5 Support](https://img.shields.io/badge/Language-Multi--5-blue)
+[![Built with: Django](https://img.shields.io/badge/Backend-Django--6-green)](https://www.djangoproject.com/)
 
-**The Personal Financial Cockpit** — A realistic, long-term financial forecasting tool designed to give you clarity on your future net worth.
+> [!TIP]
+> **Deutschsprachige Dokumentation**: Du findest die deutsche Version der Dokumentation hier: [README.de.md](README.de.md) 🇩🇪
 
-## Overview
+**The High-End Financial Cockpit** — A sophisticated, long-term financial forecasting tool designed to give you extreme clarity on your future net worth. 
 
-This project is a personal finance dashboard that simulates your financial future over 30+ years. It accounts for assets, recurring cash flows (income/expenses), one-time events, and pensions, all while factoring in the impact of inflation on your purchasing power.
+---
 
-## ✨ Key Features
+## 🌟 Vision & Overview
 
-- **Long-term Forecast**: 30-year simulation of your net worth.
-- **Inflation Monitor**: Visualizes the gap between nominal value and real purchasing power.
-- **Dynamic Dashboards**: Customizable chart layouts, colors, and widget sizes.
-- **Multi-Language Support**: Fully translated into **German, English, French, Spanish, and Italian**.
-- **Smart Bank Import (Optimized)**: Fast import (1s analysis) with grouping, duplicate detection, and plan conflict alerts.
-- **Privacy First (Local AI)**: Categorize transactions using a local **Ollama** instance (100% self-hosted) or cloud providers (Gemini, Groq).
-- **Multi-Instance Support**: Easily distinguish between 'Private' and 'Open' instances in the header.
+Finanzplan is more than just a tracking app. It is a **Simulation Engine** for your life. It projects your financial trajectory over 30+ years, accounting for assets, liabilities, recurring cash flows, and one-time events, while strictly factoring in the eroding effect of inflation on your purchasing power.
+
+---
+
+## ✨ Key Expert Features
+
+### 🧠 Smart AI Bank Import (2.0)
+Our AI-assisted import doesn't just read CSV files; it **understands** them.
+- **Pattern Recognition**: Automatically cleans bank descriptions and searches for repeating patterns.
+- **Learned Memory**: Remembers your previous categorizations and applies them to new imports.
+- **Duplicate Fingerprinting**: Every transaction gets a unique hash to prevent overlapping imports.
+- **Privacy First**: Choose between **100% Local AI** (Ollama) or high-performance cloud providers (Gemini, Groq).
+
+### 📈 Precision Simulation Engine
+Understand the math behind your wealth.
+- **Real vs. Nominal Value**: Distinguish between the absolute money you have and its real purchasing power.
+- **Inflation Buffer**: Configurable inflation rates to visualize your "Real" net worth.
+- **Dynamics & Indexing**: Simulate career growth with salary dynamics and contract-indexed pension increases.
+- **Compound Interest Logic**: Monthly compounding of growth for every individual asset class.
+
+### 🎨 Design Harmony System
+A premium experience for premium data.
+- **Mathematical Color Harmonies**: Choose a primary color, and our engine calculates perfectly matched Complementary or Analogous palettes.
+- **Glassmorphism UI**: High-end depth effects with backdrop filters and translucency.
+- **Night Mode Mastery**: A dedicated midnight theme engine for eye-soothing nighttime analysis.
+
+---
 
 ## 🛠 Tech Stack
 
-- **Backend**: Django 6.0.2 (Single-Branch `main` strategy)
-- **Frontend**: Bootstrap 5, HTMX, Chart.js
-- **Database**: SQLite (default)
-- **Deployment**: Docker & Docker Compose (Root-level orchestration)
+- **Backend**: Django 6.0.2
+- **Frontend**: Bootstrap 5, HTMX, Alpine.js, Chart.js 4
+- **AI Integration**: LangChain, Ollama, Google Gemini
+- **Infrastructure**: Docker & Docker Compose
+
+---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 
 - Python 3.10+
-- (Optional) Docker & Docker Compose
+- Docker & Docker Compose (Recommended)
 
-### Fast Deployment (Recommended)
+### Fast Deployment
 
 1. **Clone the repository**:
    ```bash
@@ -41,42 +65,38 @@ This project is a personal finance dashboard that simulates your financial futur
    cd finanzplan
    ```
 
-2. **Set up environment variables**:
+2. **Environment Configuration**:
    ```bash
    cp .env.example .env
-   # Edit .env and set your APP_INSTANCE_NAME, LLM_PROVIDER etc.
+   # Set your APP_INSTANCE_NAME, LLM_PROVIDER, etc.
    ```
 
-3. **Start the containers**:
+3. **Launch with Docker**:
    ```bash
    ./update-fast.sh
-   # This will build, migrate, and start the app in Docker.
    ```
-   Access at `http://localhost:8000`.
+   Access your cockpit at `http://localhost:8000`.
 
-### 🤖 Smart Import & AI
+---
 
-This project includes an **AI-powered bank statement import**. You can choose between different providers in your `.env`:
+## 🌍 Internationalization
 
-#### Local AI (Privacy-Modus)
-Use **Ollama** for 100% local categorization. No financial data leaves your network!
-```bash
-LLM_PROVIDER=ollama
-OLLAMA_BASE_URL=http://your-ip:11434
-OLLAMA_MODEL=llama3
-```
+Finanzplan is built for a global audience. We support:
+- 🇩🇪 **German** (DE)
+- 🇺🇸 **English** (EN)
+- 🇫🇷 **French** (FR)
+- 🇪🇸 **Spanish** (ES)
+- 🇮🇹 **Italian** (IT)
 
-#### Cloud AI (Performance-Modus)
-Use **Gemini** or **Groq** for high-quality, external categorization.
-```bash
-LLM_PROVIDER=gemini # or groq
-GEMINI_API_KEY=your-key
-```
+Our system uses a **Key-based i18n strategy** for maximum stability, especially when handling special formatting like currency and percentages.
 
-## 🔒 Security & Identification
+---
 
-- **Instance Branding**: Set `APP_INSTANCE_NAME=Private` to see it in the header.
-- **Admin Access**: Authenticated users can manage their data via the integrated Admin panel.
+## 🔒 Security & Privacy
+
+Your financial data is sensitive. That's why Finanzplan is designed to be **completely self-hosted**. No data ever leaves your control unless you explicitly choose a cloud-based AI provider. Even then, only anonymized transaction descriptions are processed.
+
+---
 
 ## 📄 License
 
