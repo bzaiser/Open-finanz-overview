@@ -1710,3 +1710,21 @@ msgstr "AI Bank Import"
 
 msgid "HELP_AI_IMPORT_DESC"
 msgstr "Learn how our pattern recognition and learned memory automate your data entry while maintaining 100% control."
+
+msgid "HELP_SIM_COMPOUND_DESC"
+msgstr "We calculate growth for each asset class individually. A 5% growth on a 100k asset is calculated monthly to account for the compound effect over 30+ years."
+
+msgid "HELP_SIM_DYNAMICS_DESC"
+msgstr "If you set a 2% \"Dynamics\" rate, your income doesn't stay level. It grows every year, simulating career growth or contract-based indexing."
+
+msgid "HELP_SIM_30YEARS_DESC"
+msgstr "Retirement planning is a marathon. We chose a 30-year horizon to visualize the late-stage effects of inflation and interest, where small differences today become massive gaps tomorrow."
+
+msgid "HELP_DESIGN_HARMONY_DESC"
+msgstr "A \"Harmony\" isn't just a set of colors. It's a mathematical relationship (Complementary, Analogous, etc.) based on your Primary Color choice."
+
+msgid "HELP_DESIGN_GLASS_DESC"
+msgstr "We use backdrop filters and translucency to create depth. This allows your personalized brand color to shine through while keeping the interface readable."
+
+msgid "HELP_DESIGN_PROTIP_DESC"
+msgstr "Use a Darker background and high-vibrancy primary colors for the absolute premium \"High-End\" look."

@@ -2128,3 +2128,21 @@ msgstr "KI Bank-Import"
 
 msgid "HELP_AI_IMPORT_DESC"
 msgstr "Erfahre, wie unsere Mustererkennung und das gelernte Gedächtnis deine Dateneingabe automatisieren und du dabei 100% Kontrolle behältst."
+
+msgid "HELP_SIM_COMPOUND_DESC"
+msgstr "Wir berechnen das Wachstum für jede Anlageklasse einzeln. Ein Wachstum von 5 % auf ein 100.000 € Guthaben wird monatlich kalkuliert, um den Zinseszinseffekt über 30+ Jahre genau abzubilden."
+
+msgid "HELP_SIM_DYNAMICS_DESC"
+msgstr "Wenn du eine \"Dynamik\" von 2 % einstellst, bleibt dein Einkommen nicht gleich. Es wächst jedes Jahr und simuliert so Karriereschritte oder vertragliche Anpassungen."
+
+msgid "HELP_SIM_30YEARS_DESC"
+msgstr "Altersvorsorge ist ein Marathon. Wir haben einen 30-Jahres-Horizont gewählt, um die Spätfolgen von Inflation und Zinsen sichtbar zu machen, wo kleine Unterschiede heute zu massiven Lücken morgen führen."
+
+msgid "HELP_DESIGN_HARMONY_DESC"
+msgstr "Eine \"Harmonie\" ist nicht nur ein Set von Farben. Es ist eine mathematische Beziehung (komplementär, analog etc.) basierend auf deiner Wahl der Primärfarbe."
+
+msgid "HELP_DESIGN_GLASS_DESC"
+msgstr "Wir nutzen Filter und Transparenz, um Tiefe zu erzeugen. So schimmert dein personalisiertes Design durch, während das Interface perfekt lesbar bleibt."
+
+msgid "HELP_DESIGN_PROTIP_DESC"
+msgstr "Nutze einen dunkleren Hintergrund und kräftige Primärfarben für den absoluten Premium-\"High-End\"-Look."
