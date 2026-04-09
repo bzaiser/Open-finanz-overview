@@ -569,7 +569,7 @@ def dashboard_view(request):
             table_data_income.append({
                 'name': cf.name, 
                 'amount': float(amt), 
-                'category': cf.category.name if cf.category else _('Income'),
+                'category': cf.category.translated_name if cf.category else _('Income'),
                 'type': _('Manual'),
                 'year': str(cf.start_date.year) if cf.start_date else continuous_label
             })
@@ -605,7 +605,7 @@ def dashboard_view(request):
             table_data_expense.append({
                 'name': cf.name, 
                 'amount': float(amt), 
-                'category': cf.category.name if cf.category else _('Expense'),
+                'category': cf.category.translated_name if cf.category else _('Expense'),
                 'type': _('Manual'),
                 'year': str(cf.start_date.year) if cf.start_date else continuous_label
             })

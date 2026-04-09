@@ -1,5 +1,5 @@
 from django.db import models
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext_lazy as _, gettext
 from django.conf import settings
 from core.models import CustomUser
 from django.utils.text import slugify
@@ -25,8 +25,12 @@ class Category(models.Model):
             raise PermissionError(_("System categories cannot be deleted."))
         super().delete(*args, **kwargs)
 
+    @property
+    def translated_name(self):
+        return gettext(self.name)
+
     def __str__(self):
-        return self.name
+        return self.translated_name
 
 class CashFlowSource(models.Model):
     FREQUENCY_CHOICES = [
