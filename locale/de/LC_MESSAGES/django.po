@@ -2000,18 +2000,6 @@ msgstr "Anbieter"
 msgid "Interest"
 msgstr "Zins"
 
-msgid "Balance"
-msgstr "Saldo"
-
-msgid "Installment"
-msgstr "Rate"
-
-msgid "Loans"
-msgstr "Kredite"
-
-msgid "Total Debt"
-msgstr "Gesamtschulden"
-
 msgid "Help & Knowledge Base"
 msgstr "Hilfe & Wissensdatenbank"
 
@@ -2021,12 +2009,11 @@ msgstr "Experten-Wissensdatenbank"
 msgid "Master your financial future. Detailed insights into our simulation engine, AI logic, and design philosophy."
 msgstr "Meistere deine finanzielle Zukunft. Detaillierte Einblicke in unsere Simulations-Engine, KI-Logik und Design-Philosophie."
 
-msgid "Show Expert Insights"
-msgstr "Experten-Einblicke anzeigen"
+msgid "AI Bank Import"
+msgstr "KI Bank-Import"
 
 msgid "Learn how our pattern recognition and learned memory automate your data entry while maintaining 100% control."
 msgstr "Erfahre, wie unsere Mustererkennung und das gelernte Gedächtnis deine Dateneingabe automatisieren und du dabei 100% Kontrolle behältst."
-
 
 msgid "Simulation Engine"
 msgstr "Simulations-Engine"
@@ -2065,7 +2052,7 @@ msgid "1. Pattern Recognition"
 msgstr "1. Mustererkennung"
 
 msgid "Our system cleans bank descriptions and searches for repeating patterns. It remembers your previous manual categorizations and applies them to new imports automatically."
-msgstr "Unser System bereinigt Bank-Beschreibungen und sucht nach sich wiederholenden Mustern. Es merkt sich deine früheren manuellen Kategorisierungen und wendet sie automatisch auf neue Importe an."
+msgstr "Unser System bereigigt Bank-Beschreibungen und sucht nach sich wiederholenden Mustern. Es merkt sich deine früheren manuellen Kategorisierungen und wendet sie automatisch auf neue Importe an."
 
 msgid "2. Duplicate Protection"
 msgstr "2. Dubletten-Schutz"
