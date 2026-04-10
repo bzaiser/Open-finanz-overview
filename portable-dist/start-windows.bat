@@ -31,9 +31,13 @@ echo.
 set /p INSTALL_CHOICE="Waehle eine Option [1-3]: "
 
 if "%INSTALL_CHOICE%"=="1" (
-    echo [+] Starte Installation von Podman Desktop via winget...
-    winget install -e --id RedHat.Podman-Desktop
-    goto AFTER_INSTALL
+    echo [+] Starte Installation von Podman via winget...
+    winget install --id RedHat.Podman -e --source winget --silent --accept-source-agreements --accept-package-agreements
+    
+    echo [+] Aktualisiere PATH für Podman...
+    set "PATH=%PATH%;C:\Program Files\RedHat\Podman"
+    set DOCKER_CMD=podman
+    goto AUTO_MACHINE
 )
 if "%INSTALL_CHOICE%"=="2" (
     echo [+] Starte Installation von Docker Desktop via winget...
@@ -67,16 +71,33 @@ exit /b 0
 :: --- PODMAN MACHINE AUTO-START ---
 if "%DOCKER_CMD%"=="podman" (
     echo [+] Pruefe Podman Maschine...
+    podman --version >nul 2>nul
+    if %ERRORLEVEL% neq 0 (
+        echo [INFO] Podman CLI noch nicht erkannt. Versuche PATH Refresh...
+        set "PATH=%PATH%;C:\Program Files\RedHat\Podman"
+    )
+
     %DOCKER_CMD% machine list --format "{{.Name}}" | findstr /r "." >nul
     if %ERRORLEVEL% neq 0 (
         echo [+] Keine Podman Maschine gefunden. Initialisiere (dies dauert einen Moment)...
         %DOCKER_CMD% machine init --cpus 2 --memory 2048
+        if %ERRORLEVEL% neq 0 (
+            echo [FEHLER] Podman Machine konnte nicht initialisiert werden. 
+            echo Ist WSL2 installiert? (winget install Microsoft.WSL)
+            pause
+            exit /b 1
+        )
     )
     
     %DOCKER_CMD% machine list --format "{{.LastUp}}" | findstr /i "Currently" >nul
     if %ERRORLEVEL% neq 0 (
         echo [+] Podman Maschine ist gestoppt. Starte Maschine...
         %DOCKER_CMD% machine start
+        if %ERRORLEVEL% neq 0 (
+            echo [FEHLER] Podman Machine konnte nicht gestartet werden.
+            pause
+            exit /b 1
+        )
         echo [+] Warte auf Maschinenzustand...
         timeout /t 5 /nobreak >nul
     )
