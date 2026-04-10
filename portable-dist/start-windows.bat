@@ -6,35 +6,22 @@ echo   Finanzplan Dashboard - Portable Setup
 echo ==========================================
 echo.
 
-REM Check for Podman first, then Docker
+REM --- DETECTION ---
 where podman >nul 2>nul
-if %ERRORLEVEL% equ 0 (
-    set DOCKER_CMD=podman
-    goto AUTO_MACHINE
-) else (
-    REM Fallback: Suche an verschiedenen Standard-Orten fuer podman.exe
-    if exist "C:\Program Files\RedHat\Podman\podman.exe" (
-        set "PATH=%PATH%;C:\Program Files\RedHat\Podman"
-        set DOCKER_CMD=podman
-        goto AUTO_MACHINE
-    )
-    if exist "C:\Program Files\Podman Desktop\podman.exe" (
-        set "PATH=%PATH%;C:\Program Files\Podman Desktop"
-        set DOCKER_CMD=podman
-        goto AUTO_MACHINE
-    )
-    if exist "%LOCALAPPDATA%\Programs\Podman Desktop\podman.exe" (
-        set "PATH=%PATH%;%LOCALAPPDATA%\Programs\Podman Desktop"
-        set DOCKER_CMD=podman
-        goto AUTO_MACHINE
-    )
-)
+if %ERRORLEVEL% equ 0 set DOCKER_CMD=podman
+if %ERRORLEVEL% equ 0 goto AUTO_MACHINE
+
+if exist "C:\Program Files\RedHat\Podman\podman.exe" set "PATH=%PATH%;C:\Program Files\RedHat\Podman"
+if exist "C:\Program Files\Podman Desktop\podman.exe" set "PATH=%PATH%;C:\Program Files\Podman Desktop"
+if exist "%LOCALAPPDATA%\Programs\Podman Desktop\podman.exe" set "PATH=%PATH%;%LOCALAPPDATA%\Programs\Podman Desktop"
+
+where podman >nul 2>nul
+if %ERRORLEVEL% equ 0 set DOCKER_CMD=podman
+if %ERRORLEVEL% equ 0 goto AUTO_MACHINE
 
 where docker >nul 2>nul
-if %ERRORLEVEL% equ 0 (
-    set DOCKER_CMD=docker
-    goto CHECK_ENV
-)
+if %ERRORLEVEL% equ 0 set DOCKER_CMD=docker
+if %ERRORLEVEL% equ 0 goto CHECK_ENV
 
 REM --- INSTALLATION ASSISTANT ---
 echo [INFO] Weder Podman noch Docker wurden auf deinem System gefunden.
@@ -47,30 +34,32 @@ echo [3] Beenden und manuell installieren
 echo.
 set /p INSTALL_CHOICE="Waehle eine Option [1-3]: "
 
-if "%INSTALL_CHOICE%"=="1" (
-    echo [+] Starte Installation von Podman Desktop via winget...
-    winget install --id RedHat.Podman-Desktop -e --source winget --silent --accept-source-agreements --accept-package-agreements
-    
-    echo [+] Aktualisiere PATH fuer Podman...
-    set "PATH=%PATH%;C:\Program Files\RedHat\Podman;C:\Program Files\Podman Desktop;%LOCALAPPDATA%\Programs\Podman Desktop"
-    set DOCKER_CMD=podman
-    goto AUTO_MACHINE
-)
-if "%INSTALL_CHOICE%"=="2" (
-    echo [+] Starte Installation von Docker Desktop via winget...
-    winget install -e --id Docker.DockerDesktop
-    goto AFTER_INSTALL
-)
-if "%INSTALL_CHOICE%"=="3" (
-    echo.
-    echo Bitte lade eine der folgenden Applikationen herunter:
-    echo Podman Desktop: https://podman-desktop.io/
-    echo Docker Desktop: https://www.docker.com/products/docker-desktop/
-    echo.
-    pause
-    exit /b 0
-)
+if "%INSTALL_CHOICE%"=="1" goto INSTALL_PODMAN
+if "%INSTALL_CHOICE%"=="2" goto INSTALL_DOCKER
+if "%INSTALL_CHOICE%"=="3" goto EXIT_MANUAL
 goto CHECK_ENV
+
+:INSTALL_PODMAN
+echo [+] Starte Installation von Podman Desktop via winget...
+winget install --id RedHat.Podman-Desktop -e --source winget --silent --accept-source-agreements --accept-package-agreements
+echo [+] Aktualisiere PATH fuer Podman...
+set "PATH=%PATH%;C:\Program Files\RedHat\Podman;C:\Program Files\Podman Desktop;%LOCALAPPDATA%\Programs\Podman Desktop"
+set DOCKER_CMD=podman
+goto AUTO_MACHINE
+
+:INSTALL_DOCKER
+echo [+] Starte Installation von Docker Desktop via winget...
+winget install -e --id Docker.DockerDesktop
+goto AFTER_INSTALL
+
+:EXIT_MANUAL
+echo.
+echo Bitte lade eine der folgenden Applikationen herunter:
+echo Podman Desktop: https://podman-desktop.io/
+echo Docker Desktop: https://www.docker.com/products/docker-desktop/
+echo.
+pause
+exit /b 0
 
 :AFTER_INSTALL
 echo.
@@ -86,122 +75,130 @@ exit /b 0
 
 :AUTO_MACHINE
 REM --- PODMAN MACHINE AUTO-START ---
-if "%DOCKER_CMD%"=="podman" (
-    echo [+] Pruefe Podman Maschine...
-    podman --version >nul 2>nul
-    if %ERRORLEVEL% neq 0 (
-        echo [INFO] Podman CLI noch nicht erkannt. Versuche PATH Refresh...
-        set "PATH=%PATH%;C:\Program Files\RedHat\Podman"
-    )
+if not "%DOCKER_CMD%"=="podman" goto CHECK_ENV
 
-    %DOCKER_CMD% machine list --format "{{.Name}}" | findstr /r "." >nul
-    if %ERRORLEVEL% neq 0 (
-        echo [+] Keine Podman Maschine gefunden. Initialisiere (dies dauert einen Moment)...
-        %DOCKER_CMD% machine init --cpus 2 --memory 2048
-        if %ERRORLEVEL% neq 0 (
-            echo [FEHLER] Podman Machine konnte nicht initialisiert werden. 
-            echo Ist WSL2 installiert? (winget install Microsoft.WSL)
-            pause
-            exit /b 1
-        )
-    )
-    
-    %DOCKER_CMD% machine list --format "{{.LastUp}}" | findstr /i "Currently" >nul
-    if %ERRORLEVEL% neq 0 (
-        echo [+] Podman Maschine ist gestoppt. Starte Maschine...
-        %DOCKER_CMD% machine start
-        if %ERRORLEVEL% neq 0 (
-            echo [FEHLER] Podman Machine konnte nicht gestartet werden.
-            pause
-            exit /b 1
-        )
-        echo [+] Warte auf Maschinenzustand...
-        timeout /t 5 /nobreak >nul
-    )
-)
+echo [+] Pruefe Podman Maschine...
+podman --version >nul 2>nul
+if %ERRORLEVEL% neq 0 set "PATH=%PATH%;C:\Program Files\RedHat\Podman"
+
+%DOCKER_CMD% machine list --format "{{.Name}}" | findstr /r "." >nul
+if %ERRORLEVEL% equ 0 goto START_MACHINE
+
+echo [+] Keine Podman Maschine gefunden. Initialisiere (dies dauert einen Moment)...
+%DOCKER_CMD% machine init --cpus 2 --memory 2048
+if %ERRORLEVEL% neq 0 goto INIT_ERROR
+goto START_MACHINE
+
+:INIT_ERROR
+echo [FEHLER] Podman Machine konnte nicht initialisiert werden. 
+echo Ist WSL2 installiert? (winget install Microsoft.WSL)
+pause
+exit /b 1
+
+:START_MACHINE
+%DOCKER_CMD% machine list --format "{{.LastUp}}" | findstr /i "Currently" >nul
+if %ERRORLEVEL% equ 0 goto CHECK_ENV
+
+echo [+] Podman Maschine ist gestoppt. Starte Maschine...
+%DOCKER_CMD% machine start
+if %ERRORLEVEL% neq 0 goto START_ERROR
+echo [+] Warte auf Maschinenzustand...
+timeout /t 5 /nobreak >nul
+goto CHECK_ENV
+
+:START_ERROR
+echo [FEHLER] Podman Machine konnte nicht gestartet werden.
+pause
+exit /b 1
 
 :CHECK_ENV
 set NEW_INSTALL=0
-if not exist .env (
-    set NEW_INSTALL=1
-    echo [+] Erster Start erkannt: Starte Setup-Assistent...
-    echo.
-    
-    REM 1. PORT
-    set /p WEB_PORT="Welchen Port soll das Dashboard nutzen? [Standard: 8000]: "
-    if "!WEB_PORT!"=="" set WEB_PORT=8000
-    
-    REM 2. INSTANCE NAME
-    set /p APP_INSTANCE_NAME="Wie soll deine Instanz heissen? (z.B. Privat) [Standard: Private]: "
-    if "!APP_INSTANCE_NAME!"=="" set APP_INSTANCE_NAME=Private
-    
-    REM 3. AI PROVIDER
-    echo.
-    echo Welchen KI-Assistenten moechtest du nutzen?
-    echo [1] Keinen (Standard)
-    echo [2] Ollama (Lokal, setzt installierten Ollama-Server voraus)
-    echo [3] Groq (Cloud, sehr schnell, erfordert API-Key)
-    set /p AI_CHOICE="Waehle eine Option [1-3]: "
-    
-    set LLM_PROVIDER=none
-    set OLLAMA_URL=http://localhost:11434
-    set GROQ_KEY=
-    
-    if "!AI_CHOICE!"=="2" (
-        set LLM_PROVIDER=ollama
-        set /p OLLAMA_URL="Ollama URL [Standard: http://localhost:11434]: "
-        if "!OLLAMA_URL!"=="" set OLLAMA_URL=http://localhost:11434
-    )
-    if "!AI_CHOICE!"=="3" (
-        set LLM_PROVIDER=groq
-        set /p GROQ_KEY="Bitte gib deinen Groq API-Key ein: "
-    )
+if exist .env goto LOAD_ENV
 
-    REM Write .env file
-    echo # Automatisch generiert durch Setup-Assistent > .env
-    echo WEB_PORT=!WEB_PORT! >> .env
-    echo APP_INSTANCE_NAME=!APP_INSTANCE_NAME! >> .env
-    echo LLM_PROVIDER=!LLM_PROVIDER! >> .env
-    echo OLLAMA_BASE_URL=!OLLAMA_URL! >> .env
-    echo GROQ_API_KEY=!GROQ_KEY! >> .env
-    echo DEBUG=False >> .env
-    echo ALLOWED_HOSTS=* >> .env
-    echo RUNNING_IN_DOCKER=1 >> .env
-    echo SECRET_KEY=portable_!RANDOM!_!RANDOM! >> .env
+set NEW_INSTALL=1
+echo [+] Erster Start erkannt: Starte Setup-Assistent...
+echo.
     
-    echo.
-    echo [+] Setup abgeschlossen! .env wurde erstellt.
-    echo.
-) else (
-    REM Load WEB_PORT from .env if it exists
-    for /f "tokens=2 delims==" %%a in ('findstr "WEB_PORT" .env') do set WEB_PORT=%%a
+REM 1. PORT
+set /p WEB_PORT="Welchen Port soll das Dashboard nutzen? [Standard: 8000]: "
+if "!WEB_PORT!"=="" set WEB_PORT=8000
+    
+REM 2. INSTANCE NAME
+set /p APP_INSTANCE_NAME="Wie soll deine Instanz heissen? (z.B. Privat) [Standard: Private]: "
+if "!APP_INSTANCE_NAME!"=="" set APP_INSTANCE_NAME=Private
+    
+REM 3. AI PROVIDER
+echo.
+echo Welchen KI-Assistenten moechtest du nutzen?
+echo [1] Keinen (Standard)
+echo [2] Ollama (Lokal, setzt installierten Ollama-Server voraus)
+echo [3] Groq (Cloud, sehr schnell, erfordert API-Key)
+set /p AI_CHOICE="Waehle eine Option [1-3]: "
+    
+set LLM_PROVIDER=none
+set OLLAMA_URL=http://localhost:11434
+set GROQ_KEY=
+    
+if "!AI_CHOICE!"=="2" set LLM_PROVIDER=ollama
+if "!AI_CHOICE!"=="3" set LLM_PROVIDER=groq
+
+if "!LLM_PROVIDER!"=="ollama" (
+    set /p OLLAMA_URL="Ollama URL [Standard: http://localhost:11434]: "
+    if "!OLLAMA_URL!"=="" set OLLAMA_URL=http://localhost:11434
+)
+if "!LLM_PROVIDER!"=="groq" (
+    set /p GROQ_KEY="Bitte gib deinen Groq API-Key ein: "
 )
 
+REM Write .env file
+echo # Automatisch generiert durch Setup-Assistent > .env
+echo WEB_PORT=!WEB_PORT! >> .env
+echo APP_INSTANCE_NAME=!APP_INSTANCE_NAME! >> .env
+echo LLM_PROVIDER=!LLM_PROVIDER! >> .env
+echo OLLAMA_BASE_URL=!OLLAMA_URL! >> .env
+echo GROQ_API_KEY=!GROQ_KEY! >> .env
+echo DEBUG=False >> .env
+echo ALLOWED_HOSTS=* >> .env
+echo RUNNING_IN_DOCKER=1 >> .env
+echo SECRET_KEY=portable_!RANDOM!_!RANDOM! >> .env
+    
+echo.
+echo [+] Setup abgeschlossen! .env wurde erstellt.
+echo.
+goto DB_CHECK
+
+:LOAD_ENV
+REM Load WEB_PORT from .env if it exists
+for /f "tokens=2 delims==" %%a in ('findstr "WEB_PORT" .env') do set WEB_PORT=%%a
+
+:DB_CHECK
 REM Ensure db.sqlite3 is a file
-if not exist db.sqlite3 (
-    set NEW_INSTALL=1
-    echo [+] Initialisiere Datenbank-Datei...
-    type nul > db.sqlite3
-)
+if exist db.sqlite3 goto COMPOSE_UP
+set NEW_INSTALL=1
+echo [+] Initialisiere Datenbank-Datei...
+type nul > db.sqlite3
 
+:COMPOSE_UP
 REM Start the containers
 echo [+] Nutze %DOCKER_CMD% fuer den Start...
 %DOCKER_CMD% compose up -d
 
-if %ERRORLEVEL% neq 0 (
-    echo [FEHLER] Der Start ist fehlgeschlagen!
-    pause
-    exit /b 1
-)
+if %ERRORLEVEL% neq 0 goto UP_ERROR
+if %NEW_INSTALL% equ 1 goto SEED_DATA
+goto FINISH
 
-REM Run migrations and seed data on fresh install
-if %NEW_INSTALL% equ 1 (
-    echo [+] Erster Start erkannt: Erstelle Datenbank-Tabellen...
-    %DOCKER_CMD% exec finanzplan-portable python manage.py migrate --noinput
-    echo [+] Befuelle Datenbank mit Demo-Daten (User: demo / demo)...
-    %DOCKER_CMD% exec finanzplan-portable python manage.py seed_portable --noinput
-)
+:UP_ERROR
+echo [FEHLER] Der Start ist fehlgeschlagen!
+pause
+exit /b 1
 
+:SEED_DATA
+echo [+] Erster Start erkannt: Erstelle Datenbank-Tabellen...
+%DOCKER_CMD% exec finanzplan-portable python manage.py migrate --noinput
+echo [+] Befuelle Datenbank mit Demo-Daten (User: demo / demo)...
+%DOCKER_CMD% exec finanzplan-portable python manage.py seed_portable --noinput
+
+:FINISH
 echo.
 echo URL: http://localhost:%WEB_PORT%
 echo Login: demo / demo
