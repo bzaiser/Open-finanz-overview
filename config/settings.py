@@ -184,8 +184,11 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'dashboard'
+LOGIN_REDIRECT_URL = 'finance:dashboard'
 LOGOUT_REDIRECT_URL = 'login'
+
+# Silence the auto-field warnings
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Session Configuration
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
