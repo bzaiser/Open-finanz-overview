@@ -9,23 +9,20 @@ echo.
 :: 1. Check for Git
 where git >nul 2>nul
     echo [+] Git wurde nicht gefunden. Starte Installation via winget...
-    winget install --id Git.Git -e --source winget
-    if %ERRORLEVEL% neq 0 (
-        echo [FEHLER] Git Installation fehlgeschlagen. 
-        echo Bitte installiere Git manuell von https://git-scm.com/
-        pause
-        exit /b 1
-    )
+    winget install --id Git.Git -e --source winget --silent --accept-source-agreements --accept-package-agreements
     
-    echo [+] Git wurde installiert. Aktualisiere PATH für diese Sitzung...
+    :: Wir ignorieren hier den Exit-Code von winget, da es oft "fehlschlägt", 
+    :: wenn Git bereits installiert aber nicht im PATH ist (z.B. "Kein Update verfügbar").
+    
+    echo [+] Aktualisiere PATH für diese Sitzung...
     set "PATH=%PATH%;C:\Program Files\Git\cmd;C:\Program Files\Git\bin"
     
-    :: Check again
+    :: Jetzt prüfen wir erneut, ob git erkannt wird
     where git >nul 2>nul
     if %ERRORLEVEL% neq 0 (
         echo.
-        echo [INFO] Git wurde installiert, aber wird im aktuellen Fenster noch nicht erkannt.
-        echo Bitte schließe dieses Fenster und starte das Skript 'Setup-Finanzplan.bat' neu.
+        echo [INFO] Git konnte nicht automatisch konfiguriert werden. 
+        echo Bitte installiere Git manuell von https://git-scm.com/ oder starte den Terminal neu.
         pause
         exit /b 0
     )
