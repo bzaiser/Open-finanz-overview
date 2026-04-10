@@ -11,6 +11,14 @@ where podman >nul 2>nul
 if %ERRORLEVEL% equ 0 (
     set DOCKER_CMD=podman
     goto AUTO_MACHINE
+) else (
+    :: Fallback: Check if Podman is installed in standard path but not in PATH yet
+    if exist "C:\Program Files\RedHat\Podman\podman.exe" (
+        echo [INFO] Podman im Standardpfad gefunden. Aktualisiere PATH...
+        set "PATH=%PATH%;C:\Program Files\RedHat\Podman"
+        set DOCKER_CMD=podman
+        goto AUTO_MACHINE
+    )
 )
 
 where docker >nul 2>nul

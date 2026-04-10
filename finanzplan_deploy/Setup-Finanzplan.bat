@@ -30,28 +30,28 @@ if %ERRORLEVEL% neq 0 (
 )
 
 :: 2. Clone the Repository
-if not exist finanzplan (
+if not exist Open-finanz-overview (
     echo [+] Klone Repository 'Open-finanz-overview' von GitHub...
-    git clone https://github.com/bzaiser/Open-finanz-overview.git finanzplan
+    git clone https://github.com/bzaiser/Open-finanz-overview.git
     if %ERRORLEVEL% neq 0 (
         echo [FEHLER] Klonen fehlgeschlagen!
         pause
         exit /b 1
     )
 ) else (
-    echo [+] Ordner 'finanzplan' existiert bereits. Suche nach Updates...
-    cd finanzplan
+    echo [+] Ordner 'Open-finanz-overview' existiert bereits. Suche nach Updates...
+    cd Open-finanz-overview
     git pull
     cd ..
 )
 
 :: 3. Handover to internal start script
 echo [+] Starte Dashboard-Setup...
-cd finanzplan
+cd Open-finanz-overview
 if exist portable-dist\start-windows.bat (
     call portable-dist\start-windows.bat
 ) else (
-    echo [FEHLER] Start-Skript nicht gefunden in: finanzplan\portable-dist\start-windows.bat
+    echo [FEHLER] Start-Skript nicht gefunden in: Open-finanz-overview\portable-dist\start-windows.bat
     pause
 )
 
