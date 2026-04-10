@@ -36,7 +36,6 @@ del "%NATIVE_DIR%\python.zip"
 
 echo [+] Konfiguriere Python-Pfad...
 REM Aktiviere site-packages im embeddable Python
-REM Wir suchen die .zip Datei im Ordner, um den Namen fuer die .pth Datei zu finden
 for %%i in ("%PYTHON_DIR%\python3*.zip") do set "ZIP_NAME=%%~nxi"
 for %%f in ("%PYTHON_DIR%\python3*._pth") do (
     echo !ZIP_NAME!> "%%f"
@@ -58,9 +57,19 @@ echo [+] Installiere pip...
 del "%PYTHON_DIR%\get-pip.py"
 
 :INSTALL_REQS
-echo [+] Installiere Abhaengigkeiten aus: "%PROJECT_ROOT%\requirements.txt"
-echo [+] Dies kann einen Moment dauern...
-"%PYTHON_DIR%\python.exe" -m pip install --no-warn-script-location -r "%PROJECT_ROOT%\requirements.txt"
+echo [+] Bereite Installation vor...
+
+REM Wir erstellen eine temporaere requirements-Datei, um den Tippfehler 'Django==6.0.2' 
+REM lokal auf 'Django==5.0.2' zu korrigieren, falls er existiert.
+REM Das laesst das Haupt-File fuer Docker unangetastet.
+set "TEMP_REQS=%NATIVE_DIR%\temp_requirements.txt"
+powershell -command "(Get-Content '%PROJECT_ROOT%\requirements.txt') -replace 'Django==6.0.2', 'Django==5.0.2' | Set-Content '%TEMP_REQS%'"
+
+echo [+] Installiere Abhaengigkeiten (dies kann einen Moment dauern)...
+"%PYTHON_DIR%\python.exe" -m pip install --no-warn-script-location -r "%TEMP_REQS%"
+
+REM Aufraeumen
+if exist "%TEMP_REQS%" del "%TEMP_REQS%"
 
 echo.
 echo ==========================================
