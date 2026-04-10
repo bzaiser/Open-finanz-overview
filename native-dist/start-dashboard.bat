@@ -20,7 +20,9 @@ if not exist "%PYTHON_EXE%" (
 cd /d "%PROJECT_ROOT%"
 
 REM Check for .env file
+set "NEW_INSTALL=0"
 if not exist ".env" (
+    set "NEW_INSTALL=1"
     echo [+] Erster Start: Generiere Standard-Konfiguration...
     echo DEBUG=False > .env
     echo ALLOWED_HOST_NAME=localhost >> .env
@@ -28,8 +30,16 @@ if not exist ".env" (
     echo SECRET_KEY=native_!RANDOM!_!RANDOM! >> .env
 )
 
+REM Check if database exists
+if not exist "db.sqlite3" set "NEW_INSTALL=1"
+
 echo [+] Pruefe Datenbank-Migrationen...
 "%PYTHON_EXE%" manage.py migrate --noinput
+
+if "!NEW_INSTALL!"=="1" (
+    echo [+] Initial-Setup: Erstelle Demo-Daten (User: demo / demo)...
+    "%PYTHON_EXE%" manage.py seed_portable --noinput
+)
 
 echo [+] Bereite statische Dateien vor...
 "%PYTHON_EXE%" manage.py collectstatic --noinput

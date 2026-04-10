@@ -19,13 +19,19 @@ set "BACKUP_DIR=backup_temp"
 if exist "%TARGET_DIR%" (
     echo [+] Programm-Ordner existiert bereits.
     echo [+] Moechtest du das Programm auf die neueste Version aktualisieren?
-    echo [WICHTIG] Deine Datenbank und Einstellungen bleiben erhalten.
+    echo [WICHTIG] Deine Datenbank, Einstellungen und Python bleiben erhalten.
     set /p UPDATE_CHOICE="Aktualisieren? (J/N): "
     if /i "!UPDATE_CHOICE!"=="J" (
-        echo [+] Erstelle Backup von Datenbank und Einstellungen...
+        echo [+] Erstelle Backup von Datenbank, Einstellungen und Python...
         if not exist "%BACKUP_DIR%" mkdir "%BACKUP_DIR%"
-        if exist "%TARGET_DIR%\db.sqlite3" copy /Y "%TARGET_DIR%\db.sqlite3" "%BACKUP_DIR%\"
-        if exist "%TARGET_DIR%\.env" copy /Y "%TARGET_DIR%\.env" "%BACKUP_DIR%\"
+        if exist "%TARGET_DIR%\db.sqlite3" move /Y "%TARGET_DIR%\db.sqlite3" "%BACKUP_DIR%\"
+        if exist "%TARGET_DIR%\.env" move /Y "%TARGET_DIR%\.env" "%BACKUP_DIR%\"
+        
+        REM Python-Ordner sichern, damit er nicht neu geladen werden muss
+        if exist "%TARGET_DIR%\native-dist\python-embed" (
+            echo [+] Parke Python-Umgebung zwischen...
+            move /Y "%TARGET_DIR%\native-dist\python-embed" "%BACKUP_DIR%\"
+        )
         
         echo [+] Entferne alte Programm-Dateien...
         rd /S /Q "%TARGET_DIR%"
@@ -53,9 +59,16 @@ del "%TEMP_ZIP%"
 
 REM Restore Backup if exists
 if exist "%BACKUP_DIR%" (
-    echo [+] Stelle Datenbank und Einstellungen wieder her...
-    if exist "%BACKUP_DIR%\db.sqlite3" copy /Y "%BACKUP_DIR%\db.sqlite3" "%TARGET_DIR%\"
-    if exist "%BACKUP_DIR%\.env" copy /Y "%BACKUP_DIR%\.env" "%TARGET_DIR%\"
+    echo [+] Stelle Datenbank, Einstellungen und Python wieder her...
+    if exist "%BACKUP_DIR%\db.sqlite3" move /Y "%BACKUP_DIR%\db.sqlite3" "%TARGET_DIR%\"
+    if exist "%BACKUP_DIR%\.env" move /Y "%BACKUP_DIR%\.env" "%TARGET_DIR%\"
+    
+    REM Python zurückbewegen
+    if exist "%BACKUP_DIR%\python-embed" (
+        if not exist "%TARGET_DIR%\native-dist" mkdir "%TARGET_DIR%\native-dist"
+        move /Y "%BACKUP_DIR%\python-embed" "%TARGET_DIR%\native-dist\"
+    )
+    
     rd /S /Q "%BACKUP_DIR%"
 )
 
