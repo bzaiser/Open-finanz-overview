@@ -27,8 +27,10 @@ pause
 echo [+] Starte Installation via winget...
 winget install --id Git.Git -e --source winget --silent --accept-source-agreements --accept-package-agreements
 
-REM Pfad fuer diese Sitzung aktualisieren
-set "PATH=%PATH%;C:\Program Files\Git\cmd;C:\Program Files\Git\bin"
+REM Pfad fuer diese Sitzung aktualisieren (Registry Refresh)
+for /f "tokens=2*" %%A in ('reg query "HKLM\System\CurrentControlSet\Control\Session Manager\Environment" /v Path 2^>nul') do set "SYS_PATH=%%B"
+for /f "tokens=2*" %%A in ('reg query "HKCU\Environment" /v Path 2^>nul') do set "USER_PATH=%%B"
+set "PATH=%SYS_PATH%;%USER_PATH%;C:\Program Files\Git\cmd;C:\Program Files\Git\bin"
 
 where git >nul 2>nul
 if %ERRORLEVEL% equ 0 goto GIT_OK

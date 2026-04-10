@@ -6,6 +6,11 @@ echo   Finanzplan Dashboard - Portable Setup
 echo ==========================================
 echo.
 
+REM --- REFRESH PATH FROM REGISTRY ---
+for /f "tokens=2*" %%A in ('reg query "HKLM\System\CurrentControlSet\Control\Session Manager\Environment" /v Path 2^>nul') do set "SYS_PATH=%%B"
+for /f "tokens=2*" %%A in ('reg query "HKCU\Environment" /v Path 2^>nul') do set "USER_PATH=%%B"
+set "PATH=%SYS_PATH%;%USER_PATH%;%PATH%"
+
 REM --- DETECTION ---
 set DOCKER_CMD=podman
 
