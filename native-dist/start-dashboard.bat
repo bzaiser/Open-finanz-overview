@@ -43,17 +43,16 @@ echo ALLOWED_HOSTS=localhost,127.0.0.1 >> .env
 echo SECRET_KEY=native_!RANDOM!_!RANDOM! >> .env
 
 :CHECK_DB
-set "NEW_INSTALL=0"
-if not exist "db.sqlite3" set "NEW_INSTALL=1"
-
-echo [+] Pruefe Datenbank-Migrationen...
-REM Wir generieren fehlende Migrations automatisch
+echo [+] Pruefe Datenbank-Status...
 "%PYTHON_EXE%" manage.py makemigrations --noinput
 "%PYTHON_EXE%" manage.py migrate --noinput
 
-if "!NEW_INSTALL!"=="0" goto COLLECT
-echo [+] Initial-Setup: Erstelle Demo-Daten (User: demo / demo)...
-"%PYTHON_EXE%" manage.py seed_portable --noinput
+REM Intelligente Prüfung: Existiert der Demo-Nutzer?
+"%PYTHON_EXE%" manage.py shell -c "from django.contrib.auth import get_user_model; User = get_user_model(); print('USER_OK' if User.objects.filter(username='demo').exists() else 'USER_MISSING')" | findstr "USER_MISSING" > nul
+if %errorlevel% equ 0 (
+    echo [+] Demo-Benutzer fehlt oder Datenbank leer. Erstelle Demo-Daten...
+    "%PYTHON_EXE%" manage.py seed_portable --noinput
+)
 
 :COLLECT
 echo [+] Bereite statische Dateien vor...
