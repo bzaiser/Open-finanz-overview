@@ -33,7 +33,6 @@ del "app.zip"
 
 :SETUP_NATIVE
 echo [+] Starte System-Pruefung...
-set "ROOT_DIR=%CD%"
 cd /d "%TARGET_DIR%"
 if exist "native-dist\setup-native.bat" (
     call "native-dist\setup-native.bat"
@@ -43,29 +42,14 @@ if exist "native-dist\setup-native.bat" (
     exit /b 1
 )
 
-REM --- PRIME 2.0 DESKTOP ICONS (ROBUST EDITION) ---
+REM --- PRIME 2.0 DESKTOP ICONS (NON-NESTED EDITION) ---
 echo.
 set /p ICON_CHOICE="Prime-Desktop-Icons erstellen? (J/N): "
-if /i "!ICON_CHOICE!"=="J" (
-    echo [+] Erstelle Premium-Verknuepfungen...
-    REM Wir nutzen eine PowerShell-Variable für die Pfade, um Leerzeichen-Fehler zu vermeiden
-    powershell -NoProfile -Command ^
-        "$d = [Environment]::GetFolderPath('Desktop'); ^
-         $ws = New-Object -ComObject WScript.Shell; ^
-         $curr = (Get-Location).Path; ^
-         $root = (Get-Item $curr).Parent.FullName; ^
-         $s1 = $ws.CreateShortcut((Join-Path $d 'Finanzplan Dashboard.lnk')); ^
-         $s1.TargetPath = (Join-Path $curr 'native-dist\start-dashboard.bat'); ^
-         $s1.WorkingDirectory = (Join-Path $curr 'native-dist'); ^
-         $s1.IconLocation = 'shell32.dll, 167'; ^
-         $s1.Save(); ^
-         $s2 = $ws.CreateShortcut((Join-Path $d 'Finanzplan Wartung.lnk')); ^
-         $s2.TargetPath = (Join-Path $root 'Finanzplan-Mobil.bat'); ^
-         $s2.WorkingDirectory = $root; ^
-         $s2.IconLocation = 'shell32.dll, 71'; ^
-         $s2.Save(); ^
-         if ($?) { Write-Host '[+] Duo-Icons erfolgreich auf dem Desktop erstellt!' -ForegroundColor Green } else { Write-Host '[FEHLER] Konnte Icons nicht erstellen.' -ForegroundColor Red; pause }"
-)
+if /i "!ICON_CHOICE!" NEQ "J" goto START_APP
+
+echo [+] Erstelle Premium-Verknuepfungen...
+REM Wir nutzen KEINEN IF-BLOCK mehr, um Klammer-Fehler zu vermeiden
+powershell -NoProfile -Command "$d=[Environment]::GetFolderPath('Desktop');$ws=New-Object -ComObject WScript.Shell;$curr=(Get-Location).Path;$root=(Get-Item $curr).Parent.FullName;$s1=$ws.CreateShortcut((Join-Path $d 'Finanzplan Dashboard.lnk'));$s1.TargetPath=(Join-Path $curr 'native-dist\start-dashboard.bat');$s1.WorkingDirectory=(Join-Path $curr 'native-dist');$s1.IconLocation='shell32.dll, 167';$s1.Save();$s2=$ws.CreateShortcut((Join-Path $d 'Finanzplan Wartung.lnk'));$s2.TargetPath=(Join-Path $root 'Finanzplan-Mobil.bat');$s2.WorkingDirectory=$root;$s2.IconLocation='shell32.dll, 71';$s2.Save();if($?){Write-Host '[+] Duo-Icons erfolgreich erstellt!' -ForegroundColor Green}else{Write-Host '[FEHLER] Icons fehlgeschlagen' -ForegroundColor Red;pause}"
 
 :START_APP
 echo [+] Starte Dashboard...
