@@ -40,6 +40,9 @@ for %%i in ("%PYTHON_DIR%\python3*.zip") do set "ZIP_NAME=%%~nxi"
 for %%f in ("%PYTHON_DIR%\python3*._pth") do (
     echo !ZIP_NAME!> "%%f"
     echo .>> "%%f"
+    REM Wir fuegen den Projekt-Root zum Pfad hinzu, damit config gefunden wird
+    echo ..>> "%%f"
+    echo ../..>> "%%f"
     echo import site>> "%%f"
 )
 
@@ -59,8 +62,7 @@ del "%PYTHON_DIR%\get-pip.py"
 :INSTALL_REQS
 echo [+] Bereite isolierte Installation vor...
 
-REM Wir installieren waitress und whitenoise direkt, damit sie nicht in der 
-REM globalen requirements.txt stehen muessen (fuer Docker-Stabilitaet).
+REM Wir installieren waitress und whitenoise direkt
 echo [+] Installiere native Server-Komponenten...
 "%PYTHON_DIR%\python.exe" -m pip install --no-warn-script-location waitress==3.0.1 whitenoise==6.6.0
 
@@ -70,7 +72,7 @@ set "TEMP_REQS=%NATIVE_DIR%\temp_requirements.txt"
 powershell -command "(Get-Content '%PROJECT_ROOT%\requirements.txt') -replace 'Django==6.0.2', 'Django==5.0.2' | Set-Content '%TEMP_REQS%'"
 
 echo [+] Installiere Abhaengigkeiten (dies kann einen Moment dauern)...
-"%PYTHON_DIR%\python.exe" -m pip install --no-warn-script-location -r "%TEMP_REQS%"
+"%PYTHON_EXE%" -m pip install --no-warn-script-location -r "%TEMP_REQS%"
 
 REM Aufraeumen
 if exist "%TEMP_REQS%" del "%TEMP_REQS%"
