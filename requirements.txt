@@ -5,7 +5,7 @@ cffi==2.0.0
 charset-normalizer==3.4.6
 crispy-bootstrap5==2025.6
 cryptography==46.0.6
-Django==6.0.2
+Django==5.0.2
 django-crispy-forms==2.5
 et_xmlfile==2.0.0
 google-ai-generativelanguage==0.6.15
