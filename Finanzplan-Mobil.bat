@@ -31,12 +31,23 @@ for /d %%D in (temp_extract\*) do (
 rd /S /Q temp_extract
 del "app.zip"
 
-REM Icon-Check am Ende der Einrichtung
-if exist "%USERPROFILE%\Desktop\Finanzplan Dashboard.lnk" goto START_APP
+:SETUP_NATIVE
+echo [+] Starte System-Pruefung...
+cd /d "%TARGET_DIR%"
+if exist "native-dist\setup-native.bat" (
+    call "native-dist\setup-native.bat"
+) else (
+    echo [FEHLER] Einrichtungsskript nicht gefunden!
+    pause
+    exit /b 1
+)
+
+REM --- PRIME 2.0 DESKTOP ICONS ---
 echo.
-set /p ICON_CHOICE="Desktop-Icon erstellen? (J/N): "
+set /p ICON_CHOICE="Prime-Desktop-Icons erstellen? (J/N): "
 if /i "!ICON_CHOICE!"=="J" (
-    powershell -NoProfile -Command "$d = [Environment]::GetFolderPath('Desktop'); $s = (New-Object -ComObject WScript.Shell).CreateShortcut((Join-Path $d 'Finanzplan Dashboard.lnk')); $s.TargetPath = '%CD%\%TARGET_DIR%\native-dist\start-dashboard.bat'; $s.WorkingDirectory = '%CD%\%TARGET_DIR%\native-dist'; $s.Save(); Write-Host '[+] Icon erstellt!' -ForegroundColor Green"
+    echo [+] Erstelle Premium-Verknuepfungen...
+    powershell -NoProfile -Command "$d = [Environment]::GetFolderPath('Desktop'); $ws = New-Object -ComObject WScript.Shell; $icon = '%CD%\native-dist\logo-prime.png'; $s1 = $ws.CreateShortcut((Join-Path $d 'Finanzplan Dashboard.lnk')); $s1.TargetPath = '%CD%\native-dist\start-dashboard.bat'; $s1.WorkingDirectory = '%CD%\native-dist'; $s1.IconLocation = $icon; $s1.Save(); $s2 = $ws.CreateShortcut((Join-Path $d 'Finanzplan Wartung.lnk')); $s2.TargetPath = '%CD%\..\Finanzplan-Mobil.bat'; $s2.WorkingDirectory = '%CD%\..'; $s2.Save(); Write-Host '[+] Premium Duo-Icons erstellt!' -ForegroundColor Green"
 )
 
 :START_APP
