@@ -57,11 +57,15 @@ echo [+] Installiere pip...
 del "%PYTHON_DIR%\get-pip.py"
 
 :INSTALL_REQS
-echo [+] Bereite Installation vor...
+echo [+] Bereite isolierte Installation vor...
 
-REM Wir erstellen eine temporaere requirements-Datei, um den Tippfehler 'Django==6.0.2' 
-REM lokal auf 'Django==5.0.2' zu korrigieren, falls er existiert.
-REM Das laesst das Haupt-File fuer Docker unangetastet.
+REM Wir installieren waitress und whitenoise direkt, damit sie nicht in der 
+REM globalen requirements.txt stehen muessen (fuer Docker-Stabilitaet).
+echo [+] Installiere native Server-Komponenten...
+"%PYTHON_DIR%\python.exe" -m pip install --no-warn-script-location waitress==3.0.1 whitenoise==6.6.0
+
+REM Wir erstellen eine temporaere requirements-Datei fuer die lokale Installation,
+REM um den Tippfehler 'Django==6.0.2' auf 'Django==5.0.2' zu korrigieren.
 set "TEMP_REQS=%NATIVE_DIR%\temp_requirements.txt"
 powershell -command "(Get-Content '%PROJECT_ROOT%\requirements.txt') -replace 'Django==6.0.2', 'Django==5.0.2' | Set-Content '%TEMP_REQS%'"
 
