@@ -9,6 +9,12 @@ echo.
 REM 1. Check for Git
 where git >nul 2>nul
 if %ERRORLEVEL% neq 0 (
+    REM Notsuche an Standard-Orten
+    if exist "C:\Program Files\Git\cmd\git.exe" (
+        set "PATH=%PATH%;C:\Program Files\Git\cmd"
+        goto GIT_OK
+    )
+    
     echo [+] Git wurde nicht gefunden. Starte Installation via winget...
     winget install --id Git.Git -e --source winget --silent --accept-source-agreements --accept-package-agreements
     
@@ -17,14 +23,20 @@ if %ERRORLEVEL% neq 0 (
     
     where git >nul 2>nul
     if %ERRORLEVEL% neq 0 (
+        if exist "C:\Program Files\Git\cmd\git.exe" (
+            set "PATH=%PATH%;C:\Program Files\Git\cmd"
+            goto GIT_OK
+        )
         echo.
         echo [INFO] Git konnte nicht automatisch konfiguriert werden. 
         echo Bitte installiere Git manuell von https://git-scm.com/ oder starte den Terminal neu.
         pause
         exit /b 0
     )
-    echo [+] Git erfolgreich erkannt. Weiter geht's...
 )
+
+:GIT_OK
+echo [+] Git erfolgreich erkannt. Weiter geht's...
 
 REM 2. Clone the Repository
 if not exist "Open-finanz-overview" (
