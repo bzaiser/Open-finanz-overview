@@ -78,7 +78,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'core.context_processors.app_instance_info',
             ],
         },
     },
@@ -182,7 +181,7 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'finance:dashboard'
+LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_REDIRECT_URL = 'login'
 
 # Session Configuration
@@ -202,7 +201,3 @@ OLLAMA_MODEL = os.getenv('OLLAMA_MODEL', 'llama3')
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
 
 X_FRAME_OPTIONS = "SAMEORIGIN"
-
-# Extension Settings
-SYNC_ADMIN_INTERFACE_THEME = True
-APP_INSTANCE_NAME = os.getenv('APP_INSTANCE_NAME', 'Finanz-Studio')
