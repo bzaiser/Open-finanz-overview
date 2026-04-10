@@ -88,8 +88,8 @@ echo.
 set /p SHORTCUT_CHOICE="Moechtest du eine Verknuepfung auf dem Desktop erstellen? (J/N): "
 if /i "!SHORTCUT_CHOICE!"=="J" (
     echo [+] Erstelle Desktop-Verknuepfung...
-    REM Wir nutzen hier eine stabilere Syntax mit Pause falls es schiefgeht
-    powershell -NoProfile -Command "$desktop = [Environment]::GetFolderPath('Desktop'); $path = Join-Path $desktop 'Finanzplan Dashboard.lnk'; $ws = New-Object -ComObject WScript.Shell; $s = $ws.CreateShortcut($path); $s.TargetPath = '%CD%\Finanzplan-Mobil.bat'; $s.WorkingDirectory = '%CD%'; $s.Save(); if ($?) { Write-Host 'Verknuepfung erfolgreich erstellt!' -ForegroundColor Green } else { Write-Host 'Fehler beim Erstellen der Verknuepfung!' -ForegroundColor Red; pause }"
+    REM Das Shortcut-Ziel ist jetzt direkt die start-dashboard.bat fuer schnellen Zugriff!
+    powershell -NoProfile -Command "$desktop = [Environment]::GetFolderPath('Desktop'); $path = Join-Path $desktop 'Finanzplan Dashboard.lnk'; $ws = New-Object -ComObject WScript.Shell; $s = $ws.CreateShortcut($path); $s.TargetPath = '%CD%\native-dist\start-dashboard.bat'; $s.WorkingDirectory = '%CD%\native-dist'; $s.IconLocation = '%CD%\native-dist\logo-prime.png'; $s.Save(); if ($?) { Write-Host 'Schnellstart-Icon erfolgreich erstellt!' -ForegroundColor Green } else { Write-Host 'Fehler beim Erstellen der Verknuepfung!' -ForegroundColor Red; pause }"
     echo.
 )
 
