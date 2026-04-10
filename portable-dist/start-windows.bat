@@ -49,6 +49,16 @@ if "%INSTALL_CHOICE%"=="3" goto EXIT_MANUAL
 goto CHECK_ENV
 
 :INSTALL_PODMAN
+echo.
+echo ============================================================
+echo   WICHTIG: Es erscheinen gleich 1-2 Windows-Abfragen (Admin)
+echo   fuer die Installation von Podman.
+echo.
+echo   Bitte bestaetige diese, damit die Installation 
+echo   abgeschlossen werden kann.
+echo ============================================================
+echo.
+pause
 echo [+] Starte Installation von Podman Engine (CLI) via winget...
 winget install --id RedHat.Podman -e --source winget --silent --accept-source-agreements --accept-package-agreements
 
@@ -60,6 +70,16 @@ if exist "C:\Program Files\RedHat\Podman\podman.exe" set DOCKER_CMD="C:\Program 
 goto AUTO_MACHINE
 
 :INSTALL_DOCKER
+echo.
+echo ============================================================
+echo   WICHTIG: Es erscheint gleich eine Windows-Abfrage (Admin)
+echo   fuer die Installation von Docker Desktop.
+echo.
+echo   Bitte bestaetige diese, damit die Installation 
+echo   abgeschlossen werden kann.
+echo ============================================================
+echo.
+pause
 echo [+] Starte Installation von Docker Desktop via winget...
 winget install -e --id Docker.DockerDesktop
 goto AFTER_INSTALL

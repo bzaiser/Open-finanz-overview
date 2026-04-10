@@ -15,7 +15,16 @@ if exist "C:\Program Files\Git\cmd\git.exe" set "PATH=%PATH%;C:\Program Files\Gi
 where git >nul 2>nul
 if %ERRORLEVEL% equ 0 goto GIT_OK
 
-echo [+] Git wurde nicht gefunden. Starte Installation via winget...
+echo.
+echo ============================================================
+echo   WICHTIG: Es erscheint gleich eine Windows-Abfrage (Admin)
+echo   fuer die Installation von Git.
+echo.
+echo   Bitte bestaetige diese, damit Git installiert werden kann.
+echo ============================================================
+echo.
+pause
+echo [+] Starte Installation via winget...
 winget install --id Git.Git -e --source winget --silent --accept-source-agreements --accept-package-agreements
 
 REM Pfad fuer diese Sitzung aktualisieren
