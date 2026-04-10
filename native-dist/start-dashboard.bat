@@ -47,6 +47,8 @@ set "NEW_INSTALL=0"
 if not exist "db.sqlite3" set "NEW_INSTALL=1"
 
 echo [+] Pruefe Datenbank-Migrationen...
+REM Wir generieren fehlende Migrations automatisch
+"%PYTHON_EXE%" manage.py makemigrations --noinput
 "%PYTHON_EXE%" manage.py migrate --noinput
 
 if "!NEW_INSTALL!"=="0" goto COLLECT
