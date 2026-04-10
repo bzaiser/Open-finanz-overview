@@ -61,7 +61,7 @@ Ein Premium-Erlebnis für Premium-Daten.
 
 1. **Repository klonen**:
    ```bash
-   git clone https://github.com/bzaiser/finanzplan.git
+   git clone https://github.com/bzaiser/Open-finanz-overview.git
    cd finanzplan
    ```
 
