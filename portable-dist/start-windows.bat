@@ -19,12 +19,12 @@ where podman >nul 2>nul
 if %ERRORLEVEL% equ 0 goto AUTO_MACHINE
 
 REM 2. Suche an Standard-Orten fuer podman.exe
-if exist "C:\Program Files\RedHat\Podman\podman.exe" (
-    set DOCKER_CMD="C:\Program Files\RedHat\Podman\podman.exe"
+if exist "%ProgramFiles%\RedHat\Podman\podman.exe" (
+    set DOCKER_CMD="%ProgramFiles%\RedHat\Podman\podman.exe"
     goto AUTO_MACHINE
 )
-if exist "C:\Program Files\Podman Desktop\podman.exe" (
-    set DOCKER_CMD="C:\Program Files\Podman Desktop\podman.exe"
+if exist "%ProgramFiles%\Podman Desktop\podman.exe" (
+    set DOCKER_CMD="%ProgramFiles%\Podman Desktop\podman.exe"
     goto AUTO_MACHINE
 )
 if exist "%LOCALAPPDATA%\Programs\Podman Desktop\podman.exe" (

@@ -11,7 +11,7 @@ where git >nul 2>nul
 if %ERRORLEVEL% equ 0 goto GIT_OK
 
 REM Notsuche an Standard-Orten
-if exist "C:\Program Files\Git\cmd\git.exe" set "PATH=%PATH%;C:\Program Files\Git\cmd"
+if exist "%ProgramFiles%\Git\cmd\git.exe" set "PATH=%PATH%;%ProgramFiles%\Git\cmd"
 where git >nul 2>nul
 if %ERRORLEVEL% equ 0 goto GIT_OK
 
@@ -35,7 +35,7 @@ set "PATH=%SYS_PATH%;%USER_PATH%;C:\Program Files\Git\cmd;C:\Program Files\Git\b
 where git >nul 2>nul
 if %ERRORLEVEL% equ 0 goto GIT_OK
 
-if exist "C:\Program Files\Git\cmd\git.exe" set "PATH=%PATH%;C:\Program Files\Git\cmd"
+if exist "%ProgramFiles%\Git\cmd\git.exe" set "PATH=%PATH%;%ProgramFiles%\Git\cmd"
 where git >nul 2>nul
 if %ERRORLEVEL% equ 0 goto GIT_OK
 
