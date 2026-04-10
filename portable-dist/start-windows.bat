@@ -12,9 +12,19 @@ if %ERRORLEVEL% equ 0 (
     set DOCKER_CMD=podman
     goto AUTO_MACHINE
 ) else (
+    REM Fallback: Suche an verschiedenen Standard-Orten fuer podman.exe
     if exist "C:\Program Files\RedHat\Podman\podman.exe" (
-        echo [INFO] Podman im Standardpfad gefunden. Aktualisiere PATH...
         set "PATH=%PATH%;C:\Program Files\RedHat\Podman"
+        set DOCKER_CMD=podman
+        goto AUTO_MACHINE
+    )
+    if exist "C:\Program Files\Podman Desktop\podman.exe" (
+        set "PATH=%PATH%;C:\Program Files\Podman Desktop"
+        set DOCKER_CMD=podman
+        goto AUTO_MACHINE
+    )
+    if exist "%LOCALAPPDATA%\Programs\Podman Desktop\podman.exe" (
+        set "PATH=%PATH%;%LOCALAPPDATA%\Programs\Podman Desktop"
         set DOCKER_CMD=podman
         goto AUTO_MACHINE
     )
@@ -38,11 +48,11 @@ echo.
 set /p INSTALL_CHOICE="Waehle eine Option [1-3]: "
 
 if "%INSTALL_CHOICE%"=="1" (
-    echo [+] Starte Installation von Podman via winget...
-    winget install --id RedHat.Podman -e --source winget --silent --accept-source-agreements --accept-package-agreements
+    echo [+] Starte Installation von Podman Desktop via winget...
+    winget install --id RedHat.Podman-Desktop -e --source winget --silent --accept-source-agreements --accept-package-agreements
     
     echo [+] Aktualisiere PATH fuer Podman...
-    set "PATH=%PATH%;C:\Program Files\RedHat\Podman"
+    set "PATH=%PATH%;C:\Program Files\RedHat\Podman;C:\Program Files\Podman Desktop;%LOCALAPPDATA%\Programs\Podman Desktop"
     set DOCKER_CMD=podman
     goto AUTO_MACHINE
 )
