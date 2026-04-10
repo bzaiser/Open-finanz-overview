@@ -6,18 +6,15 @@ echo   Finanzplan Dashboard - Setup Assistent
 echo ==========================================
 echo.
 
-:: 1. Check for Git
+REM 1. Check for Git
+where git >nul 2>nul
 if %ERRORLEVEL% neq 0 (
     echo [+] Git wurde nicht gefunden. Starte Installation via winget...
     winget install --id Git.Git -e --source winget --silent --accept-source-agreements --accept-package-agreements
     
-    :: Wir ignorieren hier den Exit-Code von winget, da es oft "fehlschlägt", 
-    :: wenn Git bereits installiert aber nicht im PATH ist (z.B. "Kein Update verfügbar").
-    
-    echo [+] Aktualisiere PATH für diese Sitzung...
+    echo [+] Aktualisiere PATH fuer diese Sitzung...
     set "PATH=%PATH%;C:\Program Files\Git\cmd;C:\Program Files\Git\bin"
     
-    :: Jetzt prüfen wir erneut, ob git erkannt wird
     where git >nul 2>nul
     if %ERRORLEVEL% neq 0 (
         echo.
@@ -29,7 +26,7 @@ if %ERRORLEVEL% neq 0 (
     echo [+] Git erfolgreich erkannt. Weiter geht's...
 )
 
-:: 2. Clone the Repository
+REM 2. Clone the Repository
 if not exist "Open-finanz-overview" (
     echo [+] Klone Repository 'Open-finanz-overview' von GitHub...
     git clone "https://github.com/bzaiser/Open-finanz-overview.git"
@@ -45,7 +42,7 @@ if not exist "Open-finanz-overview" (
     cd ..
 )
 
-:: 3. Handover to internal start script
+REM 3. Handover to internal start script
 echo [+] Starte Dashboard-Setup...
 if exist "Open-finanz-overview\portable-dist\start-windows.bat" (
     cd "Open-finanz-overview"

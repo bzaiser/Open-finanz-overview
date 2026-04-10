@@ -6,7 +6,7 @@ echo   Finanzplan Dashboard - Portable Setup
 echo ==========================================
 echo.
 
-:: Check for Podman first, then Docker
+REM Check for Podman first, then Docker
 where podman >nul 2>nul
 if %ERRORLEVEL% equ 0 (
     set DOCKER_CMD=podman
@@ -26,7 +26,7 @@ if %ERRORLEVEL% equ 0 (
     goto CHECK_ENV
 )
 
-:: --- INSTALLATION ASSISTANT ---
+REM --- INSTALLATION ASSISTANT ---
 echo [INFO] Weder Podman noch Docker wurden auf deinem System gefunden.
 echo Dies ist fuer den Betrieb des Dashboards notwendig.
 echo.
@@ -41,7 +41,7 @@ if "%INSTALL_CHOICE%"=="1" (
     echo [+] Starte Installation von Podman via winget...
     winget install --id RedHat.Podman -e --source winget --silent --accept-source-agreements --accept-package-agreements
     
-    echo [+] Aktualisiere PATH für Podman...
+    echo [+] Aktualisiere PATH fuer Podman...
     set "PATH=%PATH%;C:\Program Files\RedHat\Podman"
     set DOCKER_CMD=podman
     goto AUTO_MACHINE
@@ -75,7 +75,7 @@ pause
 exit /b 0
 
 :AUTO_MACHINE
-:: --- PODMAN MACHINE AUTO-START ---
+REM --- PODMAN MACHINE AUTO-START ---
 if "%DOCKER_CMD%"=="podman" (
     echo [+] Pruefe Podman Maschine...
     podman --version >nul 2>nul
@@ -117,15 +117,15 @@ if not exist .env (
     echo [+] Erster Start erkannt: Starte Setup-Assistent...
     echo.
     
-    :: 1. PORT
+    REM 1. PORT
     set /p WEB_PORT="Welchen Port soll das Dashboard nutzen? [Standard: 8000]: "
     if "!WEB_PORT!"=="" set WEB_PORT=8000
     
-    :: 2. INSTANCE NAME
+    REM 2. INSTANCE NAME
     set /p APP_INSTANCE_NAME="Wie soll deine Instanz heissen? (z.B. Privat) [Standard: Private]: "
     if "!APP_INSTANCE_NAME!"=="" set APP_INSTANCE_NAME=Private
     
-    :: 3. AI PROVIDER
+    REM 3. AI PROVIDER
     echo.
     echo Welchen KI-Assistenten moechtest du nutzen?
     echo [1] Keinen (Standard)
@@ -147,7 +147,7 @@ if not exist .env (
         set /p GROQ_KEY="Bitte gib deinen Groq API-Key ein: "
     )
 
-    :: Write .env file
+    REM Write .env file
     echo # Automatisch generiert durch Setup-Assistent > .env
     echo WEB_PORT=!WEB_PORT! >> .env
     echo APP_INSTANCE_NAME=!APP_INSTANCE_NAME! >> .env
@@ -163,18 +163,18 @@ if not exist .env (
     echo [+] Setup abgeschlossen! .env wurde erstellt.
     echo.
 ) else (
-    :: Load WEB_PORT from .env if it exists
+    REM Load WEB_PORT from .env if it exists
     for /f "tokens=2 delims==" %%a in ('findstr "WEB_PORT" .env') do set WEB_PORT=%%a
 )
 
-:: Ensure db.sqlite3 is a file
+REM Ensure db.sqlite3 is a file
 if not exist db.sqlite3 (
     set NEW_INSTALL=1
     echo [+] Initialisiere Datenbank-Datei...
     type nul > db.sqlite3
 )
 
-:: Start the containers
+REM Start the containers
 echo [+] Nutze %DOCKER_CMD% fuer den Start...
 %DOCKER_CMD% compose up -d
 
@@ -184,7 +184,7 @@ if %ERRORLEVEL% neq 0 (
     exit /b 1
 )
 
-:: Run migrations and seed data on fresh install
+REM Run migrations and seed data on fresh install
 if %NEW_INSTALL% equ 1 (
     echo [+] Erster Start erkannt: Erstelle Datenbank-Tabellen...
     %DOCKER_CMD% exec finanzplan-portable python manage.py migrate --noinput
@@ -197,7 +197,7 @@ echo URL: http://localhost:%WEB_PORT%
 echo Login: demo / demo
 echo.
 
-:: Open browser after a small delay
+REM Open browser after a small delay
 timeout /t 5 /nobreak >nul
 start http://localhost:%WEB_PORT%
 
