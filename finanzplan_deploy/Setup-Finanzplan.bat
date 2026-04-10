@@ -7,7 +7,7 @@ echo ==========================================
 echo.
 
 :: 1. Check for Git
-where git >nul 2>nul
+if %ERRORLEVEL% neq 0 (
     echo [+] Git wurde nicht gefunden. Starte Installation via winget...
     winget install --id Git.Git -e --source winget --silent --accept-source-agreements --accept-package-agreements
     
@@ -39,7 +39,10 @@ if not exist finanzplan (
         exit /b 1
     )
 ) else (
-    echo [+] Ordner 'finanzplan' existiert bereits.
+    echo [+] Ordner 'finanzplan' existiert bereits. Suche nach Updates...
+    cd finanzplan
+    git pull
+    cd ..
 )
 
 :: 3. Handover to internal start script
