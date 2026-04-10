@@ -83,13 +83,14 @@ if exist "native-dist\setup-native.bat" (
     exit /b 1
 )
 
-REM DEKSTOP VERKNÜPFUNG ERSTELLEN
+REM DESKTOP VERKNÜPFUNG ERSTELLEN
 echo.
 set /p SHORTCUT_CHOICE="Moechtest du eine Verknuepfung auf dem Desktop erstellen? (J/N): "
 if /i "!SHORTCUT_CHOICE!"=="J" (
     echo [+] Erstelle Desktop-Verknuepfung...
-    powershell -Command "$s=(New-Object -COM WScript.Shell).CreateShortcut([System.IO.Path]::Combine([Environment]::GetFolderPath('Desktop'), 'Finanzplan Dashboard.lnk'));$s.TargetPath='%CD%\Finanzplan-Mobil.bat';$s.WorkingDirectory='%CD%';$s.Save()"
-    echo [+] Verknuepfung erstellt!
+    REM Wir nutzen hier eine stabilere Syntax mit Pause falls es schiefgeht
+    powershell -NoProfile -Command "$desktop = [Environment]::GetFolderPath('Desktop'); $path = Join-Path $desktop 'Finanzplan Dashboard.lnk'; $ws = New-Object -ComObject WScript.Shell; $s = $ws.CreateShortcut($path); $s.TargetPath = '%CD%\Finanzplan-Mobil.bat'; $s.WorkingDirectory = '%CD%'; $s.Save(); if ($?) { Write-Host 'Verknuepfung erfolgreich erstellt!' -ForegroundColor Green } else { Write-Host 'Fehler beim Erstellen der Verknuepfung!' -ForegroundColor Red; pause }"
+    echo.
 )
 
 :START_APP
