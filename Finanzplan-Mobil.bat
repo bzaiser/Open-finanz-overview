@@ -42,12 +42,14 @@ if exist "native-dist\setup-native.bat" (
     exit /b 1
 )
 
-REM --- PRIME 2.0 DESKTOP ICONS ---
+REM --- PRIME 2.0 DESKTOP ICONS (SYSTEM-ICON EDITION) ---
 echo.
 set /p ICON_CHOICE="Prime-Desktop-Icons erstellen? (J/N): "
 if /i "!ICON_CHOICE!"=="J" (
     echo [+] Erstelle Premium-Verknuepfungen...
-    powershell -NoProfile -Command "$d = [Environment]::GetFolderPath('Desktop'); $ws = New-Object -ComObject WScript.Shell; $icon = '%CD%\native-dist\logo-prime.png'; $s1 = $ws.CreateShortcut((Join-Path $d 'Finanzplan Dashboard.lnk')); $s1.TargetPath = '%CD%\native-dist\start-dashboard.bat'; $s1.WorkingDirectory = '%CD%\native-dist'; $s1.IconLocation = $icon; $s1.Save(); $s2 = $ws.CreateShortcut((Join-Path $d 'Finanzplan Wartung.lnk')); $s2.TargetPath = '%CD%\..\Finanzplan-Mobil.bat'; $s2.WorkingDirectory = '%CD%\..'; $s2.Save(); Write-Host '[+] Premium Duo-Icons erstellt!' -ForegroundColor Green"
+    REM Wir nutzen shell32.dll Icons, da Windows keine PNGs in Verknuepfungen erlaubt. 
+    REM 167 = Goldmuenze, 71 = Zahnrad
+    powershell -NoProfile -Command "$d = [Environment]::GetFolderPath('Desktop'); $ws = New-Object -ComObject WScript.Shell; $s1 = $ws.CreateShortcut((Join-Path $d 'Finanzplan Dashboard.lnk')); $s1.TargetPath = '%CD%\native-dist\start-dashboard.bat'; $s1.WorkingDirectory = '%CD%\native-dist'; $s1.IconLocation = 'shell32.dll, 167'; $s1.Save(); $s2 = $ws.CreateShortcut((Join-Path $d 'Finanzplan Wartung.lnk')); $s2.TargetPath = '%CD%\..\Finanzplan-Mobil.bat'; $s2.WorkingDirectory = '%CD%\..'; $s2.IconLocation = 'shell32.dll, 71'; $s2.Save(); Write-Host '[+] Premium Duo-Icons erstellt!' -ForegroundColor Green"
 )
 
 :START_APP
