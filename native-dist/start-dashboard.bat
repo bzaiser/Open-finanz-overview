@@ -51,7 +51,7 @@ REM Intelligente Prüfung: Existiert der Demo-Nutzer?
 "%PYTHON_EXE%" manage.py shell -c "from django.contrib.auth import get_user_model; User = get_user_model(); print('USER_OK' if User.objects.filter(username='demo').exists() else 'USER_MISSING')" | findstr "USER_MISSING" > nul
 if %errorlevel% equ 0 (
     echo [+] Demo-Benutzer fehlt oder Datenbank leer. Erstelle Demo-Daten...
-    "%PYTHON_EXE%" manage.py seed_portable --noinput
+    "%PYTHON_EXE%" manage.py seed_portable
 )
 
 :COLLECT
