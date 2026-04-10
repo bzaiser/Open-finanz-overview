@@ -113,6 +113,10 @@ DATABASES = {
     }
 }
 
+# Performance tuning for Docker (WAL Mode)
+if os.getenv('RUNNING_IN_DOCKER'):
+    DATABASES['default']['OPTIONS']['init_command'] = 'PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL;'
+
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
