@@ -7,7 +7,6 @@ echo ==========================================
 echo.
 echo Dieses Skript konfiguriert eine isolierte 
 echo Python-Umgebung in diesem Ordner.
-echo Es werden ca. 30MB heruntergeladen.
 echo.
 pause
 
@@ -15,14 +14,16 @@ REM Absolute Pfade aufloesen
 pushd "%~dp0.."
 set "PROJECT_ROOT=%CD%"
 popd
+
 set "NATIVE_DIR=%~dp0"
 set "PYTHON_DIR=%~dp0python-embed"
+set "PYTHON_EXE=%PYTHON_DIR%\python.exe"
 set "GET_PIP_URL=https://bootstrap.pypa.io/get-pip.py"
 set "PYTHON_ZIP_URL=https://www.python.org/ftp/python/3.12.2/python-3.12.2-embed-amd64.zip"
 
 if not exist "%PYTHON_DIR%" mkdir "%PYTHON_DIR%"
 
-if exist "%PYTHON_DIR%\python.exe" (
+if exist "%PYTHON_EXE%" (
     echo [+] Python bereits vorhanden. Springe zum Setup...
     goto PIP_CHECK
 )
@@ -40,7 +41,6 @@ for %%i in ("%PYTHON_DIR%\python3*.zip") do set "ZIP_NAME=%%~nxi"
 for %%f in ("%PYTHON_DIR%\python3*._pth") do (
     echo !ZIP_NAME!> "%%f"
     echo .>> "%%f"
-    REM Wir fuegen den Projekt-Root zum Pfad hinzu, damit config gefunden wird
     echo ..>> "%%f"
     echo ../..>> "%%f"
     echo import site>> "%%f"
@@ -56,7 +56,7 @@ echo [+] Lade get-pip.py herunter...
 bitsadmin /transfer "PipDownload" "%GET_PIP_URL%" "%PYTHON_DIR%\get-pip.py"
 
 echo [+] Installiere pip...
-"%PYTHON_DIR%\python.exe" "%PYTHON_DIR%\get-pip.py" --no-warn-script-location
+"%PYTHON_EXE%" "%PYTHON_DIR%\get-pip.py" --no-warn-script-location
 del "%PYTHON_DIR%\get-pip.py"
 
 :INSTALL_REQS
@@ -64,7 +64,7 @@ echo [+] Bereite isolierte Installation vor...
 
 REM Wir installieren waitress und whitenoise direkt
 echo [+] Installiere native Server-Komponenten...
-"%PYTHON_DIR%\python.exe" -m pip install --no-warn-script-location waitress==3.0.1 whitenoise==6.6.0
+"%PYTHON_EXE%" -m pip install --no-warn-script-location waitress==3.0.1 whitenoise==6.6.0
 
 REM Wir erstellen eine temporaere requirements-Datei fuer die lokale Installation,
 REM um den Tippfehler 'Django==6.0.2' auf 'Django==5.0.2' zu korrigieren.
