@@ -7,18 +7,27 @@ echo ==========================================
 echo.
 
 REM --- DETECTION ---
+set DOCKER_CMD=podman
+
+REM 1. Prüfe ob podman bereits im PATH ist
 where podman >nul 2>nul
-if %ERRORLEVEL% equ 0 set DOCKER_CMD=podman
 if %ERRORLEVEL% equ 0 goto AUTO_MACHINE
 
-if exist "C:\Program Files\RedHat\Podman\podman.exe" set "PATH=%PATH%;C:\Program Files\RedHat\Podman"
-if exist "C:\Program Files\Podman Desktop\podman.exe" set "PATH=%PATH%;C:\Program Files\Podman Desktop"
-if exist "%LOCALAPPDATA%\Programs\Podman Desktop\podman.exe" set "PATH=%PATH%;%LOCALAPPDATA%\Programs\Podman Desktop"
+REM 2. Suche an Standard-Orten fuer podman.exe
+if exist "C:\Program Files\RedHat\Podman\podman.exe" (
+    set DOCKER_CMD="C:\Program Files\RedHat\Podman\podman.exe"
+    goto AUTO_MACHINE
+)
+if exist "C:\Program Files\Podman Desktop\podman.exe" (
+    set DOCKER_CMD="C:\Program Files\Podman Desktop\podman.exe"
+    goto AUTO_MACHINE
+)
+if exist "%LOCALAPPDATA%\Programs\Podman Desktop\podman.exe" (
+    set DOCKER_CMD="%LOCALAPPDATA%\Programs\Podman Desktop\podman.exe"
+    goto AUTO_MACHINE
+)
 
-where podman >nul 2>nul
-if %ERRORLEVEL% equ 0 set DOCKER_CMD=podman
-if %ERRORLEVEL% equ 0 goto AUTO_MACHINE
-
+REM 3. Fallback auf Docker, falls kein Podman gefunden wurde
 where docker >nul 2>nul
 if %ERRORLEVEL% equ 0 set DOCKER_CMD=docker
 if %ERRORLEVEL% equ 0 goto CHECK_ENV
@@ -42,9 +51,9 @@ goto CHECK_ENV
 :INSTALL_PODMAN
 echo [+] Starte Installation von Podman Desktop via winget...
 winget install --id RedHat.Podman-Desktop -e --source winget --silent --accept-source-agreements --accept-package-agreements
-echo [+] Aktualisiere PATH fuer Podman...
-set "PATH=%PATH%;C:\Program Files\RedHat\Podman;C:\Program Files\Podman Desktop;%LOCALAPPDATA%\Programs\Podman Desktop"
-set DOCKER_CMD=podman
+
+REM Pfad nach Installation erzwingen und absolut setzen
+if exist "C:\Program Files\RedHat\Podman\podman.exe" set DOCKER_CMD="C:\Program Files\RedHat\Podman\podman.exe"
 goto AUTO_MACHINE
 
 :INSTALL_DOCKER
@@ -75,12 +84,14 @@ exit /b 0
 
 :AUTO_MACHINE
 REM --- PODMAN MACHINE AUTO-START ---
-if not "%DOCKER_CMD%"=="podman" goto CHECK_ENV
+if not "%DOCKER_CMD%"=="docker" goto PODMAN_INIT
 
+goto CHECK_ENV
+
+:PODMAN_INIT
 echo [+] Pruefe Podman Maschine...
-podman --version >nul 2>nul
-if %ERRORLEVEL% neq 0 set "PATH=%PATH%;C:\Program Files\RedHat\Podman"
 
+REM Nutze den absoluten Befehl fuer alle Podman Aktionen
 %DOCKER_CMD% machine list --format "{{.Name}}" | findstr /r "." >nul
 if %ERRORLEVEL% equ 0 goto START_MACHINE
 
