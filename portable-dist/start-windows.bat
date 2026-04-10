@@ -9,7 +9,7 @@ echo.
 REM --- DETECTION ---
 set DOCKER_CMD=podman
 
-REM 1. Prüfe ob podman bereits im PATH ist
+REM 1. Pruefe ob podman bereits im PATH ist
 where podman >nul 2>nul
 if %ERRORLEVEL% equ 0 goto AUTO_MACHINE
 
@@ -37,7 +37,7 @@ echo [INFO] Weder Podman noch Docker wurden auf deinem System gefunden.
 echo Dies ist fuer den Betrieb des Dashboards notwendig.
 echo.
 echo Wie moechtest du fortfahren?
-echo [1] Podman Desktop installieren (Empfohlen, Open Source)
+echo [1] Podman (Engine + Desktop GUI) installieren (Empfohlen)
 echo [2] Docker Desktop installieren (Kommerziell/Enterprise)
 echo [3] Beenden und manuell installieren
 echo.
@@ -49,7 +49,10 @@ if "%INSTALL_CHOICE%"=="3" goto EXIT_MANUAL
 goto CHECK_ENV
 
 :INSTALL_PODMAN
-echo [+] Starte Installation von Podman Desktop via winget...
+echo [+] Starte Installation von Podman Engine (CLI) via winget...
+winget install --id RedHat.Podman -e --source winget --silent --accept-source-agreements --accept-package-agreements
+
+echo [+] Starte Installation von Podman Desktop (GUI) via winget...
 winget install --id RedHat.Podman-Desktop -e --source winget --silent --accept-source-agreements --accept-package-agreements
 
 REM Pfad nach Installation erzwingen und absolut setzen
