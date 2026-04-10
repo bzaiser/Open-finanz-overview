@@ -52,30 +52,21 @@ Ein Premium-Erlebnis für Premium-Daten.
 
 ## 🚀 Erste Schritte
 
-### Voraussetzungen
+Wir bieten zwei Wege an, dein Finanz-Cockpit zu betreiben, je nach deiner Umgebung.
 
-- Python 3.10+
-- Docker & Docker Compose (Empfohlen)
+### Option A: Einfacher Desktop (Windows Native)
+**Ideal für**: "Normale" Nutzer unter Windows, die eine Ein-Klick-Lösung ohne Docker/WSL2 suchen.
+1. **Download/Klonen**: Lade das Repository herunter.
+2. **Setup**: Gehe in den Ordner `native-dist/` und starte `setup-native.bat` (nur beim ersten Mal).
+3. **Start**: Klicke doppelt auf `start-dashboard.bat`.
 
-### Schnelles Deployment
+### Option B: Server/NAS (Docker & Podman)
+**Ideal für**: Fortgeschrittene Nutzer, NAS-Systeme (Synology/QNAP) oder Linux-Server.
+1. **Klonen**: `git clone https://github.com/bzaiser/Open-finanz-overview.git`.
+2. **Konfiguration**: `cp .env.example .env`.
+3. **Start**: `./update-fast.sh` (oder `docker-compose up -d`).
 
-1. **Repository klonen**:
-   ```bash
-   git clone https://github.com/bzaiser/Open-finanz-overview.git
-   cd finanzplan
-   ```
-
-2. **Umgebung konfigurieren**:
-   ```bash
-   cp .env.example .env
-   # Setze APP_INSTANCE_NAME, LLM_PROVIDER etc.
-   ```
-
-3. **Mit Docker starten**:
-   ```bash
-   ./update-fast.sh
-   ```
-   Greife auf dein Cockpit unter `http://localhost:8000` zu.
+---
 
 ---
 

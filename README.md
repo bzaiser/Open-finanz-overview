@@ -52,30 +52,21 @@ A premium experience for premium data.
 
 ## 🚀 Getting Started
 
-### Prerequisites
+We offer two ways to run your financial cockpit, depending on your environment.
 
-- Python 3.10+
-- Docker & Docker Compose (Recommended)
+### Option A: Easy Desktop (Windows Native)
+**Best for**: "Normal" users on Windows who want zero installation and no Docker/WSL2.
+1. **Download/Clone**: Get the repository.
+2. **Setup**: Go to `native-dist/` and run `setup-native.bat` (first time only).
+3. **Launch**: Run `start-dashboard.bat`.
 
-### Fast Deployment
+### Option B: Server/NAS (Docker & Podman)
+**Best for**: Advanced users, NAS systems (Synology/QNAP), or Linux servers.
+1. **Clone**: `git clone https://github.com/bzaiser/Open-finanz-overview.git`.
+2. **Config**: `cp .env.example .env`.
+3. **Launch**: `./update-fast.sh` (or `docker-compose up -d`).
 
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/bzaiser/Open-finanz-overview.git
-   cd finanzplan
-   ```
-
-2. **Environment Configuration**:
-   ```bash
-   cp .env.example .env
-   # Set your APP_INSTANCE_NAME, LLM_PROVIDER, etc.
-   ```
-
-3. **Launch with Docker**:
-   ```bash
-   ./update-fast.sh
-   ```
-   Access your cockpit at `http://localhost:8000`.
+---
 
 ---
 
