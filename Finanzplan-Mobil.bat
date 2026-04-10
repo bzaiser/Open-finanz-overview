@@ -7,34 +7,19 @@ echo ==========================================
 echo.
 echo Dieses Skript laedt das Programm herunter 
 echo und richtet alles fuer dich ein. 
-echo Keine Installation notwendig!
 echo.
 pause
 
 set "DOWNLOAD_URL=https://github.com/bzaiser/Open-finanz-overview/archive/refs/heads/main.zip"
 set "TEMP_ZIP=app_download.zip"
 set "TARGET_DIR=Finanzplan-Dashboard"
-set "BACKUP_DIR=backup_temp"
 
 if exist "%TARGET_DIR%" (
     echo [+] Programm-Ordner existiert bereits.
-    echo [+] Moechtest du das Programm auf die neueste Version aktualisieren?
-    echo [WICHTIG] Deine Datenbank, Einstellungen und Python bleiben erhalten.
+    echo [+] Moechtest du nach Programm-Updates suchen?
+    echo [WICHTIG] Deine Datenbank und Python bleiben dabei erhalten.
     set /p UPDATE_CHOICE="Aktualisieren? (J/N): "
     if /i "!UPDATE_CHOICE!"=="J" (
-        echo [+] Erstelle Backup von Datenbank, Einstellungen und Python...
-        if not exist "%BACKUP_DIR%" mkdir "%BACKUP_DIR%"
-        if exist "%TARGET_DIR%\db.sqlite3" move /Y "%TARGET_DIR%\db.sqlite3" "%BACKUP_DIR%\"
-        if exist "%TARGET_DIR%\.env" move /Y "%TARGET_DIR%\.env" "%BACKUP_DIR%\"
-        
-        REM Python-Ordner sichern, damit er nicht neu geladen werden muss
-        if exist "%TARGET_DIR%\native-dist\python-embed" (
-            echo [+] Parke Python-Umgebung zwischen...
-            move /Y "%TARGET_DIR%\native-dist\python-embed" "%BACKUP_DIR%\"
-        )
-        
-        echo [+] Entferne alte Programm-Dateien...
-        rd /S /Q "%TARGET_DIR%"
         goto DOWNLOAD
     )
     goto START_APP
@@ -50,30 +35,16 @@ powershell -command "Expand-Archive -Path '%TEMP_ZIP%' -DestinationPath 'temp_ex
 REM GitHub ZIPs haben einen Unterordner (z.B. Open-finanz-overview-main)
 if not exist "%TARGET_DIR%" mkdir "%TARGET_DIR%"
 for /d %%D in (temp_extract\*) do (
-    xcopy /E /I /Y "%%D\*" "%TARGET_DIR%\"
+    echo [+] Kopiere neue Dateien (ueberschreiben)...
+    xcopy /E /I /Y /Q "%%D\*" "%TARGET_DIR%\"
 )
 
 echo [+] Aufraeumen...
 rd /S /Q temp_extract
 del "%TEMP_ZIP%"
 
-REM Restore Backup if exists
-if exist "%BACKUP_DIR%" (
-    echo [+] Stelle Datenbank, Einstellungen und Python wieder her...
-    if exist "%BACKUP_DIR%\db.sqlite3" move /Y "%BACKUP_DIR%\db.sqlite3" "%TARGET_DIR%\"
-    if exist "%BACKUP_DIR%\.env" move /Y "%BACKUP_DIR%\.env" "%TARGET_DIR%\"
-    
-    REM Python zurückbewegen
-    if exist "%BACKUP_DIR%\python-embed" (
-        if not exist "%TARGET_DIR%\native-dist" mkdir "%TARGET_DIR%\native-dist"
-        move /Y "%BACKUP_DIR%\python-embed" "%TARGET_DIR%\native-dist\"
-    )
-    
-    rd /S /Q "%BACKUP_DIR%"
-)
-
 :SETUP_NATIVE
-echo [+] Starte System-Einrichtung (Python)...
+echo [+] Starte System-Pruefung...
 cd /d "%TARGET_DIR%"
 if exist "native-dist\setup-native.bat" (
     call "native-dist\setup-native.bat"
@@ -84,12 +55,12 @@ if exist "native-dist\setup-native.bat" (
 )
 
 REM DESKTOP VERKNÜPFUNG ERSTELLEN
+if exist "%USERPROFILE%\Desktop\Finanzplan Dashboard.lnk" goto START_APP
 echo.
 set /p SHORTCUT_CHOICE="Moechtest du eine Verknuepfung auf dem Desktop erstellen? (J/N): "
 if /i "!SHORTCUT_CHOICE!"=="J" (
     echo [+] Erstelle Desktop-Verknuepfung...
-    REM Das Shortcut-Ziel ist jetzt direkt die start-dashboard.bat fuer schnellen Zugriff!
-    powershell -NoProfile -Command "$desktop = [Environment]::GetFolderPath('Desktop'); $path = Join-Path $desktop 'Finanzplan Dashboard.lnk'; $ws = New-Object -ComObject WScript.Shell; $s = $ws.CreateShortcut($path); $s.TargetPath = '%CD%\native-dist\start-dashboard.bat'; $s.WorkingDirectory = '%CD%\native-dist'; $s.IconLocation = '%CD%\native-dist\logo-prime.png'; $s.Save(); if ($?) { Write-Host 'Schnellstart-Icon erfolgreich erstellt!' -ForegroundColor Green } else { Write-Host 'Fehler beim Erstellen der Verknuepfung!' -ForegroundColor Red; pause }"
+    powershell -NoProfile -Command "$desktop = [Environment]::GetFolderPath('Desktop'); $path = Join-Path $desktop 'Finanzplan Dashboard.lnk'; $ws = New-Object -ComObject WScript.Shell; $s = $ws.CreateShortcut($path); $s.TargetPath = '%CD%\native-dist\start-dashboard.bat'; $s.WorkingDirectory = '%CD%\native-dist'; $s.IconLocation = '%CD%\native-dist\logo-prime.png'; $s.Save(); if ($?) { Write-Host 'Schnellstart-Icon erstellt!' -ForegroundColor Green } else { Write-Host 'Fehler beim Erstellen der Verknuepfung!' -ForegroundColor Red; pause }"
     echo.
 )
 
