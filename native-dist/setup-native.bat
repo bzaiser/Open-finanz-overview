@@ -17,12 +17,13 @@ popd
 
 set "NATIVE_DIR=%~dp0"
 set "PYTHON_DIR=%~dp0python-embed"
+set "PYTHON_EXE=%PYTHON_DIR%\python.exe"
 set "GET_PIP_URL=https://bootstrap.pypa.io/get-pip.py"
 set "PYTHON_ZIP_URL=https://www.python.org/ftp/python/3.12.2/python-3.12.2-embed-amd64.zip"
 
 if not exist "%PYTHON_DIR%" mkdir "%PYTHON_DIR%"
 
-if exist "%PYTHON_DIR%\python.exe" (
+if exist "%PYTHON_EXE%" (
     echo [+] Python bereits vorhanden. Springe zum Setup...
     goto PIP_CHECK
 )
@@ -34,28 +35,17 @@ echo [+] Entpacke Python...
 powershell -command "Expand-Archive -Path '%NATIVE_DIR%\python.zip' -DestinationPath '%PYTHON_DIR%' -Force"
 del "%NATIVE_DIR%\python.zip"
 
-echo [+] Konfiguriere Python-Pfad...
-REM Aktiviere site-packages im embeddable Python
-REM Wir suchen die .zip Datei im Ordner, um den Namen fuer die .pth Datei zu finden
-set "ZIP_NAME="
+echo [+] Konfiguriere Python-Basis...
+REM Site-Packages aktivieren. 
+REM Die Pfad-Logik fuer 'config' wird jetzt dynamisch vom Launcher erledigt.
 for %%i in ("%PYTHON_DIR%\python3*.zip") do set "ZIP_NAME=%%~nxi"
-
-if "!ZIP_NAME!"=="" (
-    echo [FEHLER] Python-ZIP nicht gefunden. Entpacken fehlgeschlagen?
-    pause
-    exit /b 1
-)
-
 for %%f in ("%PYTHON_DIR%\python3*._pth") do (
     echo !ZIP_NAME!> "%%f"
     echo .>> "%%f"
-    echo ..>> "%%f"
-    echo ../..>> "%%f"
     echo import site>> "%%f"
 )
 
 :PIP_CHECK
-set "PYTHON_EXE=%PYTHON_DIR%\python.exe"
 if not exist "%PYTHON_EXE%" (
     echo [FEHLER] python.exe nicht gefunden in %PYTHON_DIR%
     pause
