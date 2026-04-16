@@ -97,8 +97,13 @@ CACHES = {
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-# Set the database correctly for docker volume persistency
-if os.getenv('RUNNING_IN_DOCKER'):
+# Set the database correctly for docker volume persistency or mobile app paths
+if os.getenv('FINANZPLAN_DB_PATH'):
+    db_path = Path(os.getenv('FINANZPLAN_DB_PATH'))
+elif os.getenv('RUNNING_IN_MOBILE_APP'):
+    # On mobile, we use the specific subdirectory to keep things isolated (Desktop fallback)
+    db_path = BASE_DIR / 'mobile-app' / 'db.sqlite3'
+elif os.getenv('RUNNING_IN_DOCKER'):
     db_path = BASE_DIR / 'data' / 'db.sqlite3'
 else:
     db_path = BASE_DIR / 'db.sqlite3'
@@ -205,5 +210,24 @@ OLLAMA_MODEL = os.getenv('OLLAMA_MODEL', 'llama3')
 
 # Overrides for heavy bulk edits
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
+
+# Reverse Proxy / SSL Settings
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
+
+# Production Security Härtung (Active when DEBUG=False)
+if not DEBUG:
+    # Cookies only via HTTPS
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_SECURE = True
+    
+    # Header security
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    
+    # Ensure our primary domain is always in the trusted origins if not already there
+    MYDS_DOMAIN = 'https://finanz.zaisers.myds.me'
+    if MYDS_DOMAIN not in CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS.append(MYDS_DOMAIN)
 
 X_FRAME_OPTIONS = "SAMEORIGIN"

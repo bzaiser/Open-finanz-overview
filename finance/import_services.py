@@ -11,6 +11,7 @@ from .llm import classify_transactions
 from django.conf import settings
 from django.core.cache import cache
 import hashlib
+from .utils import safe_float, safe_int
 
 logger = logging.getLogger(__name__)
 
@@ -152,7 +153,7 @@ class ExcelParserService:
             
             def clean_amount(val):
                 if pd.isna(val) or val == '': return Decimal('0.00')
-                if isinstance(val, (int, float, Decimal)): return Decimal(str(round(float(val), 2)))
+                if isinstance(val, (int, float, Decimal)): return Decimal(str(round(safe_float(val), 2)))
                 s = str(val).strip()
                 s = re.sub(r'[^\d,.€$\-]', '', s)
                 s = s.replace('€', '').replace('$', '').strip()
@@ -281,7 +282,7 @@ class ExcelParserService:
                     self._log(batch, f"Sende {len(llm_representative_items)} neue Händler-Pakete an die KI...")
                 
                 # Prepare data for LLM
-                llm_input = [{"id": i, "description": item['description'], "amount": float(item['total_amount'])} for i, item in enumerate(llm_representative_items)]
+                llm_input = [{"id": i, "description": item['description'], "amount": safe_float(item['total_amount'])} for i, item in enumerate(llm_representative_items)]
                 all_categories = list(Category.objects.all())
                 cat_list = [{"id": c.id, "name": c.name, "slug": c.slug} for c in all_categories]
                 
@@ -490,7 +491,7 @@ class ExcelParserService:
             data['description'] = display_desc
             groups.append(data)
 
-        groups.sort(key=lambda x: (x['latest_date'], -abs(float(x['total_amount']))), reverse=True)
+        groups.sort(key=lambda x: (x['latest_date'], -abs(safe_float(x['total_amount']))), reverse=True)
         return groups
 
     def _detect_columns(self, df):

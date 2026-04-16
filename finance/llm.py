@@ -3,6 +3,7 @@ from django.conf import settings
 import json
 import logging
 import requests
+from .utils import safe_float
 
 logger = logging.getLogger(__name__)
 
@@ -141,7 +142,7 @@ def classify_with_groq(transactions, categories):
             return {str(item['id']): {
                 'category_slug': item.get('category_slug'),
                 'reasoning': item.get('reasoning'),
-                'confidence': float(item.get('confidence', 0.8))
+                'confidence': safe_float(item.get('confidence', 0.8), 0.8)
             } for item in result_data}, None
         except Exception as e:
             if attempt == 2:
@@ -234,7 +235,7 @@ def classify_with_ollama(transactions, categories):
             return {str(item['id']): {
                 'category_slug': item.get('category_slug'),
                 'reasoning': item.get('reasoning'),
-                'confidence': float(item.get('confidence', 0.8))
+                'confidence': safe_float(item.get('confidence', 0.8), 0.8)
             } for item in result_data}, None
         elif isinstance(result_data, dict):
              # Falls die KI die Liste in ein Feld wie 'transactions' packt
@@ -242,13 +243,13 @@ def classify_with_ollama(transactions, categories):
                  return {str(item['id']): {
                     'category_slug': item.get('category_slug'),
                     'reasoning': item.get('reasoning'),
-                    'confidence': float(item.get('confidence', 0.8))
+                    'confidence': safe_float(item.get('confidence', 0.8), 0.8)
                 } for item in result_data['transactions']}, None
              # Falls das oberste Level direkt die IDs sind
              return {str(k): {
                 'category_slug': v.get('category_slug'),
                 'reasoning': v.get('reasoning'),
-                'confidence': float(v.get('confidence', 0.8))
+                'confidence': safe_float(v.get('confidence', 0.8), 0.8)
             } for k, v in result_data.items() if isinstance(v, dict)}, None
         
         return None, "Ollama lieferte kein gültiges JSON-Array."
