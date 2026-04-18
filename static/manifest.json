@@ -1,0 +1,17 @@
+{
+  "name": "Finanzplan",
+  "short_name": "Finanzplan",
+  "description": "Premium Finanzplan Dashboard",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0d1117",
+  "theme_color": "#008080",
+  "icons": [
+    {
+      "src": "/static/img/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
