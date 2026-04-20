@@ -165,7 +165,7 @@ def dashboard_view(request):
                 'id': char_id, 
                 'width': char_def['default_width'], 
                 'height': char_def['default_height'], 
-                'visible': False, 
+                'visible': True, 
                 'order': 99,
                 'bg_color': '#ffffff',
                 'text_color': '#212529'
