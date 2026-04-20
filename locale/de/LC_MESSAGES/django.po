@@ -2152,3 +2152,15 @@ msgstr "Hilfe & Details"
 
 msgid "HELP_HEADER_SUBTEXT"
 msgstr "Hintergründe zu den Berechnungen, dem Bank-Import und der Dashboard-Konfiguration."
+
+msgid "Net Worth (Nominal)"
+msgstr "Gesamtvermögen (Nominal)"
+
+msgid "Net Worth (Real)"
+msgstr "Gesamtvermögen (Real)"
+
+msgid "Real Estate (Nominal)"
+msgstr "Immobilien (Nominal)"
+
+msgid "Real Estate (Real)"
+msgstr "Immobilien (Real)"
