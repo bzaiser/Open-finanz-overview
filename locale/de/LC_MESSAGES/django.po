@@ -2165,4 +2165,57 @@ msgstr "Immobilien (Nominal)"
 msgid "Real Estate (Real)"
 msgstr "Immobilien (Real)"
 
+msgid "Teaser Interest Rate (%)"
+msgstr "Aktions-Zinssatz (%)"
+
+msgid "Teaser Rate Expiry Date"
+msgstr "Gültig bis"
+
+msgid "Higher promotional interest rate (e.g. for new customers)"
+msgstr "Erhöhter Zinssatz für Neukunden (Lockvogel-Angebot)"
+
+msgid "Date when the teaser rate expires and falls back to the standard growth rate"
+msgstr "Datum, an dem der Aktionszins endet und auf den Basis-Zins zurückfällt"
+
+msgid "Important Dates & Deadlines"
+msgstr "Wichtige Termine & Fristen"
+
+msgid "Categorisation"
+msgstr "Kategorie"
+
+msgid "Event"
+msgstr "Ereignis"
+
+msgid "End of Loan"
+msgstr "Kredit-Ende"
+
+msgid "End of Interest Lock"
+msgstr "Ende Zinsbindung"
+
+msgid "Start of Payout"
+msgstr "Beginn Auszahlung"
+
+msgid "End of Contribution"
+msgstr "Ende Einzahlung"
+
+msgid "Teaser Rate Expires"
+msgstr "Aktionszins läuft aus"
+
+msgid "Planned Sale"
+msgstr "Geplanter Verkauf"
+
+msgid "End of Cash Flow"
+msgstr "Ende Cashflow"
+
+msgid "No upcoming important dates."
+msgstr "Keine anstehenden wichtigen Termine."
+
+msgid "Teaser"
+msgstr "Aktion"
+
+msgid "Status"
+msgstr "Status"
+
+
+
 
