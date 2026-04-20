@@ -87,61 +87,59 @@
                     </th>
                 </tr>
             </thead>
-            <tbody style="border-top: 1px solid var(--app-table-border-color) !important;">
-                <template x-for="(group, gIdx) in groupedItems" :key="group.name">
-                    <template x-if="true">
-                        <tbody class="border-0">
-                            <!-- Group Header -->
-                            <tr class="cursor-pointer" @click="collapsedGroups[group.name] = !collapsedGroups[group.name]"
-                                :class="{
-                                    'bg-danger bg-opacity-25': group.maxStatus === 'danger',
-                                    'bg-warning bg-opacity-10': group.maxStatus === 'warning',
-                                    'bg-light bg-opacity-10': group.maxStatus === 'info'
-                                }" style="border-bottom: 1px solid var(--app-table-border-color) !important;">
-                                <td colspan="2" class="py-2 px-3 fw-bold">
-                                    <i class="bi me-2" :class="collapsedGroups[group.name] ? 'bi-chevron-right' : 'bi-chevron-down'"></i>
-                                    <span x-text="group.name"></span>
-                                    <span class="badge rounded-pill ms-2" 
-                                          :class="group.maxStatus === 'danger' ? 'bg-danger' : (group.maxStatus === 'warning' ? 'bg-warning text-dark' : 'bg-secondary')"
-                                          x-text="group.items.length"></span>
-                                </td>
-                                <td class="text-end px-3">
-                                    <i x-show="group.maxStatus === 'danger'" class="bi bi-exclamation-triangle-fill text-danger"></i>
+
+            <template x-for="(group, gIdx) in groupedItems" :key="group.name">
+                <tbody class="border-0" style="border-top: 1px solid var(--app-table-border-color) !important;">
+                    <!-- Group Header -->
+                    <tr class="cursor-pointer" @click="collapsedGroups[group.name] = !collapsedGroups[group.name]"
+                        :class="{
+                            'bg-danger bg-opacity-25': group.maxStatus === 'danger',
+                            'bg-warning bg-opacity-10': group.maxStatus === 'warning',
+                            'bg-light bg-opacity-10': group.maxStatus === 'info'
+                        }" style="border-bottom: 1px solid var(--app-table-border-color) !important;">
+                        <td colspan="2" class="py-2 px-3 fw-bold">
+                            <i class="bi me-2" :class="collapsedGroups[group.name] ? 'bi-chevron-right' : 'bi-chevron-down'"></i>
+                            <span x-text="group.name"></span>
+                            <span class="badge rounded-pill ms-2" 
+                                    :class="group.maxStatus === 'danger' ? 'bg-danger' : (group.maxStatus === 'warning' ? 'bg-warning text-dark' : 'bg-secondary')"
+                                    x-text="group.items.length"></span>
+                        </td>
+                        <td class="text-end px-3">
+                            <i x-show="group.maxStatus === 'danger'" class="bi bi-exclamation-triangle-fill text-danger"></i>
+                        </td>
+                    </tr>
+                    <!-- Group Items -->
+                    <template x-if="!collapsedGroups[group.name]">
+                        <template x-for="(item, iIdx) in group.items" :key="iIdx">
+                            <tr :class="{
+                                'table-danger': item.status === 'danger' || item.status === 'urgent',
+                                'table-warning': item.status === 'warning'
+                            }" style="border-bottom: 1px solid var(--app-table-border-color) !important;">
+                                <td class="py-2 px-3 border-0 font-monospace fw-bold ps-4" x-text="item.date"></td>
+                                <td class="py-2 px-3 border-0" colspan="2">
+                                    <i class="bi me-1" :class="{
+                                        'bi-exclamation-triangle-fill text-danger': item.status === 'danger' || item.status === 'urgent',
+                                        'bi-exclamation-circle-fill text-warning': item.status === 'warning',
+                                        'bi-info-circle text-info': item.status === 'info'
+                                    }"></i>
+                                    <span x-text="item.name"></span>
                                 </td>
                             </tr>
-                            <!-- Group Items -->
-                            <template x-if="!collapsedGroups[group.name]">
-                                <template x-for="(item, iIdx) in group.items" :key="iIdx">
-                                    <tr :class="{
-                                        'table-danger': item.status === 'danger' || item.status === 'urgent',
-                                        'table-warning': item.status === 'warning'
-                                    }" style="border-bottom: 1px solid var(--app-table-border-color) !important;">
-                                        <td class="py-2 px-3 border-0 font-monospace fw-bold ps-4" x-text="item.date"></td>
-                                        <td class="py-2 px-3 border-0" colspan="2">
-                                            <i class="bi me-1" :class="{
-                                                'bi-exclamation-triangle-fill text-danger': item.status === 'danger' || item.status === 'urgent',
-                                                'bi-exclamation-circle-fill text-warning': item.status === 'warning',
-                                                'bi-info-circle text-info': item.status === 'info'
-                                            }"></i>
-                                            <span x-text="item.name"></span>
-                                        </td>
-                                    </tr>
-                                </template>
-                            </template>
-                        </tbody>
+                        </template>
                     </template>
-                </template>
-                
-                <template x-if="items.length === 0">
-                    <tbody>
-                        <tr>
-                            <td colspan="3" class="py-4 text-center opacity-50 italic">
-                                {% trans 'No upcoming important dates.' %}
-                            </td>
-                        </tr>
-                    </tbody>
-                </template>
-            </tbody>
+                </tbody>
+            </template>
+            
+            <template x-if="items.length === 0">
+                <tbody style="border-top: 1px solid var(--app-table-border-color) !important;">
+                    <tr>
+                        <td colspan="3" class="py-4 text-center opacity-50 italic">
+                            {% trans 'No upcoming important dates.' %}
+                        </td>
+                    </tr>
+                </tbody>
+            </template>
+
         </table>
     </div>
 </div>
