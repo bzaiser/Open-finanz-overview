@@ -455,11 +455,11 @@ def dashboard_view(request):
             'net_worth_chart': {
                 'labels': labels_yearly,
                 'datasets': [
-                    {'label': _eager('CHART_LABEL_NETWORTH_NOMINAL'), 'data': net_worth_nominal, 'borderColor': '#0d6efd', 'fill': False},
-                    {'label': _eager('CHART_LABEL_NETWORTH_REAL'), 'data': net_worth_real, 'borderColor': '#0d6efd', 'borderDash': [5, 5], 'fill': False},
-                    {'label': _eager('CHART_LABEL_PHYSICAL_ASSETS'), 'data': physical_asset_yearly, 'borderColor': '#8a2be2', 'backgroundColor': 'rgba(138, 43, 226, 0.1)', 'fill': True},
-                    {'label': _eager('CHART_LABEL_REALESTATE_NOMINAL'), 'data': real_estate_yearly, 'borderColor': '#fd7e14', 'backgroundColor': 'rgba(253, 126, 20, 0.1)', 'fill': True},
-                    {'label': _eager('CHART_LABEL_REALESTATE_REAL'), 'data': real_estate_real_yearly, 'borderColor': '#fd7e14', 'borderDash': [5, 5], 'fill': False},
+                    {'label': _eager('Net Worth (Nominal)'), 'data': net_worth_nominal, 'borderColor': '#0d6efd', 'fill': False},
+                    {'label': _eager('Net Worth (Real)'), 'data': net_worth_real, 'borderColor': '#0d6efd', 'borderDash': [5, 5], 'fill': False},
+                    {'label': _eager('Physical Assets'), 'data': physical_asset_yearly, 'borderColor': '#8a2be2', 'backgroundColor': 'rgba(138, 43, 226, 0.1)', 'fill': True},
+                    {'label': _eager('Real Estate (Nominal)'), 'data': real_estate_yearly, 'borderColor': '#fd7e14', 'backgroundColor': 'rgba(253, 126, 20, 0.1)', 'fill': True},
+                    {'label': _eager('Real Estate (Real)'), 'data': real_estate_real_yearly, 'borderColor': '#fd7e14', 'borderDash': [5, 5], 'fill': False},
                 ],
                 'stichtag_index': stichtag_year_index
             },
