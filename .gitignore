@@ -46,3 +46,4 @@ wheels/
 .idea/
 *.swp
 *.swo
+*.mo
