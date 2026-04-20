@@ -52,3 +52,8 @@ Der Agent folgt bei JEDER Aufgabe strikt diesem Ablauf:
 ## Troubleshooting & Support
 - **Three-Strike Rule**: Wenn ein Problem (z.B. eine Fehlermeldung oder ein Bug) nach **drei Versuchen** durch die KI nicht behoben werden konnte, muss die KI SOFORT stoppen.
 - **Vorgehensweise**: Anstatt weiter zu "frickeln", muss die KI die relevanten Stellen im Code (Dateien und Zeilennummern) klar benennen und dem Nutzer präsentieren, damit dieser selbst nachsehen kann.
+
+## Translations & I18N
+- **STRICT: NO Overhaul of Translation Procedures**: Bestehende Übersetzungsverfahren (z. B. die Verwendung von `gettext` / `_eager`) dürfen NICHT eigenmächtig durch andere Verfahren (wie `gettext_lazy` / `_`) ersetzt werden, nur um einen einzelnen Übersetzungsfehler zu beheben. Fehler müssen innerhalb des bestehenden Systems durch Korrektur der `msgid` oder der Sprachdateien gelöst werden.
+- **NO tracked .mo files**: (Entsprechend der aktuellen Bereinigung) Kompilierte `.mo`-Dateien werden nicht in Git getrackt, um Merge-Konflikte zu vermeiden. Die Generierung erfolgt ausschließlich auf dem Zielsystem.
+
