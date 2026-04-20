@@ -158,8 +158,14 @@ class SimulationEngine:
             if i > 0: # Start growth from the second month
                 for item in assets_state:
                     asset = item['asset']
-                    rate = ((asset.growth_rate or Decimal('0.00')) / 100) + self.investment_return_offset
+                    # Dynamic Interest Rate (Teaser Rate handling)
+                    asset_growth_rate = asset.growth_rate or Decimal('0.00')
+                    if asset.interest_teaser_rate is not None and asset.interest_teaser_until and current_date <= asset.interest_teaser_until:
+                        asset_growth_rate = asset.interest_teaser_rate
+                        
+                    rate = (asset_growth_rate / 100) + self.investment_return_offset
                     item['balance'] *= (1 + (rate / 12))
+
                     if asset.withdrawal_start_date and current_date >= asset.withdrawal_start_date.replace(day=1):
                         withdrawal = (asset.withdrawal_amount or Decimal('0.00'))
                         item['balance'] = max(Decimal('0'), item['balance'] - withdrawal)

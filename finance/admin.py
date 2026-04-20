@@ -123,7 +123,8 @@ class CashFlowSourceInline(admin.TabularInline):
 class AssetInline(admin.TabularInline):
     model = Asset
     extra = 1
-    fields = ('name', 'value', 'growth_rate', 'withdrawal_amount', 'withdrawal_start_date')
+    fields = ('name', 'value', 'growth_rate', 'interest_teaser_rate', 'interest_teaser_until', 'withdrawal_amount', 'withdrawal_start_date')
+
     classes = ['collapse']
 
 class OneTimeEventInline(admin.TabularInline):
@@ -187,10 +188,12 @@ class CashFlowSourceAdmin(BaseOwnedModelAdmin):
 
 @admin.register(Asset)
 class AssetAdmin(BaseOwnedModelAdmin):
-    list_display = ('name', 'user', 'value', 'growth_rate', 'withdrawal_amount', 'withdrawal_start_date')
+    list_display = ('name', 'user', 'value', 'growth_rate', 'interest_teaser_rate', 'interest_teaser_until', 'withdrawal_amount', 'withdrawal_start_date')
+
     list_filter = ('user',)
     search_fields = ('name',)
-    list_editable = ('value', 'growth_rate', 'withdrawal_amount', 'withdrawal_start_date')
+    list_editable = ('value', 'growth_rate', 'interest_teaser_rate', 'interest_teaser_until', 'withdrawal_amount', 'withdrawal_start_date')
+
 
 @admin.register(OneTimeEvent)
 class OneTimeEventAdmin(BaseOwnedModelAdmin):

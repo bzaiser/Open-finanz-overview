@@ -43,7 +43,11 @@
                     {% elif item.id == 'loan_table_widget' %}
                         {{ table_datasets.loan_table_widget|json_script:item.id }}
                         {% include 'finance/partials/dashboard_table_loan.html' with widget_id=item.id %}
+                    {% elif item.id == 'upcoming_dates_widget' %}
+                        {{ table_datasets.upcoming_dates_widget|json_script:item.id }}
+                        {% include 'finance/partials/dashboard_table_dates.html' with widget_id=item.id %}
                     {% else %}
+
                     <canvas id="{{ item.id }}"></canvas>
                     {% endif %}
                 </div>

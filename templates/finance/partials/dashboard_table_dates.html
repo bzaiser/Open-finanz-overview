@@ -1,0 +1,107 @@
+{% load i18n humanize %}
+<div x-data="{ 
+    colFilters: { date: '', name: '', cat: '' },
+    sortCol: 'date', 
+    sortDir: 'asc',
+    items: [],
+    init() {
+        const scriptTag = document.getElementById('{{ widget_id }}');
+        if (scriptTag) {
+            try {
+                const data = JSON.parse(scriptTag.textContent);
+                this.items = Array.isArray(data) ? data : [];
+            } catch (e) {
+                console.error('Error parsing dates data:', e);
+                this.items = [];
+            }
+        }
+    },
+    get filteredItems() {
+        if (!this.items) return [];
+        return this.items.filter(i => {
+            const n = (i.name || '').toLowerCase();
+            const f_n = (this.colFilters.name || '').toLowerCase();
+            if (f_n && !n.includes(f_n)) return false;
+
+            const c = (i.category || '').toLowerCase();
+            const f_c = (this.colFilters.cat || '').toLowerCase();
+            if (f_c && !c.includes(f_c)) return false;
+
+            return true;
+        }).sort((a, b) => {
+            let va = a[this.sortCol];
+            let vb = b[this.sortCol];
+            // Since dates are strings in format DD.MM.YYYY for display, 
+            // we might need to parse them for correct sorting if we didn't send iso dates.
+            // But for now, we assume views.py gave us what we need.
+            if (this.sortCol === 'date') {
+                const da = a.date.split('.').reverse().join('-');
+                const db = b.date.split('.').reverse().join('-');
+                return this.sortDir === 'asc' ? da.localeCompare(db) : db.localeCompare(da);
+            }
+            if (va < vb) return this.sortDir === 'asc' ? -1 : 1;
+            if (va > vb) return this.sortDir === 'asc' ? 1 : -1;
+            return 0;
+        });
+    }
+}" class="h-100 d-flex flex-column" x-init="init()" style="background-color: var(--app-table-body-bg) !important;">
+    
+    <div class="flex-grow-1 overflow-auto px-0" style="background-color: var(--app-table-body-bg) !important;">
+        <table class="table table-sm table-hover align-middle mb-0" 
+               style="font-size: 0.82rem; border-color: var(--app-table-border-color) !important; --bs-table-bg: var(--app-table-body-bg); --bs-table-color: var(--app-table-body-text);">
+            <thead class="sticky-top" style="z-index: 10;">
+                <tr class="text-uppercase" style="font-size: 0.65rem;">
+                    <th class="py-2 px-3 border-0 cursor-pointer" @click="sortCol = 'date'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
+                        style="background-color: var(--app-table-header-bg) !important; color: var(--app-table-header-text) !important; width: 120px;">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <span>{% trans 'Date' %}</span>
+                            <i class="bi" :class="sortCol === 'date' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                        </div>
+                    </th>
+                    <th class="py-2 px-3 border-0 cursor-pointer" @click="sortCol = 'category'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
+                        style="background-color: var(--app-table-header-bg) !important; color: var(--app-table-header-text) !important; width: 150px;">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <span>{% trans 'Category' %}</span>
+                            <i class="bi" :class="sortCol === 'category' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                        </div>
+                    </th>
+                    <th class="py-2 px-3 border-0 cursor-pointer" @click="sortCol = 'name'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
+                        style="background-color: var(--app-table-header-bg) !important; color: var(--app-table-header-text) !important;">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <span>{% trans 'Event' %}</span>
+                            <i class="bi" :class="sortCol === 'name' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody style="border-top: 1px solid var(--app-table-border-color) !important;">
+                <template x-for="(item, index) in filteredItems" :key="index">
+                    <tr :class="{
+                        'table-danger': item.status === 'danger' || item.status === 'urgent',
+                        'table-warning': item.status === 'warning'
+                    }">
+                        <td class="py-2 px-3 border-0 font-monospace fw-bold" x-text="item.date"></td>
+                        <td class="py-2 px-3 border-0">
+                            <span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill" style="font-size: 0.65rem;" x-text="item.category"></span>
+                        </td>
+                        <td class="py-2 px-3 border-0">
+                            <i class="bi me-1" :class="{
+                                'bi-exclamation-triangle-fill text-danger': item.status === 'danger' || item.status === 'urgent',
+                                'bi-exclamation-circle-fill text-warning': item.status === 'warning',
+                                'bi-info-circle text-info': item.status === 'info'
+                            }"></i>
+                            <span x-text="item.name"></span>
+                        </td>
+                    </tr>
+                </template>
+                <template x-if="filteredItems.length === 0">
+                    <tr>
+                        <td colspan="3" class="py-4 text-center opacity-50 italic">
+                            {% trans 'No upcoming important dates.' %}
+                        </td>
+                    </tr>
+                </template>
+            </tbody>
+        </table>
+    </div>
+</div>

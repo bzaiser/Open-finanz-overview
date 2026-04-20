@@ -116,7 +116,16 @@
             <tbody style="border-top: 1px solid var(--app-table-border-color) !important;">
                 <template x-for="(item, index) in filteredItems" :key="index">
                     <tr>
-                        <td class="py-2 px-3 border-0" x-text="item.name"></td>
+                        <td class="py-2 px-3 border-0">
+                            <span x-text="item.name"></span>
+                            <template x-if="item.teaser_active">
+                                <span class="badge bg-danger rounded-pill ms-2" style="font-size: 0.6rem;" 
+                                      :title="'Aktionszins bis: ' + item.teaser_until">
+                                    <i class="bi bi-fire"></i> {% trans 'Teaser' %}
+                                </span>
+                            </template>
+                        </td>
+
                         <td class="py-2 px-3 border-0">
                             <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill mb-1 d-block" style="font-size: 0.65rem;" x-text="item.category"></span>
                             <span class="small opacity-75 d-block" style="font-size: 0.65rem;" x-text="item.date"></span>

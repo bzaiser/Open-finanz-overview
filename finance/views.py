@@ -63,7 +63,9 @@ AVAILABLE_CHARTS = {
     'inflation_monitor_chart': {'title': _('Inflation Monitor'), 'type': 'line', 'default_width': 6, 'default_height': 'small'},
     'budget_pie_chart': {'title': _('Monthly Budget'), 'type': 'pie', 'default_width': 6, 'default_height': 'small'},
     'asset_allocation_chart': {'title': _('Asset Allocation'), 'type': 'doughnut', 'default_width': 6, 'default_height': 'small'},
+    'upcoming_dates_widget': {'title': _('Important Dates & Deadlines'), 'type': 'table', 'default_width': 12, 'default_height': 'small'},
     'income_table_widget': {'title': _('Income Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small'},
+
     'expense_table_widget': {'title': _('Expense Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small'},
     'asset_table_widget': {'title': _('Asset Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small'},
     'pension_table_widget': {'title': _('Pension Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small'},
@@ -522,7 +524,83 @@ def dashboard_view(request):
                     'hoverOffset': 8,
                 }]
             },
+            'upcoming_dates_widget': {
+                'labels': [_eager('Date'), _eager('Categorisation'), _eager('Event'), _eager('Status')],
+                'datasets': [] # We'll fill table_datasets instead
+            }
         }
+
+    # 6. Collect Important Dates/Deadlines
+    upcoming_dates = []
+    today = timezone.now().date()
+    two_months_out = today + datetime.timedelta(days=60)
+    
+    # Loans
+    for l in user.loans.all():
+        if l.end_date and l.end_date >= today:
+            upcoming_dates.append({
+                'date': l.end_date, 'category': _('Loan'), 'name': f"{_('End of Loan')}: {l.name}",
+                'status': 'urgent' if l.end_date <= two_months_out else 'info'
+            })
+        if l.interest_lock_end and l.interest_lock_end >= today:
+            upcoming_dates.append({
+                'date': l.interest_lock_end, 'category': _('Loan'), 'name': f"{_('End of Interest Lock')}: {l.name}",
+                'status': 'warning' if l.interest_lock_end <= two_months_out else 'info'
+            })
+            
+    # Pensions
+    for p in user.pensions.all():
+        if p.start_payout_date and p.start_payout_date >= today:
+            upcoming_dates.append({
+                'date': p.start_payout_date, 'category': _('Pension'), 'name': f"{_('Start of Payout')}: {p.provider}",
+                'status': 'info'
+            })
+        if p.contribution_end_date and p.contribution_end_date >= today:
+            upcoming_dates.append({
+                'date': p.contribution_end_date, 'category': _('Pension'), 'name': f"{_('End of Contribution')}: {p.provider}",
+                'status': 'info'
+            })
+
+    # Assets (Tagesgeld Hopping)
+    for a in user.assets.all():
+        if a.interest_teaser_until and a.interest_teaser_until >= today:
+            upcoming_dates.append({
+                'date': a.interest_teaser_until, 'category': _('Asset'), 'name': f"{_('Teaser Rate Expires')}: {a.name} ({a.interest_teaser_rate}%)",
+                'status': 'danger' if a.interest_teaser_until <= today + datetime.timedelta(days=14) else ('warning' if a.interest_teaser_until <= two_months_out else 'info')
+            })
+
+    # Sales
+    for pa in user.physical_assets.all():
+        if pa.sale_date and pa.sale_date >= today:
+            upcoming_dates.append({
+                'date': pa.sale_date, 'category': _('Physical Asset'), 'name': f"{_('Planned Sale')}: {pa.name}",
+                'status': 'info'
+            })
+            
+    for re in user.real_estates.all():
+        if re.sale_date and re.sale_date >= today:
+            upcoming_dates.append({
+                'date': re.sale_date, 'category': _('Real Estate'), 'name': f"{_('Planned Sale')}: {re.name}",
+                'status': 'info'
+            })
+
+    # Cashflows
+    for cf in user.cash_flows.filter(end_date__gte=today):
+        upcoming_dates.append({
+            'date': cf.end_date, 'category': _('Cash Flow'), 'name': f"{_('End of Cash Flow')}: {cf.name}",
+            'status': 'warning' if cf.end_date <= two_months_out else 'info'
+        })
+        
+    # Events
+    for e in user.events.filter(date__gte=today):
+        upcoming_dates.append({
+            'date': e.date, 'category': _('Event'), 'name': e.name, 'status': 'info'
+        })
+        
+    upcoming_dates.sort(key=lambda x: x['date'])
+    # Only show next 10 or so
+    upcoming_dates = upcoming_dates[:15]
+
 
     # Key Metrics for Summary Panels (Use REAL values for purchasing power consistency)
     last_month = forecast_data[-1]
@@ -651,13 +729,22 @@ def dashboard_view(request):
 
     table_data_asset = []
     for a in user.assets.all():
+        rate_display = f"{a.growth_rate or 0}%"
+        teaser_active = False
+        if a.interest_teaser_rate is not None and a.interest_teaser_until and today <= a.interest_teaser_until:
+            rate_display = f"{a.interest_teaser_rate}% -> {a.growth_rate or 0}%"
+            teaser_active = True
+            
         table_data_asset.append({
             'name': a.name, 
             'amount': float(a.value or 0), 
             'category': _('Asset'),
-            'rate': f"{a.growth_rate or 0}%",
-            'year': continuous_label
+            'rate': rate_display,
+            'year': continuous_label,
+            'teaser_until': a.interest_teaser_until.strftime('%d.%m.%Y') if a.interest_teaser_until else None,
+            'teaser_active': teaser_active
         })
+
 
     for p in user.pensions.all():
         table_data_asset.append({
@@ -709,6 +796,15 @@ def dashboard_view(request):
             'year': str(l.end_date.year) if l.end_date else continuous_label
         })
 
+    table_data_upcoming_dates = []
+    for d in upcoming_dates:
+        table_data_upcoming_dates.append({
+            'date': d['date'].strftime('%d.%m.%Y'),
+            'category': str(d['category']),
+            'name': d['name'],
+            'status': d['status']
+        })
+
     table_datasets = {
         'income_table_widget': table_data_income,
         'expense_table_widget': table_data_expense,
@@ -716,8 +812,10 @@ def dashboard_view(request):
         'pension_table_widget': table_data_pension,
         'event_table_widget': table_data_event,
         'loan_table_widget': table_data_loan,
+        'upcoming_dates_widget': table_data_upcoming_dates,
     }
     table_json = {k: json.dumps(v, cls=DjangoJSONEncoder) for k, v in table_datasets.items()}
+
 
     # Key Metrics for Summary Panels
 
