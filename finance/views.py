@@ -287,7 +287,6 @@ def dashboard_view(request):
         # One Time Events
         if d['one_time_events']:
             bucket['one_time_events'].extend(d['one_time_events'])
-            bucket['one_time_total'] += sum(evt['value'] for evt in d['one_time_events'])
 
     sorted_years = sorted(yearly_buckets.keys())
     
@@ -346,6 +345,18 @@ def dashboard_view(request):
             'data': cat_data,
             'backgroundColor': color,
             'stack': 'income',
+        })
+    
+    # Add One-Time Effects dataset (if any exist)
+    if any(v != 0 for v in one_time_yearly):
+        income_evo_datasets.append({
+            'label': _eager('One-Time Effects'),
+            'data': one_time_yearly,
+            'backgroundColor': '#ffecb3', # Light amber
+            'borderColor': '#ffc107',     # Solid amber
+            'borderWidth': 1,
+            'stack': 'income',
+            'tooltipData': one_time_tooltips
         })
     
     expense_evo_datasets = []

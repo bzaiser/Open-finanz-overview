@@ -345,9 +345,9 @@ class SimulationEngine:
                         'date': event.date.isoformat(), 'value': float(round(event.value, 2)),
                     })
 
-                # Monthly Savings: monthly_expenses already includes current_monthly_pension_contribution
-                monthly_savings = monthly_income - monthly_expenses
-                accumulated_cash += (monthly_savings + event_impact)
+            # Monthly Savings: monthly_expenses already includes current_monthly_pension_contribution
+            monthly_savings = monthly_income - monthly_expenses
+            accumulated_cash += (monthly_savings + event_impact)
             
             # Totals
             asset_total = sum(item['balance'] for item in assets_state)
@@ -390,6 +390,7 @@ class SimulationEngine:
                 'category_breakdown': {k: float(round(v, 2)) for k, v in category_breakdown.items()},
                 'income_category_breakdown': {k: float(round(v, 2)) for k, v in income_category_breakdown.items()},
                 'loan_balances': {str(item['loan'].id): float(round(item['balance'], 2)) for item in loans_state},
+                'one_time_impact': float(round(event_impact, 2)),
                 'one_time_events': events_this_month,
             })
             
