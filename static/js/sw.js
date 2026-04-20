@@ -1,6 +1,5 @@
-const CACHE_NAME = 'finanzplan-pwa-v1';
+const CACHE_NAME = 'finanzplan-pwa-v2';
 const urlsToCache = [
-  '/',
   '/static/img/icon.png'
 ];
 
@@ -13,14 +12,25 @@ self.addEventListener('install', event => {
   );
 });
 
+// Use Network-First strategy to ensure layout changes are visible immediately
 self.addEventListener('fetch', event => {
+  if (event.request.method !== 'GET') return;
+
   event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        if (response) {
-          return response;
-        }
-        return fetch(event.request);
+    fetch(event.request)
+      .catch(() => {
+        return caches.match(event.request);
       })
+  );
+});
+
+// Clean up old caches
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.filter(name => name !== CACHE_NAME).map(name => caches.delete(name))
+      );
+    })
   );
 });
