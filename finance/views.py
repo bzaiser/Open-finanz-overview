@@ -267,6 +267,7 @@ def dashboard_view(request):
         bucket['real_net_worth'] = d.get('real_net_worth', 0)
         bucket['physical_asset_total'] = d.get('physical_asset_total', 0)
         bucket['real_estate_total'] = d.get('real_estate_total', 0)
+        bucket['real_estate_real_total'] = d.get('real_real_estate_total', 0)
         
         # Totals for the year
         bucket['monthly_income'] += d['monthly_income']
@@ -295,6 +296,7 @@ def dashboard_view(request):
     net_worth_real = []
     physical_asset_yearly = []
     real_estate_yearly = []
+    real_estate_real_yearly = []
     income_yearly = []
     expenses_yearly = []
     net_savings_yearly = []
@@ -318,6 +320,7 @@ def dashboard_view(request):
         net_worth_real.append(float(bucket['real_net_worth']))
         physical_asset_yearly.append(float(bucket['physical_asset_total']))
         real_estate_yearly.append(float(bucket['real_estate_total']))
+        real_estate_real_yearly.append(float(bucket['real_estate_real_total']))
         
         income_yearly.append(float(bucket['monthly_income']))
         expenses_yearly.append(-float(bucket['monthly_expenses']))
@@ -456,6 +459,7 @@ def dashboard_view(request):
                     {'label': _eager('Real Net Worth'), 'data': net_worth_real, 'borderColor': 'green', 'borderDash': [5, 5]},
                     {'label': _eager('Physical Assets'), 'data': physical_asset_yearly, 'borderColor': '#8a2be2', 'backgroundColor': 'rgba(138, 43, 226, 0.1)', 'fill': True},
                     {'label': _eager('Real Estate'), 'data': real_estate_yearly, 'borderColor': '#20c997', 'backgroundColor': 'rgba(32, 201, 151, 0.1)', 'fill': True},
+                    {'label': _eager('Real Real Estate'), 'data': real_estate_real_yearly, 'borderColor': '#20c997', 'borderDash': [5, 5], 'fill': False},
                 ],
                 'stichtag_index': stichtag_year_index
             },
