@@ -3,52 +3,11 @@
 
 {% block extrastyle %}
 <style>
-    /* Admin Header Bar Customization */
+    /* Admin Header Bar Customization - Keeping this to match the Dashboard aesthetic */
     #header {
         background: {{ user.profile.primary_color|default:"#0d6efd" }} !important;
         background: linear-gradient(135deg, {{ user.profile.gradient_start|default:"#6610f2" }} 0%, {{ user.profile.gradient_end|default:"#0d6efd" }} 100%) !important;
         color: #ffffff !important;
-    }
-
-    /* Admin Table Headers - Relaxed to allow admin_interface themes */
-    .module thead th, 
-    .results table thead th {
-        background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0.1) 100%), 
-                    {{ user.profile.table_header_bg_color|default:"#212529" }};
-        color: {{ user.profile.table_header_text_color|default:"#ffffff" }};
-        border-bottom: 1px solid rgba(0,0,0,0.1);
-        font-weight: 600;
-        text-transform: uppercase;
-        font-size: 0.75rem;
-        letter-spacing: 0.5px;
-    }
-
-    /* Module Headers (e.g. "Finance") - Relaxed */
-    .module h2, .module caption {
-        background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0.1) 100%), 
-                    {{ user.profile.primary_color|default:"#0d6efd" }};
-        color: #ffffff;
-    }
-
-    /* Sidebar Fixes - Relaxed */
-    #changelist-filter h2 {
-        background: {{ user.profile.primary_color|default:"#0d6efd" }};
-        filter: brightness(0.9);
-        color: #ffffff;
-    }
-
-    /* Breadcrumbs contrast - FIXED for link visibility */
-    .breadcrumbs {
-        background: {{ user.profile.table_filter_bg_color|default:"#f8f9fa" }} !important;
-        color: {{ user.profile.table_body_text_color|default:"#212529" }} !important;
-        border-bottom: 1px solid rgba(0,0,0,0.05);
-    }
-    .breadcrumbs a {
-        color: {{ user.profile.primary_color|default:"#0d6efd" }} !important;
-        font-weight: 600;
-    }
-    .breadcrumbs a:hover {
-        text-decoration: underline !important;
     }
 </style>
 {% endblock %}
