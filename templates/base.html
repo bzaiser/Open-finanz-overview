@@ -320,18 +320,6 @@
                             {% trans 'Bank Import' %}
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'help' %}">
-                            <i class="bi bi-question-circle me-1"></i>
-                            {% trans 'Help' %}
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'about' %}">
-                            <i class="bi bi-info-circle me-1"></i>
-                            {% trans 'About' %}
-                        </a>
-                    </li>
                     {% if user.is_staff %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'admin:index' %}">
@@ -361,6 +349,8 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end shadow border-0" style="z-index: 1050;">
                             <li><a class="dropdown-item" href="{% url 'admin:index' %}">{% trans 'Admin' %}</a></li>
+                            <li><a class="dropdown-item" href="{% url 'help' %}"><i class="bi bi-question-circle me-1"></i> {% trans 'Help' %}</a></li>
+                            <li><a class="dropdown-item" href="{% url 'about' %}"><i class="bi bi-info-circle me-1"></i> {% trans 'About' %}</a></li>
 
                             <li>
                                 <hr class="dropdown-divider">
