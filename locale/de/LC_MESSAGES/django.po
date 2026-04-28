@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-02 10:40+0200\n"
+"POT-Creation-Date: 2026-04-28 21:55+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,423 +17,1144 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-msgid "Inflation Rate"
-msgstr "Inflationsrate (%)"
+#: core/forms.py:12
+msgid "Vorname"
+msgstr ""
 
-msgid "Salary Increase"
-msgstr "Gehaltssteigerung (%)"
+#: core/forms.py:13
+msgid "Nachname"
+msgstr ""
 
-msgid "Pension Increase"
-msgstr "Rentenerhöhung (%)"
+#: core/forms.py:14
+#, fuzzy
+#| msgid "Email Address"
+msgid "E-Mail-Adresse"
+msgstr "E-Mail-Adresse"
 
-msgid "Investment Return"
-msgstr "Investitionsrendite (%)"
-
-msgid "Growth Real Estate"
-msgstr "Wertsteigerung Immobilien (%)"
-
-msgid "Decline Physical Assets"
-msgstr "Wertverlust Sachwerte (%)"
-
-msgid "Target Date"
-msgstr "Stichtag"
-
-#: core/forms.py:16 core/models.py:34
+#: core/forms.py:44 core/models.py:23 templates/core/profile.html:101
 msgid "Birth Date"
 msgstr "Geburtsdatum"
 
-#: core/models.py:9 finance/models.py:8 finance/models.py:26
-#: finance/models.py:44 finance/models.py:61
-#: templates/finance/partials/dashboard_table_simple.html:105
-msgid "Name"
-msgstr "Bezeichnung"
+#: core/forms.py:49
+msgid "Nachtmodus Einstellungen vom System übernehmen"
+msgstr ""
 
-#: core/models.py:10
+#: core/forms.py:56 core/models.py:68
+#, fuzzy
+#| msgid "Border Color"
+msgid "Gradient Start Color"
+msgstr "Rahmenfarbe"
+
+#: core/forms.py:61 core/models.py:69
+#, fuzzy
+#| msgid "Border Color"
+msgid "Gradient End Color"
+msgstr "Rahmenfarbe"
+
+#: core/forms.py:66 core/models.py:71
 msgid "Primary Color"
 msgstr "Primärfarbe"
 
-#: core/models.py:11
+#: core/forms.py:71 core/models.py:72
 msgid "Secondary Color"
 msgstr "Sekundärfarbe"
 
-#: core/models.py:12
+#: core/forms.py:76 core/models.py:73
 msgid "Background Color"
 msgstr "Hintergrundfarbe"
 
-#: core/models.py:13
+#: core/forms.py:81 core/models.py:74
 msgid "Text Color"
 msgstr "Textfarbe"
 
-#: core/models.py:14
+#: core/forms.py:86 core/models.py:75
 msgid "Sidebar Background"
 msgstr "Sidebar-Hintergrund"
 
-#: core/models.py:17
-msgid "Table Header Background"
-msgstr "Tabellenkopf-Hintergrund"
+#: core/forms.py:91
+#, fuzzy
+#| msgid "Table Header Text"
+msgid "Table Header BG"
+msgstr "Tabellenkopf-Text"
 
-#: core/models.py:18
+#: core/forms.py:96 core/models.py:79
 msgid "Table Header Text"
 msgstr "Tabellenkopf-Text"
 
-#: core/models.py:19
-msgid "Table Filter Background"
+#: core/forms.py:101
+#, fuzzy
+#| msgid "Table Filter Background"
+msgid "Table Filter BG"
 msgstr "Tabellenfilter-Hintergrund"
 
-#: core/models.py:20
-msgid "Table Body Background"
-msgstr "Tabellenkopf-Hintergrund"
+#: core/forms.py:106
+#, fuzzy
+#| msgid "Table Body Text"
+msgid "Table Body BG"
+msgstr "Tabellenkopf-Text"
 
-#: core/models.py:21
+#: core/forms.py:111 core/models.py:82
 msgid "Table Body Text"
 msgstr "Tabellenkopf-Text"
 
-#: core/models.py:22
-msgid "Table Border Color"
+#: core/forms.py:116
+#, fuzzy
+#| msgid "Table Border Color"
+msgid "Table Border"
 msgstr "Sekundärfarbe"
 
-#: core/models.py:25 core/models.py:70
-msgid "Theme"
-msgstr "Design"
+#: core/models.py:21 templates/core/profile.html:45
+msgid "Display Name"
+msgstr "Anzeigename"
 
-#: core/models.py:26
-msgid "Themes"
-msgstr "Designs"
-
-#: core/models.py:33
+#: core/models.py:22
 msgid "Avatar"
 msgstr "Profilbild"
 
-#: core/models.py:55
+#: core/models.py:44 templates/core/profile.html:96
 msgid "Currency"
 msgstr "Währung"
 
-#: core/models.py:56
+#: core/models.py:45 templates/core/profile.html:92
 msgid "Language"
 msgstr "Sprache"
 
-#: core/models.py:63
+#: core/models.py:52
 msgid "Simulation Max Age"
 msgstr "Max. Simulationsalter"
 
-#: core/models.py:66
+#: core/models.py:55
 msgid "Default Inflation Rate (%)"
 msgstr "Standard-Inflationsrate (%)"
 
-#: core/models.py:67
+#: core/models.py:56
 msgid "Default Salary Increase (%)"
 msgstr "Standard-Gehaltssteigerung (%)"
 
-#: core/models.py:72
+#: core/models.py:57
 msgid "Default Pension Increase (%)"
 msgstr "Standard-Rentensteigerung (%)"
 
-#: core/models.py:68
+#: core/models.py:58
 msgid "Investment Return Offset (%)"
 msgstr "Anlage-Rendite Offset (%)"
 
-#: core/models.py:71
+#: core/models.py:59
+#, fuzzy
+#| msgid "Real Estate (%)"
+msgid "Default Real Estate Growth (%)"
+msgstr "Immobilien (%)"
+
+#: core/models.py:60
+#, fuzzy
+#| msgid "Physical Assets (%)"
+msgid "Default Physical Asset Growth (%)"
+msgstr "Sachwerte (%)"
+
+#: core/models.py:61
 msgid "Dashboard Configuration"
 msgstr "Dashboard-Konfiguration"
 
-#: core/models.py:74 templates/core/profile.html:4
+#: core/models.py:64
+msgid "Follow System Design"
+msgstr ""
+
+#: core/models.py:65
+#, fuzzy
+#| msgid "Border Color"
+msgid "Night Mode Colors"
+msgstr "Rahmenfarbe"
+
+#: core/models.py:78
+msgid "Table Header Background"
+msgstr "Tabellenkopf-Hintergrund"
+
+#: core/models.py:80
+msgid "Table Filter Background"
+msgstr "Tabellenfilter-Hintergrund"
+
+#: core/models.py:81
+msgid "Table Body Background"
+msgstr "Tabellenkopf-Hintergrund"
+
+#: core/models.py:83
+msgid "Table Border Color"
+msgstr "Sekundärfarbe"
+
+#: core/models.py:87
 msgid "User Profile"
 msgstr "Benutzerprofil"
 
-#: core/models.py:75
+#: core/models.py:88
 msgid "User Profiles"
 msgstr "Benutzerprofile"
 
-#: finance/admin.py:29
+#: core/views.py:40
+msgid "Profile updated successfully!"
+msgstr "Profil erfolgreich aktualisiert!"
+
+#: finance/admin.py:67
 msgid "Auswahl duplizieren & Datum hochzählen"
 msgstr ""
 
-#: finance/admin.py:64
+#: finance/admin.py:102
 msgid "Jahr"
 msgstr ""
 
-#: finance/models.py:9
+#: finance/forms.py:6
+msgid "Excel-Datei auswählen"
+msgstr ""
+
+#: finance/forms.py:7
+msgid "Wähle eine Excel-Datei (.xlsx oder .xls) mit deinen Bankbuchungen aus."
+msgstr ""
+
+#: finance/import_services.py:258
+msgid "Aus deinem Gedächtnis gelernt"
+msgstr ""
+
+#: finance/import_services.py:329
+msgid "Automatisch von KI kategorisiert"
+msgstr ""
+
+#: finance/models.py:9 finance/models.py:42 finance/models.py:61
+#: finance/models.py:81 finance/models.py:187 finance/models.py:233
+#: templates/finance/import_filters.html:276
+#: templates/finance/import_filters.html:310
+#: templates/finance/import_review.html:283
+#: templates/finance/partials/dashboard_table_simple.html:74
+msgid "Name"
+msgstr "Bezeichnung"
+
+#: finance/models.py:10
 msgid "Slug"
 msgstr "Bezeichnung (System)"
 
-#: finance/models.py:10
+#: finance/models.py:11
 msgid "Color"
 msgstr "Farbe"
 
-#: finance/models.py:10
+#: finance/models.py:11
 msgid "Hex color code, e.g. #FF0000"
 msgstr "Hex-Farbcode, z.B. #FF0000"
 
-#: finance/models.py:13 finance/models.py:32
-#: templates/finance/partials/dashboard_table_simple.html:112
+#: finance/models.py:12
+#, fuzzy
+#| msgid "Category"
+msgid "System Category"
+msgstr "Kategorie"
+
+#: finance/models.py:15 finance/models.py:48 finance/models.py:266
+#: finance/models.py:295
 msgid "Category"
 msgstr "Kategorie"
 
-#: finance/models.py:14
+#: finance/models.py:16
 msgid "Categories"
 msgstr "Kategorien"
 
-#: finance/models.py:21
+#: finance/models.py:25
+msgid "System categories cannot be deleted."
+msgstr ""
+
+#: finance/models.py:37
 msgid "Monthly"
 msgstr "Monatlich"
 
-#: finance/models.py:22
+#: finance/models.py:38
 msgid "Yearly"
 msgstr "Jährlich"
 
-#: finance/models.py:27 finance/models.py:62
-#: templates/finance/partials/dashboard_table_simple.html:126
+#: finance/models.py:43 finance/models.py:82 finance/models.py:131
+#: finance/models.py:255
+#: templates/finance/partials/dashboard_table_simple.html:95
+#: templates/finance/partials/dashboard_table_simple.html:112
 msgid "Amount"
 msgstr "Betrag"
 
-#: finance/models.py:28
+#: finance/models.py:44 finance/models.py:239
 msgid "Start Date"
 msgstr "Startdatum"
 
-#: finance/models.py:29
+#: finance/models.py:45 finance/models.py:240
 msgid "End Date"
 msgstr "Enddatum"
 
-#: finance/models.py:30
+#: finance/models.py:46 finance/models.py:132 finance/models.py:267
 msgid "Is Income"
 msgstr "Ist Einkommen"
 
-#: finance/models.py:31
-#: finance/models.py:33
+#: finance/models.py:47 finance/models.py:100
+msgid "Indexed (Inflation Adjustment)"
+msgstr "Indiziert (Inflationsanpassung)"
+
+#: finance/models.py:47 finance/models.py:100
+msgid ""
+"If checked, the payout will increase annually based on the global pension "
+"increase rate."
+msgstr ""
+"Wenn aktiviert, steigt die Auszahlung jährlich basierend auf der globalen "
+"Rentensteigerungsrate."
+
+#: finance/models.py:49 finance/models.py:140
 msgid "Frequency"
 msgstr "Häufigkeit"
 
-#: finance/models.py:36
+#: finance/models.py:50 finance/models.py:241
+msgid "Notes"
+msgstr ""
+
+#: finance/models.py:53
 msgid "Cash Flow Source"
 msgstr "Einnahme-/Ausgabequelle"
 
-#: finance/models.py:37
+#: finance/models.py:54
 msgid "Cash Flow Sources"
 msgstr "Einnahmen & Ausgaben"
 
-#: finance/models.py:45 finance/models.py:76
+#: finance/models.py:62 finance/models.py:96 finance/models.py:188
 msgid "Current Value"
 msgstr "Aktueller Wert"
 
-#: finance/models.py:46 finance/models.py:78
+#: finance/models.py:63 finance/models.py:98
 msgid "Annual Growth Rate (%)"
 msgstr "Jährliche Wachstumsrate (%)"
 
-#: finance/models.py:49
+#: finance/models.py:64
+msgid "Teaser Interest Rate (%)"
+msgstr "Aktions-Zinssatz (%)"
+
+#: finance/models.py:64
+msgid "Higher promotional interest rate (e.g. for new customers)"
+msgstr "Erhöhter Zinssatz für Neukunden (Lockvogel-Angebot)"
+
+#: finance/models.py:65
+msgid "Teaser Rate Expiry Date"
+msgstr "Gültig bis"
+
+#: finance/models.py:65
+msgid ""
+"Date when the teaser rate expires and falls back to the standard growth rate"
+msgstr "Datum, an dem der Aktionszins endet und auf den Basis-Zins zurückfällt"
+
+#: finance/models.py:69
 msgid "Monthly Withdrawal"
 msgstr "Monatliche Auszahlung"
 
-#: finance/models.py:49
+#: finance/models.py:69
 msgid "Amount to take out of this asset each month"
 msgstr "Betrag, der jeden Monat aus diesem Vermögenswert entnommen wird"
 
-#: finance/models.py:50
+#: finance/models.py:70
 msgid "Withdrawal Start Date"
 msgstr "Startdatum"
 
-#: finance/models.py:53 finance/views.py:390 finance/views.py:391
-#: finance/views.py:423
+#: finance/models.py:73 finance/views.py:644 finance/views.py:817
 msgid "Asset"
 msgstr "Vermögenswert"
 
-#: finance/models.py:54
+#: finance/models.py:74 finance/views.py:752
 msgid "Assets"
 msgstr "Vermögenswerte"
 
-#: finance/models.py:62
+#: finance/models.py:82
 msgid "Positive for income, negative for expense"
 msgstr "Positiv für Einnahmen, negativ für Ausgaben"
 
-#: finance/models.py:63
-#: templates/finance/partials/dashboard_table_simple.html:112
+#: finance/models.py:83 finance/models.py:129 finance/models.py:254
+#: templates/finance/partials/dashboard_table_dates.html:81
 msgid "Date"
 msgstr "Datum"
 
-#: finance/models.py:64
+#: finance/models.py:84 finance/models.py:130 finance/models.py:294
 msgid "Description"
 msgstr "Beschreibung"
 
-#: finance/models.py:67
+#: finance/models.py:87
 msgid "One Time Event"
 msgstr "Einmaliges Ereignis"
 
-#: finance/models.py:68
+#: finance/models.py:88
 msgid "One Time Events"
 msgstr "Einmalige Ereignisse"
 
-#: finance/models.py:75
+#: finance/models.py:95
 msgid "Provider/Name"
 msgstr "Anbieter/Name"
 
-#: finance/models.py:77
+#: finance/models.py:97
 msgid "Monthly Contribution"
 msgstr "Monatlicher Beitrag"
 
-#: finance/models.py:79
+#: finance/models.py:99
 msgid "Expected Monthly Payout"
 msgstr "Erwartete monatliche Auszahlung"
 
-#: finance/models.py:80
+#: finance/models.py:101
+msgid "Contribution End Date"
+msgstr "Beitragsende"
+
+#: finance/models.py:101
+msgid "Date when you stop paying into this pension"
+msgstr "Datum, an dem die Beitragszahlung für diese Rente endet"
+
+#: finance/models.py:102
 msgid "Payout Start Date"
 msgstr "Auszahlungsbeginn"
 
-#: finance/models.py:80
+#: finance/models.py:102
 msgid "Approximate date when pension payout starts"
 msgstr "Ungefähres Datum, wann die Rentenzahlung beginnt"
 
-#: finance/models.py:83 finance/views.py:413 finance/views.py:414
-#: finance/views.py:434
+#: finance/models.py:105 finance/views.py:631 finance/views.py:636
+#: finance/views.py:761 finance/views.py:763 finance/views.py:827
+#: finance/views.py:829 finance/views.py:840
 msgid "Pension"
 msgstr "Rente/Vorsorge"
 
-#: finance/models.py:84
+#: finance/models.py:106
 msgid "Pensions"
 msgstr "Renten & Vorsorge"
 
-#: finance/models.py:92
+#: finance/models.py:118
+msgid "AI Log / Errors"
+msgstr ""
+
+#: finance/models.py:121
+msgid "Import Batch"
+msgstr ""
+
+#: finance/models.py:122
+msgid "Import Batches"
+msgstr ""
+
+#: finance/models.py:133
+#, fuzzy
+#| msgid "Category"
+msgid "Suggested Category"
+msgstr "Kategorie"
+
+#: finance/models.py:136
+#, fuzzy
+#| msgid "Planned Sale"
+msgid "Planned Amount"
+msgstr "Geplanter Verkauf"
+
+#: finance/models.py:139
+msgid "Is Recurring"
+msgstr ""
+
+#: finance/models.py:141
+msgid "AI Reasoning"
+msgstr ""
+
+#: finance/models.py:142
+msgid "AI Confidence"
+msgstr ""
+
+#: finance/models.py:142
+msgid "0.0 to 1.0"
+msgstr ""
+
+#: finance/models.py:145
+msgid "Ignore"
+msgstr ""
+
+#: finance/models.py:148
+msgid "Matched Terms (Notes)"
+msgstr ""
+
+#: finance/models.py:149
+#, fuzzy
+#| msgid "Inflation Monitor"
+msgid "Integration Count"
+msgstr "Inflations-Monitor"
+
+#: finance/models.py:150
+msgid "Transaction Signature"
+msgstr ""
+
+#: finance/models.py:153
+msgid "Has Plan Conflict"
+msgstr ""
+
+#: finance/models.py:154
+msgid "Confirmed Conflict"
+msgstr ""
+
+#: finance/models.py:158
+msgid "Raw Row Fingerprints"
+msgstr ""
+
+#: finance/models.py:158
+msgid "Semicolon-separated MD5 hashes of original Excel rows"
+msgstr ""
+
+#: finance/models.py:161
+msgid "Pending Transaction"
+msgstr ""
+
+#: finance/models.py:162
+msgid "Pending Transactions"
+msgstr ""
+
+#: finance/models.py:181
+msgid "Processed Transaction Hash"
+msgstr ""
+
+#: finance/models.py:182
+msgid "Processed Transaction Hashes"
+msgstr ""
+
+#: finance/models.py:189 finance/models.py:207
+#| msgid "Annual Growth Rate (%)"
+msgid "Annual Appreciation Rate (%)"
+msgstr "Jährliche Wachstumsrate (%)"
+
+#: finance/models.py:190
+msgid "Location / Storage"
+msgstr "Standort / Aufbewahrung"
+
+#: finance/models.py:191
+msgid "Monthly Storage/Maintenance Costs"
+msgstr "Monatliche Lager-/Unterhaltskosten"
+
+#: finance/models.py:192 finance/models.py:213
+msgid "Is Sold"
+msgstr "Verkauft"
+
+#: finance/models.py:193 finance/models.py:214
+#| msgid "Start Date"
+msgid "Sale Date"
+msgstr "Startdatum"
+
+#: finance/models.py:196
+#| msgid "Decline Physical Assets"
+msgid "Sachwert (Physical Asset)"
+msgstr "Wertverlust Sachwerte (%)"
+
+#: finance/models.py:197
+#| msgid "Decline Physical Assets"
+msgid "Sachwerte (Physical Assets)"
+msgstr "Wertverlust Sachwerte (%)"
+
+#: finance/models.py:205
+msgid "Name / Property"
+msgstr ""
+
+#: finance/models.py:206
+#| msgid "Current Value"
+msgid "Property Value"
+msgstr "Aktueller Wert"
+
+#: finance/models.py:208
+#| msgid "Notification"
+msgid "Location"
+msgstr "Hinweis"
+
+#: finance/models.py:209
+#| msgid "Current Pension"
+msgid "Current Tenant"
+msgstr "Aktuelle Rente (am Stichtag)"
+
+#: finance/models.py:210
+#| msgid "Monthly Income"
+msgid "Monthly Rental Income (Net)"
+msgstr "Monatliches Einkommen"
+
+#: finance/models.py:211
+msgid "Monthly Maintenance/Mgmt Costs"
+msgstr "Monatliche Instandhaltungs-/Verwaltungskosten"
+
+#: finance/models.py:212
+msgid "Monthly Ancillary Costs (Nebenkosten)"
+msgstr "Monatliche Nebenkosten"
+
+#: finance/models.py:217
+#| msgid "Real Estate"
+msgid "Immobilie (Real Estate)"
+msgstr "Immobilien"
+
+#: finance/models.py:218
+#| msgid "Real Estate"
+msgid "Immobilien (Real Estate)"
+msgstr "Immobilien"
+
+#: finance/models.py:227
 msgid "Mein Finanzstatus (Vorausgefüllt)"
 msgstr ""
 
-#: finance/models.py:93
+#: finance/models.py:228
 msgid "Meine Finanzen (Schnelleingabe)"
 msgstr ""
 
-#: finance/views.py:14 templates/core/help.html:141
+#: finance/models.py:234
+#, fuzzy
+#| msgid "Provider/Name"
+msgid "Provider / Bank"
+msgstr "Anbieter/Name"
+
+#: finance/models.py:235
+msgid "Initial Loan Amount"
+msgstr "Darlehenssumme"
+
+#: finance/models.py:236
+msgid "Interest Rate (%)"
+msgstr "Zinssatz (%)"
+
+#: finance/models.py:237
+msgid "Interest Lock End Date"
+msgstr "Ende Zinsbindung"
+
+#: finance/models.py:238
+msgid "Monthly Installment"
+msgstr "Monatliche Rate"
+
+#: finance/models.py:242
+msgid "Extra Repayment Possible"
+msgstr "Sondertilgung möglich"
+
+#: finance/models.py:245
+msgid "Loan / Debt"
+msgstr "Kredit / Schulden"
+
+#: finance/models.py:246
+msgid "Loans / Debts"
+msgstr "Kredite / Schulden"
+
+#: finance/models.py:258
+msgid "Extra Repayment"
+msgstr "Sondertilgung"
+
+#: finance/models.py:259
+msgid "Extra Repayments"
+msgstr "Sondertilgungen"
+
+#: finance/models.py:264
+msgid "Search Query"
+msgstr ""
+
+#: finance/models.py:264
+msgid "Separated by semicolon, e.g. EDEKA;REWE"
+msgstr ""
+
+#: finance/models.py:265
+#, fuzzy
+#| msgid "Target Date"
+msgid "Target Name"
+msgstr "Stichtag"
+
+#: finance/models.py:265
+msgid "e.g. Lebensmitteleinkäufe"
+msgstr ""
+
+#: finance/models.py:268
+msgid "Is Active"
+msgstr ""
+
+#: finance/models.py:272
+#, fuzzy
+#| msgid "Cash Flow Source"
+msgid "Linked Cash Flow Source"
+msgstr "Einnahme-/Ausgabequelle"
+
+#: finance/models.py:275
+msgid "Import Filter"
+msgstr ""
+
+#: finance/models.py:276
+msgid "Import Filters"
+msgstr ""
+
+#: finance/models.py:300
+#, fuzzy
+#| msgid "Categorisation"
+msgid "Categorization Memory"
+msgstr "Kategorie"
+
+#: finance/models.py:301
+#, fuzzy
+#| msgid "Categorisation"
+msgid "Categorization Memories"
+msgstr "Kategorie"
+
+#: finance/services.py:255
+msgid "Sparen"
+msgstr ""
+
+#: finance/services.py:259
+msgid "Vermögen"
+msgstr ""
+
+#: finance/services.py:262 finance/services.py:264
+msgid "Rente"
+msgstr ""
+
+#: finance/services.py:293
+msgid "Sachwerte"
+msgstr ""
+
+#: finance/services.py:301 finance/services.py:307
+msgid "Immobilien"
+msgstr ""
+
+#: finance/services.py:327
+msgid "Kredit"
+msgstr "Kredit"
+
+#: finance/views.py:60
 msgid "Net Worth Forecast"
 msgstr "Vermögensprognose"
 
-#: finance/views.py:15
+#: finance/views.py:61
+msgid ""
+"Diese Grafik projiziert dein Gesamtvermögen bis zum Lebensende. Die Daten "
+"stammen aus deinen <b>Anlagen</b>, <b>Renten</b>, <b>Immobilien</b> und "
+"<b>Sachwerten</b>, abzüglich der <b>Kredite</b>. <br><br>„Nominal“ zeigt die "
+"nackten Zahlen der Zukunft. „Real“ berechnet die Kaufkraft in heutigen Euros "
+"(inflationsbereinigt)."
+msgstr ""
+
+#: finance/views.py:64
 msgid "Cash Flow Analysis"
 msgstr "Cashflow-Analyse"
 
-#: finance/views.py:16
+#: finance/views.py:65
+msgid ""
+"Vergleicht monatliche Einnahmen mit Ausgaben. Zeigt, ob du am Ende des "
+"Jahres Geld übrig hast (Überschuss) oder an dein Erspartes gehen musst "
+"(Defizit). <br><br>Basis ist die Tabelle <a href=\"/admin/finance/"
+"cashflowsource/\" target=\"_blank\" class=\"alert-link\">Zahlungsströme "
+"(Einnahmen/Ausgaben)</a>."
+msgstr ""
+
+#: finance/views.py:68
 msgid "Income & One-Time Effects"
 msgstr "Entwicklung der Einnahmen und Einmaleffekte"
 
-#: finance/views.py:17
+#: finance/views.py:69
+msgid ""
+"Zeigt die Entwicklung deiner Einnahmen über Jahrzehnte. Berücksichtigt "
+"Gehaltssprünge, Mietsteigerungen und den Übergang von Gehalt zu Rente. "
+"<br><br>Datenquellen: <a href=\"/admin/finance/cashflowsource/\" "
+"target=\"_blank\" class=\"alert-link\">Einnahmen</a> und <a href=\"/admin/"
+"finance/pension/\" target=\"_blank\" class=\"alert-link\">Rentenverträge</a>."
+msgstr ""
+
+#: finance/views.py:72
 msgid "Expense Evolution"
 msgstr "Ausgaben-Evolution"
 
-#: finance/views.py:18
+#: finance/views.py:73
+msgid ""
+"Visualisiert, wie sich deine Fixkosten und Lebenshaltungskosten durch "
+"Inflation und den Wegfall von Krediten verändern. <br><br>Datenquellen: <a "
+"href=\"/admin/finance/cashflowsource/\" target=\"_blank\" class=\"alert-"
+"link\">Ausgaben</a> und <a href=\"/admin/finance/loan/\" target=\"_blank\" "
+"class=\"alert-link\">Kredite</a>."
+msgstr ""
+
+#: finance/views.py:76
 msgid "Inflation Monitor"
 msgstr "Inflations-Monitor"
 
-#: finance/views.py:19
+#: finance/views.py:77
+msgid ""
+"Ein Warnsystem für deine Kaufkraft. Es zeigt, wie viel deine heutige "
+"Sparsumme in der Zukunft noch wert ist, basierend auf der in der Simulation "
+"gewählten Inflationsrate."
+msgstr ""
+
+#: finance/views.py:80
 msgid "Monthly Budget"
 msgstr "Monatliches Budget"
 
-#: finance/views.py:20
+#: finance/views.py:81
+msgid ""
+"Die prozentuale Verteilung deiner Ausgaben im gewählten Simulationsjahr. "
+"Hilft dabei, Kostentreiber zu identifizieren. <br><br>Anpassbar in der "
+"Tabelle <a href=\"/admin/finance/cashflowsource/\" target=\"_blank\" "
+"class=\"alert-link\">Ausgaben</a>."
+msgstr ""
+
+#: finance/views.py:84
+msgid "Asset Allocation"
+msgstr "Vermögensaufteilung (Asset Allocation)"
+
+#: finance/views.py:85
+msgid ""
+"Zeigt die Diversifikation deines Vermögens. Ein ausgewogener Mix aus "
+"liquiden Mitteln, Immobilien und Sachwerten ist oft sicherer. <br><br>Daten "
+"aus der Tabelle <a href=\"/admin/finance/asset/\" target=\"_blank\" "
+"class=\"alert-link\">Vermögenswerte</a>."
+msgstr ""
+
+#: finance/views.py:88
+msgid "Important Dates & Deadlines"
+msgstr "Wichtige Termine & Fristen"
+
+#: finance/views.py:89
+msgid ""
+"Ein automatischer Kalender für deine Finanzen. Zeigt, wann Kredite "
+"auslaufen, Versicherungen enden oder Einmalzahlungen fällig werden. "
+"<br><br>Speist sich aus allen Tabellen mit Enddatum."
+msgstr ""
+
+#: finance/views.py:92
 msgid "Income Table"
 msgstr "Einnahmen-Tabelle"
 
-#: finance/views.py:21
+#: finance/views.py:93
+msgid ""
+"Detaillierte Liste deiner monatlichen Zuflüsse zum gewählten Stichtag. "
+"<br><br>Hier anpassen: <a href=\"/admin/finance/cashflowsource/\" "
+"target=\"_blank\" class=\"alert-link\">Einnahmen verwalten</a>."
+msgstr ""
+
+#: finance/views.py:97
 msgid "Expense Table"
 msgstr "Ausgaben-Tabelle"
 
-#: finance/views.py:22
+#: finance/views.py:98
+msgid ""
+"Detaillierte Liste deiner monatlichen Abflüsse zum gewählten Stichtag. "
+"<br><br>Hier anpassen: <a href=\"/admin/finance/cashflowsource/\" "
+"target=\"_blank\" class=\"alert-link\">Ausgaben verwalten</a>."
+msgstr ""
+
+#: finance/views.py:101
 msgid "Asset Table"
 msgstr "Vermögenswerte-Tabelle"
 
-#: finance/views.py:23
+#: finance/views.py:102
+msgid ""
+"Inventur deiner Konten und Depots. Zeigt den simulierten Stand inklusive "
+"Zinseszinseffekt. <br><br>Hier anpassen: <a href=\"/admin/finance/asset/\" "
+"target=\"_blank\" class=\"alert-link\">Vermögenswerte</a>."
+msgstr ""
+
+#: finance/views.py:105
 msgid "Pension Table"
 msgstr "Renten-Tabelle"
 
-#: finance/views.py:24
+#: finance/views.py:106
+msgid ""
+"Übersicht deiner Altersvorsorge. Zeigt garantierte Beträge und aktuelle "
+"Kapitalwerte. <br><br>Hier anpassen: <a href=\"/admin/finance/pension/\" "
+"target=\"_blank\" class=\"alert-link\">Rentenverträge</a>."
+msgstr ""
+
+#: finance/views.py:109
 msgid "One-Time Event Table"
 msgstr "Einmalige Ereignisse"
 
-#: finance/views.py:28
+#: finance/views.py:110
+msgid ""
+"Besondere Ereignisse (Erbe, Autokauf, Schenkung) im gewählten "
+"Simulationsjahr. <br><br>Hier anpassen: <a href=\"/admin/finance/"
+"onetimeevent/\" target=\"_blank\" class=\"alert-link\">Einmalereignisse</a>."
+msgstr ""
+
+#: finance/views.py:113
+msgid "Loan Table"
+msgstr "Kredit-Übersicht"
+
+#: finance/views.py:114
+msgid ""
+"Übersicht deiner Schuldenlast. Zeigt Restsaldo und Zinssatz zum Stichtag. "
+"<br><br>Hier anpassen: <a href=\"/admin/finance/loan/\" target=\"_blank\" "
+"class=\"alert-link\">Kredite verwalten</a>."
+msgstr ""
+
+#: finance/views.py:117
+msgid "Loan Balance Trend"
+msgstr "Kredit-Trend"
+
+#: finance/views.py:118
+msgid ""
+"Visualisiert, wie schnell deine Schulden durch Tilgung schrumpfen. Hilft bei "
+"der Planung von Sondertilgungen. <br><br>Datenquelle: <a href=\"/admin/"
+"finance/loan/\" target=\"_blank\" class=\"alert-link\">Kredite</a>."
+msgstr ""
+
+#: finance/views.py:124
 msgid "Current Assets"
 msgstr "Aktuelles Vermögen / Konten"
 
-#: finance/views.py:29
+#: finance/views.py:125
+msgid ""
+"Summe deines gesamten liquiden Kapitals (Konten, Aktien, Cash) zum gewählten "
+"Datum. <br><br>Verwaltet in <a href=\"/admin/finance/asset/\" "
+"target=\"_blank\" class=\"alert-link\">Vermögenswerte</a>."
+msgstr ""
+
+#: finance/views.py:128
 msgid "Monthly Income"
 msgstr "Monatliches Einkommen"
 
-#: finance/views.py:30
+#: finance/views.py:129
+msgid ""
+"Dein gesamtes monatliches Netto-Einkommen (Gehalt, Mieteinnahmen, etc.). "
+"<br><br>Verwaltet in <a href=\"/admin/finance/cashflowsource/\" "
+"target=\"_blank\" class=\"alert-link\">Zahlungsströme (Einnahmen)</a>."
+msgstr ""
+
+#: finance/views.py:132
 msgid "Monthly Expenses"
 msgstr "Monatliche Ausgaben"
 
-#: finance/views.py:31
-msgid "Total Pensions"
-msgstr "Gesamtrenten"
+#: finance/views.py:133
+msgid ""
+"Deine gesamten monatlichen Ausgaben inklusive simulierter Inflation. "
+"<br><br>Verwaltet in <a href=\"/admin/finance/cashflowsource/\" "
+"target=\"_blank\" class=\"alert-link\">Zahlungsströme (Ausgaben)</a>."
+msgstr ""
 
-#: finance/views.py:263
-msgid "One-Time Events"
-msgstr "Einmalige Ereignisse"
+#: finance/views.py:136
+msgid "Pension Capital"
+msgstr "Angespartes Rentenkapital"
 
-#: finance/views.py:317
-msgid "Income"
-msgstr "Einnahmen"
+#: finance/views.py:137
+msgid ""
+"Aktueller Barwert bzw. Rückkaufwert all deiner Rentenanwartschaften. "
+"<br><br>Verwaltet in <a href=\"/admin/finance/pension/\" target=\"_blank\" "
+"class=\"alert-link\">Rentenverträge</a>."
+msgstr ""
 
-#: finance/views.py:318
-msgid "Expenses"
-msgstr "Ausgaben"
+#: finance/views.py:140
+msgid "Target Monthly Pension"
+msgstr "Ziel-Rente (Vertrag)"
 
-#: finance/views.py:319
-msgid "Net Savings"
-msgstr "Nettoersparnis"
+#: finance/views.py:141
+msgid ""
+"Die Summe der monatlichen Renten, die du laut deinen Verträgen nominal (ohne "
+"Inflation) erwartest. Dein Zielwert."
+msgstr ""
 
-#: finance/views.py:337
-msgid "Nominal Value"
-msgstr "Nominalwert"
+#: finance/views.py:144
+msgid "Current Pension"
+msgstr "Aktuelle Rente (am Stichtag)"
 
-#: finance/views.py:338
-msgid "Real Value (Purchasing Power)"
-msgstr "Realwert (Kaufkraft)"
+#: finance/views.py:145
+msgid ""
+"Die monatliche Rente, die du laut Simulation zum Stichtag tatsächlich "
+"beziehst (inflationsbereinigt)."
+msgstr ""
 
-#: finance/views.py:340
-msgid "Purchasing Power Loss"
-msgstr "Kaufkraftverlust"
+#: finance/views.py:148
+msgid "Physical Assets"
+msgstr "Sachwerte"
 
-#: finance/views.py:371
+#: finance/views.py:149
+msgid ""
+"Gesamtwert deiner Sachwerte wie Fahrzeuge, Gold oder Sammlungen. "
+"<br><br>Verwaltet in <a href=\"/admin/finance/physicalasset/\" "
+"target=\"_blank\" class=\"alert-link\">Sachwerte</a>."
+msgstr ""
+
+#: finance/views.py:152 finance/views.py:659
+msgid "Real Estate"
+msgstr "Immobilien"
+
+#: finance/views.py:153
+msgid ""
+"Marktwert deiner Immobilien zum gewählten Datum. <br><br>Verwaltet in <a "
+"href=\"/admin/finance/realestate/\" target=\"_blank\" class=\"alert-"
+"link\">Immobilien</a>."
+msgstr ""
+
+#: finance/views.py:156
+msgid "Total Wealth"
+msgstr "Gesamtvermögen"
+
+#: finance/views.py:157
+msgid ""
+"Dein Netto-Reinvermögen: Summe aller Werte (liquide, Renten, Immobilien, "
+"Sachwerte) minus alle Kredite."
+msgstr ""
+
+#: finance/views.py:160
+msgid "Total Debts"
+msgstr "Gesamtschulden"
+
+#: finance/views.py:161
+msgid ""
+"Deine gesamte Schuldenlast (Restsaldo) zum gewählten Datum. "
+"<br><br>Verwaltet in <a href=\"/admin/finance/loan/\" target=\"_blank\" "
+"class=\"alert-link\">Kredite</a>."
+msgstr ""
+
+#: finance/views.py:183
+msgid "State Pension"
+msgstr "Gesetzliche Rente"
+
+#: finance/views.py:184
+msgid "Private Pension"
+msgstr "Private Pension"
+
+#: finance/views.py:618 finance/views.py:623 finance/views.py:801
+msgid "Loan"
+msgstr "Kredit"
+
+#: finance/views.py:618
+msgid "End of Loan"
+msgstr "Kredit-Ende"
+
+#: finance/views.py:623
+msgid "End of Interest Lock"
+msgstr "Ende Zinsbindung"
+
+#: finance/views.py:631
+msgid "Start of Payout"
+msgstr "Beginn Auszahlung"
+
+#: finance/views.py:636
+msgid "End of Contribution"
+msgstr "Ende Einzahlung"
+
+#: finance/views.py:644
+msgid "Teaser Rate Expires"
+msgstr "Aktionszins läuft aus"
+
+#: finance/views.py:652
+#, fuzzy
+#| msgid "Physical Assets"
+msgid "Physical Asset"
+msgstr "Sachwerte"
+
+#: finance/views.py:652 finance/views.py:659
+msgid "Planned Sale"
+msgstr "Geplanter Verkauf"
+
+#: finance/views.py:666
+#, fuzzy
+#| msgid "Cash Flow Source"
+msgid "Cash Flow"
+msgstr "Einnahme-/Ausgabequelle"
+
+#: finance/views.py:666
+msgid "End of Cash Flow"
+msgstr "Ende Cashflow"
+
+#: finance/views.py:673
+#: templates/finance/partials/dashboard_table_dates.html:84
+msgid "Event"
+msgstr "Ereignis"
+
+#: finance/views.py:728 finance/views.py:730
 msgid "Continuous"
 msgstr ""
 
-#: finance/views.py:380 finance/views.py:403
-msgid "Uncategorized"
-msgstr "Kategorien"
+#: finance/views.py:741
+msgid "Income"
+msgstr "Einnahmen"
 
-#: finance/views.py:381 finance/views.py:404
-#: templates/finance/partials/dashboard_table_simple.html:172
+#: finance/views.py:742 finance/views.py:778
 msgid "Manual"
 msgstr ""
 
-#: finance/views.py:444
+#: finance/views.py:750
+msgid "Withdrawal"
+msgstr "Entnahme"
+
+#: finance/views.py:753 templates/finance/dashboard.html:26
+#: templates/finance/dashboard.html:46
+msgid "Simulation"
+msgstr "Simulation"
+
+#: finance/views.py:764 finance/views.py:790 finance/views.py:802
+msgid "Contract"
+msgstr "Vertrag"
+
+#: finance/views.py:777
+msgid "Expense"
+msgstr "Ausgabe"
+
+#: finance/views.py:787
+msgid "Contribution"
+msgstr "Beitrag"
+
+#: finance/views.py:789
+msgid "Savings"
+msgstr "Sparen"
+
+#: finance/views.py:799
+msgid "Loan Installment"
+msgstr "Kreditrate"
+
+#: finance/views.py:850
 msgid "One-Time"
 msgstr "Einmalige Ereignisse"
 
-#: finance/views.py:484 templates/base.html:64 templates/core/help.html:4
+#: finance/views.py:951 templates/base.html:352
 msgid "Help"
 msgstr "Hilfe"
 
-#: templates/base.html:59 templates/finance/dashboard.html:5
+#: finance/views.py:1283 templates/finance/partials/import_mapping_pane.html:23
+msgid "Alle Posten zugeordnet!"
+msgstr ""
+
+#: finance/views.py:1309
+msgid "Noch keine Buchungen bereit."
+msgstr ""
+
+#: finance/views.py:1330
+msgid "Dieser Import wurde bereits angewendet."
+msgstr ""
+
+#: finance/views.py:1693
+msgid "Filter erfolgreich hinzugefügt."
+msgstr ""
+
+#: finance/views.py:1720
+msgid "Filter erfolgreich geändert."
+msgstr ""
+
+#: finance/views.py:1739
+msgid "Filter gelöscht."
+msgstr ""
+
+#: finance/views.py:1826
+msgid "Import-Batch gelöscht."
+msgstr ""
+
+#: templates/base.html:308 templates/finance/dashboard.html:5
 #: templates/finance/dashboard.html:18
 msgid "Dashboard"
 msgstr "Dashboard"
 
-#: templates/base.html:69 templates/core/about.html:4
-msgid "About"
-msgstr "Über uns"
+#: templates/base.html:314 templates/core/profile.html:11
+msgid "Settings"
+msgstr "Einstellungen"
 
-#: templates/base.html:83
-msgid "Profile"
-msgstr "Benutzerprofil"
+#: templates/base.html:320
+#, fuzzy
+#| msgid "AI Bank Import"
+msgid "Bank Import"
+msgstr "KI Bank-Import"
 
-#: templates/base.html:84
+#: templates/base.html:327 templates/base.html:351
 msgid "Admin"
 msgstr ""
 
-#: templates/base.html:91
+#: templates/base.html:336
+msgid "Toggle Night Mode"
+msgstr "Nachtmodus umschalten"
+
+#: templates/base.html:353 templates/core/about.html:4
+msgid "About"
+msgstr "Über uns"
+
+#: templates/base.html:360
 msgid "Logout"
 msgstr "Abmelden"
 
-#: templates/base.html:96 templates/core/login.html:4
+#: templates/base.html:365 templates/core/login.html:4
 #: templates/core/login.html:11 templates/core/login.html:17
 msgid "Login"
 msgstr ""
 
-#: templates/base.html:97 templates/core/signup.html:4
+#: templates/base.html:366 templates/core/signup.html:4
 #: templates/core/signup.html:11 templates/core/signup.html:17
 msgid "Sign Up"
 msgstr ""
@@ -451,1771 +1172,1588 @@ msgstr ""
 "entwickelt, um Ihnen einen klaren und realistischen Blick auf Ihre "
 "langfristige finanzielle Zukunft zu geben."
 
+#: templates/core/about.html:15
+msgid ""
+"Our goal is to demystify complex financial planning by offering simple, "
+"visual, and highly customizable tools to help you reach your goals."
+msgstr ""
+
 #: templates/core/about.html:23
 msgid "Personal Data Security"
+msgstr ""
+
+#: templates/core/about.html:24
+msgid ""
+"Your data is only stored in your personal database and is not shared with "
+"third parties."
 msgstr ""
 
 #: templates/core/about.html:33
 msgid "Advanced Simulation"
 msgstr "Simulation aktualisieren"
 
+#: templates/core/about.html:34
+msgid ""
+"We use high-precision calculations for inflation and compound interest over "
+"a 30-year period."
+msgstr ""
+
 #: templates/core/about.html:47
 msgid "Lead Developer & Architect"
 msgstr "Hauptentwickler & Architekt"
 
-#: templates/core/help.html:10
-msgid "How can we help you?"
-msgstr "Wie können wir Ihnen helfen?"
-
-#: templates/core/help.html:11
-msgid "Find answers and tips to get the most out of your financial planning."
+#: templates/core/about.html:50
+msgid ""
+"Financial Independence is a goal for many, but for most it remains just a "
+"dream. My passion is to create tools that turn those dreams into actionable "
+"plans."
 msgstr ""
-"Finden Sie Antworten und Tipps, um Ihre Finanzplanung optimal zu nutzen."
 
-#: templates/core/help.html:23
-msgid "Quick Start"
-msgstr "Schnellstart"
+#: templates/core/help.html:4
+msgid "Help & Knowledge Base"
+msgstr "Hilfe & Wissensdatenbank"
 
-#: templates/core/help.html:25 templates/core/help.html:39
-#: templates/core/help.html:53
+#: templates/core/help.html:10
+msgid "HELP_HEADER_TITLE"
+msgstr "Hilfe & Details"
+
+#: templates/core/help.html:12
+msgid "HELP_HEADER_SUBTEXT"
+msgstr ""
+"Hintergründe zu den Berechnungen, dem Bank-Import und der Dashboard-"
+"Konfiguration."
+
+#: templates/core/help.html:27
+msgid "HELP_AI_IMPORT_TITLE"
+msgstr "KI Bank-Import"
+
+#: templates/core/help.html:29
+msgid "HELP_AI_IMPORT_DESC"
+msgstr ""
+"Erfahre, wie unsere Mustererkennung und das gelernte Gedächtnis deine "
+"Dateneingabe automatisieren und du dabei 100% Kontrolle behältst."
+
+#: templates/core/help.html:30 templates/core/help.html:46
+#: templates/core/help.html:62
 msgid "Learn More"
 msgstr "Mehr erfahren"
 
-#: templates/core/help.html:37
-msgid "Personal Dashboard"
-msgstr "Persönliches Dashboard"
+#: templates/core/help.html:43
+msgid "Simulation Engine"
+msgstr "Simulations-Engine"
 
-#: templates/core/help.html:51
-msgid "Calculations"
-msgstr "Simulation"
-
-#: templates/core/help.html:62
-msgid "Frequently Asked Questions"
-msgstr "Häufig gestellte Fragen"
-
-#: templates/core/help.html:67
-msgid "How do I add a new recurring expense?"
-msgstr "Wie füge ich eine neue wiederkehrende Ausgabe hinzu?"
-
-#: templates/core/help.html:79
-msgid "What is the \"Inflation Monitor\"?"
-msgstr "Inflations-Monitor"
-
-#: templates/core/help.html:98
-msgid "Quick Start Guide"
-msgstr "Schnellstart-Anleitung"
-
-#: templates/core/help.html:103
-msgid "Go to your Profile and set your default currency and inflation rate."
+#: templates/core/help.html:45
+msgid ""
+"Understand the math behind real vs. nominal value, inflation buffers, and "
+"how growth rates impact your 30-year forecast."
 msgstr ""
-"Gehen Sie zu Ihrem Profil und legen Sie Ihre Standardwährung und "
-"Inflationsrate fest."
+"Verstehe die Mathematik hinter Real- vs. Nominalwert, Zinspuffer und wie "
+"Wachstumsraten deine 30-Jahres-Prognose beeinflussen."
 
-#: templates/core/help.html:104
-msgid "Add your current Assets (bank accounts, investments, real estate)."
+#: templates/core/help.html:59 templates/core/profile.html:144
+#, fuzzy
+#| msgid "Profile & Design Studio"
+msgid "Design Studio"
+msgstr "Profil & Design Studio"
+
+#: templates/core/help.html:61
+msgid ""
+"Master the Art of Design Harmony. Explore how our color engine ensures your "
+"dashboard always looks premium."
 msgstr ""
-"Fügen Sie Ihr aktuelles Vermögen hinzu (Bankkonten, Investitionen, "
-"Immobilien)."
+"Meistere die Kunst der Design-Harmonie. Erfahre, wie unsere Farb-Engine "
+"dafür sorgt, dass dein Dashboard immer hochwertig aussieht."
 
-#: templates/core/help.html:105
-msgid "Enter your regular Income and Expenses in the Cash Flow section."
+#: templates/core/help.html:73
+msgid "Advanced FAQ"
+msgstr "Erweiterte FAQ"
+
+#: templates/core/help.html:81
+msgid "Why does my net worth decrease although my cash flow is positive?"
+msgstr "Warum sinkt mein Netto-Vermögen, obwohl mein Cashflow positiv ist?"
+
+#: templates/core/help.html:86
+msgid ""
+"This is likely due to the Inflation Monitor. While your nominal wealth "
+"increases, higher inflation rates can \"eat\" your purchasing power faster "
+"than you save. Check your \"Real Value\" vs \"Nominal Value\" in the charts."
 msgstr ""
-"Geben Sie Ihr regelmäßiges Einkommen und Ihre Ausgaben im Bereich Cashflow "
-"ein."
+"Das liegt wahrscheinlich am Inflations-Monitor. Während dein nominales "
+"Vermögen steigt, kann eine hohe Inflationsrate deine Kaufkraft schneller "
+"\"auffressen\", als du sparst. Prüfe den \"Realwert\" im Vergleich zum "
+"\"Nominalwert\" in den Diagrammen."
 
-#: templates/core/help.html:106
-msgid "Check the Dashboard to see your 30-year financial forecast!"
-msgstr "Prüfen Sie das Dashboard, um Ihre 30-jährige Finanzprognose zu sehen!"
+#: templates/core/help.html:94
+msgid "How does the \"Stichtag\" (Simulation Date) work?"
+msgstr "Wie funktioniert der \"Stichtag\" (Simulationsdatum)?"
 
-#: templates/core/help.html:117
-msgid "Dashboard Customization"
-msgstr "Dashboard-Konfiguration"
-
-#: templates/core/help.html:123
-msgid "Drag and drop widgets to change their order."
+#: templates/core/help.html:99
+msgid ""
+"The Stichtag is the \"fictional today\". Moving it allows you to travel "
+"through time. The dashboard will recalculate all active income, expenses, "
+"and asset values for that specific point in your life."
 msgstr ""
+"Der Stichtag ist das \"fiktive Heute\". Durch das Verschieben kannst du "
+"durch die Zeit reisen. Das Dashboard berechnet alle aktiven Einnahmen, "
+"Ausgaben und Vermögenswerte für genau diesen Zeitpunkt in deinem Leben neu."
 
-#: templates/core/help.html:124
-msgid "Resize widgets (Small/Medium/Large)."
-msgstr ""
+#: templates/core/help.html:107
+msgid "Are my bank details and financial data safe?"
+msgstr "Sind meine Bankdaten und Finanzinfos sicher?"
 
-#: templates/core/help.html:125
-msgid "Change background and text colors of individual charts."
+#: templates/core/help.html:112
+msgid ""
+"Yes. Your data stays in your instance. Our AI processing for bank imports is "
+"designed to respect your privacy, and no financial secrets ever leave your "
+"dedicated environment."
 msgstr ""
+"Ja. Deine Daten bleiben in deiner Instanz. Unsere KI-Verarbeitung für Bank-"
+"Importe ist darauf ausgelegt, deine Privatsphäre zu respektieren. Keine "
+"Finanzgeheimnisse verlassen jemals deine dedizierte Umgebung."
 
-#: templates/core/help.html:126
-msgid "Toggle visibility of widgets you don\\"
-msgstr ""
+#: templates/core/help.html:130
+msgid "AI-Assisted Bank Import"
+msgstr "KI-gestützter Bank-Import"
+
+#: templates/core/help.html:136
+msgid "1. Pattern Recognition"
+msgstr "1. Mustererkennung"
 
 #: templates/core/help.html:137
-msgid "How calculations work"
+msgid ""
+"Our system cleans bank descriptions and searches for repeating patterns. It "
+"remembers your previous manual categorizations and applies them to new "
+"imports automatically."
 msgstr ""
+"Unser System bereigigt Bank-Beschreibungen und sucht nach sich "
+"wiederholenden Mustern. Es merkt sich deine früheren manuellen "
+"Kategorisierungen und wendet sie automatisch auf neue Importe an."
 
-#: templates/core/help.html:143
-msgid "Inflation Adjustment"
-msgstr "Inflationsangepasst"
+#: templates/core/help.html:140
+msgid "2. Duplicate Protection"
+msgstr "2. Dubletten-Schutz"
+
+#: templates/core/help.html:141
+msgid ""
+"Every imported row gets a unique fingerprint. If you upload the same file "
+"twice, or overlapping files, the system will detect and ignore already "
+"existing transactions."
+msgstr ""
+"Jede importierte Zeile erhält einen eindeutigen Fingerabdruck. Wenn du "
+"dieselbe Datei doppelt hochlädst, erkennt das System dies und ignoriert "
+"bereits vorhandene Transaktionen."
+
+#: templates/core/help.html:144
+msgid "3. Bridge to Plan"
+msgstr "3. Brücke zum Plan"
+
+#: templates/core/help.html:145
+msgid ""
+"Detected transactions can be \"Linked\" to your financial plan. This allows "
+"you to track if your reality (Bank) matches your expectations (Plan)."
+msgstr ""
+"Erkannte Transaktionen können mit deinem Finanzplan \"verknüpft\" werden. So "
+"kannst du verfolgen, ob deine Realität (Bank) mit deinen Erwartungen (Plan) "
+"übereinstimmt."
+
+#: templates/core/help.html:148
+msgid "4. The Review Process"
+msgstr "4. Der Prüfprozess"
+
+#: templates/core/help.html:149
+msgid ""
+"Nothing is saved directly. You always have a \"Pending Transactions\" area "
+"where you can verify, correct, or ignore rows before they impact your "
+"history."
+msgstr ""
+"Nichts wird direkt gespeichert. Du hast immer einen Bereich für "
+"\"ausstehende Transaktionen\", in dem du Zeilen prüfen, korrigieren oder "
+"ignorieren kannst, bevor sie deine Historie beeinflussen."
+
+#: templates/core/help.html:162
+msgid "The Simulation Engine"
+msgstr "Die Simulations-Engine"
+
+#: templates/core/help.html:166
+msgid "Mathematical Foundations"
+msgstr "Mathematische Grundlagen"
+
+#: templates/core/help.html:168
+msgid "Formula:"
+msgstr "Formel:"
+
+#: templates/core/help.html:168
+msgid "Real Value = Nominal Value / (1 + Inflation)^Years"
+msgstr "Realwert = Nominalwert / (1 + Inflation)^Jahre"
+
+#: templates/core/help.html:172
+msgid "Compound Interest"
+msgstr "Zinseszins"
+
+#: templates/core/help.html:173
+msgid "HELP_SIM_COMPOUND_DESC"
+msgstr ""
+"Wir berechnen das Wachstum für jede Anlageklasse einzeln. Ein Wachstum von 5 "
+"% auf ein 100.000 € Guthaben wird monatlich kalkuliert, um den "
+"Zinseszinseffekt über 30+ Jahre genau abzubilden."
+
+#: templates/core/help.html:176
+msgid "Dynamics (Pensions & Salary)"
+msgstr "Dynamiken (Renten & Gehalt)"
+
+#: templates/core/help.html:177
+msgid "HELP_SIM_DYNAMICS_DESC"
+msgstr ""
+"Wenn du eine \"Dynamik\" von 2 % einstellst, bleibt dein Einkommen nicht "
+"gleich. Es wächst jedes Jahr und simuliert so Karriereschritte oder "
+"vertragliche Anpassungen."
+
+#: templates/core/help.html:182
+msgid "Why 30 Years?"
+msgstr "Warum 30 Jahre?"
+
+#: templates/core/help.html:183
+msgid "HELP_SIM_30YEARS_DESC"
+msgstr ""
+"Altersvorsorge ist ein Marathon. Wir haben einen 30-Jahres-Horizont gewählt, "
+"um die Spätfolgen von Inflation und Zinsen sichtbar zu machen, wo kleine "
+"Unterschiede heute zu massiven Lücken morgen führen."
+
+#: templates/core/help.html:198
+msgid "The Design Philosophy"
+msgstr "Die Design-Philosophie"
+
+#: templates/core/help.html:202
+msgid "Color Harmonies"
+msgstr "Farbharmonien"
+
+#: templates/core/help.html:203
+msgid "HELP_DESIGN_HARMONY_DESC"
+msgstr ""
+"Eine \"Harmonie\" ist nicht nur ein Set von Farben. Es ist eine "
+"mathematische Beziehung (komplementär, analog etc.) basierend auf deiner "
+"Wahl der Primärfarbe."
+
+#: templates/core/help.html:204
+msgid "Glassmorphism"
+msgstr "Glassmorphismus"
+
+#: templates/core/help.html:205
+msgid "HELP_DESIGN_GLASS_DESC"
+msgstr ""
+"Wir nutzen Filter und Transparenz, um Tiefe zu erzeugen. So schimmert dein "
+"personalisiertes Design durch, während das Interface perfekt lesbar bleibt."
+
+#: templates/core/help.html:207
+msgid "Pro Tip:"
+msgstr "Profi-Tipp:"
+
+#: templates/core/help.html:208
+msgid "HELP_DESIGN_PROTIP_DESC"
+msgstr ""
+"Nutze einen dunkleren Hintergrund und kräftige Primärfarben für den "
+"absoluten Premium-\"High-End\"-Look."
 
 #: templates/core/login.html:21
 msgid "No account yet? Sign up"
 msgstr ""
 
-#: templates/core/profile.html:8
-msgid "Edit Profile"
+#: templates/core/profile.html:4
+msgid "Profile & Design Studio"
+msgstr "Profil & Design Studio"
+
+#: templates/core/profile.html:12
+msgid "Personalize your experience and your dashboard design."
+msgstr "Personalisiere dein Erlebnis und dein Dashboard-Design."
+
+#: templates/core/profile.html:23
+msgid "Notification"
+msgstr "Hinweis"
+
+#: templates/core/profile.html:24
+msgid "Some fields could not be saved. Please check your input:"
+msgstr ""
+"Einige Felder konnten nicht gespeichert werden. Bitte prüfe deine Eingaben:"
+
+#: templates/core/profile.html:41
+msgid "Profile & Basic Data"
+msgstr "Profil & Stammdaten"
+
+#: templates/core/profile.html:51
+msgid "Username (Login)"
+msgstr "Benutzername (Login)"
+
+#: templates/core/profile.html:69
+msgid "Profile Picture"
+msgstr "Profilbild"
+
+#: templates/core/profile.html:77
+msgid "First Name"
+msgstr "Vorname"
+
+#: templates/core/profile.html:81
+msgid "Last Name"
+msgstr "Nachname"
+
+#: templates/core/profile.html:86
+msgid "Email Address"
+msgstr "E-Mail-Adresse"
+
+#: templates/core/profile.html:105
+msgid "Sim. Max Age"
+msgstr "Sim. Max Alter"
+
+#: templates/core/profile.html:114
+#, fuzzy, python-format
+#| msgid "Inflation Rate (%%)"
+msgid "Inflation (%%)"
+msgstr "Inflationsrate (%%)"
+
+#: templates/core/profile.html:118
+#, python-format
+msgid "Salary Increase (%%)"
+msgstr "Gehaltssteigerung (%%)"
+
+#: templates/core/profile.html:122
+#, fuzzy, python-format
+#| msgid "Pension Increase (%)"
+msgid "Pension Increase (%%)"
+msgstr "Rentenplus (%)"
+
+#: templates/core/profile.html:126
+#, fuzzy, python-format
+#| msgid "Interest Buffer (%)"
+msgid "Interest Buffer (%%)"
+msgstr "Zins-Puffer (%)"
+
+#: templates/core/profile.html:130
+#, fuzzy, python-format
+#| msgid "Real Estate (%)"
+msgid "Real Estate (%%)"
+msgstr "Immobilien (%)"
+
+#: templates/core/profile.html:134
+#, fuzzy, python-format
+#| msgid "Physical Assets (%)"
+msgid "Physical Assets (%%)"
+msgstr "Sachwerte (%)"
+
+#: templates/core/profile.html:149
+msgid "Design Harmony"
+msgstr "Design Harmonie"
+
+#: templates/core/profile.html:150
+msgid "Real-time Live Preview"
+msgstr "Echtzeit Live-Vorschau"
+
+#: templates/core/profile.html:153
+msgid "Select a Color Harmony"
+msgstr "Wähle eine Farbzusammenstellung"
+
+#: templates/core/profile.html:163
+msgid "Precision Studio (Manual Color Adjustment)"
+msgstr "Präzisions-Studio (Farben manuell anpassen)"
+
+#: templates/core/profile.html:169
+msgid "Primary"
+msgstr "Primär"
+
+#: templates/core/profile.html:170
+#, fuzzy
+#| msgid "Start Date"
+msgid "Start"
+msgstr "Startdatum"
+
+#: templates/core/profile.html:171
+msgid "End"
+msgstr "Ende"
+
+#: templates/core/profile.html:172
+msgid "Background"
+msgstr "Hintergrund"
+
+#: templates/core/profile.html:173
+#, fuzzy
+#| msgid "Sidebar Background"
+msgid "Sidebar BG"
+msgstr "Sidebar-Hintergrund"
+
+#: templates/core/profile.html:174
+msgid "Text"
 msgstr ""
 
-#: templates/core/profile.html:16 templates/finance/dashboard.html:234
-msgid "Save Changes"
-msgstr ""
+#: templates/core/profile.html:175
+#, fuzzy
+#| msgid "Table Header Text"
+msgid "Tab. Header BG"
+msgstr "Tabellenkopf-Text"
+
+#: templates/core/profile.html:176
+#, fuzzy
+#| msgid "Table Header Text"
+msgid "Tab. Header Text"
+msgstr "Tabellenkopf-Text"
+
+#: templates/core/profile.html:177
+#, fuzzy
+#| msgid "Table Body Text"
+msgid "Tab. Body BG"
+msgstr "Tabellenkopf-Text"
+
+#: templates/core/profile.html:178
+#, fuzzy
+#| msgid "Table Body Text"
+msgid "Tab. Body Text"
+msgstr "Tabellenkopf-Text"
+
+#: templates/core/profile.html:179
+#, fuzzy
+#| msgid "Table Border Color"
+msgid "Tab. Border"
+msgstr "Sekundärfarbe"
+
+#: templates/core/profile.html:192
+msgid "Save Changes & Design"
+msgstr "Änderungen & Design speichern"
 
 #: templates/core/signup.html:21
 msgid "Already have an account? Login"
+msgstr ""
+
+#: templates/finance/ai_status.html:10
+msgid "KI-Diagnose & Status"
+msgstr ""
+
+#: templates/finance/ai_status.html:14
+msgid ""
+"Hier kannst du prüfen, ob deine API-Schlüssel korrekt konfiguriert sind und "
+"die KI-Dienste antworten."
+msgstr ""
+
+#: templates/finance/ai_status.html:22
+msgid "Haupt-Modell für Kategorisierung"
+msgstr ""
+
+#: templates/finance/ai_status.html:26 templates/finance/ai_status.html:45
+msgid "Key Vorhanden"
+msgstr ""
+
+#: templates/finance/ai_status.html:32 templates/finance/ai_status.html:47
+msgid "Kein Key gefunden"
+msgstr ""
+
+#: templates/finance/ai_status.html:41
+msgid "Fallback & Prognosen"
+msgstr ""
+
+#: templates/finance/ai_status.html:55
+msgid "Hinweis:"
+msgstr ""
+
+#: templates/finance/ai_status.html:56
+msgid ""
+"Wenn beide Keys fehlen, nutzt das System einen einfachen Keyword-Abgleich. "
+"Für beste Ergebnisse solltest du einen Groq-Key (kostenlos) in deiner .env "
+"Datei hinterlegen."
+msgstr ""
+
+#: templates/finance/ai_status.html:61
+msgid "Zurück zum Import"
 msgstr ""
 
 #: templates/finance/dashboard.html:22
 msgid "Configure Layout"
 msgstr "Layout konfigurieren"
 
-#: templates/finance/dashboard.html:26 templates/finance/dashboard.html:44
-msgid "Simulation"
-msgstr "Simulation"
-
-#: templates/finance/dashboard.html:50
+#: templates/finance/dashboard.html:52
 msgid "Changes here are temporary. Update your profile for permanent settings."
-msgstr "Änderungen hier sind temporär. Aktualisieren Sie Ihr Profil für dauerhafte Einstellungen."
+msgstr ""
+"Änderungen hier sind temporär. Aktualisieren Sie Ihr Profil für dauerhafte "
+"Einstellungen."
 
-#: templates/finance/dashboard.html:56
-#, python-format
-msgid "Inflation Rate (%%)"
-msgstr "Inflationsrate (%%)"
+#: templates/finance/dashboard.html:62
+msgid "Target Date"
+msgstr "Stichtag"
 
-#: templates/finance/dashboard.html:61
-#, python-format
-msgid "Salary Increase (%%)"
-msgstr "Gehaltssteigerung (%%)"
+#: templates/finance/dashboard.html:63
+#, fuzzy
+#| msgid "Update Simulation"
+msgid "Ankerdatum für die Simulation."
+msgstr "Simulation aktualisieren"
 
-#: templates/finance/dashboard.html:66
-#, python-format
-msgid "Inv. Return Offset (%%)"
-msgstr "Anlage-Rendite Offset (%%)"
+#: templates/finance/dashboard.html:69
+msgid "Inflation Rate"
+msgstr "Inflationsrate (%)"
 
-#: templates/finance/dashboard.html:74
+#: templates/finance/dashboard.html:70
+#, fuzzy
+#| msgid "Inflation Rate"
+msgid "Jährliche Inflationsrate."
+msgstr "Inflationsrate (%)"
+
+#: templates/finance/dashboard.html:78
+msgid "Salary Increase"
+msgstr "Gehaltssteigerung (%)"
+
+#: templates/finance/dashboard.html:79
+msgid "Voraussichtliche jährliche Gehaltssteigerung."
+msgstr ""
+
+#: templates/finance/dashboard.html:85
+msgid "Pension Increase"
+msgstr "Rentenerhöhung (%)"
+
+#: templates/finance/dashboard.html:86
+msgid "Jährliche Rentenanpassung."
+msgstr ""
+
+#: templates/finance/dashboard.html:98
+msgid "Investment Return"
+msgstr "Investitionsrendite (%)"
+
+#: templates/finance/dashboard.html:99
+msgid "Zusätzliche Rendite auf liquides Anlagevermögen."
+msgstr ""
+
+#: templates/finance/dashboard.html:106
+msgid "Growth Real Estate"
+msgstr "Wertsteigerung Immobilien (%)"
+
+#: templates/finance/dashboard.html:107
+msgid "Standardmäßige jährliche Wertsteigerung für Immobilien."
+msgstr ""
+
+#: templates/finance/dashboard.html:113
+msgid "Decline Physical Assets"
+msgstr "Wertverlust Sachwerte (%)"
+
+#: templates/finance/dashboard.html:114
+msgid "Jährliche Wertminderung für Sachwerte."
+msgstr ""
+
+#: templates/finance/dashboard.html:124
 msgid "Update Simulation"
 msgstr "Simulation aktualisieren"
 
-#: templates/finance/dashboard.html:77
+#: templates/finance/dashboard.html:127
 msgid "Reset to Defaults"
 msgstr "Zurücksetzen"
 
-#: templates/finance/dashboard.html:88
+#: templates/finance/dashboard.html:169
 msgid "Configure Dashboard"
 msgstr "Dashboard konfigurieren"
 
-#: templates/finance/dashboard.html:101
+#: templates/finance/dashboard.html:181
 msgid "Customize colors and visibility for all dashboard components."
 msgstr "Farben und Sichtbarkeit der Dashboard-Komponenten anpassen."
 
-#: templates/finance/dashboard.html:104
-msgid "Table Styling"
-msgstr "Tabellen-Design"
-
-#: templates/finance/dashboard.html:107
-msgid "Header Background"
-msgstr "Kopf-Hintergrund"
-
-#: templates/finance/dashboard.html:111
-msgid "Header Text Color"
-msgstr "Kopf-Textfarbe"
-
-#: templates/finance/dashboard.html:115
-msgid "Filter Row Background"
-msgstr "Filterzeilen-Hintergrund"
-
-#: templates/finance/dashboard.html:119
-msgid "Body Background"
-msgstr "Tabellen-Hintergrund"
-
-#: templates/finance/dashboard.html:123
-msgid "Body Text Color"
-msgstr "Tabellen-Textfarbe"
-
-#: templates/finance/dashboard.html:127
-msgid "Border Color"
-msgstr "Rahmenfarbe"
-
-#: templates/finance/dashboard.html:132
-msgid "Simulation Panel"
-msgstr "Simulations-Panel"
-
-#: templates/finance/dashboard.html:135
-msgid "Header Background & Text"
-msgstr "Header Hintergrund & Text"
-
-#: templates/finance/dashboard.html:142
-msgid "Panel Background & Text"
-msgstr "Panel Hintergrund & Text"
-
-#: templates/finance/dashboard.html:150
+#: templates/finance/dashboard.html:185
 msgid "Summary Cards"
 msgstr "Zusammenfassungskarten"
 
-#: templates/finance/dashboard.html:155
+#: templates/finance/dashboard.html:190
 msgid "Widget"
 msgstr "Widget"
 
-#: templates/finance/dashboard.html:156 templates/finance/dashboard.html:188
+#: templates/finance/dashboard.html:191 templates/finance/dashboard.html:222
 msgid "Visible"
 msgstr "Sichtbar"
 
-#: templates/finance/dashboard.html:157 templates/finance/dashboard.html:191
+#: templates/finance/dashboard.html:192
 msgid "Colors"
 msgstr "Farbe"
 
-#: templates/finance/dashboard.html:182
+#: templates/finance/dashboard.html:217
 msgid "Charts & Widgets"
 msgstr "Charts & Widgets"
 
-#: templates/finance/dashboard.html:187
+#: templates/finance/dashboard.html:223
 msgid "Chart"
 msgstr "Chart"
 
-#: templates/finance/dashboard.html:189
+#: templates/finance/dashboard.html:224
 msgid "Width"
 msgstr "Breite"
 
-#: templates/finance/dashboard.html:190
+#: templates/finance/dashboard.html:225
 msgid "Height"
 msgstr "Höhe"
 
-#: templates/finance/dashboard.html:215
+#: templates/finance/dashboard.html:248
 msgid "Small"
 msgstr "Klein"
 
-#: templates/finance/dashboard.html:216
+#: templates/finance/dashboard.html:249
 msgid "Medium"
 msgstr "Mittel"
 
-#: templates/finance/dashboard.html:217
+#: templates/finance/dashboard.html:250
 msgid "Large"
 msgstr "Groß"
 
-#: templates/finance/dashboard.html:233
+#: templates/finance/dashboard.html:260
 msgid "Close"
 msgstr "Schließen"
 
-#: templates/finance/partials/dashboard_charts.html:23
-msgid "Simulation Parameters"
-msgstr "Simulationsparameter"
-
-#: templates/finance/partials/dashboard_charts.html:23
-msgid "Inflation"
-msgstr "Inflation"
-
-#: templates/finance/partials/dashboard_charts.html:23
-msgid "Salary"
-msgstr "Gehalt"
-
-#: templates/finance/partials/dashboard_charts.html:23
-msgid "Return Offset"
-msgstr "Rendite-Offset"
-
-#: templates/finance/partials/dashboard_table_simple.html:119
-msgid "Year"
-msgstr "Jährlich"
-
-#: templates/finance/partials/dashboard_table_simple.html:133
-#: templates/finance/partials/dashboard_table_simple.html:136
-#: templates/finance/partials/dashboard_table_simple.html:139
-#: templates/finance/partials/dashboard_table_simple.html:142
-msgid "Filter..."
-msgstr "Filter..."
-
-#: templates/finance/partials/dashboard_table_simple.html:159
-msgid "Group Sum"
-msgstr "Gruppensumme"
-
-#: templates/finance/partials/dashboard_table_simple.html:185
-msgid "No items found"
-msgstr "Keine Einträge gefunden"
-
-#: templates/finance/partials/dashboard_table_simple.html:193
-msgid "Total"
-msgstr "Gesamt"
-
-#: venv/lib/python3.12/site-packages/django/contrib/messages/apps.py:16
-msgid "Messages"
+#: templates/finance/dashboard.html:261
+msgid "Save Changes"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/contrib/sitemaps/apps.py:8
-msgid "Site Maps"
+#: templates/finance/dashboard.html:331
+msgid "Verstanden"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/contrib/staticfiles/apps.py:9
-msgid "Static Files"
+#: templates/finance/import_filters.html:8
+msgid "Import-Filter verwalten"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/contrib/syndication/apps.py:7
-msgid "Syndication"
-msgstr "Simulation"
-
-#. Translators: String used to replace omitted page numbers in elided page
-#. range generated by paginators, e.g. [1, 2, '…', 5, 6, 7, '…', 9, 10].
-#: venv/lib/python3.12/site-packages/django/core/paginator.py:33
-msgid "…"
+#: templates/finance/import_filters.html:9
+msgid "Definiere Regeln, um Buchungen automatisch zusammenzufassen."
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/core/paginator.py:35
-msgid "That page number is not an integer"
+#: templates/finance/import_filters.html:13
+msgid "Zurück zur Buchungsprüfung"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/core/paginator.py:36
-msgid "That page number is less than 1"
+#: templates/finance/import_filters.html:17
+#: templates/finance/import_processing.html:31
+msgid "Zurück zum Upload"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/core/paginator.py:37
-msgid "That page contains no results"
+#: templates/finance/import_filters.html:28
+msgid "Kopiervorlage aus Buchung"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/core/validators.py:22
-msgid "Enter a valid value."
+#: templates/finance/import_filters.html:30
+msgid "Alles kopieren"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/core/validators.py:70
-msgid "Enter a valid domain name."
+#: templates/finance/import_filters.html:33
+msgid "Text markieren und oben einfügen"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/core/validators.py:153
-#: venv/lib/python3.12/site-packages/django/forms/fields.py:774
-msgid "Enter a valid URL."
+#: templates/finance/import_filters.html:36
+msgid "Markiere oben den Teil (z.B. 'REWE'), der für den Filter relevant ist."
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/core/validators.py:200
-msgid "Enter a valid integer."
+#: templates/finance/import_filters.html:42
+msgid "Neuen Filter erstellen"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/core/validators.py:211
-msgid "Enter a valid email address."
+#: templates/finance/import_filters.html:50
+#: templates/finance/import_filters.html:142
+msgid "Suchbegriffe (mit ; getrennt)"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/core/validators.py:309
-#: venv/lib/python3.12/site-packages/django/core/validators.py:318
-#: venv/lib/python3.12/site-packages/django/core/validators.py:332
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2220
+#: templates/finance/import_filters.html:54
+#: templates/finance/import_filters.html:101
+#: templates/finance/import_filters.html:146
+#: templates/finance/partials/import_ready_pane.html:12
+#, fuzzy
+#| msgid "Name"
+msgid "Ziel-Name"
+msgstr "Bezeichnung"
+
+#: templates/finance/import_filters.html:58
+#: templates/finance/import_filters.html:103
+#: templates/finance/import_filters.html:150
+#: templates/finance/partials/import_ready_pane.html:17
+#, fuzzy
+#| msgid "Categories"
+msgid "Kategorie"
+msgstr "Kategorien"
+
+#: templates/finance/import_filters.html:66
+#: templates/finance/import_filters.html:158
+#: templates/finance/partials/import_mapping_pane.html:62
+msgid "Neue Kategorie anlegen"
+msgstr ""
+
+#: templates/finance/import_filters.html:72
+#: templates/finance/import_filters.html:164
+msgid "Verknüpfung mit Finanzplan (Abgleich)"
+msgstr ""
+
+#: templates/finance/import_filters.html:75
+#: templates/finance/import_filters.html:167
+msgid "-- Kein Plan-Abgleich --"
+msgstr ""
+
+#: templates/finance/import_filters.html:80
+#: templates/finance/import_filters.html:172
+msgid "Neuen Plan-Eintrag anlegen"
+msgstr ""
+
+#: templates/finance/import_filters.html:84
 #, python-format
-msgid "Enter a valid %(protocol)s address."
+msgid "Falls verknüpft, warnt das System bei Preisabweichungen > 2%%."
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/core/validators.py:311
-msgid "IPv4"
+#: templates/finance/import_filters.html:87
+msgid "Filter speichern"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/core/validators.py:320
-#: venv/lib/python3.12/site-packages/django/utils/ipv6.py:43
-msgid "IPv6"
+#: templates/finance/import_filters.html:102
+msgid "Suchbegriffe"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/core/validators.py:334
-msgid "IPv4 or IPv6"
+#: templates/finance/import_filters.html:104
+#: templates/finance/import_upload.html:73
+#: templates/finance/partials/import_mapping_pane.html:6
+msgid "Aktion"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/core/validators.py:375
-msgid "Enter only digits separated by commas."
+#: templates/finance/import_filters.html:113
+msgid "Noch keine Filter definiert."
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/core/validators.py:381
-#, python-format
-msgid "Ensure this value is %(limit_value)s (it is %(show_value)s)."
+#: templates/finance/import_filters.html:137
+msgid "Filter bearbeiten"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/core/validators.py:416
-#, python-format
-msgid "Ensure this value is less than or equal to %(limit_value)s."
+#: templates/finance/import_filters.html:179
+#: templates/finance/import_review.html:35
+msgid "Abbrechen"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/core/validators.py:425
-#, python-format
-msgid "Ensure this value is greater than or equal to %(limit_value)s."
+#: templates/finance/import_filters.html:180
+msgid "Änderungen speichern"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/core/validators.py:434
-#, python-format
-msgid "Ensure this value is a multiple of step size %(limit_value)s."
+#: templates/finance/import_filters.html:192
+msgid "Kopiert!"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/core/validators.py:514
-#: venv/lib/python3.12/site-packages/django/forms/fields.py:365
-#: venv/lib/python3.12/site-packages/django/forms/fields.py:404
-msgid "Enter a number."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/core/validators.py:516
-#, python-format
-msgid "Ensure that there are no more than %(max)s digit in total."
-msgid_plural "Ensure that there are no more than %(max)s digits in total."
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.12/site-packages/django/core/validators.py:521
-#, python-format
-msgid "Ensure that there are no more than %(max)s decimal place."
-msgid_plural "Ensure that there are no more than %(max)s decimal places."
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.12/site-packages/django/core/validators.py:659
-msgid "Null characters are not allowed."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/base.py:1633
-#: venv/lib/python3.12/site-packages/django/forms/models.py:932
-msgid "and"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/base.py:1635
-#, python-format
-msgid "%(model_name)s with this %(field_labels)s already exists."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/constraints.py:20
-#, python-format
-msgid "Constraint “%(name)s” is violated."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:134
-#, python-format
-msgid "Value %(value)r is not a valid choice."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:135
-msgid "This field cannot be null."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:136
-msgid "This field cannot be blank."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:137
-#, python-format
-msgid "%(model_name)s with this %(field_label)s already exists."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:180
-#, python-format
-msgid "Field of type: %(field_type)s"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1161
-#, python-format
-msgid "“%(value)s” value must be either True or False."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1162
-#, python-format
-msgid "“%(value)s” value must be either True, False, or None."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1164
-msgid "Boolean (Either True or False)"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1214
-#, python-format
-msgid "String (up to %(max_length)s)"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1216
-msgid "String (unlimited)"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1325
-msgid "Comma-separated integers"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1434
-msgid "Date (without time)"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1574
-msgid "Date (with time)"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1701
-#, python-format
-msgid "“%(value)s” value must be a decimal number."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1703
-msgid "Decimal number"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1868
-msgid "Duration"
-msgstr "Simulation"
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1920
-msgid "Email address"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1945
-msgid "File path"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2023
-#, python-format
-msgid "“%(value)s” value must be a float."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2025
-msgid "Floating point number"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2065
-#, python-format
-msgid "“%(value)s” value must be an integer."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2067
-msgid "Integer"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2163
-msgid "Big (8 byte) integer"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2180
-msgid "Small integer"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2188
-msgid "IPv4 address"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2219
-msgid "IP address"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2310
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2311
-#, python-format
-msgid "“%(value)s” value must be either None, True or False."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2313
-msgid "Boolean (Either True, False or None)"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2364
-msgid "Positive big integer"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2379
-msgid "Positive integer"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2394
-msgid "Positive small integer"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2410
-#, python-format
-msgid "Slug (up to %(max_length)s)"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2446
-msgid "Text"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2534
-msgid "Time"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2642
-msgid "URL"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2666
-msgid "Raw binary data"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2731
-#, python-format
-msgid "“%(value)s” is not a valid UUID."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:2733
-msgid "Universally unique identifier"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/files.py:244
-msgid "File"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/files.py:420
-msgid "Image"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/json.py:24
-msgid "A JSON object"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/json.py:26
-msgid "Value must be valid JSON."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/related.py:978
-#, python-format
-msgid "%(model)s instance with %(field)s %(value)r is not a valid choice."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/related.py:981
-msgid "Foreign Key (type determined by related field)"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/related.py:1275
-msgid "One-to-one relationship"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/related.py:1332
-#, python-format
-msgid "%(from)s-%(to)s relationship"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/related.py:1334
-#, python-format
-msgid "%(from)s-%(to)s relationships"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/db/models/fields/related.py:1382
-msgid "Many-to-many relationship"
-msgstr ""
-
-#. Translators: If found as last label character, these punctuation
-#. characters will prevent the default label_suffix to be appended to
-#. the label
-#: venv/lib/python3.12/site-packages/django/forms/boundfield.py:188
-msgid ":?.!"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/forms/fields.py:92
-msgid "This field is required."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/forms/fields.py:314
-msgid "Enter a whole number."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/forms/fields.py:485
-#: venv/lib/python3.12/site-packages/django/forms/fields.py:1251
-msgid "Enter a valid date."
-msgstr "Geben Sie ein gültiges Datum ein."
-
-#: venv/lib/python3.12/site-packages/django/forms/fields.py:508
-#: venv/lib/python3.12/site-packages/django/forms/fields.py:1252
-msgid "Enter a valid time."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/forms/fields.py:535
-msgid "Enter a valid date/time."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/forms/fields.py:569
-msgid "Enter a valid duration."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/forms/fields.py:570
-#, python-brace-format
-msgid "The number of days must be between {min_days} and {max_days}."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/forms/fields.py:639
-msgid "No file was submitted. Check the encoding type on the form."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/forms/fields.py:640
-msgid "No file was submitted."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/forms/fields.py:641
-msgid "The submitted file is empty."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/forms/fields.py:643
-#, python-format
-msgid "Ensure this filename has at most %(max)d character (it has %(length)d)."
-msgid_plural ""
-"Ensure this filename has at most %(max)d characters (it has %(length)d)."
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.12/site-packages/django/forms/fields.py:648
-msgid "Please either submit a file or check the clear checkbox, not both."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/forms/fields.py:872
-#: venv/lib/python3.12/site-packages/django/forms/fields.py:959
-#: venv/lib/python3.12/site-packages/django/forms/models.py:1621
-#, python-format
-msgid "Select a valid choice. %(value)s is not one of the available choices."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/forms/fields.py:961
-#: venv/lib/python3.12/site-packages/django/forms/fields.py:1080
-#: venv/lib/python3.12/site-packages/django/forms/models.py:1619
-msgid "Enter a list of values."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/forms/fields.py:1081
-msgid "Enter a complete value."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/forms/fields.py:1323
-msgid "Enter a valid UUID."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/forms/fields.py:1353
-msgid "Enter a valid JSON."
-msgstr ""
-
-#. Translators: This is the default suffix added to form field labels
-#: venv/lib/python3.12/site-packages/django/forms/forms.py:97
-msgid ":"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/forms/forms.py:239
-#, python-format
-msgid "(Hidden field %(name)s) %(error)s"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/forms/formsets.py:65
-#, python-format
-msgid "Please submit at most %(num)d form."
-msgid_plural "Please submit at most %(num)d forms."
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.12/site-packages/django/forms/formsets.py:70
-#, python-format
-msgid "Please submit at least %(num)d form."
-msgid_plural "Please submit at least %(num)d forms."
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.12/site-packages/django/forms/formsets.py:484
-#: venv/lib/python3.12/site-packages/django/forms/formsets.py:491
-msgid "Order"
-msgstr "Reihenfolge"
-
-#: venv/lib/python3.12/site-packages/django/forms/formsets.py:499
-msgid "Delete"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/forms/models.py:925
-#, python-format
-msgid "Please correct the duplicate data for %(field)s."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/forms/models.py:930
-#, python-format
-msgid "Please correct the duplicate data for %(field)s, which must be unique."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/forms/models.py:946
-msgid "Please correct the duplicate values below."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/forms/models.py:1383
-msgid "The inline value did not match the parent instance."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/forms/models.py:1474
-msgid "Select a valid choice. That choice is not one of the available choices."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/forms/models.py:1623
-#, python-format
-msgid "“%(pk)s” is not a valid value."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/forms/widgets.py:528
-msgid "Clear"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/forms/widgets.py:529
-msgid "Currently"
-msgstr "Währung"
-
-#: venv/lib/python3.12/site-packages/django/forms/widgets.py:530
-msgid "Change"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/forms/widgets.py:869
-msgid "Unknown"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/forms/widgets.py:870
-msgid "Yes"
-msgstr "Ja"
-
-#: venv/lib/python3.12/site-packages/django/forms/widgets.py:871
-msgid "No"
-msgstr "Nein"
-
-#: venv/lib/python3.12/site-packages/django/tasks/base.py:34
-msgctxt "Task"
-msgid "Ready"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/tasks/base.py:36
-msgctxt "Task"
-msgid "Running"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/tasks/base.py:38
-msgctxt "Task"
-msgid "Failed"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/tasks/base.py:40
-msgctxt "Task"
-msgid "Successful"
-msgstr ""
-
-#. Translators: Please do not add spaces around commas.
-#: venv/lib/python3.12/site-packages/django/template/defaultfilters.py:878
-msgid "yes,no,maybe"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/template/defaultfilters.py:908
-#: venv/lib/python3.12/site-packages/django/template/defaultfilters.py:925
-#, python-format
-msgid "%(size)d byte"
-msgid_plural "%(size)d bytes"
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.12/site-packages/django/template/defaultfilters.py:927
-#, python-format
-msgid "%s KB"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/template/defaultfilters.py:929
-#, python-format
-msgid "%s MB"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/template/defaultfilters.py:931
-#, python-format
-msgid "%s GB"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/template/defaultfilters.py:933
-#, python-format
-msgid "%s TB"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/template/defaultfilters.py:935
-#, python-format
-msgid "%s PB"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dateformat.py:74
-msgid "p.m."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dateformat.py:75
-msgid "a.m."
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dateformat.py:80
-msgid "PM"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dateformat.py:81
-msgid "AM"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dateformat.py:153
-msgid "midnight"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dateformat.py:155
-msgid "noon"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:7
-msgid "Monday"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:8
-msgid "Tuesday"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:9
-msgid "Wednesday"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:10
-msgid "Thursday"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:11
-msgid "Friday"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:12
-msgid "Saturday"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:13
-msgid "Sunday"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:16
-msgid "Mon"
-msgstr "Monatlich"
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:17
-msgid "Tue"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:18
-msgid "Wed"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:19
-msgid "Thu"
-msgstr ""
+#: templates/finance/import_filters.html:270
+#: templates/finance/import_review.html:277
+#, fuzzy
+#| msgid "Categories"
+msgid "Neue Kategorie"
+msgstr "Kategorien"
 
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:20
-msgid "Fri"
+#: templates/finance/import_filters.html:280
+msgid "Farbe (Standard: Grau)"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:21
-msgid "Sat"
+#: templates/finance/import_filters.html:281
+msgid "Farbe wählen"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:22
-msgid "Sun"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:25
-msgid "January"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:26
-msgid "February"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:27
-msgid "March"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:28
-msgid "April"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:29
-msgid "May"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:30
-msgid "June"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:31
-msgid "July"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:32
-msgid "August"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:33
-msgid "September"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:34
-msgid "October"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:35
-msgid "November"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:36
-msgid "December"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:39
-msgid "jan"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:40
-msgid "feb"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:41
-msgid "mar"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:42
-msgid "apr"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:43
-msgid "may"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:44
-msgid "jun"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:45
-msgid "jul"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:46
-msgid "aug"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:47
-msgid "sep"
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:48
-msgid "oct"
-msgstr ""
+#: templates/finance/import_filters.html:286
+#, fuzzy
+#| msgid "Categories"
+msgid "Kategorie erstellen"
+msgstr "Kategorien"
 
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:49
-msgid "nov"
+#: templates/finance/import_filters.html:304
+msgid "Neuer Plan-Eintrag"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:50
-msgid "dec"
+#: templates/finance/import_filters.html:314
+msgid "Betrag (€)"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:53
-msgctxt "abbrev. month"
-msgid "Jan."
+#: templates/finance/import_filters.html:319
+msgid "Einnahme?"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:54
-msgctxt "abbrev. month"
-msgid "Feb."
+#: templates/finance/import_filters.html:324
+msgid "Plan-Eintrag erstellen"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:60
-msgctxt "abbrev. month"
-msgid "Aug."
+#: templates/finance/import_processing.html:15
+msgid "Analyse läuft..."
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:61
-msgctxt "abbrev. month"
-msgid "Sept."
+#: templates/finance/import_processing.html:17
+msgid ""
+"Deine Daten werden von der KI kategorisiert. Bitte schließe dieses Fenster "
+"nicht."
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:62
-msgctxt "abbrev. month"
-msgid "Oct."
+#: templates/finance/import_processing.html:25
+msgid "Analyse fehlgeschlagen"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:63
-msgctxt "abbrev. month"
-msgid "Nov."
+#: templates/finance/import_processing.html:42
+msgid "KI analysiert Daten..."
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/utils/dates.py:64
-msgctxt "abbrev. month"
-msgid "Dec."
+#: templates/finance/import_processing.html:48
+msgid "Analyse fertig – Buchungen ansehen"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/utils/ipv6.py:20
-msgid "This is not a valid IPv6 address."
+#: templates/finance/import_processing.html:53
+msgid ""
+"Möchtest du die Analyse wirklich abbrechen? Alle Daten dieses Imports werden "
+"gelöscht."
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/utils/text.py:76
-#, python-format
-msgctxt "String to return when truncating text"
-msgid "%(truncated_text)s…"
+#: templates/finance/import_processing.html:57
+msgid "Analyse abbrechen & Löschen"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/utils/text.py:288
-msgid "or"
+#: templates/finance/import_review.html:27
+msgid "Abstimmung & Import"
 msgstr ""
-
-#. Translators: This string is used as a separator between list elements
-#: venv/lib/python3.12/site-packages/django/utils/text.py:307
-#: venv/lib/python3.12/site-packages/django/utils/timesince.py:135
-msgid ", "
-msgstr ""
-
-#: venv/lib/python3.12/site-packages/django/utils/timesince.py:8
-#, python-format
-msgid "%(num)d year"
-msgid_plural "%(num)d years"
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.12/site-packages/django/utils/timesince.py:9
-#, python-format
-msgid "%(num)d month"
-msgid_plural "%(num)d months"
-msgstr[0] ""
-msgstr[1] ""
 
-#: venv/lib/python3.12/site-packages/django/utils/timesince.py:10
-#, python-format
-msgid "%(num)d week"
-msgid_plural "%(num)d weeks"
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.12/site-packages/django/utils/timesince.py:11
-#, python-format
-msgid "%(num)d day"
-msgid_plural "%(num)d days"
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.12/site-packages/django/utils/timesince.py:12
-#, python-format
-msgid "%(num)d hour"
-msgid_plural "%(num)d hours"
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.12/site-packages/django/utils/timesince.py:13
-#, python-format
-msgid "%(num)d minute"
-msgid_plural "%(num)d minutes"
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.12/site-packages/django/views/csrf.py:29
-msgid "Forbidden"
+#: templates/finance/import_review.html:28
+msgid ""
+"Bereinige die offenen Posten oben, bis sie in der Import-Vorschau unten "
+"korrekt zusammengefasst sind."
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/views/csrf.py:30
-msgid "CSRF verification failed. Request aborted."
+#: templates/finance/import_review.html:32
+#: templates/finance/import_upload.html:17
+msgid "Filter verwalten"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/views/csrf.py:66
-msgid "More information is available with DEBUG=True."
+#: templates/finance/import_review.html:39
+msgid "Nicht markierte Konflikte werden beim Import übersprungen."
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/views/generic/dates.py:44
-msgid "No year specified"
+#: templates/finance/import_review.html:41
+msgid "Konflikte (werden übersprungen)"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/views/generic/dates.py:64
-#: venv/lib/python3.12/site-packages/django/views/generic/dates.py:115
-#: venv/lib/python3.12/site-packages/django/views/generic/dates.py:214
-msgid "Date out of range"
+#: templates/finance/import_review.html:46
+msgid "Jetzt importieren"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/views/generic/dates.py:94
-msgid "No month specified"
+#: templates/finance/import_review.html:57
+msgid "1. Offene Posten (Noch zuordnen)"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/views/generic/dates.py:147
-msgid "No day specified"
+#: templates/finance/import_review.html:70
+msgid "Suchen & Gruppieren (z.B. Aldi)..."
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/views/generic/dates.py:194
-msgid "No week specified"
+#: templates/finance/import_review.html:79
+msgid "Suche zurücksetzen"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/views/generic/dates.py:353
-#: venv/lib/python3.12/site-packages/django/views/generic/dates.py:384
-#, python-format
-msgid "No %(verbose_name_plural)s available"
+#: templates/finance/import_review.html:91
+msgid "Filter-Vorschläge:"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/views/generic/dates.py:720
-#, python-format
-msgid "Invalid date string “%(datestr)s” given format “%(format)s”"
+#: templates/finance/import_review.html:98
+msgid "Alle anzeigen"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/views/generic/detail.py:56
-#, python-format
-msgid "No %(verbose_name)s found matching the query"
+#: templates/finance/import_review.html:287
+msgid "Farbe"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/views/generic/list.py:70
-msgid "Page is not “last”, nor can it be converted to an int."
+#: templates/finance/import_review.html:293
+msgid "Erstellen"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/views/generic/list.py:77
-#, python-format
-msgid "Invalid page (%(page_number)s): %(message)s"
+#: templates/finance/import_upload.html:12
+msgid "Bankbuchungen importieren"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/views/generic/list.py:173
-#, python-format
-msgid "Empty list and “%(class_name)s.allow_empty” is False."
+#: templates/finance/import_upload.html:13
+msgid ""
+"Lade deine Excel-Tabelle hoch. Unsere KI hilft dir bei der Kategorisierung."
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/views/static.py:49
-msgid "Directory indexes are not allowed here."
+#: templates/finance/import_upload.html:23
+msgid "Hinweise zum Import"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/views/static.py:51
-#, python-format
-msgid "“%(path)s” does not exist"
+#: templates/finance/import_upload.html:25
+msgid "Unterstützte Formate: .xlsx, .xls"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/views/static.py:68
-#: venv/lib/python3.12/site-packages/django/views/templates/directory_index.html:8
-#: venv/lib/python3.12/site-packages/django/views/templates/directory_index.html:11
-#, python-format
-msgid "Index of %(directory)s"
+#: templates/finance/import_upload.html:26
+msgid ""
+"Die Tabelle sollte Spalten für Datum, Verwendungszweck und Betrag enthalten."
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/views/templates/default_urlconf.html:7
-#: venv/lib/python3.12/site-packages/django/views/templates/default_urlconf.html:204
-msgid "The install worked successfully! Congratulations!"
+#: templates/finance/import_upload.html:27
+msgid ""
+"Die KI erkennt automatisch Einnahmen, Ausgaben und regelmäßige Abos/Gehälter."
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/views/templates/default_urlconf.html:217
-msgid "Django Documentation"
+#: templates/finance/import_upload.html:39
+msgid "Analyse starten"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/views/templates/default_urlconf.html:218
-msgid "Topics, references, &amp; how-to’s"
+#: templates/finance/import_upload.html:48
+msgid "Lade Datei hoch..."
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/views/templates/default_urlconf.html:226
-msgid "Tutorial: A Polling App"
+#: templates/finance/import_upload.html:49
+msgid "Bitte warten, die Daten werden zum Server übertragen."
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/views/templates/default_urlconf.html:227
-msgid "Get started with Django"
+#: templates/finance/import_upload.html:58
+msgid "Bisherige Importe"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/views/templates/default_urlconf.html:235
-msgid "Django Community"
+#: templates/finance/import_upload.html:62
+msgid "History löschen"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/views/templates/default_urlconf.html:236
-msgid "Connect, get help, or contribute"
+#: templates/finance/import_upload.html:70
+#: templates/finance/partials/import_mapping_pane.html:7
+msgid "Datum"
 msgstr ""
-
-msgid "Pension Capital"
-msgstr "Angespartes Rentenkapital"
-
-msgid "Target Monthly Pension"
-msgstr "Ziel-Rente (Vertrag)"
-
-msgid "Current Pension"
-msgstr "Aktuelle Rente (am Stichtag)"
-
-msgid "Stichtag"
-msgstr "Stichtag"
-
-msgid "Glossary & Charts"
-msgstr "Glossar & Diagramme"
-
-msgid "Do you want to know what \"Pension Capital\" or the \"Inflation Monitor\" is? Find all definitions here."
-msgstr "Möchten Sie wissen, was \"Angespartes Rentenkapital\" oder der \"Inflations-Monitor\" bedeutet? Finden Sie hier alle Definitionen."
-
-msgid "Glossary of Dashboard Terms & Charts"
-msgstr "Glossar der Dashboard-Begriffe & Diagramme"
-
-msgid "Summary Widgets"
-msgstr "Zusammenfassungs-Widgets (Kennzahlen)"
-
-msgid "The accumulated value of all your bank accounts, properties, and investments, excluding pensions."
-msgstr "Der kumulierte Wert all Ihrer Bankkonten, Immobilien und Investitionen (ohne private Renten)."
-
-msgid "Your total active regular incoming cash flow (e.g., salary, rent income) at the selected date."
-msgstr "Ihr gesamter regelmäßiger eingehender Geldfluss (z.B. Gehalt, Mieteinnahmen) zum gewählten Stichtag."
-
-msgid "Your total active regular outgoing cash flow at the selected date."
-msgstr "Ihr gesamter regelmäßiger ausgehender Geldfluss zum gewählten Stichtag."
-
-msgid "The accumulated lump sum balance (savings) sitting in all your pension and retirement accounts."
-msgstr "Der angesparte Gesamtwert auf all Ihren privaten oder betrieblichen Rentenkonten."
-
-msgid "Your desired retirement income. This is simply the raw total of the target payouts you defined in your pension contracts."
-msgstr "Ihr gewünschtes Renteneinkommen. Dies ist einfach die unbereinigte Summe der Ziel-Auszahlungen aus Ihren Rentenverträgen."
-
-msgid "The actual cash flow being paid out to you by active pensions at the selected simulation date. (0 EUR if not retired yet)."
-msgstr "Der tatsächliche Geldfluss, der Ihnen zum gewählten Simulationsdatum aus aktiven Renten ausgezahlt wird (0 EUR, falls noch nicht im Ruhestand)."
-
-msgid "Interactive Charts"
-msgstr "Interaktive Diagramme"
-
-msgid "Net Worth Development"
-msgstr "Vermögensentwicklung"
-
-msgid "A line chart showing how your total wealth grows over time, comparing nominal values to inflation-adjusted purchasing power."
-msgstr "Ein Liniendiagramm, das zeigt, wie Ihr Gesamtvermögen im Laufe der Zeit wächst, und nominale Werte mit inflationsbereinigter Kaufkraft vergleicht."
-
-msgid "Cash Flow Forecast"
-msgstr "Cashflow Vorhersage"
-
-msgid "Visualizes the evolution of your monthly income versus your monthly expenses over the years."
-msgstr "Visualisiert die Entwicklung Ihres monatlichen Einkommens gegenüber Ihren monatlichen Ausgaben im Laufe der Jahre."
-
-msgid "Wealth Breakdown"
-msgstr "Vermögenszusammensetzung"
-
-msgid "An area chart illustrating the composition of your total wealth, comparing liquid assets and locked pension capital."
-msgstr "Ein Flächendiagramm zur Veranschaulichung der Zusammensetzung Ihres Gesamtvermögens, das liquide Mittel und gebundenes Rentenkapital vergleicht."
-
-msgid "Income vs Expenses"
-msgstr "Einnahmen vs Ausgaben"
-
-msgid "A direct bar chart comparison of money coming in versus money going out."
-msgstr "Ein direkter Balkendiagramm-Vergleich von eingehendem gegenüber ausgehendem Geld."
-
-msgid "Category Breakdown"
-msgstr "Kategorien-Übersicht"
-
-msgid "A pie chart dividing your cash flow into individual categories (e.g., Housing, Food, Transport)."
-msgstr "Ein Kreisdiagramm, das Ihren Cashflow in einzelne Kategorien unterteilt (z.B. Wohnen, Essen, Transport)."
-
-msgid "Highlights the expanding gap between the absolute money you have and its real value due to inflation."
-msgstr "Hebt die wachsende Lücke zwischen Ihrem absoluten Geld und seinem wahren Wert aufgrund von Inflation hervor."
-
-msgid "Event Impact"
-msgstr "Auswirkungen von Ereignissen"
-
-msgid "Visualizes the financial spikes caused by configured one-time events, like buying a car or receiving an inheritance."
-msgstr "Visualisiert die finanziellen Ausschläge durch konfigurierte einmalige Ereignisse, wie z.B. den Kauf eines Autos oder eine Erbschaft."
-
-msgid "Asset Allocation"
-msgstr "Vermögensaufteilung (Asset Allocation)"
-
-msgid "Liquid Assets"
-msgstr "Flüssige Mittel & Anlagen"
-
-msgid "Accumulated Cash"
-msgstr "Angespartes Barvermögen"
-
-msgid "A snapshot donut chart showing the percentage distribution of your assets."
-msgstr "Ein Ringdiagramm, das die prozentuale Verteilung Ihrer Vermögenswerte am heutigen Tag zeigt."
-
-msgid "Indexed (Inflation Adjustment)"
-msgstr "Indiziert (Inflationsanpassung)"
-
-msgid "If checked, the payout will increase annually based on the global pension increase rate."
-msgstr "Wenn aktiviert, steigt die Auszahlung jährlich basierend auf der globalen Rentensteigerungsrate."
-
-msgid "Contribution End Date"
-msgstr "Beitragsende"
-
-msgid "Date when you stop paying into this pension"
-msgstr "Datum, an dem die Beitragszahlung für diese Rente endet"
-
-msgid "Initial Loan Amount"
-msgstr "Darlehenssumme"
-
-msgid "Interest Rate (%)"
-msgstr "Zinssatz (%)"
-
-msgid "Interest Lock End Date"
-msgstr "Ende Zinsbindung"
-
-msgid "Monthly Installment"
-msgstr "Monatliche Rate"
-
-msgid "Extra Repayment Possible"
-msgstr "Sondertilgung möglich"
-
-msgid "Loan / Debt"
-msgstr "Kredit / Schulden"
-
-msgid "Loans / Debts"
-msgstr "Kredite / Schulden"
-
-msgid "Extra Repayment"
-msgstr "Sondertilgung"
-
-msgid "Extra Repayments"
-msgstr "Sondertilgungen"
-
-msgid "Kredit"
-msgstr "Kredit"
-
-msgid "Total Debts"
-msgstr "Gesamtschulden"
-
-msgid "Loan Table"
-msgstr "Kredit-Übersicht"
-
-msgid "Kreditrate"
-msgstr "Kreditrate"
-
-msgid "Loan Balance Trend"
-msgstr "Kredit-Trend"
-
-msgid "Sum Interest"
-msgstr "Zinskosten (voraus.)"
-
-msgid "Total Interest"
-msgstr "Zinsen gesamt"
-
-msgid "Total Balance"
-msgstr "Restsaldo gesamt"
-
-msgid "Loan"
-msgstr "Kredit"
-
-msgid "Settings"
-msgstr "Einstellungen"
-
-
-msgid "Profile updated successfully!"
-msgstr "Profil erfolgreich aktualisiert!"
-
-msgid "Total Wealth"
-msgstr "Gesamtvermögen"
-
-msgid "Physical Assets"
-msgstr "Sachwerte"
-
-msgid "Real Estate"
-msgstr "Immobilien"
-
-msgid "Real Net Worth"
-msgstr "Real Gesamtwert"
-
-msgid "Nominal Net Worth"
-msgstr "Nominal Gesamtwert"
-
-msgid "State Pension"
-msgstr "Gesetzliche Rente"
-
-msgid "Private Pension"
-msgstr "Private Pension"
-
-msgid "Username (Login)"
-msgstr "Benutzername (Login)"
-
-msgid "Expense"
-msgstr "Ausgabe"
-
-msgid "Contract"
-msgstr "Vertrag"
-
-msgid "Contribution"
-msgstr "Beitrag"
-
-msgid "Savings"
-msgstr "Sparen"
-
-msgid "Withdrawal"
-msgstr "Entnahme"
-
-msgid "Loan Installment"
-msgstr "Kreditrate"
-
-msgid "Total Combined Assets"
-msgstr "Gesamtvermögen"
-
-msgid "Profile & Design Studio"
-msgstr "Profil & Design Studio"
-
-msgid "Personalize your experience and your dashboard design."
-msgstr "Personalisiere dein Erlebnis und dein Dashboard-Design."
-
-msgid "Notification"
-msgstr "Hinweis"
-
-msgid "Some fields could not be saved. Please check your input:"
-msgstr "Einige Felder konnten nicht gespeichert werden. Bitte prüfe deine Eingaben:"
-
-msgid "Profile & Basic Data"
-msgstr "Profil & Stammdaten"
-
-msgid "Display Name"
-msgstr "Anzeigename"
-
-msgid "Profile Picture"
-msgstr "Profilbild"
-
-msgid "First Name"
-msgstr "Vorname"
-
-msgid "Last Name"
-msgstr "Nachname"
-
-msgid "Email Address"
-msgstr "E-Mail-Adresse"
-
-msgid "Sim. Max Age"
-msgstr "Sim. Max Alter"
-
-msgid "Salary Increase (%)"
-msgstr "Gehaltsplus (%)"
-
-msgid "Pension Increase (%)"
-msgstr "Rentenplus (%)"
-
-msgid "Interest Buffer (%)"
-msgstr "Zins-Puffer (%)"
-
-msgid "Real Estate (%)"
-msgstr "Immobilien (%)"
-
-msgid "Physical Assets (%)"
-msgstr "Sachwerte (%)"
-
-msgid "Design Harmony"
-msgstr "Design Harmonie"
-
-msgid "Real-time Live Preview"
-msgstr "Echtzeit Live-Vorschau"
-
-msgid "Select a Color Harmony"
-msgstr "Wähle eine Farbzusammenstellung"
-
-msgid "Precision Studio (Manual Color Adjustment)"
-msgstr "Präzisions-Studio (Farben manuell anpassen)"
-
-msgid "Primary"
-msgstr "Primär"
-
-msgid "End"
-msgstr "Ende"
-
-msgid "Background"
-msgstr "Hintergrund"
-
-msgid "Save Changes & Design"
-msgstr "Änderungen & Design speichern"
-
-msgid "Toggle Night Mode"
-msgstr "Nachtmodus umschalten"
-
-msgid "Category/Date"
-msgstr "Kategorie/Datum"
-
-msgid "Loan Name"
-msgstr "Kredit Name"
-
-msgid "Provider"
-msgstr "Anbieter"
-
-msgid "Interest"
-msgstr "Zins"
-
-msgid "Help & Knowledge Base"
-msgstr "Hilfe & Wissensdatenbank"
-
-msgid "Expert Knowledge Base"
-msgstr "Experten-Wissensdatenbank"
-
-msgid "Master your financial future. Detailed insights into our simulation engine, AI logic, and design philosophy."
-msgstr "Meistere deine finanzielle Zukunft. Detaillierte Einblicke in unsere Simulations-Engine, KI-Logik und Design-Philosophie."
-
-msgid "AI Bank Import"
-msgstr "KI Bank-Import"
-
-msgid "Learn how our pattern recognition and learned memory automate your data entry while maintaining 100% control."
-msgstr "Erfahre, wie unsere Mustererkennung und das gelernte Gedächtnis deine Dateneingabe automatisieren und du dabei 100% Kontrolle behältst."
-
-msgid "Simulation Engine"
-msgstr "Simulations-Engine"
-
-msgid "Understand the math behind real vs. nominal value, inflation buffers, and how growth rates impact your 30-year forecast."
-msgstr "Verstehe die Mathematik hinter Real- vs. Nominalwert, Zinspuffer und wie Wachstumsraten deine 30-Jahres-Prognose beeinflussen."
-
-msgid "Master the Art of Design Harmony. Explore how our color engine ensures your dashboard always looks premium."
-msgstr "Meistere die Kunst der Design-Harmonie. Erfahre, wie unsere Farb-Engine dafür sorgt, dass dein Dashboard immer hochwertig aussieht."
-
-msgid "Advanced FAQ"
-msgstr "Erweiterte FAQ"
-
-msgid "Why does my net worth decrease although my cash flow is positive?"
-msgstr "Warum sinkt mein Netto-Vermögen, obwohl mein Cashflow positiv ist?"
-
-msgid "This is likely due to the Inflation Monitor. While your nominal wealth increases, higher inflation rates can \"eat\" your purchasing power faster than you save. Check your \"Real Value\" vs \"Nominal Value\" in the charts."
-msgstr "Das liegt wahrscheinlich am Inflations-Monitor. Während dein nominales Vermögen steigt, kann eine hohe Inflationsrate deine Kaufkraft schneller \"auffressen\", als du sparst. Prüfe den \"Realwert\" im Vergleich zum \"Nominalwert\" in den Diagrammen."
-
-msgid "How does the \"Stichtag\" (Simulation Date) work?"
-msgstr "Wie funktioniert der \"Stichtag\" (Simulationsdatum)?"
-
-msgid "The Stichtag is the \"fictional today\". Moving it allows you to travel through time. The dashboard will recalculate all active income, expenses, and asset values for that specific point in your life."
-msgstr "Der Stichtag ist das \"fiktive Heute\". Durch das Verschieben kannst du durch die Zeit reisen. Das Dashboard berechnet alle aktiven Einnahmen, Ausgaben und Vermögenswerte für genau diesen Zeitpunkt in deinem Leben neu."
-
-msgid "Are my bank details and financial data safe?"
-msgstr "Sind meine Bankdaten und Finanzinfos sicher?"
-
-msgid "Yes. Your data stays in your instance. Our AI processing for bank imports is designed to respect your privacy, and no financial secrets ever leave your dedicated environment."
-msgstr "Ja. Deine Daten bleiben in deiner Instanz. Unsere KI-Verarbeitung für Bank-Importe ist darauf ausgelegt, deine Privatsphäre zu respektieren. Keine Finanzgeheimnisse verlassen jemals deine dedizierte Umgebung."
-
-msgid "AI-Assisted Bank Import"
-msgstr "KI-gestützter Bank-Import"
-
-msgid "1. Pattern Recognition"
-msgstr "1. Mustererkennung"
-
-msgid "Our system cleans bank descriptions and searches for repeating patterns. It remembers your previous manual categorizations and applies them to new imports automatically."
-msgstr "Unser System bereigigt Bank-Beschreibungen und sucht nach sich wiederholenden Mustern. Es merkt sich deine früheren manuellen Kategorisierungen und wendet sie automatisch auf neue Importe an."
-
-msgid "2. Duplicate Protection"
-msgstr "2. Dubletten-Schutz"
-
-msgid "Every imported row gets a unique fingerprint. If you upload the same file twice, or overlapping files, the system will detect and ignore already existing transactions."
-msgstr "Jede importierte Zeile erhält einen eindeutigen Fingerabdruck. Wenn du dieselbe Datei doppelt hochlädst, erkennt das System dies und ignoriert bereits vorhandene Transaktionen."
-
-msgid "3. Bridge to Plan"
-msgstr "3. Brücke zum Plan"
-
-msgid "Detected transactions can be \"Linked\" to your financial plan. This allows you to track if your reality (Bank) matches your expectations (Plan)."
-msgstr "Erkannte Transaktionen können mit deinem Finanzplan \"verknüpft\" werden. So kannst du verfolgen, ob deine Realität (Bank) mit deinen Erwartungen (Plan) übereinstimmt."
-
-msgid "4. The Review Process"
-msgstr "4. Der Prüfprozess"
-
-msgid "Nothing is saved directly. You always have a \"Pending Transactions\" area where you can verify, correct, or ignore rows before they impact your history."
-msgstr "Nichts wird direkt gespeichert. Du hast immer einen Bereich für \"ausstehende Transaktionen\", in dem du Zeilen prüfen, korrigieren oder ignorieren kannst, bevor sie deine Historie beeinflussen."
-
-msgid "The Simulation Engine"
-msgstr "Die Simulations-Engine"
-
-msgid "Mathematical Foundations"
-msgstr "Mathematische Grundlagen"
-
-msgid "Formula:"
-msgstr "Formel:"
-
-msgid "Real Value = Nominal Value / (1 + Inflation)^Years"
-msgstr "Realwert = Nominalwert / (1 + Inflation)^Jahre"
-
-msgid "Compound Interest"
-msgstr "Zinseszins"
-
-msgid "We calculate growth for each asset class individually. A 5% growth on a 100k asset is calculated monthly to account for the compound effect over 30+ years."
-msgstr "Wir berechnen das Wachstum für jede Anlageklasse einzeln. Ein Wachstum von 5 % auf ein 100.000 € Guthaben wird monatlich kalkuliert, um den Zinseszinseffekt über 30+ Jahre genau abzubilden."
-
-msgid "Dynamics (Pensions & Salary)"
-msgstr "Dynamiken (Renten & Gehalt)"
-
-msgid "If you set a 2% \"Dynamics\" rate, your income doesn't stay level. It grows every year, simulating career growth or contract-based indexing."
-msgstr "Wenn du eine \"Dynamik\" von 2 % einstellst, bleibt dein Einkommen nicht gleich. Es wächst jedes Jahr und simuliert so Karriereschritte oder vertragliche Anpassungen."
-
-msgid "Why 30 Years?"
-msgstr "Warum 30 Jahre?"
-
-msgid "Retirement planning is a marathon. We chose a 30-year horizon to visualize the late-stage effects of inflation and interest, where small differences today become massive gaps tomorrow."
-msgstr "Altersvorsorge ist ein Marathon. Wir haben einen 30-Jahres-Horizont gewählt, um die Spätfolgen von Inflation und Zinsen sichtbar zu machen, wo kleine Unterschiede heute zu massiven Lücken morgen führen."
-
-msgid "The Design Philosophy"
-msgstr "Die Design-Philosophie"
-
-msgid "Color Harmonies"
-msgstr "Farbharmonien"
-
-msgid "A \"Harmony\" isn't just a set of colors. It's a mathematical relationship (Complementary, Analogous, etc.) based on your Primary Color choice."
-msgstr "Eine \"Harmonie\" ist nicht nur ein Set von Farben. Es ist eine mathematische Beziehung (komplementär, analog etc.) basierend auf deiner Wahl der Primärfarbe."
-
-msgid "Glassmorphism"
-msgstr "Glassmorphismus"
-
-msgid "We use backdrop filters and translucency to create depth. This allows your personalized brand color to shine through while keeping the interface readable."
-msgstr "Wir nutzen Filter und Transparenz, um Tiefe zu erzeugen. So schimmert dein personalisiertes Design durch, während das Interface perfekt lesbar bleibt."
-
-msgid "Pro Tip:"
-msgstr "Profi-Tipp:"
-
-msgid "Use a Darker background and high-vibrancy primary colors for the absolute premium \"High-End\" look."
-msgstr "Nutze einen dunkleren Hintergrund und kräftige Primärfarben für den absoluten Premium-\"High-End\"-Look."
-
-msgid "HELP_AI_IMPORT_TITLE"
-msgstr "KI Bank-Import"
-
-msgid "HELP_AI_IMPORT_DESC"
-msgstr "Erfahre, wie unsere Mustererkennung und das gelernte Gedächtnis deine Dateneingabe automatisieren und du dabei 100% Kontrolle behältst."
-
-msgid "HELP_SIM_COMPOUND_DESC"
-msgstr "Wir berechnen das Wachstum für jede Anlageklasse einzeln. Ein Wachstum von 5 % auf ein 100.000 € Guthaben wird monatlich kalkuliert, um den Zinseszinseffekt über 30+ Jahre genau abzubilden."
-
-msgid "HELP_SIM_DYNAMICS_DESC"
-msgstr "Wenn du eine \"Dynamik\" von 2 % einstellst, bleibt dein Einkommen nicht gleich. Es wächst jedes Jahr und simuliert so Karriereschritte oder vertragliche Anpassungen."
-
-msgid "HELP_SIM_30YEARS_DESC"
-msgstr "Altersvorsorge ist ein Marathon. Wir haben einen 30-Jahres-Horizont gewählt, um die Spätfolgen von Inflation und Zinsen sichtbar zu machen, wo kleine Unterschiede heute zu massiven Lücken morgen führen."
-
-msgid "HELP_DESIGN_HARMONY_DESC"
-msgstr "Eine \"Harmonie\" ist nicht nur ein Set von Farben. Es ist eine mathematische Beziehung (komplementär, analog etc.) basierend auf deiner Wahl der Primärfarbe."
-
-msgid "HELP_DESIGN_GLASS_DESC"
-msgstr "Wir nutzen Filter und Transparenz, um Tiefe zu erzeugen. So schimmert dein personalisiertes Design durch, während das Interface perfekt lesbar bleibt."
-
-msgid "HELP_DESIGN_PROTIP_DESC"
-msgstr "Nutze einen dunkleren Hintergrund und kräftige Primärfarben für den absoluten Premium-\"High-End\"-Look."
-
-msgid "HELP_HEADER_TITLE"
-msgstr "Hilfe & Details"
-
-msgid "HELP_HEADER_SUBTEXT"
-msgstr "Hintergründe zu den Berechnungen, dem Bank-Import und der Dashboard-Konfiguration."
-
-msgid "Net Worth (Nominal)"
-msgstr "Gesamtvermögen (Nominal)"
-
-msgid "Net Worth (Real)"
-msgstr "Gesamtvermögen (Real)"
-
-msgid "Real Estate (Nominal)"
-msgstr "Immobilien (Nominal)"
-
-msgid "Real Estate (Real)"
-msgstr "Immobilien (Real)"
-
-msgid "Teaser Interest Rate (%)"
-msgstr "Aktions-Zinssatz (%)"
-
-msgid "Teaser Rate Expiry Date"
-msgstr "Gültig bis"
-
-msgid "Higher promotional interest rate (e.g. for new customers)"
-msgstr "Erhöhter Zinssatz für Neukunden (Lockvogel-Angebot)"
-
-msgid "Date when the teaser rate expires and falls back to the standard growth rate"
-msgstr "Datum, an dem der Aktionszins endet und auf den Basis-Zins zurückfällt"
-
-msgid "Important Dates & Deadlines"
-msgstr "Wichtige Termine & Fristen"
-
-msgid "Categorisation"
-msgstr "Kategorie"
-
-msgid "Event"
-msgstr "Ereignis"
-
-msgid "End of Loan"
-msgstr "Kredit-Ende"
-
-msgid "End of Interest Lock"
-msgstr "Ende Zinsbindung"
-
-msgid "Start of Payout"
-msgstr "Beginn Auszahlung"
-
-msgid "End of Contribution"
-msgstr "Ende Einzahlung"
-
-msgid "Teaser Rate Expires"
-msgstr "Aktionszins läuft aus"
-
-msgid "Planned Sale"
-msgstr "Geplanter Verkauf"
-
-msgid "End of Cash Flow"
-msgstr "Ende Cashflow"
-
-msgid "No upcoming important dates."
-msgstr "Keine anstehenden wichtigen Termine."
 
-msgid "Teaser"
-msgstr "Aktion"
+#: templates/finance/import_upload.html:71
+#, fuzzy
+#| msgid "Date"
+msgid "Datei"
+msgstr "Datum"
 
+#: templates/finance/import_upload.html:72
 msgid "Status"
 msgstr "Status"
 
+#: templates/finance/import_upload.html:84
+msgid "Angewendet"
+msgstr ""
 
+#: templates/finance/import_upload.html:88
+msgid "Offen"
+msgstr ""
 
+#: templates/finance/import_upload.html:95
+msgid "Prüfen & Zuordnen"
+msgstr ""
 
+#: templates/finance/import_upload.html:101
+#: templates/finance/partials/import_filter_row.html:30
+#: templates/finance/partials/import_ready_row.html:82
+msgid "Löschen"
+msgstr ""
+
+#: templates/finance/import_upload.html:117
+msgid "Cache & Wartung"
+msgstr ""
+
+#: templates/finance/import_upload.html:122
+msgid "Alle temporären Daten löschen"
+msgstr ""
+
+#: templates/finance/import_upload.html:131
+#, fuzzy
+#| msgid "Configure Dashboard"
+msgid "Zurück zum Dashboard"
+msgstr "Dashboard konfigurieren"
+
+#: templates/finance/partials/dashboard_charts.html:21
+msgid "Simulation Parameters"
+msgstr "Simulationsparameter"
+
+#: templates/finance/partials/dashboard_charts.html:21
+msgid "Inflation"
+msgstr "Inflation"
+
+#: templates/finance/partials/dashboard_charts.html:21
+msgid "Salary"
+msgstr "Gehalt"
+
+#: templates/finance/partials/dashboard_charts.html:21
+msgid "Return Offset"
+msgstr "Rendite-Offset"
+
+#: templates/finance/partials/dashboard_summary.html:53
+msgid "Summe aus Verträgen"
+msgstr ""
+
+#: templates/finance/partials/dashboard_table_dates.html:137
+msgid "No upcoming important dates."
+msgstr "Keine anstehenden wichtigen Termine."
+
+#: templates/finance/partials/dashboard_table_loan.html:52
+msgid "Loan Name"
+msgstr "Kredit Name"
+
+#: templates/finance/partials/dashboard_table_loan.html:59
+msgid "Provider"
+msgstr "Anbieter"
+
+#: templates/finance/partials/dashboard_table_loan.html:66
+#: templates/finance/partials/dashboard_table_loan.html:125
+msgid "Interest"
+msgstr "Zins"
+
+#: templates/finance/partials/dashboard_table_loan.html:73
+#, fuzzy
+#| msgid "Total Balance"
+msgid "Balance"
+msgstr "Restsaldo gesamt"
+
+#: templates/finance/partials/dashboard_table_loan.html:80
+#, fuzzy
+#| msgid "Loan Installment"
+msgid "Installment"
+msgstr "Kreditrate"
+
+#: templates/finance/partials/dashboard_table_loan.html:122
+#, fuzzy
+#| msgid "Loan"
+msgid "Loans"
+msgstr "Kredit"
+
+#: templates/finance/partials/dashboard_table_loan.html:129
+#, fuzzy
+#| msgid "Total Debts"
+msgid "Total Debt"
+msgstr "Gesamtschulden"
+
+#: templates/finance/partials/dashboard_table_simple.html:81
+msgid "Category/Date"
+msgstr "Kategorie/Datum"
+
+#: templates/finance/partials/dashboard_table_simple.html:88
+msgid "Year"
+msgstr "Jährlich"
+
+#: templates/finance/partials/dashboard_table_simple.html:124
+msgid "Teaser"
+msgstr "Aktion"
+
+#: templates/finance/partials/dashboard_table_simple.html:148
+msgid "Total"
+msgstr "Gesamt"
+
+#: templates/finance/partials/import_filter_row.html:15
+msgid "Verknüpft mit Finanzplan"
+msgstr ""
+
+#: templates/finance/partials/import_filter_row.html:26
+msgid "Bearbeiten"
+msgstr ""
+
+#: templates/finance/partials/import_filter_row.html:31
+msgid "Filter wirklich löschen?"
+msgstr ""
+
+#: templates/finance/partials/import_mapping_pane.html:8
+msgid "Buchungstext"
+msgstr ""
+
+#: templates/finance/partials/import_mapping_pane.html:9
+msgid "Betrag"
+msgstr ""
+
+#: templates/finance/partials/import_mapping_pane.html:10
+#, fuzzy
+#| msgid "Categories"
+msgid "Kategorie zuweisen"
+msgstr "Kategorien"
+
+#: templates/finance/partials/import_mapping_pane.html:24
+msgid "Du kannst jetzt den Import unten final prüfen und speichern."
+msgstr ""
+
+#: templates/finance/partials/import_mapping_pane.html:37
+#, python-format
+msgid "Gefilterte Ansicht: %(count)s offene Buchungen."
+msgstr ""
+
+#: templates/finance/partials/import_mapping_pane.html:43
+msgid ""
+"Möchtest du alle aktuell gefilterten Buchungen als eine Gruppe importieren?"
+msgstr ""
+
+#: templates/finance/partials/import_mapping_pane.html:45
+msgid "Alle gefilterten als GRUPPE übernehmen"
+msgstr ""
+
+#: templates/finance/partials/import_mapping_pane.html:52
+msgid "Ziel-Name (z.B. Lebensmittel)"
+msgstr ""
+
+#: templates/finance/partials/import_mapping_pane.html:57
+msgid "-- Ziel-Kategorie --"
+msgstr ""
+
+#: templates/finance/partials/import_mapping_pane.html:71
+msgid "In Finanzplan übernehmen"
+msgstr ""
+
+#: templates/finance/partials/import_ready_pane.html:5
+msgid "2. Vorschau: Import-Bereit (Zusammengefasst)"
+msgstr ""
+
+#: templates/finance/partials/import_ready_pane.html:13
+msgid "Zeitraum"
+msgstr ""
+
+#: templates/finance/partials/import_ready_pane.html:14
+msgid "Details / Notiz"
+msgstr ""
+
+#: templates/finance/partials/import_ready_pane.html:15
+msgid "Summe"
+msgstr ""
+
+#: templates/finance/partials/import_ready_pane.html:16
+msgid "Anzahl"
+msgstr ""
+
+#: templates/finance/partials/import_ready_pane.html:29
+msgid "Noch keine Buchungen zur Übernahme bereit. Ordne oben Filter zu."
+msgstr ""
+
+#: templates/finance/partials/import_ready_pane.html:36
+msgid "GESAMTSUMME:"
+msgstr ""
+
+#: templates/finance/partials/import_ready_row.html:24
+msgid "Konflikt: Ein Eintrag für dieses Jahr existiert bereits im Plan!"
+msgstr ""
+
+#: templates/finance/partials/import_ready_row.html:25
+msgid "Plan-Konflikt"
+msgstr ""
+
+#: templates/finance/partials/import_ready_row.html:34
+msgid "Überschreiben?"
+msgstr ""
+
+#: templates/finance/partials/import_ready_row.html:39
+#: templates/finance/partials/import_row.html:46
+msgid "Plan-Abweichung!"
+msgstr ""
+
+#: templates/finance/partials/import_ready_row.html:39
+#: templates/finance/partials/import_row.html:46
+msgid "Geplant:"
+msgstr ""
+
+#: templates/finance/partials/import_ready_row.html:43
+#: templates/finance/partials/import_row.html:50
+msgid "Entspricht Plan"
+msgstr ""
+
+#: templates/finance/partials/import_ready_row.html:69
+msgid "Zurück nach oben verschieben"
+msgstr ""
+
+#: templates/finance/partials/import_ready_row.html:81
+msgid "Diesen zusammengefassten Posten wirklich verwerten?"
+msgstr ""
+
+#: templates/finance/partials/import_row.html:12
+msgid "Ignorieren"
+msgstr ""
+
+#: templates/finance/partials/import_row.html:31
+msgid "KI-Vertrauen"
+msgstr ""
+
+#: templates/finance/partials/import_row.html:36
+msgid "Gelernt / Filter"
+msgstr ""
+
+#: templates/finance/partials/import_row.html:69
+msgid "Wähle Kategorie..."
+msgstr ""
+
+#: templates/finance/partials/import_row.html:82
+msgid "Zu Ausgabe machen"
+msgstr ""
+
+#: templates/finance/partials/import_row.html:82
+msgid "Zu Einnahme machen"
+msgstr ""
+
+#: templates/finance/partials/import_row.html:91
+msgid "Dauerhaften Filter erstellen"
+msgstr ""
+
+#~ msgid "Theme"
+#~ msgstr "Design"
+
+#~ msgid "Themes"
+#~ msgstr "Designs"
+
+#~ msgid "Total Pensions"
+#~ msgstr "Gesamtrenten"
+
+#~ msgid "One-Time Events"
+#~ msgstr "Einmalige Ereignisse"
+
+#~ msgid "Expenses"
+#~ msgstr "Ausgaben"
+
+#~ msgid "Net Savings"
+#~ msgstr "Nettoersparnis"
+
+#~ msgid "Nominal Value"
+#~ msgstr "Nominalwert"
+
+#~ msgid "Real Value (Purchasing Power)"
+#~ msgstr "Realwert (Kaufkraft)"
+
+#~ msgid "Purchasing Power Loss"
+#~ msgstr "Kaufkraftverlust"
+
+#~ msgid "Uncategorized"
+#~ msgstr "Kategorien"
+
+#~ msgid "Profile"
+#~ msgstr "Benutzerprofil"
+
+#~ msgid "How can we help you?"
+#~ msgstr "Wie können wir Ihnen helfen?"
+
+#~ msgid ""
+#~ "Find answers and tips to get the most out of your financial planning."
+#~ msgstr ""
+#~ "Finden Sie Antworten und Tipps, um Ihre Finanzplanung optimal zu nutzen."
+
+#~ msgid "Quick Start"
+#~ msgstr "Schnellstart"
+
+#~ msgid "Personal Dashboard"
+#~ msgstr "Persönliches Dashboard"
+
+#~ msgid "Calculations"
+#~ msgstr "Simulation"
+
+#~ msgid "Frequently Asked Questions"
+#~ msgstr "Häufig gestellte Fragen"
+
+#~ msgid "How do I add a new recurring expense?"
+#~ msgstr "Wie füge ich eine neue wiederkehrende Ausgabe hinzu?"
+
+#~ msgid "What is the \"Inflation Monitor\"?"
+#~ msgstr "Inflations-Monitor"
+
+#~ msgid "Quick Start Guide"
+#~ msgstr "Schnellstart-Anleitung"
+
+#~ msgid "Go to your Profile and set your default currency and inflation rate."
+#~ msgstr ""
+#~ "Gehen Sie zu Ihrem Profil und legen Sie Ihre Standardwährung und "
+#~ "Inflationsrate fest."
+
+#~ msgid "Add your current Assets (bank accounts, investments, real estate)."
+#~ msgstr ""
+#~ "Fügen Sie Ihr aktuelles Vermögen hinzu (Bankkonten, Investitionen, "
+#~ "Immobilien)."
+
+#~ msgid "Enter your regular Income and Expenses in the Cash Flow section."
+#~ msgstr ""
+#~ "Geben Sie Ihr regelmäßiges Einkommen und Ihre Ausgaben im Bereich "
+#~ "Cashflow ein."
+
+#~ msgid "Check the Dashboard to see your 30-year financial forecast!"
+#~ msgstr ""
+#~ "Prüfen Sie das Dashboard, um Ihre 30-jährige Finanzprognose zu sehen!"
+
+#~ msgid "Dashboard Customization"
+#~ msgstr "Dashboard-Konfiguration"
+
+#~ msgid "Inflation Adjustment"
+#~ msgstr "Inflationsangepasst"
+
+#, python-format
+#~ msgid "Inv. Return Offset (%%)"
+#~ msgstr "Anlage-Rendite Offset (%%)"
+
+#~ msgid "Table Styling"
+#~ msgstr "Tabellen-Design"
+
+#~ msgid "Header Background"
+#~ msgstr "Kopf-Hintergrund"
+
+#~ msgid "Header Text Color"
+#~ msgstr "Kopf-Textfarbe"
+
+#~ msgid "Filter Row Background"
+#~ msgstr "Filterzeilen-Hintergrund"
+
+#~ msgid "Body Background"
+#~ msgstr "Tabellen-Hintergrund"
+
+#~ msgid "Body Text Color"
+#~ msgstr "Tabellen-Textfarbe"
+
+#~ msgid "Simulation Panel"
+#~ msgstr "Simulations-Panel"
+
+#~ msgid "Header Background & Text"
+#~ msgstr "Header Hintergrund & Text"
+
+#~ msgid "Panel Background & Text"
+#~ msgstr "Panel Hintergrund & Text"
+
+#~ msgid "Filter..."
+#~ msgstr "Filter..."
+
+#~ msgid "Group Sum"
+#~ msgstr "Gruppensumme"
+
+#~ msgid "No items found"
+#~ msgstr "Keine Einträge gefunden"
+
+#~ msgid "Syndication"
+#~ msgstr "Simulation"
+
+#~ msgid "Duration"
+#~ msgstr "Simulation"
+
+#~ msgid "Enter a valid date."
+#~ msgstr "Geben Sie ein gültiges Datum ein."
+
+#~ msgid "Order"
+#~ msgstr "Reihenfolge"
+
+#~ msgid "Currently"
+#~ msgstr "Währung"
+
+#~ msgid "Yes"
+#~ msgstr "Ja"
+
+#~ msgid "No"
+#~ msgstr "Nein"
+
+#~ msgid "Mon"
+#~ msgstr "Monatlich"
+
+#~ msgid "Stichtag"
+#~ msgstr "Stichtag"
+
+#~ msgid "Glossary & Charts"
+#~ msgstr "Glossar & Diagramme"
+
+#~ msgid ""
+#~ "Do you want to know what \"Pension Capital\" or the \"Inflation Monitor\" "
+#~ "is? Find all definitions here."
+#~ msgstr ""
+#~ "Möchten Sie wissen, was \"Angespartes Rentenkapital\" oder der "
+#~ "\"Inflations-Monitor\" bedeutet? Finden Sie hier alle Definitionen."
+
+#~ msgid "Glossary of Dashboard Terms & Charts"
+#~ msgstr "Glossar der Dashboard-Begriffe & Diagramme"
+
+#~ msgid "Summary Widgets"
+#~ msgstr "Zusammenfassungs-Widgets (Kennzahlen)"
+
+#~ msgid ""
+#~ "The accumulated value of all your bank accounts, properties, and "
+#~ "investments, excluding pensions."
+#~ msgstr ""
+#~ "Der kumulierte Wert all Ihrer Bankkonten, Immobilien und Investitionen "
+#~ "(ohne private Renten)."
+
+#~ msgid ""
+#~ "Your total active regular incoming cash flow (e.g., salary, rent income) "
+#~ "at the selected date."
+#~ msgstr ""
+#~ "Ihr gesamter regelmäßiger eingehender Geldfluss (z.B. Gehalt, "
+#~ "Mieteinnahmen) zum gewählten Stichtag."
+
+#~ msgid "Your total active regular outgoing cash flow at the selected date."
+#~ msgstr ""
+#~ "Ihr gesamter regelmäßiger ausgehender Geldfluss zum gewählten Stichtag."
+
+#~ msgid ""
+#~ "The accumulated lump sum balance (savings) sitting in all your pension "
+#~ "and retirement accounts."
+#~ msgstr ""
+#~ "Der angesparte Gesamtwert auf all Ihren privaten oder betrieblichen "
+#~ "Rentenkonten."
+
+#~ msgid ""
+#~ "Your desired retirement income. This is simply the raw total of the "
+#~ "target payouts you defined in your pension contracts."
+#~ msgstr ""
+#~ "Ihr gewünschtes Renteneinkommen. Dies ist einfach die unbereinigte Summe "
+#~ "der Ziel-Auszahlungen aus Ihren Rentenverträgen."
+
+#~ msgid ""
+#~ "The actual cash flow being paid out to you by active pensions at the "
+#~ "selected simulation date. (0 EUR if not retired yet)."
+#~ msgstr ""
+#~ "Der tatsächliche Geldfluss, der Ihnen zum gewählten Simulationsdatum aus "
+#~ "aktiven Renten ausgezahlt wird (0 EUR, falls noch nicht im Ruhestand)."
+
+#~ msgid "Interactive Charts"
+#~ msgstr "Interaktive Diagramme"
+
+#~ msgid "Net Worth Development"
+#~ msgstr "Vermögensentwicklung"
+
+#~ msgid ""
+#~ "A line chart showing how your total wealth grows over time, comparing "
+#~ "nominal values to inflation-adjusted purchasing power."
+#~ msgstr ""
+#~ "Ein Liniendiagramm, das zeigt, wie Ihr Gesamtvermögen im Laufe der Zeit "
+#~ "wächst, und nominale Werte mit inflationsbereinigter Kaufkraft vergleicht."
+
+#~ msgid "Cash Flow Forecast"
+#~ msgstr "Cashflow Vorhersage"
+
+#~ msgid ""
+#~ "Visualizes the evolution of your monthly income versus your monthly "
+#~ "expenses over the years."
+#~ msgstr ""
+#~ "Visualisiert die Entwicklung Ihres monatlichen Einkommens gegenüber Ihren "
+#~ "monatlichen Ausgaben im Laufe der Jahre."
+
+#~ msgid "Wealth Breakdown"
+#~ msgstr "Vermögenszusammensetzung"
+
+#~ msgid ""
+#~ "An area chart illustrating the composition of your total wealth, "
+#~ "comparing liquid assets and locked pension capital."
+#~ msgstr ""
+#~ "Ein Flächendiagramm zur Veranschaulichung der Zusammensetzung Ihres "
+#~ "Gesamtvermögens, das liquide Mittel und gebundenes Rentenkapital "
+#~ "vergleicht."
+
+#~ msgid "Income vs Expenses"
+#~ msgstr "Einnahmen vs Ausgaben"
+
+#~ msgid ""
+#~ "A direct bar chart comparison of money coming in versus money going out."
+#~ msgstr ""
+#~ "Ein direkter Balkendiagramm-Vergleich von eingehendem gegenüber "
+#~ "ausgehendem Geld."
+
+#~ msgid "Category Breakdown"
+#~ msgstr "Kategorien-Übersicht"
+
+#~ msgid ""
+#~ "A pie chart dividing your cash flow into individual categories (e.g., "
+#~ "Housing, Food, Transport)."
+#~ msgstr ""
+#~ "Ein Kreisdiagramm, das Ihren Cashflow in einzelne Kategorien unterteilt "
+#~ "(z.B. Wohnen, Essen, Transport)."
+
+#~ msgid ""
+#~ "Highlights the expanding gap between the absolute money you have and its "
+#~ "real value due to inflation."
+#~ msgstr ""
+#~ "Hebt die wachsende Lücke zwischen Ihrem absoluten Geld und seinem wahren "
+#~ "Wert aufgrund von Inflation hervor."
+
+#~ msgid "Event Impact"
+#~ msgstr "Auswirkungen von Ereignissen"
+
+#~ msgid ""
+#~ "Visualizes the financial spikes caused by configured one-time events, "
+#~ "like buying a car or receiving an inheritance."
+#~ msgstr ""
+#~ "Visualisiert die finanziellen Ausschläge durch konfigurierte einmalige "
+#~ "Ereignisse, wie z.B. den Kauf eines Autos oder eine Erbschaft."
+
+#~ msgid "Liquid Assets"
+#~ msgstr "Flüssige Mittel & Anlagen"
+
+#~ msgid "Accumulated Cash"
+#~ msgstr "Angespartes Barvermögen"
+
+#~ msgid ""
+#~ "A snapshot donut chart showing the percentage distribution of your assets."
+#~ msgstr ""
+#~ "Ein Ringdiagramm, das die prozentuale Verteilung Ihrer Vermögenswerte am "
+#~ "heutigen Tag zeigt."
+
+#~ msgid "Kreditrate"
+#~ msgstr "Kreditrate"
+
+#~ msgid "Sum Interest"
+#~ msgstr "Zinskosten (voraus.)"
+
+#~ msgid "Total Interest"
+#~ msgstr "Zinsen gesamt"
+
+#~ msgid "Real Net Worth"
+#~ msgstr "Real Gesamtwert"
+
+#~ msgid "Nominal Net Worth"
+#~ msgstr "Nominal Gesamtwert"
+
+#~ msgid "Total Combined Assets"
+#~ msgstr "Gesamtvermögen"
+
+#~ msgid "Salary Increase (%)"
+#~ msgstr "Gehaltsplus (%)"
+
+#~ msgid "Expert Knowledge Base"
+#~ msgstr "Experten-Wissensdatenbank"
+
+#~ msgid ""
+#~ "Master your financial future. Detailed insights into our simulation "
+#~ "engine, AI logic, and design philosophy."
+#~ msgstr ""
+#~ "Meistere deine finanzielle Zukunft. Detaillierte Einblicke in unsere "
+#~ "Simulations-Engine, KI-Logik und Design-Philosophie."
+
+#~ msgid ""
+#~ "Learn how our pattern recognition and learned memory automate your data "
+#~ "entry while maintaining 100% control."
+#~ msgstr ""
+#~ "Erfahre, wie unsere Mustererkennung und das gelernte Gedächtnis deine "
+#~ "Dateneingabe automatisieren und du dabei 100% Kontrolle behältst."
+
+#~ msgid ""
+#~ "We calculate growth for each asset class individually. A 5% growth on a "
+#~ "100k asset is calculated monthly to account for the compound effect over "
+#~ "30+ years."
+#~ msgstr ""
+#~ "Wir berechnen das Wachstum für jede Anlageklasse einzeln. Ein Wachstum "
+#~ "von 5 % auf ein 100.000 € Guthaben wird monatlich kalkuliert, um den "
+#~ "Zinseszinseffekt über 30+ Jahre genau abzubilden."
+
+#~ msgid ""
+#~ "If you set a 2% \"Dynamics\" rate, your income doesn't stay level. It "
+#~ "grows every year, simulating career growth or contract-based indexing."
+#~ msgstr ""
+#~ "Wenn du eine \"Dynamik\" von 2 % einstellst, bleibt dein Einkommen nicht "
+#~ "gleich. Es wächst jedes Jahr und simuliert so Karriereschritte oder "
+#~ "vertragliche Anpassungen."
+
+#~ msgid ""
+#~ "Retirement planning is a marathon. We chose a 30-year horizon to "
+#~ "visualize the late-stage effects of inflation and interest, where small "
+#~ "differences today become massive gaps tomorrow."
+#~ msgstr ""
+#~ "Altersvorsorge ist ein Marathon. Wir haben einen 30-Jahres-Horizont "
+#~ "gewählt, um die Spätfolgen von Inflation und Zinsen sichtbar zu machen, "
+#~ "wo kleine Unterschiede heute zu massiven Lücken morgen führen."
+
+#~ msgid ""
+#~ "A \"Harmony\" isn't just a set of colors. It's a mathematical "
+#~ "relationship (Complementary, Analogous, etc.) based on your Primary Color "
+#~ "choice."
+#~ msgstr ""
+#~ "Eine \"Harmonie\" ist nicht nur ein Set von Farben. Es ist eine "
+#~ "mathematische Beziehung (komplementär, analog etc.) basierend auf deiner "
+#~ "Wahl der Primärfarbe."
+
+#~ msgid ""
+#~ "We use backdrop filters and translucency to create depth. This allows "
+#~ "your personalized brand color to shine through while keeping the "
+#~ "interface readable."
+#~ msgstr ""
+#~ "Wir nutzen Filter und Transparenz, um Tiefe zu erzeugen. So schimmert "
+#~ "dein personalisiertes Design durch, während das Interface perfekt lesbar "
+#~ "bleibt."
+
+#~ msgid ""
+#~ "Use a Darker background and high-vibrancy primary colors for the absolute "
+#~ "premium \"High-End\" look."
+#~ msgstr ""
+#~ "Nutze einen dunkleren Hintergrund und kräftige Primärfarben für den "
+#~ "absoluten Premium-\"High-End\"-Look."
+
+#~ msgid "Net Worth (Nominal)"
+#~ msgstr "Gesamtvermögen (Nominal)"
+
+#~ msgid "Net Worth (Real)"
+#~ msgstr "Gesamtvermögen (Real)"
+
+#~ msgid "Real Estate (Nominal)"
+#~ msgstr "Immobilien (Nominal)"
+
+#~ msgid "Real Estate (Real)"
+#~ msgstr "Immobilien (Real)"
