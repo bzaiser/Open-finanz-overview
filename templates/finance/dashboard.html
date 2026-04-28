@@ -132,22 +132,38 @@
 </div>
 
 <script>
-    // Initialize Tooltips
     function initTooltips() {
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-        console.log("Initializing " + tooltipTriggerList.length + " Tooltips...");
-        tooltipTriggerList.forEach(function (tooltipTriggerEl) {
-            bootstrap.Tooltip.getOrCreateInstance(tooltipTriggerEl, {
-                container: 'body',
-                boundary: 'viewport',
-                fallbackPlacements: ['top', 'right', 'bottom'],
-                trigger: 'hover focus click',
-                html: true
-            })
-        });
+        try {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            console.log("Initializing " + tooltipTriggerList.length + " Tooltips...");
+            
+            if (typeof bootstrap === 'undefined') {
+                console.error("Bootstrap is not defined!");
+                return;
+            }
+
+            tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+                try {
+                    new bootstrap.Tooltip(tooltipTriggerEl, {
+                        container: 'body',
+                        boundary: 'viewport',
+                        fallbackPlacements: ['top', 'right', 'bottom'],
+                        trigger: 'hover focus click',
+                        html: true
+                    });
+                } catch (e) {
+                    console.error("Error initializing individual tooltip:", e);
+                }
+            });
+        } catch (e) {
+            console.error("Error in initTooltips:", e);
+        }
     }
+    // Try multiple times to be sure
     document.addEventListener('DOMContentLoaded', initTooltips);
+    window.addEventListener('load', initTooltips);
     document.addEventListener('htmx:afterSettle', initTooltips);
+    setTimeout(initTooltips, 1000); 
 
     // Close the simulation offcanvas after a successful HTMX update
     document.addEventListener('htmx:afterOnLoad', function(evt) {
