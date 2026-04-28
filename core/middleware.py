@@ -63,11 +63,15 @@ class DynamicAdminThemeMiddleware(MiddlewareMixin):
                             color: #ffffff !important;
                             opacity: 0.9;
                         }}
-                        /* Targeted styling for collapsible summaries */
+                        /* Targeted styling for collapsible summaries - using {gs} directly */
+                        summary,
                         .admin-interface .module.collapse details summary {{
-                            background: var(--admin-interface-module-background-color) !important;
-                            border-color: var(--admin-interface-module-background-color) !important;
+                            background: {gs} !important;
+                            border-color: {gs} !important;
                             color: #ffffff !important;
+                        }}
+                        .admin-interface .module.collapse details summary:hover {{
+                            opacity: 0.9 !important;
                         }}
                         /* Hide the logo on the fly */
                         #header #branding img, 
