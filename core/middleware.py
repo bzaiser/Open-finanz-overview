@@ -50,6 +50,13 @@ class DynamicAdminThemeMiddleware(MiddlewareMixin):
                         #header h1 a, #header #user-tools, #header #user-tools a {{
                             color: #ffffff !important;
                         }}
+                        /* Hide the logo on the fly */
+                        #header #branding img, 
+                        #header #branding svg,
+                        .admin-interface #header #branding img,
+                        .admin-interface #header #branding svg {{
+                            display: none !important;
+                        }}
                         /* Ensure the branding text is what we want if JS is disabled */
                         #site-name a {{ color: white !important; }}
                     </style>
