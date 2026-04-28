@@ -1,17 +1,5 @@
 {% extends "admin/base.html" %}
-{% load static i18n %}
-
-{% block extrastyle %}
-{{ block.super }}
-<style>
-    /* Admin Header Bar Customization - Keeping this to match the Dashboard aesthetic */
-    #header {
-        background: {{ user.profile.primary_color|default:"#0d6efd" }} !important;
-        background: linear-gradient(135deg, {{ user.profile.gradient_start|default:"#6610f2" }} 0%, {{ user.profile.gradient_end|default:"#0d6efd" }} 100%) !important;
-        color: #ffffff !important;
-    }
-</style>
-{% endblock %}
+{% load i18n static %}
 
 {% block branding %}
 <h1 id="site-name"><a href="{% url 'admin:index' %}">{% trans "Finanzplan Admin" %}</a></h1>
