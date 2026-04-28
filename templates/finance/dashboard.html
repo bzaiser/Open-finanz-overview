@@ -315,12 +315,21 @@
 <!-- Help Modal -->
 <div class="modal fade" id="helpModal" tabindex="-1" aria-hidden="true" style="z-index: 2100;">
     <div class="modal-dialog modal-dialog-centered modal-sm">
-        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
-            <div class="modal-header border-0 pb-0" style="background: var(--app-card-bg);">
-                <h6 class="modal-title fw-bold" id="helpModalTitle" style="color: var(--app-primary);"></h6>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 24px; overflow: hidden; background: var(--app-card-bg); backdrop-filter: blur(10px);">
+            <div class="modal-header border-0 pb-0 d-flex align-items-center gap-2" style="background: transparent;">
+                <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; background: rgba(var(--app-primary-rgb, 13, 110, 253), 0.1); color: var(--app-primary);">
+                    <i class="bi bi-info-lg"></i>
+                </div>
+                <h6 class="modal-title fw-bold m-0" id="helpModalTitle" style="color: var(--app-card-color); font-size: 1rem;"></h6>
+                <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close" style="font-size: 0.8rem;"></button>
             </div>
-            <div class="modal-body pt-2 pb-4" id="helpModalBody" style="background: var(--app-card-bg); color: var(--app-card-color); font-size: 0.9rem; line-height: 1.5;">
+            <div class="modal-body pt-3 pb-4" id="helpModalBody" style="color: var(--app-card-color); font-size: 0.95rem; line-height: 1.6; opacity: 0.9;">
+            </div>
+            <div class="px-3 pb-3">
+                <button type="button" class="btn btn-sm w-100 rounded-pill py-2 fw-bold" data-bs-dismiss="modal" 
+                        style="background: var(--app-gradient); border: none; color: white; font-size: 0.8rem; letter-spacing: 0.5px;">
+                    {% trans "Verstanden" %}
+                </button>
             </div>
         </div>
     </div>
