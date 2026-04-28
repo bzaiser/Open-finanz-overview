@@ -49,32 +49,31 @@ class Command(BaseCommand):
         Asset.objects.create(user=user, name='Bitcoin (Cold Wallet)', value=Decimal('8200.00'), growth_rate=Decimal('15.0'))
 
         # 5. Physical Assets (Sachwerte)
-        PhysicalAsset.objects.create(user=user, name='VW Golf VIII', purchase_price=Decimal('28000.00'), current_value=Decimal('22000.00'))
-        PhysicalAsset.objects.create(user=user, name='Rolex Submariner', purchase_price=Decimal('9500.00'), current_value=Decimal('11200.00'))
+        PhysicalAsset.objects.create(user=user, name='VW Golf VIII', value=Decimal('22000.00'), appreciation_rate=Decimal('-5.0'))
+        PhysicalAsset.objects.create(user=user, name='Rolex Submariner', value=Decimal('11200.00'), appreciation_rate=Decimal('3.0'))
 
         # 6. Real Estate & Corresponding Loan
         apartment = RealEstate.objects.create(
             user=user, 
             name='ETW Berlin-Pankow', 
-            purchase_price=Decimal('280000.00'),
-            current_value=Decimal('315000.00'),
+            property_value=Decimal('315000.00'),
+            appreciation_rate=Decimal('2.5'),
             rental_income_monthly=Decimal('950.00'),
-            property_management_costs=Decimal('250.00')
+            maintenance_costs_monthly=Decimal('250.00')
         )
 
         Loan.objects.create(
             user=user,
             name='Immobiliendarlehen Pankow',
-            total_amount=Decimal('220000.00'),
-            current_balance=Decimal('195000.00'),
+            nominal_amount=Decimal('220000.00'),
             interest_rate=Decimal('1.85'),
-            monthly_payment=Decimal('850.00'),
-            real_estate=apartment
+            monthly_installment=Decimal('850.00'),
+            start_date=date(2022, 1, 1)
         )
 
         # 7. Pensions
-        Pension.objects.create(user=user, name='Gesetzliche Rentenversicherung', expected_monthly_amount=Decimal('1850.00'), start_date=date(2055, 1, 1))
-        Pension.objects.create(user=user, name='Allianz Riester Rente', expected_monthly_amount=Decimal('320.00'), start_date=date(2055, 1, 1))
+        Pension.objects.create(user=user, provider='Gesetzliche Rentenversicherung', expected_payout_at_retirement=Decimal('1850.00'), start_payout_date=date(2055, 1, 1), is_indexed=True)
+        Pension.objects.create(user=user, provider='Allianz Riester Rente', expected_payout_at_retirement=Decimal('320.00'), start_payout_date=date(2055, 1, 1), is_indexed=True)
 
         # 8. CashFlow - Incomes
         CashFlowSource.objects.create(
