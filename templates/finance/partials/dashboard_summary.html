@@ -48,7 +48,11 @@
                         <span class="ms-1 fs-6 fw-normal opacity-75">{{ profile.currency }}</span>
                     </h3>
                     <div class="small opacity-75 mt-1" style="font-size: 0.65rem;">
-                        <i class="bi bi-calendar3 me-1"></i>{{ simulation_params.stichtag|date:"M Y" }}
+                        {% if item.id == 'expected_payout' %}
+                            <i class="bi bi-file-earmark-text me-1"></i>{% trans "Summe aus Verträgen" %} <span class="ms-1">(Nominal)</span>
+                        {% else %}
+                            <i class="bi bi-calendar3 me-1"></i>{{ simulation_params.stichtag|date:"M Y" }}
+                        {% endif %}
                     </div>
                 </div>
             </div>
