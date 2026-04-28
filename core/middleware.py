@@ -51,23 +51,23 @@ class DynamicAdminThemeMiddleware(MiddlewareMixin):
                         .admin-interface #header {{
                             background: linear-gradient(135deg, {gs} 0%, {ge} 100%) !important;
                         }}
-                        /* Targeted styling only for collapsible summaries */
-                        .admin-interface .module.collapse details summary {{
-                            background: var(--admin-interface-module-background-color) !important;
-                            border-color: var(--admin-interface-module-background-color) !important;
-                            color: #ffffff !important;
-                        }}
                         #header h1 a, #header #user-tools, #header #user-tools a {{
                             color: #ffffff !important;
                         }}
-                        /* Apply start color to breadcrumbs and module headers */
-                        .breadcrumbs, .module h2, .module caption {{
+                        /* Apply start color to breadcrumbs */
+                        .breadcrumbs {{
                             background: {gs} !important;
                             color: #ffffff !important;
                         }}
                         .breadcrumbs a {{
                             color: #ffffff !important;
                             opacity: 0.9;
+                        }}
+                        /* Targeted styling for collapsible summaries */
+                        .admin-interface .module.collapse details summary {{
+                            background: var(--admin-interface-module-background-color) !important;
+                            border-color: var(--admin-interface-module-background-color) !important;
+                            color: #ffffff !important;
                         }}
                         /* Hide the logo on the fly */
                         #header #branding img, 
