@@ -266,16 +266,6 @@ def dashboard_view(request):
     layout.sort(key=lambda x: x.get('order', 99))
     summary_layout.sort(key=lambda x: x.get('order', 99))
 
-    # --- Pre-attach titles and descriptions for easy template access ---
-    for item in layout:
-        cfg = AVAILABLE_CHARTS.get(item['id'], {})
-        item['title'] = _eager(str(cfg.get('title', item['id'])))
-        item['description'] = _eager(str(cfg.get('description', '')))
-        
-    for item in summary_layout:
-        cfg = SUMMARY_WIDGETS.get(item['id'], {})
-        item['title'] = _eager(str(cfg.get('title', item['id'])))
-        item['description'] = _eager(str(cfg.get('description', '')))
 
     # Simulation Params from Profile (with safe fallbacks for missing columns or NULL values)
     def get_safe_profile_val(profile_obj, field, default):
@@ -916,6 +906,17 @@ def dashboard_view(request):
             for k, v in SUMMARY_WIDGETS.items()
         }
 
+        # --- Pre-attach titles and descriptions for easy template access ---
+        for item in layout:
+            info = translated_available_charts.get(item['id'], {})
+            item['display_title'] = info.get('title', item['id'])
+            item['help_text'] = info.get('description', '')
+            
+        for item in summary_layout:
+            info = translated_summary_widgets.get(item['id'], {})
+            item['display_title'] = info.get('title', item['id'])
+            item['help_text'] = info.get('description', '')
+
     context = {
         'profile': profile,
         'currency': profile.currency or 'EUR',
@@ -1481,7 +1482,7 @@ def get_import_progress(request):
             <i class="bi bi-check-circle-fill me-1"></i>{_eager("Analyse abgeschlossen!")}
         </p>
         <div class="mt-4 animate__animated animate__bounceIn">
-            <a href="{review_url}" class="btn btn-success fw-bold shadow-lg px-5 py-3">
+             <a href="{review_url}" class="btn btn-success fw-bold shadow-lg px-5 py-3">
                 <i class="bi bi-check-all me-2"></i>{_eager("Buchungen ansehen")}
             </a>
         </div>
