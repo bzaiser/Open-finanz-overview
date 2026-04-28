@@ -60,18 +60,18 @@ class Asset(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='assets')
     name = models.CharField(_("Name"), max_length=100)
     value = models.DecimalField(_("Current Value"), max_digits=12, decimal_places=2)
-    growth_rate = models.DecimalField(_("Annual Growth Rate (%)"), max_digits=5, decimal_places=2, default=0.0)
-    interest_teaser_rate = models.DecimalField(_("Teaser Interest Rate (%)"), max_digits=5, decimal_places=2, null=True, blank=True, help_text=_("Higher promotional interest rate (e.g. for new customers)"))
-    interest_teaser_until = models.DateField(_("Teaser Rate Expiry Date"), null=True, blank=True, help_text=_("Date when the teaser rate expires and falls back to the standard growth rate"))
+    growth_rate = models.DecimalField(_("Jährliche Wachstumsrate (%)"), max_digits=5, decimal_places=2, default=0.0)
+    interest_teaser_rate = models.DecimalField(_("Lockvogel-Zinssatz (%)"), max_digits=5, decimal_places=2, null=True, blank=True, help_text=_("Höherer Aktionszins (z. B. für Neukunden)"))
+    interest_teaser_until = models.DateField(_("Ablaufdatum des Lockvogel-Zinses"), null=True, blank=True, help_text=_("Datum, an dem der Lockvogel-Zins ausläuft und auf den Standardzinssatz zurückfällt"))
 
     
     # Withdrawal / Decumulation
-    withdrawal_amount = models.DecimalField(_("Monthly Withdrawal"), max_digits=12, decimal_places=2, default=0.0, help_text=_("Amount to take out of this asset each month"))
-    withdrawal_start_date = models.DateField(_("Withdrawal Start Date"), null=True, blank=True)
+    withdrawal_amount = models.DecimalField(_("Monatliche Entnahme"), max_digits=12, decimal_places=2, default=0.0, help_text=_("Betrag, der monatlich aus diesem Vermögenswert entnommen werden soll"))
+    withdrawal_start_date = models.DateField(_("Startdatum der Entnahme"), null=True, blank=True)
     
     class Meta:
-        verbose_name = _("Asset")
-        verbose_name_plural = _("Assets")
+        verbose_name = _("Vermögenswert (Asset)")
+        verbose_name_plural = _("Vermögenswerte (Assets)")
 
     def __str__(self):
         return self.name
@@ -102,8 +102,8 @@ class Pension(models.Model):
     start_payout_date = models.DateField(_("Payout Start Date"), blank=True, null=True, help_text=_("Approximate date when pension payout starts"))
 
     class Meta:
-        verbose_name = _("Pension")
-        verbose_name_plural = _("Pensions")
+        verbose_name = _("Rente (Pension)")
+        verbose_name_plural = _("Renten (Pensions)")
 
     def __str__(self):
         return self.provider
@@ -186,11 +186,11 @@ class PhysicalAsset(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='physical_assets')
     name = models.CharField(_("Name"), max_length=100)
     value = models.DecimalField(_("Current Value"), max_digits=12, decimal_places=2)
-    appreciation_rate = models.DecimalField(_("Annual Appreciation Rate (%)"), max_digits=5, decimal_places=2, default=0.0)
-    location = models.CharField(_("Location / Storage"), max_length=255, blank=True)
-    storage_costs_monthly = models.DecimalField(_("Monthly Storage/Maintenance Costs"), max_digits=10, decimal_places=2, default=0.0)
-    is_sold = models.BooleanField(_("Is Sold"), default=False)
-    sale_date = models.DateField(_("Sale Date"), null=True, blank=True)
+    appreciation_rate = models.DecimalField(_("Jährliche Wertsteigerung (%)"), max_digits=5, decimal_places=2, default=0.0)
+    location = models.CharField(_("Standort / Aufbewahrung"), max_length=255, blank=True)
+    storage_costs_monthly = models.DecimalField(_("Monatliche Lager-/Unterhaltskosten"), max_digits=10, decimal_places=2, default=0.0)
+    is_sold = models.BooleanField(_("Verkauft"), default=False)
+    sale_date = models.DateField(_("Verkaufsdatum"), null=True, blank=True)
     
     class Meta:
         verbose_name = _("Sachwert (Physical Asset)")
@@ -203,15 +203,15 @@ class PhysicalAsset(models.Model):
 class RealEstate(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='real_estates')
     name = models.CharField(_("Name / Property"), max_length=100)
-    property_value = models.DecimalField(_("Property Value"), max_digits=12, decimal_places=2)
-    appreciation_rate = models.DecimalField(_("Annual Appreciation Rate (%)"), max_digits=5, decimal_places=2, default=0.0)
-    location = models.CharField(_("Location"), max_length=255, blank=True)
-    current_tenant = models.CharField(_("Current Tenant"), max_length=100, blank=True)
-    rental_income_monthly = models.DecimalField(_("Monthly Rental Income (Net)"), max_digits=10, decimal_places=2, default=0.0)
-    maintenance_costs_monthly = models.DecimalField(_("Monthly Maintenance/Mgmt Costs"), max_digits=10, decimal_places=2, default=0.0)
-    ancillary_costs_monthly = models.DecimalField(_("Monthly Ancillary Costs (Nebenkosten)"), max_digits=10, decimal_places=2, default=0.0)
-    is_sold = models.BooleanField(_("Is Sold"), default=False)
-    sale_date = models.DateField(_("Sale Date"), null=True, blank=True)
+    property_value = models.DecimalField(_("Immobilienwert"), max_digits=12, decimal_places=2)
+    appreciation_rate = models.DecimalField(_("Jährliche Wertsteigerung (%)"), max_digits=5, decimal_places=2, default=0.0)
+    location = models.CharField(_("Standort"), max_length=255, blank=True)
+    current_tenant = models.CharField(_("Aktueller Mieter"), max_length=100, blank=True)
+    rental_income_monthly = models.DecimalField(_("Monatliche Mieteinnahmen (Netto)"), max_digits=10, decimal_places=2, default=0.0)
+    maintenance_costs_monthly = models.DecimalField(_("Monatliche Instandhaltungs-/Verwaltungskosten"), max_digits=10, decimal_places=2, default=0.0)
+    ancillary_costs_monthly = models.DecimalField(_("Monatliche Nebenkosten"), max_digits=10, decimal_places=2, default=0.0)
+    is_sold = models.BooleanField(_("Verkauft"), default=False)
+    sale_date = models.DateField(_("Verkaufsdatum"), null=True, blank=True)
 
     class Meta:
         verbose_name = _("Immobilie (Real Estate)")
@@ -232,14 +232,14 @@ class Loan(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='loans')
     name = models.CharField(_("Name"), max_length=100)
     provider = models.CharField(_("Provider / Bank"), max_length=100, blank=True)
-    nominal_amount = models.DecimalField(_("Initial Loan Amount"), max_digits=12, decimal_places=2)
-    interest_rate = models.DecimalField(_("Interest Rate (%)"), max_digits=5, decimal_places=2)
-    interest_lock_end = models.DateField(_("Interest Lock End Date"), null=True, blank=True)
-    monthly_installment = models.DecimalField(_("Monthly Installment"), max_digits=12, decimal_places=2)
-    start_date = models.DateField(_("Start Date"))
-    end_date = models.DateField(_("End Date"), null=True, blank=True)
-    notes = models.TextField(_("Notes"), blank=True)
-    allows_extra_repayment = models.BooleanField(_("Extra Repayment Possible"), default=False)
+    nominal_amount = models.DecimalField(_("Ursprünglicher Darlehensbetrag"), max_digits=12, decimal_places=2)
+    interest_rate = models.DecimalField(_("Zinssatz (%)"), max_digits=5, decimal_places=2)
+    interest_lock_end = models.DateField(_("Zinsbindungsende"), null=True, blank=True)
+    monthly_installment = models.DecimalField(_("Monatliche Rate"), max_digits=12, decimal_places=2)
+    start_date = models.DateField(_("Startdatum"))
+    end_date = models.DateField(_("Enddatum"), null=True, blank=True)
+    notes = models.TextField(_("Notizen"), blank=True)
+    allows_extra_repayment = models.BooleanField(_("Sondertilgung möglich"), default=False)
 
     class Meta:
         verbose_name = _("Loan / Debt")
