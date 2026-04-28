@@ -4,6 +4,8 @@
     {% if item.visible %}
     <div class="col-md-3 mb-3" style="order: {{ item.order }};">
         <div class="card metric-card h-100"
+             data-bs-toggle="tooltip" data-bs-placement="top"
+             data-bs-title="{% for k,v in summary_widgets.items %}{% if k == item.id %}{{ v.description }}{% endif %}{% endfor %}"
              style="background: linear-gradient(135deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0) 100%), {{ item.bg_color|default:'#ffffff' }}; color: {{ item.text_color|default:'#212529' }};">
             <div class="card-glass-glow"></div>
             <div class="card-body p-3 d-flex flex-column justify-content-between">

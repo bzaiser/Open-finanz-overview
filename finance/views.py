@@ -56,35 +56,110 @@ from decimal import Decimal
 
 # Define available charts and their default properties
 AVAILABLE_CHARTS = {
-    'net_worth_chart': {'title': _('Net Worth Forecast'), 'type': 'line', 'default_width': 12, 'default_height': 'medium'},
-    'cashflow_chart': {'title': _('Cash Flow Analysis'), 'type': 'bar', 'default_width': 6, 'default_height': 'small'},
-    'income_evolution_chart': {'title': _('Income & One-Time Effects'), 'type': 'bar', 'default_width': 12, 'default_height': 'medium'},
-    'expense_evolution_chart': {'title': _('Expense Evolution'), 'type': 'line', 'default_width': 6, 'default_height': 'small'},
-    'inflation_monitor_chart': {'title': _('Inflation Monitor'), 'type': 'line', 'default_width': 6, 'default_height': 'small'},
-    'budget_pie_chart': {'title': _('Monthly Budget'), 'type': 'pie', 'default_width': 6, 'default_height': 'small'},
-    'asset_allocation_chart': {'title': _('Asset Allocation'), 'type': 'doughnut', 'default_width': 6, 'default_height': 'small'},
-    'upcoming_dates_widget': {'title': _('Important Dates & Deadlines'), 'type': 'table', 'default_width': 12, 'default_height': 'small'},
-    'income_table_widget': {'title': _('Income Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small'},
+    'net_worth_chart': {
+        'title': _('Net Worth Forecast'), 'type': 'line', 'default_width': 12, 'default_height': 'medium',
+        'description': _('Projiziert dein Gesamtvermögen über die Zeit. „Nominal“ zeigt den tatsächlichen Geldbetrag in der Zukunft, während „Real“ die Kaufkraft in heutigem Geldwert (inflationsbereinigt) darstellt.')
+    },
+    'cashflow_chart': {
+        'title': _('Cash Flow Analysis'), 'type': 'bar', 'default_width': 6, 'default_height': 'small',
+        'description': _('Vergleicht monatliche Einnahmen mit Ausgaben über den Simulationszeitraum. Die Balken zeigen den Überschuss oder das Defizit für jedes Jahr.')
+    },
+    'income_evolution_chart': {
+        'title': _('Income & One-Time Effects'), 'type': 'bar', 'default_width': 12, 'default_height': 'medium',
+        'description': _('Detaillierte Aufschlüsselung deiner Einnahmequellen im Zeitverlauf, inklusive Gehaltssteigerungen, Mieteinahmen und Rentenbeginn.')
+    },
+    'expense_evolution_chart': {
+        'title': _('Expense Evolution'), 'type': 'line', 'default_width': 6, 'default_height': 'small',
+        'description': _('Visualisierung der Ausgabenentwicklung nach Kategorien, inklusive Inflationseffekten und dem Wegfall von Kreditzahlungen.')
+    },
+    'inflation_monitor_chart': {
+        'title': _('Inflation Monitor'), 'type': 'line', 'default_width': 6, 'default_height': 'small',
+        'description': _('Veranschaulicht den Kaufkraftverlust. Zeigt, was 1.000 € heute in zukünftigen Jahren bei der gewählten Inflationsrate noch wert sind.')
+    },
+    'budget_pie_chart': {
+        'title': _('Monthly Budget'), 'type': 'pie', 'default_width': 6, 'default_height': 'small',
+        'description': _('Verteilung deiner monatlichen Ausgaben auf die verschiedenen Kategorien für das aktuell gewählte Simulationsjahr.')
+    },
+    'asset_allocation_chart': {
+        'title': _('Asset Allocation'), 'type': 'doughnut', 'default_width': 6, 'default_height': 'small',
+        'description': _('Eine Momentaufnahme deiner Vermögensverteilung über Sachwerte, Renten, Immobilien und liquides Vermögen.')
+    },
+    'upcoming_dates_widget': {
+        'title': _('Important Dates & Deadlines'), 'type': 'table', 'default_width': 12, 'default_height': 'small',
+        'description': _('Chronologische Liste wichtiger finanzieller Ereignisse, wie das Ende von Kreditlaufzeiten, Rentenbeginn oder Einmalzahlungen.')
+    },
+    'income_table_widget': {
+        'title': _('Income Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small',
+        'description': _('Liste aller monatlichen Einnahmequellen, die zum gewählten Stichtag aktiv sind.')
+    },
 
-    'expense_table_widget': {'title': _('Expense Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small'},
-    'asset_table_widget': {'title': _('Asset Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small'},
-    'pension_table_widget': {'title': _('Pension Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small'},
-    'event_table_widget': {'title': _('One-Time Event Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small'},
-    'loan_table_widget': {'title': _('Loan Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small'},
-    'loan_evolution_chart': {'title': _('Loan Balance Trend'), 'type': 'line', 'default_width': 12, 'default_height': 'medium'},
+    'expense_table_widget': {
+        'title': _('Expense Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small',
+        'description': _('Liste aller monatlichen Ausgabenposten, die zum gewählten Stichtag aktiv sind.')
+    },
+    'asset_table_widget': {
+        'title': _('Asset Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small',
+        'description': _('Inventar deines liquiden Vermögens und der simulierten Kontostände.')
+    },
+    'pension_table_widget': {
+        'title': _('Pension Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small',
+        'description': _('Übersicht deiner Rentenverträge mit den jeweils projizierten Kapitalwerten oder Auszahlungen.')
+    },
+    'event_table_widget': {
+        'title': _('One-Time Event Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small',
+        'description': _('Zusammenfassung besonderer einmaliger Einnahmen oder Ausgaben im aktuellen Simulationsjahr.')
+    },
+    'loan_table_widget': {
+        'title': _('Loan Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small',
+        'description': _('Liste deiner Kredite mit aktuellem Restsaldo, Zinssatz und verbleibender Laufzeit.')
+    },
+    'loan_evolution_chart': {
+        'title': _('Loan Balance Trend'), 'type': 'line', 'default_width': 12, 'default_height': 'medium',
+        'description': _('Prognose des Schuldenabbaus über die Zeit durch Tilgung und Zinszahlungen.')
+    },
 }
 
 SUMMARY_WIDGETS = {
-    'current_assets': {'title': _('Current Assets'), 'default_bg': '#0d6efd', 'default_text': '#ffffff', 'icon': 'bi-wallet2'},
-    'monthly_income': {'title': _('Monthly Income'), 'default_bg': '#198754', 'default_text': '#ffffff', 'icon': 'bi-graph-up-arrow'},
-    'monthly_expenses': {'title': _('Monthly Expenses'), 'default_bg': '#dc3545', 'default_text': '#ffffff', 'icon': 'bi-graph-down-arrow'},
-    'total_pensions': {'title': _('Pension Capital'), 'default_bg': '#0dcaf0', 'default_text': '#ffffff', 'icon': 'bi-bank'},
-    'expected_payout': {'title': _('Target Monthly Pension'), 'default_bg': '#6f42c1', 'default_text': '#ffffff', 'icon': 'bi-bullseye'},
-    'current_pension_payout': {'title': _('Current Pension'), 'default_bg': '#fd7e14', 'default_text': '#ffffff', 'icon': 'bi-cash-stack'},
-    'total_physical_assets': {'title': _('Physical Assets'), 'default_bg': '#8a2be2', 'default_text': '#ffffff', 'icon': 'bi-car-front'},
-    'total_real_estate': {'title': _('Real Estate'), 'default_bg': '#20c997', 'default_text': '#ffffff', 'icon': 'bi-house-heart'},
-    'total_combined_assets': {'title': _('Total Wealth'), 'default_bg': '#ffc107', 'default_text': '#212529', 'icon': 'bi-pie-chart'},
-    'total_debts': {'title': _('Total Debts'), 'default_bg': '#343a40', 'default_text': '#ffffff', 'icon': 'bi-credit-card-2-front'},
+    'current_assets': {
+        'title': _('Current Assets'), 'default_bg': '#0d6efd', 'default_text': '#ffffff', 'icon': 'bi-wallet2',
+        'description': _('Summe aller Kontostände deiner liquiden Anlagen (Giro, Tagesgeld, Depot) zum gewählten Stichtag.')
+    },
+    'monthly_income': {
+        'title': _('Monthly Income'), 'default_bg': '#198754', 'default_text': '#ffffff', 'icon': 'bi-graph-up-arrow',
+        'description': _('Summe aller monatlichen Einnahmen (Gehalt, Mieten, etc.), die zum Stichtag aktiv sind, inklusive simulierter Steigerungen.')
+    },
+    'monthly_expenses': {
+        'title': _('Monthly Expenses'), 'default_bg': '#dc3545', 'default_text': '#ffffff', 'icon': 'bi-graph-down-arrow',
+        'description': _('Summe aller monatlichen Ausgaben (Miete, Versicherungen, Lebenshaltung), die zum Stichtag aktiv sind, inklusive Inflation.')
+    },
+    'total_pensions': {
+        'title': _('Pension Capital'), 'default_bg': '#0dcaf0', 'default_text': '#ffffff', 'icon': 'bi-bank',
+        'description': _('Aktuelles Guthaben bzw. Barwert aller deiner Renten- und Vorsorgeverträge.')
+    },
+    'expected_payout': {
+        'title': _('Target Monthly Pension'), 'default_bg': '#6f42c1', 'default_text': '#ffffff', 'icon': 'bi-bullseye',
+        'description': _('Statische Summe der in deinen Verträgen garantierten/erwarteten Monatsrenten. Dies ist dein nominales Ziel-Soll.')
+    },
+    'current_pension_payout': {
+        'title': _('Current Pension'), 'default_bg': '#fd7e14', 'default_text': '#ffffff', 'icon': 'bi-cash-stack',
+        'description': _('Die monatliche Rente, die du laut Simulation zum gewählten Stichtag tatsächlich erhältst (inflationsbereinigt).')
+    },
+    'total_physical_assets': {
+        'title': _('Physical Assets'), 'default_bg': '#8a2be2', 'default_text': '#ffffff', 'icon': 'bi-car-front',
+        'description': _('Geschätzter Gesamtwert deiner Sachwerte (Gold, Auto, etc.) zum Stichtag unter Berücksichtigung von Wertänderungen.')
+    },
+    'total_real_estate': {
+        'title': _('Real Estate'), 'default_bg': '#20c997', 'default_text': '#ffffff', 'icon': 'bi-house-heart',
+        'description': _('Marktwert aller deiner Immobilien zum Stichtag, basierend auf der simulierten jährlichen Wertsteigerung.')
+    },
+    'total_combined_assets': {
+        'title': _('Total Wealth'), 'default_bg': '#ffc107', 'default_text': '#212529', 'icon': 'bi-pie-chart',
+        'description': _('Dein gesamtes Reinvermögen: Summe aus Anlagen, Rentenkapital, Sachwerten und Immobilien minus Restschulden.')
+    },
+    'total_debts': {
+        'title': _('Total Debts'), 'default_bg': '#343a40', 'default_text': '#ffffff', 'icon': 'bi-credit-card-2-front',
+        'description': _('Summe aller noch offenen Kreditsalden zum gewählten Simulations-Stichtag.')
+    },
 }
 
 DEFAULT_LAYOUT = [
