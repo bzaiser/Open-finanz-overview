@@ -51,11 +51,8 @@ class DynamicAdminThemeMiddleware(MiddlewareMixin):
                         .admin-interface #header {{
                             background: linear-gradient(135deg, {gs} 0%, {ge} 100%) !important;
                         }}
-                        /* Collapsible Group Headers & Module Captions */
-                        .admin-interface .module h2, 
-                        .admin-interface .module caption, 
-                        .admin-interface .module.collapse details summary, 
-                        .admin-interface .module.filtered h2 {{
+                        /* Targeted styling only for collapsible summaries */
+                        .admin-interface .module.collapse details summary {{
                             background: var(--admin-interface-module-background-color) !important;
                             border-color: var(--admin-interface-module-background-color) !important;
                             color: #ffffff !important;
