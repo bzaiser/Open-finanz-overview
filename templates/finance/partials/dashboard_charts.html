@@ -13,8 +13,8 @@
                     {% for k,v in available_charts.items %}
                     {% if k == item.id %}
                     {{ v.title }}
-                    <i class="bi bi-info-circle ms-2 cursor-help" 
-                       style="font-size: 0.9rem; color: inherit; opacity: 0.7;"
+                    <i class="bi bi-info-circle ms-2" 
+                       style="font-size: 0.9rem; color: inherit; opacity: 0.7; cursor: pointer; padding: 4px;"
                        data-bs-toggle="tooltip" data-bs-placement="top"
                        data-bs-title="{{ v.description }}"></i>
                     {% endif %}

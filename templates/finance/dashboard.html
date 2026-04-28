@@ -134,14 +134,15 @@
 <script>
     // Initialize Tooltips
     function initTooltips() {
-        console.log("Initializing Tooltips...");
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        console.log("Initializing " + tooltipTriggerList.length + " Tooltips...");
         tooltipTriggerList.forEach(function (tooltipTriggerEl) {
             bootstrap.Tooltip.getOrCreateInstance(tooltipTriggerEl, {
                 container: 'body',
                 boundary: 'viewport',
                 fallbackPlacements: ['top', 'right', 'bottom'],
-                trigger: 'hover focus'
+                trigger: 'hover focus click',
+                html: true
             })
         });
     }

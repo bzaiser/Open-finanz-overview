@@ -12,8 +12,8 @@
                         {% for k,v in summary_widgets.items %}
                             {% if k == item.id %}
                                 {{ v.title }}
-                                <i class="bi bi-info-circle ms-1 cursor-help" 
-                                   style="color: inherit; opacity: 0.7;"
+                                <i class="bi bi-info-circle ms-1" 
+                                   style="color: inherit; opacity: 0.7; cursor: pointer; padding: 4px;"
                                    data-bs-toggle="tooltip" data-bs-placement="top"
                                    data-bs-title="{{ v.description }}"></i>
                             {% endif %}
