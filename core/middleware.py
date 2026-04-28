@@ -41,7 +41,7 @@ class DynamicAdminThemeMiddleware(MiddlewareMixin):
                     gs = profile.gradient_start or '#6610f2'
                     ge = profile.gradient_end or '#0d6efd'
                     
-                    # Surgical CSS to only affect the header background
+                    # Surgical CSS to only affect the header background and hide default branding if needed
                     style_tag = f"""
                     <style id="dynamic-admin-theme">
                         .admin-interface #header {{
@@ -50,11 +50,18 @@ class DynamicAdminThemeMiddleware(MiddlewareMixin):
                         #header h1 a, #header #user-tools, #header #user-tools a {{
                             color: #ffffff !important;
                         }}
+                        /* Ensure the branding text is what we want if JS is disabled */
+                        #site-name a {{ color: white !important; }}
                     </style>
                     """
                     
                     # Insert the style tag before the closing head or body tag
                     content = response.content.decode('utf-8')
+                    
+                    # On-the-fly title replacement if not already handled by site_header
+                    content = content.replace('Django Administration', 'Finanzplan Admin')
+                    content = content.replace('Django-Administration', 'Finanzplan Admin')
+                    
                     if '</head>' in content:
                         content = content.replace('</head>', f'{style_tag}</head>')
                     elif '</body>' in content:
