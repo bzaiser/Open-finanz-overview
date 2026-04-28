@@ -26,3 +26,43 @@ class UserLanguageMiddleware(MiddlewareMixin):
             except Exception as e:
                 # logger.error(f"Error in UserLanguageMiddleware: {e}")
                 pass
+
+class DynamicAdminThemeMiddleware(MiddlewareMixin):
+    """
+    Injects the user's custom dashboard gradient into the admin header dynamically.
+    This ensures that the admin theme follows the user's profile settings.
+    """
+    def process_response(self, request, response):
+        # Only target admin HTML responses
+        if request.path.startswith('/admin/') and 'text/html' in response.get('Content-Type', ''):
+            if hasattr(request, 'user') and request.user.is_authenticated:
+                try:
+                    profile = request.user.profile
+                    gs = profile.gradient_start or '#6610f2'
+                    ge = profile.gradient_end or '#0d6efd'
+                    
+                    # Surgical CSS to only affect the header background
+                    style_tag = f"""
+                    <style id="dynamic-admin-theme">
+                        .admin-interface #header {{
+                            background: linear-gradient(135deg, {gs} 0%, {ge} 100%) !important;
+                        }}
+                        #header h1 a, #header #user-tools, #header #user-tools a {{
+                            color: #ffffff !important;
+                        }}
+                    </style>
+                    """
+                    
+                    # Insert the style tag before the closing head or body tag
+                    content = response.content.decode('utf-8')
+                    if '</head>' in content:
+                        content = content.replace('</head>', f'{style_tag}</head>')
+                    elif '</body>' in content:
+                        content = content.replace('</body>', f'{style_tag}</body>')
+                    
+                    response.content = content.encode('utf-8')
+                    if response.get('Content-Length'):
+                        response['Content-Length'] = len(response.content)
+                except Exception:
+                    pass
+        return response
