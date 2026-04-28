@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-28 21:55+0200\n"
+"POT-Creation-Date: 2026-04-28 22:00+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -507,7 +507,6 @@ msgid "Processed Transaction Hashes"
 msgstr ""
 
 #: finance/models.py:189 finance/models.py:207
-#| msgid "Annual Growth Rate (%)"
 msgid "Annual Appreciation Rate (%)"
 msgstr "Jährliche Wachstumsrate (%)"
 
@@ -524,41 +523,36 @@ msgid "Is Sold"
 msgstr "Verkauft"
 
 #: finance/models.py:193 finance/models.py:214
-#| msgid "Start Date"
 msgid "Sale Date"
 msgstr "Startdatum"
 
-#: finance/models.py:196
-#| msgid "Decline Physical Assets"
-msgid "Sachwert (Physical Asset)"
-msgstr "Wertverlust Sachwerte (%)"
+#: finance/models.py:196 finance/views.py:652
+#, fuzzy
+#| msgid "Physical Assets"
+msgid "Physical Asset"
+msgstr "Sachwerte"
 
-#: finance/models.py:197
-#| msgid "Decline Physical Assets"
-msgid "Sachwerte (Physical Assets)"
-msgstr "Wertverlust Sachwerte (%)"
+#: finance/models.py:197 finance/views.py:148
+msgid "Physical Assets"
+msgstr "Sachwerte"
 
 #: finance/models.py:205
 msgid "Name / Property"
 msgstr ""
 
 #: finance/models.py:206
-#| msgid "Current Value"
 msgid "Property Value"
 msgstr "Aktueller Wert"
 
 #: finance/models.py:208
-#| msgid "Notification"
 msgid "Location"
 msgstr "Hinweis"
 
 #: finance/models.py:209
-#| msgid "Current Pension"
 msgid "Current Tenant"
 msgstr "Aktuelle Rente (am Stichtag)"
 
 #: finance/models.py:210
-#| msgid "Monthly Income"
 msgid "Monthly Rental Income (Net)"
 msgstr "Monatliches Einkommen"
 
@@ -570,23 +564,23 @@ msgstr "Monatliche Instandhaltungs-/Verwaltungskosten"
 msgid "Monthly Ancillary Costs (Nebenkosten)"
 msgstr "Monatliche Nebenkosten"
 
-#: finance/models.py:217
-#| msgid "Real Estate"
-msgid "Immobilie (Real Estate)"
+#: finance/models.py:217 finance/views.py:152 finance/views.py:659
+msgid "Real Estate"
 msgstr "Immobilien"
 
 #: finance/models.py:218
+#, fuzzy
 #| msgid "Real Estate"
-msgid "Immobilien (Real Estate)"
+msgid "Real Estates"
 msgstr "Immobilien"
 
 #: finance/models.py:227
-msgid "Mein Finanzstatus (Vorausgefüllt)"
-msgstr ""
+msgid "My Financial Status"
+msgstr "Mein Finanzstatus"
 
 #: finance/models.py:228
-msgid "Meine Finanzen (Schnelleingabe)"
-msgstr ""
+msgid "My Finances (Quick Entry)"
+msgstr "Meine Finanzen (Schnelleingabe)"
 
 #: finance/models.py:234
 #, fuzzy
@@ -941,20 +935,12 @@ msgid ""
 "beziehst (inflationsbereinigt)."
 msgstr ""
 
-#: finance/views.py:148
-msgid "Physical Assets"
-msgstr "Sachwerte"
-
 #: finance/views.py:149
 msgid ""
 "Gesamtwert deiner Sachwerte wie Fahrzeuge, Gold oder Sammlungen. "
 "<br><br>Verwaltet in <a href=\"/admin/finance/physicalasset/\" "
 "target=\"_blank\" class=\"alert-link\">Sachwerte</a>."
 msgstr ""
-
-#: finance/views.py:152 finance/views.py:659
-msgid "Real Estate"
-msgstr "Immobilien"
 
 #: finance/views.py:153
 msgid ""
@@ -1015,12 +1001,6 @@ msgstr "Ende Einzahlung"
 #: finance/views.py:644
 msgid "Teaser Rate Expires"
 msgstr "Aktionszins läuft aus"
-
-#: finance/views.py:652
-#, fuzzy
-#| msgid "Physical Assets"
-msgid "Physical Asset"
-msgstr "Sachwerte"
 
 #: finance/views.py:652 finance/views.py:659
 msgid "Planned Sale"
@@ -2365,6 +2345,22 @@ msgstr ""
 #: templates/finance/partials/import_row.html:91
 msgid "Dauerhaften Filter erstellen"
 msgstr ""
+
+#~| msgid "Decline Physical Assets"
+#~ msgid "Sachwert (Physical Asset)"
+#~ msgstr "Wertverlust Sachwerte (%)"
+
+#~| msgid "Decline Physical Assets"
+#~ msgid "Sachwerte (Physical Assets)"
+#~ msgstr "Wertverlust Sachwerte (%)"
+
+#~| msgid "Real Estate"
+#~ msgid "Immobilie (Real Estate)"
+#~ msgstr "Immobilien"
+
+#~| msgid "Real Estate"
+#~ msgid "Immobilien (Real Estate)"
+#~ msgstr "Immobilien"
 
 #~ msgid "Theme"
 #~ msgstr "Design"

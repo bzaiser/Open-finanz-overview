@@ -193,8 +193,8 @@ class PhysicalAsset(models.Model):
     sale_date = models.DateField(_("Sale Date"), null=True, blank=True)
     
     class Meta:
-        verbose_name = _("Sachwert (Physical Asset)")
-        verbose_name_plural = _("Sachwerte (Physical Assets)")
+        verbose_name = _("Physical Asset")
+        verbose_name_plural = _("Physical Assets")
 
     def __str__(self):
         return f"{self.name} ({self.value})"
@@ -214,8 +214,8 @@ class RealEstate(models.Model):
     sale_date = models.DateField(_("Sale Date"), null=True, blank=True)
 
     class Meta:
-        verbose_name = _("Immobilie (Real Estate)")
-        verbose_name_plural = _("Immobilien (Real Estate)")
+        verbose_name = _("Real Estate")
+        verbose_name_plural = _("Real Estates")
 
     def __str__(self):
         return f"{self.name} ({self.property_value})"
@@ -224,8 +224,8 @@ class RealEstate(models.Model):
 class FinancialStatusProxy(CustomUser):
     class Meta:
         proxy = True
-        verbose_name = _("Mein Finanzstatus (Vorausgefüllt)")
-        verbose_name_plural = _("Meine Finanzen (Schnelleingabe)")
+        verbose_name = _("My Financial Status")
+        verbose_name_plural = _("My Finances (Quick Entry)")
 
 
 class Loan(models.Model):
