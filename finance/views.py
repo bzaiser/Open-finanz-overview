@@ -894,10 +894,16 @@ def dashboard_view(request):
 
     # Key Metrics for Summary Panels
 
-    # Ensure all chart titles are eagerly translated in the current language context
+    # Ensure all chart titles and descriptions are eagerly translated in the current language context
     with translation.override(translation.get_language()):
-        translated_available_charts = {k: {**v, 'title': _eager(str(v['title']))} for k, v in AVAILABLE_CHARTS.items()}
-        translated_summary_widgets = {k: {**v, 'title': _eager(str(v['title']))} for k, v in SUMMARY_WIDGETS.items()}
+        translated_available_charts = {
+            k: {**v, 'title': _eager(str(v['title'])), 'description': _eager(str(v.get('description', '')))} 
+            for k, v in AVAILABLE_CHARTS.items()
+        }
+        translated_summary_widgets = {
+            k: {**v, 'title': _eager(str(v['title'])), 'description': _eager(str(v.get('description', '')))} 
+            for k, v in SUMMARY_WIDGETS.items()
+        }
 
     context = {
         'profile': profile,
