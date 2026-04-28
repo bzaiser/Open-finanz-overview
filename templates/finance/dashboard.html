@@ -138,7 +138,12 @@
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
             
             tooltipTriggerList.forEach(function (el) {
-                bootstrap.Tooltip.getOrCreateInstance(el, {
+                var instance = bootstrap.Tooltip.getInstance(el);
+                if (instance) {
+                    instance.dispose();
+                }
+                new bootstrap.Tooltip(el, {
+                    container: 'body',
                     boundary: 'viewport',
                     trigger: 'hover focus click',
                     html: true,
