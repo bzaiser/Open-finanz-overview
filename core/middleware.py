@@ -46,7 +46,7 @@ class DynamicAdminThemeMiddleware(MiddlewareMixin):
                     style_tag = f"""
                     <style id="dynamic-admin-theme">
                         :root {{
-                            --admin-interface-module-background-color: {bg} !important;
+                            --admin-interface-module-background-color: {gs} !important;
                         }}
                         .admin-interface #header {{
                             background: linear-gradient(135deg, {gs} 0%, {ge} 100%) !important;
