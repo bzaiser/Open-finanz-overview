@@ -266,6 +266,17 @@ def dashboard_view(request):
     layout.sort(key=lambda x: x.get('order', 99))
     summary_layout.sort(key=lambda x: x.get('order', 99))
 
+    # --- Pre-attach titles and descriptions for easy template access ---
+    for item in layout:
+        cfg = AVAILABLE_CHARTS.get(item['id'], {})
+        item['title'] = _eager(str(cfg.get('title', item['id'])))
+        item['description'] = _eager(str(cfg.get('description', '')))
+        
+    for item in summary_layout:
+        cfg = SUMMARY_WIDGETS.get(item['id'], {})
+        item['title'] = _eager(str(cfg.get('title', item['id'])))
+        item['description'] = _eager(str(cfg.get('description', '')))
+
     # Simulation Params from Profile (with safe fallbacks for missing columns or NULL values)
     def get_safe_profile_val(profile_obj, field, default):
         val = getattr(profile_obj, field, default)
