@@ -137,13 +137,16 @@
             if (typeof bootstrap === 'undefined') return;
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
             
-            tooltipTriggerList.forEach(function (tooltipTriggerEl) {
-                // Use getOrCreateInstance to avoid multiple tooltips on one element
-                bootstrap.Tooltip.getOrCreateInstance(tooltipTriggerEl, {
+            tooltipTriggerList.forEach(function (el) {
+                bootstrap.Tooltip.getOrCreateInstance(el, {
                     boundary: 'viewport',
-                    fallbackPlacements: ['top', 'right', 'bottom'],
                     trigger: 'hover focus click',
-                    html: true
+                    html: true,
+                    popperConfig: function (defaultConfig) {
+                        return Object.assign({}, defaultConfig, {
+                            strategy: 'fixed'
+                        });
+                    }
                 });
             });
         } catch (e) {
