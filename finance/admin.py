@@ -1,6 +1,9 @@
 from django.contrib import admin
 from .models import Category, CashFlowSource, Asset, OneTimeEvent, Pension, FinancialStatusProxy, PhysicalAsset, RealEstate, Loan, LoanExtraRepayment
 
+admin.site.site_header = "Finanzplan Admin"
+admin.site.index_title = "Finanzplan Admin"
+
 class BaseOwnedModelAdmin(admin.ModelAdmin):
     """
     Base Admin class that enforces tenant isolation:
@@ -24,6 +27,11 @@ class BaseOwnedModelAdmin(admin.ModelAdmin):
         if getattr(obj, 'user', None) is None:
             obj.user = request.user
         super().save_model(request, obj, form, change)
+
+    class Media:
+        css = {
+            'all': ('admin/css/custom_admin.css',)
+        }
 
     def get_list_filter(self, request):
         """Remove 'user' from filters for standard users."""
