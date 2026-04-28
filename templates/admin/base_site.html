@@ -1,44 +1,14 @@
 {% extends "admin/base.html" %}
-{% load i18n static %}
+{% load static i18n %}
 
 {% block extrastyle %}
 {{ block.super }}
 <style>
-    /* 
-       Surgical override for the Admin Header - ONLY top bar 
-    */
+    /* Admin Header Bar Customization - Keeping this to match the Dashboard aesthetic */
     #header {
+        background: {{ user.profile.primary_color|default:"#0d6efd" }} !important;
         background: linear-gradient(135deg, {{ user.profile.gradient_start|default:"#6610f2" }} 0%, {{ user.profile.gradient_end|default:"#0d6efd" }} 100%) !important;
-        border-bottom: none !important;
-    }
-
-    /* Reset Breadcrumbs and Module Headers to standard look */
-    .breadcrumbs, 
-    .module h2, 
-    .module caption,
-    #content h1 {
-        background: #f8f9fa !important;
-        color: #333333 !important;
-        text-shadow: none !important;
-        border-bottom: 1px solid #dee2e6 !important;
-    }
-
-    /* Ensure breadcrumb links are blue/standard */
-    .breadcrumbs a {
-        color: #0d6efd !important;
-    }
-
-    /* Ensure readable text on the gradient */
-    #header h1 a, 
-    #header #user-tools, 
-    #header #user-tools a, 
-    #header .header-item {
         color: #ffffff !important;
-    }
-
-    #header #user-tools a:hover {
-        opacity: 0.8;
-        text-decoration: underline;
     }
 </style>
 {% endblock %}
