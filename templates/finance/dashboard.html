@@ -134,26 +134,17 @@
 <script>
     function initTooltips() {
         try {
+            if (typeof bootstrap === 'undefined') return;
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-            console.log("Initializing " + tooltipTriggerList.length + " Tooltips...");
             
-            if (typeof bootstrap === 'undefined') {
-                console.error("Bootstrap is not defined!");
-                return;
-            }
-
             tooltipTriggerList.forEach(function (tooltipTriggerEl) {
-                try {
-                    new bootstrap.Tooltip(tooltipTriggerEl, {
-                        container: 'body',
-                        boundary: 'viewport',
-                        fallbackPlacements: ['top', 'right', 'bottom'],
-                        trigger: 'hover focus click',
-                        html: true
-                    });
-                } catch (e) {
-                    console.error("Error initializing individual tooltip:", e);
-                }
+                // Use getOrCreateInstance to avoid multiple tooltips on one element
+                bootstrap.Tooltip.getOrCreateInstance(tooltipTriggerEl, {
+                    boundary: 'viewport',
+                    fallbackPlacements: ['top', 'right', 'bottom'],
+                    trigger: 'hover focus click',
+                    html: true
+                });
             });
         } catch (e) {
             console.error("Error in initTooltips:", e);
