@@ -12,9 +12,7 @@
                         {{ item.display_title }}
                         <i class="bi bi-info-circle ms-1" 
                            style="color: inherit; opacity: 0.7; cursor: pointer; padding: 4px;"
-                           data-bs-toggle="tooltip" data-bs-placement="top"
-                           title="{{ item.help_text }}"
-                           data-bs-title="{{ item.help_text }}"></i>
+                           onclick="showHelp('{{ item.display_title|escapejs }}', '{{ item.help_text|escapejs }}')"></i>
                     </div>
                     <div class="simulation-glow-wrapper">
                         <div class="ms-2 {% if is_simulation_active %}{% if item.id == 'net_worth' or item.id == 'monthly_savings' %}simulation-glow{% endif %}{% endif %}">

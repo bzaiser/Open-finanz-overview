@@ -13,9 +13,7 @@
                     {{ item.display_title }}
                     <i class="bi bi-info-circle ms-2" 
                        style="font-size: 0.9rem; color: inherit; opacity: 0.7; cursor: pointer; padding: 4px;"
-                       data-bs-toggle="tooltip" data-bs-placement="top"
-                       title="{{ item.help_text }}"
-                       data-bs-title="{{ item.help_text }}"></i>
+                       onclick="showHelp('{{ item.display_title|escapejs }}', '{{ item.help_text|escapejs }}')"></i>
                 </span>
                 {% if item.id in affected_charts %}
                 <i class="bi bi-sliders {% if is_simulation_active %}simulation-glow{% endif %}"

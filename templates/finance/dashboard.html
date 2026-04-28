@@ -3,6 +3,20 @@
 
 {% block title %}
 {% trans "Dashboard" %}
+<!-- Help Modal -->
+<div class="modal fade" id="helpModal" tabindex="-1" aria-hidden="true" style="z-index: 2100;">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+            <div class="modal-header border-0 pb-0" style="background: var(--app-card-bg);">
+                <h6 class="modal-title fw-bold" id="helpModalTitle" style="color: var(--app-primary);"></h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body pt-2 pb-4" id="helpModalBody" style="background: var(--app-card-bg); color: var(--app-card-color); font-size: 0.9rem; line-height: 1.5;">
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
 
 {% block content %}
@@ -132,37 +146,12 @@
 </div>
 
 <script>
-    function initTooltips() {
-        try {
-            if (typeof bootstrap === 'undefined') return;
-            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-            
-            tooltipTriggerList.forEach(function (el) {
-                var instance = bootstrap.Tooltip.getInstance(el);
-                if (instance) {
-                    instance.dispose();
-                }
-                new bootstrap.Tooltip(el, {
-                    container: 'body',
-                    boundary: 'viewport',
-                    trigger: 'hover focus click',
-                    html: true,
-                    popperConfig: function (defaultConfig) {
-                        return Object.assign({}, defaultConfig, {
-                            strategy: 'fixed'
-                        });
-                    }
-                });
-            });
-        } catch (e) {
-            console.error("Error in initTooltips:", e);
-        }
+    function showHelp(title, text) {
+        document.getElementById('helpModalTitle').innerText = title;
+        document.getElementById('helpModalBody').innerText = text;
+        var helpModal = new bootstrap.Modal(document.getElementById('helpModal'));
+        helpModal.show();
     }
-    // Try multiple times to be sure
-    document.addEventListener('DOMContentLoaded', initTooltips);
-    window.addEventListener('load', initTooltips);
-    document.addEventListener('htmx:afterSettle', initTooltips);
-    setTimeout(initTooltips, 1000); 
 
     // Close the simulation offcanvas after a successful HTMX update
     document.addEventListener('htmx:afterOnLoad', function(evt) {
