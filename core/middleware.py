@@ -45,9 +45,6 @@ class DynamicAdminThemeMiddleware(MiddlewareMixin):
                     # Surgical CSS to only affect the header background and hide default branding if needed
                     style_tag = f"""
                     <style id="dynamic-admin-theme">
-                        :root {{
-                            --admin-interface-module-background-color: {gs} !important;
-                        }}
                         .admin-interface #header {{
                             background: linear-gradient(135deg, {gs} 0%, {ge} 100%) !important;
                         }}
@@ -63,8 +60,7 @@ class DynamicAdminThemeMiddleware(MiddlewareMixin):
                             color: #ffffff !important;
                             opacity: 0.9;
                         }}
-                        /* Targeted styling for collapsible summaries - using {gs} directly */
-                        summary,
+                        /* Targeted styling ONLY for collapsible summaries */
                         .admin-interface .module.collapse details summary {{
                             background: {gs} !important;
                             border-color: {gs} !important;
