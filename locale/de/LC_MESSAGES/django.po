@@ -140,13 +140,11 @@ msgid "Investment Return Offset (%)"
 msgstr "Anlage-Rendite Offset (%)"
 
 #: core/models.py:59
-#, fuzzy
 #| msgid "Real Estate (%)"
 msgid "Default Real Estate Growth (%)"
 msgstr "Immobilien (%)"
 
 #: core/models.py:60
-#, fuzzy
 #| msgid "Physical Assets (%)"
 msgid "Default Physical Asset Growth (%)"
 msgstr "Sachwerte (%)"
@@ -527,7 +525,6 @@ msgid "Sale Date"
 msgstr "Startdatum"
 
 #: finance/models.py:196 finance/views.py:652
-#, fuzzy
 #| msgid "Physical Assets"
 msgid "Physical Asset"
 msgstr "Sachwerte"
@@ -569,7 +566,6 @@ msgid "Real Estate"
 msgstr "Immobilien"
 
 #: finance/models.py:218
-#, fuzzy
 #| msgid "Real Estate"
 msgid "Real Estates"
 msgstr "Immobilien"
@@ -1507,13 +1503,11 @@ msgid "Interest Buffer (%%)"
 msgstr "Zins-Puffer (%)"
 
 #: templates/core/profile.html:130
-#, fuzzy, python-format
 #| msgid "Real Estate (%)"
 msgid "Real Estate (%%)"
 msgstr "Immobilien (%)"
 
 #: templates/core/profile.html:134
-#, fuzzy, python-format
 #| msgid "Physical Assets (%)"
 msgid "Physical Assets (%%)"
 msgstr "Sachwerte (%)"
