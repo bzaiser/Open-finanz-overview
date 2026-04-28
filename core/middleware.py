@@ -50,6 +50,15 @@ class DynamicAdminThemeMiddleware(MiddlewareMixin):
                         #header h1 a, #header #user-tools, #header #user-tools a {{
                             color: #ffffff !important;
                         }}
+                        /* Apply start color to breadcrumbs and module headers */
+                        .breadcrumbs, .module h2, .module caption {{
+                            background: {gs} !important;
+                            color: #ffffff !important;
+                        }}
+                        .breadcrumbs a {{
+                            color: #ffffff !important;
+                            opacity: 0.9;
+                        }}
                         /* Hide the logo on the fly */
                         #header #branding img, 
                         #header #branding svg,
