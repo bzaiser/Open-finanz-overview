@@ -134,7 +134,7 @@
 <script>
     function showHelp(title, text) {
         document.getElementById('helpModalTitle').innerText = title;
-        document.getElementById('helpModalBody').innerText = text;
+        document.getElementById('helpModalBody').innerHTML = text;
         var helpModal = new bootstrap.Modal(document.getElementById('helpModal'));
         helpModal.show();
     }
