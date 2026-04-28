@@ -40,10 +40,14 @@ class DynamicAdminThemeMiddleware(MiddlewareMixin):
                     profile = request.user.profile
                     gs = profile.gradient_start or '#6610f2'
                     ge = profile.gradient_end or '#0d6efd'
+                    bg = profile.background_color or '#ffffff'
                     
                     # Surgical CSS to only affect the header background and hide default branding if needed
                     style_tag = f"""
                     <style id="dynamic-admin-theme">
+                        :root {{
+                            --admin-interface-module-background-color: {bg} !important;
+                        }}
                         .admin-interface #header {{
                             background: linear-gradient(135deg, {gs} 0%, {ge} 100%) !important;
                         }}
