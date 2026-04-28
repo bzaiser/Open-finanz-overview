@@ -110,6 +110,22 @@ def dashboard_view(request):
 
     # Initialize or get Dashboard Config
     dashboard_config = profile.dashboard_config or {}
+
+    # --- 0. Handle Configuration Updates FIRST (Post-Redirect-Get pattern or early update) ---
+    if request.method == 'POST' and 'config_update' in request.POST:
+        try:
+            if request.POST.get('layout_json'):
+                dashboard_config['layout'] = json.loads(request.POST.get('layout_json'))
+            if request.POST.get('summary_layout_json'):
+                dashboard_config['summary_layout'] = json.loads(request.POST.get('summary_layout_json'))
+            if request.POST.get('simulation_panel_json'):
+                dashboard_config['simulation_panel'] = json.loads(request.POST.get('simulation_panel_json'))
+            
+            profile.dashboard_config = dashboard_config
+            profile.save()
+            # We continue so the rest of the view uses the UPDATED dashboard_config
+        except json.JSONDecodeError:
+            pass
     
     # 2. Extract configurations with safe defaults
     layout = dashboard_config.get('layout', DEFAULT_LAYOUT)
@@ -201,34 +217,18 @@ def dashboard_view(request):
     else:
         simulation_params['stichtag'] = timezone.now().date()
 
-    if request.method == 'POST':
-        if 'config_update' in request.POST:
-            # Handle Configuration Update
-            try:
-                if request.POST.get('layout_json'):
-                    dashboard_config['layout'] = json.loads(request.POST.get('layout_json'))
-                if request.POST.get('summary_layout_json'):
-                    dashboard_config['summary_layout'] = json.loads(request.POST.get('summary_layout_json'))
-                if request.POST.get('simulation_panel_json'):
-                    dashboard_config['simulation_panel'] = json.loads(request.POST.get('simulation_panel_json'))
+    if request.method == 'POST' and 'config_update' not in request.POST:
+        # Handle Simulation Update
+        def safe_float(val, default):
+            try: return float(val) if val else default
+            except (ValueError, TypeError): return default
                 
-                profile.dashboard_config = dashboard_config
-                profile.save()
-                #FALLTHROUGH to let HTMX handle the refresh naturally
-            except json.JSONDecodeError:
-                pass
-        else:
-            # Handle Simulation Update
-            def safe_float(val, default):
-                try: return float(val) if val else default
-                except (ValueError, TypeError): return default
-                    
-            simulation_params['inflation_rate'] = safe_float(request.POST.get('inflation_rate'), profile_params['inflation_rate'])
-            simulation_params['salary_increase'] = safe_float(request.POST.get('salary_increase'), profile_params['salary_increase'])
-            simulation_params['pension_increase'] = safe_float(request.POST.get('pension_increase'), profile_params['pension_increase'])
-            simulation_params['investment_return_offset'] = safe_float(request.POST.get('investment_return_offset'), profile_params['investment_return_offset'])
-            simulation_params['real_estate_growth_rate'] = safe_float(request.POST.get('real_estate_growth_rate'), profile_params['real_estate_growth_rate'])
-            simulation_params['physical_asset_growth_rate'] = safe_float(request.POST.get('physical_asset_growth_rate'), profile_params['physical_asset_growth_rate'])
+        simulation_params['inflation_rate'] = safe_float(request.POST.get('inflation_rate'), profile_params['inflation_rate'])
+        simulation_params['salary_increase'] = safe_float(request.POST.get('salary_increase'), profile_params['salary_increase'])
+        simulation_params['pension_increase'] = safe_float(request.POST.get('pension_increase'), profile_params['pension_increase'])
+        simulation_params['investment_return_offset'] = safe_float(request.POST.get('investment_return_offset'), profile_params['investment_return_offset'])
+        simulation_params['real_estate_growth_rate'] = safe_float(request.POST.get('real_estate_growth_rate'), profile_params['real_estate_growth_rate'])
+        simulation_params['physical_asset_growth_rate'] = safe_float(request.POST.get('physical_asset_growth_rate'), profile_params['physical_asset_growth_rate'])
 
     # Check if simulation is active (different from profile defaults)
     is_simulation_active = any(
