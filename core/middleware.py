@@ -48,6 +48,15 @@ class DynamicAdminThemeMiddleware(MiddlewareMixin):
                         .admin-interface #header {{
                             background: linear-gradient(135deg, {gs} 0%, {ge} 100%) !important;
                         }}
+                        /* Apply start color to the specific group of selectors provided by the user */
+                        .admin-interface .module h2, 
+                        .admin-interface .module caption, 
+                        .admin-interface .module.collapse details summary, 
+                        .admin-interface .module.filtered h2 {{
+                            background: {gs} !important;
+                            border-color: {gs} !important;
+                            color: #ffffff !important;
+                        }}
                         #header h1 a, #header #user-tools, #header #user-tools a {{
                             color: #ffffff !important;
                         }}
@@ -59,12 +68,6 @@ class DynamicAdminThemeMiddleware(MiddlewareMixin):
                         .breadcrumbs a {{
                             color: #ffffff !important;
                             opacity: 0.9;
-                        }}
-                        /* Targeted styling ONLY for collapsible summaries */
-                        .admin-interface .module.collapse details summary {{
-                            background: {gs} !important;
-                            border-color: {gs} !important;
-                            color: #ffffff !important;
                         }}
                         .admin-interface .module.collapse details summary:hover {{
                             opacity: 0.9 !important;
