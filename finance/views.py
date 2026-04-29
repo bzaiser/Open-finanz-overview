@@ -1921,5 +1921,15 @@ def dynamic_theme_css(request):
         .dashboard-link-admin svg {{
             margin-right: 0.25rem !important; /* matches me-1 */
         }}
+
+        /* Hide redundant admin header elements */
+        #user-tools a[href="/"], 
+        #user-tools a[href="/admin/"],
+        .viewsite-link,
+        #language-chooser,
+        .language-chooser,
+        form#language-chooser-form {{
+            display: none !important;
+        }}
     """
     return HttpResponse(css_content, content_type="text/css")
