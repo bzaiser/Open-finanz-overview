@@ -2,6 +2,7 @@ import logging
 from django.utils import translation
 from django.conf import settings
 from django.utils.deprecation import MiddlewareMixin
+from django.urls import reverse
 
 logger = logging.getLogger(__name__)
 
@@ -27,8 +28,6 @@ class UserLanguageMiddleware(MiddlewareMixin):
                 # logger.error(f"Error in UserLanguageMiddleware: {e}")
                 pass
 
-from django.urls import reverse
-
 class DynamicAdminThemeMiddleware(MiddlewareMixin):
     """
     Injects a link to the dynamic theme CSS into the admin header.
@@ -36,7 +35,7 @@ class DynamicAdminThemeMiddleware(MiddlewareMixin):
     without bloating every HTML response with inline styles.
     """
     def process_response(self, request, response):
-        # Only target admin HTML responses
+        # Only target admin HTML responses that are not too huge
         if request.path.startswith('/admin/') and 'text/html' in response.get('Content-Type', ''):
             if hasattr(request, 'user') and request.user.is_authenticated:
                 try:
@@ -44,6 +43,7 @@ class DynamicAdminThemeMiddleware(MiddlewareMixin):
                     theme_url = reverse('finance:dynamic_theme_css')
                     link_tag = f'<link rel="stylesheet" href="{theme_url}" id="dynamic-admin-theme">'
                     
+                    # Get content and decode
                     content = response.content.decode('utf-8')
                     
                     # Performance: Fast replacements for titles
@@ -58,7 +58,7 @@ class DynamicAdminThemeMiddleware(MiddlewareMixin):
                     
                     response.content = content.encode('utf-8')
                     if response.get('Content-Length'):
-                        response['Content-Length'] = len(response.content)
-                except Exception:
-                    pass
+                        response['Content-Length'] = str(len(response.content))
+                except Exception as e:
+                    logger.error(f"Error in DynamicAdminThemeMiddleware: {e}")
         return response
