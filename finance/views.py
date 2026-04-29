@@ -1897,27 +1897,27 @@ def dynamic_theme_css(request):
 
         /* Dashboard Link in Admin Header */
         .dashboard-link-admin {{
-            color: white !important;
+            color: rgba(255, 255, 255, 0.95) !important;
             text-transform: none !important;
-            font-size: 1rem !important;
+            font-size: 16px !important;
             font-weight: 500 !important;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
             text-decoration: none !important;
             border: none !important;
             display: inline-flex !important;
             align-items: center !important;
             margin-right: 15px !important;
-            transition: opacity 0.2s ease !important;
+            transition: all 0.2s ease !important;
             vertical-align: middle !important;
         }}
-        .dashboard-link-admin:hover, .dashboard-link-admin:active, .dashboard-link-admin:focus {{
-            opacity: 0.8 !important;
+        .dashboard-link-admin:hover {{
+            color: #ffffff !important;
+            opacity: 1 !important;
+            text-shadow: 0 0 10px rgba(255,255,255,0.3) !important;
             text-decoration: none !important;
-            border: none !important;
         }}
         .dashboard-link-admin svg {{
-            margin-right: 8px !important;
-            filter: drop-shadow(0 1px 1px rgba(0,0,0,0.2)) !important;
+            margin-right: 0.25rem !important; /* matches me-1 */
         }}
     """
     return HttpResponse(css_content, content_type="text/css")
