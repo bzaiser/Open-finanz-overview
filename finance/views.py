@@ -1894,5 +1894,26 @@ def dynamic_theme_css(request):
         }}
         /* Ensure the branding text is white */
         #site-name a {{ color: white !important; }}
+
+        /* Dashboard Link in Admin Header */
+        .dashboard-link-admin {{
+            color: white !important;
+            text-transform: none !important;
+            font-size: 1rem !important;
+            font-weight: 500 !important;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+            text-decoration: none !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            margin-right: 15px !important;
+            transition: opacity 0.2s ease !important;
+            vertical-align: middle !important;
+        }}
+        .dashboard-link-admin:hover {{
+            opacity: 0.8 !important;
+        }}
+        .dashboard-link-admin svg {{
+            margin-right: 6px !important;
+        }}
     """
     return HttpResponse(css_content, content_type="text/css")
