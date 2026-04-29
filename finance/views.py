@@ -1903,17 +1903,21 @@ def dynamic_theme_css(request):
             font-weight: 500 !important;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
             text-decoration: none !important;
+            border: none !important;
             display: inline-flex !important;
             align-items: center !important;
             margin-right: 15px !important;
             transition: opacity 0.2s ease !important;
             vertical-align: middle !important;
         }}
-        .dashboard-link-admin:hover {{
+        .dashboard-link-admin:hover, .dashboard-link-admin:active, .dashboard-link-admin:focus {{
             opacity: 0.8 !important;
+            text-decoration: none !important;
+            border: none !important;
         }}
         .dashboard-link-admin svg {{
-            margin-right: 6px !important;
+            margin-right: 8px !important;
+            filter: drop-shadow(0 1px 1px rgba(0,0,0,0.2)) !important;
         }}
     """
     return HttpResponse(css_content, content_type="text/css")
