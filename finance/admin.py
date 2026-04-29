@@ -38,6 +38,7 @@ class PensionAdmin(BaseOwnedModelAdmin):
     list_editable = ('is_indexed',)
     search_fields = ('provider', 'user__username')
     list_filter = ('user',)
+    list_select_related = ('user',)
 
 from django import forms
 
@@ -183,6 +184,7 @@ class CashFlowSourceAdmin(BaseOwnedModelAdmin):
     list_display = ('name', 'user', 'value', 'category', 'is_income', 'frequency', 'start_date', 'end_date')
     list_editable = ('value', 'category', 'is_income', 'frequency', 'start_date', 'end_date')
     list_filter = (YearListFilter, 'is_income', 'frequency', 'user', 'category')
+    list_select_related = ('category', 'user')
     search_fields = ('name',)
     actions = [duplicate_and_increment_cashflow]
 
@@ -191,6 +193,7 @@ class AssetAdmin(BaseOwnedModelAdmin):
     list_display = ('name', 'user', 'value', 'growth_rate', 'interest_teaser_rate', 'interest_teaser_until', 'withdrawal_amount', 'withdrawal_start_date')
 
     list_filter = ('user',)
+    list_select_related = ('user',)
     search_fields = ('name',)
     list_editable = ('value', 'growth_rate', 'interest_teaser_rate', 'interest_teaser_until', 'withdrawal_amount', 'withdrawal_start_date')
 
@@ -199,12 +202,14 @@ class AssetAdmin(BaseOwnedModelAdmin):
 class OneTimeEventAdmin(BaseOwnedModelAdmin):
     list_display = ('name', 'user', 'value', 'date')
     list_filter = ('user',)
+    list_select_related = ('user',)
     search_fields = ('name',)
 
 @admin.register(PhysicalAsset)
 class PhysicalAssetAdmin(BaseOwnedModelAdmin):
     list_display = ('name', 'user', 'value', 'appreciation_rate', 'storage_costs_monthly', 'is_sold', 'sale_date')
     list_filter = ('user', 'is_sold')
+    list_select_related = ('user',)
     search_fields = ('name',)
     list_editable = ('value', 'appreciation_rate', 'storage_costs_monthly', 'is_sold', 'sale_date')
 
@@ -212,6 +217,7 @@ class PhysicalAssetAdmin(BaseOwnedModelAdmin):
 class RealEstateAdmin(BaseOwnedModelAdmin):
     list_display = ('name', 'user', 'property_value', 'appreciation_rate', 'rental_income_monthly', 'is_sold', 'sale_date')
     list_filter = ('user', 'is_sold')
+    list_select_related = ('user',)
     search_fields = ('name',)
     list_editable = ('property_value', 'appreciation_rate', 'rental_income_monthly', 'is_sold', 'sale_date')
 
@@ -223,6 +229,7 @@ class LoanExtraRepaymentInline(admin.TabularInline):
 class LoanAdmin(BaseOwnedModelAdmin):
     list_display = ('name', 'user', 'provider', 'nominal_amount', 'interest_rate', 'monthly_installment', 'start_date', 'end_date')
     list_filter = ('user', 'provider')
+    list_select_related = ('user',)
     search_fields = ('name', 'provider')
     inlines = [LoanExtraRepaymentInline]
 

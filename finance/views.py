@@ -1131,14 +1131,14 @@ def review_bank_transactions(request, batch_id):
     
     # 2. Split into panes
     # Mapping: Not ignored, NO category
-    mapping_qs = batch.transactions.filter(is_ignored=False, category__isnull=True)
+    mapping_qs = batch.transactions.select_related('category').filter(is_ignored=False, category__isnull=True)
     if q:
         mapping_qs = mapping_qs.filter(description__icontains=q)
     
     mapping_list = mapping_qs.order_by('date')
     
     # Ready: Not ignored, HAS category
-    ready_list = batch.transactions.filter(is_ignored=False, category__isnull=False).order_by('date', '-amount')
+    ready_list = batch.transactions.select_related('category', 'existing_source').filter(is_ignored=False, category__isnull=False).order_by('date', '-amount')
     
     # Total sum for Ready Pane
     total_ready = sum(t.amount for t in ready_list)
@@ -1654,7 +1654,7 @@ def delete_all_temporary_data(request):
 
 @login_required
 def import_filters_list(request):
-    filters = ImportFilter.objects.filter(user=request.user).order_by('target_name')
+    filters = ImportFilter.objects.filter(user=request.user).select_related('category', 'linked_cash_flow').order_by('target_name')
     categories = Category.objects.all()
     
     # Pre-fill values from GET if redirected from review
