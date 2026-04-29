@@ -35,28 +35,20 @@ class DynamicAdminThemeMiddleware(MiddlewareMixin):
     without bloating every HTML response with inline styles.
     """
     def process_response(self, request, response):
-        # Only target admin HTML responses that are not too huge
+        # Only target admin HTML responses
         if request.path.startswith('/admin/') and 'text/html' in response.get('Content-Type', ''):
             if hasattr(request, 'user') and request.user.is_authenticated:
                 try:
-                    # Inject a link to our dynamic CSS view
+                    # Inject a link to our dynamic CSS view using bytes for performance
                     theme_url = reverse('finance:dynamic_theme_css')
-                    link_tag = f'<link rel="stylesheet" href="{theme_url}" id="dynamic-admin-theme">'
+                    link_tag = f'<link rel="stylesheet" href="{theme_url}" id="dynamic-admin-theme">'.encode('utf-8')
                     
-                    # Get content and decode
-                    content = response.content.decode('utf-8')
+                    # Direct byte replacement is much faster than decoding the whole HTML
+                    if b'</head>' in response.content:
+                        response.content = response.content.replace(b'</head>', link_tag + b'</head>')
+                    elif b'</body>' in response.content:
+                        response.content = response.content.replace(b'</body>', link_tag + b'</body>')
                     
-                    # Performance: Fast replacements for titles
-                    content = content.replace('Django Administration', 'Finanzplan Admin')
-                    content = content.replace('Django-Administration', 'Finanzplan Admin')
-                    
-                    # Inject the link tag at the end of the head
-                    if '</head>' in content:
-                        content = content.replace('</head>', f'{link_tag}</head>')
-                    elif '</body>' in content:
-                        content = content.replace('</body>', f'{link_tag}</body>')
-                    
-                    response.content = content.encode('utf-8')
                     if response.get('Content-Length'):
                         response['Content-Length'] = str(len(response.content))
                 except Exception as e:
