@@ -1858,6 +1858,8 @@ def dynamic_theme_css(request):
         ge = '#0d6efd'
 
     css_content = f"""
+        @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css");
+
         .admin-interface #header {{
             background: linear-gradient(135deg, {gs} 0%, {ge} 100%) !important;
         }}
