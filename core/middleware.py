@@ -50,9 +50,10 @@ class DynamicAdminThemeMiddleware(MiddlewareMixin):
                     
                     # 2. Inject the Dashboard link into the user tools area
                     dashboard_url = reverse('finance:dashboard')
-                    # Use the EXACT SVG for bi-layout-text-window-reverse from Bootstrap Icons
-                    dashboard_icon = """<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-layout-text-window-reverse" style="margin-right: 8px; vertical-align: -0.125em;" viewBox="0 0 16 16"><path d="M13 6.5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h5a.5.5 0 0 0 .5-.5zm0 3a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h5a.5.5 0 0 0 .5-.5zm0 3a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h5a.5.5 0 0 0 .5-.5zM5 14.1l.005-9.147 6.005-.003-.005 9.15-6.005.003zM4 4.5V15a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V4.5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1zm.646-1.646a.5.5 0 0 1 .708 0l1 1a.5.5 0 0 1-.708.708l-1-1a.5.5 0 0 1 0-.708z"/></svg>"""
-                    dashboard_link = f'<a href="{dashboard_url}" style="margin-right: 25px; color: white !important; font-weight: 500; font-family: system-ui, -apple-system, sans-serif; text-decoration: none; display: inline-flex; align-items: center; transition: opacity 0.2s;">{dashboard_icon} Dashboard</a>'.encode('utf-8')
+                    # Use a LARGER SVG for bi-layout-text-window-reverse (20x20)
+                    dashboard_icon = """<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-layout-text-window-reverse" style="margin-right: 10px; vertical-align: -0.15em;" viewBox="0 0 16 16"><path d="M13 6.5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h5a.5.5 0 0 0 .5-.5zm0 3a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h5a.5.5 0 0 0 .5-.5zm0 3a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h5a.5.5 0 0 0 .5-.5zM5 14.1l.005-9.147 6.005-.003-.005 9.15-6.005.003zM4 4.5V15a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V4.5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1zm.646-1.646a.5.5 0 0 1 .708 0l1 1a.5.5 0 0 1-.708.708l-1-1a.5.5 0 0 1 0-.708z"/></svg>"""
+                    # Use forced font-size and weight with !important to win over admin CSS
+                    dashboard_link = f'<a href="{dashboard_url}" style="margin-right: 30px; color: white !important; font-size: 1.1rem !important; font-weight: 600 !important; font-family: -apple-system, BlinkMacSystemFont, \\"Segoe UI\\", Roboto, \\"Helvetica Neue\\", Arial, sans-serif !important; text-decoration: none !important; display: inline-flex; align-items: center; transition: all 0.2s ease;">{dashboard_icon} Dashboard</a>'.encode('utf-8')
                     
                     # Target both standard and django-admin-interface user tools containers
                     if b'id="user-tools"' in response.content:
