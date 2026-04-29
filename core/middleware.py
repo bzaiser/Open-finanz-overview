@@ -50,9 +50,9 @@ class DynamicAdminThemeMiddleware(MiddlewareMixin):
                     
                     # 2. Inject the Dashboard link into the user tools area
                     dashboard_url = reverse('finance:dashboard')
-                    # Use an SVG icon for the dashboard (speedometer/chart-like)
-                    dashboard_icon = """<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" style="margin-right: 5px; vertical-align: text-bottom;" viewBox="0 0 16 16"><path d="M8 2a.5.5 0 0 1 .5.5V4a.5.5 0 0 1-1 0V2.5A.5.5 0 0 1 8 2zM3.732 3.732a.5.5 0 0 1 .707 0l.915.914a.5.5 0 1 1-.708.708l-.914-.915a.5.5 0 0 1 0-.707zM2 8a.5.5 0 0 1 .5-.5h1.586a.5.5 0 0 1 0 1H2.5A.5.5 0 0 1 2 8zm9.5 0a.5.5 0 0 1 .5-.5h1.5a.5.5 0 0 1 0 1H12a.5.5 0 0 1-.5-.5zm-7-5.414A.5.5 0 0 1 5 2.086V1.5a.5.5 0 0 1 1 0v.586a.5.5 0 0 1-.293.457l-1.207.371zM8 15a6.974 6.974 0 0 1-4.95-2.05 5 5 0 0 1 9.9 0A6.974 6.974 0 0 1 8 15zM4.646 5.354a.5.5 0 0 1 0-.708l1.207-1.207a.5.5 0 0 1 .708.708L5.354 5.354a.5.5 0 0 1-.708 0z"/></svg>"""
-                    dashboard_link = f'<a href="{dashboard_url}" style="margin-right: 20px; color: white !important; font-weight: bold; text-decoration: none; display: inline-flex; align-items: center;">{dashboard_icon} Dashboard</a>'.encode('utf-8')
+                    # Use the EXACT SVG for bi-layout-text-window-reverse from Bootstrap Icons
+                    dashboard_icon = """<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-layout-text-window-reverse" style="margin-right: 8px; vertical-align: -0.125em;" viewBox="0 0 16 16"><path d="M13 6.5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h5a.5.5 0 0 0 .5-.5zm0 3a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h5a.5.5 0 0 0 .5-.5zm0 3a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h5a.5.5 0 0 0 .5-.5zM5 14.1l.005-9.147 6.005-.003-.005 9.15-6.005.003zM4 4.5V15a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V4.5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1zm.646-1.646a.5.5 0 0 1 .708 0l1 1a.5.5 0 0 1-.708.708l-1-1a.5.5 0 0 1 0-.708z"/></svg>"""
+                    dashboard_link = f'<a href="{dashboard_url}" style="margin-right: 25px; color: white !important; font-weight: 500; font-family: system-ui, -apple-system, sans-serif; text-decoration: none; display: inline-flex; align-items: center; transition: opacity 0.2s;">{dashboard_icon} Dashboard</a>'.encode('utf-8')
                     
                     # Target both standard and django-admin-interface user tools containers
                     if b'id="user-tools"' in response.content:
