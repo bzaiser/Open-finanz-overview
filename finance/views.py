@@ -1842,3 +1842,57 @@ def delete_all_import_history(request):
     
     messages.success(request, _(f"Gesamte Import-Historie ({count} Batches) wurde gelöscht."))
     return redirect('finance:import_transactions')
+@login_required
+def dynamic_theme_css(request):
+    """
+    Returns a dynamic CSS file based on the user's profile settings.
+    This allows the browser to cache the CSS and prevents the middleware
+    from having to inject large blocks of text into every HTML response.
+    """
+    try:
+        profile = request.user.profile
+        gs = profile.gradient_start or '#6610f2'
+        ge = profile.gradient_end or '#0d6efd'
+    except Exception:
+        gs = '#6610f2'
+        ge = '#0d6efd'
+
+    css_content = f"""
+        .admin-interface #header {{
+            background: linear-gradient(135deg, {gs} 0%, {ge} 100%) !important;
+        }}
+        /* Apply start color to the specific group of selectors provided by the user */
+        .admin-interface .module h2, 
+        .admin-interface .module caption, 
+        .admin-interface .module.collapse details summary, 
+        .admin-interface .module.filtered h2 {{
+            background: {gs} !important;
+            border-color: {gs} !important;
+            color: #ffffff !important;
+        }}
+        #header h1 a, #header #user-tools, #header #user-tools a {{
+            color: #ffffff !important;
+        }}
+        /* Apply start color to breadcrumbs */
+        .breadcrumbs {{
+            background: {gs} !important;
+            color: #ffffff !important;
+        }}
+        .breadcrumbs a {{
+            color: #ffffff !important;
+            opacity: 0.9;
+        }}
+        .admin-interface .module.collapse details summary:hover {{
+            opacity: 0.9 !important;
+        }}
+        /* Hide the logo on the fly */
+        #header #branding img, 
+        #header #branding svg,
+        .admin-interface #header #branding img,
+        .admin-interface #header #branding svg {{
+            display: none !important;
+        }}
+        /* Ensure the branding text is white */
+        #site-name a {{ color: white !important; }}
+    """
+    return HttpResponse(css_content, content_type="text/css")

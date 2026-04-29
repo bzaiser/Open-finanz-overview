@@ -27,74 +27,34 @@ class UserLanguageMiddleware(MiddlewareMixin):
                 # logger.error(f"Error in UserLanguageMiddleware: {e}")
                 pass
 
+from django.urls import reverse
+
 class DynamicAdminThemeMiddleware(MiddlewareMixin):
     """
-    Injects the user's custom dashboard gradient into the admin header dynamically.
-    This ensures that the admin theme follows the user's profile settings.
+    Injects a link to the dynamic theme CSS into the admin header.
+    This ensures that the admin theme follows the user's profile settings
+    without bloating every HTML response with inline styles.
     """
     def process_response(self, request, response):
         # Only target admin HTML responses
         if request.path.startswith('/admin/') and 'text/html' in response.get('Content-Type', ''):
             if hasattr(request, 'user') and request.user.is_authenticated:
                 try:
-                    profile = request.user.profile
-                    gs = profile.gradient_start or '#6610f2'
-                    ge = profile.gradient_end or '#0d6efd'
-                    bg = profile.background_color or '#ffffff'
+                    # Inject a link to our dynamic CSS view
+                    theme_url = reverse('finance:dynamic_theme_css')
+                    link_tag = f'<link rel="stylesheet" href="{theme_url}" id="dynamic-admin-theme">'
                     
-                    # Surgical CSS to only affect the header background and hide default branding if needed
-                    style_tag = f"""
-                    <style id="dynamic-admin-theme">
-                        .admin-interface #header {{
-                            background: linear-gradient(135deg, {gs} 0%, {ge} 100%) !important;
-                        }}
-                        /* Apply start color to the specific group of selectors provided by the user */
-                        .admin-interface .module h2, 
-                        .admin-interface .module caption, 
-                        .admin-interface .module.collapse details summary, 
-                        .admin-interface .module.filtered h2 {{
-                            background: {gs} !important;
-                            border-color: {gs} !important;
-                            color: #ffffff !important;
-                        }}
-                        #header h1 a, #header #user-tools, #header #user-tools a {{
-                            color: #ffffff !important;
-                        }}
-                        /* Apply start color to breadcrumbs */
-                        .breadcrumbs {{
-                            background: {gs} !important;
-                            color: #ffffff !important;
-                        }}
-                        .breadcrumbs a {{
-                            color: #ffffff !important;
-                            opacity: 0.9;
-                        }}
-                        .admin-interface .module.collapse details summary:hover {{
-                            opacity: 0.9 !important;
-                        }}
-                        /* Hide the logo on the fly */
-                        #header #branding img, 
-                        #header #branding svg,
-                        .admin-interface #header #branding img,
-                        .admin-interface #header #branding svg {{
-                            display: none !important;
-                        }}
-                        /* Ensure the branding text is what we want if JS is disabled */
-                        #site-name a {{ color: white !important; }}
-                    </style>
-                    """
-                    
-                    # Insert the style tag before the closing head or body tag
                     content = response.content.decode('utf-8')
                     
-                    # On-the-fly title replacement if not already handled by site_header
+                    # Performance: Fast replacements for titles
                     content = content.replace('Django Administration', 'Finanzplan Admin')
                     content = content.replace('Django-Administration', 'Finanzplan Admin')
                     
+                    # Inject the link tag at the end of the head
                     if '</head>' in content:
-                        content = content.replace('</head>', f'{style_tag}</head>')
+                        content = content.replace('</head>', f'{link_tag}</head>')
                     elif '</body>' in content:
-                        content = content.replace('</body>', f'{style_tag}</body>')
+                        content = content.replace('</body>', f'{link_tag}</body>')
                     
                     response.content = content.encode('utf-8')
                     if response.get('Content-Length'):
