@@ -79,6 +79,6 @@ REM Browser-Start
 start "" http://localhost:8000
 
 REM Waitress Start
-"%PYTHON_EXE%" -m waitress --port=8000 config.wsgi:application
+"%PYTHON_EXE%" -m waitress --port=8000 --threads=12 config.wsgi:application
 
 pause
