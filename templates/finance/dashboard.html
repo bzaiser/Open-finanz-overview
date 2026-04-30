@@ -160,18 +160,10 @@
     .tooltip {
         z-index: 2100 !important;
     }
-
-    /* Force modal to be wide on small screens */
-    @media (max-width: 1200px) {
-        #configModal .modal-dialog {
-            max-width: 98% !important;
-            margin: 10px auto !important;
-        }
-    }
 </style>
 
 <div class="modal fade" id="configModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered" style="max-width: 98% !important; width: 98% !important;">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content" style="background-color: #ffffff !important; color: #212529 !important; opacity: 1 !important;">
             <div class="modal-header" style="background-color: #f8f9fa;">
                 <h5 class="modal-title">{% trans "Configure Dashboard" %}</h5>
