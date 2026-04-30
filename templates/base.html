@@ -153,23 +153,16 @@
         .h-widget-medium { height: 400px; }
         .h-widget-large { height: 600px; }
         
-        .dashboard-widget-wrapper {
+        .dashboard-card-body {
             position: relative;
             display: flex;
             flex-direction: column;
             flex-grow: 1;
-            min-height: 0; /* Crucial for scrolling inside flex */
+            min-height: 0;
+            overflow: hidden;
             background-color: var(--app-table-body-bg) !important;
             color: var(--app-table-body-text) !important;
-        }
-
-        .dashboard-card-body {
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-            overflow: hidden;
-            min-height: 0; /* Crucial for scrolling inside flex */
-            padding-bottom: 10px !important; /* Gap for charts and footerless tables */
+            padding-bottom: 10px !important;
         }
         
         .table-footer {

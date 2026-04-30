@@ -22,7 +22,6 @@
                 {% endif %}
             </div>
             <div class="card-body p-0 dashboard-card-body">
-                <div class="dashboard-widget-wrapper flex-grow-1">
                     {% if item.id == 'income_table_widget' %}
                         {{ table_datasets.income_table_widget|json_script:item.id }}
                         {% include 'finance/partials/dashboard_table_simple.html' with widget_id=item.id %}
@@ -45,10 +44,8 @@
                         {{ table_datasets.upcoming_dates_widget|json_script:item.id }}
                         {% include 'finance/partials/dashboard_table_dates.html' with widget_id=item.id %}
                     {% else %}
-
-                    <canvas id="{{ item.id }}"></canvas>
+                        <canvas id="{{ item.id }}"></canvas>
                     {% endif %}
-                </div>
             </div>
         </div>
     </div>
