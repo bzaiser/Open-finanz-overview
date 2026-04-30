@@ -157,6 +157,8 @@
             position: relative;
             display: flex;
             flex-direction: column;
+            flex-grow: 1;
+            min-height: 0; /* Crucial for scrolling inside flex */
             background-color: var(--app-table-body-bg) !important;
             color: var(--app-table-body-text) !important;
         }
@@ -166,6 +168,7 @@
             flex-direction: column;
             flex-grow: 1;
             overflow: hidden;
+            min-height: 0; /* Crucial for scrolling inside flex */
             padding-bottom: 10px !important; /* Gap for charts and footerless tables */
         }
         
