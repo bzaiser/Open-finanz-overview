@@ -234,6 +234,7 @@ exit /b 1
 :SEED_DATA
 echo [+] Erster Start erkannt: Erstelle Datenbank-Tabellen...
 %DOCKER_CMD% exec finanzplan-portable python manage.py migrate --noinput
+%DOCKER_CMD% exec finanzplan-portable python manage.py createcachetable --noinput
 echo [+] Befuelle Datenbank mit Demo-Daten (User: demo / demo)...
 %DOCKER_CMD% exec finanzplan-portable python manage.py seed_portable --noinput
 

@@ -46,6 +46,7 @@ echo SECRET_KEY=native_!RANDOM!_!RANDOM! >> .env
 echo [+] Pruefe Datenbank-Status...
 "%PYTHON_EXE%" manage.py makemigrations --noinput >nul 2>&1
 "%PYTHON_EXE%" manage.py migrate --noinput >nul 2>&1
+"%PYTHON_EXE%" manage.py createcachetable >nul 2>&1
 
 REM Intelligente Prüfung: Existiert der Demo-Nutzer?
 "%PYTHON_EXE%" manage.py shell -c "from django.contrib.auth import get_user_model; User = get_user_model(); print('USER_OK' if User.objects.filter(username='demo').exists() else 'USER_MISSING')" | findstr "USER_MISSING" > nul
