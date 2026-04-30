@@ -39,7 +39,7 @@
     get totalInterest() {
         return this.filteredItems.reduce((sum, i) => sum + (parseFloat(i.total_interest) || 0), 0);
     }
-}" class="h-100 d-flex flex-column" x-init="init()" style="background-color: var(--app-table-body-bg) !important;">
+}" class="flex-grow-1 d-flex flex-column" x-init="init()" style="background-color: var(--app-table-body-bg) !important;">
     
     <div class="flex-grow-1 overflow-auto px-0" style="background-color: var(--app-table-body-bg) !important;">
         <table class="table table-sm table-hover align-middle mb-0" 
