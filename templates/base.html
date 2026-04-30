@@ -162,12 +162,14 @@
         }
 
         .dashboard-card-body {
-            padding-bottom: 10px !important;
-            overflow: hidden; /* Ensure negative margin doesn't overflow the card */
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            overflow: hidden;
         }
         
         .table-footer {
-            margin-bottom: -10px !important;
+            /* No more negative margin hack */
         }
 
         .modal-content {
