@@ -166,10 +166,11 @@
             flex-direction: column;
             flex-grow: 1;
             overflow: hidden;
+            padding-bottom: 10px !important; /* Gap for charts and footerless tables */
         }
         
         .table-footer {
-            /* No more negative margin hack */
+            margin-bottom: -10px !important; /* Pulls footer back to the edge */
         }
 
         .modal-content {
