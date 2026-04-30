@@ -219,10 +219,10 @@
                         <thead>
                             <tr>
                                 <th style="width: 40px;"></th>
-                                <th>{% trans "Visible" %}</th>
+                                <th style="width: 60px;">{% trans "Visible" %}</th>
                                 <th>{% trans "Chart" %}</th>
-                                <th>{% trans "Width" %}</th>
-                                <th>{% trans "Height" %}</th>
+                                <th style="width: 100px;">{% trans "Width" %}</th>
+                                <th style="width: 100px;">{% trans "Height" %}</th>
                             </tr>
                         </thead>
                         <tbody id="layout-table-body">
@@ -236,7 +236,7 @@
                                     {% endfor %}
                                 </td>
                                 <td>
-                                    <select class="form-select form-select-sm layout-width">
+                                    <select class="form-select form-select-sm layout-width px-2">
                                         <option value="4" {% if item.width == 4 %}selected{% endif %}>1/3</option>
                                         <option value="6" {% if item.width == 6 %}selected{% endif %}>1/2</option>
                                         <option value="8" {% if item.width == 8 %}selected{% endif %}>2/3</option>
@@ -244,7 +244,7 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="form-select form-select-sm layout-height">
+                                    <select class="form-select form-select-sm layout-height px-2">
                                         <option value="small" {% if item.height == 'small' %}selected{% endif %}>{% trans "Small" %}</option>
                                         <option value="medium" {% if item.height == 'medium' %}selected{% endif %}>{% trans "Medium" %}</option>
                                         <option value="large" {% if item.height == 'large' %}selected{% endif %}>{% trans "Large" %}</option>
