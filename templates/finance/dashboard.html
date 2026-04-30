@@ -160,6 +160,14 @@
     .tooltip {
         z-index: 2100 !important;
     }
+
+    /* Force modal to be wide on small screens */
+    @media (max-width: 1200px) {
+        #configModal .modal-dialog {
+            max-width: 98% !important;
+            margin: 10px auto !important;
+        }
+    }
 </style>
 
 <div class="modal fade" id="configModal" tabindex="-1">
