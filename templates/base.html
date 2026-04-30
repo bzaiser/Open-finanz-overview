@@ -159,6 +159,15 @@
             color: var(--app-table-body-text) !important;
         }
 
+        .dashboard-card-body {
+            padding-bottom: 10px !important;
+        }
+        
+        /* If the card body contains a footer, remove the bottom padding to keep it flush */
+        .dashboard-card-body:has(.table-footer) {
+            padding-bottom: 0 !important;
+        }
+
         .modal-content {
             background-color: var(--bs-modal-bg, #ffffff);
             color: var(--bs-modal-color, #212529);

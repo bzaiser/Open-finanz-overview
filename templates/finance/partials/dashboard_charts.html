@@ -21,7 +21,7 @@
                     data-bs-title="{% trans 'Simulation Parameters' %}:&lt;br&gt;{% trans 'Inflation' %}: {{ simulation_params.inflation_rate }}%&lt;br&gt;{% trans 'Salary' %}: {{ simulation_params.salary_increase }}%&lt;br&gt;{% trans 'Return Offset' %}: {{ simulation_params.investment_return_offset }}%"></i>
                 {% endif %}
             </div>
-            <div class="card-body p-0 d-flex flex-column flex-grow-1">
+            <div class="card-body p-0 d-flex flex-column flex-grow-1 dashboard-card-body">
                 <div class="dashboard-widget-wrapper h-widget-{{ item.height }}">
                     {% if item.id == 'income_table_widget' %}
                         {{ table_datasets.income_table_widget|json_script:item.id }}
