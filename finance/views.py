@@ -533,20 +533,20 @@ def dashboard_view(request):
             'net_worth_chart': {
                 'labels': labels_yearly,
                 'datasets': [
-                    {'label': _eager('Net Worth (Nominal)'), 'data': net_worth_nominal, 'borderColor': '#0d6efd', 'fill': False},
-                    {'label': _eager('Net Worth (Real)'), 'data': net_worth_real, 'borderColor': '#0d6efd', 'borderDash': [5, 5], 'fill': False},
-                    {'label': _eager('Physical Assets'), 'data': physical_asset_yearly, 'borderColor': '#8a2be2', 'backgroundColor': 'rgba(138, 43, 226, 0.1)', 'fill': True},
-                    {'label': _eager('Real Estate (Nominal)'), 'data': real_estate_yearly, 'borderColor': '#fd7e14', 'backgroundColor': 'rgba(253, 126, 20, 0.1)', 'fill': True},
-                    {'label': _eager('Real Estate (Real)'), 'data': real_estate_real_yearly, 'borderColor': '#fd7e14', 'borderDash': [5, 5], 'fill': False},
+                    {'label': _('Net Worth (Nominal)'), 'data': net_worth_nominal, 'borderColor': '#0d6efd', 'fill': False},
+                    {'label': _('Net Worth (Real)'), 'data': net_worth_real, 'borderColor': '#0d6efd', 'borderDash': [5, 5], 'fill': False},
+                    {'label': _('Physical Assets'), 'data': physical_asset_yearly, 'borderColor': '#8a2be2', 'backgroundColor': 'rgba(138, 43, 226, 0.1)', 'fill': True},
+                    {'label': _('Real Estate (Nominal)'), 'data': real_estate_yearly, 'borderColor': '#fd7e14', 'backgroundColor': 'rgba(253, 126, 20, 0.1)', 'fill': True},
+                    {'label': _('Real Estate (Real)'), 'data': real_estate_real_yearly, 'borderColor': '#fd7e14', 'borderDash': [5, 5], 'fill': False},
                 ],
                 'stichtag_index': stichtag_year_index
             },
             'cashflow_chart': {
                  'labels': labels_yearly,
                  'datasets': [
-                     {'label': _eager('Income'), 'data': income_yearly, 'backgroundColor': 'rgba(25, 135, 84, 0.7)', 'order': 2},
-                     {'label': _eager('Expenses'), 'data': expenses_yearly, 'backgroundColor': 'rgba(220, 53, 69, 0.7)', 'order': 2},
-                     {'label': _eager('Net Savings'), 'data': net_savings_yearly, 'type': 'line', 'borderColor': '#0d6efd', 'borderWidth': 2, 'fill': False, 'pointRadius': 3, 'order': 1},
+                     {'label': _('Income'), 'data': income_yearly, 'backgroundColor': 'rgba(25, 135, 84, 0.7)', 'order': 2},
+                     {'label': _('Expenses'), 'data': expenses_yearly, 'backgroundColor': 'rgba(220, 53, 69, 0.7)', 'order': 2},
+                     {'label': _('Net Savings'), 'data': net_savings_yearly, 'type': 'line', 'borderColor': '#0d6efd', 'borderWidth': 2, 'fill': False, 'pointRadius': 3, 'order': 1},
                  ]
             },
             'income_evolution_chart': {
@@ -569,10 +569,10 @@ def dashboard_view(request):
             'inflation_monitor_chart': {
                 'labels': labels_yearly,
                 'datasets': [
-                    {'label': _eager('Nominal Value'), 'data': net_worth_nominal, 'borderColor': '#0d6efd', 'fill': False},
-                    {'label': _eager('Real Value (Purchasing Power)'), 'data': net_worth_real, 'borderColor': '#198754', 'fill': False},
+                    {'label': _('Nominal Value'), 'data': net_worth_nominal, 'borderColor': '#0d6efd', 'fill': False},
+                    {'label': _('Real Value (Purchasing Power)'), 'data': net_worth_real, 'borderColor': '#198754', 'fill': False},
                     {
-                        'label': _eager('Purchasing Power Loss'), 
+                        'label': _('Purchasing Power Loss'), 
                         'data': inflation_loss, 
                         'backgroundColor': 'rgba(220, 53, 69, 0.5)', 
                         'type': 'bar',
@@ -582,11 +582,11 @@ def dashboard_view(request):
             },
             'asset_allocation_chart': {
                 'labels': [
-                    _eager('Liquid Assets'),
-                    _eager('Pension Capital'),
-                    _eager('Accumulated Cash'),
-                    _eager('Sachwerte'),
-                    _eager('Immobilien'),
+                    _('Liquid Assets'),
+                    _('Pension Capital'),
+                    _('Accumulated Cash'),
+                    _('Physical Assets'),
+                    _('Real Estate'),
                 ],
                 'datasets': [{
                     'data': [
@@ -898,11 +898,11 @@ def dashboard_view(request):
     # Ensure all chart titles and descriptions are eagerly translated in the current language context
     with translation.override(translation.get_language()):
         translated_available_charts = {
-            k: {**v, 'title': _eager(str(v['title'])), 'description': _eager(str(v.get('description', '')))} 
+            k: {**v, 'title': _(str(v['title'])), 'description': _(str(v.get('description', '')))} 
             for k, v in AVAILABLE_CHARTS.items()
         }
         translated_summary_widgets = {
-            k: {**v, 'title': _eager(str(v['title'])), 'description': _eager(str(v.get('description', '')))} 
+            k: {**v, 'title': _(str(v['title'])), 'description': _(str(v.get('description', '')))} 
             for k, v in SUMMARY_WIDGETS.items()
         }
 
