@@ -2340,19 +2340,15 @@ msgstr ""
 msgid "Dauerhaften Filter erstellen"
 msgstr ""
 
-#~| msgid "Decline Physical Assets"
 msgid "Sachwert (Physical Asset)"
 msgstr "Wertverlust Sachwerte (%)"
 
-#~| msgid "Decline Physical Assets"
 msgid "Sachwerte (Physical Assets)"
 msgstr "Wertverlust Sachwerte (%)"
 
-#~| msgid "Real Estate"
 msgid "Immobilie (Real Estate)"
 msgstr "Immobilien"
 
-#~| msgid "Real Estate"
 msgid "Immobilien (Real Estate)"
 msgstr "Immobilien"
 
