@@ -19,7 +19,6 @@ msgstr ""
 "1 : 2;\n"
 
 #: core/forms.py:16 core/models.py:31
-#: core/forms.py:16 core/models.py:31
 msgid "Birth Date"
 msgstr ""
 
@@ -427,7 +426,9 @@ msgstr "¿Cómo podemos ayudarle?"
 
 #: templates/core/help.html:11
 msgid "Find answers and tips to get the most out of your financial planning."
-msgstr "Encuentre respuestas y consejos para aprovechar al máximo su planificación financiera."
+msgstr ""
+"Encuentre respuestas y consejos para aprovechar al máximo su planificación "
+"financiera."
 
 #: templates/core/help.html:23
 msgid "Quick Start"
@@ -547,6 +548,7 @@ msgstr ""
 #, python-format
 msgid "Inv. Return Offset (%%)"
 msgstr ""
+
 #: templates/finance/dashboard.html:82
 msgid "Configure Dashboard"
 msgstr "Configurar tablero"
@@ -1676,8 +1678,12 @@ msgstr "Pensión de capital privada"
 msgid "Indexed (Inflation Adjustment)"
 msgstr "Indexado (Ajuste por inflación)"
 
-msgid "If checked, the payout will increase annually based on the global pension increase rate."
-msgstr "Si está marcado, el pago aumentará anualmente según la tasa global de aumento de las pensiones."
+msgid ""
+"If checked, the payout will increase annually based on the global pension "
+"increase rate."
+msgstr ""
+"Si está marcado, el pago aumentará anualmente según la tasa global de "
+"aumento de las pensiones."
 
 msgid "Contribution End Date"
 msgstr "Fecha de finalización de la contribución"
@@ -1696,36 +1702,49 @@ msgstr "Fecha de venta"
 
 msgid "Gesamtvermögen"
 msgstr "Patrimonio total"
+
 msgid "Stichtag"
 msgstr "Fecha objetivo"
+
 msgid "Sachwerte"
 msgstr "Activos físicos"
 
 msgid "Immobilien"
 msgstr "Bienes inmuebles"
 
-
 # --- Simulation Panel Translations ---
+msgid ""
+"Ankerdatum für die Simulation. Alle Berechnungen beziehen sich auf diesen "
+"Monat."
+msgstr ""
+"Fecha de anclaje para la simulación. Todos los cálculos se refieren a este "
+"mes."
 
-msgid "Ankerdatum für die Simulation. Alle Berechnungen beziehen sich auf diesen Monat."
-msgstr "Fecha de anclaje para la simulación. Todos los cálculos se refieren a este mes."
-
-msgid "Jährliche Inflationsrate. Reduziert die reale Kaufkraft Ihres Vermögens über die Zeit."
+msgid ""
+"Jährliche Inflationsrate. Reduziert die reale Kaufkraft Ihres Vermögens über "
+"die Zeit."
 msgstr "Tasa de inflación anual."
 
 msgid "Voraussichtliche jährliche Gehaltssteigerung in Prozent."
 msgstr "Aumento anual previsto del salario."
 
-msgid "Jährliche Rentenanpassung. Standardmäßig oft niedriger als die Inflation."
+msgid ""
+"Jährliche Rentenanpassung. Standardmäßig oft niedriger als die Inflation."
 msgstr "Ajuste anual de las pensiones."
 
-msgid "Zusätzliche Rendite auf Ihr liquides Anlagevermögen (z.B. Aktien, ETFs)."
+msgid ""
+"Zusätzliche Rendite auf Ihr liquides Anlagevermögen (z.B. Aktien, ETFs)."
 msgstr "Rendimiento adicional de sus inversiones."
 
-msgid "Standardmäßige jährliche Wertsteigerung für Immobilien. Wird nur verwendet, wenn am Objekt selbst kein individueller Wert (0%) hinterlegt ist."
+msgid ""
+"Standardmäßige jährliche Wertsteigerung für Immobilien. Wird nur verwendet, "
+"wenn am Objekt selbst kein individueller Wert (0%) hinterlegt ist."
 msgstr "Aumento anual por defecto del valor de los bienes inmuebles."
 
-msgid "Jährliche Wertminderung für Sachwerte (wie Autos). Wird nur verwendet, wenn am Objekt selbst kein individueller Wert (0%) hinterlegt ist. Tragen Sie hier positive Werte für Wertverlust ein."
+msgid ""
+"Jährliche Wertminderung für Sachwerte (wie Autos). Wird nur verwendet, wenn "
+"am Objekt selbst kein individueller Wert (0%) hinterlegt ist. Tragen Sie "
+"hier positive Werte für Wertverlust ein."
 msgstr "Depreciación anual de los activos físicos."
 
 msgid "Target Date"
