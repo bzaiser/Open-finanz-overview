@@ -344,6 +344,7 @@ def dashboard_view(request):
         bucket['nominal_net_worth'] = d.get('nominal_net_worth', 0)
         bucket['real_net_worth'] = d.get('real_net_worth', 0)
         bucket['physical_asset_total'] = d.get('physical_asset_total', 0)
+        bucket['physical_asset_real_total'] = d.get('real_physical_asset_total', 0)
         bucket['real_estate_total'] = d.get('real_estate_total', 0)
         bucket['real_estate_real_total'] = d.get('real_real_estate_total', 0)
         
@@ -373,6 +374,7 @@ def dashboard_view(request):
     net_worth_nominal = []
     net_worth_real = []
     physical_asset_yearly = []
+    physical_asset_real_yearly = []
     real_estate_yearly = []
     real_estate_real_yearly = []
     income_yearly = []
@@ -397,6 +399,7 @@ def dashboard_view(request):
         net_worth_nominal.append(float(bucket['nominal_net_worth']))
         net_worth_real.append(float(bucket['real_net_worth']))
         physical_asset_yearly.append(float(bucket['physical_asset_total']))
+        physical_asset_real_yearly.append(float(bucket['physical_asset_real_total']))
         real_estate_yearly.append(float(bucket['real_estate_total']))
         real_estate_real_yearly.append(float(bucket['real_estate_real_total']))
         
@@ -536,6 +539,7 @@ def dashboard_view(request):
                     {'label': _('Net Worth (Nominal)'), 'data': net_worth_nominal, 'borderColor': '#0d6efd', 'fill': False},
                     {'label': _('Net Worth (Real)'), 'data': net_worth_real, 'borderColor': '#0d6efd', 'borderDash': [5, 5], 'fill': False},
                     {'label': _('Physical Assets'), 'data': physical_asset_yearly, 'borderColor': '#8a2be2', 'backgroundColor': 'rgba(138, 43, 226, 0.1)', 'fill': True},
+                    {'label': _('Physical Assets (Real)'), 'data': physical_asset_real_yearly, 'borderColor': '#8a2be2', 'borderDash': [5, 5], 'fill': False},
                     {'label': _('Real Estate (Nominal)'), 'data': real_estate_yearly, 'borderColor': '#fd7e14', 'backgroundColor': 'rgba(253, 126, 20, 0.1)', 'fill': True},
                     {'label': _('Real Estate (Real)'), 'data': real_estate_real_yearly, 'borderColor': '#fd7e14', 'borderDash': [5, 5], 'fill': False},
                 ],

@@ -46,7 +46,6 @@ wheels/
 .idea/
 *.swp
 *.swo
-*.mo
 
 # Deployment mirror (Local only)
 finanzplan_deploy/
