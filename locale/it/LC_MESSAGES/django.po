@@ -270,47 +270,47 @@ msgstr ""
 
 #: finance/views.py:13 templates/core/help.html:141
 msgid "Net Worth Forecast"
-msgstr ""
+msgstr "Previsione del patrimonio netto"
 
 #: finance/views.py:14
 msgid "Cash Flow Analysis"
-msgstr ""
+msgstr "Analisi del flusso di cassa"
 
 #: finance/views.py:15
 msgid "Income & One-Time Effects"
-msgstr ""
+msgstr "Reddito ed effetti una tantum"
 
 #: finance/views.py:16
 msgid "Expense Evolution"
-msgstr ""
+msgstr "Evoluzione delle spese"
 
 #: finance/views.py:17
 msgid "Inflation Monitor"
-msgstr ""
+msgstr "Monitor dell'inflazione"
 
 #: finance/views.py:18
 msgid "Monthly Budget"
-msgstr ""
+msgstr "Budget mensile"
 
 #: finance/views.py:19
 msgid "Income Table"
-msgstr ""
+msgstr "Tabella dei redditi"
 
 #: finance/views.py:20
 msgid "Expense Table"
-msgstr ""
+msgstr "Tabella delle spese"
 
 #: finance/views.py:21
 msgid "Asset Table"
-msgstr ""
+msgstr "Tabella degli asset"
 
 #: finance/views.py:22
 msgid "Pension Table"
-msgstr ""
+msgstr "Tabella delle pensioni"
 
 #: finance/views.py:23
 msgid "One-Time Event Table"
-msgstr ""
+msgstr "Tabella degli eventi una tantum"
 
 msgid "Current Assets"
 msgstr "Attività attuali"
@@ -338,19 +338,19 @@ msgstr ""
 
 #: finance/views.py:283
 msgid "Net Savings"
-msgstr ""
+msgstr "Risparmio netto"
 
 #: finance/views.py:303
 msgid "Nominal Value"
-msgstr ""
+msgstr "Valore nominale"
 
 #: finance/views.py:304
 msgid "Real Value (Purchasing Power)"
-msgstr ""
+msgstr "Valore reale (potere d'acquisto)"
 
 #: finance/views.py:306
 msgid "Purchasing Power Loss"
-msgstr ""
+msgstr "Perdita di potere d'acquisto"
 
 #: finance/views.py:336
 msgid "Continuous"
@@ -515,7 +515,7 @@ msgstr ""
 
 #: templates/core/profile.html:16 templates/finance/dashboard.html:216
 msgid "Save Changes"
-msgstr ""
+msgstr "Salva modifiche"
 
 #: templates/core/signup.html:21
 msgid "Already have an account? Login"
@@ -523,7 +523,7 @@ msgstr ""
 
 #: templates/finance/dashboard.html:16
 msgid "Configure Layout"
-msgstr ""
+msgstr "Configura layout"
 
 #: templates/finance/dashboard.html:20 templates/finance/dashboard.html:38
 msgid "Simulation"
@@ -548,7 +548,7 @@ msgid "Inv. Return Offset (%%)"
 msgstr ""
 #: templates/finance/dashboard.html:82
 msgid "Configure Dashboard"
-msgstr ""
+msgstr "Configura dashboard"
 
 #: templates/finance/dashboard.html:95
 msgid "Customize colors and visibility for all dashboard components."
@@ -592,7 +592,7 @@ msgstr ""
 
 #: templates/finance/dashboard.html:138 templates/finance/dashboard.html:170
 msgid "Visible"
-msgstr ""
+msgstr "Visibile"
 
 #: templates/finance/dashboard.html:139 templates/finance/dashboard.html:173
 msgid "Colors"
@@ -604,47 +604,47 @@ msgstr ""
 
 #: templates/finance/dashboard.html:169
 msgid "Chart"
-msgstr ""
+msgstr "Grafico"
 
 #: templates/finance/dashboard.html:171
 msgid "Width"
-msgstr ""
+msgstr "Larghezza"
 
 #: templates/finance/dashboard.html:172
 msgid "Height"
-msgstr ""
+msgstr "Altezza"
 
 #: templates/finance/dashboard.html:197
 msgid "Small"
-msgstr ""
+msgstr "Piccolo"
 
 #: templates/finance/dashboard.html:198
 msgid "Medium"
-msgstr ""
+msgstr "Medio"
 
 #: templates/finance/dashboard.html:199
 msgid "Large"
-msgstr ""
+msgstr "Grande"
 
 #: templates/finance/dashboard.html:215
 msgid "Close"
-msgstr ""
+msgstr "Chiudi"
 
 #: templates/finance/partials/dashboard_charts.html:23
 msgid "Simulation Parameters"
-msgstr ""
+msgstr "Parametri di simulazione"
 
 #: templates/finance/partials/dashboard_charts.html:23
 msgid "Inflation"
-msgstr ""
+msgstr "Inflazione"
 
 #: templates/finance/partials/dashboard_charts.html:23
 msgid "Salary"
-msgstr ""
+msgstr "Stipendio"
 
 #: templates/finance/partials/dashboard_charts.html:23
 msgid "Return Offset"
-msgstr ""
+msgstr "Offset del rendimento"
 
 #: templates/finance/partials/dashboard_table_simple.html:118
 msgid "Year"
@@ -667,7 +667,7 @@ msgstr ""
 
 #: templates/finance/partials/dashboard_table_simple.html:190
 msgid "Total"
-msgstr ""
+msgstr "Totale"
 
 #: venv/lib/python3.12/site-packages/django/contrib/messages/apps.py:16
 msgid "Messages"

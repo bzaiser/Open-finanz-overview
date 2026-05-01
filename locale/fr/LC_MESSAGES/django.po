@@ -270,47 +270,47 @@ msgstr ""
 
 #: finance/views.py:13 templates/core/help.html:141
 msgid "Net Worth Forecast"
-msgstr ""
+msgstr "Prévisions de la valeur nette"
 
 #: finance/views.py:14
 msgid "Cash Flow Analysis"
-msgstr ""
+msgstr "Analyse des flux de trésorerie"
 
 #: finance/views.py:15
 msgid "Income & One-Time Effects"
-msgstr ""
+msgstr "Revenus et effets ponctuels"
 
 #: finance/views.py:16
 msgid "Expense Evolution"
-msgstr ""
+msgstr "Évolution des dépenses"
 
 #: finance/views.py:17
 msgid "Inflation Monitor"
-msgstr ""
+msgstr "Moniteur d'inflation"
 
 #: finance/views.py:18
 msgid "Monthly Budget"
-msgstr ""
+msgstr "Budget mensuel"
 
 #: finance/views.py:19
 msgid "Income Table"
-msgstr ""
+msgstr "Tableau des revenus"
 
 #: finance/views.py:20
 msgid "Expense Table"
-msgstr ""
+msgstr "Tableau des dépenses"
 
 #: finance/views.py:21
 msgid "Asset Table"
-msgstr ""
+msgstr "Tableau des actifs"
 
 #: finance/views.py:22
 msgid "Pension Table"
-msgstr ""
+msgstr "Tableau des pensions"
 
 #: finance/views.py:23
 msgid "One-Time Event Table"
-msgstr ""
+msgstr "Tableau des événements ponctuels"
 
 msgid "Current Assets"
 msgstr "Actifs actuels"
@@ -338,19 +338,19 @@ msgstr ""
 
 #: finance/views.py:283
 msgid "Net Savings"
-msgstr ""
+msgstr "Épargne nette"
 
 #: finance/views.py:303
 msgid "Nominal Value"
-msgstr ""
+msgstr "Valeur nominale"
 
 #: finance/views.py:304
 msgid "Real Value (Purchasing Power)"
-msgstr ""
+msgstr "Valeur réelle (pouvoir d'achat)"
 
 #: finance/views.py:306
 msgid "Purchasing Power Loss"
-msgstr ""
+msgstr "Perte de pouvoir d'achat"
 
 #: finance/views.py:336
 msgid "Continuous"
@@ -515,7 +515,7 @@ msgstr ""
 
 #: templates/core/profile.html:16 templates/finance/dashboard.html:216
 msgid "Save Changes"
-msgstr ""
+msgstr "Enregistrer les modifications"
 
 #: templates/core/signup.html:21
 msgid "Already have an account? Login"
@@ -523,7 +523,7 @@ msgstr ""
 
 #: templates/finance/dashboard.html:16
 msgid "Configure Layout"
-msgstr ""
+msgstr "Configurer la mise en page"
 
 #: templates/finance/dashboard.html:20 templates/finance/dashboard.html:38
 msgid "Simulation"
@@ -548,7 +548,7 @@ msgid "Inv. Return Offset (%%)"
 msgstr ""
 #: templates/finance/dashboard.html:82
 msgid "Configure Dashboard"
-msgstr ""
+msgstr "Configurer le tableau de bord"
 
 #: templates/finance/dashboard.html:95
 msgid "Customize colors and visibility for all dashboard components."
@@ -592,7 +592,7 @@ msgstr ""
 
 #: templates/finance/dashboard.html:138 templates/finance/dashboard.html:170
 msgid "Visible"
-msgstr ""
+msgstr "Visible"
 
 #: templates/finance/dashboard.html:139 templates/finance/dashboard.html:173
 msgid "Colors"
@@ -604,47 +604,47 @@ msgstr ""
 
 #: templates/finance/dashboard.html:169
 msgid "Chart"
-msgstr ""
+msgstr "Graphique"
 
 #: templates/finance/dashboard.html:171
 msgid "Width"
-msgstr ""
+msgstr "Largeur"
 
 #: templates/finance/dashboard.html:172
 msgid "Height"
-msgstr ""
+msgstr "Hauteur"
 
 #: templates/finance/dashboard.html:197
 msgid "Small"
-msgstr ""
+msgstr "Petit"
 
 #: templates/finance/dashboard.html:198
 msgid "Medium"
-msgstr ""
+msgstr "Moyen"
 
 #: templates/finance/dashboard.html:199
 msgid "Large"
-msgstr ""
+msgstr "Grand"
 
 #: templates/finance/dashboard.html:215
 msgid "Close"
-msgstr ""
+msgstr "Fermer"
 
 #: templates/finance/partials/dashboard_charts.html:23
 msgid "Simulation Parameters"
-msgstr ""
+msgstr "Paramètres de simulation"
 
 #: templates/finance/partials/dashboard_charts.html:23
 msgid "Inflation"
-msgstr ""
+msgstr "Inflation"
 
 #: templates/finance/partials/dashboard_charts.html:23
 msgid "Salary"
-msgstr ""
+msgstr "Salaire"
 
 #: templates/finance/partials/dashboard_charts.html:23
 msgid "Return Offset"
-msgstr ""
+msgstr "Écart de rendement"
 
 #: templates/finance/partials/dashboard_table_simple.html:118
 msgid "Year"
@@ -667,7 +667,7 @@ msgstr ""
 
 #: templates/finance/partials/dashboard_table_simple.html:190
 msgid "Total"
-msgstr ""
+msgstr "Total"
 
 #: venv/lib/python3.12/site-packages/django/contrib/messages/apps.py:16
 msgid "Messages"

@@ -271,47 +271,47 @@ msgstr ""
 
 #: finance/views.py:13 templates/core/help.html:141
 msgid "Net Worth Forecast"
-msgstr ""
+msgstr "Previsión del patrimonio neto"
 
 #: finance/views.py:14
 msgid "Cash Flow Analysis"
-msgstr ""
+msgstr "Análisis del flujo de caja"
 
 #: finance/views.py:15
 msgid "Income & One-Time Effects"
-msgstr ""
+msgstr "Ingresos y efectos únicos"
 
 #: finance/views.py:16
 msgid "Expense Evolution"
-msgstr ""
+msgstr "Evolución de los gastos"
 
 #: finance/views.py:17
 msgid "Inflation Monitor"
-msgstr ""
+msgstr "Monitor de inflación"
 
 #: finance/views.py:18
 msgid "Monthly Budget"
-msgstr ""
+msgstr "Presupuesto mensual"
 
 #: finance/views.py:19
 msgid "Income Table"
-msgstr ""
+msgstr "Tabla de ingresos"
 
 #: finance/views.py:20
 msgid "Expense Table"
-msgstr ""
+msgstr "Tabla de gastos"
 
 #: finance/views.py:21
 msgid "Asset Table"
-msgstr ""
+msgstr "Tabla de activos"
 
 #: finance/views.py:22
 msgid "Pension Table"
-msgstr ""
+msgstr "Tabla de pensiones"
 
 #: finance/views.py:23
 msgid "One-Time Event Table"
-msgstr ""
+msgstr "Tabla de eventos únicos"
 
 msgid "Current Assets"
 msgstr "Activos actuales"
@@ -339,19 +339,19 @@ msgstr ""
 
 #: finance/views.py:283
 msgid "Net Savings"
-msgstr ""
+msgstr "Ahorro neto"
 
 #: finance/views.py:303
 msgid "Nominal Value"
-msgstr ""
+msgstr "Valor nominal"
 
 #: finance/views.py:304
 msgid "Real Value (Purchasing Power)"
-msgstr ""
+msgstr "Valor real (poder adquisitivo)"
 
 #: finance/views.py:306
 msgid "Purchasing Power Loss"
-msgstr ""
+msgstr "Pérdida de poder adquisitivo"
 
 #: finance/views.py:336
 msgid "Continuous"
@@ -516,7 +516,7 @@ msgstr ""
 
 #: templates/core/profile.html:16 templates/finance/dashboard.html:216
 msgid "Save Changes"
-msgstr ""
+msgstr "Guardar cambios"
 
 #: templates/core/signup.html:21
 msgid "Already have an account? Login"
@@ -524,7 +524,7 @@ msgstr ""
 
 #: templates/finance/dashboard.html:16
 msgid "Configure Layout"
-msgstr ""
+msgstr "Configurar diseño"
 
 #: templates/finance/dashboard.html:20 templates/finance/dashboard.html:38
 msgid "Simulation"
@@ -549,7 +549,7 @@ msgid "Inv. Return Offset (%%)"
 msgstr ""
 #: templates/finance/dashboard.html:82
 msgid "Configure Dashboard"
-msgstr ""
+msgstr "Configurar tablero"
 
 #: templates/finance/dashboard.html:95
 msgid "Customize colors and visibility for all dashboard components."
@@ -593,7 +593,7 @@ msgstr ""
 
 #: templates/finance/dashboard.html:138 templates/finance/dashboard.html:170
 msgid "Visible"
-msgstr ""
+msgstr "Visible"
 
 #: templates/finance/dashboard.html:139 templates/finance/dashboard.html:173
 msgid "Colors"
@@ -605,47 +605,47 @@ msgstr ""
 
 #: templates/finance/dashboard.html:169
 msgid "Chart"
-msgstr ""
+msgstr "Gráfico"
 
 #: templates/finance/dashboard.html:171
 msgid "Width"
-msgstr ""
+msgstr "Ancho"
 
 #: templates/finance/dashboard.html:172
 msgid "Height"
-msgstr ""
+msgstr "Altura"
 
 #: templates/finance/dashboard.html:197
 msgid "Small"
-msgstr ""
+msgstr "Pequeño"
 
 #: templates/finance/dashboard.html:198
 msgid "Medium"
-msgstr ""
+msgstr "Medio"
 
 #: templates/finance/dashboard.html:199
 msgid "Large"
-msgstr ""
+msgstr "Grande"
 
 #: templates/finance/dashboard.html:215
 msgid "Close"
-msgstr ""
+msgstr "Cerrar"
 
 #: templates/finance/partials/dashboard_charts.html:23
 msgid "Simulation Parameters"
-msgstr ""
+msgstr "Parámetros de simulación"
 
 #: templates/finance/partials/dashboard_charts.html:23
 msgid "Inflation"
-msgstr ""
+msgstr "Inflación"
 
 #: templates/finance/partials/dashboard_charts.html:23
 msgid "Salary"
-msgstr ""
+msgstr "Salario"
 
 #: templates/finance/partials/dashboard_charts.html:23
 msgid "Return Offset"
-msgstr ""
+msgstr "Compensación de rendimiento"
 
 #: templates/finance/partials/dashboard_table_simple.html:118
 msgid "Year"
@@ -668,7 +668,7 @@ msgstr ""
 
 #: templates/finance/partials/dashboard_table_simple.html:190
 msgid "Total"
-msgstr ""
+msgstr "Total"
 
 #: venv/lib/python3.12/site-packages/django/contrib/messages/apps.py:16
 msgid "Messages"
