@@ -2738,3 +2738,18 @@ msgstr "Immobilien (Nominal)"
 
 msgid "Real Estate (Real)"
 msgstr "Immobilien (Real)"
+
+msgid "Pension Capital (Nominal)"
+msgstr "Rentenkapital (Nominal)"
+
+msgid "Pension Capital (Real)"
+msgstr "Rentenkapital (Real)"
+
+msgid "Liquid Assets (Nominal)"
+msgstr "Konten/Liquidität (Nominal)"
+
+msgid "Liquid Assets (Real)"
+msgstr "Konten/Liquidität (Real)"
+
+msgid "Physical Assets (Nominal)"
+msgstr "Sachwerte (Nominal)"

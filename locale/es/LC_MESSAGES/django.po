@@ -1773,3 +1773,18 @@ msgstr "Actualizar simulación"
 
 msgid "Reset to Defaults"
 msgstr "Restablecer"
+
+msgid "Pension Capital (Nominal)"
+msgstr "Capital de pensión (Nominal)"
+
+msgid "Pension Capital (Real)"
+msgstr "Capital de pensión (Real)"
+
+msgid "Liquid Assets (Nominal)"
+msgstr "Activos líquidos (Nominal)"
+
+msgid "Liquid Assets (Real)"
+msgstr "Activos líquidos (Real)"
+
+msgid "Physical Assets (Nominal)"
+msgstr "Activos físicos (Nominal)"

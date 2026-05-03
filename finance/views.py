@@ -343,6 +343,12 @@ def dashboard_view(request):
         # Net worth is a point-in-time value, take the last one of the year
         bucket['nominal_net_worth'] = d.get('nominal_net_worth', 0)
         bucket['real_net_worth'] = d.get('real_net_worth', 0)
+        bucket['pension_total'] = d.get('pension_total', 0)
+        bucket['real_pension_total'] = d.get('real_pension_total', 0)
+        bucket['asset_total'] = d.get('asset_total', 0)
+        bucket['real_asset_total'] = d.get('real_asset_total', 0)
+        bucket['accumulated_cash'] = d.get('accumulated_cash', 0)
+        bucket['real_accumulated_cash'] = d.get('real_accumulated_cash', 0)
         bucket['physical_asset_total'] = d.get('physical_asset_total', 0)
         bucket['physical_asset_real_total'] = d.get('real_physical_asset_total', 0)
         bucket['real_estate_total'] = d.get('real_estate_total', 0)
@@ -373,6 +379,10 @@ def dashboard_view(request):
     labels_yearly = []
     net_worth_nominal = []
     net_worth_real = []
+    pension_yearly = []
+    pension_real_yearly = []
+    liquid_assets_yearly = []
+    liquid_assets_real_yearly = []
     physical_asset_yearly = []
     physical_asset_real_yearly = []
     real_estate_yearly = []
@@ -398,6 +408,15 @@ def dashboard_view(request):
         
         net_worth_nominal.append(float(bucket['nominal_net_worth']))
         net_worth_real.append(float(bucket['real_net_worth']))
+        pension_yearly.append(float(bucket['pension_total']))
+        pension_real_yearly.append(float(bucket['real_pension_total']))
+        
+        # Combine base assets and accumulated cash for "Liquid Assets" line
+        liquid_nominal = float(bucket['asset_total'] + bucket['accumulated_cash'])
+        liquid_real = float(bucket['real_asset_total'] + bucket['real_accumulated_cash'])
+        liquid_assets_yearly.append(liquid_nominal)
+        liquid_assets_real_yearly.append(liquid_real)
+        
         physical_asset_yearly.append(float(bucket['physical_asset_total']))
         physical_asset_real_yearly.append(float(bucket['physical_asset_real_total']))
         real_estate_yearly.append(float(bucket['real_estate_total']))
@@ -538,7 +557,11 @@ def dashboard_view(request):
                 'datasets': [
                     {'label': _('Net Worth (Nominal)'), 'data': net_worth_nominal, 'borderColor': '#0d6efd', 'fill': False},
                     {'label': _('Net Worth (Real)'), 'data': net_worth_real, 'borderColor': '#0d6efd', 'borderDash': [5, 5], 'fill': False},
-                    {'label': _('Physical Assets'), 'data': physical_asset_yearly, 'borderColor': '#8a2be2', 'backgroundColor': 'rgba(138, 43, 226, 0.1)', 'fill': True},
+                    {'label': _('Pension Capital (Nominal)'), 'data': pension_yearly, 'borderColor': '#6f42c1', 'fill': False},
+                    {'label': _('Pension Capital (Real)'), 'data': pension_real_yearly, 'borderColor': '#6f42c1', 'borderDash': [5, 5], 'fill': False},
+                    {'label': _('Liquid Assets (Nominal)'), 'data': liquid_assets_yearly, 'borderColor': '#198754', 'fill': False},
+                    {'label': _('Liquid Assets (Real)'), 'data': liquid_assets_real_yearly, 'borderColor': '#198754', 'borderDash': [5, 5], 'fill': False},
+                    {'label': _('Physical Assets (Nominal)'), 'data': physical_asset_yearly, 'borderColor': '#8a2be2', 'backgroundColor': 'rgba(138, 43, 226, 0.1)', 'fill': True},
                     {'label': _('Physical Assets (Real)'), 'data': physical_asset_real_yearly, 'borderColor': '#8a2be2', 'borderDash': [5, 5], 'fill': False},
                     {'label': _('Real Estate (Nominal)'), 'data': real_estate_yearly, 'borderColor': '#fd7e14', 'backgroundColor': 'rgba(253, 126, 20, 0.1)', 'fill': True},
                     {'label': _('Real Estate (Real)'), 'data': real_estate_real_yearly, 'borderColor': '#fd7e14', 'borderDash': [5, 5], 'fill': False},
