@@ -1869,7 +1869,6 @@ def delete_all_import_history(request):
     
     messages.success(request, _(f"Gesamte Import-Historie ({count} Batches) wurde gelöscht."))
     return redirect('finance:import_transactions')
-@login_required
 def dynamic_theme_css(request):
     """
     Returns a dynamic CSS file based on the user's profile settings.
@@ -1877,9 +1876,13 @@ def dynamic_theme_css(request):
     from having to inject large blocks of text into every HTML response.
     """
     try:
-        profile = request.user.profile
-        gs = profile.gradient_start or '#6610f2'
-        ge = profile.gradient_end or '#0d6efd'
+        if request.user.is_authenticated:
+            profile = request.user.profile
+            gs = profile.gradient_start or '#6610f2'
+            ge = profile.gradient_end or '#0d6efd'
+        else:
+            gs = '#6610f2'
+            ge = '#0d6efd'
     except Exception:
         gs = '#6610f2'
         ge = '#0d6efd'
