@@ -55,11 +55,46 @@
 {{ chart_datasets|json_script:"chart-data" }}
 <script>
     (function () {
+        // Global storage for chart instances to allow cleanup and global interactions
+        window.activeCharts = window.activeCharts || {};
+        
+        // Cleanup function for old charts (important for HTMX updates)
+        const cleanupCharts = () => {
+            Object.keys(window.activeCharts).forEach(id => {
+                if (window.activeCharts[id]) {
+                    window.activeCharts[id].destroy();
+                    delete window.activeCharts[id];
+                }
+            });
+        };
+
+        // Reset tooltips when clicking/tapping outside
+        if (!window.chartTooltipResetInitialized) {
+            const resetTooltips = (e) => {
+                if (!e.target.closest('canvas')) {
+                    Object.values(window.activeCharts).forEach(chart => {
+                        chart.setActiveElements([]);
+                        if (chart.tooltip) {
+                            chart.tooltip.setActiveElements([], {x: 0, y: 0});
+                        }
+                        chart.update();
+                    });
+                }
+            };
+            document.addEventListener('click', resetTooltips);
+            document.addEventListener('touchstart', resetTooltips, {passive: true});
+            window.chartTooltipResetInitialized = true;
+        }
+
         const dataElement = document.getElementById('chart-data');
         if (!dataElement) {
             console.error('Chart data element missing!');
             return;
         }
+        
+        // Destroy all existing charts before re-creating them (HTMX support)
+        cleanupCharts();
+
         const chartData = JSON.parse(dataElement.textContent);
         
         // Helper to get theme-aware colors for Chart.js
@@ -245,7 +280,10 @@
                     }
                 };
                 {% endif %}
-                new Chart(ctx, config);
+                if (window.activeCharts['{{ item.id }}']) {
+                    window.activeCharts['{{ item.id }}'].destroy();
+                }
+                window.activeCharts['{{ item.id }}'] = new Chart(ctx, config);
             }
         }
         {% endif %}
