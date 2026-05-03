@@ -547,11 +547,11 @@ msgstr "Hinweis"
 
 #: finance/models.py:209
 msgid "Current Tenant"
-msgstr "Aktuelle Rente (am Stichtag)"
+msgstr "Aktueller Mieter"
 
 #: finance/models.py:210
 msgid "Monthly Rental Income (Net)"
-msgstr "Monatliches Einkommen"
+msgstr "Monatliche Mieteinnahmen (Netto)"
 
 #: finance/models.py:211
 msgid "Monthly Maintenance/Mgmt Costs"
