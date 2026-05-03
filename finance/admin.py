@@ -149,7 +149,7 @@ class PhysicalAssetInline(admin.TabularInline):
 class RealEstateInline(admin.TabularInline):
     model = RealEstate
     extra = 1
-    fields = ('name', 'property_value', 'appreciation_rate', 'location', 'current_tenant', 'rental_income_monthly', 'maintenance_costs_monthly', 'ancillary_costs_monthly', 'is_sold')
+    fields = ('name', 'property_value', 'appreciation_rate', 'location', 'current_tenant', 'rental_income_monthly', 'maintenance_costs_monthly', 'ancillary_costs_monthly', 'acquisition_date', 'sale_date', 'is_sold')
     classes = ['collapse']
 
 class LoanInline(admin.TabularInline):
@@ -215,11 +215,11 @@ class PhysicalAssetAdmin(BaseOwnedModelAdmin):
 
 @admin.register(RealEstate)
 class RealEstateAdmin(BaseOwnedModelAdmin):
-    list_display = ('name', 'user', 'property_value', 'appreciation_rate', 'rental_income_monthly', 'is_sold', 'sale_date')
+    list_display = ('name', 'user', 'property_value', 'appreciation_rate', 'rental_income_monthly', 'acquisition_date', 'sale_date', 'is_sold')
     list_filter = ('user', 'is_sold')
     list_select_related = ('user',)
     search_fields = ('name',)
-    list_editable = ('property_value', 'appreciation_rate', 'rental_income_monthly', 'is_sold', 'sale_date')
+    list_editable = ('property_value', 'appreciation_rate', 'rental_income_monthly', 'acquisition_date', 'sale_date', 'is_sold')
 
 class LoanExtraRepaymentInline(admin.TabularInline):
     model = LoanExtraRepayment

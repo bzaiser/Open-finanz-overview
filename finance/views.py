@@ -1955,8 +1955,37 @@ def dynamic_theme_css(request):
         .viewsite-link,
         #language-chooser,
         .language-chooser,
-        form#language-chooser-form {{
+        form#language-chooser-form {
             display: none !important;
-        }}
+        }
+
+        /* Tame the Django Admin Calendar size */
+        .calendarbox {
+            font-size: 0.75rem !important;
+            z-index: 1100 !important;
+            width: auto !important;
+        }
+        .calendarbox table {
+            margin: 0 !important;
+            width: 100% !important;
+        }
+        .calendarbox table th, .calendarbox table td {
+            padding: 2px !important;
+            font-size: 0.7rem !important;
+        }
+        .calendar-shortcuts {
+            font-size: 0.65rem !important;
+            line-height: 1.2 !important;
+            padding: 3px 0 !important;
+        }
+        .calendar-caption {
+            font-size: 0.75rem !important;
+            padding: 3px !important;
+            font-weight: bold !important;
+        }
+        .clockbox {
+            font-size: 0.75rem !important;
+            z-index: 1100 !important;
+        }
     """
     return HttpResponse(css_content, content_type="text/css")
