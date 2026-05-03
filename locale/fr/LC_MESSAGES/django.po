@@ -1786,3 +1786,6 @@ msgstr "Actifs liquides (Réel)"
 
 msgid "Physical Assets (Nominal)"
 msgstr "Actifs matériels (Nominal)"
+
+msgid "Acquisition Date"
+msgstr "Date d'acquisition"

@@ -201,11 +201,16 @@ class SimulationEngine:
                 # Apply Immobilien Growth
                 for item in real_estates_state:
                     re = item['asset']
-                    # Sale Date Check
-                    if re.sale_date and current_date >= re.sale_date:
-                        item['balance'] = Decimal('0.00')
-                        continue
-                    if re.is_sold and i == 0: # Already sold at simulation start
+                    # Possession Check (Inclusive of acquisition month, exclusive of sale month)
+                    is_owned = True
+                    if re.acquisition_date and current_date < re.acquisition_date.replace(day=1):
+                        is_owned = False
+                    if re.sale_date and current_date >= re.sale_date.replace(day=1):
+                        is_owned = False
+                    if re.is_sold and i == 0 and (not re.sale_date or current_date >= re.sale_date.replace(day=1)):
+                        is_owned = False
+
+                    if not is_owned:
                         item['balance'] = Decimal('0.00')
                         continue
 
@@ -295,17 +300,20 @@ class SimulationEngine:
                     
             for item in real_estates_state:
                 re = item['asset']
-                if re.rental_income_monthly:
-                    val = re.rental_income_monthly
-                    monthly_income += val
-                    cat_name = str(_('Immobilien'))
-                    income_category_breakdown[cat_name] = income_category_breakdown.get(cat_name, Decimal('0')) + val
-                
-                costs = (re.maintenance_costs_monthly or Decimal('0'))
-                if costs > 0:
-                    monthly_expenses += costs
-                    cat_name = str(_('Immobilien'))
-                    category_breakdown[cat_name] = category_breakdown.get(cat_name, Decimal('0')) + costs
+                # Only process income/expenses if currently owned
+                if item['balance'] > 0:
+                    if re.rental_income_monthly:
+                        val = re.rental_income_monthly
+                        monthly_income += val
+                        cat_name = str(_('Immobilien'))
+                        income_category_breakdown[cat_name] = income_category_breakdown.get(cat_name, Decimal('0')) + val
+                    
+                    # Maintenance and ancillary costs
+                    costs = (re.maintenance_costs_monthly or Decimal('0')) + (re.ancillary_costs_monthly or Decimal('0'))
+                    if costs > 0:
+                        monthly_expenses += costs
+                        cat_name = str(_('Immobilien'))
+                        category_breakdown[cat_name] = category_breakdown.get(cat_name, Decimal('0')) + costs
 
             # 2.1 Process Loans (Installments and Interest)
             current_monthly_loan_installment = Decimal('0.00')

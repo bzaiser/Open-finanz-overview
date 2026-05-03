@@ -212,6 +212,7 @@ class RealEstate(models.Model):
     ancillary_costs_monthly = models.DecimalField(_("Monthly Ancillary Costs (Nebenkosten)"), max_digits=10, decimal_places=2, default=0.0)
     is_sold = models.BooleanField(_("Is Sold"), default=False)
     sale_date = models.DateField(_("Sale Date"), null=True, blank=True)
+    acquisition_date = models.DateField(_("Acquisition Date"), null=True, blank=True)
 
     class Meta:
         verbose_name = _("Real Estate")

@@ -522,7 +522,10 @@ msgstr "Verkauft"
 
 #: finance/models.py:193 finance/models.py:214
 msgid "Sale Date"
-msgstr "Startdatum"
+msgstr "Verkaufsdatum"
+
+msgid "Acquisition Date"
+msgstr "Kaufdatum"
 
 #: finance/models.py:196 finance/views.py:652
 #| msgid "Physical Assets"
