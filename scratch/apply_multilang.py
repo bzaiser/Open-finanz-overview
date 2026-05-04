@@ -80,6 +80,11 @@ translations = {
         'Cancel': 'Annuler',
         'Save': 'Enregistrer',
         'Save changes': 'Enregistrer les modifications',
+        'Filter added successfully.': 'Filtre ajouté avec succès.',
+        'Filter updated successfully.': 'Filtre mis à jour avec succès.',
+        'Filter deleted.': 'Filtre supprimé.',
+        'Automatically categorized by AI': 'Catégorisé automatiquement par l\'IA',
+        'Learned from your memory': 'Appris de votre mémoire',
     },
     'it': {
         'First Name': 'Nome',
@@ -101,6 +106,11 @@ translations = {
         'Cancel': 'Annulla',
         'Save': 'Salva',
         'Save changes': 'Salva modifiche',
+        'Filter added successfully.': 'Filtro aggiunto con successo.',
+        'Filter updated successfully.': 'Filtro aggiornato con successo.',
+        'Filter deleted.': 'Filtro eliminato.',
+        'Automatically categorized by AI': 'Categorizzato automaticamente dall\'IA',
+        'Learned from your memory': 'Appreso dalla tua memoria',
     },
     'es': {
         'First Name': 'Nombre',
@@ -122,6 +132,11 @@ translations = {
         'Cancel': 'Cancelar',
         'Save': 'Guardar',
         'Save changes': 'Guardar cambios',
+        'Filter added successfully.': 'Filtro añadido con éxito.',
+        'Filter updated successfully.': 'Filtro actualizado con éxito.',
+        'Filter deleted.': 'Filtro eliminado.',
+        'Automatically categorized by AI': 'Categorizado automáticamente por la IA',
+        'Learned from your memory': 'Aprendido de tu memoria',
     }
 }
 
@@ -147,6 +162,7 @@ def apply_translations():
                 full_msgid = msgid_match.group(1)
                 raw_msgid = "".join(re.findall(r'"(.*)"', full_msgid))
                 
+                # Header überspringen
                 if not raw_msgid:
                     new_entries.append(entry.strip())
                     continue
@@ -154,14 +170,21 @@ def apply_translations():
                 if raw_msgid in translations.get(lang, {}):
                     translated = translations[lang][raw_msgid]
                     entry = re.sub(r'msgstr\s+.*', f'msgstr "{escape_po(translated)}"', entry, flags=re.DOTALL)
+                elif lang == 'de':
+                    # Bei Deutsch lassen wir den aktuellen Stand (da es das Original ist)
+                    pass
                 elif lang == 'en':
+                    # Für Englisch: msgstr = msgid (Fallback)
                     entry = re.sub(r'msgstr\s+.*', f'msgstr {full_msgid.strip()}', entry, flags=re.DOTALL)
+                else:
+                    # Für andere Sprachen: LEEREN, damit Fallback auf msgid (Englisch) greift
+                    entry = re.sub(r'msgstr\s+.*', f'msgstr ""', entry, flags=re.DOTALL)
             
             new_entries.append(entry.strip())
             
         with open(path, 'w', encoding='utf-8') as f:
             f.write('\n\n'.join(new_entries) + '\n')
-        print(f"Applied core translations to {path}")
+        print(f"Purged non-matching translations and applied core for {lang}")
 
 if __name__ == "__main__":
     apply_translations()
