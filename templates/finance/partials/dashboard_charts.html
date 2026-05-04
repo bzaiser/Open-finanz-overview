@@ -274,9 +274,32 @@
                         }
                     }
                 };
+                config.options.elements = {
+                    point: {
+                        radius: function(context) {
+                            const events = context.dataset.tooltipData ? context.dataset.tooltipData[context.dataIndex] : [];
+                            return (events && events.length > 0) ? 6 : 0;
+                        },
+                        hoverRadius: 8,
+                        pointStyle: function(context) {
+                            const events = context.dataset.tooltipData ? context.dataset.tooltipData[context.dataIndex] : [];
+                            return (events && events.length > 0) ? 'rectRot' : 'circle';
+                        },
+                        backgroundColor: function(context) {
+                            return context.dataset.borderColor;
+                        }
+                    }
+                };
                 config.options.plugins.tooltip.callbacks = {
                     label: function(context) {
-                        return context.dataset.label + ': ' + new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ profile.currency }}' }).format(context.parsed.y);
+                        let lines = [context.dataset.label + ': ' + new Intl.NumberFormat('de-DE', { style: 'currency', currency: '{{ profile.currency }}' }).format(context.parsed.y)];
+                        const events = context.dataset.tooltipData ? context.dataset.tooltipData[context.dataIndex] : [];
+                        if (events && events.length > 0) {
+                            events.forEach(e => {
+                                lines.push('  \u2022 ' + e.label);
+                            });
+                        }
+                        return lines;
                     }
                 };
                 {% endif %}

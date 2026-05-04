@@ -484,8 +484,15 @@ def dashboard_view(request):
     
     for idx, l in enumerate(user_loans_list):
         l_id_str = str(l.id)
-        l_data = [float(yearly_buckets[y]['loan_balances'].get(l_id_str, 0)) for y in sorted_years]
+        l_data = []
+        l_events_yearly = []
         
+        for y in sorted_years:
+            l_data.append(float(yearly_buckets[y]['loan_balances'].get(l_id_str, 0)))
+            # Filter events for this specific loan
+            y_events = [e for e in yearly_buckets[y]['one_time_events'] if e.get('loan_name') == l.name]
+            l_events_yearly.append(y_events)
+            
         # Only add if there is any debt in the simulation period
         if any(v > 0 for v in l_data):
             loan_evo_datasets.append({
@@ -495,7 +502,8 @@ def dashboard_view(request):
                 'backgroundColor': loan_colors[idx % len(loan_colors)] + '1A', # 10% alpha
                 'fill': False,
                 'borderWidth': 3,
-                'tension': 0.1
+                'tension': 0.1,
+                'tooltipData': l_events_yearly
             })
 
     # 3. Budget Pie & Current Month Data (Reference month breakdown)

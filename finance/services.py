@@ -314,6 +314,7 @@ class SimulationEngine:
                         category_breakdown[cat_name] = category_breakdown.get(cat_name, Decimal('0')) + costs
 
             # 2.1 Process Loans (Installments and Interest)
+            events_this_month = []
             current_monthly_loan_installment = Decimal('0.00')
             for item in loans_state:
                 loan = item['loan']
@@ -340,6 +341,28 @@ class SimulationEngine:
                         if i > 0: # Only update balance from second month of core loop
                             reduction = (installment - interest) + extras_this_month
                             item['balance'] = max(Decimal('0'), item['balance'] - reduction)
+
+                        # Track Loan Events for Chart Annotations
+                        loan_events = []
+                        if loan.interest_lock_end and loan.interest_lock_end.year == current_date.year and loan.interest_lock_end.month == current_date.month:
+                            loan_events.append({
+                                'loan_name': loan.name,
+                                'type': 'interest_lock_end',
+                                'label': _('Zinsbindung Ende')
+                            })
+                        
+                        # Add extra repayments to events
+                        for e in loan.extra_repayments.all():
+                            if e.date.year == current_date.year and e.date.month == current_date.month:
+                                loan_events.append({
+                                    'loan_name': loan.name,
+                                    'type': 'extra_repayment',
+                                    'amount': float(e.amount),
+                                    'label': f"{_('Sondertilgung')} ({float(e.amount):,.2f} €)"
+                                })
+                        
+                        if loan_events:
+                            events_this_month.extend(loan_events)
                 elif i > 0:
                     # Even if not active yet or finished, we keep current balance at 0 if finished or initial
                     pass
@@ -348,7 +371,6 @@ class SimulationEngine:
 
             # 3. One Time Events
             event_impact = Decimal('0.00')
-            events_this_month = []
             for event in one_time_events:
                 if event.date.year == current_date.year and event.date.month == current_date.month:
                     event_impact += event.value
