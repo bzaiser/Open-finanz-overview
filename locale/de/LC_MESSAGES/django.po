@@ -2803,4 +2803,14 @@ msgid "Investment Return Buffer (%)"
 msgstr "Zusatz-Rendite (%)"
 
 msgid "Interest Buffer (%)"
-msgstr "Rendite-Puffer (%)"
+msgstr "Zusatz-Rendite (%)"
+
+msgid "Pension Increase (%)"
+msgstr "Rentenanpassung (%)"
+
+msgid "Inflation (%)"
+msgstr "Inflation (%)"
+
+
+msgid "Real Estate (%)"
+msgstr "Immobilien (%)"
