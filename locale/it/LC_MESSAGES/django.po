@@ -1780,6 +1780,7 @@ msgstr "SUMMARY_DESC_DEBTS"
 # #-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#
 # #-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#
 # #-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#
+# #-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#
 # Core Form Translations
 msgid "Email Address"
 msgstr "Email Address"
@@ -1826,12 +1827,20 @@ msgstr "Learned from your memory"
 msgid "Duplicate selection & increment date"
 msgstr "Duplicate selection & increment date"
 
-# MASTER SYNC - CLEAN LOCALIZATION
 msgid "First Name"
 msgstr "First Name"
 
 msgid "Last Name"
 msgstr "Last Name"
+
+msgid "Display Name"
+msgstr "Display Name"
+
+msgid "Entry Date"
+msgstr "Entry Date"
+
+msgid "Label"
+msgstr "Label"
 
 msgid "Status"
 msgstr "Status"

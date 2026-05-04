@@ -1,3 +1,4 @@
+# ### KATE_MUST_SHOW_THIS_CHANGE_###
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
@@ -1133,6 +1134,7 @@ msgstr "Profilbild"
 # #-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#
 # #-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#
 # #-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#
+# #-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#
 # Core Form Translations
 #: templates/core/profile.html:77 templates/core/profile.html:81
 #: templates/core/profile.html:86
@@ -2116,6 +2118,7 @@ msgstr ""
 # #-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#
 # #-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#
 # #-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#
+# #-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#
 # New Chart/Widget Descriptions
 msgid "CHART_DESC_NET_WORTH"
 msgstr ""
@@ -2334,12 +2337,20 @@ msgstr "Aus deinem Gedächtnis gelernt"
 msgid "Duplicate selection & increment date"
 msgstr "Auswahl duplizieren & Datum hochzählen"
 
-# MASTER SYNC - CLEAN LOCALIZATION
 msgid "First Name"
 msgstr "Vorname"
 
 msgid "Last Name"
 msgstr "Nachname"
+
+msgid "Display Name"
+msgstr "Name"
+
+msgid "Entry Date"
+msgstr "Datum"
+
+msgid "Label"
+msgstr "Bezeichnung"
 
 msgid "Status"
 msgstr "Status"
