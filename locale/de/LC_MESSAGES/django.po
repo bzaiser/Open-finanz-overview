@@ -20,7 +20,20 @@ msgstr ""
 msgid "Interest Buffer"
 msgstr "Zusatz-Rendite"
 
-msgid "A global return surcharge on all your liquid assets (accounts and portfolios). If you have 1% interest on an account and enter 2% here, that account will yield 3% interest. Ideal for lump-sum scenarios."
+
+msgid "HELP_TARGET_DATE"
+msgstr "Das Ankerdatum für deine Simulation. Alle Berechnungen für Zinsen, Rentenphasen und Kaufkraftverluste starten ab diesem Tag."
+
+msgid "HELP_INFLATION_RATE"
+msgstr "Die erwartete jährliche Teuerungsrate. Diese reduziert den Realwert (die Kaufkraft) deines zukünftigen Vermögens. Ein Wert von 2% ist ein gängiger Richtwert."
+
+msgid "HELP_SALARY_INCREASE"
+msgstr "Die durchschnittliche jährliche Steigerung deines Brutto-Gehalts bis zum Renteneintritt."
+
+msgid "HELP_PENSION_INCREASE"
+msgstr "Die jährliche Anpassung deiner Rentenbezüge. In Deutschland orientiert sich dieser Wert oft an der allgemeinen Lohnentwicklung."
+
+msgid "HELP_INTEREST_BUFFER"
 msgstr "Ein globaler Rendite-Aufschlag auf alle deine liquiden Mittel (Konten und Depots). Wenn du z.B. bei einem Konto 1% Zinsen hast und hier 2% einträgst, wird dieses Konto mit 3% verzinst. Ideal für Pauschal-Szenarien."
 
 #: core/forms.py:12
