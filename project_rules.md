@@ -12,7 +12,6 @@
          'foo' %}
       ```
 - **Tag Consolidation**: Prefer keeping biological units (like an `if` block wrapping a `trans` tag) on one line if it aids in following the no-split rule: `{% if ... %}{% trans ... %}{% endif %}`.
-- **{% trans %} Placement**: Innerhalb von HTML-Elementen (wie `<label>`, `<div>`, `<span>`) muss der `{% trans %}`-Tag immer auf einer **eigenen Zeile** stehen, um die Lesbarkeit und Erkennung durch das i18n-System zu optimieren. Der Tag selbst darf dabei nicht umgebrochen werden.
 - **NO Special Characters in IDs (Use Keys)**: In `{% trans "..." %}`-Tags dürfen in der `msgid` (dem Schlüssel) KEINE Sonderzeichen verwendet werden. Insbesondere das Prozentzeichen `%` ist strikt verboten. Bei Sätzen mit Sonderzeichen oder komplexer Formatierung MÜSSEN stattdessen eindeutige Schlüssel-Begriffe (z.B. `HELP_AI_DESC`) verwendet werden. Sonderzeichen gehören ausschließlich in die Übersetzung (`msgstr`).
 
 ## General Frontend
@@ -53,13 +52,12 @@ Der Agent folgt bei JEDER Aufgabe strikt diesem Ablauf:
 - **Three-Strike Rule**: Wenn ein Problem (z.B. eine Fehlermeldung oder ein Bug) nach **drei Versuchen** durch die KI nicht behoben werden konnte, muss die KI SOFORT stoppen.
 - **Vorgehensweise**: Anstatt weiter zu "frickeln", muss die KI die relevanten Stellen im Code (Dateien und Zeilennummern) klar benennen und dem Nutzer präsentieren, damit dieser selbst nachsehen kann.
 
-## Language & Localization
-- **Base Language is English**: All strings in the source code (Python, Templates, JS) MUST be in English.
-- **msgid is English**: In `django.po` files, the `msgid` MUST always be the English string. 
+## Language & Localization (I18N)
+- **English-First Policy**: All strings in the source code (Python, Templates, JS) MUST be in English.
+- **MANDATORY LINTER**: Run `scripts/check_i18n.py` before every commit. It will fail if any German strings are found in `_()` or `{% trans %}`.
+- **msgid is English**: In `django.po` files, the `msgid` MUST always be the English string or a stable ID. 
 - **German is a translation**: German strings belong strictly in the `msgstr` of the `locale/de/` files.
-- **No German in code**: Using German strings in `{% trans "..." %}` or `_("...")` is strictly forbidden. If a string is complex or contains special characters, use a stable ID (e.g. `HELP_INTEREST_BUFFER`) and translate it in all PO files.
-
-## Translations & I18N
-- **STRICT: NO Overhaul of Translation Procedures**: Bestehende Übersetzungsverfahren (z. B. die Verwendung von `gettext` / `_eager`) dürfen NICHT eigenmächtig durch andere Verfahren (wie `gettext_lazy` / `_`) ersetzt werden, nur um einen einzelnen Übersetzungsfehler zu beheben. Fehler müssen innerhalb des bestehenden Systems durch Korrektur der `msgid` oder der Sprachdateien gelöst werden.
-- **NO tracked .mo files**: (Entsprechend der aktuellen Bereinigung) Kompilierte `.mo`-Dateien werden nicht in Git getrackt, um Merge-Konflikte zu vermeiden. Die Generierung erfolgt ausschließlich auf dem Zielsystem.
+- **No Special Characters**: No special characters (especially `%`) in `msgid`s. Use stable IDs (e.g. `HELP_INTEREST_BUFFER`) for complex strings.
+- **PO-Cleanup**: Duplicates in `.po` files must be merged using `msguniq`.
+- **NO tracked .mo files**: Compiled `.mo` files are not tracked in Git. Generation happens on the target system.
 
