@@ -58,7 +58,6 @@ class UserProfile(models.Model):
     pension_increase = models.DecimalField(_("Default Pension Increase (%)"), max_digits=5, decimal_places=2, default=1.0)
     investment_return_offset = models.DecimalField(_("Investment Return Buffer (%)"), max_digits=5, decimal_places=2, default=0.0)
     real_estate_growth_rate = models.DecimalField(_("Default Real Estate Growth (%)"), max_digits=5, decimal_places=2, default=0.0)
-    physical_asset_growth_rate = models.DecimalField(_("Default Physical Asset Growth (%)"), max_digits=5, decimal_places=2, default=0.0)
     dashboard_config = models.JSONField(_("Dashboard Configuration"), default=dict, blank=True)
     
     # Night Mode / System Sync
