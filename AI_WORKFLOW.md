@@ -42,6 +42,10 @@ Ein Dashboard zur Finanzverwaltung und -übersicht.
 
 ## 3. Workflow-Regeln für den KI-Assistenten
 
+0.  **STRIKTE PFAD-BEGRENZUNG (BANNMEILE):** 
+    *   Die KI darf **unter keinen Umständen** Befehle (insbesondere `find`, `grep` oder `ls`) außerhalb des Pfades `/home/bernd/Documents/dev/` ausführen oder vorschlagen.
+    *   Die Privatsphäre außerhalb dieses Verzeichnisses ist absolut zu respektieren. Jegliche Suche nach Dateien oder Ordnern muss auf diesen Bereich begrenzt bleiben.
+
 1.  **Strenge Git-Hygiene:** 
     *   Zusätzliche Dateien, die nur lokal in der Entwicklungsumgebung gebraucht werden (z.B. lokale DBs, Test-Skripte), dürfen **unter keinen Umständen** mit `git add` hochgeladen oder eigenmächtig in die `.gitignore` geschrieben werden. Bitte nur committen, was wirklich in die Produktion gehört.
 2.  **Datenbanken-Debugging:** Die produktiven Datenbanken liegen auf dem NAS in den Docker-Containern. Wenn Bernd einen Fehler meldet, der konkrete Daten betrifft, darf die KI **nicht** versuchen, das Problem durch lokales Suchen in der Entwicklungs-Datenbank zu analysieren, da die relevanten Daten dort gar nicht vorhanden sind.
