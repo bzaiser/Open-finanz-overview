@@ -681,15 +681,15 @@ msgstr ""
 
 #: finance/services.py:262 finance/services.py:264
 msgid "Rente"
-msgstr ""
+msgstr "Rente"
 
 #: finance/services.py:293
 msgid "Sachwerte"
-msgstr ""
+msgstr "Sachwerte"
 
 #: finance/services.py:301 finance/services.py:307
 msgid "Immobilien"
-msgstr ""
+msgstr "Immobilien"
 
 #: finance/services.py:327
 msgid "Kredit"
@@ -2756,3 +2756,18 @@ msgstr "Konten/Liquidität (Real)"
 
 msgid "Physical Assets (Nominal)"
 msgstr "Sachwerte (Nominal)"
+
+msgid "Asset Snapshot"
+msgstr "Vermögens-Snapshot"
+
+msgid "Asset Snapshots"
+msgstr "Vermögens-Snapshots"
+
+msgid "Asset/Object"
+msgstr "Asset / Objekt"
+
+msgid "Select the concrete asset to create a snapshot for. This will automatically fill the Type and ID fields."
+msgstr "Wählen Sie das konkrete Asset aus, für das ein Snapshot erstellt werden soll. Typ und ID werden automatisch ausgefüllt."
+
+msgid "Konto/Anlage"
+msgstr "Konto/Anlage"
