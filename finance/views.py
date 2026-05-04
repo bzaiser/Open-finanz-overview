@@ -314,7 +314,7 @@ def dashboard_view(request):
         except (ValueError, TypeError):
             simulation_params['stichtag'] = timezone.now().date()
     else:
-        simulation_params['stichtag'] = profile.simulation_start_date or timezone.now().date()
+        simulation_params['stichtag'] = timezone.now().date()
 
     if request.method == 'POST' and 'config_update' not in request.POST:
         # Handle Simulation Update
