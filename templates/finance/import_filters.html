@@ -5,8 +5,8 @@
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h2 class="mb-0 fw-bold text-gradient"><i class="bi bi-funnel me-2"></i>{% trans "Import-Filter verwalten" %}</h2>
-            <p class="text-muted">{% trans "Definiere Regeln, um Buchungen automatisch zusammenzufassen." %}</p>
+            <h2 class="mb-0 fw-bold text-gradient"><i class="bi bi-funnel me-2"></i>{% trans "Manage Import Filters" %}</h2>
+            <p class="text-muted">{% trans "Define rules to automatically group transactions." %}</p>
         </div>
         {% if batch_id %}
         <a href="{% url 'finance:review_transactions' batch_id %}" class="btn btn-primary shadow-sm px-4 fw-bold">
@@ -110,7 +110,7 @@
                             {% empty %}
                             <tr id="empty-row">
                                 <td colspan="4" class="text-center py-4 text-muted">
-                                    <i class="bi bi-info-circle me-1"></i> {% trans "Noch keine Filter definiert." %}
+                                    <i class="bi bi-info-circle me-1"></i> {% trans "No filters defined yet." %}
                                 </td>
                             </tr>
                             {% endfor %}
@@ -134,12 +134,12 @@
                 {% csrf_token %}
                 <input type="hidden" name="batch_id" value="{{ batch_id }}">
                 <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title fw-bold"><i class="bi bi-pencil-square me-2"></i>{% trans "Filter bearbeiten" %}</h5>
+                    <h5 class="modal-title fw-bold"><i class="bi bi-pencil-square me-2"></i>{% trans "Edit Filter" %}</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label class="form-label small fw-bold">{% trans "Suchbegriffe (mit ; getrennt)" %}</label>
+                        <label class="form-label small fw-bold">{% trans "Search Terms (separated by ;)" %}</label>
                         <input type="text" id="edit_search_query" name="search_query" class="form-control" required>
                     </div>
                     <div class="mb-3">
@@ -147,7 +147,7 @@
                         <input type="text" id="edit_target_name" name="target_name" class="form-control" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label small fw-bold">{% trans "Kategorie" %}</label>
+                        <label class="form-label small fw-bold">{% trans "Category" %}</label>
                         <div class="input-group">
                             <select id="edit_category" name="category" class="form-select category-select">
                                 <option value="">---------</option>
@@ -155,7 +155,7 @@
                                 <option value="{{ cat.id }}">{{ cat.name }}</option>
                                 {% endfor %}
                             </select>
-                            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#quickCategoryModal" title="{% trans 'Neue Kategorie anlegen' %}">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#quickCategoryModal" title="{% trans 'Create new category' %}">
                                 <i class="bi bi-plus-lg"></i>
                             </button>
                         </div>
@@ -164,20 +164,20 @@
                         <label class="form-label small fw-bold text-primary">{% trans "Link with Finance Plan (Matching)" %}</label>
                         <div class="input-group">
                             <select id="edit_linked_cash_flow" name="linked_cash_flow" class="form-select cashflow-select">
-                                <option value="">{% trans "-- Kein Plan-Abgleich --" %}</option>
+                                <option value="">{% trans "-- No Plan Matching --" %}</option>
                                 {% for cf in cash_flows %}
                                 <option value="{{ cf.id }}">{{ cf.name }} ({{ cf.value }} €)</option>
                                 {% endfor %}
                             </select>
-                            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#quickCashFlowModal" title="{% trans 'Neuen Plan-Eintrag anlegen' %}">
+                            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#quickCashFlowModal" title="{% trans 'Create new plan entry' %}">
                                 <i class="bi bi-plus-lg"></i>
                             </button>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer bg-light">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{% trans "Abbrechen" %}</button>
-                    <button type="submit" class="btn btn-primary fw-bold">{% trans "Änderungen speichern" %}</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
+                    <button type="submit" class="btn btn-primary fw-bold">{% trans "Save changes" %}</button>
                 </div>
             </form>
         </div>
@@ -189,7 +189,7 @@
         navigator.clipboard.writeText(text).then(() => {
             const btn = event.currentTarget;
             const originalHtml = btn.innerHTML;
-            btn.innerHTML = '<i class="bi bi-check"></i> ' + "{% trans 'Kopiert!' %}";
+            btn.innerHTML = '<i class="bi bi-check"></i> ' + "{% trans 'Copied!' %}";
             setTimeout(() => { btn.innerHTML = originalHtml; }, 2000);
         });
     }
@@ -267,23 +267,23 @@
                   hx-on::after-request="if(event.detail.successful) { bootstrap.Modal.getInstance(document.getElementById('quickCategoryModal')).hide(); this.reset(); }"
                   hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
                 <div class="modal-header bg-dark text-white py-2 border-0">
-                    <h6 class="modal-title fw-bold">{% trans "Neue Kategorie" %}</h6>
+                    <h6 class="modal-title fw-bold">{% trans "New Category" %}</h6>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-3">
                     <div id="quick-cat-msg"></div>
                     <div class="mb-3">
-                        <label class="form-label small fw-bold">{% trans "Name" %}</label>
+                        <label class="form-label small fw-bold">{% trans "Label" %}</label>
                         <input type="text" name="name" class="form-control form-control-sm border-primary" placeholder="z.B. Sonstiges" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label small fw-bold">{% trans "Farbe (Standard: Grau)" %}</label>
+                        <label class="form-label small fw-bold">{% trans "Color (Default: Gray)" %}</label>
                         <input type="color" name="color" class="form-control form-control-color w-100 border-0 p-0" style="height: 40px;" value="#6c757d" title="{% trans 'Choose color' %}">
                     </div>
                 </div>
                 <div class="modal-footer bg-light border-0 py-2">
                     <button type="submit" class="btn btn-sm btn-primary w-100 fw-bold shadow-sm">
-                        <i class="bi bi-check2-circle me-1"></i> {% trans "Kategorie erstellen" %}
+                        <i class="bi bi-check2-circle me-1"></i> {% trans "Create category" %}
                     </button>
                 </div>
             </form>
@@ -301,13 +301,13 @@
                   hx-on::after-request="if(event.detail.successful) { bootstrap.Modal.getInstance(document.getElementById('quickCashFlowModal')).hide(); this.reset(); }"
                   hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
                 <div class="modal-header bg-primary text-white py-2 border-0">
-                    <h6 class="modal-title fw-bold">{% trans "Neuer Plan-Eintrag" %}</h6>
+                    <h6 class="modal-title fw-bold">{% trans "New Plan Entry" %}</h6>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-3">
                     <div id="quick-cf-msg"></div>
                     <div class="mb-3">
-                        <label class="form-label small fw-bold">{% trans "Name" %}</label>
+                        <label class="form-label small fw-bold">{% trans "Label" %}</label>
                         <input type="text" name="name" class="form-control form-control-sm border-primary" placeholder="z.B. Tanzkurs" required>
                     </div>
                     <div class="mb-3">
@@ -316,12 +316,12 @@
                     </div>
                     <div class="form-check form-switch small mb-3">
                         <input class="form-check-input" type="checkbox" name="is_income" id="quickCFIncome">
-                        <label class="form-check-label" for="quickCFIncome">{% trans "Einnahme?" %}</label>
+                        <label class="form-check-label" for="quickCFIncome">{% trans "Income?" %}</label>
                     </div>
                 </div>
                 <div class="modal-footer bg-light border-0 py-2">
                     <button type="submit" class="btn btn-sm btn-primary w-100 fw-bold shadow-sm">
-                        <i class="bi bi-check2-circle me-1"></i> {% trans "Plan-Eintrag erstellen" %}
+                        <i class="bi bi-check2-circle me-1"></i> {% trans "Create plan entry" %}
                     </button>
                 </div>
             </form>

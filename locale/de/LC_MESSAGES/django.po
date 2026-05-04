@@ -1353,6 +1353,7 @@ msgstr "Profilbild"
 
 # #-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#
 # #-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#
+# #-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#
 # Core Form Translations
 #: templates/core/profile.html:77 templates/core/profile.html:81
 #: templates/core/profile.html:86
@@ -2448,6 +2449,7 @@ msgstr ""
 "dieser Wert oft an der allgemeinen Lohnentwicklung."
 
 # #-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#
+# #-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#
 # New Chart/Widget Descriptions
 msgid "CHART_DESC_NET_WORTH"
 msgstr ""
@@ -2554,16 +2556,8 @@ msgstr ""
 "Zeigt die Wertentwicklung deiner Immobilien. Hier siehst du Details zu "
 "Wertsteigerungen, die im großen Gesamt-Chart oft untergehen."
 
-#, fuzzy
 msgid "CHART_DESC_PHYSICAL_ASSETS"
 msgstr ""
-"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
-"Visualisiert den Wertverlauf deiner Sachwerte (z.B. Gold, Autos). Durch den "
-"eigenen Maßstab sind hier auch kleinere Schwankungen gut sichtbar.\n"
-"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
-"Visualisiert den Wertverlauf deiner Sachwerte (z.B. Gold, Autos). Durch den "
-"eigenen Maßstab sind hier auch kleinere SchwANKungen gut sichtbar.\n"
-"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
 "Visualisiert den Wertverlauf deiner Sachwerte (z.B. Gold, Autos). Durch den "
 "eigenen Maßstab sind hier auch kleinere SchwANKungen gut sichtbar."
 

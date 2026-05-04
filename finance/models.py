@@ -8,7 +8,7 @@ from django.contrib.contenttypes.models import ContentType
 
 
 class Category(models.Model):
-    name = models.CharField(_("Name"), max_length=100)
+    name = models.CharField(_("Display Name"), max_length=100)
     slug = models.SlugField(_("Slug"), unique=True, blank=True)
     color = models.CharField(_("Color"), max_length=7, default="#6c757d", help_text=_("Hex color code, e.g. #FF0000"))
     is_system = models.BooleanField(_("System Category"), default=False)
@@ -41,7 +41,7 @@ class CashFlowSource(models.Model):
     ]
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='cash_flows')
-    name = models.CharField(_("Name"), max_length=100)
+    name = models.CharField(_("Display Name"), max_length=100)
     value = models.DecimalField(_("Amount"), max_digits=12, decimal_places=2)
     start_date = models.DateField(_("Start Date"), blank=True, null=True)
     end_date = models.DateField(_("End Date"), blank=True, null=True)
@@ -60,7 +60,7 @@ class CashFlowSource(models.Model):
 
 class Asset(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='assets')
-    name = models.CharField(_("Name"), max_length=100)
+    name = models.CharField(_("Display Name"), max_length=100)
     value = models.DecimalField(_("Current Value"), max_digits=12, decimal_places=2)
     growth_rate = models.DecimalField(_("Annual Growth Rate (%)"), max_digits=5, decimal_places=2, default=0.0)
     interest_teaser_rate = models.DecimalField(_("Teaser Interest Rate (%)"), max_digits=5, decimal_places=2, null=True, blank=True, help_text=_("Higher promotional interest rate (e.g. for new customers)"))
@@ -80,9 +80,9 @@ class Asset(models.Model):
 
 class OneTimeEvent(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='events')
-    name = models.CharField(_("Name"), max_length=100)
+    name = models.CharField(_("Display Name"), max_length=100)
     value = models.DecimalField(_("Amount"), max_digits=12, decimal_places=2, help_text=_("Positive for income, negative for expense"))
-    date = models.DateField(_("Date"))
+    date = models.DateField(_("Entry Date"))
     description = models.TextField(_("Description"), blank=True)
     
     class Meta:
@@ -128,7 +128,7 @@ class ImportBatch(models.Model):
 
 class PendingTransaction(models.Model):
     batch = models.ForeignKey(ImportBatch, on_delete=models.CASCADE, related_name='transactions')
-    date = models.DateField(_("Date"))
+    date = models.DateField(_("Entry Date"))
     description = models.TextField(_("Description"))
     amount = models.DecimalField(_("Amount"), max_digits=12, decimal_places=2)
     is_income = models.BooleanField(_("Is Income"), default=True)
@@ -186,7 +186,7 @@ class ProcessedTransactionHash(models.Model):
 
 class PhysicalAsset(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='physical_assets')
-    name = models.CharField(_("Name"), max_length=100)
+    name = models.CharField(_("Display Name"), max_length=100)
     value = models.DecimalField(_("Current Value"), max_digits=12, decimal_places=2)
     appreciation_rate = models.DecimalField(_("Annual Appreciation Rate (%)"), max_digits=5, decimal_places=2, default=0.0)
     location = models.CharField(_("Location / Storage"), max_length=255, blank=True)
@@ -204,7 +204,7 @@ class PhysicalAsset(models.Model):
 
 class RealEstate(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='real_estates')
-    name = models.CharField(_("Name / Property"), max_length=100)
+    name = models.CharField(_("Provider / Name"), max_length=100)
     property_value = models.DecimalField(_("Property Value"), max_digits=12, decimal_places=2)
     appreciation_rate = models.DecimalField(_("Annual Appreciation Rate (%)"), max_digits=5, decimal_places=2, default=0.0)
     location = models.CharField(_("Location"), max_length=255, blank=True)
@@ -233,7 +233,7 @@ class FinancialStatusProxy(CustomUser):
 
 class Loan(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='loans')
-    name = models.CharField(_("Name"), max_length=100)
+    name = models.CharField(_("Display Name"), max_length=100)
     provider = models.CharField(_("Provider / Bank"), max_length=100, blank=True)
     nominal_amount = models.DecimalField(_("Initial Loan Amount"), max_digits=12, decimal_places=2)
     interest_rate = models.DecimalField(_("Interest Rate (%)"), max_digits=5, decimal_places=2)
@@ -254,7 +254,7 @@ class Loan(models.Model):
 
 class LoanExtraRepayment(models.Model):
     loan = models.ForeignKey(Loan, on_delete=models.CASCADE, related_name='extra_repayments')
-    date = models.DateField(_("Date"))
+    date = models.DateField(_("Entry Date"))
     amount = models.DecimalField(_("Amount"), max_digits=12, decimal_places=2)
 
     class Meta:
