@@ -2811,3 +2811,6 @@ msgstr "Ein globaler Rendite-Aufschlag auf alle deine liquiden Mittel (Konten un
 
 msgid "The expected annual value increase of your real estate properties."
 msgstr "Die erwartete jährliche Wertsteigerung deiner Immobilienobjekte."
+
+msgid "Interest Buffer (%)"
+msgstr "Zusatz-Rendite (%)"
