@@ -50,25 +50,9 @@ msgstr ""
 msgid "HELP_REAL_ESTATE_GROWTH"
 msgstr "Die erwartete jährliche Wertsteigerung deiner Immobilien."
 
-#: core/forms.py:12
-msgid "Vorname"
-msgstr ""
-
-#: core/forms.py:13
-msgid "Nachname"
-msgstr ""
-
-#: core/forms.py:14
-msgid "E-Mail-Adresse"
-msgstr "E-Mail-Adresse"
-
 #: core/forms.py:44 core/models.py:23 templates/core/profile.html:101
 msgid "Birth Date"
 msgstr "Geburtsdatum"
-
-#: core/forms.py:49
-msgid "Nachtmodus Einstellungen vom System übernehmen"
-msgstr ""
 
 #: core/forms.py:56 core/models.py:68
 msgid "Gradient Start Color"
