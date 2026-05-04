@@ -101,7 +101,7 @@
                             <span class="small opacity-75" x-text="item.type_display"></span>
                         </td>
                         <td class="py-2 px-3 border-0" x-text="item.provider"></td>
-                        <td class="py-2 px-3 border-0 font-monospace text-center" x-text="(parseFloat(item.interest_rate) || 0).toFixed(2) + '%'"></td>
+                        <td class="py-2 px-3 border-0 font-monospace text-center" x-text="parseFloat(item.interest_rate).toFixed(2) + '%'"></td>
                         <td class="py-2 px-3 border-0 text-end font-monospace fw-bold text-danger" 
                             x-text="(item.current_balance || 0).toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })">
                         </td>
