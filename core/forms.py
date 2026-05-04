@@ -49,6 +49,13 @@ class UserProfileForm(forms.ModelForm):
         label=_("Follow System Night Mode Settings"),
         widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
     )
+
+    simulation_start_date = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}, format='%Y-%m-%d'),
+        input_formats=['%Y-%m-%d', '%d.%m.%Y', '%d/%m/%Y'],
+        required=False,
+        label=_("Simulation Start Date")
+    )
     
     # Design & Colors (Explicit overrides)
     gradient_start = forms.CharField(
@@ -132,5 +139,4 @@ class UserProfileForm(forms.ModelForm):
         widgets = {
             'avatar': forms.FileInput(attrs={'class': 'form-control form-control-sm'}),
             'dark_mode_config': forms.HiddenInput(),
-            'simulation_start_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
         }

@@ -92,7 +92,8 @@ class SimulationEngine:
             except:
                 stichtag = timezone.now().date().replace(day=1)
         if not stichtag:
-            stichtag = timezone.now().date().replace(day=1)
+            stichtag = self.profile.simulation_start_date or timezone.now().date()
+            stichtag = stichtag.replace(day=1)
         else:
             stichtag = stichtag.replace(day=1)
 
