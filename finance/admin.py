@@ -116,7 +116,7 @@ import datetime
 import calendar
 from django.utils.translation import gettext_lazy as _
 
-@admin.action(description=_("Auswahl duplizieren & Datum hochzählen"))
+@admin.action(description=_("Duplicate selection & increment date"))
 def duplicate_and_increment_cashflow(modeladmin, request, queryset):
     count = 0
     for obj in queryset:

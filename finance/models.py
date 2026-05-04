@@ -265,7 +265,7 @@ class LoanExtraRepayment(models.Model):
 class ImportFilter(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='import_filters')
     search_query = models.CharField(_("Search Query"), max_length=255, help_text=_("Separated by semicolon, e.g. EDEKA;REWE"))
-    target_name = models.CharField(_("Target Name"), max_length=100, help_text=_("e.g. Lebensmitteleinkäufe"))
+    target_name = models.CharField(_("Target Name"), max_length=100, help_text=_("e.g. Grocery shopping"))
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, verbose_name=_("Category"))
     is_income = models.BooleanField(_("Is Income"), default=False)
     is_active = models.BooleanField(_("Is Active"), default=True)

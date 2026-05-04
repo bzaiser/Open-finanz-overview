@@ -1766,7 +1766,7 @@ def add_import_filter(request):
             category=category,
             linked_cash_flow=linked_cf
         )
-        messages.success(request, _("Filter erfolgreich hinzugefügt."))
+        messages.success(request, _("Filter added successfully."))
         
         # HTMX support: Return the row and close modal
         if request.headers.get('HX-Request'):
@@ -1793,7 +1793,7 @@ def edit_import_filter(request, filter_id):
         cf_id = request.POST.get('linked_cash_flow')
         f.linked_cash_flow = CashFlowSource.objects.filter(id=cf_id, user=request.user).first() if cf_id else None
         f.save()
-        messages.success(request, _("Filter erfolgreich geändert."))
+        messages.success(request, _("Filter updated successfully."))
         
         # HTMX support: Update row and close modal
         if request.headers.get('HX-Request'):
@@ -1812,7 +1812,7 @@ def delete_import_filter(request, filter_id):
     f = get_object_or_404(ImportFilter, id=filter_id, user=request.user)
     batch_id = request.GET.get('batch_id')
     f.delete()
-    messages.success(request, _("Filter gelöscht."))
+    messages.success(request, _("Filter deleted."))
     if batch_id:
         return redirect(f"{reverse('finance:import_filters_list')}?batch_id={batch_id}")
     return redirect('finance:import_filters_list')
@@ -1899,7 +1899,7 @@ def quick_create_cash_flow(request):
 def delete_import_batch(request, batch_id):
     batch = get_object_or_404(ImportBatch, id=batch_id, user=request.user)
     batch.delete()
-    messages.success(request, _("Import-Batch gelöscht."))
+    messages.success(request, _("Import batch deleted."))
     return redirect('finance:import_transactions')
 
 @login_required

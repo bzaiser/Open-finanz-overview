@@ -20,17 +20,12 @@ msgstr ""
 msgid "Current Assets"
 msgstr "Current Assets"
 
-#: core/forms.py:16 core/models.py:31
 msgid "Birth Date"
-msgstr ""
+msgstr "Birth Date"
 
 #: core/models.py:9 finance/models.py:8 finance/models.py:26
 #: finance/models.py:44 finance/models.py:61
-#: templates/finance/partials/dashboard_table_simple.html:104
-msgid "Name"
-msgstr ""
-
-#: core/models.py:10
+#: templates/finance/partials/dashboard_table_simple.html:104 core/models.py:10
 msgid "Primary Color"
 msgstr ""
 
@@ -58,11 +53,7 @@ msgstr ""
 msgid "Table Header Text"
 msgstr ""
 
-#: core/models.py:19
-msgid "Table Filter Background"
-msgstr ""
-
-#: core/models.py:22 core/models.py:67
+#: core/models.py:19 core/models.py:22 core/models.py:67
 msgid "Theme"
 msgstr ""
 
@@ -113,15 +104,7 @@ msgstr ""
 msgid "User Profiles"
 msgstr ""
 
-#: finance/admin.py:29
-msgid "Auswahl duplizieren & Datum hochzählen"
-msgstr ""
-
-#: finance/admin.py:64
-msgid "Jahr"
-msgstr ""
-
-#: finance/models.py:9
+#: finance/admin.py:29 finance/admin.py:64 finance/models.py:9
 msgid "Slug"
 msgstr ""
 
@@ -133,10 +116,8 @@ msgstr ""
 msgid "Hex color code, e.g. #FF0000"
 msgstr ""
 
-#: finance/models.py:13 finance/models.py:32
-#: templates/finance/partials/dashboard_table_simple.html:111
 msgid "Category"
-msgstr ""
+msgstr "Category"
 
 #: finance/models.py:14
 msgid "Categories"
@@ -150,10 +131,8 @@ msgstr ""
 msgid "Yearly"
 msgstr ""
 
-#: finance/models.py:27 finance/models.py:62
-#: templates/finance/partials/dashboard_table_simple.html:125
 msgid "Amount"
-msgstr ""
+msgstr "Amount"
 
 #: finance/models.py:28
 msgid "Start Date"
@@ -216,10 +195,8 @@ msgstr ""
 msgid "Positive for income, negative for expense"
 msgstr ""
 
-#: finance/models.py:63
-#: templates/finance/partials/dashboard_table_simple.html:111
 msgid "Date"
-msgstr ""
+msgstr "Date"
 
 #: finance/models.py:64
 msgid "Description"
@@ -233,11 +210,7 @@ msgstr ""
 msgid "One Time Events"
 msgstr ""
 
-#: finance/models.py:75
-msgid "Provider/Name"
-msgstr ""
-
-#: finance/models.py:77
+#: finance/models.py:75 finance/models.py:77
 msgid "Monthly Contribution"
 msgstr ""
 
@@ -262,11 +235,7 @@ msgstr ""
 msgid "Pensions"
 msgstr ""
 
-#: finance/models.py:92
-msgid "Mein Finanzstatus (Vorausgefüllt)"
-msgstr ""
-
-#: finance/models.py:93
+#: finance/models.py:92 finance/models.py:93
 msgid "Meine Finanzen (Schnelleingabe)"
 msgstr ""
 
@@ -541,11 +510,7 @@ msgstr ""
 msgid "Header Text Color"
 msgstr ""
 
-#: templates/finance/dashboard.html:109
-msgid "Filter Row Background"
-msgstr ""
-
-#: templates/finance/dashboard.html:117
+#: templates/finance/dashboard.html:109 templates/finance/dashboard.html:117
 msgid "Header Background & Text"
 msgstr "Header Background & Text"
 
@@ -625,9 +590,6 @@ msgstr ""
 #: templates/finance/partials/dashboard_table_simple.html:135
 #: templates/finance/partials/dashboard_table_simple.html:138
 #: templates/finance/partials/dashboard_table_simple.html:141
-msgid "Filter..."
-msgstr ""
-
 #: templates/finance/partials/dashboard_table_simple.html:157
 msgid "Group Sum"
 msgstr ""
@@ -675,9 +637,6 @@ msgid "Enter a valid value."
 msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/core/validators.py:70
-msgid "Enter a valid domain name."
-msgstr ""
-
 #: venv/lib/python3.12/site-packages/django/core/validators.py:153
 #: venv/lib/python3.12/site-packages/django/forms/fields.py:774
 msgid "Enter a valid URL."
@@ -771,10 +730,6 @@ msgid "%(model_name)s with this %(field_labels)s already exists."
 msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/db/models/constraints.py:20
-#, python-format
-msgid "Constraint “%(name)s” is violated."
-msgstr ""
-
 #: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:134
 #, python-format
 msgid "Value %(value)r is not a valid choice."
@@ -936,9 +891,8 @@ msgstr ""
 msgid "Universally unique identifier"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/db/models/fields/files.py:244
 msgid "File"
-msgstr ""
+msgstr "File"
 
 #: venv/lib/python3.12/site-packages/django/db/models/fields/files.py:420
 msgid "Image"
@@ -1072,10 +1026,6 @@ msgid ":"
 msgstr ""
 
 #: venv/lib/python3.12/site-packages/django/forms/forms.py:239
-#, python-format
-msgid "(Hidden field %(name)s) %(error)s"
-msgstr ""
-
 #: venv/lib/python3.12/site-packages/django/forms/formsets.py:65
 #, python-format
 msgid "Please submit at most %(num)d form."
@@ -1095,9 +1045,8 @@ msgstr[1] ""
 msgid "Order"
 msgstr ""
 
-#: venv/lib/python3.12/site-packages/django/forms/formsets.py:499
 msgid "Delete"
-msgstr ""
+msgstr "Delete"
 
 #: venv/lib/python3.12/site-packages/django/forms/models.py:925
 #, python-format
@@ -1650,9 +1599,6 @@ msgstr "Default Physical Asset Growth (%)"
 msgid "Sale Date"
 msgstr "Sale Date"
 
-msgid "Gesamtvermögen"
-msgstr "Total Wealth"
-
 msgid "Stichtag"
 msgstr "Target Date"
 
@@ -1674,9 +1620,6 @@ msgid ""
 msgstr ""
 "Annual inflation rate. Reduces the real purchasing power of your assets over "
 "time."
-
-msgid "Voraussichtliche jährliche Gehaltssteigerung in Prozent."
-msgstr "Expected annual salary increase in percent."
 
 msgid ""
 "Jährliche Rentenanpassung. Standardmäßig oft niedriger als die Inflation."
@@ -1803,188 +1746,416 @@ msgstr ""
 msgid "HELP_REAL_ESTATE_GROWTH"
 msgstr "The expected annual value increase of your real estate properties."
 
+# #-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#
 # New Chart/Widget Descriptions
+#, fuzzy
 msgid "CHART_DESC_NET_WORTH"
 msgstr ""
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
 "This chart projects your total wealth until the end of life. The data comes "
 "from your <b>investments</b>, <b>pensions</b>, <b>real estate</b>, and "
 "<b>physical assets</b>, minus <b>loans</b>. <br><br>“Nominal” shows the raw "
 "numbers of the future. “Real” calculates the purchasing power in today's "
-"Euros (inflation-adjusted)."
+"Euros (inflation-adjusted).\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"CHART_DESC_NET_WORTH\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"CHART_DESC_NET_WORTH"
 
+#, fuzzy
 msgid "CHART_DESC_CASH_FLOW"
 msgstr ""
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
 "Compares monthly income with expenses. Shows whether you have money left at "
 "the end of the year (surplus) or need to use your savings (deficit). "
 "<br><br>Based on the <a href=\"/admin/finance/cashflowsource/\" "
 "target=\"_blank\" class=\"alert-link\">Cash Flows (Income/Expenses)</a> "
-"table."
+"table.\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"CHART_DESC_CASH_FLOW\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"CHART_DESC_CASH_FLOW"
 
+#, fuzzy
 msgid "CHART_DESC_INCOME_EVOLUTION"
 msgstr ""
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
 "Shows the development of your income over decades. Considers salary jumps, "
 "rent increases, and the transition from salary to pension. <br><br>Data "
 "sources: <a href=\"/admin/finance/cashflowsource/\" target=\"_blank\" "
 "class=\"alert-link\">Income</a> and <a href=\"/admin/finance/pension/\" "
-"target=\"_blank\" class=\"alert-link\">Pension Contracts</a>."
+"target=\"_blank\" class=\"alert-link\">Pension Contracts</a>.\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"CHART_DESC_INCOME_EVOLUTION\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"CHART_DESC_INCOME_EVOLUTION"
 
+#, fuzzy
 msgid "CHART_DESC_EXPENSE_EVOLUTION"
 msgstr ""
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
 "Visualizes how your fixed and living costs change due to inflation and the "
 "elimination of loans. <br><br>Data sources: <a href=\"/admin/finance/"
 "cashflowsource/\" target=\"_blank\" class=\"alert-link\">Expenses</a> and <a "
 "href=\"/admin/finance/loan/\" target=\"_blank\" class=\"alert-link\">Loans</"
-"a>."
+"a>.\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"CHART_DESC_EXPENSE_EVOLUTION\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"CHART_DESC_EXPENSE_EVOLUTION"
 
+#, fuzzy
 msgid "CHART_DESC_INFLATION_MONITOR"
 msgstr ""
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
 "A warning system for your purchasing power. It shows how much your current "
 "savings will be worth in the future, based on the inflation rate chosen in "
-"the simulation."
+"the simulation.\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"CHART_DESC_INFLATION_MONITOR\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"CHART_DESC_INFLATION_MONITOR"
 
+#, fuzzy
 msgid "CHART_DESC_BUDGET_PIE"
 msgstr ""
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
 "The percentage distribution of your expenses in the chosen simulation year. "
 "Helps identify cost drivers. <br><br>Adjustable in the <a href=\"/admin/"
 "finance/cashflowsource/\" target=\"_blank\" class=\"alert-link\">Expenses</"
-"a> table."
+"a> table.\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"CHART_DESC_BUDGET_PIE\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"CHART_DESC_BUDGET_PIE"
 
+#, fuzzy
 msgid "CHART_DESC_ASSET_ALLOCATION"
 msgstr ""
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
 "Shows the diversification of your wealth. A balanced mix of liquid assets, "
 "real estate, and physical assets is often safer. <br><br>Data from the <a "
 "href=\"/admin/finance/asset/\" target=\"_blank\" class=\"alert-"
-"link\">Assets</a> table."
+"link\">Assets</a> table.\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"CHART_DESC_ASSET_ALLOCATION\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"CHART_DESC_ASSET_ALLOCATION"
 
+#, fuzzy
 msgid "WIDGET_DESC_UPCOMING_DATES"
 msgstr ""
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
 "An automatic calendar for your finances. Shows when loans expire, insurance "
 "ends, or one-time payments are due. <br><br>Fed from all tables with an end "
-"date."
+"date.\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"WIDGET_DESC_UPCOMING_DATES\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"WIDGET_DESC_UPCOMING_DATES"
 
+#, fuzzy
 msgid "WIDGET_DESC_INCOME_TABLE"
 msgstr ""
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
 "Detailed list of your monthly inflows as of the chosen date. <br><br>Adjust "
 "here: <a href=\"/admin/finance/cashflowsource/\" target=\"_blank\" "
-"class=\"alert-link\">Manage Income</a>."
+"class=\"alert-link\">Manage Income</a>.\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"WIDGET_DESC_INCOME_TABLE\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"WIDGET_DESC_INCOME_TABLE"
 
+#, fuzzy
 msgid "WIDGET_DESC_EXPENSE_TABLE"
 msgstr ""
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
 "Detailed list of your monthly outflows as of the chosen date. <br><br>Adjust "
 "here: <a href=\"/admin/finance/cashflowsource/\" target=\"_blank\" "
-"class=\"alert-link\">Manage Expenses</a>."
+"class=\"alert-link\">Manage Expenses</a>.\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"WIDGET_DESC_EXPENSE_TABLE\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"WIDGET_DESC_EXPENSE_TABLE"
 
+#, fuzzy
 msgid "WIDGET_DESC_ASSET_TABLE"
 msgstr ""
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
 "Inventory of your accounts and portfolios. Shows the simulated status "
 "including the compound interest effect. <br><br>Adjust here: <a href=\"/"
-"admin/finance/asset/\" target=\"_blank\" class=\"alert-link\">Assets</a>."
+"admin/finance/asset/\" target=\"_blank\" class=\"alert-link\">Assets</a>.\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"WIDGET_DESC_ASSET_TABLE\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"WIDGET_DESC_ASSET_TABLE"
 
+#, fuzzy
 msgid "WIDGET_DESC_PENSION_TABLE"
 msgstr ""
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
 "Overview of your retirement provision. Shows guaranteed amounts and current "
 "capital values. <br><br>Adjust here: <a href=\"/admin/finance/pension/\" "
-"target=\"_blank\" class=\"alert-link\">Pension Contracts</a>."
+"target=\"_blank\" class=\"alert-link\">Pension Contracts</a>.\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"WIDGET_DESC_PENSION_TABLE\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"WIDGET_DESC_PENSION_TABLE"
 
+#, fuzzy
 msgid "WIDGET_DESC_EVENT_TABLE"
 msgstr ""
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
 "Special events (inheritance, car purchase, gift) in the chosen simulation "
 "year. <br><br>Adjust here: <a href=\"/admin/finance/onetimeevent/\" "
-"target=\"_blank\" class=\"alert-link\">One-time Events</a>."
+"target=\"_blank\" class=\"alert-link\">One-time Events</a>.\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"WIDGET_DESC_EVENT_TABLE\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"WIDGET_DESC_EVENT_TABLE"
 
+#, fuzzy
 msgid "WIDGET_DESC_LOAN_TABLE"
 msgstr ""
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
 "Overview of your debt load. Shows remaining balance and interest rate as of "
 "the date. <br><br>Adjust here: <a href=\"/admin/finance/loan/\" "
-"target=\"_blank\" class=\"alert-link\">Manage Loans</a>."
+"target=\"_blank\" class=\"alert-link\">Manage Loans</a>.\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"WIDGET_DESC_LOAN_TABLE\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"WIDGET_DESC_LOAN_TABLE"
 
+#, fuzzy
 msgid "CHART_DESC_LOAN_EVOLUTION"
 msgstr ""
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
 "Visualizes how quickly your debts shrink through repayment. Helps in "
 "planning unscheduled repayments. <br><br>Data source: <a href=\"/admin/"
-"finance/loan/\" target=\"_blank\" class=\"alert-link\">Loans</a>."
+"finance/loan/\" target=\"_blank\" class=\"alert-link\">Loans</a>.\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"CHART_DESC_LOAN_EVOLUTION\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"CHART_DESC_LOAN_EVOLUTION"
 
+#, fuzzy
 msgid "CHART_DESC_REAL_ESTATE"
 msgstr ""
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
 "Shows the value development of your real estate. Here you see details on "
-"value increases that often get lost in the large overall chart."
+"value increases that often get lost in the large overall chart.\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"CHART_DESC_REAL_ESTATE\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"CHART_DESC_REAL_ESTATE"
 
+#, fuzzy
 msgid "CHART_DESC_PHYSICAL_ASSETS"
 msgstr ""
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
 "Visualizes the value progression of your physical assets (e.g., gold, cars). "
-"Due to its own scale, even smaller fluctuations are clearly visible here."
+"Due to its own scale, even smaller fluctuations are clearly visible here.\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"CHART_DESC_PHYSICAL_ASSETS\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"CHART_DESC_PHYSICAL_ASSETS"
 
+#, fuzzy
 msgid "CHART_DESC_LIQUID_PENSION"
 msgstr ""
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
 "Compares your available cash/portfolio balance with your accumulated pension "
-"capital over time."
+"capital over time.\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"CHART_DESC_LIQUID_PENSION\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"CHART_DESC_LIQUID_PENSION"
 
+#, fuzzy
 msgid "SUMMARY_DESC_ASSETS"
 msgstr ""
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
 "Sum of all your liquid capital (accounts, stocks, cash) as of the chosen "
 "date. <br><br>Managed in <a href=\"/admin/finance/asset/\" target=\"_blank\" "
-"class=\"alert-link\">Assets</a>."
+"class=\"alert-link\">Assets</a>.\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"SUMMARY_DESC_ASSETS\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"SUMMARY_DESC_ASSETS"
 
+#, fuzzy
 msgid "SUMMARY_DESC_INCOME"
 msgstr ""
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
 "Your total monthly net income (salary, rental income, etc.). <br><br>Managed "
 "in <a href=\"/admin/finance/cashflowsource/\" target=\"_blank\" "
-"class=\"alert-link\">Cash Flows (Income)</a>."
+"class=\"alert-link\">Cash Flows (Income)</a>.\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"SUMMARY_DESC_INCOME\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"SUMMARY_DESC_INCOME"
 
+#, fuzzy
 msgid "SUMMARY_DESC_EXPENSES"
 msgstr ""
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
 "Your total monthly expenses including simulated inflation. <br><br>Managed "
 "in <a href=\"/admin/finance/cashflowsource/\" target=\"_blank\" "
-"class=\"alert-link\">Cash Flows (Expenses)</a>."
+"class=\"alert-link\">Cash Flows (Expenses)</a>.\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"SUMMARY_DESC_EXPENSES\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"SUMMARY_DESC_EXPENSES"
 
+#, fuzzy
 msgid "SUMMARY_DESC_PENSION"
 msgstr ""
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
 "Current present value or surrender value of all your pension entitlements. "
 "<br><br>Managed in <a href=\"/admin/finance/pension/\" target=\"_blank\" "
-"class=\"alert-link\">Pension Contracts</a>."
+"class=\"alert-link\">Pension Contracts</a>.\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"SUMMARY_DESC_PENSION\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"SUMMARY_DESC_PENSION"
 
+#, fuzzy
 msgid "SUMMARY_DESC_TARGET_PENSION"
 msgstr ""
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
 "The sum of monthly pensions you expect nominally (without inflation) "
-"according to your contracts. Your target value."
+"according to your contracts. Your target value.\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"SUMMARY_DESC_TARGET_PENSION\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"SUMMARY_DESC_TARGET_PENSION"
 
+#, fuzzy
 msgid "SUMMARY_DESC_CURRENT_PENSION"
 msgstr ""
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
 "The monthly pension you actually receive according to the simulation as of "
-"the date (inflation-adjusted)."
+"the date (inflation-adjusted).\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"SUMMARY_DESC_CURRENT_PENSION\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"SUMMARY_DESC_CURRENT_PENSION"
 
+#, fuzzy
 msgid "SUMMARY_DESC_PHYSICAL_ASSETS"
 msgstr ""
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
 "Total value of your physical assets such as vehicles, gold, or collections. "
 "<br><br>Managed in <a href=\"/admin/finance/physicalasset/\" "
-"target=\"_blank\" class=\"alert-link\">Physical Assets</a>."
+"target=\"_blank\" class=\"alert-link\">Physical Assets</a>.\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"SUMMARY_DESC_PHYSICAL_ASSETS\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"SUMMARY_DESC_PHYSICAL_ASSETS"
 
+#, fuzzy
 msgid "SUMMARY_DESC_REAL_ESTATE"
 msgstr ""
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
 "Market value of your real estate as of the chosen date. <br><br>Managed in "
 "<a href=\"/admin/finance/realestate/\" target=\"_blank\" class=\"alert-"
-"link\">Real Estate</a>."
+"link\">Real Estate</a>.\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"SUMMARY_DESC_REAL_ESTATE\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"SUMMARY_DESC_REAL_ESTATE"
 
+#, fuzzy
 msgid "SUMMARY_DESC_TOTAL_WEALTH"
 msgstr ""
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
 "Your net total wealth: Sum of all assets (liquid, pensions, real estate, "
-"physical assets) minus all loans."
+"physical assets) minus all loans.\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"SUMMARY_DESC_TOTAL_WEALTH\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"SUMMARY_DESC_TOTAL_WEALTH"
 
+#, fuzzy
 msgid "SUMMARY_DESC_DEBTS"
 msgstr ""
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
 "Your entire debt load (remaining balance) as of the chosen date. "
 "<br><br>Managed in <a href=\"/admin/finance/loan/\" target=\"_blank\" "
-"class=\"alert-link\">Loans</a>."
+"class=\"alert-link\">Loans</a>.\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"SUMMARY_DESC_DEBTS\n"
+"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
+"SUMMARY_DESC_DEBTS"
 
+# #-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#
 # Core Form Translations
+msgid "Email Address"
+msgstr "Email Address"
+
+msgid "Follow System Night Mode Settings"
+msgstr "Follow System Night Mode Settings"
+
+# MASTER SYNC - CLEAN LOCALIZATION
 msgid "First Name"
 msgstr "First Name"
 
 msgid "Last Name"
 msgstr "Last Name"
 
-msgid "Email Address"
-msgstr "Email Address"
+msgid "Status"
+msgstr "Status"
 
-msgid "Follow System Night Mode Settings"
-msgstr "Follow System Night Mode Settings"
+msgid "Action"
+msgstr "Action"
+
+msgid "Amount (€)"
+msgstr "Amount (€)"
+
+msgid "Target Name"
+msgstr "Target Name"
+
+msgid "Search Terms"
+msgstr "Search Terms"
+
+msgid "Transaction Text"
+msgstr "Transaction Text"
+
+msgid "Assign Category"
+msgstr "Assign Category"
+
+msgid "Uploading file..."
+msgstr "Uploading file..."
+
+msgid "Please wait, the data is being transferred to the server."
+msgstr "Please wait, the data is being transferred to the server."
+
+msgid "Edit"
+msgstr "Edit"
+
+msgid "Really delete filter?"
+msgstr "Really delete filter?"
+
+msgid "Filter added successfully."
+msgstr "Filter added successfully."
+
+msgid "Filter updated successfully."
+msgstr "Filter updated successfully."
+
+msgid "Filter deleted."
+msgstr "Filter deleted."
+
+msgid "Import batch deleted."
+msgstr "Import batch deleted."
+
+msgid "Profile updated successfully!"
+msgstr "Profile updated successfully!"
+
+msgid "Automatically categorized by AI"
+msgstr "Automatically categorized by AI"
+
+msgid "Learned from your memory"
+msgstr "Learned from your memory"
+
+msgid "Duplicate selection & increment date"
+msgstr "Duplicate selection & increment date"

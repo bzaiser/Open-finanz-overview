@@ -326,7 +326,7 @@ class ExcelParserService:
                             cat = cat_map_lower.get(slug)
                             if cat:
                                 group['category'] = cat
-                                group['ai_reasoning'] = res.get('reasoning', _("Automatisch von KI kategorisiert"))
+                                group['ai_reasoning'] = res.get('reasoning', _("Automatically categorized by AI"))
                                 group['ai_confidence'] = res.get('confidence', 0.8)
                                 if 'is_income' in res:
                                     group['is_income'] = res['is_income']
