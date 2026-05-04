@@ -125,22 +125,17 @@ msgstr "Max. Simulationsalter"
 
 #: core/models.py:55
 msgid "Default Inflation Rate (%)"
-msgstr "Standard-Inflationsrate (%)"
+msgstr "Inflation (%)"
 
-#: core/models.py:56
 msgid "Default Salary Increase (%)"
-msgstr "Standard-Gehaltssteigerung (%)"
+msgstr "Gehaltssteigerung (%)"
 
-#: core/models.py:57
 msgid "Default Pension Increase (%)"
-msgstr "Standard-Rentensteigerung (%)"
+msgstr "Rentenanpassung (%)"
 
-#: core/models.py:58
-msgid "Investment Return Offset (%)"
-msgstr "Anlage-Rendite Offset (%)"
+msgid "Investment Return Buffer (%)"
+msgstr "Zusatz-Rendite (%)"
 
-#: core/models.py:59
-#| msgid "Real Estate (%)"
 msgid "Default Real Estate Growth (%)"
 msgstr "Immobilien (%)"
 
@@ -2798,22 +2793,6 @@ msgstr "Sim. Startdatum"
 
 msgid "Earliest date to show in charts. Leave empty for automatic (based on oldest snapshot or current year)."
 msgstr "Frühestes Datum, das in den Charts angezeigt wird. Leer lassen für automatische Erkennung (basierend auf ältestem Snapshot oder aktuellem Jahr)."
-
-msgid "Investment Return Buffer (%)"
-msgstr "Zusatz-Rendite (%)"
-
-msgid "Interest Buffer (%)"
-msgstr "Zusatz-Rendite (%)"
-
-msgid "Pension Increase (%)"
-msgstr "Rentenanpassung (%)"
-
-msgid "Inflation (%)"
-msgstr "Inflation (%)"
-
-
-msgid "Real Estate (%)"
-msgstr "Immobilien (%)"
 
 msgid "The anchor date for your simulation. All calculations for interest, pension phases, and purchasing power losses start from this day."
 msgstr "Das Ankerdatum für deine Simulation. Alle Berechnungen für Zinsen, Rentenphasen und Kaufkraftverluste starten ab diesem Tag."

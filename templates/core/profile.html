@@ -115,23 +115,23 @@
                         
                         <div class="row g-2">
                             <div class="col-md-6 mb-1">
-                                <label class="form-label fw-bold d-block mb-0" style="font-size: 0.7rem;">{% trans "Inflation (%)" %}</label>
+                                <label class="form-label fw-bold d-block mb-0" style="font-size: 0.7rem;">{{ form.inflation_rate.label }}</label>
                                 {{ form.inflation_rate }}
                             </div>
                             <div class="col-md-6 mb-1">
-                                <label class="form-label fw-bold d-block mb-0" style="font-size: 0.7rem;">{% trans "Salary Increase (%)" %}</label>
+                                <label class="form-label fw-bold d-block mb-0" style="font-size: 0.7rem;">{{ form.salary_increase.label }}</label>
                                 {{ form.salary_increase }}
                             </div>
                             <div class="col-md-6 mb-1">
-                                <label class="form-label fw-bold d-block mb-0" style="font-size: 0.7rem;">{% trans "Pension Increase (%)" %}</label>
+                                <label class="form-label fw-bold d-block mb-0" style="font-size: 0.7rem;">{{ form.pension_increase.label }}</label>
                                 {{ form.pension_increase }}
                             </div>
                             <div class="col-md-6 mb-2">
-                                <label class="form-label fw-bold d-block mb-0" style="font-size: 0.7rem;">{% trans "Interest Buffer (%)" %}</label>
+                                <label class="form-label fw-bold d-block mb-0" style="font-size: 0.7rem;">{{ form.investment_return_offset.label }}</label>
                                 {{ form.investment_return_offset }}
                             </div>
                             <div class="col-md-6 mb-2">
-                                <label class="form-label fw-bold d-block mb-0" style="font-size: 0.7rem;">{% trans "Real Estate (%)" %}</label>
+                                <label class="form-label fw-bold d-block mb-0" style="font-size: 0.7rem;">{{ form.real_estate_growth_rate.label }}</label>
                                 {{ form.real_estate_growth_rate }}
                             </div>
                         </div>
