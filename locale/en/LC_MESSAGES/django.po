@@ -202,36 +202,6 @@ msgstr "Matches Plan"
 #: templates/finance/partials/import_row.html:12
 msgid "Ignorieren"
 msgstr "Ignore"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# #-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#
-# #-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#
-# #-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#
-# #-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#
-# New Chart/Widget Descriptions
 msgid "CHART_DESC_NET_WORTH"
 msgstr "This chart projects your total wealth until the end of life, including assets, pensions, and real estate, minus debts."
 
