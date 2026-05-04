@@ -24,7 +24,8 @@ class BaseOwnedModelAdmin(admin.ModelAdmin):
         return exclude
 
     def save_model(self, request, obj, form, change):
-        if getattr(obj, 'user', None) is None:
+        # Auto-assign user only for regular users (who don't see the field)
+        if not request.user.is_superuser and getattr(obj, 'user', None) is None:
             obj.user = request.user
         
         # Save snapshot if value changed
@@ -36,7 +37,7 @@ class BaseOwnedModelAdmin(admin.ModelAdmin):
                 new_val = getattr(obj, val_field)
                 if old_val != new_val:
                     AssetSnapshot.objects.update_or_create(
-                        user=request.user,
+                        user=obj.user, # Use the object's user
                         content_type=ContentType.objects.get_for_model(obj),
                         object_id=obj.pk,
                         date=timezone.now().date(),
@@ -50,7 +51,7 @@ class BaseOwnedModelAdmin(admin.ModelAdmin):
         # Capture snapshot for new objects after they have a PK
         if val_field and not change:
             AssetSnapshot.objects.update_or_create(
-                user=request.user,
+                user=obj.user, # Use the object's user
                 content_type=ContentType.objects.get_for_model(obj),
                 object_id=obj.pk,
                 date=timezone.now().date(),
@@ -58,11 +59,11 @@ class BaseOwnedModelAdmin(admin.ModelAdmin):
             )
 
     def save_formset(self, request, form, formset, change):
-        """Ensure inlines (like AssetSnapshots) get the correct user."""
+        """Ensure inlines (like AssetSnapshots) get the correct user from the parent."""
         instances = formset.save(commit=False)
         for instance in instances:
-            if hasattr(instance, 'user') and not instance.user_id:
-                instance.user = request.user
+            if hasattr(instance, 'user') and not getattr(instance, 'user_id', None):
+                instance.user = formset.instance.user
             instance.save()
         formset.save_m2m()
 
