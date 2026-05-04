@@ -2096,34 +2096,34 @@ msgid "CHART_DESC_LIQUID_PENSION"
 msgstr "CHART_DESC_LIQUID_PENSION"
 
 msgid "SUMMARY_DESC_ASSETS"
-msgstr "SUMMARY_DESC_ASSETS"
+msgstr "Total liquid capital (accounts, stocks, cash) at the selected date."
 
 msgid "SUMMARY_DESC_INCOME"
-msgstr "SUMMARY_DESC_INCOME"
+msgstr "Total monthly net income (salary, rent, etc.)."
 
 msgid "SUMMARY_DESC_EXPENSES"
-msgstr "SUMMARY_DESC_EXPENSES"
+msgstr "Total monthly expenses including simulated inflation."
 
 msgid "SUMMARY_DESC_PENSION"
-msgstr "SUMMARY_DESC_PENSION"
+msgstr "Current present value or surrender value of all your pension entitlements."
 
 msgid "SUMMARY_DESC_TARGET_PENSION"
-msgstr "SUMMARY_DESC_TARGET_PENSION"
+msgstr "Sum of monthly pensions you expect nominally (without inflation) based on your contracts."
 
 msgid "SUMMARY_DESC_CURRENT_PENSION"
-msgstr "SUMMARY_DESC_CURRENT_PENSION"
+msgstr "The monthly pension you actually receive according to the simulation at the reference date (inflation-adjusted)."
 
 msgid "SUMMARY_DESC_PHYSICAL_ASSETS"
-msgstr "SUMMARY_DESC_PHYSICAL_ASSETS"
+msgstr "Total value of your physical assets like vehicles, gold, or collections."
 
 msgid "SUMMARY_DESC_REAL_ESTATE"
-msgstr "SUMMARY_DESC_REAL_ESTATE"
+msgstr "Market value of your real estate at the selected date."
 
 msgid "SUMMARY_DESC_TOTAL_WEALTH"
-msgstr "SUMMARY_DESC_TOTAL_WEALTH"
+msgstr "Your net worth: sum of all assets minus all debts."
 
 msgid "SUMMARY_DESC_DEBTS"
-msgstr "SUMMARY_DESC_DEBTS"
+msgstr "Your total debt load (remaining balance) at the selected date."
 
 msgid "Follow System Night Mode Settings"
 msgstr "Follow System Night Mode Settings"

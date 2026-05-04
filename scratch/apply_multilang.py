@@ -49,6 +49,16 @@ translations = {
         'Cancel': 'Cancel',
         'Save': 'Save',
         'Save changes': 'Save changes',
+        'SUMMARY_DESC_ASSETS': 'Total liquid capital (accounts, stocks, cash) at the selected date.',
+        'SUMMARY_DESC_INCOME': 'Total monthly net income (salary, rent, etc.).',
+        'SUMMARY_DESC_EXPENSES': 'Total monthly expenses including simulated inflation.',
+        'SUMMARY_DESC_PENSION': 'Current present value or surrender value of all your pension entitlements.',
+        'SUMMARY_DESC_TARGET_PENSION': 'Sum of monthly pensions you expect nominally (without inflation) based on your contracts.',
+        'SUMMARY_DESC_CURRENT_PENSION': 'The monthly pension you actually receive according to the simulation at the reference date (inflation-adjusted).',
+        'SUMMARY_DESC_PHYSICAL_ASSETS': 'Total value of your physical assets like vehicles, gold, or collections.',
+        'SUMMARY_DESC_REAL_ESTATE': 'Market value of your real estate at the selected date.',
+        'SUMMARY_DESC_TOTAL_WEALTH': 'Your net worth: sum of all assets minus all debts.',
+        'SUMMARY_DESC_DEBTS': 'Your total debt load (remaining balance) at the selected date.',
     },
     'fr': {
         'First Name': 'Prénom',
@@ -70,11 +80,6 @@ translations = {
         'Cancel': 'Annuler',
         'Save': 'Enregistrer',
         'Save changes': 'Enregistrer les modifications',
-        'Filter added successfully.': 'Filtre ajouté avec succès.',
-        'Filter updated successfully.': 'Filtre mis à jour avec succès.',
-        'Filter deleted.': 'Filtre supprimé.',
-        'Automatically categorized by AI': 'Catégorisé automatisch par l\'IA',
-        'Learned from your memory': 'Appris de votre mémoire',
     },
     'it': {
         'First Name': 'Nome',
@@ -96,11 +101,6 @@ translations = {
         'Cancel': 'Annulla',
         'Save': 'Salva',
         'Save changes': 'Salva modifiche',
-        'Filter added successfully.': 'Filtro aggiunto con successo.',
-        'Filter updated successfully.': 'Filtro aggiornato con successo.',
-        'Filter deleted.': 'Filtro eliminato.',
-        'Automatically categorized by AI': 'Categorizzato automaticamente dall\'IA',
-        'Learned from your memory': 'Appreso dalla tua memoria',
     },
     'es': {
         'First Name': 'Nombre',
@@ -122,11 +122,6 @@ translations = {
         'Cancel': 'Cancelar',
         'Save': 'Guardar',
         'Save changes': 'Guardar cambios',
-        'Filter added successfully.': 'Filtro añadido con éxito.',
-        'Filter updated successfully.': 'Filtro actualizado con éxito.',
-        'Filter deleted.': 'Filtro eliminado.',
-        'Automatically categorized by AI': 'Categorizado automáticamente por la IA',
-        'Learned from your memory': 'Aprendido de tu memoria',
     }
 }
 
@@ -152,7 +147,6 @@ def apply_translations():
                 full_msgid = msgid_match.group(1)
                 raw_msgid = "".join(re.findall(r'"(.*)"', full_msgid))
                 
-                # IMPORTANT: Skip the header (empty msgid)
                 if not raw_msgid:
                     new_entries.append(entry.strip())
                     continue
@@ -161,7 +155,6 @@ def apply_translations():
                     translated = translations[lang][raw_msgid]
                     entry = re.sub(r'msgstr\s+.*', f'msgstr "{escape_po(translated)}"', entry, flags=re.DOTALL)
                 elif lang == 'en':
-                    # Fallback for English: msgstr = msgid
                     entry = re.sub(r'msgstr\s+.*', f'msgstr {full_msgid.strip()}', entry, flags=re.DOTALL)
             
             new_entries.append(entry.strip())
