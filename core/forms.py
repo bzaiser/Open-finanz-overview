@@ -9,9 +9,9 @@ class CustomUserCreationForm(UserCreationForm):
         fields = ('username', 'email')
 
 class UserProfileForm(forms.ModelForm):
-    first_name = forms.CharField(label=_("Vorname"), required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    last_name = forms.CharField(label=_("Nachname"), required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    email = forms.EmailField(label=_("E-Mail-Adresse"), required=False, widget=forms.EmailInput(attrs={'class': 'form-control'}))
+    first_name = forms.CharField(label=_("First Name"), required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    last_name = forms.CharField(label=_("Last Name"), required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    email = forms.EmailField(label=_("Email Address"), required=False, widget=forms.EmailInput(attrs={'class': 'form-control'}))
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -46,7 +46,7 @@ class UserProfileForm(forms.ModelForm):
     
     auto_night_mode = forms.BooleanField(
         required=False,
-        label=_("Nachtmodus Einstellungen vom System übernehmen"),
+        label=_("Follow System Night Mode Settings"),
         widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
     )
     
