@@ -36,6 +36,9 @@ msgstr "Die jährliche Anpassung deiner Rentenbezüge. In Deutschland orientiert
 msgid "HELP_INTEREST_BUFFER"
 msgstr "Ein globaler Rendite-Aufschlag auf alle deine liquiden Mittel (Konten und Depots). Wenn du z.B. bei einem Konto 1% Zinsen hast und hier 2% einträgst, wird dieses Konto mit 3% verzinst. Ideal für Pauschal-Szenarien."
 
+msgid "HELP_REAL_ESTATE_GROWTH"
+msgstr "Die erwartete jährliche Wertsteigerung deiner Immobilien."
+
 #: core/forms.py:12
 msgid "Vorname"
 msgstr ""
