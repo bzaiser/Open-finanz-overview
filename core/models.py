@@ -50,6 +50,7 @@ class UserProfile(models.Model):
         ('it', 'Italiano'),
     ])
     simulation_max_age = models.PositiveIntegerField(_("Simulation Max Age"), default=90)
+    simulation_start_date = models.DateField(_("Simulation Start Date"), blank=True, null=True, help_text=_("Earliest date to show in charts. Leave empty for automatic (based on oldest snapshot or current year)."))
     
     # Simulation Parameters (Defaults)
     inflation_rate = models.DecimalField(_("Default Inflation Rate (%)"), max_digits=5, decimal_places=2, default=2.0)

@@ -2789,3 +2789,12 @@ msgstr "Liquidität & Vorsorge"
 
 msgid "Vergleicht dein verfügbares Bargeld/Depotguthaben mit deinem angesparten Rentenkapital über die Zeit."
 msgstr "Vergleicht dein verfügbares Bargeld/Depotguthaben mit deinem angesparten Rentenkapital über die Zeit."
+
+msgid "Simulation Start Date"
+msgstr "Simulations-Startdatum"
+
+msgid "Sim. Start Date"
+msgstr "Sim. Startdatum"
+
+msgid "Earliest date to show in charts. Leave empty for automatic (based on oldest snapshot or current year)."
+msgstr "Frühestes Datum, das in den Charts angezeigt wird. Leer lassen für automatische Erkennung (basierend auf ältestem Snapshot oder aktuellem Jahr)."

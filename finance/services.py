@@ -38,10 +38,19 @@ class SimulationEngine:
     def get_simulation_start_date(self):
         """
         Finds the earliest relevant date across all models for the user.
-        Always returns at least the 1st of the current month.
+        If a manual start date is set in the profile, it takes precedence.
         """
+        if self.profile.simulation_start_date:
+            return self.profile.simulation_start_date.replace(day=1)
+
         today = datetime.date.today().replace(day=1)
         dates = [today]
+
+        # Check Asset Snapshots (Historical Data)
+        from .models import AssetSnapshot
+        snapshot_start = AssetSnapshot.objects.filter(user=self.user).order_by('date').first()
+        if snapshot_start:
+            dates.append(snapshot_start.date)
 
         # Check Cash Flows
         cf_start = self.user.cash_flows.filter(start_date__isnull=False).order_by('start_date').first()
