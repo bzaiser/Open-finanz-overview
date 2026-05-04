@@ -21,8 +21,8 @@
         {% if t.has_conflict %}
             <div class="d-inline-flex flex-column align-items-end me-2">
                 <span class="badge bg-danger text-white mb-1" 
-                      title="{% trans 'Konflikt: Ein Eintrag für dieses Jahr existiert bereits im Plan!' %}">
-                    <i class="bi bi-exclamation-triangle-fill"></i> {% trans "Plan-Konflikt" %}
+                      title="{% trans 'Conflict: An entry for this year already exists in the plan!' %}">
+                    <i class="bi bi-exclamation-triangle-fill"></i> {% trans "Plan Conflict" %}
                 </span>
                 <div class="form-check form-switch small">
                     <input class="form-check-input" type="checkbox" role="switch" 
@@ -31,7 +31,7 @@
                            hx-get="{% url 'finance:confirm_transaction' t.id %}"
                            hx-vals='js:{"field": "is_confirmed", "value": event.target.checked ? "true" : "false"}'
                            hx-swap="none">
-                    <label class="form-check-label text-muted x-small" for="confirm-{{ t.id }}">{% trans "Überschreiben?" %}</label>
+                    <label class="form-check-label text-muted x-small" for="confirm-{{ t.id }}">{% trans "Overwrite?" %}</label>
                 </div>
             </div>
         {% elif t.planned_amount and t.planned_amount != t.amount %}
@@ -66,7 +66,7 @@
                     hx-on::after-request="if(event.detail.successful) this.closest('tr').remove()"
                     hx-indicator="closest tr"
                     hx-vals='{"field": "category", "value": ""}'
-                    title="{% trans 'Zurück nach oben verschieben' %}">
+                    title="{% trans 'Move back up' %}">
                 <i class="bi bi-arrow-90deg-up"></i>
             </button>
             
@@ -78,8 +78,8 @@
                     hx-on::after-request="if(event.detail.successful) this.closest('tr').remove()"
                     hx-indicator="closest tr"
                     hx-vals='{"field": "is_ignored", "value": "true"}'
-                    hx-confirm="{% trans 'Diesen zusammengefassten Posten wirklich verwerten?' %}"
-                    title="{% trans 'Löschen' %}">
+                    hx-confirm="{% trans 'Really discard this summarized item?' %}"
+                    title="{% trans 'Delete' %}">
                 <i class="bi bi-trash"></i>
             </button>
         </div>

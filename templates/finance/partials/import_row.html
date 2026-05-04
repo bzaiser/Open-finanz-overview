@@ -66,7 +66,7 @@
                     hx-indicator="closest tr"
                     name="value"
                     hx-vals='{"field": "category"}'>
-                <option value="">{% trans "Wähle Kategorie..." %}</option>
+                <option value="">{% trans "Select category..." %}</option>
                 {% for cat in categories %}
                     <option value="{{ cat.id }}" {% if t.category == cat %}selected{% endif %}>{{ cat.name }}</option>
                 {% endfor %}

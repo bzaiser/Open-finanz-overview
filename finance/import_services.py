@@ -255,7 +255,7 @@ class ExcelParserService:
                     if cleaned in all_memories:
                         mem = all_memories[cleaned]
                         g['category'] = mem.category
-                        g['ai_reasoning'] = _("Aus deinem Gedächtnis gelernt")
+                        g['ai_reasoning'] = _("Learned from your memory")
                         g['ai_confidence'] = 1.0
                         memory_matches += 1
                         # Increment usage count (background)

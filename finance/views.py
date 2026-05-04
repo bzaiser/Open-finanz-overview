@@ -58,119 +58,119 @@ from decimal import Decimal
 AVAILABLE_CHARTS = {
     'net_worth_chart': {
         'title': _('Net Worth Forecast'), 'type': 'line', 'default_width': 12, 'default_height': 'medium',
-        'description': _('Diese Grafik projiziert dein Gesamtvermögen bis zum Lebensende. Die Daten stammen aus deinen <b>Anlagen</b>, <b>Renten</b>, <b>Immobilien</b> und <b>Sachwerten</b>, abzüglich der <b>Kredite</b>. <br><br>„Nominal“ zeigt die nackten Zahlen der Zukunft. „Real“ berechnet die Kaufkraft in heutigen Euros (inflationsbereinigt).')
+        'description': _('CHART_DESC_NET_WORTH')
     },
     'cashflow_chart': {
         'title': _('Cash Flow Analysis'), 'type': 'bar', 'default_width': 6, 'default_height': 'small',
-        'description': _('Vergleicht monatliche Einnahmen mit Ausgaben. Zeigt, ob du am Ende des Jahres Geld übrig hast (Überschuss) oder an dein Erspartes gehen musst (Defizit). <br><br>Basis ist die Tabelle <a href="/admin/finance/cashflowsource/" target="_blank" class="alert-link">Zahlungsströme (Einnahmen/Ausgaben)</a>.')
+        'description': _('CHART_DESC_CASH_FLOW')
     },
     'income_evolution_chart': {
         'title': _('Income & One-Time Effects'), 'type': 'bar', 'default_width': 12, 'default_height': 'medium',
-        'description': _('Zeigt die Entwicklung deiner Einnahmen über Jahrzehnte. Berücksichtigt Gehaltssprünge, Mietsteigerungen und den Übergang von Gehalt zu Rente. <br><br>Datenquellen: <a href="/admin/finance/cashflowsource/" target="_blank" class="alert-link">Einnahmen</a> und <a href="/admin/finance/pension/" target="_blank" class="alert-link">Rentenverträge</a>.')
+        'description': _('CHART_DESC_INCOME_EVOLUTION')
     },
     'expense_evolution_chart': {
         'title': _('Expense Evolution'), 'type': 'line', 'default_width': 6, 'default_height': 'small',
-        'description': _('Visualisiert, wie sich deine Fixkosten und Lebenshaltungskosten durch Inflation und den Wegfall von Krediten verändern. <br><br>Datenquellen: <a href="/admin/finance/cashflowsource/" target="_blank" class="alert-link">Ausgaben</a> und <a href="/admin/finance/loan/" target="_blank" class="alert-link">Kredite</a>.')
+        'description': _('CHART_DESC_EXPENSE_EVOLUTION')
     },
     'inflation_monitor_chart': {
         'title': _('Inflation Monitor'), 'type': 'line', 'default_width': 6, 'default_height': 'small',
-        'description': _('Ein Warnsystem für deine Kaufkraft. Es zeigt, wie viel deine heutige Sparsumme in der Zukunft noch wert ist, basierend auf der in der Simulation gewählten Inflationsrate.')
+        'description': _('CHART_DESC_INFLATION_MONITOR')
     },
     'budget_pie_chart': {
         'title': _('Monthly Budget'), 'type': 'pie', 'default_width': 6, 'default_height': 'small',
-        'description': _('Die prozentuale Verteilung deiner Ausgaben im gewählten Simulationsjahr. Hilft dabei, Kostentreiber zu identifizieren. <br><br>Anpassbar in der Tabelle <a href="/admin/finance/cashflowsource/" target="_blank" class="alert-link">Ausgaben</a>.')
+        'description': _('CHART_DESC_BUDGET_PIE')
     },
     'asset_allocation_chart': {
         'title': _('Asset Allocation'), 'type': 'doughnut', 'default_width': 6, 'default_height': 'small',
-        'description': _('Zeigt die Diversifikation deines Vermögens. Ein ausgewogener Mix aus liquiden Mitteln, Immobilien und Sachwerten ist oft sicherer. <br><br>Daten aus der Tabelle <a href="/admin/finance/asset/" target="_blank" class="alert-link">Vermögenswerte</a>.')
+        'description': _('CHART_DESC_ASSET_ALLOCATION')
     },
     'upcoming_dates_widget': {
         'title': _('Important Dates & Deadlines'), 'type': 'table', 'default_width': 12, 'default_height': 'small',
-        'description': _('Ein automatischer Kalender für deine Finanzen. Zeigt, wann Kredite auslaufen, Versicherungen enden oder Einmalzahlungen fällig werden. <br><br>Speist sich aus allen Tabellen mit Enddatum.')
+        'description': _('WIDGET_DESC_UPCOMING_DATES')
     },
     'income_table_widget': {
         'title': _('Income Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small',
-        'description': _('Detaillierte Liste deiner monatlichen Zuflüsse zum gewählten Stichtag. <br><br>Hier anpassen: <a href="/admin/finance/cashflowsource/" target="_blank" class="alert-link">Einnahmen verwalten</a>.')
+        'description': _('WIDGET_DESC_INCOME_TABLE')
     },
 
     'expense_table_widget': {
         'title': _('Expense Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small',
-        'description': _('Detaillierte Liste deiner monatlichen Abflüsse zum gewählten Stichtag. <br><br>Hier anpassen: <a href="/admin/finance/cashflowsource/" target="_blank" class="alert-link">Ausgaben verwalten</a>.')
+        'description': _('WIDGET_DESC_EXPENSE_TABLE')
     },
     'asset_table_widget': {
         'title': _('Asset Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small',
-        'description': _('Inventur deiner Konten und Depots. Zeigt den simulierten Stand inklusive Zinseszinseffekt. <br><br>Hier anpassen: <a href="/admin/finance/asset/" target="_blank" class="alert-link">Vermögenswerte</a>.')
+        'description': _('WIDGET_DESC_ASSET_TABLE')
     },
     'pension_table_widget': {
         'title': _('Pension Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small',
-        'description': _('Übersicht deiner Altersvorsorge. Zeigt garantierte Beträge und aktuelle Kapitalwerte. <br><br>Hier anpassen: <a href="/admin/finance/pension/" target="_blank" class="alert-link">Rentenverträge</a>.')
+        'description': _('WIDGET_DESC_PENSION_TABLE')
     },
     'event_table_widget': {
         'title': _('One-Time Event Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small',
-        'description': _('Besondere Ereignisse (Erbe, Autokauf, Schenkung) im gewählten Simulationsjahr. <br><br>Hier anpassen: <a href="/admin/finance/onetimeevent/" target="_blank" class="alert-link">Einmalereignisse</a>.')
+        'description': _('WIDGET_DESC_EVENT_TABLE')
     },
     'loan_table_widget': {
         'title': _('Loan Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small',
-        'description': _('Übersicht deiner Schuldenlast. Zeigt Restsaldo und Zinssatz zum Stichtag. <br><br>Hier anpassen: <a href="/admin/finance/loan/" target="_blank" class="alert-link">Kredite verwalten</a>.')
+        'description': _('WIDGET_DESC_LOAN_TABLE')
     },
     'loan_evolution_chart': {
         'title': _('Loan Balance Trend'), 'type': 'line', 'default_width': 12, 'default_height': 'medium',
-        'description': _('Visualisiert, wie schnell deine Schulden durch Tilgung schrumpfen. Hilft bei der Planung von Sondertilgungen. <br><br>Datenquelle: <a href="/admin/finance/loan/" target="_blank" class="alert-link">Kredite</a>.')
+        'description': _('CHART_DESC_LOAN_EVOLUTION')
     },
     'real_estate_forecast_chart': {
         'title': _('Real Estate Trend'), 'type': 'line', 'default_width': 6, 'default_height': 'small',
-        'description': _('Zeigt die Wertentwicklung deiner Immobilien. Hier siehst du Details zu Wertsteigerungen, die im großen Gesamt-Chart oft untergehen.')
+        'description': _('CHART_DESC_REAL_ESTATE')
     },
     'physical_asset_forecast_chart': {
         'title': _('Physical Assets Trend'), 'type': 'line', 'default_width': 6, 'default_height': 'small',
-        'description': _('Visualisiert den Wertverlauf deiner Sachwerte (z.B. Gold, Autos). Durch den eigenen Maßstab sind hier auch kleinere Schwankungen gut sichtbar.')
+        'description': _('CHART_DESC_PHYSICAL_ASSETS')
     },
     'liquid_pension_forecast_chart': {
         'title': _('Liquidity & Pension'), 'type': 'line', 'default_width': 6, 'default_height': 'small',
-        'description': _('Vergleicht dein verfügbares Bargeld/Depotguthaben mit deinem angesparten Rentenkapital über die Zeit.')
+        'description': _('CHART_DESC_LIQUID_PENSION')
     },
 }
 
 SUMMARY_WIDGETS = {
     'current_assets': {
         'title': _('Current Assets'), 'default_bg': '#0d6efd', 'default_text': '#ffffff', 'icon': 'bi-wallet2',
-        'description': _('Summe deines gesamten liquiden Kapitals (Konten, Aktien, Cash) zum gewählten Datum. <br><br>Verwaltet in <a href="/admin/finance/asset/" target="_blank" class="alert-link">Vermögenswerte</a>.')
+        'description': _('SUMMARY_DESC_ASSETS')
     },
     'monthly_income': {
         'title': _('Monthly Income'), 'default_bg': '#198754', 'default_text': '#ffffff', 'icon': 'bi-graph-up-arrow',
-        'description': _('Dein gesamtes monatliches Netto-Einkommen (Gehalt, Mieteinnahmen, etc.). <br><br>Verwaltet in <a href="/admin/finance/cashflowsource/" target="_blank" class="alert-link">Zahlungsströme (Einnahmen)</a>.')
+        'description': _('SUMMARY_DESC_INCOME')
     },
     'monthly_expenses': {
         'title': _('Monthly Expenses'), 'default_bg': '#dc3545', 'default_text': '#ffffff', 'icon': 'bi-graph-down-arrow',
-        'description': _('Deine gesamten monatlichen Ausgaben inklusive simulierter Inflation. <br><br>Verwaltet in <a href="/admin/finance/cashflowsource/" target="_blank" class="alert-link">Zahlungsströme (Ausgaben)</a>.')
+        'description': _('SUMMARY_DESC_EXPENSES')
     },
     'total_pensions': {
         'title': _('Pension Capital'), 'default_bg': '#0dcaf0', 'default_text': '#ffffff', 'icon': 'bi-bank',
-        'description': _('Aktueller Barwert bzw. Rückkaufwert all deiner Rentenanwartschaften. <br><br>Verwaltet in <a href="/admin/finance/pension/" target="_blank" class="alert-link">Rentenverträge</a>.')
+        'description': _('SUMMARY_DESC_PENSION')
     },
     'expected_payout': {
         'title': _('Target Monthly Pension'), 'default_bg': '#6f42c1', 'default_text': '#ffffff', 'icon': 'bi-bullseye',
-        'description': _('Die Summe der monatlichen Renten, die du laut deinen Verträgen nominal (ohne Inflation) erwartest. Dein Zielwert.')
+        'description': _('SUMMARY_DESC_TARGET_PENSION')
     },
     'current_pension_payout': {
         'title': _('Current Pension'), 'default_bg': '#fd7e14', 'default_text': '#ffffff', 'icon': 'bi-cash-stack',
-        'description': _('Die monatliche Rente, die du laut Simulation zum Stichtag tatsächlich beziehst (inflationsbereinigt).')
+        'description': _('SUMMARY_DESC_CURRENT_PENSION')
     },
     'total_physical_assets': {
         'title': _('Physical Assets'), 'default_bg': '#8a2be2', 'default_text': '#ffffff', 'icon': 'bi-car-front',
-        'description': _('Gesamtwert deiner Sachwerte wie Fahrzeuge, Gold oder Sammlungen. <br><br>Verwaltet in <a href="/admin/finance/physicalasset/" target="_blank" class="alert-link">Sachwerte</a>.')
+        'description': _('SUMMARY_DESC_PHYSICAL_ASSETS')
     },
     'total_real_estate': {
         'title': _('Real Estate'), 'default_bg': '#20c997', 'default_text': '#ffffff', 'icon': 'bi-house-heart',
-        'description': _('Marktwert deiner Immobilien zum gewählten Datum. <br><br>Verwaltet in <a href="/admin/finance/realestate/" target="_blank" class="alert-link">Immobilien</a>.')
+        'description': _('SUMMARY_DESC_REAL_ESTATE')
     },
     'total_combined_assets': {
         'title': _('Total Wealth'), 'default_bg': '#ffc107', 'default_text': '#212529', 'icon': 'bi-pie-chart',
-        'description': _('Dein Netto-Reinvermögen: Summe aller Werte (liquide, Renten, Immobilien, Sachwerte) minus alle Kredite.')
+        'description': _('SUMMARY_DESC_TOTAL_WEALTH')
     },
     'total_debts': {
         'title': _('Total Debts'), 'default_bg': '#343a40', 'default_text': '#ffffff', 'icon': 'bi-credit-card-2-front',
-        'description': _('Deine gesamte Schuldenlast (Restsaldo) zum gewählten Datum. <br><br>Verwaltet in <a href="/admin/finance/loan/" target="_blank" class="alert-link">Kredite</a>.')
+        'description': _('SUMMARY_DESC_DEBTS')
     },
 }
 

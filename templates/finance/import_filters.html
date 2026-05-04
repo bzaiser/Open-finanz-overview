@@ -10,11 +10,11 @@
         </div>
         {% if batch_id %}
         <a href="{% url 'finance:review_transactions' batch_id %}" class="btn btn-primary shadow-sm px-4 fw-bold">
-            <i class="bi bi-arrow-left me-2"></i> {% trans "Zurück zur Buchungsprüfung" %}
+            <i class="bi bi-arrow-left me-2"></i> {% trans "Back to Transaction Review" %}
         </a>
         {% else %}
         <a href="{% url 'finance:import_transactions' %}" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left"></i> {% trans "Zurück zum Upload" %}
+            <i class="bi bi-arrow-left"></i> {% trans "Back to Upload" %}
         </a>
         {% endif %}
     </div>
@@ -25,21 +25,21 @@
             {% if pre_query %}
             <div class="alert alert-info shadow-sm border-0 mb-4 animate__animated animate__fadeIn">
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                    <h6 class="fw-bold mb-0 text-primary"><i class="bi bi-info-circle me-1"></i> {% trans "Kopiervorlage aus Buchung" %}</h6>
+                    <h6 class="fw-bold mb-0 text-primary"><i class="bi bi-info-circle me-1"></i> {% trans "Copy Template from Booking" %}</h6>
                     <button class="btn btn-sm btn-outline-primary py-0" onclick="copyToClipboard('{{ pre_query|escapejs }}')">
-                        <i class="bi bi-clipboard"></i> {% trans "Alles kopieren" %}
+                        <i class="bi bi-clipboard"></i> {% trans "Copy All" %}
                     </button>
                 </div>
-                <div class="bg-white p-2 rounded border small text-break shadow-inner" style="max-height: 100px; overflow-y: auto; cursor: help;" title="{% trans 'Text markieren und oben einfügen' %}">
+                <div class="bg-white p-2 rounded border small text-break shadow-inner" style="max-height: 100px; overflow-y: auto; cursor: help;" title="{% trans 'Select text and paste above' %}">
                     {{ pre_query }}
                 </div>
-                <p class="mt-2 mb-0 x-small text-muted">{% trans "Markiere oben den Teil (z.B. 'REWE'), der für den Filter relevant ist." %}</p>
+                <p class="mt-2 mb-0 x-small text-muted">{% trans "Highlight the part above (e.g. 'REWE') that is relevant for the filter." %}</p>
             </div>
             {% endif %}
 
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-body">
-                    <h5 class="card-title fw-bold mb-3">{% trans "Neuen Filter erstellen" %}</h5>
+                    <h5 class="card-title fw-bold mb-3">{% trans "Create New Filter" %}</h5>
                     <form hx-post="{% url 'finance:add_import_filter' %}" 
                           hx-target="#filter-rows" 
                           hx-swap="afterbegin"
@@ -47,15 +47,15 @@
                           hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
                         <input type="hidden" name="batch_id" value="{{ batch_id }}">
                         <div class="mb-3">
-                            <label class="form-label small fw-bold">{% trans "Suchbegriffe (mit ; getrennt)" %}</label>
-                            <input type="text" id="id_search_query" name="search_query" class="form-control border-primary" placeholder="z.B. EDEKA;REWE;LIDL" value="" required autofocus>
+                            <label class="form-label small fw-bold">{% trans "Search Terms (separated by ;)" %}</label>
+                            <input type="text" id="id_search_query" name="search_query" class="form-control border-primary" placeholder="e.g. EDEKA;REWE;LIDL" value="" required autofocus>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label small fw-bold">{% trans "Ziel-Name" %}</label>
-                            <input type="text" id="id_target_name" name="target_name" class="form-control" placeholder="z.B. Lebensmitteleinkäufe" value="{{ pre_name }}" required>
+                            <label class="form-label small fw-bold">{% trans "Target Name" %}</label>
+                            <input type="text" id="id_target_name" name="target_name" class="form-control" placeholder="e.g. Grocery Shopping" value="{{ pre_name }}" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label small fw-bold">{% trans "Kategorie" %}</label>
+                            <label class="form-label small fw-bold">{% trans "Category" %}</label>
                             <div class="input-group">
                                 <select name="category" class="form-select category-select">
                                     <option value="">---------</option>
@@ -63,28 +63,28 @@
                                     <option value="{{ cat.id }}">{{ cat.name }}</option>
                                     {% endfor %}
                                 </select>
-                                <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#quickCategoryModal" title="{% trans 'Neue Kategorie anlegen' %}">
+                                <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#quickCategoryModal" title="{% trans 'Create new category' %}">
                                     <i class="bi bi-plus-lg"></i>
                                 </button>
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label small fw-bold text-primary"><i class="bi bi-link-45deg me-1"></i>{% trans "Verknüpfung mit Finanzplan (Abgleich)" %}</label>
+                            <label class="form-label small fw-bold text-primary"><i class="bi bi-link-45deg me-1"></i>{% trans "Link with Finance Plan (Matching)" %}</label>
                             <div class="input-group">
                                 <select name="linked_cash_flow" class="form-select border-primary-subtle cashflow-select">
-                                    <option value="">{% trans "-- Kein Plan-Abgleich --" %}</option>
+                                    <option value="">{% trans "-- No Plan Matching --" %}</option>
                                     {% for cf in cash_flows %}
                                     <option value="{{ cf.id }}">{{ cf.name }} ({{ cf.value }} €)</option>
                                     {% endfor %}
                                 </select>
-                                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#quickCashFlowModal" title="{% trans 'Neuen Plan-Eintrag anlegen' %}">
+                                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#quickCashFlowModal" title="{% trans 'Create new plan entry' %}">
                                     <i class="bi bi-plus-lg"></i>
                                 </button>
                             </div>
-                            <div class="form-text x-small">{% trans "Falls verknüpft, warnt das System bei Preisabweichungen > 2%." %}</div>
+                            <div class="form-text x-small">{% trans "If linked, the system warns about price deviations > 2%." %}</div>
                         </div>
                         <button type="submit" class="btn btn-primary w-100 fw-bold">
-                            <i class="bi bi-plus-lg me-1"></i> {% trans "Filter speichern" %}
+                            <i class="bi bi-plus-lg me-1"></i> {% trans "Save Filter" %}
                         </button>
                     </form>
                 </div>
@@ -161,7 +161,7 @@
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label small fw-bold text-primary">{% trans "Verknüpfung mit Finanzplan (Abgleich)" %}</label>
+                        <label class="form-label small fw-bold text-primary">{% trans "Link with Finance Plan (Matching)" %}</label>
                         <div class="input-group">
                             <select id="edit_linked_cash_flow" name="linked_cash_flow" class="form-select cashflow-select">
                                 <option value="">{% trans "-- Kein Plan-Abgleich --" %}</option>
@@ -278,7 +278,7 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label small fw-bold">{% trans "Farbe (Standard: Grau)" %}</label>
-                        <input type="color" name="color" class="form-control form-control-color w-100 border-0 p-0" style="height: 40px;" value="#6c757d" title="{% trans 'Farbe wählen' %}">
+                        <input type="color" name="color" class="form-control form-control-color w-100 border-0 p-0" style="height: 40px;" value="#6c757d" title="{% trans 'Choose color' %}">
                     </div>
                 </div>
                 <div class="modal-footer bg-light border-0 py-2">

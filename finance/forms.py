@@ -3,7 +3,7 @@ from django.utils.translation import gettext_lazy as _
 
 class BankImportForm(forms.Form):
     file = forms.FileField(
-        label=_("Excel-Datei auswählen"),
-        help_text=_("Wähle eine Excel-Datei (.xlsx oder .xls) mit deinen Bankbuchungen aus."),
+        label=_("Select Excel file"),
+        help_text=_("Select an Excel file (.xlsx or .xls) with your bank transactions."),
         widget=forms.FileInput(attrs={'class': 'form-control', 'accept': '.xlsx, .xls'})
     )

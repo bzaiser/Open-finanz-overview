@@ -22,9 +22,9 @@
                     <div class="alert alert-info border-0 bg-light p-3 mb-4">
                         <h6 class="fw-bold"><i class="bi bi-info-circle me-1"></i> {% trans "Hinweise zum Import" %}</h6>
                         <ul class="small mb-0 ps-3">
-                            <li>{% trans "Unterstützte Formate: .xlsx, .xls" %}</li>
-                            <li>{% trans "Die Tabelle sollte Spalten für Datum, Verwendungszweck und Betrag enthalten." %}</li>
-                            <li>{% trans "Die KI erkennt automatisch Einnahmen, Ausgaben und regelmäßige Abos/Gehälter." %}</li>
+                            <li>{% trans "Supported formats: .xlsx, .xls" %}</li>
+                            <li>{% trans "The spreadsheet should contain columns for Date, Purpose, and Amount." %}</li>
+                            <li>{% trans "The AI automatically recognizes income, expenses, and recurring subscriptions/salaries." %}</li>
                         </ul>
                     </div>
 
@@ -36,7 +36,7 @@
                             
                             <div class="d-grid mt-4">
                                 <button type="submit" class="btn btn-primary btn-lg">
-                                    <i class="bi bi-magic me-2"></i>{% trans "Analyse starten" %}
+                                    <i class="bi bi-magic me-2"></i>{% trans "Start Analysis" %}
                                 </button>
                             </div>
                         </form>
@@ -46,7 +46,7 @@
                     <div id="uploading-spinner" style="display: none;" class="py-4 text-center">
                         <div class="spinner-border text-primary mb-3" role="status"></div>
                         <h4>{% trans "Lade Datei hoch..." %}</h4>
-                        <p class="text-muted">{% trans "Bitte warten, die Daten werden zum Server übertragen." %}</p>
+                        <p class="text-muted">{% trans "Please wait, the data is being transferred to the server." %}</p>
                     </div>
 
                     </div>
@@ -59,7 +59,7 @@
                             <form method="post" action="{% url 'finance:delete_all_import_history' %}" onsubmit="return confirm('Möchtest du wirklich die gesamte Import-Historie (alle offenen und angewendeten Batches) löschen?');">
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-outline-danger btn-sm py-0 px-2" style="font-size: 0.75rem;">
-                                    <i class="bi bi-trash-fill me-1"></i>{% trans "History löschen" %}
+                                    <i class="bi bi-trash-fill me-1"></i>{% trans "Clear History" %}
                                 </button>
                             </form>
                         </div>
@@ -92,13 +92,13 @@
                                         <td class="text-end">
                                             <div class="d-flex justify-content-end gap-1">
                                                 {% if not b.is_applied %}
-                                                    <a href="{% url 'finance:review_transactions' b.id %}" class="btn btn-sm btn-outline-primary" title="{% trans 'Prüfen & Zuordnen' %}">
+                                                    <a href="{% url 'finance:review_transactions' b.id %}" class="btn btn-sm btn-outline-primary" title="{% trans 'Review & Assign' %}">
                                                         <i class="bi bi-search"></i>
                                                     </a>
                                                 {% endif %}
                                                 <a href="{% url 'finance:delete_import_batch' b.id %}" class="btn btn-sm btn-outline-danger" 
                                                    onclick="return confirm('Möchtest du diesen Batch wirklich löschen?')" 
-                                                   title="{% trans 'Löschen' %}">
+                                                   title="{% trans 'Delete' %}">
                                                     <i class="bi bi-trash"></i>
                                                 </a>
                                             </div>
@@ -119,7 +119,7 @@
                         <form method="post" action="{% url 'finance:delete_all_temporary_data' %}" onsubmit="return confirm('Möchtest du wirklich alle nicht übernommenen Importe löschen?');">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-link text-danger btn-sm p-0 text-decoration-none">
-                                <i class="bi bi-trash-fill me-1"></i>{% trans "Alle temporären Daten löschen" %}
+                                <i class="bi bi-trash-fill me-1"></i>{% trans "Delete all temporary data" %}
                             </button>
                         </form>
                     </div>
@@ -128,7 +128,7 @@
             
             <div class="text-center mt-4">
                 <a href="{% url 'finance:dashboard' %}" class="btn btn-link text-decoration-none">
-                    <i class="bi bi-arrow-left"></i> {% trans "Zurück zum Dashboard" %}
+                    <i class="bi bi-arrow-left"></i> {% trans "Back to Dashboard" %}
                 </a>
             </div>
         </div>
