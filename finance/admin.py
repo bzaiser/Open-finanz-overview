@@ -1,5 +1,8 @@
 from django.contrib import admin
-from .models import Category, CashFlowSource, Asset, OneTimeEvent, Pension, FinancialStatusProxy, PhysicalAsset, RealEstate, Loan, LoanExtraRepayment
+from .models import Category, CashFlowSource, Asset, OneTimeEvent, Pension, FinancialStatusProxy, PhysicalAsset, RealEstate, Loan, LoanExtraRepayment, AssetSnapshot
+from django.contrib.contenttypes.admin import GenericTabularInline
+from django.contrib.contenttypes.models import ContentType
+from django.utils import timezone
 
 class BaseOwnedModelAdmin(admin.ModelAdmin):
     """
@@ -23,7 +26,40 @@ class BaseOwnedModelAdmin(admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         if getattr(obj, 'user', None) is None:
             obj.user = request.user
+        
+        # Save snapshot if value changed
+        val_field = getattr(self, 'snapshot_value_field', None)
+        if val_field and change:
+            try:
+                old_obj = obj.__class__.objects.get(pk=obj.pk)
+                old_val = getattr(old_obj, val_field)
+                new_val = getattr(obj, val_field)
+                if old_val != new_val:
+                    AssetSnapshot.objects.update_or_create(
+                        user=request.user,
+                        content_type=ContentType.objects.get_for_model(obj),
+                        object_id=obj.pk,
+                        date=timezone.now().date(),
+                        defaults={'value': new_val}
+                    )
+            except:
+                pass
+        elif val_field and not change:
+            # Initial snapshot for new objects
+            # We wait until after super().save_model to get the ID, but GenericFK needs it
+            pass
+
         super().save_model(request, obj, form, change)
+        
+        # Capture snapshot for new objects after they have a PK
+        if val_field and not change:
+            AssetSnapshot.objects.update_or_create(
+                user=request.user,
+                content_type=ContentType.objects.get_for_model(obj),
+                object_id=obj.pk,
+                date=timezone.now().date(),
+                defaults={'value': getattr(obj, val_field)}
+            )
 
     def get_list_filter(self, request):
         """Remove 'user' from filters for standard users."""
@@ -32,6 +68,12 @@ class BaseOwnedModelAdmin(admin.ModelAdmin):
             return tuple(f for f in filters if f != 'user')
         return filters
 
+class AssetSnapshotInline(GenericTabularInline):
+    model = AssetSnapshot
+    extra = 0
+    fields = ('date', 'value', 'notes')
+    classes = ['collapse']
+
 @admin.register(Pension)
 class PensionAdmin(BaseOwnedModelAdmin):
     list_display = ('provider', 'user', 'current_value', 'monthly_contribution', 'expected_payout_at_retirement', 'is_indexed', 'contribution_end_date', 'start_payout_date')
@@ -39,6 +81,8 @@ class PensionAdmin(BaseOwnedModelAdmin):
     search_fields = ('provider', 'user__username')
     list_filter = ('user',)
     list_select_related = ('user',)
+    inlines = [AssetSnapshotInline]
+    snapshot_value_field = 'current_value'
 
 from django import forms
 
@@ -134,6 +178,7 @@ class OneTimeEventInline(admin.TabularInline):
     fields = ('name', 'value', 'date', 'description')
     classes = ['collapse']
 
+
 class PensionInline(admin.TabularInline):
     model = Pension
     extra = 1
@@ -196,6 +241,8 @@ class AssetAdmin(BaseOwnedModelAdmin):
     list_select_related = ('user',)
     search_fields = ('name',)
     list_editable = ('value', 'growth_rate', 'interest_teaser_rate', 'interest_teaser_until', 'withdrawal_amount', 'withdrawal_start_date')
+    inlines = [AssetSnapshotInline]
+    snapshot_value_field = 'value'
 
 
 @admin.register(OneTimeEvent)
@@ -212,6 +259,8 @@ class PhysicalAssetAdmin(BaseOwnedModelAdmin):
     list_select_related = ('user',)
     search_fields = ('name',)
     list_editable = ('value', 'appreciation_rate', 'storage_costs_monthly', 'is_sold', 'sale_date')
+    inlines = [AssetSnapshotInline]
+    snapshot_value_field = 'value'
 
 @admin.register(RealEstate)
 class RealEstateAdmin(BaseOwnedModelAdmin):
@@ -220,6 +269,8 @@ class RealEstateAdmin(BaseOwnedModelAdmin):
     list_select_related = ('user',)
     search_fields = ('name',)
     list_editable = ('property_value', 'appreciation_rate', 'rental_income_monthly', 'acquisition_date', 'sale_date', 'is_sold')
+    inlines = [AssetSnapshotInline]
+    snapshot_value_field = 'property_value'
 
 class LoanExtraRepaymentInline(admin.TabularInline):
     model = LoanExtraRepayment
@@ -231,5 +282,12 @@ class LoanAdmin(BaseOwnedModelAdmin):
     list_filter = ('user', 'provider')
     list_select_related = ('user',)
     search_fields = ('name', 'provider')
-    inlines = [LoanExtraRepaymentInline]
+    inlines = [LoanExtraRepaymentInline, AssetSnapshotInline]
+
+@admin.register(AssetSnapshot)
+class AssetSnapshotAdmin(BaseOwnedModelAdmin):
+    list_display = ('date', 'content_object', 'value', 'user')
+    list_filter = ('date', 'user')
+    search_fields = ('notes',)
+    snapshot_value_field = 'nominal_amount'
 

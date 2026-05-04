@@ -280,7 +280,6 @@ def dashboard_view(request):
         'pension_increase': get_safe_profile_val(profile, 'pension_increase', 1.0),
         'investment_return_offset': get_safe_profile_val(profile, 'investment_return_offset', 0.0),
         'real_estate_growth_rate': get_safe_profile_val(profile, 'real_estate_growth_rate', 0.0),
-        'physical_asset_growth_rate': get_safe_profile_val(profile, 'physical_asset_growth_rate', 0.0),
     }
     
     simulation_params = profile_params.copy()
@@ -304,7 +303,6 @@ def dashboard_view(request):
         simulation_params['pension_increase'] = safe_float(request.POST.get('pension_increase'), profile_params['pension_increase'])
         simulation_params['investment_return_offset'] = safe_float(request.POST.get('investment_return_offset'), profile_params['investment_return_offset'])
         simulation_params['real_estate_growth_rate'] = safe_float(request.POST.get('real_estate_growth_rate'), profile_params['real_estate_growth_rate'])
-        simulation_params['physical_asset_growth_rate'] = safe_float(request.POST.get('physical_asset_growth_rate'), profile_params['physical_asset_growth_rate'])
 
     # Check if simulation is active (different from profile defaults)
     is_simulation_active = any(

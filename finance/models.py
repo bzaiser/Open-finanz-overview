@@ -3,6 +3,8 @@ from django.utils.translation import gettext_lazy as _, gettext
 from django.conf import settings
 from core.models import CustomUser
 from django.utils.text import slugify
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 
 
 class Category(models.Model):
@@ -306,3 +308,27 @@ class CategorizationMemory(models.Model):
 
     def __str__(self):
         return f"{self.description} -> {self.category.name}"
+
+class AssetSnapshot(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='asset_snapshots')
+    
+    # Generic relationship to any asset (Account, PhysicalAsset, RealEstate, etc.)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+    
+    date = models.DateField(_("Date"))
+    value = models.DecimalField(_("Value"), max_digits=15, decimal_places=2)
+    notes = models.TextField(_("Notes"), blank=True)
+
+    class Meta:
+        verbose_name = _("Asset Snapshot")
+        verbose_name_plural = _("Asset Snapshots")
+        ordering = ['-date']
+        indexes = [
+            models.Index(fields=["content_type", "object_id"]),
+            models.Index(fields=["date"]),
+        ]
+
+    def __str__(self):
+        return f"{self.date} - {self.content_object}: {self.value}"

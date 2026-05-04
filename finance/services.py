@@ -111,7 +111,6 @@ class SimulationEngine:
         physical_assets = list(self.user.physical_assets.all())
         real_estates = list(self.user.real_estates.all())
 
-        global_pa_growth = Decimal(str(self.params.get('physical_asset_growth_rate', 0.0)))
         global_re_growth = Decimal(str(self.params.get('real_estate_growth_rate', 0.0)))
 
         pensions_state = []
@@ -191,8 +190,6 @@ class SimulationEngine:
                         continue
                         
                     rate = pa.appreciation_rate
-                    if rate == 0 and global_pa_growth != 0:
-                        rate = global_pa_growth
                         
                     item['balance'] *= (1 + (rate / 100 / 12))
                     
