@@ -44,10 +44,6 @@ class BaseOwnedModelAdmin(admin.ModelAdmin):
                     )
             except:
                 pass
-        elif val_field and not change:
-            # Initial snapshot for new objects
-            # We wait until after super().save_model to get the ID, but GenericFK needs it
-            pass
 
         super().save_model(request, obj, form, change)
         
@@ -60,6 +56,15 @@ class BaseOwnedModelAdmin(admin.ModelAdmin):
                 date=timezone.now().date(),
                 defaults={'value': getattr(obj, val_field)}
             )
+
+    def save_formset(self, request, form, formset, change):
+        """Ensure inlines (like AssetSnapshots) get the correct user."""
+        instances = formset.save(commit=False)
+        for instance in instances:
+            if hasattr(instance, 'user') and not instance.user_id:
+                instance.user = request.user
+            instance.save()
+        formset.save_m2m()
 
     def get_list_filter(self, request):
         """Remove 'user' from filters for standard users."""
