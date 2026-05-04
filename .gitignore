@@ -50,3 +50,4 @@ wheels/
 # Deployment mirror (Local only)
 finanzplan_deploy/
 
+scratch/
