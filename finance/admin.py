@@ -290,10 +290,100 @@ class LoanAdmin(BaseOwnedModelAdmin):
     search_fields = ('name', 'provider')
     inlines = [LoanExtraRepaymentInline, AssetSnapshotInline]
 
+class AssetSnapshotForm(forms.ModelForm):
+    asset_choice = forms.ChoiceField(
+        label=_("Asset/Object"),
+        required=False,
+        help_text=_("Select the concrete asset to create a snapshot for. This will automatically fill the Type and ID fields.")
+    )
+
+    class Meta:
+        model = AssetSnapshot
+        fields = ['asset_choice', 'date', 'value', 'notes', 'content_type', 'object_id']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        user = None
+        if hasattr(self, 'request') and self.request.user:
+            user = self.request.user
+        elif self.instance and self.instance.user_id:
+            user = self.instance.user
+
+        if user:
+            choices = [('', '---------')]
+            
+            # Accounts (Asset model)
+            for obj in Asset.objects.filter(user=user):
+                choices.append((f"asset-{obj.id}", f"{obj.name} ({_('Konto/Anlage')})"))
+            
+            # Physical Assets
+            for obj in PhysicalAsset.objects.filter(user=user):
+                choices.append((f"pa-{obj.id}", f"{obj.name} ({_('Sachwert')})"))
+                
+            # Real Estate
+            for obj in RealEstate.objects.filter(user=user):
+                choices.append((f"re-{obj.id}", f"{obj.name} ({_('Immobilie')})"))
+                
+            # Pensions
+            for obj in Pension.objects.filter(user=user):
+                choices.append((f"pen-{obj.id}", f"{obj.provider} ({_('Rente')})"))
+                
+            # Loans
+            for obj in Loan.objects.filter(user=user):
+                choices.append((f"loan-{obj.id}", f"{obj.name} ({_('Kredit')})"))
+                
+            self.fields['asset_choice'].choices = choices
+            
+            # Set initial value if editing
+            if self.instance.pk and self.instance.content_type:
+                model_name = self.instance.content_type.model
+                prefix = ""
+                if model_name == 'asset': prefix = "asset"
+                elif model_name == 'physicalasset': prefix = "pa"
+                elif model_name == 'realestate': prefix = "re"
+                elif model_name == 'pension': prefix = "pen"
+                elif model_name == 'loan': prefix = "loan"
+                
+                if prefix:
+                    self.initial['asset_choice'] = f"{prefix}-{self.instance.object_id}"
+
+    def clean(self):
+        cleaned_data = super().clean()
+        asset_choice = cleaned_data.get('asset_choice')
+        
+        if asset_choice:
+            prefix, obj_id = asset_choice.split('-')
+            obj_id = int(obj_id)
+            
+            model_map = {
+                'asset': Asset,
+                'pa': PhysicalAsset,
+                're': RealEstate,
+                'pen': Pension,
+                'loan': Loan,
+            }
+            
+            model_class = model_map.get(prefix)
+            if model_class:
+                cleaned_data['content_type'] = ContentType.objects.get_for_model(model_class)
+                cleaned_data['object_id'] = obj_id
+                
+        return cleaned_data
+
 @admin.register(AssetSnapshot)
 class AssetSnapshotAdmin(BaseOwnedModelAdmin):
+    form = AssetSnapshotForm
     list_display = ('date', 'content_object', 'value', 'user')
     list_filter = ('date', 'user')
     search_fields = ('notes',)
-    snapshot_value_field = 'nominal_amount'
+    
+    def get_form(self, request, obj=None, **kwargs):
+        form = super().get_form(request, obj, **kwargs)
+        form.request = request
+        return form
+
+    def get_fields(self, request, obj=None):
+        # Hide the technical fields from the form
+        fields = super().get_fields(request, obj)
+        return [f for f in fields if f not in ['content_type', 'object_id']]
 
