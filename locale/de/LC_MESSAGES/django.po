@@ -2798,3 +2798,9 @@ msgstr "Sim. Startdatum"
 
 msgid "Earliest date to show in charts. Leave empty for automatic (based on oldest snapshot or current year)."
 msgstr "Frühestes Datum, das in den Charts angezeigt wird. Leer lassen für automatische Erkennung (basierend auf ältestem Snapshot oder aktuellem Jahr)."
+
+msgid "Investment Return Buffer (%)"
+msgstr "Zusatz-Rendite (%)"
+
+msgid "Interest Buffer (%)"
+msgstr "Rendite-Puffer (%)"
