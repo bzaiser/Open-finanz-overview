@@ -79,7 +79,7 @@
                     hx-swap="outerHTML"
                     hx-indicator="closest tr"
                     hx-vals='{"field": "is_income", "value": "{% if t.is_income %}false{% else %}true{% endif %}"}'
-                    title="{% if t.is_income %}{% trans 'Zu Ausgabe machen' %}{% else %}{% trans 'Zu Einnahme machen' %}{% endif %}">
+                    title="{% if t.is_income %}{% trans 'Mark as expense' %}{% else %}{% trans 'Mark as income' %}{% endif %}">
                 {% if t.is_income %}<i class="bi bi-plus-lg"></i>{% else %}<i class="bi bi-dash-lg"></i>{% endif %}
             </button>
         </div>

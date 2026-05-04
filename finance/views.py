@@ -1356,7 +1356,7 @@ def confirm_bank_transaction(request, transaction_id):
 
             # OOB: Empty Mapping Message
             if mapping_count == 0:
-                msg = _("Alle Posten zugeordnet!")
+                msg = _("All items assigned!")
                 oob_elements.append(f'<tr id="empty-mapping-msg" hx-swap-oob="afterbegin:#mapping-rows"><td colspan="6" class="text-center py-5 text-success fw-bold"><i class="bi bi-check-circle me-2"></i>{msg}</td></tr>')
             
             # OOB: Hide Empty Ready Message
@@ -1382,7 +1382,7 @@ def confirm_bank_transaction(request, transaction_id):
             
             # OOB: Empty Ready Message
             if ready_count == 0:
-                msg = _("Noch keine Buchungen bereit.")
+                msg = _("No transactions ready yet.")
                 oob_elements.append(f'<tr id="empty-ready-msg" hx-swap-oob="afterbegin:#ready-rows"><td colspan="7" class="text-center py-5 text-muted"><i class="bi bi-info-circle me-2"></i>{msg}</td></tr>')
             
             # OOB: Hide Empty Mapping Message
@@ -1403,7 +1403,7 @@ def confirm_bank_transaction(request, transaction_id):
 def apply_import_batch(request, batch_id):
     batch = get_object_or_404(ImportBatch, id=batch_id, user=request.user)
     if batch.is_applied:
-        messages.warning(request, _("Dieser Import wurde bereits angewendet."))
+        messages.warning(request, _("This import has already been applied."))
         return redirect('finance:dashboard')
         
     # Only import transactions that have a category assigned (Ready pane)
@@ -1486,9 +1486,9 @@ def apply_import_batch(request, batch_id):
     batch.is_applied = True
     batch.save(update_fields=['is_applied'])
     
-    msg = _(f"Import erfolgreich: {count_recurring} Plan-Einträge erstellt/aktualisiert.")
+    msg = _(f"Import successful: {count_recurring} plan entries created/updated.")
     if total_unassigned > 0:
-        msg += " " + _(f"{total_unassigned} unzugeordnete Posten wurden verworfen.")
+        msg += " " + _(f"{total_unassigned} unassigned items were discarded.")
     
     messages.success(request, msg)
     return redirect('finance:dashboard')
@@ -1504,7 +1504,7 @@ def get_import_progress(request):
     
     # Fetch the latest batch to get the REAL-TIME log
     latest_batch = ImportBatch.objects.filter(user=request.user, is_applied=False).order_by('-date').first()
-    log_content = latest_batch.ai_log if latest_batch else _eager("Warte auf Batch...")
+    log_content = latest_batch.ai_log if latest_batch else _eager("Waiting for batch...")
     
     # Status and styling logic
     is_finished = (progress >= 100)
@@ -1530,8 +1530,8 @@ def get_import_progress(request):
         <div class="mt-3">
             <a href="{cancel_url}" 
                class="btn btn-outline-danger btn-sm px-4 w-100"
-               onclick="return confirm('{_eager("Möchtest du die Analyse wirklich abbrechen? Alle Daten dieses Imports werden gelöscht.")}')">
-                <i class="bi bi-x-circle me-1"></i> {_eager("Analyse abbrechen & Löschen")}
+               onclick="return confirm('{_eager("Do you really want to cancel the analysis? All data from this import will be deleted.")}')">
+                <i class="bi bi-x-circle me-1"></i> {_eager("Cancel analysis & Delete")}
             </a>
         </div>
         '''
@@ -1555,11 +1555,11 @@ def get_import_progress(request):
         review_url = reverse('finance:review_transactions', args=[latest_batch.id])
         html += f'''
         <p class="text-center mt-2 text-success fw-bold">
-            <i class="bi bi-check-circle-fill me-1"></i>{_eager("Analyse abgeschlossen!")}
+            <i class="bi bi-check-circle-fill me-1"></i>{_eager("Analysis complete!")}
         </p>
         <div class="mt-4 animate__animated animate__bounceIn">
              <a href="{review_url}" class="btn btn-success fw-bold shadow-lg px-5 py-3">
-                <i class="bi bi-check-all me-2"></i>{_eager("Buchungen ansehen")}
+                <i class="bi bi-check-all me-2"></i>{_eager("View transactions")}
             </a>
         </div>
         '''
@@ -1567,18 +1567,18 @@ def get_import_progress(request):
         upload_url = reverse('finance:import_transactions')
         error_msg = cache.get(f"import_error_{request.user.id}", _eager("Unbekannter Fehler"))
         html += f'''
-        <p class="text-center mt-2 text-danger fw-bold">{_eager("Analyse fehlgeschlagen")}</p>
+        <p class="text-center mt-2 text-danger fw-bold">{_eager("Analysis failed")}</p>
         <div class="alert alert-danger mt-3 small">
             <code>{error_msg}</code>
         </div>
         <div class="mt-3">
             <a href="{upload_url}" class="btn btn-outline-danger btn-sm px-4">
-                <i class="bi bi-arrow-left me-2"></i>{_eager("Zurück zum Upload")}
+                <i class="bi bi-arrow-left me-2"></i>{_eager("Back to upload")}
             </a>
         </div>
         '''
     else:
-        html += f'<p class="text-center mt-2 text-muted small fw-bold">{_eager("KI analysiert Daten...")} ({progress_val}%)</p>'
+        html += f'<p class="text-center mt-2 text-muted small fw-bold">{_eager("AI is analyzing data...")} ({progress_val}%)</p>'
 
     # IMPORTANT: Close the placeholder div!
     html += f'''
@@ -1659,7 +1659,7 @@ def import_search_as_group(request, batch_id):
     )
     
     if not matches.exists():
-        return HttpResponse('<div class="alert alert-warning small p-2 m-0 border-0">Keine weiteren unkategorisierten Buchungen gefunden.</div>')
+        return HttpResponse('<div class="alert alert-warning small p-2 m-0 border-0">No further uncategorized transactions found.</div>')
 
     # 3. Create or Update Consolidated Record (Ready Pane)
     from collections import defaultdict
@@ -1725,7 +1725,7 @@ def delete_all_temporary_data(request):
     cache_key = f"import_progress_{request.user.id}"
     cache.delete(cache_key)
     
-    messages.success(request, _(f"{count} temporäre Import-Datensätze wurden gelöscht."))
+    messages.success(request, _(f"{count} temporary import records have been deleted."))
     return redirect('finance:import_transactions')
 
 @login_required

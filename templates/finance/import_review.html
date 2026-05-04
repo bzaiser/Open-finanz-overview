@@ -24,8 +24,8 @@
     <div class="row mb-4">
         <div class="col-12 d-flex justify-content-between align-items-center">
             <div>
-                <h2 class="mb-0 fw-bold"><i class="bi bi-shield-check me-2 text-primary"></i>{% trans "Abstimmung & Import" %}</h2>
-                <p class="text-muted mb-0">{% trans "Bereinige die offenen Posten oben, bis sie in der Import-Vorschau unten korrekt zusammengefasst sind." %}</p>
+                <h2 class="mb-0 fw-bold"><i class="bi bi-shield-check me-2 text-primary"></i>{% trans "Reconciliation & Import" %}</h2>
+                <p class="text-muted mb-0">{% trans "Clean up the open items above until they are correctly summarized in the import preview below." %}</p>
             </div>
             <div class="d-flex gap-2">
                 <a href="{% url 'finance:import_filters_list' %}" class="btn btn-outline-primary">
@@ -54,7 +54,7 @@
         <div class="col-12">
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center border-bottom">
-                    <h5 class="mb-0 fw-bold text-primary"><i class="bi bi-question-circle-fill me-2"></i>{% trans "1. Offene Posten (Noch zuordnen)" %}</h5>
+                    <h5 class="mb-0 fw-bold text-primary"><i class="bi bi-question-circle-fill me-2"></i>{% trans "1. Open Items (To be assigned)" %}</h5>
                     
                     <!-- Search Box -->
                     <div class="input-group" style="width: 400px;">
@@ -67,7 +67,7 @@
                         </button>
                         <input type="text" name="q" class="form-control border-start-0 border-end-0" 
                                id="mapping-search-input"
-                               placeholder="{% trans 'Suchen & Gruppieren (z.B. Aldi)...' %}"
+                               placeholder="{% trans 'Search & Group (e.g. Aldi)...' %}"
                                hx-get="{% url 'finance:review_transactions' batch.id %}"
                                hx-trigger="keyup changed delay:300ms, search"
                                hx-target="#mapping-pane"
@@ -274,7 +274,7 @@
                   hx-on::after-request="if(event.detail.successful) { bootstrap.Modal.getInstance(document.getElementById('quickCategoryModal')).hide(); this.reset(); }"
                   hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
                 <div class="modal-header bg-dark text-white py-2 border-0">
-                    <h6 class="modal-title fw-bold">{% trans "Neue Kategorie" %}</h6>
+                    <h6 class="modal-title fw-bold">{% trans "New Category" %}</h6>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-3">

@@ -20,7 +20,7 @@
                 </div>
                 <div class="card-body p-4">
                     <div class="alert alert-info border-0 bg-light p-3 mb-4">
-                        <h6 class="fw-bold"><i class="bi bi-info-circle me-1"></i> {% trans "Hinweise zum Import" %}</h6>
+                        <h6 class="fw-bold"><i class="bi bi-info-circle me-1"></i> {% trans "Import Notes" %}</h6>
                         <ul class="small mb-0 ps-3">
                             <li>{% trans "Supported formats: .xlsx, .xls" %}</li>
                             <li>{% trans "The spreadsheet should contain columns for Date, Purpose, and Amount." %}</li>
@@ -55,8 +55,8 @@
                     <!-- Batch History -->
                     <div class="mt-5 border-top pt-4">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="fw-bold mb-0"><i class="bi bi-clock-history me-2"></i>{% trans "Bisherige Importe" %}</h5>
-                            <form method="post" action="{% url 'finance:delete_all_import_history' %}" onsubmit="return confirm('Möchtest du wirklich die gesamte Import-Historie (alle offenen und angewendeten Batches) löschen?');">
+                            <h5 class="fw-bold mb-0"><i class="bi bi-clock-history me-2"></i>{% trans "Previous Imports" %}</h5>
+                            <form method="post" action="{% url 'finance:delete_all_import_history' %}" onsubmit="return confirm('{% trans "Do you really want to delete the entire import history (all open and applied batches)?" %}');">
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-outline-danger btn-sm py-0 px-2" style="font-size: 0.75rem;">
                                     <i class="bi bi-trash-fill me-1"></i>{% trans "Clear History" %}
@@ -114,9 +114,9 @@
                     <!-- Clean-up / Emergency Button -->
                     <div class="mt-4 pt-4 border-top">
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                            <small class="text-danger fw-bold text-uppercase">{% trans "Cache & Wartung" %}</small>
+                            <small class="text-danger fw-bold text-uppercase">{% trans "Cache & Maintenance" %}</small>
                         </div>
-                        <form method="post" action="{% url 'finance:delete_all_temporary_data' %}" onsubmit="return confirm('Möchtest du wirklich alle nicht übernommenen Importe löschen?');">
+                        <form method="post" action="{% url 'finance:delete_all_temporary_data' %}" onsubmit="return confirm('{% trans "Do you really want to delete all unmerged imports?" %}');">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-link text-danger btn-sm p-0 text-decoration-none">
                                 <i class="bi bi-trash-fill me-1"></i>{% trans "Delete all temporary data" %}
