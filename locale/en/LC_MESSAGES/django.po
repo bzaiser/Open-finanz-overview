@@ -36,62 +36,20 @@ msgid "HELP_REAL_ESTATE_GROWTH"
 msgstr "The expected annual value increase of your real estate properties."
 
 #: finance/models.py:47 finance/models.py:100
-msgid ""
-"If checked, the payout will increase annually based on the global pension "
-"increase rate."
-msgstr "If checked, the payout will increase annually based on the global pension "
-"increase rate."
 
 #: finance/models.py:65
-msgid ""
-"Date when the teaser rate expires and falls back to the standard growth rate"
-msgstr "Date when the teaser rate expires and falls back to the standard growth rate"
 
 #: finance/views.py:118
-msgid ""
-"Visualisiert, wie schnell deine Schulden durch Tilgung schrumpfen. Hilft bei "
-"der Planung von Sondertilgungen. <br><br>Datenquelle: <a href=\"/admin/"
-"finance/loan/\" target=\"_blank\" class=\"alert-link\">Kredite</a>."
-msgstr "Visualisiert, wie schnell deine Schulden durch Tilgung schrumpfen. Hilft bei "
-"der Planung von Sondertilgungen. <br><br>Datenquelle: <a href=\"/admin/"
-"finance/loan/\" target=\"_blank\" class=\"alert-link\">Kredite</a>."
 
 #: templates/core/about.html:12
-msgid ""
-"Welcome to your personal financial cockpit. This platform is designed to "
-"give you a clear and realistic look at your long-term financial future."
-msgstr "Welcome to your personal financial cockpit. This platform is designed to "
-"give you a clear and realistic look at your long-term financial future."
 
 #: templates/core/about.html:15
-msgid ""
-"Our goal is to demystify complex financial planning by offering simple, "
-"visual, and highly customizable tools to help you reach your goals."
-msgstr "Our goal is to demystify complex financial planning by offering simple, "
-"visual, and highly customizable tools to help you reach your goals."
 
 #: templates/core/about.html:24
-msgid ""
-"Your data is only stored in your personal database and is not shared with "
-"third parties."
-msgstr "Your data is only stored in your personal database and is not shared with "
-"third parties."
 
 #: templates/core/about.html:34
-msgid ""
-"We use high-precision calculations for inflation and compound interest over "
-"a 30-year period."
-msgstr "We use high-precision calculations for inflation and compound interest over "
-"a 30-year period."
 
 #: templates/core/about.html:50
-msgid ""
-"Financial Independence is a goal for many, but for most it remains just a "
-"dream. My passion is to create tools that turn those dreams into actionable "
-"plans."
-msgstr "Financial Independence is a goal for many, but for most it remains just a "
-"dream. My passion is to create tools that turn those dreams into actionable "
-"plans."
 
 #: templates/core/help.html:10
 msgid "HELP_HEADER_TITLE"
@@ -110,70 +68,20 @@ msgid "HELP_AI_IMPORT_DESC"
 msgstr "Learn how our pattern recognition and learned memory automate your data entry while maintaining 100% control."
 
 #: templates/core/help.html:45
-msgid ""
-"Understand the math behind real vs. nominal value, inflation buffers, and "
-"how growth rates impact your 30-year forecast."
-msgstr "Understand the math behind real vs. nominal value, inflation buffers, and "
-"how growth rates impact your 30-year forecast."
 
 #: templates/core/help.html:61
-msgid ""
-"Master the Art of Design Harmony. Explore how our color engine ensures your "
-"dashboard always looks premium."
-msgstr "Master the Art of Design Harmony. Explore how our color engine ensures your "
-"dashboard always looks premium."
 
 #: templates/core/help.html:86
-msgid ""
-"This is likely due to the Inflation Monitor. While your nominal wealth "
-"increases, higher inflation rates can \"eat\" your purchasing power faster "
-"than you save. Check your \"Real Value\" vs \"Nominal Value\" in the charts."
-msgstr "This is likely due to the Inflation Monitor. While your nominal wealth "
-"increases, higher inflation rates can \"eat\" your purchasing power faster "
-"than you save. Check your \"Real Value\" vs \"Nominal Value\" in the charts."
 
 #: templates/core/help.html:112
-msgid ""
-"Yes. Your data stays in your instance. Our AI processing for bank imports is "
-"designed to respect your privacy, and no financial secrets ever leave your "
-"dedicated environment."
-msgstr "Yes. Your data stays in your instance. Our AI processing for bank imports is "
-"designed to respect your privacy, and no financial secrets ever leave your "
-"dedicated environment."
 
 #: templates/core/help.html:137
-msgid ""
-"Our system cleans bank descriptions and searches for repeating patterns. It "
-"remembers your previous manual categorizations and applies them to new "
-"imports automatically."
-msgstr "Our system cleans bank descriptions and searches for repeating patterns. It "
-"remembers your previous manual categorizations and applies them to new "
-"imports automatically."
 
 #: templates/core/help.html:141
-msgid ""
-"Every imported row gets a unique fingerprint. If you upload the same file "
-"twice, or overlapping files, the system will detect and ignore already "
-"existing transactions."
-msgstr "Every imported row gets a unique fingerprint. If you upload the same file "
-"twice, or overlapping files, the system will detect and ignore already "
-"existing transactions."
 
 #: templates/core/help.html:145
-msgid ""
-"Detected transactions can be \"Linked\" to your financial plan. This allows "
-"you to track if your reality (Bank) matches your expectations (Plan)."
-msgstr "Detected transactions can be \"Linked\" to your financial plan. This allows "
-"you to track if your reality (Bank) matches your expectations (Plan)."
 
 #: templates/core/help.html:149
-msgid ""
-"Nothing is saved directly. You always have a \"Pending Transactions\" area "
-"where you can verify, correct, or ignore rows before they impact your "
-"history."
-msgstr "Nothing is saved directly. You always have a \"Pending Transactions\" area "
-"where you can verify, correct, or ignore rows before they impact your "
-"history."
 
 #: templates/core/help.html:173
 msgid "HELP_SIM_COMPOUND_DESC"
@@ -228,11 +136,6 @@ msgid "Abstimmung & Import"
 msgstr "Reconciliation & Import"
 
 #: templates/finance/import_review.html:28
-msgid ""
-"Bereinige die offenen Posten oben, bis sie in der Import-Vorschau unten "
-"korrekt zusammengefasst sind."
-msgstr "Bereinige die offenen Posten oben, bis sie in der Import-Vorschau unten "
-"korrekt zusammengefasst sind."
 
 #: templates/finance/import_upload.html:23
 msgid "Hinweise zum Import"
@@ -263,6 +166,9 @@ msgstr "Filtered view: %(count)s open transactions."
 #: templates/finance/partials/import_mapping_pane.html:52
 #: templates/finance/partials/import_mapping_pane.html:57
 #: templates/finance/partials/import_mapping_pane.html:71
+msgid "Clean up the open items above until they are correctly summarized in the import preview below."
+msgstr "Clean up the open items above until they are correctly summarized in the import preview below."
+
 #: templates/finance/partials/import_ready_pane.html:5
 msgid "2. Vorschau: Import-Bereit (Zusammengefasst)"
 msgstr "2. Preview: Ready to Import (Summarized)"
@@ -299,151 +205,29 @@ msgstr "Matches Plan"
 msgid "Ignorieren"
 msgstr "Ignore"
 
-msgid ""
-" Do you want to know what \"Pension Capital\" or the \"Inflation Monitor\"  "
-"is? Find all definitions here."
-msgstr " Do you want to know what \"Pension Capital\" or the \"Inflation Monitor\"  "
-"is? Find all definitions here."
 
-msgid ""
-" The accumulated value of all your bank accounts, properties, and  "
-"investments, excluding pensions."
-msgstr " The accumulated value of all your bank accounts, properties, and  "
-"investments, excluding pensions."
 
-msgid ""
-" Your total active regular incoming cash flow (e.g., salary, rent income)  "
-"at the selected date."
-msgstr " Your total active regular incoming cash flow (e.g., salary, rent income)  "
-"at the selected date."
 
-msgid ""
-" The accumulated lump sum balance (savings) sitting in all your pension  and "
-"retirement accounts."
-msgstr " The accumulated lump sum balance (savings) sitting in all your pension  and "
-"retirement accounts."
 
-msgid ""
-" Your desired retirement income. This is simply the raw total of the  target "
-"payouts you defined in your pension contracts."
-msgstr " Your desired retirement income. This is simply the raw total of the  target "
-"payouts you defined in your pension contracts."
 
-msgid ""
-" A line chart showing how your total wealth grows over time, comparing  "
-"nominal values to inflation-adjusted purchasing power."
-msgstr " A line chart showing how your total wealth grows over time, comparing  "
-"nominal values to inflation-adjusted purchasing power."
 
-msgid ""
-" Visualizes the evolution of your monthly income versus your monthly  "
-"expenses over the years."
-msgstr " Visualizes the evolution of your monthly income versus your monthly  "
-"expenses over the years."
 
-msgid ""
-" An area chart illustrating the composition of your total wealth,  comparing "
-"liquid assets and locked pension capital."
-msgstr " An area chart illustrating the composition of your total wealth,  comparing "
-"liquid assets and locked pension capital."
 
-msgid ""
-" A direct bar chart comparison of money coming in versus money going out."
-msgstr " A direct bar chart comparison of money coming in versus money going out."
 
-msgid ""
-" A pie chart dividing your cash flow into individual categories (e.g.,  "
-"Housing, Food, Transport)."
-msgstr " A pie chart dividing your cash flow into individual categories (e.g.,  "
-"Housing, Food, Transport)."
 
-msgid ""
-" Highlights the expanding gap between the absolute money you have and its  "
-"real value due to inflation."
-msgstr " Highlights the expanding gap between the absolute money you have and its  "
-"real value due to inflation."
 
-msgid ""
-" Visualizes the financial spikes caused by configured one-time events,  like "
-"buying a car or receiving an inheritance."
-msgstr " Visualizes the financial spikes caused by configured one-time events,  like "
-"buying a car or receiving an inheritance."
 
-msgid ""
-" A snapshot donut chart showing the percentage distribution of your assets."
-msgstr " A snapshot donut chart showing the percentage distribution of your assets."
 
-msgid ""
-" Learn how our pattern recognition and learned memory automate your data  "
-"entry while maintaining 100% control."
-msgstr " Learn how our pattern recognition and learned memory automate your data  "
-"entry while maintaining 100% control."
 
-msgid ""
-" We calculate growth for each asset class individually. A 5% growth on a  "
-"100k asset is calculated monthly to account for the compound effect over  "
-"30+ years."
-msgstr " We calculate growth for each asset class individually. A 5% growth on a  "
-"100k asset is calculated monthly to account for the compound effect over  "
-"30+ years."
 
-msgid ""
-" If you set a 2% \"Dynamics\" rate, your income doesn't stay level. It  "
-"grows every year, simulating career growth or contract-based indexing."
-msgstr " If you set a 2% \"Dynamics\" rate, your income doesn't stay level. It  "
-"grows every year, simulating career growth or contract-based indexing."
 
-msgid ""
-" Retirement planning is a marathon. We chose a 30-year horizon to  visualize "
-"the late-stage effects of inflation and interest, where small  differences "
-"today become massive gaps tomorrow."
-msgstr " Retirement planning is a marathon. We chose a 30-year horizon to  visualize "
-"the late-stage effects of inflation and interest, where small  differences "
-"today become massive gaps tomorrow."
 
-msgid ""
-" A \"Harmony\" isn't just a set of colors. It's a mathematical  relationship "
-"(Complementary, Analogous, etc.) based on your Primary Color  choice."
-msgstr " A \"Harmony\" isn't just a set of colors. It's a mathematical  relationship "
-"(Complementary, Analogous, etc.) based on your Primary Color  choice."
 
-msgid ""
-" We use backdrop filters and translucency to create depth. This allows  your "
-"personalized brand color to shine through while keeping the  interface "
-"readable."
-msgstr " We use backdrop filters and translucency to create depth. This allows  your "
-"personalized brand color to shine through while keeping the  interface "
-"readable."
 
-msgid ""
-" Use a Darker background and high-vibrancy primary colors for the absolute  "
-"premium \"High-End\" look."
-msgstr " Use a Darker background and high-vibrancy primary colors for the absolute  "
-"premium \"High-End\" look."
 
-msgid ""
-"Select the concrete asset to create a snapshot for. This will automatically "
-"fill the Type and ID fields."
-msgstr "Select the concrete asset to create a snapshot for. This will automatically "
-"fill the Type and ID fields."
 
-msgid ""
-"Earliest date to show in charts. Leave empty for automatic (based on oldest "
-"snapshot or current year)."
-msgstr "Earliest date to show in charts. Leave empty for automatic (based on oldest "
-"snapshot or current year)."
 
-msgid ""
-"The expected annual inflation rate. This reduces the real value (purchasing "
-"power) of your future wealth. A value of 2% is a common benchmark."
-msgstr "The expected annual inflation rate. This reduces the real value (purchasing "
-"power) of your future wealth. A value of 2% is a common benchmark."
 
-msgid ""
-"The annual adjustment of your pension benefits. In many countries, this "
-"value often follows general wage development."
-msgstr "The annual adjustment of your pension benefits. In many countries, this "
-"value often follows general wage development."
 
 # #-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#
 # #-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#
