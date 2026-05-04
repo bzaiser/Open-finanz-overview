@@ -114,10 +114,6 @@ msgstr "Währung"
 msgid "Language"
 msgstr "Sprache"
 
-#: core/models.py:52
-msgid "Simulation Max Age"
-msgstr "Max. Simulationsalter"
-
 #: core/models.py:55
 msgid "Default Inflation Rate (%)"
 msgstr "Inflation (%)"
@@ -585,18 +581,6 @@ msgstr "Kategorie"
 msgid "Sparen"
 msgstr ""
 
-#: finance/services.py:259 finance/services.py:262 finance/services.py:264
-msgid "Rente"
-msgstr "Rente"
-
-#: finance/services.py:293
-msgid "Sachwerte"
-msgstr "Sachwerte"
-
-#: finance/services.py:301 finance/services.py:307
-msgid "Immobilien"
-msgstr "Immobilien"
-
 #: finance/services.py:327
 msgid "Kredit"
 msgstr "Kredit"
@@ -605,165 +589,57 @@ msgstr "Kredit"
 msgid "Net Worth Forecast"
 msgstr "Vermögensprognose"
 
-#: finance/views.py:61
-msgid ""
-"Diese Grafik projiziert dein Gesamtvermögen bis zum Lebensende. Die Daten "
-"stammen aus deinen <b>Anlagen</b>, <b>Renten</b>, <b>Immobilien</b> und "
-"<b>Sachwerten</b>, abzüglich der <b>Kredite</b>. <br><br>„Nominal“ zeigt die "
-"nackten Zahlen der Zukunft. „Real“ berechnet die Kaufkraft in heutigen Euros "
-"(inflationsbereinigt)."
-msgstr ""
-
 #: finance/views.py:64
 msgid "Cash Flow Analysis"
 msgstr "Cashflow-Analyse"
-
-#: finance/views.py:65
-msgid ""
-"Vergleicht monatliche Einnahmen mit Ausgaben. Zeigt, ob du am Ende des "
-"Jahres Geld übrig hast (Überschuss) oder an dein Erspartes gehen musst "
-"(Defizit). <br><br>Basis ist die Tabelle <a href=\"/admin/finance/"
-"cashflowsource/\" target=\"_blank\" class=\"alert-link\">Zahlungsströme "
-"(Einnahmen/Ausgaben)</a>."
-msgstr ""
 
 #: finance/views.py:68
 msgid "Income & One-Time Effects"
 msgstr "Entwicklung der Einnahmen und Einmaleffekte"
 
-#: finance/views.py:69
-msgid ""
-"Zeigt die Entwicklung deiner Einnahmen über Jahrzehnte. Berücksichtigt "
-"Gehaltssprünge, Mietsteigerungen und den Übergang von Gehalt zu Rente. "
-"<br><br>Datenquellen: <a href=\"/admin/finance/cashflowsource/\" "
-"target=\"_blank\" class=\"alert-link\">Einnahmen</a> und <a href=\"/admin/"
-"finance/pension/\" target=\"_blank\" class=\"alert-link\">Rentenverträge</a>."
-msgstr ""
-
 #: finance/views.py:72
 msgid "Expense Evolution"
 msgstr "Ausgaben-Evolution"
-
-#: finance/views.py:73
-msgid ""
-"Visualisiert, wie sich deine Fixkosten und Lebenshaltungskosten durch "
-"Inflation und den Wegfall von Krediten verändern. <br><br>Datenquellen: <a "
-"href=\"/admin/finance/cashflowsource/\" target=\"_blank\" class=\"alert-"
-"link\">Ausgaben</a> und <a href=\"/admin/finance/loan/\" target=\"_blank\" "
-"class=\"alert-link\">Kredite</a>."
-msgstr ""
 
 #: finance/views.py:76
 msgid "Inflation Monitor"
 msgstr "Inflations-Monitor"
 
-#: finance/views.py:77
-msgid ""
-"Ein Warnsystem für deine Kaufkraft. Es zeigt, wie viel deine heutige "
-"Sparsumme in der Zukunft noch wert ist, basierend auf der in der Simulation "
-"gewählten Inflationsrate."
-msgstr ""
-
 #: finance/views.py:80
 msgid "Monthly Budget"
 msgstr "Monatliches Budget"
-
-#: finance/views.py:81
-msgid ""
-"Die prozentuale Verteilung deiner Ausgaben im gewählten Simulationsjahr. "
-"Hilft dabei, Kostentreiber zu identifizieren. <br><br>Anpassbar in der "
-"Tabelle <a href=\"/admin/finance/cashflowsource/\" target=\"_blank\" "
-"class=\"alert-link\">Ausgaben</a>."
-msgstr ""
 
 #: finance/views.py:84
 msgid "Asset Allocation"
 msgstr "Vermögensaufteilung (Asset Allocation)"
 
-#: finance/views.py:85
-msgid ""
-"Zeigt die Diversifikation deines Vermögens. Ein ausgewogener Mix aus "
-"liquiden Mitteln, Immobilien und Sachwerten ist oft sicherer. <br><br>Daten "
-"aus der Tabelle <a href=\"/admin/finance/asset/\" target=\"_blank\" "
-"class=\"alert-link\">Vermögenswerte</a>."
-msgstr ""
-
 #: finance/views.py:88
 msgid "Important Dates & Deadlines"
 msgstr "Wichtige Termine & Fristen"
-
-#: finance/views.py:89
-msgid ""
-"Ein automatischer Kalender für deine Finanzen. Zeigt, wann Kredite "
-"auslaufen, Versicherungen enden oder Einmalzahlungen fällig werden. "
-"<br><br>Speist sich aus allen Tabellen mit Enddatum."
-msgstr ""
 
 #: finance/views.py:92
 msgid "Income Table"
 msgstr "Einnahmen-Tabelle"
 
-#: finance/views.py:93
-msgid ""
-"Detaillierte Liste deiner monatlichen Zuflüsse zum gewählten Stichtag. "
-"<br><br>Hier anpassen: <a href=\"/admin/finance/cashflowsource/\" "
-"target=\"_blank\" class=\"alert-link\">Einnahmen verwalten</a>."
-msgstr ""
-
 #: finance/views.py:97
 msgid "Expense Table"
 msgstr "Ausgaben-Tabelle"
-
-#: finance/views.py:98
-msgid ""
-"Detaillierte Liste deiner monatlichen Abflüsse zum gewählten Stichtag. "
-"<br><br>Hier anpassen: <a href=\"/admin/finance/cashflowsource/\" "
-"target=\"_blank\" class=\"alert-link\">Ausgaben verwalten</a>."
-msgstr ""
 
 #: finance/views.py:101
 msgid "Asset Table"
 msgstr "Vermögenswerte-Tabelle"
 
-#: finance/views.py:102
-msgid ""
-"Inventur deiner Konten und Depots. Zeigt den simulierten Stand inklusive "
-"Zinseszinseffekt. <br><br>Hier anpassen: <a href=\"/admin/finance/asset/\" "
-"target=\"_blank\" class=\"alert-link\">Vermögenswerte</a>."
-msgstr ""
-
 #: finance/views.py:105
 msgid "Pension Table"
 msgstr "Renten-Tabelle"
-
-#: finance/views.py:106
-msgid ""
-"Übersicht deiner Altersvorsorge. Zeigt garantierte Beträge und aktuelle "
-"Kapitalwerte. <br><br>Hier anpassen: <a href=\"/admin/finance/pension/\" "
-"target=\"_blank\" class=\"alert-link\">Rentenverträge</a>."
-msgstr ""
 
 #: finance/views.py:109
 msgid "One-Time Event Table"
 msgstr "Einmalige Ereignisse"
 
-#: finance/views.py:110
-msgid ""
-"Besondere Ereignisse (Erbe, Autokauf, Schenkung) im gewählten "
-"Simulationsjahr. <br><br>Hier anpassen: <a href=\"/admin/finance/"
-"onetimeevent/\" target=\"_blank\" class=\"alert-link\">Einmalereignisse</a>."
-msgstr ""
-
 #: finance/views.py:113
 msgid "Loan Table"
 msgstr "Kredit-Übersicht"
-
-#: finance/views.py:114
-msgid ""
-"Übersicht deiner Schuldenlast. Zeigt Restsaldo und Zinssatz zum Stichtag. "
-"<br><br>Hier anpassen: <a href=\"/admin/finance/loan/\" target=\"_blank\" "
-"class=\"alert-link\">Kredite verwalten</a>."
-msgstr ""
 
 #: finance/views.py:117
 msgid "Loan Balance Trend"
@@ -780,100 +656,33 @@ msgstr ""
 msgid "Current Assets"
 msgstr "Aktuelles Vermögen / Konten"
 
-#: finance/views.py:125
-msgid ""
-"Summe deines gesamten liquiden Kapitals (Konten, Aktien, Cash) zum gewählten "
-"Datum. <br><br>Verwaltet in <a href=\"/admin/finance/asset/\" "
-"target=\"_blank\" class=\"alert-link\">Vermögenswerte</a>."
-msgstr ""
-
 #: finance/views.py:128
 msgid "Monthly Income"
 msgstr "Monatliches Einkommen"
-
-#: finance/views.py:129
-msgid ""
-"Dein gesamtes monatliches Netto-Einkommen (Gehalt, Mieteinnahmen, etc.). "
-"<br><br>Verwaltet in <a href=\"/admin/finance/cashflowsource/\" "
-"target=\"_blank\" class=\"alert-link\">Zahlungsströme (Einnahmen)</a>."
-msgstr ""
 
 #: finance/views.py:132
 msgid "Monthly Expenses"
 msgstr "Monatliche Ausgaben"
 
-#: finance/views.py:133
-msgid ""
-"Deine gesamten monatlichen Ausgaben inklusive simulierter Inflation. "
-"<br><br>Verwaltet in <a href=\"/admin/finance/cashflowsource/\" "
-"target=\"_blank\" class=\"alert-link\">Zahlungsströme (Ausgaben)</a>."
-msgstr ""
-
 #: finance/views.py:136
 msgid "Pension Capital"
 msgstr "Angespartes Rentenkapital"
-
-#: finance/views.py:137
-msgid ""
-"Aktueller Barwert bzw. Rückkaufwert all deiner Rentenanwartschaften. "
-"<br><br>Verwaltet in <a href=\"/admin/finance/pension/\" target=\"_blank\" "
-"class=\"alert-link\">Rentenverträge</a>."
-msgstr ""
 
 #: finance/views.py:140
 msgid "Target Monthly Pension"
 msgstr "Ziel-Rente (Vertrag)"
 
-#: finance/views.py:141
-msgid ""
-"Die Summe der monatlichen Renten, die du laut deinen Verträgen nominal (ohne "
-"Inflation) erwartest. Dein Zielwert."
-msgstr ""
-
 #: finance/views.py:144
 msgid "Current Pension"
 msgstr "Aktuelle Rente (am Stichtag)"
-
-#: finance/views.py:145
-msgid ""
-"Die monatliche Rente, die du laut Simulation zum Stichtag tatsächlich "
-"beziehst (inflationsbereinigt)."
-msgstr ""
-
-#: finance/views.py:149
-msgid ""
-"Gesamtwert deiner Sachwerte wie Fahrzeuge, Gold oder Sammlungen. "
-"<br><br>Verwaltet in <a href=\"/admin/finance/physicalasset/\" "
-"target=\"_blank\" class=\"alert-link\">Sachwerte</a>."
-msgstr ""
-
-#: finance/views.py:153
-msgid ""
-"Marktwert deiner Immobilien zum gewählten Datum. <br><br>Verwaltet in <a "
-"href=\"/admin/finance/realestate/\" target=\"_blank\" class=\"alert-"
-"link\">Immobilien</a>."
-msgstr ""
 
 #: finance/views.py:156
 msgid "Total Wealth"
 msgstr "Gesamtvermögen"
 
-#: finance/views.py:157
-msgid ""
-"Dein Netto-Reinvermögen: Summe aller Werte (liquide, Renten, Immobilien, "
-"Sachwerte) minus alle Kredite."
-msgstr ""
-
 #: finance/views.py:160
 msgid "Total Debts"
 msgstr "Gesamtschulden"
-
-#: finance/views.py:161
-msgid ""
-"Deine gesamte Schuldenlast (Restsaldo) zum gewählten Datum. "
-"<br><br>Verwaltet in <a href=\"/admin/finance/loan/\" target=\"_blank\" "
-"class=\"alert-link\">Kredite</a>."
-msgstr ""
 
 #: finance/views.py:183
 msgid "State Pension"
@@ -939,11 +748,6 @@ msgstr ""
 #: finance/views.py:750
 msgid "Withdrawal"
 msgstr "Entnahme"
-
-#: finance/views.py:753 templates/finance/dashboard.html:26
-#: templates/finance/dashboard.html:46
-msgid "Simulation"
-msgstr "Simulation"
 
 #: finance/views.py:764 finance/views.py:790 finance/views.py:802
 msgid "Contract"
@@ -1054,10 +858,6 @@ msgid ""
 "third parties."
 msgstr ""
 
-#: templates/core/about.html:33
-msgid "Advanced Simulation"
-msgstr "Simulation aktualisieren"
-
 #: templates/core/about.html:34
 msgid ""
 "We use high-precision calculations for inflation and compound interest over "
@@ -1104,10 +904,6 @@ msgstr ""
 msgid "Learn More"
 msgstr "Mehr erfahren"
 
-#: templates/core/help.html:43
-msgid "Simulation Engine"
-msgstr "Simulations-Engine"
-
 #: templates/core/help.html:45
 msgid ""
 "Understand the math behind real vs. nominal value, inflation buffers, and "
@@ -1146,20 +942,6 @@ msgstr ""
 "Vermögen steigt, kann eine hohe Inflationsrate deine Kaufkraft schneller "
 "\"auffressen\", als du sparst. Prüfe den \"Realwert\" im Vergleich zum "
 "\"Nominalwert\" in den Diagrammen."
-
-#: templates/core/help.html:94
-msgid "How does the \"Stichtag\" (Simulation Date) work?"
-msgstr "Wie funktioniert der \"Stichtag\" (Simulationsdatum)?"
-
-#: templates/core/help.html:99
-msgid ""
-"The Stichtag is the \"fictional today\". Moving it allows you to travel "
-"through time. The dashboard will recalculate all active income, expenses, "
-"and asset values for that specific point in your life."
-msgstr ""
-"Der Stichtag ist das \"fiktive Heute\". Durch das Verschieben kannst du "
-"durch die Zeit reisen. Das Dashboard berechnet alle aktiven Einnahmen, "
-"Ausgaben und Vermögenswerte für genau diesen Zeitpunkt in deinem Leben neu."
 
 #: templates/core/help.html:107
 msgid "Are my bank details and financial data safe?"
@@ -1233,10 +1015,6 @@ msgstr ""
 "Nichts wird direkt gespeichert. Du hast immer einen Bereich für "
 "\"ausstehende Transaktionen\", in dem du Zeilen prüfen, korrigieren oder "
 "ignorieren kannst, bevor sie deine Historie beeinflussen."
-
-#: templates/core/help.html:162
-msgid "The Simulation Engine"
-msgstr "Die Simulations-Engine"
 
 #: templates/core/help.html:166
 msgid "Mathematical Foundations"
@@ -1354,6 +1132,7 @@ msgstr "Profilbild"
 # #-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#
 # #-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#
 # #-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#
+# #-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#
 # Core Form Translations
 #: templates/core/profile.html:77 templates/core/profile.html:81
 #: templates/core/profile.html:86
@@ -1453,12 +1232,6 @@ msgstr "Änderungen & Design speichern"
 msgid "Already have an account? Login"
 msgstr ""
 
-#: templates/finance/ai_status.html:10 templates/finance/ai_status.html:14
-msgid ""
-"Hier kannst du prüfen, ob deine API-Schlüssel korrekt konfiguriert sind und "
-"die KI-Dienste antworten."
-msgstr ""
-
 #: templates/finance/ai_status.html:22 templates/finance/ai_status.html:26
 #: templates/finance/ai_status.html:45
 msgid "Key Vorhanden"
@@ -1474,13 +1247,6 @@ msgstr ""
 
 #: templates/finance/ai_status.html:55
 msgid "Hinweis:"
-msgstr ""
-
-#: templates/finance/ai_status.html:56
-msgid ""
-"Wenn beide Keys fehlen, nutzt das System einen einfachen Keyword-Abgleich. "
-"Für beste Ergebnisse solltest du einen Groq-Key (kostenlos) in deiner .env "
-"Datei hinterlegen."
 msgstr ""
 
 #: templates/finance/ai_status.html:61 templates/finance/dashboard.html:22
@@ -1520,10 +1286,6 @@ msgstr "Wertsteigerung Immobilien (%)"
 #: templates/finance/dashboard.html:107 templates/finance/dashboard.html:113
 msgid "Decline Physical Assets"
 msgstr "Wertverlust Sachwerte (%)"
-
-#: templates/finance/dashboard.html:114 templates/finance/dashboard.html:124
-msgid "Update Simulation"
-msgstr "Simulation aktualisieren"
 
 #: templates/finance/dashboard.html:127
 msgid "Reset to Defaults"
@@ -1671,13 +1433,6 @@ msgstr ""
 msgid "Plan-Eintrag erstellen"
 msgstr ""
 
-#: templates/finance/import_processing.html:15
-#: templates/finance/import_processing.html:17
-msgid ""
-"Deine Daten werden von der KI kategorisiert. Bitte schließe dieses Fenster "
-"nicht."
-msgstr ""
-
 #: templates/finance/import_processing.html:25
 msgid "Analyse fehlgeschlagen"
 msgstr ""
@@ -1688,12 +1443,6 @@ msgstr ""
 
 #: templates/finance/import_processing.html:48
 msgid "Analyse fertig – Buchungen ansehen"
-msgstr ""
-
-#: templates/finance/import_processing.html:53
-msgid ""
-"Möchtest du die Analyse wirklich abbrechen? Alle Daten dieses Imports werden "
-"gelöscht."
 msgstr ""
 
 #: templates/finance/import_processing.html:57
@@ -1741,24 +1490,8 @@ msgstr ""
 msgid "Bankbuchungen importieren"
 msgstr ""
 
-#: templates/finance/import_upload.html:13
-msgid ""
-"Lade deine Excel-Tabelle hoch. Unsere KI hilft dir bei der Kategorisierung."
-msgstr ""
-
 #: templates/finance/import_upload.html:23
 msgid "Hinweise zum Import"
-msgstr ""
-
-#: templates/finance/import_upload.html:25
-#: templates/finance/import_upload.html:26
-msgid ""
-"Die Tabelle sollte Spalten für Datum, Verwendungszweck und Betrag enthalten."
-msgstr ""
-
-#: templates/finance/import_upload.html:27
-msgid ""
-"Die KI erkennt automatisch Einnahmen, Ausgaben und regelmäßige Abos/Gehälter."
 msgstr ""
 
 #: templates/finance/import_upload.html:39
@@ -1791,12 +1524,6 @@ msgstr ""
 #: templates/finance/import_upload.html:117
 msgid "Cache & Wartung"
 msgstr ""
-
-#: templates/finance/import_upload.html:122
-#: templates/finance/import_upload.html:131
-#: templates/finance/partials/dashboard_charts.html:21
-msgid "Simulation Parameters"
-msgstr "Simulationsparameter"
 
 #: templates/finance/partials/dashboard_charts.html:21
 msgid "Inflation"
@@ -1870,11 +1597,6 @@ msgstr ""
 #: templates/finance/partials/import_mapping_pane.html:37
 #, python-format
 msgid "Gefilterte Ansicht: %(count)s offene Buchungen."
-msgstr ""
-
-#: templates/finance/partials/import_mapping_pane.html:43
-msgid ""
-"Möchtest du alle aktuell gefilterten Buchungen als eine Gruppe importieren?"
 msgstr ""
 
 #: templates/finance/partials/import_mapping_pane.html:45
@@ -1954,13 +1676,7 @@ msgstr ""
 msgid "Sachwert (Physical Asset)"
 msgstr "Wertverlust Sachwerte (%)"
 
-msgid "Sachwerte (Physical Assets)"
-msgstr "Wertverlust Sachwerte (%)"
-
 msgid "Immobilie (Real Estate)"
-msgstr "Immobilien"
-
-msgid "Immobilien (Real Estate)"
 msgstr "Immobilien"
 
 msgid "Theme"
@@ -2067,9 +1783,6 @@ msgstr "Tabellen-Hintergrund"
 msgid "Body Text Color"
 msgstr "Tabellen-Textfarbe"
 
-msgid "Simulation Panel"
-msgstr "Simulations-Panel"
-
 msgid "Header Background & Text"
 msgstr "Header Hintergrund & Text"
 
@@ -2105,9 +1818,6 @@ msgstr "Nein"
 
 msgid "Mon"
 msgstr "Monatlich"
-
-msgid "Stichtag"
-msgstr "Stichtag"
 
 msgid "Glossary & Charts"
 msgstr "Glossar & Diagramme"
@@ -2156,13 +1866,6 @@ msgid ""
 msgstr ""
 " Ihr gewünschtes Renteneinkommen. Dies ist einfach die unbereinigte Summe  "
 "der Ziel-Auszahlungen aus Ihren Rentenverträgen."
-
-msgid ""
-" The actual cash flow being paid out to you by active pensions at the  "
-"selected simulation date. (0 EUR if not retired yet)."
-msgstr ""
-" Der tatsächliche Geldfluss, der Ihnen zum gewählten Simulationsdatum aus  "
-"aktiven Renten ausgezahlt wird (0 EUR, falls noch nicht im Ruhestand)."
 
 msgid "Interactive Charts"
 msgstr "Interaktive Diagramme"
@@ -2270,13 +1973,6 @@ msgid "Expert Knowledge Base"
 msgstr "Experten-Wissensdatenbank"
 
 msgid ""
-" Master your financial future. Detailed insights into our simulation  "
-"engine, AI logic, and design philosophy."
-msgstr ""
-" Meistere deine finanzielle Zukunft. Detaillierte Einblicke in unsere  "
-"Simulations-Engine, KI-Logik und Design-Philosophie."
-
-msgid ""
 " Learn how our pattern recognition and learned memory automate your data  "
 "entry while maintaining 100% control."
 msgstr ""
@@ -2381,35 +2077,11 @@ msgstr "Konto/Anlage"
 msgid "Real Estate Trend"
 msgstr "Immobilien-Trend"
 
-msgid ""
-"Zeigt die Wertentwicklung deiner Immobilien. Hier siehst du Details zu "
-"Wertsteigerungen, die im großen Gesamt-Chart oft untergehen."
-msgstr ""
-"Zeigt die Wertentwicklung deiner Immobilien. Hier siehst du Details zu "
-"Wertsteigerungen, die im großen Gesamt-Chart oft untergehen."
-
 msgid "Physical Assets Trend"
 msgstr "Sachwerte-Trend"
 
-msgid ""
-"Visualisiert den Wertverlauf deiner Sachwerte (z.B. Gold, Autos). Durch den "
-"eigenen Maßstab sind hier auch kleinere Schwankungen gut sichtbar."
-msgstr ""
-"Visualisiert den Wertverlauf deiner Sachwerte (z.B. Gold, Autos). Durch den "
-"eigenen Maßstab sind hier auch kleinere Schwankungen gut sichtbar."
-
 msgid "Liquidity & Pension"
 msgstr "Liquidität & Vorsorge"
-
-msgid ""
-"Vergleicht dein verfügbares Bargeld/Depotguthaben mit deinem angesparten "
-"Rentenkapital über die Zeit."
-msgstr ""
-"Vergleicht dein verfügbares Bargeld/Depotguthaben mit deinem angesparten "
-"Rentenkapital über die Zeit."
-
-msgid "Simulation Start Date"
-msgstr "Simulations-Startdatum"
 
 msgid "Sim. Start Date"
 msgstr "Sim. Startdatum"
@@ -2420,13 +2092,6 @@ msgid ""
 msgstr ""
 "Frühestes Datum, das in den Charts angezeigt wird. Leer lassen für "
 "automatische Erkennung (basierend auf ältestem Snapshot oder aktuellem Jahr)."
-
-msgid ""
-"The anchor date for your simulation. All calculations for interest, pension "
-"phases, and purchasing power losses start from this day."
-msgstr ""
-"Das Ankerdatum für deine Simulation. Alle Berechnungen für Zinsen, "
-"Rentenphasen und Kaufkraftverluste starten ab diesem Tag."
 
 msgid ""
 "The expected annual inflation rate. This reduces the real value (purchasing "
@@ -2448,6 +2113,7 @@ msgstr ""
 "Die jährliche Anpassung deiner Rentenbezüge. In Deutschland orientiert sich "
 "dieser Wert oft an der allgemeinen Lohnentwicklung."
 
+# #-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#
 # #-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#
 # #-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#
 # New Chart/Widget Descriptions
@@ -2626,27 +2292,14 @@ msgstr ""
 msgid "Follow System Night Mode Settings"
 msgstr "Nachtmodus Einstellungen vom System übernehmen"
 
-# MASTER SYNC - CLEAN LOCALIZATION
-msgid "First Name"
-msgstr "Vorname"
-
-msgid "Last Name"
-msgstr "Nachname"
-
 msgid "File"
 msgstr "Datei"
-
-msgid "Status"
-msgstr "Status"
 
 msgid "Action"
 msgstr "Action"
 
 msgid "Amount (€)"
 msgstr "Betrag (€)"
-
-msgid "Target Name"
-msgstr "Ziel-Name"
 
 msgid "Search Terms"
 msgstr "Suchbegriffe"
@@ -2669,18 +2322,6 @@ msgstr "Löschen"
 msgid "Edit"
 msgstr "Bearbeiten"
 
-msgid "Really delete filter?"
-msgstr "Filter wirklich löschen?"
-
-msgid "Filter added successfully."
-msgstr "Filter erfolgreich hinzugefügt."
-
-msgid "Filter updated successfully."
-msgstr "Filter erfolgreich geändert."
-
-msgid "Filter deleted."
-msgstr "Filter gelöscht."
-
 msgid "Import batch deleted."
 msgstr "Import-Batch gelöscht."
 
@@ -2692,3 +2333,28 @@ msgstr "Aus deinem Gedächtnis gelernt"
 
 msgid "Duplicate selection & increment date"
 msgstr "Auswahl duplizieren & Datum hochzählen"
+
+# MASTER SYNC - CLEAN LOCALIZATION
+msgid "First Name"
+msgstr "Vorname"
+
+msgid "Last Name"
+msgstr "Nachname"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Target Name"
+msgstr "Ziel-Name"
+
+msgid "Really delete filter?"
+msgstr "Filter wirklich löschen?"
+
+msgid "Filter added successfully."
+msgstr "Filter erfolgreich hinzugefügt."
+
+msgid "Filter updated successfully."
+msgstr "Filter erfolgreich geändert."
+
+msgid "Filter deleted."
+msgstr "Filter gelöscht."

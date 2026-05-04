@@ -73,10 +73,6 @@ msgstr ""
 msgid "Language"
 msgstr ""
 
-#: core/models.py:60
-msgid "Simulation Max Age"
-msgstr ""
-
 #: core/models.py:63
 msgid "Default Inflation Rate (%)"
 msgstr ""
@@ -394,11 +390,6 @@ msgstr "Quick Start"
 msgid "Learn More"
 msgstr "Learn More"
 
-#: venv/lib/python3.12/site-packages/django/db/models/fields/__init__.py:1868
-#| msgid "Simulation"
-msgid "Duration"
-msgstr "Simulation"
-
 #: templates/core/help.html:62
 msgid "Frequently Asked Questions"
 msgstr ""
@@ -564,10 +555,6 @@ msgstr ""
 
 #: templates/finance/dashboard.html:215
 msgid "Close"
-msgstr ""
-
-#: templates/finance/partials/dashboard_charts.html:23
-msgid "Simulation Parameters"
 msgstr ""
 
 #: templates/finance/partials/dashboard_charts.html:23
@@ -1568,12 +1555,6 @@ msgstr "Current Pension"
 msgid "Table Styling"
 msgstr "Table Styling"
 
-msgid "Gesetzliche Rente"
-msgstr "Public Pension"
-
-msgid "Private Kapital-Rente"
-msgstr "Private Capital Pension"
-
 msgid "Indexed (Inflation Adjustment)"
 msgstr "Indexed (Inflation Adjustment)"
 
@@ -1599,52 +1580,6 @@ msgstr "Default Physical Asset Growth (%)"
 msgid "Sale Date"
 msgstr "Sale Date"
 
-msgid "Stichtag"
-msgstr "Target Date"
-
-msgid "Sachwerte"
-msgstr "Physical Assets"
-
-msgid "Immobilien"
-msgstr "Real Estate"
-
-# --- Simulation Panel Translations ---
-msgid ""
-"Ankerdatum für die Simulation. Alle Berechnungen beziehen sich auf diesen "
-"Monat."
-msgstr "Anchor date for the simulation. All calculations refer to this month."
-
-msgid ""
-"Jährliche Inflationsrate. Reduziert die reale Kaufkraft Ihres Vermögens über "
-"die Zeit."
-msgstr ""
-"Annual inflation rate. Reduces the real purchasing power of your assets over "
-"time."
-
-msgid ""
-"Jährliche Rentenanpassung. Standardmäßig oft niedriger als die Inflation."
-msgstr "Annual pension adjustment. Often lower than inflation."
-
-msgid ""
-"Zusätzliche Rendite auf Ihr liquides Anlagevermögen (z.B. Aktien, ETFs)."
-msgstr ""
-"Additional return on your liquid investment assets (e.g. stocks, ETFs)."
-
-msgid ""
-"Standardmäßige jährliche Wertsteigerung für Immobilien. Wird nur verwendet, "
-"wenn am Objekt selbst kein individueller Wert (0%) hinterlegt ist."
-msgstr ""
-"Default annual appreciation for real estate. Only used if no individual "
-"value is set."
-
-msgid ""
-"Jährliche Wertminderung für Sachwerte (wie Autos). Wird nur verwendet, wenn "
-"am Objekt selbst kein individueller Wert (0%) hinterlegt ist. Tragen Sie "
-"hier positive Werte für Wertverlust ein."
-msgstr ""
-"Annual depreciation for physical assets (e.g. cars). Only used if no "
-"individual value is set."
-
 msgid "Target Date"
 msgstr "Target Date"
 
@@ -1665,9 +1600,6 @@ msgstr "Growth Real Estate (%)"
 
 msgid "Decline Physical Assets (%)"
 msgstr "Decline Physical Assets (%)"
-
-msgid "Update Simulation"
-msgstr "Update Simulation"
 
 msgid "Reset to Defaults"
 msgstr "Reset to Defaults"
@@ -1832,6 +1764,7 @@ msgstr "SUMMARY_DESC_DEBTS"
 
 # #-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#
 # #-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#
+# #-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#
 # Core Form Translations
 msgid "Email Address"
 msgstr "Email Address"
@@ -1839,24 +1772,11 @@ msgstr "Email Address"
 msgid "Follow System Night Mode Settings"
 msgstr "Follow System Night Mode Settings"
 
-# MASTER SYNC - CLEAN LOCALIZATION
-msgid "First Name"
-msgstr "First Name"
-
-msgid "Last Name"
-msgstr "Last Name"
-
-msgid "Status"
-msgstr "Status"
-
 msgid "Action"
 msgstr "Action"
 
 msgid "Amount (€)"
 msgstr "Amount (€)"
-
-msgid "Target Name"
-msgstr "Target Name"
 
 msgid "Search Terms"
 msgstr "Search Terms"
@@ -1876,18 +1796,6 @@ msgstr "Please wait, the data is being transferred to the server."
 msgid "Edit"
 msgstr "Edit"
 
-msgid "Really delete filter?"
-msgstr "Really delete filter?"
-
-msgid "Filter added successfully."
-msgstr "Filter added successfully."
-
-msgid "Filter updated successfully."
-msgstr "Filter updated successfully."
-
-msgid "Filter deleted."
-msgstr "Filter deleted."
-
 msgid "Import batch deleted."
 msgstr "Import batch deleted."
 
@@ -1902,3 +1810,28 @@ msgstr "Learned from your memory"
 
 msgid "Duplicate selection & increment date"
 msgstr "Duplicate selection & increment date"
+
+# MASTER SYNC - CLEAN LOCALIZATION
+msgid "First Name"
+msgstr "First Name"
+
+msgid "Last Name"
+msgstr "Last Name"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Target Name"
+msgstr "Target Name"
+
+msgid "Really delete filter?"
+msgstr "Really delete filter?"
+
+msgid "Filter added successfully."
+msgstr "Filter added successfully."
+
+msgid "Filter updated successfully."
+msgstr "Filter updated successfully."
+
+msgid "Filter deleted."
+msgstr "Filter deleted."

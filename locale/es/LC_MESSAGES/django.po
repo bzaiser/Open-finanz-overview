@@ -71,10 +71,6 @@ msgstr ""
 msgid "Language"
 msgstr ""
 
-#: core/models.py:60
-msgid "Simulation Max Age"
-msgstr ""
-
 #: core/models.py:63
 msgid "Default Inflation Rate (%)"
 msgstr ""
@@ -381,10 +377,6 @@ msgstr "Sobre el proyecto"
 msgid "Personal Data Security"
 msgstr ""
 
-#: templates/core/about.html:33
-msgid "Advanced Simulation"
-msgstr ""
-
 #: templates/core/about.html:47
 msgid "Lead Developer & Architect"
 msgstr "Desarrollador principal y arquitecto"
@@ -496,10 +488,6 @@ msgstr ""
 msgid "Configure Layout"
 msgstr "Configurar diseño"
 
-#: templates/finance/dashboard.html:20 templates/finance/dashboard.html:38
-msgid "Simulation"
-msgstr ""
-
 msgid "Changes here are temporary. Update your profile for permanent settings."
 msgstr "Cambios temporales."
 
@@ -537,10 +525,6 @@ msgstr ""
 #: templates/finance/dashboard.html:105
 msgid "Header Text Color"
 msgstr ""
-
-#: templates/finance/dashboard.html:109 templates/finance/dashboard.html:114
-msgid "Simulation Panel"
-msgstr "Panel de Simulación"
 
 #: templates/finance/dashboard.html:117
 msgid "Header Background & Text"
@@ -597,10 +581,6 @@ msgstr "Grande"
 #: templates/finance/dashboard.html:215
 msgid "Close"
 msgstr "Cerrar"
-
-#: templates/finance/partials/dashboard_charts.html:23
-msgid "Simulation Parameters"
-msgstr "Parámetros de simulación"
 
 #: templates/finance/partials/dashboard_charts.html:23
 msgid "Inflation"
@@ -1618,12 +1598,6 @@ msgstr "Activos Líquidos"
 msgid "Accumulated Cash"
 msgstr "Efectivo Acumulado"
 
-msgid "Gesetzliche Rente"
-msgstr "Pensión pública"
-
-msgid "Private Kapital-Rente"
-msgstr "Pensión de capital privada"
-
 msgid "Indexed (Inflation Adjustment)"
 msgstr "Indexado (Ajuste por inflación)"
 
@@ -1649,47 +1623,6 @@ msgstr "Crecimiento de activos físicos predeterminado (%)"
 msgid "Sale Date"
 msgstr "Fecha de venta"
 
-msgid "Stichtag"
-msgstr "Fecha objetivo"
-
-msgid "Sachwerte"
-msgstr "Activos físicos"
-
-msgid "Immobilien"
-msgstr "Bienes inmuebles"
-
-# --- Simulation Panel Translations ---
-msgid ""
-"Ankerdatum für die Simulation. Alle Berechnungen beziehen sich auf diesen "
-"Monat."
-msgstr ""
-"Fecha de anclaje para la simulación. Todos los cálculos se refieren a este "
-"mes."
-
-msgid ""
-"Jährliche Inflationsrate. Reduziert die reale Kaufkraft Ihres Vermögens über "
-"die Zeit."
-msgstr "Tasa de inflación anual."
-
-msgid ""
-"Jährliche Rentenanpassung. Standardmäßig oft niedriger als die Inflation."
-msgstr "Ajuste anual de las pensiones."
-
-msgid ""
-"Zusätzliche Rendite auf Ihr liquides Anlagevermögen (z.B. Aktien, ETFs)."
-msgstr "Rendimiento adicional de sus inversiones."
-
-msgid ""
-"Standardmäßige jährliche Wertsteigerung für Immobilien. Wird nur verwendet, "
-"wenn am Objekt selbst kein individueller Wert (0%) hinterlegt ist."
-msgstr "Aumento anual por defecto del valor de los bienes inmuebles."
-
-msgid ""
-"Jährliche Wertminderung für Sachwerte (wie Autos). Wird nur verwendet, wenn "
-"am Objekt selbst kein individueller Wert (0%) hinterlegt ist. Tragen Sie "
-"hier positive Werte für Wertverlust ein."
-msgstr "Depreciación anual de los activos físicos."
-
 msgid "Target Date"
 msgstr "Fecha objetivo"
 
@@ -1710,9 +1643,6 @@ msgstr "Crecimiento immo (%)"
 
 msgid "Decline Physical Assets (%)"
 msgstr "Depreciación activos (%)"
-
-msgid "Update Simulation"
-msgstr "Actualizar simulación"
 
 msgid "Reset to Defaults"
 msgstr "Restablecer"
@@ -1849,6 +1779,7 @@ msgstr "SUMMARY_DESC_DEBTS"
 
 # #-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#
 # #-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#
+# #-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#
 # Core Form Translations
 msgid "Email Address"
 msgstr "Email Address"
@@ -1856,24 +1787,11 @@ msgstr "Email Address"
 msgid "Follow System Night Mode Settings"
 msgstr "Follow System Night Mode Settings"
 
-# MASTER SYNC - CLEAN LOCALIZATION
-msgid "First Name"
-msgstr "First Name"
-
-msgid "Last Name"
-msgstr "Last Name"
-
-msgid "Status"
-msgstr "Status"
-
 msgid "Action"
 msgstr "Action"
 
 msgid "Amount (€)"
 msgstr "Amount (€)"
-
-msgid "Target Name"
-msgstr "Target Name"
 
 msgid "Search Terms"
 msgstr "Search Terms"
@@ -1893,18 +1811,6 @@ msgstr "Please wait, the data is being transferred to the server."
 msgid "Edit"
 msgstr "Edit"
 
-msgid "Really delete filter?"
-msgstr "Really delete filter?"
-
-msgid "Filter added successfully."
-msgstr "Filter added successfully."
-
-msgid "Filter updated successfully."
-msgstr "Filter updated successfully."
-
-msgid "Filter deleted."
-msgstr "Filter deleted."
-
 msgid "Import batch deleted."
 msgstr "Import batch deleted."
 
@@ -1919,3 +1825,28 @@ msgstr "Learned from your memory"
 
 msgid "Duplicate selection & increment date"
 msgstr "Duplicate selection & increment date"
+
+# MASTER SYNC - CLEAN LOCALIZATION
+msgid "First Name"
+msgstr "First Name"
+
+msgid "Last Name"
+msgstr "Last Name"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Target Name"
+msgstr "Target Name"
+
+msgid "Really delete filter?"
+msgstr "Really delete filter?"
+
+msgid "Filter added successfully."
+msgstr "Filter added successfully."
+
+msgid "Filter updated successfully."
+msgstr "Filter updated successfully."
+
+msgid "Filter deleted."
+msgstr "Filter deleted."
