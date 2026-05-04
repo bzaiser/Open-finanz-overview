@@ -21,36 +21,29 @@ msgid "HELP_TARGET_DATE"
 msgstr "The target date for your financial simulation."
 
 msgid "HELP_INFLATION_RATE"
-msgstr "The expected annual inflation rate that reduces the purchasing power of your assets."
+msgstr ""
+"The expected annual inflation rate that reduces the purchasing power of your "
+"assets."
 
 msgid "HELP_SALARY_INCREASE"
-msgstr "The average annual percentage by which your gross salary is expected to grow."
+msgstr ""
+"The average annual percentage by which your gross salary is expected to grow."
 
 msgid "HELP_PENSION_INCREASE"
 msgstr "The annual adjustment rate for your pension benefits."
 
 msgid "HELP_INTEREST_BUFFER"
-msgstr "A global return premium applied to all your liquid assets (accounts and investments)."
+msgstr ""
+"A global return premium applied to all your liquid assets (accounts and "
+"investments)."
 
 msgid "HELP_REAL_ESTATE_GROWTH"
 msgstr "The expected annual value increase of your real estate properties."
 
-#: finance/models.py:47 finance/models.py:100
-
-#: finance/models.py:65
-
-#: finance/views.py:118
-
-#: templates/core/about.html:12
-
-#: templates/core/about.html:15
-
-#: templates/core/about.html:24
-
-#: templates/core/about.html:34
-
-#: templates/core/about.html:50
-
+#: finance/models.py:47 finance/models.py:100 finance/models.py:65
+#: finance/views.py:118 templates/core/about.html:12
+#: templates/core/about.html:15 templates/core/about.html:24
+#: templates/core/about.html:34 templates/core/about.html:50
 #: templates/core/help.html:10
 msgid "HELP_HEADER_TITLE"
 msgstr "Help & Details"
@@ -65,47 +58,50 @@ msgstr "AI-Assisted Bank Import"
 
 #: templates/core/help.html:29
 msgid "HELP_AI_IMPORT_DESC"
-msgstr "Learn how our pattern recognition and learned memory automate your data entry while maintaining 100% control."
+msgstr ""
+"Learn how our pattern recognition and learned memory automate your data "
+"entry while maintaining 100% control."
 
-#: templates/core/help.html:45
-
-#: templates/core/help.html:61
-
-#: templates/core/help.html:86
-
-#: templates/core/help.html:112
-
-#: templates/core/help.html:137
-
-#: templates/core/help.html:141
-
-#: templates/core/help.html:145
-
-#: templates/core/help.html:149
-
+#: templates/core/help.html:45 templates/core/help.html:61
+#: templates/core/help.html:86 templates/core/help.html:112
+#: templates/core/help.html:137 templates/core/help.html:141
+#: templates/core/help.html:145 templates/core/help.html:149
 #: templates/core/help.html:173
 msgid "HELP_SIM_COMPOUND_DESC"
-msgstr "We calculate growth for each asset class individually. A 5% growth on a 100k asset is calculated monthly to account for the compound effect over 30+ years."
+msgstr ""
+"We calculate growth for each asset class individually. A 5% growth on a 100k "
+"asset is calculated monthly to account for the compound effect over 30+ "
+"years."
 
 #: templates/core/help.html:177
 msgid "HELP_SIM_DYNAMICS_DESC"
-msgstr "If you set a 2% \"Dynamics\" rate, your income doesn't stay level. It grows every year, simulating career growth or contract-based indexing."
+msgstr ""
+"If you set a 2% \"Dynamics\" rate, your income doesn't stay level. It grows "
+"every year, simulating career growth or contract-based indexing."
 
 #: templates/core/help.html:183
 msgid "HELP_SIM_30YEARS_DESC"
-msgstr "Retirement planning is a marathon. We chose a 30-year horizon to visualize the late-stage effects of inflation and interest."
+msgstr ""
+"Retirement planning is a marathon. We chose a 30-year horizon to visualize "
+"the late-stage effects of inflation and interest."
 
 #: templates/core/help.html:203
 msgid "HELP_DESIGN_HARMONY_DESC"
-msgstr "A \"Harmony\" isn't just a set of colors. It's a mathematical relationship based on your Primary Color choice."
+msgstr ""
+"A \"Harmony\" isn't just a set of colors. It's a mathematical relationship "
+"based on your Primary Color choice."
 
 #: templates/core/help.html:205
 msgid "HELP_DESIGN_GLASS_DESC"
-msgstr "We use backdrop filters and translucency to create depth. This allows your personalized brand color to shine through."
+msgstr ""
+"We use backdrop filters and translucency to create depth. This allows your "
+"personalized brand color to shine through."
 
 #: templates/core/help.html:208
 msgid "HELP_DESIGN_PROTIP_DESC"
-msgstr "Use a Darker background and high-vibrancy primary colors for the absolute premium \"High-End\" look."
+msgstr ""
+"Use a Darker background and high-vibrancy primary colors for the absolute "
+"premium \"High-End\" look."
 
 #: templates/finance/import_filters.html:84
 #: templates/finance/import_filters.html:87
@@ -136,7 +132,6 @@ msgid "Abstimmung & Import"
 msgstr "Reconciliation & Import"
 
 #: templates/finance/import_review.html:28
-
 #: templates/finance/import_upload.html:23
 msgid "Hinweise zum Import"
 msgstr "Import notes"
@@ -166,7 +161,6 @@ msgstr "Filtered view: %(count)s open transactions."
 #: templates/finance/partials/import_mapping_pane.html:52
 #: templates/finance/partials/import_mapping_pane.html:57
 #: templates/finance/partials/import_mapping_pane.html:71
-
 #: templates/finance/partials/import_ready_pane.html:5
 msgid "2. Vorschau: Import-Bereit (Zusammengefasst)"
 msgstr "2. Preview: Ready to Import (Summarized)"
@@ -202,29 +196,44 @@ msgstr "Matches Plan"
 #: templates/finance/partials/import_row.html:12
 msgid "Ignorieren"
 msgstr "Ignore"
+
 msgid "CHART_DESC_NET_WORTH"
-msgstr "This chart projects your total wealth until the end of life, including assets, pensions, and real estate, minus debts."
+msgstr ""
+"This chart projects your total wealth until the end of life, including "
+"assets, pensions, and real estate, minus debts."
 
 msgid "CHART_DESC_CASH_FLOW"
-msgstr "Compares monthly income vs. expenses to show annual surplus or deficit."
+msgstr ""
+"Compares monthly income vs. expenses to show annual surplus or deficit."
 
 msgid "CHART_DESC_INCOME_EVOLUTION"
-msgstr "Shows the development of your income over decades, including salary steps and pension transition."
+msgstr ""
+"Shows the development of your income over decades, including salary steps "
+"and pension transition."
 
 msgid "CHART_DESC_EXPENSE_EVOLUTION"
-msgstr "Visualizes how fixed and living costs change due to inflation and loan repayments."
+msgstr ""
+"Visualizes how fixed and living costs change due to inflation and loan "
+"repayments."
 
 msgid "CHART_DESC_INFLATION_MONITOR"
-msgstr "A warning system for your purchasing power, showing the future value of today's savings."
+msgstr ""
+"A warning system for your purchasing power, showing the future value of "
+"today's savings."
 
 msgid "CHART_DESC_BUDGET_PIE"
-msgstr "Percentage distribution of your expenses in the selected simulation year."
+msgstr ""
+"Percentage distribution of your expenses in the selected simulation year."
 
 msgid "CHART_DESC_ASSET_ALLOCATION"
-msgstr "Shows the diversification of your wealth across liquid assets, real estate, and physical assets."
+msgstr ""
+"Shows the diversification of your wealth across liquid assets, real estate, "
+"and physical assets."
 
 msgid "WIDGET_DESC_UPCOMING_DATES"
-msgstr "An automatic calendar showing when loans expire, insurances end, or one-time payments are due."
+msgstr ""
+"An automatic calendar showing when loans expire, insurances end, or one-time "
+"payments are due."
 
 msgid "WIDGET_DESC_INCOME_TABLE"
 msgstr "Detailed list of your monthly inflows at the selected reference date."
@@ -233,28 +242,36 @@ msgid "WIDGET_DESC_EXPENSE_TABLE"
 msgstr "Detailed list of your monthly outflows at the selected reference date."
 
 msgid "WIDGET_DESC_ASSET_TABLE"
-msgstr "Inventory of your accounts and portfolios showing the simulated balance including compound interest."
+msgstr ""
+"Inventory of your accounts and portfolios showing the simulated balance "
+"including compound interest."
 
 msgid "WIDGET_DESC_PENSION_TABLE"
-msgstr "Overview of your various pension contracts and their projected payouts."
+msgstr ""
+"Overview of your various pension contracts and their projected payouts."
 
 msgid "WIDGET_DESC_EVENT_TABLE"
 msgstr "Chronological list of configured one-time financial events."
 
 msgid "WIDGET_DESC_LOAN_TABLE"
-msgstr "Current status of your loans, including remaining balance and interest costs."
+msgstr ""
+"Current status of your loans, including remaining balance and interest costs."
 
 msgid "CHART_DESC_LOAN_EVOLUTION"
-msgstr "Visualizes the reduction of your debt over time as you repay your loans."
+msgstr ""
+"Visualizes the reduction of your debt over time as you repay your loans."
 
 msgid "CHART_DESC_REAL_ESTATE"
 msgstr "Shows the value development of your real estate properties over time."
 
 msgid "CHART_DESC_PHYSICAL_ASSETS"
-msgstr "Visualizes the value history of your physical assets like gold or vehicles."
+msgstr ""
+"Visualizes the value history of your physical assets like gold or vehicles."
 
 msgid "CHART_DESC_LIQUID_PENSION"
-msgstr "Compares your available cash/investments with your accumulated pension capital."
+msgstr ""
+"Compares your available cash/investments with your accumulated pension "
+"capital."
 
 msgid "SUMMARY_DESC_ASSETS"
 msgstr "Total liquid capital (accounts, stocks, cash) at the selected date."
@@ -266,16 +283,22 @@ msgid "SUMMARY_DESC_EXPENSES"
 msgstr "Total monthly expenses including simulated inflation."
 
 msgid "SUMMARY_DESC_PENSION"
-msgstr "Current present value or surrender value of all your pension entitlements."
+msgstr ""
+"Current present value or surrender value of all your pension entitlements."
 
 msgid "SUMMARY_DESC_TARGET_PENSION"
-msgstr "Sum of monthly pensions you expect nominally (without inflation) based on your contracts."
+msgstr ""
+"Sum of monthly pensions you expect nominally (without inflation) based on "
+"your contracts."
 
 msgid "SUMMARY_DESC_CURRENT_PENSION"
-msgstr "The monthly pension you actually receive according to the simulation at the reference date (inflation-adjusted)."
+msgstr ""
+"The monthly pension you actually receive according to the simulation at the "
+"reference date (inflation-adjusted)."
 
 msgid "SUMMARY_DESC_PHYSICAL_ASSETS"
-msgstr "Total value of your physical assets like vehicles, gold, or collections."
+msgstr ""
+"Total value of your physical assets like vehicles, gold, or collections."
 
 msgid "SUMMARY_DESC_REAL_ESTATE"
 msgstr "Market value of your real estate at the selected date."
