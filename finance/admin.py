@@ -302,18 +302,28 @@ class AssetSnapshotForm(forms.ModelForm):
             const ctSelect = document.getElementById('id_content_type');
             const objIdInput = document.getElementById('id_object_id');
             
+            console.log("Asset Snapshot Helper initialized");
+            console.log("Elements found:", !!assetSelect, !!ctSelect, !!objIdInput);
+
             if (assetSelect && ctSelect && objIdInput) {
                 assetSelect.addEventListener('change', function() {
-                    const mapping = JSON.parse(this.getAttribute('data-mapping') || '{}');
+                    const mappingRaw = this.getAttribute('data-mapping');
+                    console.log("Selection changed:", this.value);
+                    console.log("Mapping raw:", mappingRaw);
+                    
+                    const mapping = JSON.parse(mappingRaw || '{}');
                     const val = this.value;
                     if (val && val.includes('-')) {
                         const parts = val.split('-');
                         const prefix = parts[0];
                         const id = parts[1];
                         
+                        console.log("Prefix:", prefix, "ID:", id, "CT:", mapping[prefix]);
+                        
                         if (mapping[prefix]) {
                             ctSelect.value = mapping[prefix];
                             objIdInput.value = id;
+                            console.log("Set CT to", ctSelect.value, "and ID to", objIdInput.value);
                         }
                     }
                 });
