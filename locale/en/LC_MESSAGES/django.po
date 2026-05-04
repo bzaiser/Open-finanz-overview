@@ -166,8 +166,6 @@ msgstr "Filtered view: %(count)s open transactions."
 #: templates/finance/partials/import_mapping_pane.html:52
 #: templates/finance/partials/import_mapping_pane.html:57
 #: templates/finance/partials/import_mapping_pane.html:71
-msgid "Clean up the open items above until they are correctly summarized in the import preview below."
-msgstr "Clean up the open items above until they are correctly summarized in the import preview below."
 
 #: templates/finance/partials/import_ready_pane.html:5
 msgid "2. Vorschau: Import-Bereit (Zusammengefasst)"
