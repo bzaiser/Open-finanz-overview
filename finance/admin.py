@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.safestring import mark_safe
 from .models import Category, CashFlowSource, Asset, OneTimeEvent, Pension, FinancialStatusProxy, PhysicalAsset, RealEstate, Loan, LoanExtraRepayment, AssetSnapshot
 from django.contrib.contenttypes.admin import GenericTabularInline
 from django.contrib.contenttypes.models import ContentType
@@ -294,16 +295,37 @@ class AssetSnapshotForm(forms.ModelForm):
     asset_choice = forms.ChoiceField(
         label=_("Asset/Object"),
         required=False,
-        help_text=_("Select the concrete asset to create a snapshot for. This will automatically fill the Type and ID fields.")
+        help_text=mark_safe(_("Select the concrete asset to create a snapshot for. This will automatically fill the Type and ID fields.") + """
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const assetSelect = document.getElementById('id_asset_choice');
+            const ctSelect = document.getElementById('id_content_type');
+            const objIdInput = document.getElementById('id_object_id');
+            
+            if (assetSelect && ctSelect && objIdInput) {
+                assetSelect.addEventListener('change', function() {
+                    const mapping = JSON.parse(this.getAttribute('data-mapping') || '{}');
+                    const val = this.value;
+                    if (val && val.includes('-')) {
+                        const parts = val.split('-');
+                        const prefix = parts[0];
+                        const id = parts[1];
+                        
+                        if (mapping[prefix]) {
+                            ctSelect.value = mapping[prefix];
+                            objIdInput.value = id;
+                        }
+                    }
+                });
+            }
+        });
+        </script>
+        """)
     )
 
     class Meta:
         model = AssetSnapshot
         fields = ['asset_choice', 'date', 'value', 'notes', 'content_type', 'object_id']
-        widgets = {
-            'content_type': forms.HiddenInput(),
-            'object_id': forms.HiddenInput(),
-        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -384,5 +406,18 @@ class AssetSnapshotAdmin(BaseOwnedModelAdmin):
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)
         form.request = request
+        
+        # Add mapping to JS
+        mapping = {}
+        for prefix, model_class in [('asset', Asset), ('pa', PhysicalAsset), ('re', RealEstate), ('pen', Pension), ('loan', Loan)]:
+            mapping[prefix] = ContentType.objects.get_for_model(model_class).id
+        
+        import json
+        form.base_fields['asset_choice'].widget.attrs['data-mapping'] = json.dumps(mapping)
         return form
 
+    class Media:
+        js = (
+            'admin/js/vendor/jquery/jquery.js',
+            'admin/js/jquery.init.js',
+        )
