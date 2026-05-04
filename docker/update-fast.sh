@@ -14,6 +14,8 @@ cd "$ROOT_DIR"
 
 # Pull new changes from git
 echo "Pulling from git repository..."
+# Clean up untracked .mo files that block merge
+find locale -name "*.mo" -type f -delete 2>/dev/null || true
 git pull origin $(git rev-parse --abbrev-ref HEAD)
 
 # Fix permissions for the Docker user
