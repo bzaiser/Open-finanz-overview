@@ -938,12 +938,13 @@ def dashboard_view(request):
 
         table_data_loan.append({
             'name': l.name,
+            'type_display': str(l._meta.verbose_name),
             'amount': float(l.nominal_amount), 
             'current_balance': float(current_bal),
             'total_interest': float(total_int),
             'provider': l.provider,
-            'rate': f"{l.interest_rate}%",
-            'monthly': float(l.monthly_installment),
+            'interest_rate': float(l.interest_rate),
+            'monthly_payment': float(l.monthly_installment),
             'year': str(l.end_date.year) if l.end_date else continuous_label
         })
 
