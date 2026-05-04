@@ -117,6 +117,18 @@ AVAILABLE_CHARTS = {
         'title': _('Loan Balance Trend'), 'type': 'line', 'default_width': 12, 'default_height': 'medium',
         'description': _('Visualisiert, wie schnell deine Schulden durch Tilgung schrumpfen. Hilft bei der Planung von Sondertilgungen. <br><br>Datenquelle: <a href="/admin/finance/loan/" target="_blank" class="alert-link">Kredite</a>.')
     },
+    'real_estate_forecast_chart': {
+        'title': _('Real Estate Trend'), 'type': 'line', 'default_width': 6, 'default_height': 'small',
+        'description': _('Zeigt die Wertentwicklung deiner Immobilien. Hier siehst du Details zu Wertsteigerungen, die im großen Gesamt-Chart oft untergehen.')
+    },
+    'physical_asset_forecast_chart': {
+        'title': _('Physical Assets Trend'), 'type': 'line', 'default_width': 6, 'default_height': 'small',
+        'description': _('Visualisiert den Wertverlauf deiner Sachwerte (z.B. Gold, Autos). Durch den eigenen Maßstab sind hier auch kleinere Schwankungen gut sichtbar.')
+    },
+    'liquid_pension_forecast_chart': {
+        'title': _('Liquidity & Pension'), 'type': 'line', 'default_width': 6, 'default_height': 'small',
+        'description': _('Vergleicht dein verfügbares Bargeld/Depotguthaben mit deinem angesparten Rentenkapital über die Zeit.')
+    },
 }
 
 SUMMARY_WIDGETS = {
@@ -227,6 +239,18 @@ def dashboard_view(request):
                 'bg_color': 'var(--app-card-bg)',
                 'text_color': 'var(--app-card-color)',
                 'order': len(summary_layout) + 1
+            })
+
+    # Ensure all available charts are in the layout (auto-add missing ones)
+    existing_chart_ids = [item['id'] for item in layout]
+    for chart_id, chart_info in AVAILABLE_CHARTS.items():
+        if chart_id not in existing_chart_ids:
+            layout.append({
+                'id': chart_id,
+                'visible': False,
+                'width': chart_info.get('default_width', 6),
+                'height': chart_info.get('default_height', 'small'),
+                'order': len(layout) + 1
             })
 
     simulation_config = {
@@ -561,16 +585,34 @@ def dashboard_view(request):
             'net_worth_chart': {
                 'labels': labels_yearly,
                 'datasets': [
-                    {'label': _('Net Worth (Nominal)'), 'data': net_worth_nominal, 'borderColor': '#0d6efd', 'fill': False},
-                    {'label': _('Net Worth (Real)'), 'data': net_worth_real, 'borderColor': '#0d6efd', 'borderDash': [5, 5], 'fill': False},
-                    {'label': _('Pension Capital (Nominal)'), 'data': pension_yearly, 'borderColor': '#6f42c1', 'fill': False},
-                    {'label': _('Pension Capital (Real)'), 'data': pension_real_yearly, 'borderColor': '#6f42c1', 'borderDash': [5, 5], 'fill': False},
-                    {'label': _('Liquid Assets (Nominal)'), 'data': liquid_assets_yearly, 'borderColor': '#198754', 'fill': False},
-                    {'label': _('Liquid Assets (Real)'), 'data': liquid_assets_real_yearly, 'borderColor': '#198754', 'borderDash': [5, 5], 'fill': False},
-                    {'label': _('Physical Assets (Nominal)'), 'data': physical_asset_yearly, 'borderColor': '#8a2be2', 'backgroundColor': 'rgba(138, 43, 226, 0.1)', 'fill': True},
-                    {'label': _('Physical Assets (Real)'), 'data': physical_asset_real_yearly, 'borderColor': '#8a2be2', 'borderDash': [5, 5], 'fill': False},
+                    {'label': _('Net Worth (Nominal)'), 'data': net_worth_nominal, 'borderColor': '#0d6efd', 'fill': False, 'borderWidth': 4},
+                    {'label': _('Net Worth (Real)'), 'data': net_worth_real, 'borderColor': '#0d6efd', 'borderDash': [5, 5], 'fill': False, 'borderWidth': 2},
+                ],
+                'stichtag_index': stichtag_year_index
+            },
+            'real_estate_forecast_chart': {
+                'labels': labels_yearly,
+                'datasets': [
                     {'label': _('Real Estate (Nominal)'), 'data': real_estate_yearly, 'borderColor': '#fd7e14', 'backgroundColor': 'rgba(253, 126, 20, 0.1)', 'fill': True},
                     {'label': _('Real Estate (Real)'), 'data': real_estate_real_yearly, 'borderColor': '#fd7e14', 'borderDash': [5, 5], 'fill': False},
+                ],
+                'stichtag_index': stichtag_year_index
+            },
+            'physical_asset_forecast_chart': {
+                'labels': labels_yearly,
+                'datasets': [
+                    {'label': _('Physical Assets (Nominal)'), 'data': physical_asset_yearly, 'borderColor': '#8a2be2', 'backgroundColor': 'rgba(138, 43, 226, 0.1)', 'fill': True},
+                    {'label': _('Physical Assets (Real)'), 'data': physical_asset_real_yearly, 'borderColor': '#8a2be2', 'borderDash': [5, 5], 'fill': False},
+                ],
+                'stichtag_index': stichtag_year_index
+            },
+            'liquid_pension_forecast_chart': {
+                'labels': labels_yearly,
+                'datasets': [
+                    {'label': _('Liquid Assets (Nominal)'), 'data': liquid_assets_yearly, 'borderColor': '#198754', 'fill': False},
+                    {'label': _('Liquid Assets (Real)'), 'data': liquid_assets_real_yearly, 'borderColor': '#198754', 'borderDash': [5, 5], 'fill': False},
+                    {'label': _('Pension Capital (Nominal)'), 'data': pension_yearly, 'borderColor': '#6f42c1', 'fill': False},
+                    {'label': _('Pension Capital (Real)'), 'data': pension_real_yearly, 'borderColor': '#6f42c1', 'borderDash': [5, 5], 'fill': False},
                 ],
                 'stichtag_index': stichtag_year_index
             },

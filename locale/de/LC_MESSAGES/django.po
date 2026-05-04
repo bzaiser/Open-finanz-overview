@@ -2771,3 +2771,21 @@ msgstr "Wählen Sie das konkrete Asset aus, für das ein Snapshot erstellt werde
 
 msgid "Konto/Anlage"
 msgstr "Konto/Anlage"
+
+msgid "Real Estate Trend"
+msgstr "Immobilien-Trend"
+
+msgid "Zeigt die Wertentwicklung deiner Immobilien. Hier siehst du Details zu Wertsteigerungen, die im großen Gesamt-Chart oft untergehen."
+msgstr "Zeigt die Wertentwicklung deiner Immobilien. Hier siehst du Details zu Wertsteigerungen, die im großen Gesamt-Chart oft untergehen."
+
+msgid "Physical Assets Trend"
+msgstr "Sachwerte-Trend"
+
+msgid "Visualisiert den Wertverlauf deiner Sachwerte (z.B. Gold, Autos). Durch den eigenen Maßstab sind hier auch kleinere Schwankungen gut sichtbar."
+msgstr "Visualisiert den Wertverlauf deiner Sachwerte (z.B. Gold, Autos). Durch den eigenen Maßstab sind hier auch kleinere Schwankungen gut sichtbar."
+
+msgid "Liquidity & Pension"
+msgstr "Liquidität & Vorsorge"
+
+msgid "Vergleicht dein verfügbares Bargeld/Depotguthaben mit deinem angesparten Rentenkapital über die Zeit."
+msgstr "Vergleicht dein verfügbares Bargeld/Depotguthaben mit deinem angesparten Rentenkapital über die Zeit."
