@@ -110,7 +110,7 @@
         const theme = getThemeColors();
 
         {% for item in layout %}
-        {% if item.visible %}
+        {% if item.visible and not item.id|slice:"-13:" == "_table_widget" and not item.id == "upcoming_dates_widget" %}
         if (chartData['{{ item.id }}']) {
             const ctx = document.getElementById('{{ item.id }}');
             if (ctx) {
