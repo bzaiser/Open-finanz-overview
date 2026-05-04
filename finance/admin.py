@@ -300,6 +300,10 @@ class AssetSnapshotForm(forms.ModelForm):
     class Meta:
         model = AssetSnapshot
         fields = ['asset_choice', 'date', 'value', 'notes', 'content_type', 'object_id']
+        widgets = {
+            'content_type': forms.HiddenInput(),
+            'object_id': forms.HiddenInput(),
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -381,9 +385,4 @@ class AssetSnapshotAdmin(BaseOwnedModelAdmin):
         form = super().get_form(request, obj, **kwargs)
         form.request = request
         return form
-
-    def get_fields(self, request, obj=None):
-        # Hide the technical fields from the form
-        fields = super().get_fields(request, obj)
-        return [f for f in fields if f not in ['content_type', 'object_id']]
 
