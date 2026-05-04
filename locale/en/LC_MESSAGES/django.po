@@ -95,7 +95,7 @@ msgstr "Financial Independence is a goal for many, but for most it remains just 
 
 #: templates/core/help.html:10
 msgid "HELP_HEADER_TITLE"
-msgstr "HELP_HEADER_TITLE"
+msgstr "Help & Details"
 
 #: templates/core/help.html:12
 msgid "HELP_HEADER_SUBTEXT"
