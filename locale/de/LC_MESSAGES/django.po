@@ -2814,3 +2814,21 @@ msgstr "Inflation (%)"
 
 msgid "Real Estate (%)"
 msgstr "Immobilien (%)"
+
+msgid "The anchor date for your simulation. All calculations for interest, pension phases, and purchasing power losses start from this day."
+msgstr "Das Ankerdatum für deine Simulation. Alle Berechnungen für Zinsen, Rentenphasen und Kaufkraftverluste starten ab diesem Tag."
+
+msgid "The expected annual inflation rate. This reduces the real value (purchasing power) of your future wealth. A value of 2% is a common benchmark."
+msgstr "Die erwartete jährliche Teuerungsrate. Diese reduziert den Realwert (die Kaufkraft) deines zukünftigen Vermögens. Ein Wert von 2% ist ein gängiger Richtwert."
+
+msgid "The average annual increase in your gross salary until retirement."
+msgstr "Die durchschnittliche jährliche Steigerung deines Brutto-Gehalts bis zum Renteneintritt."
+
+msgid "The annual adjustment of your pension benefits. In many countries, this value often follows general wage development."
+msgstr "Die jährliche Anpassung deiner Rentenbezüge. In Deutschland orientiert sich dieser Wert oft an der allgemeinen Lohnentwicklung."
+
+msgid "A global return surcharge on all your liquid assets (accounts and portfolios). If you have 1% interest on an account and enter 2% here, that account will yield 3% interest. Ideal for lump-sum scenarios."
+msgstr "Ein globaler Rendite-Aufschlag auf alle deine liquiden Mittel (Konten und Depots). Wenn du z.B. bei einem Konto 1% Zinsen hast und hier 2% einträgst, wird dieses Konto mit 3% verzinst. Ideal für Pauschal-Szenarien."
+
+msgid "The expected annual value increase of your real estate properties."
+msgstr "Die erwartete jährliche Wertsteigerung deiner Immobilienobjekte."

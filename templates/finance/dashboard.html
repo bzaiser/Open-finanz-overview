@@ -61,7 +61,7 @@
                     <label class="form-label fw-bold small text-uppercase d-flex align-items-center justify-content-between" style="font-size: 0.7rem;">
                         {% trans "Target Date" %}
                         <i class="bi bi-info-circle ms-1 text-primary cursor-pointer" 
-                           onclick="showHelp('{% trans "Target Date"|escapejs %}', '{% trans "Das Ankerdatum für deine Simulation. Alle Berechnungen für Zinsen, Rentenphasen und Kaufkraftverluste starten ab diesem Tag."|escapejs %}')"></i>
+                           onclick="showHelp('{% trans "Target Date"|escapejs %}', '{% trans "The anchor date for your simulation. All calculations for interest, pension phases, and purchasing power losses start from this day."|escapejs %}')"></i>
                     </label>
                     <input type="date" name="stichtag" value="{{ simulation_params.stichtag|date:'Y-m-d' }}" class="form-control form-control-sm">
                 </div>
@@ -69,7 +69,7 @@
                     <label class="form-label fw-bold small text-uppercase d-flex align-items-center justify-content-between" style="font-size: 0.7rem;">
                         {% trans "Inflation Rate" %}
                         <i class="bi bi-info-circle ms-1 text-primary cursor-pointer" 
-                           onclick="showHelp('{% trans "Inflation Rate"|escapejs %}', '{% trans "Die erwartete jährliche Teuerungsrate. Diese reduziert den Realwert (die Kaufkraft) deines zukünftigen Vermögens. Ein Wert von 2% ist ein gängiger Richtwert."|escapejs %}')"></i>
+                           onclick="showHelp('{% trans "Inflation Rate"|escapejs %}', '{% trans "The expected annual inflation rate. This reduces the real value (purchasing power) of your future wealth. A value of 2% is a common benchmark."|escapejs %}')"></i>
                     </label>
                     <input type="number" step="0.1" name="inflation_rate" value="{{ simulation_params.inflation_rate|stringformat:'.2f' }}" class="form-control form-control-sm">
                 </div>
@@ -79,7 +79,7 @@
                     <label class="form-label fw-bold small text-uppercase d-flex align-items-center justify-content-between" style="font-size: 0.7rem;">
                         {% trans "Salary Increase" %}
                         <i class="bi bi-info-circle ms-1 text-primary cursor-pointer" 
-                           onclick="showHelp('{% trans "Salary Increase"|escapejs %}', '{% trans "Die durchschnittliche jährliche Steigerung deines Brutto-Gehalts bis zum Renteneintritt."|escapejs %}')"></i>
+                           onclick="showHelp('{% trans "Salary Increase"|escapejs %}', '{% trans "The average annual increase in your gross salary until retirement."|escapejs %}')"></i>
                     </label>
                     <input type="number" step="0.1" name="salary_increase" value="{{ simulation_params.salary_increase|stringformat:'.2f' }}" class="form-control form-control-sm">
                 </div>
@@ -87,7 +87,7 @@
                     <label class="form-label fw-bold small text-uppercase d-flex align-items-center justify-content-between" style="font-size: 0.7rem;">
                         {% trans "Pension Increase" %}
                         <i class="bi bi-info-circle ms-1 text-primary cursor-pointer" 
-                           onclick="showHelp('{% trans "Pension Increase"|escapejs %}', '{% trans "Die jährliche Anpassung deiner Rentenbezüge. In Deutschland orientiert sich dieser Wert oft an der allgemeinen Lohnentwicklung."|escapejs %}')"></i>
+                           onclick="showHelp('{% trans "Pension Increase"|escapejs %}', '{% trans "The annual adjustment of your pension benefits. In many countries, this value often follows general wage development."|escapejs %}')"></i>
                     </label>
                     <input type="number" step="0.1" name="pension_increase" value="{{ simulation_params.pension_increase|stringformat:'.2f' }}" class="form-control form-control-sm">
                 </div>
@@ -99,9 +99,9 @@
                 
                 <div class="col-md-12">
                     <label class="form-label fw-bold small text-uppercase d-flex align-items-center justify-content-between" style="font-size: 0.7rem;">
-                        {% trans "Zusatz-Rendite (%)" %}
+                        {% trans "Investment Return Buffer (%)" %}
                         <i class="bi bi-info-circle ms-1 text-primary cursor-pointer" 
-                           onclick="showHelp('{% trans "Zusatz-Rendite (%)"|escapejs %}', '{% trans "Ein globaler Rendite-Aufschlag auf alle deine liquiden Mittel (Konten und Depots). Wenn du z.B. bei einem Konto 1% Zinsen hast und hier 2% einträgst, wird dieses Konto mit 3% verzinst. Ideal für Pauschal-Szenarien."|escapejs %}')"></i>
+                           onclick="showHelp('{% trans "Investment Return Buffer (%)"|escapejs %}', '{% trans "A global return surcharge on all your liquid assets (accounts and portfolios). If you have 1% interest on an account and enter 2% here, that account will yield 3% interest. Ideal for lump-sum scenarios."|escapejs %}')"></i>
                     </label>
                     <input type="number" step="0.1" name="investment_return_offset" value="{{ simulation_params.investment_return_offset|stringformat:'.2f' }}" class="form-control form-control-sm">
                 </div>
@@ -110,7 +110,7 @@
                     <label class="form-label fw-bold small text-uppercase d-flex align-items-center justify-content-between" style="font-size: 0.7rem;">
                         {% trans "Growth Real Estate" %}
                         <i class="bi bi-info-circle ms-1 text-primary cursor-pointer" 
-                           onclick="showHelp('{% trans "Growth Real Estate"|escapejs %}', '{% trans "Die erwartete jährliche Wertsteigerung deiner Immobilienobjekte."|escapejs %}')"></i>
+                           onclick="showHelp('{% trans "Growth Real Estate"|escapejs %}', '{% trans "The expected annual value increase of your real estate properties."|escapejs %}')"></i>
                     </label>
                     <input type="number" step="0.1" name="real_estate_growth_rate" value="{{ simulation_params.real_estate_growth_rate|stringformat:'.2f' }}" class="form-control form-control-sm">
                 </div>
