@@ -26,8 +26,6 @@ msgid "Nachname"
 msgstr ""
 
 #: core/forms.py:14
-#, fuzzy
-#| msgid "Email Address"
 msgid "E-Mail-Adresse"
 msgstr "E-Mail-Adresse"
 
@@ -40,14 +38,10 @@ msgid "Nachtmodus Einstellungen vom System übernehmen"
 msgstr ""
 
 #: core/forms.py:56 core/models.py:68
-#, fuzzy
-#| msgid "Border Color"
 msgid "Gradient Start Color"
 msgstr "Rahmenfarbe"
 
 #: core/forms.py:61 core/models.py:69
-#, fuzzy
-#| msgid "Border Color"
 msgid "Gradient End Color"
 msgstr "Rahmenfarbe"
 
@@ -72,8 +66,6 @@ msgid "Sidebar Background"
 msgstr "Sidebar-Hintergrund"
 
 #: core/forms.py:91
-#, fuzzy
-#| msgid "Table Header Text"
 msgid "Table Header BG"
 msgstr "Tabellenkopf-Text"
 
@@ -82,14 +74,10 @@ msgid "Table Header Text"
 msgstr "Tabellenkopf-Text"
 
 #: core/forms.py:101
-#, fuzzy
-#| msgid "Table Filter Background"
 msgid "Table Filter BG"
 msgstr "Tabellenfilter-Hintergrund"
 
 #: core/forms.py:106
-#, fuzzy
-#| msgid "Table Body Text"
 msgid "Table Body BG"
 msgstr "Tabellenkopf-Text"
 
@@ -98,8 +86,6 @@ msgid "Table Body Text"
 msgstr "Tabellenkopf-Text"
 
 #: core/forms.py:116
-#, fuzzy
-#| msgid "Table Border Color"
 msgid "Table Border"
 msgstr "Sekundärfarbe"
 
@@ -140,7 +126,6 @@ msgid "Default Real Estate Growth (%)"
 msgstr "Immobilien (%)"
 
 #: core/models.py:60
-#| msgid "Physical Assets (%)"
 msgid "Default Physical Asset Growth (%)"
 msgstr "Sachwerte (%)"
 
@@ -153,8 +138,6 @@ msgid "Follow System Design"
 msgstr ""
 
 #: core/models.py:65
-#, fuzzy
-#| msgid "Border Color"
 msgid "Night Mode Colors"
 msgstr "Rahmenfarbe"
 
@@ -232,8 +215,6 @@ msgid "Hex color code, e.g. #FF0000"
 msgstr "Hex-Farbcode, z.B. #FF0000"
 
 #: finance/models.py:12
-#, fuzzy
-#| msgid "Category"
 msgid "System Category"
 msgstr "Kategorie"
 
@@ -422,14 +403,10 @@ msgid "Import Batches"
 msgstr ""
 
 #: finance/models.py:133
-#, fuzzy
-#| msgid "Category"
 msgid "Suggested Category"
 msgstr "Kategorie"
 
 #: finance/models.py:136
-#, fuzzy
-#| msgid "Planned Sale"
 msgid "Planned Amount"
 msgstr "Geplanter Verkauf"
 
@@ -458,8 +435,6 @@ msgid "Matched Terms (Notes)"
 msgstr ""
 
 #: finance/models.py:149
-#, fuzzy
-#| msgid "Inflation Monitor"
 msgid "Integration Count"
 msgstr "Inflations-Monitor"
 
@@ -523,7 +498,6 @@ msgid "Acquisition Date"
 msgstr "Kaufdatum"
 
 #: finance/models.py:196 finance/views.py:652
-#| msgid "Physical Assets"
 msgid "Physical Asset"
 msgstr "Sachwerte"
 
@@ -564,7 +538,6 @@ msgid "Real Estate"
 msgstr "Immobilien"
 
 #: finance/models.py:218
-#| msgid "Real Estate"
 msgid "Real Estates"
 msgstr "Immobilien"
 
@@ -577,8 +550,6 @@ msgid "My Finances (Quick Entry)"
 msgstr "Meine Finanzen (Schnelleingabe)"
 
 #: finance/models.py:234
-#, fuzzy
-#| msgid "Provider/Name"
 msgid "Provider / Bank"
 msgstr "Anbieter/Name"
 
@@ -627,8 +598,6 @@ msgid "Separated by semicolon, e.g. EDEKA;REWE"
 msgstr ""
 
 #: finance/models.py:265
-#, fuzzy
-#| msgid "Target Date"
 msgid "Target Name"
 msgstr "Stichtag"
 
@@ -641,8 +610,6 @@ msgid "Is Active"
 msgstr ""
 
 #: finance/models.py:272
-#, fuzzy
-#| msgid "Cash Flow Source"
 msgid "Linked Cash Flow Source"
 msgstr "Einnahme-/Ausgabequelle"
 
@@ -655,14 +622,10 @@ msgid "Import Filters"
 msgstr ""
 
 #: finance/models.py:300
-#, fuzzy
-#| msgid "Categorisation"
 msgid "Categorization Memory"
 msgstr "Kategorie"
 
 #: finance/models.py:301
-#, fuzzy
-#| msgid "Categorisation"
 msgid "Categorization Memories"
 msgstr "Kategorie"
 
@@ -1001,8 +964,6 @@ msgid "Planned Sale"
 msgstr "Geplanter Verkauf"
 
 #: finance/views.py:666
-#, fuzzy
-#| msgid "Cash Flow Source"
 msgid "Cash Flow"
 msgstr "Einnahme-/Ausgabequelle"
 
@@ -1102,8 +1063,6 @@ msgid "Settings"
 msgstr "Einstellungen"
 
 #: templates/base.html:320
-#, fuzzy
-#| msgid "AI Bank Import"
 msgid "Bank Import"
 msgstr "KI Bank-Import"
 
@@ -1225,8 +1184,6 @@ msgstr ""
 "Wachstumsraten deine 30-Jahres-Prognose beeinflussen."
 
 #: templates/core/help.html:59 templates/core/profile.html:144
-#, fuzzy
-#| msgid "Profile & Design Studio"
 msgid "Design Studio"
 msgstr "Profil & Design Studio"
 
@@ -1478,8 +1435,6 @@ msgid "Sim. Max Age"
 msgstr "Sim. Max Alter"
 
 #: templates/core/profile.html:114
-#, fuzzy, python-format
-#| msgid "Inflation Rate (%%)"
 msgid "Inflation (%%)"
 msgstr "Inflationsrate (%%)"
 
@@ -1489,24 +1444,15 @@ msgid "Salary Increase (%%)"
 msgstr "Gehaltssteigerung (%%)"
 
 #: templates/core/profile.html:122
-#, fuzzy, python-format
-#| msgid "Pension Increase (%)"
 msgid "Pension Increase (%%)"
 msgstr "Rentenplus (%)"
 
-#: templates/core/profile.html:126
-#, fuzzy, python-format
-#| msgid "Interest Buffer (%)"
-msgid "Interest Buffer (%%)"
-msgstr "Zins-Puffer (%)"
 
 #: templates/core/profile.html:130
-#| msgid "Real Estate (%)"
 msgid "Real Estate (%%)"
 msgstr "Immobilien (%)"
 
 #: templates/core/profile.html:134
-#| msgid "Physical Assets (%)"
 msgid "Physical Assets (%%)"
 msgstr "Sachwerte (%)"
 
@@ -1531,8 +1477,6 @@ msgid "Primary"
 msgstr "Primär"
 
 #: templates/core/profile.html:170
-#, fuzzy
-#| msgid "Start Date"
 msgid "Start"
 msgstr "Startdatum"
 
@@ -1545,8 +1489,6 @@ msgid "Background"
 msgstr "Hintergrund"
 
 #: templates/core/profile.html:173
-#, fuzzy
-#| msgid "Sidebar Background"
 msgid "Sidebar BG"
 msgstr "Sidebar-Hintergrund"
 
@@ -1555,32 +1497,22 @@ msgid "Text"
 msgstr ""
 
 #: templates/core/profile.html:175
-#, fuzzy
-#| msgid "Table Header Text"
 msgid "Tab. Header BG"
 msgstr "Tabellenkopf-Text"
 
 #: templates/core/profile.html:176
-#, fuzzy
-#| msgid "Table Header Text"
 msgid "Tab. Header Text"
 msgstr "Tabellenkopf-Text"
 
 #: templates/core/profile.html:177
-#, fuzzy
-#| msgid "Table Body Text"
 msgid "Tab. Body BG"
 msgstr "Tabellenkopf-Text"
 
 #: templates/core/profile.html:178
-#, fuzzy
-#| msgid "Table Body Text"
 msgid "Tab. Body Text"
 msgstr "Tabellenkopf-Text"
 
 #: templates/core/profile.html:179
-#, fuzzy
-#| msgid "Table Border Color"
 msgid "Tab. Border"
 msgstr "Sekundärfarbe"
 
@@ -1648,8 +1580,6 @@ msgid "Target Date"
 msgstr "Stichtag"
 
 #: templates/finance/dashboard.html:63
-#, fuzzy
-#| msgid "Update Simulation"
 msgid "Ankerdatum für die Simulation."
 msgstr "Simulation aktualisieren"
 
@@ -1658,8 +1588,6 @@ msgid "Inflation Rate"
 msgstr "Inflationsrate (%)"
 
 #: templates/finance/dashboard.html:70
-#, fuzzy
-#| msgid "Inflation Rate"
 msgid "Jährliche Inflationsrate."
 msgstr "Inflationsrate (%)"
 
@@ -1821,8 +1749,6 @@ msgstr ""
 #: templates/finance/import_filters.html:101
 #: templates/finance/import_filters.html:146
 #: templates/finance/partials/import_ready_pane.html:12
-#, fuzzy
-#| msgid "Name"
 msgid "Ziel-Name"
 msgstr "Bezeichnung"
 
@@ -1830,8 +1756,6 @@ msgstr "Bezeichnung"
 #: templates/finance/import_filters.html:103
 #: templates/finance/import_filters.html:150
 #: templates/finance/partials/import_ready_pane.html:17
-#, fuzzy
-#| msgid "Categories"
 msgid "Kategorie"
 msgstr "Kategorien"
 
@@ -1898,8 +1822,6 @@ msgstr ""
 
 #: templates/finance/import_filters.html:270
 #: templates/finance/import_review.html:277
-#, fuzzy
-#| msgid "Categories"
 msgid "Neue Kategorie"
 msgstr "Kategorien"
 
@@ -1912,8 +1834,6 @@ msgid "Farbe wählen"
 msgstr ""
 
 #: templates/finance/import_filters.html:286
-#, fuzzy
-#| msgid "Categories"
 msgid "Kategorie erstellen"
 msgstr "Kategorien"
 
@@ -2073,8 +1993,6 @@ msgid "Datum"
 msgstr ""
 
 #: templates/finance/import_upload.html:71
-#, fuzzy
-#| msgid "Date"
 msgid "Datei"
 msgstr "Datum"
 
@@ -2109,8 +2027,6 @@ msgid "Alle temporären Daten löschen"
 msgstr ""
 
 #: templates/finance/import_upload.html:131
-#, fuzzy
-#| msgid "Configure Dashboard"
 msgid "Zurück zum Dashboard"
 msgstr "Dashboard konfigurieren"
 
@@ -2152,26 +2068,18 @@ msgid "Interest"
 msgstr "Zins"
 
 #: templates/finance/partials/dashboard_table_loan.html:73
-#, fuzzy
-#| msgid "Total Balance"
 msgid "Balance"
 msgstr "Restsaldo gesamt"
 
 #: templates/finance/partials/dashboard_table_loan.html:80
-#, fuzzy
-#| msgid "Loan Installment"
 msgid "Installment"
 msgstr "Kreditrate"
 
 #: templates/finance/partials/dashboard_table_loan.html:122
-#, fuzzy
-#| msgid "Loan"
 msgid "Loans"
 msgstr "Kredit"
 
 #: templates/finance/partials/dashboard_table_loan.html:129
-#, fuzzy
-#| msgid "Total Debts"
 msgid "Total Debt"
 msgstr "Gesamtschulden"
 
@@ -2212,8 +2120,6 @@ msgid "Betrag"
 msgstr ""
 
 #: templates/finance/partials/import_mapping_pane.html:10
-#, fuzzy
-#| msgid "Categories"
 msgid "Kategorie zuweisen"
 msgstr "Kategorien"
 
