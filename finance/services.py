@@ -147,9 +147,7 @@ class SimulationEngine:
             today_normalized = datetime.date.today().replace(day=1)
             months_from_today = (current_date.year - today_normalized.year) * 12 + (current_date.month - today_normalized.month)
             year_passed_decimal = Decimal(str(max(0, months_from_today))) / 12
-            # Inflation factor for real-value conversion is relative to Stichtag
-            months_from_stichtag = (current_date.year - stichtag.year) * 12 + (current_date.month - stichtag.month)
-            year_from_stichtag = Decimal(str(max(0, months_from_stichtag))) / 12
+            # year_passed_decimal is already calculated relative to today (today_normalized)
 
             # 1. Wealth Accumulation and Growth - Continuous Simulation
             current_monthly_asset_withdrawal = Decimal('0.00')
@@ -372,8 +370,8 @@ class SimulationEngine:
             
             total_nominal = asset_total + pension_total + accumulated_cash + physical_asset_total + real_estate_total - loan_total
             
-            # Inflation Factor for Real Value (Purchasing Power relative to Stichtag)
-            inflation_factor = (1 + self.inflation_rate) ** year_from_stichtag
+            # Inflation Factor for Real Value (Purchasing Power relative to TODAY)
+            inflation_factor = (1 + self.inflation_rate) ** year_passed_decimal
             total_real = total_nominal / inflation_factor
 
             data.append({
