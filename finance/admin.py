@@ -335,7 +335,7 @@ class AssetSnapshotForm(forms.ModelForm):
 
     class Meta:
         model = AssetSnapshot
-        fields = ['asset_choice', 'date', 'value', 'notes', 'content_type', 'object_id']
+        fields = ['asset_choice', 'user', 'date', 'value', 'notes', 'content_type', 'object_id']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
