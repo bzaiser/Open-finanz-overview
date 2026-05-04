@@ -1791,3 +1791,21 @@ msgstr "Activos físicos (Nominal)"
 
 msgid "Acquisition Date"
 msgstr "Fecha de adquisición"
+
+msgid "HELP_TARGET_DATE"
+msgstr "La fecha de anclaje para su simulación. Todos los cálculos de intereses, fases de jubilación y pérdidas de poder adquisitivo comienzan a partir de este día."
+
+msgid "HELP_INFLATION_RATE"
+msgstr "La tasa de inflación anual esperada. Esto reduce el valor real (poder adquisitivo) de su riqueza futura. Un valor del 2% es un referente común."
+
+msgid "HELP_SALARY_INCREASE"
+msgstr "El incremento anual promedio de su salario bruto hasta la jubilación."
+
+msgid "HELP_PENSION_INCREASE"
+msgstr "El ajuste anual de sus prestaciones de jubilación. En muchos países, este valor suele seguir la evolución general de los salarios."
+
+msgid "HELP_INTEREST_BUFFER"
+msgstr "Un recargo de rendimiento global en todos sus activos líquidos (cuentas y carteras). Si tiene un 1% de interés en una cuenta e ingresa un 2% aquí, esa cuenta rendirá un 3% de interés. Ideal para escenarios de suma global."
+
+msgid "HELP_REAL_ESTATE_GROWTH"
+msgstr "El aumento de valor anual esperado de sus propiedades inmobiliarias."

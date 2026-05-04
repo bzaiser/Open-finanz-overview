@@ -1797,3 +1797,21 @@ msgstr "Beni materiali (Nominale)"
 
 msgid "Acquisition Date"
 msgstr "Data di acquisizione"
+
+msgid "HELP_TARGET_DATE"
+msgstr "La data di riferimento per la tua simulazione. Tutti i calcoli per interessi, fasi pensionistiche e perdite di potere d'acquisto iniziano da questo giorno."
+
+msgid "HELP_INFLATION_RATE"
+msgstr "Il tasso di inflazione annuale atteso. Questo riduce il valore reale (potere d'acquisto) della tua ricchezza futura. Un valore del 2% è un parametro comune."
+
+msgid "HELP_SALARY_INCREASE"
+msgstr "L'aumento annuo medio del tuo stipendio lordo fino al pensionamento."
+
+msgid "HELP_PENSION_INCREASE"
+msgstr "L'adeguamento annuale delle tue prestazioni pensionistiche. In molti paesi, questo valore segue spesso l'andamento generale dei salari."
+
+msgid "HELP_INTEREST_BUFFER"
+msgstr "Una maggiorazione del rendimento globale su tutte le tue attività liquide (conti e portafogli). Se hai l'1% di interesse su un conto e inserisci il 2% qui, quel conto renderà il 3% di interesse. Ideale per scenari forfettari."
+
+msgid "HELP_REAL_ESTATE_GROWTH"
+msgstr "L'aumento annuo atteso del valore delle tue proprietà immobiliari."

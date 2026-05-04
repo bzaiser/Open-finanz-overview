@@ -1789,3 +1789,21 @@ msgstr "Actifs matériels (Nominal)"
 
 msgid "Acquisition Date"
 msgstr "Date d'acquisition"
+
+msgid "HELP_TARGET_DATE"
+msgstr "La date d'ancrage de votre simulation. Tous les calculs d'intérêts, de phases de retraite et de pertes de pouvoir d'achat commencent à partir de ce jour."
+
+msgid "HELP_INFLATION_RATE"
+msgstr "Le taux d'inflation annuel attendu. Cela réduit la valeur réelle (pouvoir d'achat) de votre patrimoine futur. Une valeur de 2% est une référence courante."
+
+msgid "HELP_SALARY_INCREASE"
+msgstr "L'augmentation annuelle moyenne de votre salaire brut jusqu'à la retraite."
+
+msgid "HELP_PENSION_INCREASE"
+msgstr "L'ajustement annuel de vos prestations de retraite. Dans de nombreux pays, cette valeur suit souvent l'évolution générale des salaires."
+
+msgid "HELP_INTEREST_BUFFER"
+msgstr "Une surtaxe de rendement globale sur tous vos actifs liquides (comptes et portefeuilles). Si vous avez 1% d'intérêt sur un compte et entrez 2% ici, ce compte rapportera 3% d'intérêt. Idéal pour les scénarios forfaitaires."
+
+msgid "HELP_REAL_ESTATE_GROWTH"
+msgstr "L'augmentation annuelle attendue de la valeur de vos biens immobiliers."

@@ -1734,3 +1734,21 @@ msgstr "Help & Details"
 
 msgid "HELP_HEADER_SUBTEXT"
 msgstr "Insights into calculations, bank import and dashboard configuration."
+
+msgid "HELP_TARGET_DATE"
+msgstr "The anchor date for your simulation. All calculations for interest, pension phases, and purchasing power losses start from this day."
+
+msgid "HELP_INFLATION_RATE"
+msgstr "The expected annual inflation rate. This reduces the real value (purchasing power) of your future wealth. A value of 2% is a common benchmark."
+
+msgid "HELP_SALARY_INCREASE"
+msgstr "The average annual increase in your gross salary until retirement."
+
+msgid "HELP_PENSION_INCREASE"
+msgstr "The annual adjustment of your pension benefits. In many countries, this value often follows general wage development."
+
+msgid "HELP_INTEREST_BUFFER"
+msgstr "A global return surcharge on all your liquid assets (accounts and portfolios). If you have 1% interest on an account and enter 2% here, that account will yield 3% interest. Ideal for lump-sum scenarios."
+
+msgid "HELP_REAL_ESTATE_GROWTH"
+msgstr "The expected annual value increase of your real estate properties."
