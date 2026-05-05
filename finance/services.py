@@ -255,63 +255,69 @@ class SimulationEngine:
                     # Numerical Safety
                     item['balance'] = min(item['balance'], Decimal('1e15'))
 
-                # Apply Sachwerte Growth
-                for item in physical_assets_state:
-                    pa = item['asset']
-                    # Switch to current value once we hit "Today"
-                    if is_today:
-                        item['balance'] = pa.value
-                        continue
+            # Apply Sachwerte Growth / Back-calculation (Runs for all i)
+            for item in physical_assets_state:
+                pa = item['asset']
+                if is_today:
+                    item['balance'] = pa.value
+                    continue
 
-                    # Possession Check (Acquisition & Sale)
-                    is_owned = True
-                    if pa.acquisition_date and current_date < pa.acquisition_date.replace(day=1):
-                        is_owned = False
-                    if pa.sale_date and current_date >= pa.sale_date.replace(day=1):
-                        is_owned = False
-                    if pa.is_sold and i == 0 and (not pa.sale_date or current_date >= pa.sale_date.replace(day=1)):
-                        is_owned = False
+                is_owned = True
+                if pa.acquisition_date and current_date < pa.acquisition_date.replace(day=1):
+                    is_owned = False
+                if pa.sale_date and current_date >= pa.sale_date.replace(day=1):
+                    is_owned = False
+                if pa.is_sold and i == 0 and (not pa.sale_date or current_date >= pa.sale_date.replace(day=1)):
+                    is_owned = False
 
-                    if not is_owned:
-                        item['balance'] = Decimal('0.00')
-                        continue
-                        
-                    if is_future:
-                        rate = pa.appreciation_rate
+                if not is_owned:
+                    item['balance'] = Decimal('0.00')
+                    continue
+                    
+                if is_future:
+                    if i > 0:
+                        rate = pa.appreciation_rate or Decimal('0')
                         item['balance'] *= ((1 + (rate / 100 / 12)) ** step_months)
-                    
-                    # Numerical Safety
-                    item['balance'] = min(item['balance'], Decimal('1e15'))
-                    
-                # Apply Immobilien Growth
-                for item in real_estates_state:
-                    re = item['asset']
-                    # Switch to current value once we hit "Today"
-                    if is_today:
-                        item['balance'] = re.property_value
-                        continue
+                else:
+                    rate = pa.appreciation_rate or Decimal('0')
+                    months_to_today = (today_normalized.year - current_date.year) * 12 + (today_normalized.month - current_date.month)
+                    item['balance'] = pa.value / ((1 + (rate / 100 / 12)) ** months_to_today)
+                
+                item['balance'] = min(item['balance'], Decimal('1e15'))
+                
+            # Apply Immobilien Growth / Back-calculation (Runs for all i)
+            for item in real_estates_state:
+                re = item['asset']
+                if is_today:
+                    item['balance'] = re.property_value
+                    continue
 
-                    # Possession Check
-                    is_owned = True
-                    if re.acquisition_date and current_date < re.acquisition_date.replace(day=1):
-                        is_owned = False
-                    if re.sale_date and current_date >= re.sale_date.replace(day=1):
-                        is_owned = False
-                    if re.is_sold and i == 0 and (not re.sale_date or current_date >= re.sale_date.replace(day=1)):
-                        is_owned = False
+                is_owned = True
+                if re.acquisition_date and current_date < re.acquisition_date.replace(day=1):
+                    is_owned = False
+                if re.sale_date and current_date >= re.sale_date.replace(day=1):
+                    is_owned = False
+                if re.is_sold and i == 0 and (not re.sale_date or current_date >= re.sale_date.replace(day=1)):
+                    is_owned = False
 
-                    if not is_owned:
-                        item['balance'] = Decimal('0.00')
-                        continue
+                if not is_owned:
+                    item['balance'] = Decimal('0.00')
+                    continue
 
-                    if is_future:
-                        rate = re.appreciation_rate
+                if is_future:
+                    if i > 0:
+                        rate = re.appreciation_rate or Decimal('0')
                         if rate == 0 and global_re_growth != 0:
                             rate = global_re_growth
                         item['balance'] *= ((1 + (rate / 100 / 12)) ** step_months)
-                    
-                    # Numerical Safety
-                    item['balance'] = min(item['balance'], Decimal('1e15'))
+                else:
+                    rate = re.appreciation_rate or Decimal('0')
+                    if rate == 0 and global_re_growth != 0:
+                        rate = global_re_growth
+                    months_to_today = (today_normalized.year - current_date.year) * 12 + (today_normalized.month - current_date.month)
+                    item['balance'] = re.property_value / ((1 + (rate / 100 / 12)) ** months_to_today)
+                
+                item['balance'] = min(item['balance'], Decimal('1e15'))
 
             # 1.1 Override with Snapshots (for past or present)
             from .models import Pension
