@@ -134,15 +134,16 @@ class SimulationEngine:
             
         assets_state = []
         for a in assets:
-            assets_state.append({'asset': a, 'balance': a.value})
+            assets_state.append({'asset': a, 'balance': Decimal('0.00')})
             
         physical_assets_state = []
         for pa in physical_assets:
-            physical_assets_state.append({'asset': pa, 'balance': pa.value})
+            physical_assets_state.append({'asset': pa, 'balance': Decimal('0.00')})
             
         real_estates_state = []
         for re in real_estates:
-            real_estates_state.append({'asset': re, 'balance': re.property_value})
+            # Initialize with 0 for the past, will be populated by snapshots or future projection
+            real_estates_state.append({'asset': re, 'balance': Decimal('0.00')})
 
         user_loans = list(self.user.loans.prefetch_related('extra_repayments').all())
         loans_state = []
@@ -160,6 +161,17 @@ class SimulationEngine:
                 key = (e.date.year, e.date.month)
                 if key not in repayments_by_loan_month[l.id]: repayments_by_loan_month[l.id][key] = []
                 repayments_by_loan_month[l.id][key].append(e)
+        
+        # Pre-index Snapshots for O(1) lookup
+        from django.contrib.contenttypes.models import ContentType
+        ct_asset = ContentType.objects.get_for_model(Asset).id
+        ct_pa = ContentType.objects.get_for_model(PhysicalAsset).id
+        ct_re = ContentType.objects.get_for_model(RealEstate).id
+        
+        snapshots_by_obj = {}
+        for s in self.user.asset_snapshots.all():
+            key = (s.content_type_id, s.object_id, s.date.year, s.date.month)
+            snapshots_by_obj[key] = s.value
 
         loans_state = []
         for l in user_loans:
@@ -171,17 +183,20 @@ class SimulationEngine:
             
         accumulated_cash = Decimal('0.00')
 
+        today_normalized = today.replace(day=1)
+        
         for i in range(months):
             current_date = start_date + relativedelta(months=i)
+            is_future = current_date >= today_normalized
+            is_today = current_date == today_normalized
+
             # Standard monthly step for precision
             step_months = 1
             year_passed_decimal_step = Decimal('1') / 12
 
-            # Inflation calculation relative to Simulation Start (today), not Stichtag
-            today_normalized = datetime.date.today().replace(day=1)
+            # Inflation calculation relative to Today
             months_from_today = (current_date.year - today_normalized.year) * 12 + (current_date.month - today_normalized.month)
             year_passed_decimal = Decimal(str(max(0, months_from_today))) / 12
-            # year_passed_decimal is already calculated relative to today (today_normalized)
 
             # 1. Wealth Accumulation and Growth - Continuous Simulation
             current_monthly_asset_withdrawal = Decimal('0.00')
@@ -239,7 +254,12 @@ class SimulationEngine:
                 # Apply Immobilien Growth
                 for item in real_estates_state:
                     re = item['asset']
-                    # Possession Check (Inclusive of acquisition month, exclusive of sale month)
+                    # Switch to current value once we hit "Today"
+                    if is_today:
+                        item['balance'] = re.property_value
+                        continue
+
+                    # Possession Check
                     is_owned = True
                     if re.acquisition_date and current_date < re.acquisition_date.replace(day=1):
                         is_owned = False
@@ -252,14 +272,30 @@ class SimulationEngine:
                         item['balance'] = Decimal('0.00')
                         continue
 
-                    rate = re.appreciation_rate
-                    if rate == 0 and global_re_growth != 0:
-                        rate = global_re_growth
-
-                    item['balance'] *= ((1 + (rate / 100 / 12)) ** step_months)
+                    if is_future:
+                        rate = re.appreciation_rate
+                        if rate == 0 and global_re_growth != 0:
+                            rate = global_re_growth
+                        item['balance'] *= ((1 + (rate / 100 / 12)) ** step_months)
                     
                     # Numerical Safety
                     item['balance'] = min(item['balance'], Decimal('1e15'))
+
+            # 1.1 Override with Snapshots (for past or present)
+            for item in assets_state:
+                key = (ct_asset, item['asset'].id, current_date.year, current_date.month)
+                if key in snapshots_by_obj:
+                    item['balance'] = snapshots_by_obj[key]
+
+            for item in physical_assets_state:
+                key = (ct_pa, item['asset'].id, current_date.year, current_date.month)
+                if key in snapshots_by_obj:
+                    item['balance'] = snapshots_by_obj[key]
+
+            for item in real_estates_state:
+                key = (ct_re, item['asset'].id, current_date.year, current_date.month)
+                if key in snapshots_by_obj:
+                    item['balance'] = snapshots_by_obj[key]
 
             # 2. Dynamic Pension Contributions and Payouts for this month
             current_monthly_pension_contribution = Decimal('0.00')
@@ -310,51 +346,52 @@ class SimulationEngine:
                 cat_name = str(_('Rente'))
                 income_category_breakdown[cat_name] = income_category_breakdown.get(cat_name, Decimal('0')) + current_monthly_pension_payout_capital
             
-            for cf in cash_flows:
-                if cf.start_date and cf.start_date.replace(day=1) > current_date: continue
-                if cf.end_date and cf.end_date.replace(day=1) < current_date: continue
-                
-                amount = cf.value
-                if cf.is_inflation_adjusted:
-                    rate = self.salary_increase if cf.is_income else self.inflation_rate
-                    amount = amount * ((1 + rate) ** year_passed_decimal)
-
-                val = amount if cf.frequency == 'monthly' else amount / 12
-
-                if cf.is_income:
-                    monthly_income += val * step_months
-                    cat_name = cf.category.name if cf.category else "Uncategorized"
-                    income_category_breakdown[cat_name] = income_category_breakdown.get(cat_name, Decimal('0')) + (val * step_months)
-                else:
-                    monthly_expenses += val * step_months
-                    cat_name = cf.category.name if cf.category else "Uncategorized"
-                    category_breakdown[cat_name] = category_breakdown.get(cat_name, Decimal('0')) + (val * step_months)
-
-            # Cash flows from PhysicalAssets and RealEstate
-            for item in physical_assets_state:
-                pa = item['asset']
-                if pa.storage_costs_monthly:
-                    val = pa.storage_costs_monthly
-                    monthly_expenses += val
-                    cat_name = str(_('Sachwerte'))
-                    category_breakdown[cat_name] = category_breakdown.get(cat_name, Decimal('0')) + val
+            if is_future:
+                for cf in cash_flows:
+                    if cf.start_date and cf.start_date.replace(day=1) > current_date: continue
+                    if cf.end_date and cf.end_date.replace(day=1) < current_date: continue
                     
-            for item in real_estates_state:
-                re = item['asset']
-                # Only process income/expenses if currently owned
-                if item['balance'] > 0:
-                    if re.rental_income_monthly:
-                        val = re.rental_income_monthly
-                        monthly_income += val
-                        cat_name = str(_('Immobilien'))
-                        income_category_breakdown[cat_name] = income_category_breakdown.get(cat_name, Decimal('0')) + val
-                    
-                    # Maintenance and ancillary costs
-                    costs = (re.maintenance_costs_monthly or Decimal('0')) + (re.ancillary_costs_monthly or Decimal('0'))
-                    if costs > 0:
-                        monthly_expenses += costs
-                        cat_name = str(_('Immobilien'))
-                        category_breakdown[cat_name] = category_breakdown.get(cat_name, Decimal('0')) + costs
+                    amount = cf.value
+                    if cf.is_inflation_adjusted:
+                        rate = self.salary_increase if cf.is_income else self.inflation_rate
+                        amount = amount * ((1 + rate) ** year_passed_decimal)
+
+                    val = amount if cf.frequency == 'monthly' else amount / 12
+
+                    if cf.is_income:
+                        monthly_income += val * step_months
+                        cat_name = cf.category.name if cf.category else "Uncategorized"
+                        income_category_breakdown[cat_name] = income_category_breakdown.get(cat_name, Decimal('0')) + (val * step_months)
+                    else:
+                        monthly_expenses += val * step_months
+                        cat_name = cf.category.name if cf.category else "Uncategorized"
+                        category_breakdown[cat_name] = category_breakdown.get(cat_name, Decimal('0')) + (val * step_months)
+
+                # Cash flows from PhysicalAssets and RealEstate
+                for item in physical_assets_state:
+                    pa = item['asset']
+                    if pa.storage_costs_monthly:
+                        val = pa.storage_costs_monthly
+                        monthly_expenses += val
+                        cat_name = str(_('Sachwerte'))
+                        category_breakdown[cat_name] = category_breakdown.get(cat_name, Decimal('0')) + val
+                        
+                for item in real_estates_state:
+                    re = item['asset']
+                    # Only process income/expenses if currently owned
+                    if item['balance'] > 0:
+                        if re.rental_income_monthly:
+                            val = re.rental_income_monthly
+                            monthly_income += val
+                            cat_name = str(_('Immobilien'))
+                            income_category_breakdown[cat_name] = income_category_breakdown.get(cat_name, Decimal('0')) + val
+                        
+                        # Maintenance and ancillary costs
+                        costs = (re.maintenance_costs_monthly or Decimal('0')) + (re.ancillary_costs_monthly or Decimal('0'))
+                        if costs > 0:
+                            monthly_expenses += costs
+                            cat_name = str(_('Immobilien'))
+                            category_breakdown[cat_name] = category_breakdown.get(cat_name, Decimal('0')) + costs
 
             # 2.1 Process Loans (Installments and Interest)
             events_this_month = []
@@ -422,9 +459,14 @@ class SimulationEngine:
                         'date': event.date.isoformat(), 'value': float(round(event.value, 2)),
                     })
 
-            # Monthly Savings: monthly_expenses already includes current_monthly_pension_contribution
+            # Monthly Savings only for future months
             monthly_savings = monthly_income - monthly_expenses
-            accumulated_cash += (monthly_savings + event_impact)
+            if is_future:
+                accumulated_cash += (monthly_savings + event_impact)
+            else:
+                # In the past, we only respect explicit event impacts if they represent data
+                # but usually, we want accumulated_cash to stay at 0 unless snapshots exist
+                accumulated_cash = Decimal('0.00')
             
             # Totals
             asset_total = sum(item['balance'] for item in assets_state)
