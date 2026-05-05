@@ -650,14 +650,14 @@ def dashboard_view(request):
             {'label': _('Pension Capital (Real)'), 'data': pension_real_yearly, 'borderColor': '#6f42c1', 'borderDash': [5, 5], 'fill': False},
         ], stichtag_year_index)
 
-        cf_labels, cf_datasets, _ = trim_chart_data(labels_yearly, [
+        cf_labels, cf_datasets, __ = trim_chart_data(labels_yearly, [
             {'label': _('Income'), 'data': income_yearly, 'backgroundColor': 'rgba(25, 135, 84, 0.7)', 'order': 2},
             {'label': _('Expenses'), 'data': expenses_yearly, 'backgroundColor': 'rgba(220, 53, 69, 0.7)', 'order': 2},
             {'label': _('Net Savings'), 'data': net_savings_yearly, 'type': 'line', 'borderColor': '#0d6efd', 'borderWidth': 2, 'fill': False, 'pointRadius': 3, 'order': 1},
         ])
 
-        ie_labels, ie_datasets, _ = trim_chart_data(labels_yearly, income_evo_datasets)
-        ee_labels, ee_datasets, _ = trim_chart_data(labels_yearly, expense_evo_datasets)
+        ie_labels, ie_datasets, __ = trim_chart_data(labels_yearly, income_evo_datasets)
+        ee_labels, ee_datasets, __ = trim_chart_data(labels_yearly, expense_evo_datasets)
         le_labels, le_datasets, le_stichtag = trim_chart_data(labels_yearly, loan_evo_datasets, stichtag_year_index)
 
         im_labels, im_datasets, im_stichtag = trim_chart_data(labels_yearly, [
