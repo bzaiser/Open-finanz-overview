@@ -584,8 +584,14 @@ def dashboard_view(request):
         Trims leading zero-data periods from chart labels and datasets.
         Finds the first index where ANY dataset has a non-zero value.
         """
-        if not labels or not datasets:
+        if not labels:
             return labels, datasets, stichtag_index
+
+        if not datasets:
+            # If no datasets at all, show a minimal timeline (just the Stichtag year or the first year)
+            # to prevent empty charts from stretching over the full simulation period.
+            idx = stichtag_index if stichtag_index is not None and 0 <= stichtag_index < len(labels) else 0
+            return [labels[idx]], [], 0
 
         # Find the first index with non-zero data across all datasets
         first_idx = len(labels)
