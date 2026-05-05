@@ -404,7 +404,8 @@ class SimulationEngine:
             # Cash flows from PhysicalAssets and RealEstate
             for item in physical_assets_state:
                 pa = item['asset']
-                if pa.storage_costs_monthly:
+                # Only process costs if currently owned (has a value in snapshots or future)
+                if item['balance'] > 0 and pa.storage_costs_monthly:
                     val = pa.storage_costs_monthly
                     monthly_expenses += val
                     cat_name = str(_('Sachwerte'))
