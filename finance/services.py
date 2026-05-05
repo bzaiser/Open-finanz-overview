@@ -130,7 +130,8 @@ class SimulationEngine:
 
         pensions_state = []
         for p in pensions:
-            pensions_state.append({'pension': p, 'balance': p.current_value})
+            # Initialize with 0 for the past
+            pensions_state.append({'pension': p, 'balance': Decimal('0.00')})
             
         assets_state = []
         for a in assets:
@@ -205,18 +206,24 @@ class SimulationEngine:
             if i > 0: # Start growth from the second month
                 for item in assets_state:
                     asset = item['asset']
-                    # Dynamic Interest Rate (Teaser Rate handling)
-                    asset_growth_rate = asset.growth_rate or Decimal('0.00')
-                    if asset.interest_teaser_rate is not None and asset.interest_teaser_until and current_date <= asset.interest_teaser_until:
-                        asset_growth_rate = asset.interest_teaser_rate
-                        
-                    rate = (asset_growth_rate / 100) + self.investment_return_offset
-                    item['balance'] *= ((1 + (rate / 12)) ** step_months)
+                    # Switch to current value once we hit "Today"
+                    if is_today:
+                        item['balance'] = asset.value
+                        continue
 
-                    if asset.withdrawal_start_date and current_date >= asset.withdrawal_start_date.replace(day=1):
-                        withdrawal = (asset.withdrawal_amount or Decimal('0.00')) * step_months
-                        item['balance'] = max(Decimal('0'), item['balance'] - withdrawal)
-                        current_monthly_asset_withdrawal += withdrawal
+                    if is_future:
+                        # Dynamic Interest Rate
+                        asset_growth_rate = asset.growth_rate or Decimal('0.00')
+                        if asset.interest_teaser_rate is not None and asset.interest_teaser_until and current_date <= asset.interest_teaser_until:
+                            asset_growth_rate = asset.interest_teaser_rate
+                            
+                        rate = (asset_growth_rate / 100) + self.investment_return_offset
+                        item['balance'] *= ((1 + (rate / 12)) ** step_months)
+
+                        if asset.withdrawal_start_date and current_date >= asset.withdrawal_start_date.replace(day=1):
+                            withdrawal = (asset.withdrawal_amount or Decimal('0.00')) * step_months
+                            item['balance'] = max(Decimal('0'), item['balance'] - withdrawal)
+                            current_monthly_asset_withdrawal += withdrawal
                     
                     # Numerical Safety
                     item['balance'] = min(item['balance'], Decimal('1e15'))
@@ -224,12 +231,18 @@ class SimulationEngine:
                 # Apply Pension Growth & Contribution
                 for item in pensions_state:
                     pension = item['pension']
-                    # Growth applies to current balance
-                    rate = (pension.growth_rate or Decimal('0.00')) / 100
-                    item['balance'] *= ((1 + (rate / 12)) ** step_months)
-                    # Contribution only if before end date
-                    if not pension.contribution_end_date or current_date < pension.contribution_end_date.replace(day=1):
-                        item['balance'] += ((pension.monthly_contribution or Decimal('0.00')) * step_months)
+                    # Switch to current value once we hit "Today"
+                    if is_today:
+                        item['balance'] = pension.current_value
+                        continue
+
+                    if is_future:
+                        # Growth applies to current balance
+                        rate = (pension.growth_rate or Decimal('0.00')) / 100
+                        item['balance'] *= ((1 + (rate / 12)) ** step_months)
+                        # Contribution only if before end date
+                        if not pension.contribution_end_date or current_date < pension.contribution_end_date.replace(day=1):
+                            item['balance'] += ((pension.monthly_contribution or Decimal('0.00')) * step_months)
                     
                     # Numerical Safety
                     item['balance'] = min(item['balance'], Decimal('1e15'))
@@ -237,6 +250,11 @@ class SimulationEngine:
                 # Apply Sachwerte Growth
                 for item in physical_assets_state:
                     pa = item['asset']
+                    # Switch to current value once we hit "Today"
+                    if is_today:
+                        item['balance'] = pa.value
+                        continue
+
                     # Sale Date Check
                     if pa.sale_date and current_date >= pa.sale_date:
                         item['balance'] = Decimal('0.00')
@@ -245,8 +263,9 @@ class SimulationEngine:
                         item['balance'] = Decimal('0.00')
                         continue
                         
-                    rate = pa.appreciation_rate
-                    item['balance'] *= ((1 + (rate / 100 / 12)) ** step_months)
+                    if is_future:
+                        rate = pa.appreciation_rate
+                        item['balance'] *= ((1 + (rate / 100 / 12)) ** step_months)
                     
                     # Numerical Safety
                     item['balance'] = min(item['balance'], Decimal('1e15'))
@@ -282,6 +301,9 @@ class SimulationEngine:
                     item['balance'] = min(item['balance'], Decimal('1e15'))
 
             # 1.1 Override with Snapshots (for past or present)
+            from .models import Pension
+            ct_pension = ContentType.objects.get_for_model(Pension).id
+            
             for item in assets_state:
                 key = (ct_asset, item['asset'].id, current_date.year, current_date.month)
                 if key in snapshots_by_obj:
@@ -296,6 +318,11 @@ class SimulationEngine:
                 key = (ct_re, item['asset'].id, current_date.year, current_date.month)
                 if key in snapshots_by_obj:
                     item['balance'] = snapshots_by_obj[key]
+            
+            for item in pensions_state:
+                key = (ct_pension, item['pension'].id, current_date.year, current_date.month)
+                if key in snapshots_by_obj:
+                    item['balance'] = snapshots_by_obj[key]
 
             # 2. Dynamic Pension Contributions and Payouts for this month
             current_monthly_pension_contribution = Decimal('0.00')
@@ -303,32 +330,33 @@ class SimulationEngine:
             current_monthly_pension_payout_fixed = Decimal('0.00')
             current_monthly_pension_payout_capital = Decimal('0.00')
             
-            for p_item in pensions_state:
-                p = p_item['pension']
-                # Contrib: only if before end date
-                if not p.contribution_end_date or current_date < p.contribution_end_date.replace(day=1):
-                    current_monthly_pension_contribution += p.monthly_contribution
-                
-                # Payout: only if after/at start payout date
-                if p.start_payout_date and current_date >= p.start_payout_date.replace(day=1):
-                    if p.expected_payout_at_retirement:
-                        # Use the contract value but apply growth from start of payout until now
-                        payout_val = Decimal(str(p.expected_payout_at_retirement))
-                        
-                        # Calculate full years since payout started for annual step-growth
-                        years_since_start = (current_date.year - p.start_payout_date.year) * 12 + (current_date.month - p.start_payout_date.month)
-                        full_years_since_start = Decimal(str(max(0, years_since_start) // 12))
-                        
-                        # Grow Nominal Payout by pension_increase rate annually (step function) if indexed
-                        actual_increase = self.pension_increase if p.is_indexed else Decimal('0.00')
-                        payout_val = payout_val * ((1 + actual_increase) ** full_years_since_start)
-                        current_monthly_pension_payout += payout_val * step_months
-                        
-                        # Split by capital base
-                        if p.current_value > 0:
-                            current_monthly_pension_payout_capital += payout_val * step_months
-                        else:
-                            current_monthly_pension_payout_fixed += payout_val * step_months
+            if is_future:
+                for p_item in pensions_state:
+                    p = p_item['pension']
+                    # Contrib: only if before end date
+                    if not p.contribution_end_date or current_date < p.contribution_end_date.replace(day=1):
+                        current_monthly_pension_contribution += p.monthly_contribution
+                    
+                    # Payout: only if after/at start payout date
+                    if p.start_payout_date and current_date >= p.start_payout_date.replace(day=1):
+                        if p.expected_payout_at_retirement:
+                            # Use the contract value but apply growth from start of payout until now
+                            payout_val = Decimal(str(p.expected_payout_at_retirement))
+                            
+                            # Calculate full years since payout started for annual step-growth
+                            years_since_start = (current_date.year - p.start_payout_date.year) * 12 + (current_date.month - p.start_payout_date.month)
+                            full_years_since_start = Decimal(str(max(0, years_since_start) // 12))
+                            
+                            # Grow Nominal Payout by pension_increase rate annually (step function) if indexed
+                            actual_increase = self.pension_increase if p.is_indexed else Decimal('0.00')
+                            payout_val = payout_val * ((1 + actual_increase) ** full_years_since_start)
+                            current_monthly_pension_payout += payout_val * step_months
+                            
+                            # Split by capital base
+                            if p.current_value > 0:
+                                current_monthly_pension_payout_capital += payout_val * step_months
+                            else:
+                                current_monthly_pension_payout_fixed += payout_val * step_months
 
             # 3. Process Cash Flows (Income/Expenses)
             monthly_income = current_monthly_pension_payout + current_monthly_asset_withdrawal
