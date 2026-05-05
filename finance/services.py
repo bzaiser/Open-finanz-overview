@@ -608,7 +608,7 @@ class SimulationEngine:
                 'loan_balances': {str(item['loan'].id): float(round(item['balance'], 2)) for item in loans_state},
                 'one_time_impact': float(round(event_impact, 2)),
                 'one_time_events': events_this_month,
-                'debug_breakdown': {k: float(round(v, 2)) for k, v in debug_breakdown.items()},
+                'debug_breakdown': {k: {sub_k: float(round(sub_v, 2)) for sub_k, sub_v in v.items()} for k, v in debug_breakdown.items()},
             })
             
             i += step_months
