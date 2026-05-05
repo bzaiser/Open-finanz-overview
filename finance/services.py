@@ -142,7 +142,22 @@ class SimulationEngine:
             real_estates_state.append({'asset': re, 'balance': re.property_value})
 
         loans_state = []
-        user_loans = list(self.user.loans.prefetch_related('extra_repayments').all())
+        # 0. Pre-index Events and Repayments for O(1) lookup performance
+        events_by_month = {}
+        for e in one_time_events:
+            key = (e.date.year, e.date.month)
+            if key not in events_by_month: events_by_month[key] = []
+            events_by_month[key].append(e)
+            
+        repayments_by_loan_month = {}
+        for l in user_loans:
+            repayments_by_loan_month[l.id] = {}
+            for e in l.extra_repayments.all():
+                key = (e.date.year, e.date.month)
+                if key not in repayments_by_loan_month[l.id]: repayments_by_loan_month[l.id][key] = []
+                repayments_by_loan_month[l.id][key].append(e)
+
+        loans_state = []
         for l in user_loans:
             loans_state.append({
                 'loan': l, 
@@ -152,17 +167,11 @@ class SimulationEngine:
             
         accumulated_cash = Decimal('0.00')
 
-        i = 0
-        while i < months:
+        for i in range(months):
             current_date = start_date + relativedelta(months=i)
-            
-            # Use yearly steps for history if possible (only if we start in January)
-            is_history = current_date < today_year_start
-            is_january = current_date.month == 1
-            can_do_yearly = is_history and is_january and (months - i) >= 12
-            
-            step_months = 12 if can_do_yearly else 1
-            year_passed_decimal_step = Decimal(str(step_months)) / 12
+            # Standard monthly step for precision
+            step_months = 1
+            year_passed_decimal_step = Decimal('1') / 12
 
             # Inflation calculation relative to Simulation Start (today), not Stichtag
             today_normalized = datetime.date.today().replace(day=1)
@@ -364,9 +373,8 @@ class SimulationEngine:
                         cat_name = str(_('Kredit'))
                         category_breakdown[cat_name] = category_breakdown.get(cat_name, Decimal('0')) + installment
                         
-                        # Extra repayments
-                        extras_this_month = sum(e.amount for e in loan.extra_repayments.all() 
-                                               if e.date.year == current_date.year and e.date.month == current_date.month)
+                        # Extra repayments lookup (O(1))
+                        extras_this_month = sum(e.amount for e in repayments_by_loan_month.get(loan.id, {}).get((current_date.year, current_date.month), []))
                         
                         if i > 0: # Only update balance from second month of core loop
                             reduction = (installment - interest) + extras_this_month
@@ -385,8 +393,7 @@ class SimulationEngine:
                             })
                         
                         # Add extra repayments to events
-                        for e in loan.extra_repayments.all():
-                            if e.date.year == current_date.year and e.date.month == current_date.month:
+                        for e in repayments_by_loan_month.get(loan.id, {}).get((current_date.year, current_date.month), []):
                                 loan_events.append({
                                     'loan_name': loan.name,
                                     'type': 'extra_repayment',
@@ -402,10 +409,9 @@ class SimulationEngine:
 
             monthly_expenses += current_monthly_loan_installment
 
-            # 3. One Time Events
+            # 3. One Time Events lookup (O(1))
             event_impact = Decimal('0.00')
-            for event in one_time_events:
-                if event.date.year == current_date.year and event.date.month == current_date.month:
+            for event in events_by_month.get((current_date.year, current_date.month), []):
                     event_impact += event.value
                     events_this_month.append({
                         'name': event.name, 'description': event.description or '',
