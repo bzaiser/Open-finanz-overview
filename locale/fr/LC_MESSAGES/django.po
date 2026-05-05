@@ -654,49 +654,17 @@ msgstr "Tendance du solde du prêt"
 # #-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#
 # #-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#
 # New Chart/Widget Descriptions
-#, fuzzy
 msgid "CHART_DESC_NET_WORTH"
-msgstr ""
-"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
-"Ce graphique projette votre patrimoine net total jusqu'à la fin de votre "
-"vie, y compris les actifs, les pensions et l'immobilier, moins les dettes.\n"
-"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
-"Ce graphique projette votre patrimoine total jusqu'à la fin de votre vie. "
-"Les données proviennent de vos <b>investissements</b>, <b>retraites</b>, "
-"<b>immobilier</b> et <b>actifs matériels</b>, moins les <b>prêts</b>. "
-"<br><br>« Nominal » montre les chiffres bruts du futur. « Réel » calcule le "
-"pouvoir d'achat en euros d'aujourd'hui (ajusté à l'inflation)."
+msgstr "Ce graphique projette votre patrimoine net total jusqu'à la fin de votre vie, y compris les actifs, les retraites et l'immobilier, moins les dettes. <br><br>Sources : <a href=\"/admin/finance/asset/\" target=\"_blank\" class=\"alert-link\">Actifs</a>, <a href=\"/admin/finance/pension/\" target=\"_blank\" class=\"alert-link\">Retraites</a> et <a href=\"/admin/finance/realestate/\" target=\"_blank\" class=\"alert-link\">Immobilier</a>."
 
-#, fuzzy
 msgid "CHART_DESC_CASH_FLOW"
-msgstr ""
-"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
-"Compare vos revenus mensuels à vos dépenses pour montrer le surplus ou le "
-"déficit annuel.\n"
-"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
-"Compare les revenus mensuels avec les dépenses. Indique si vous avez de "
-"l'argent de côté à la fin de l'année (excédent) ou si vous devez puiser dans "
-"vos économies (déficit)."
+msgstr "Compare vos revenus mensuels à vos dépenses pour montrer le surplus ou le déficit annuel. <br><br>Source : <a href=\"/admin/finance/cashflowsource/\" target=\"_blank\" class=\"alert-link\">Flux de trésorerie</a>."
 
-#, fuzzy
 msgid "CHART_DESC_INCOME_EVOLUTION"
-msgstr ""
-"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
-"Affiche l'évolution de vos revenus et des effets ponctuels au fil du temps.\n"
-"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
-"Affiche l'évolution de vos revenus sur plusieurs décennies. Prend en compte "
-"les sauts de salaire, les augmentations de loyer et le passage du salaire à "
-"la retraite."
+msgstr "Affiche l'évolution de vos revenus sur plusieurs décennies, y compris les étapes salariales et la transition vers la retraite. <br><br>Sources : <a href=\"/admin/finance/cashflowsource/\" target=\"_blank\" class=\"alert-link\">Revenus</a> et <a href=\"/admin/finance/pension/\" target=\"_blank\" class=\"alert-link\">Retraites</a>."
 
-#, fuzzy
 msgid "CHART_DESC_EXPENSE_EVOLUTION"
-msgstr ""
-"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
-"Suit l'évolution de vos dépenses au fil du temps, y compris les effets de "
-"l'inflation.\n"
-"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
-"Visualise comment vos coûts fixes et vos frais de subsistance changent en "
-"raison de l'inflation et de la fin des prêts."
+msgstr "Visualise comment vos coûts fixes et vos frais de subsistance changent en raison de l'inflation et de la fin des prêts. <br><br>Sources : <a href=\"/admin/finance/cashflowsource/\" target=\"_blank\" class=\"alert-link\">Dépenses</a> et <a href=\"/admin/finance/loan/\" target=\"_blank\" class=\"alert-link\">Prêts</a>."
 
 #, fuzzy
 msgid "CHART_DESC_INFLATION_MONITOR"
@@ -708,23 +676,11 @@ msgstr ""
 "montant d'épargne actuel vaudra à l'avenir, sur la base du taux d'inflation "
 "choisi dans la simulation."
 
-#, fuzzy
 msgid "CHART_DESC_BUDGET_PIE"
-msgstr ""
-"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
-"Répartition de vos dépenses mensuelles par catégorie.\n"
-"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
-"La répartition en pourcentage de vos dépenses dans l'année de simulation "
-"choisie. Aide à identifier les facteurs de coûts."
+msgstr "Répartition en pourcentage de vos dépenses dans l'année de simulation choisie. <br><br>Modifier dans : <a href=\"/admin/finance/cashflowsource/\" target=\"_blank\" class=\"alert-link\">Dépenses</a>."
 
-#, fuzzy
 msgid "CHART_DESC_ASSET_ALLOCATION"
-msgstr ""
-"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
-"Répartition de vos investissements entre les différentes classes d'actifs.\n"
-"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
-"Affiche la diversification de votre patrimoine. Un mix équilibré d'actifs "
-"liquides, d'immobilier et d'actifs matériels est souvent plus sûr."
+msgstr "Affiche la diversification de votre patrimoine. Un mix équilibré d'actifs liquides, d'immobilier et d'actifs physiques est souvent plus sûr. <br><br>Données de : <a href=\"/admin/finance/asset/\" target=\"_blank\" class=\"alert-link\">Actifs</a>."
 
 #, fuzzy
 msgid "WIDGET_DESC_UPCOMING_DATES"
@@ -735,51 +691,23 @@ msgstr ""
 "Un calendrier automatique pour vos finances. Indique quand les prêts "
 "expirent, les assurances se terminent ou les paiements uniques sont dus."
 
-#, fuzzy
 msgid "WIDGET_DESC_INCOME_TABLE"
-msgstr ""
-"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
-"Liste détaillée de vos sources de revenus actuelles.\n"
-"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
-"Liste détaillée de vos entrées mensuelles à la date de référence choisie."
+msgstr "Liste détaillée de vos revenus mensuels à la date de référence choisie. <br><br>Modifier ici : <a href=\"/admin/finance/cashflowsource/\" target=\"_blank\" class=\"alert-link\">Revenus</a>."
 
-#, fuzzy
 msgid "WIDGET_DESC_EXPENSE_TABLE"
-msgstr ""
-"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
-"Liste détaillée de vos dépenses régulières.\n"
-"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
-"Liste détaillée de vos sorties mensuelles à la date de référence choisie."
+msgstr "Liste détaillée de vos dépenses mensuelles à la date de référence choisie. <br><br>Modifier ici : <a href=\"/admin/finance/cashflowsource/\" target=\"_blank\" class=\"alert-link\">Dépenses</a>."
 
-#, fuzzy
 msgid "WIDGET_DESC_ASSET_TABLE"
-msgstr ""
-"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
-"Aperçu de tous vos comptes et investissements.\n"
-"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
-"Inventaire de vos comptes et dépôts. Affiche le solde simulé, y compris "
-"l'effet des intérêts composés."
+msgstr "Inventaire de vos comptes et dépôts affichant le solde simulé, y compris l'effet des intérêts composés. <br><br>Modifier ici : <a href=\"/admin/finance/asset/\" target=\"_blank\" class=\"alert-link\">Actifs</a>."
 
-#, fuzzy
 msgid "WIDGET_DESC_PENSION_TABLE"
-msgstr ""
-"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
-"Détails de vos contrats de pension et projections.\n"
-"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
-"Aperçu de votre prévoyance vieillesse. Affiche les montants garantis et les "
-"valeurs de capital actuelles."
+msgstr "Aperçu de vos différents contrats de retraite et de leurs versements projetés. <br><br>Modifier ici : <a href=\"/admin/finance/pension/\" target=\"_blank\" class=\"alert-link\">Retraites</a>."
 
 msgid "WIDGET_DESC_ONETIME_TABLE"
 msgstr "Prochains événements financiers ponctuels."
 
-#, fuzzy
 msgid "WIDGET_DESC_LOAN_TABLE"
-msgstr ""
-"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
-"État actuel de vos prêts et dettes.\n"
-"#-#-#-#-#  django.po (PACKAGE VERSION)  #-#-#-#-#\n"
-"Aperçu de votre charge de dette. Affiche le solde restant et le taux "
-"d'intérêt à la date de référence."
+msgstr "État actuel de vos prêts, y compris le solde restant et les coûts d'intérêts. <br><br>Modifier ici : <a href=\"/admin/finance/loan/\" target=\"_blank\" class=\"alert-link\">Prêts</a>."
 
 #: finance/views.py:118
 msgid ""
@@ -2271,42 +2199,31 @@ msgstr ""
 "cette valeur suit l'évolution générale des salaires."
 
 msgid "WIDGET_DESC_EVENT_TABLE"
-msgstr ""
-"Événements spéciaux (héritage, achat de voiture, don) dans l'année de "
-"simulation choisie."
+msgstr "Liste chronologique des événements financiers ponctuels configurés. <br><br>Modifier ici : <a href=\"/admin/finance/onetimeevent/\" target=\"_blank\" class=\"alert-link\">Événements ponctuels</a>."
 
 msgid "CHART_DESC_LOAN_EVOLUTION"
-msgstr ""
-"Visualise la rapidité avec laquelle vos dettes diminuent grâce au "
-"remboursement. Aide à la planification des remboursements anticipés."
+msgstr "Visualise la réduction de votre dette au fil du temps à mesure que vous remboursez vos prêts. <br><br>Gérer dans : <a href=\"/admin/finance/loan/\" target=\"_blank\" class=\"alert-link\">Prêts</a>."
 
 msgid "CHART_DESC_REAL_ESTATE"
-msgstr ""
-"Affiche l'évolution de la valeur de vos biens immobiliers. Vous voyez ici "
-"les détails des augmentations de valeur."
+msgstr "Affiche l'évolution de la valeur de vos biens immobiliers au fil du temps. <br><br>Gérer dans : <a href=\"/admin/finance/realestate/\" target=\"_blank\" class=\"alert-link\">Immobilier</a>."
 
 msgid "CHART_DESC_PHYSICAL_ASSETS"
-msgstr ""
-"Visualise l'évolution de la valeur de vos actifs matériels (ex. or, "
-"voitures)."
+msgstr "Visualise l'historique de la valeur de vos actifs physiques comme l'or ou les véhicules. <br><br>Gérer dans : <a href=\"/admin/finance/physicalasset/\" target=\"_blank\" class=\"alert-link\">Actifs physiques</a>."
 
 msgid "CHART_DESC_LIQUID_PENSION"
-msgstr ""
-"Compare votre argent liquide disponible avec votre capital retraite épargné "
-"au fil du temps."
+msgstr "Compare vos liquidités/investissements disponibles avec votre capital retraite accumulé. <br><br>Sources : <a href=\"/admin/finance/asset/\" target=\"_blank\" class=\"alert-link\">Actifs</a> et <a href=\"/admin/finance/pension/\" target=\"_blank\" class=\"alert-link\">Retraites</a>."
 
 msgid "SUMMARY_DESC_ASSETS"
-msgstr ""
-"Capital liquide total (comptes, actions, espèces) à la date sélectionnée."
+msgstr "Capital liquide total (comptes, actions, espèces) à la date choisie. <br><br>Gérer dans : <a href=\"/admin/finance/asset/\" target=\"_blank\" class=\"alert-link\">Actifs</a>."
 
 msgid "SUMMARY_DESC_INCOME"
-msgstr "Votre revenu net mensuel total (salaire, loyers, etc.)."
+msgstr "Revenu net mensuel total (salaire, loyer, etc.). <br><br>Gérer dans : <a href=\"/admin/finance/cashflowsource/\" target=\"_blank\" class=\"alert-link\">Flux de revenus</a>."
 
 msgid "SUMMARY_DESC_EXPENSES"
-msgstr "Vos dépenses mensuelles totales, y compris l'inflation simulée."
+msgstr "Dépenses mensuelles totales, y compris l'inflation simulée. <br><br>Gérer dans : <a href=\"/admin/finance/cashflowsource/\" target=\"_blank\" class=\"alert-link\">Flux de dépenses</a>."
 
 msgid "SUMMARY_DESC_PENSION"
-msgstr "Valeur actuelle ou valeur de rachat de tous vos droits à la retraite."
+msgstr "Valeur actuelle ou valeur de rachat de tous vos droits à la retraite. <br><br>Gérer dans : <a href=\"/admin/finance/pension/\" target=\"_blank\" class=\"alert-link\">Retraites</a>."
 
 msgid "SUMMARY_DESC_TARGET_PENSION"
 msgstr ""
@@ -2319,11 +2236,10 @@ msgstr ""
 "date de référence (ajustée à l'inflation)."
 
 msgid "SUMMARY_DESC_PHYSICAL_ASSETS"
-msgstr ""
-"Valeur totale de vos actifs matériels tels que véhicules, or ou collections."
+msgstr "Valeur totale de vos actifs physiques comme l'or ou les véhicules. <br><br>Gérer dans : <a href=\"/admin/finance/physicalasset/\" target=\"_blank\" class=\"alert-link\">Actifs physiques</a>."
 
 msgid "SUMMARY_DESC_REAL_ESTATE"
-msgstr "Valeur marchande de vos biens immobiliers à la date sélectionnée."
+msgstr "Valeur marchande de vos biens immobiliers à la date choisie. <br><br>Gérer dans : <a href=\"/admin/finance/realestate/\" target=\"_blank\" class=\"alert-link\">Immobilier</a>."
 
 msgid "SUMMARY_DESC_TOTAL_WEALTH"
 msgstr ""
@@ -2331,7 +2247,7 @@ msgstr ""
 "immobilier, actifs matériels) moins tous les prêts."
 
 msgid "SUMMARY_DESC_DEBTS"
-msgstr "Votre charge de dette totale (solde restant) à la date sélectionnée."
+msgstr "Votre charge totale de la dette (solde restant) à la date choisie. <br><br>Gérer dans : <a href=\"/admin/finance/loan/\" target=\"_blank\" class=\"alert-link\">Prêts</a>."
 
 msgid "Follow System Night Mode Settings"
 msgstr "Suivre les paramètres du mode nuit du système"

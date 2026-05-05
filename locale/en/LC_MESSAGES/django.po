@@ -198,23 +198,16 @@ msgid "Ignorieren"
 msgstr "Ignore"
 
 msgid "CHART_DESC_NET_WORTH"
-msgstr ""
-"This chart projects your total wealth until the end of life, including "
-"assets, pensions, and real estate, minus debts."
+msgstr "This chart projects your total wealth until the end of life, including assets, pensions, and real estate, minus debts. <br><br>Sources: <a href=\"/admin/finance/asset/\" target=\"_blank\" class=\"alert-link\">Assets</a>, <a href=\"/admin/finance/pension/\" target=\"_blank\" class=\"alert-link\">Pensions</a> and <a href=\"/admin/finance/realestate/\" target=\"_blank\" class=\"alert-link\">Real Estate</a>."
 
 msgid "CHART_DESC_CASH_FLOW"
-msgstr ""
-"Compares monthly income vs. expenses to show annual surplus or deficit."
+msgstr "Compares monthly income vs. expenses to show annual surplus or deficit. <br><br>Source: <a href=\"/admin/finance/cashflowsource/\" target=\"_blank\" class=\"alert-link\">Cash Flows</a>."
 
 msgid "CHART_DESC_INCOME_EVOLUTION"
-msgstr ""
-"Shows the development of your income over decades, including salary steps "
-"and pension transition."
+msgstr "Shows the development of your income over decades, including salary steps and pension transition. <br><br>Sources: <a href=\"/admin/finance/cashflowsource/\" target=\"_blank\" class=\"alert-link\">Income</a> and <a href=\"/admin/finance/pension/\" target=\"_blank\" class=\"alert-link\">Pensions</a>."
 
 msgid "CHART_DESC_EXPENSE_EVOLUTION"
-msgstr ""
-"Visualizes how fixed and living costs change due to inflation and loan "
-"repayments."
+msgstr "Visualizes how fixed and living costs change due to inflation and loan repayments. <br><br>Sources: <a href=\"/admin/finance/cashflowsource/\" target=\"_blank\" class=\"alert-link\">Expenses</a> and <a href=\"/admin/finance/loan/\" target=\"_blank\" class=\"alert-link\">Loans</a>."
 
 msgid "CHART_DESC_INFLATION_MONITOR"
 msgstr ""
@@ -222,13 +215,10 @@ msgstr ""
 "today's savings."
 
 msgid "CHART_DESC_BUDGET_PIE"
-msgstr ""
-"Percentage distribution of your expenses in the selected simulation year."
+msgstr "Percentage distribution of your expenses in the selected simulation year. <br><br>Edit in <a href=\"/admin/finance/cashflowsource/\" target=\"_blank\" class=\"alert-link\">Expenses</a>."
 
 msgid "CHART_DESC_ASSET_ALLOCATION"
-msgstr ""
-"Shows the diversification of your wealth across liquid assets, real estate, "
-"and physical assets."
+msgstr "Shows the diversification of your wealth across liquid assets, real estate, and physical assets. <br><br>Data from <a href=\"/admin/finance/asset/\" target=\"_blank\" class=\"alert-link\">Assets</a>."
 
 msgid "WIDGET_DESC_UPCOMING_DATES"
 msgstr ""
@@ -236,55 +226,46 @@ msgstr ""
 "payments are due."
 
 msgid "WIDGET_DESC_INCOME_TABLE"
-msgstr "Detailed list of your monthly inflows at the selected reference date."
+msgstr "Detailed list of your monthly inflows at the selected reference date. <br><br>Edit here: <a href=\"/admin/finance/cashflowsource/\" target=\"_blank\" class=\"alert-link\">Income</a>."
 
 msgid "WIDGET_DESC_EXPENSE_TABLE"
-msgstr "Detailed list of your monthly outflows at the selected reference date."
+msgstr "Detailed list of your monthly outflows at the selected reference date. <br><br>Edit here: <a href=\"/admin/finance/cashflowsource/\" target=\"_blank\" class=\"alert-link\">Expenses</a>."
 
 msgid "WIDGET_DESC_ASSET_TABLE"
-msgstr ""
-"Inventory of your accounts and portfolios showing the simulated balance "
-"including compound interest."
+msgstr "Inventory of your accounts and portfolios showing the simulated balance including compound interest. <br><br>Edit here: <a href=\"/admin/finance/asset/\" target=\"_blank\" class=\"alert-link\">Assets</a>."
 
 msgid "WIDGET_DESC_PENSION_TABLE"
-msgstr ""
-"Overview of your various pension contracts and their projected payouts."
+msgstr "Overview of your various pension contracts and their projected payouts. <br><br>Edit here: <a href=\"/admin/finance/pension/\" target=\"_blank\" class=\"alert-link\">Pensions</a>."
 
 msgid "WIDGET_DESC_EVENT_TABLE"
-msgstr "Chronological list of configured one-time financial events."
+msgstr "Chronological list of configured one-time financial events. <br><br>Edit here: <a href=\"/admin/finance/onetimeevent/\" target=\"_blank\" class=\"alert-link\">One-Time Events</a>."
 
 msgid "WIDGET_DESC_LOAN_TABLE"
-msgstr ""
-"Current status of your loans, including remaining balance and interest costs."
+msgstr "Current status of your loans, including remaining balance and interest costs. <br><br>Edit here: <a href=\"/admin/finance/loan/\" target=\"_blank\" class=\"alert-link\">Loans</a>."
 
 msgid "CHART_DESC_LOAN_EVOLUTION"
-msgstr ""
-"Visualizes the reduction of your debt over time as you repay your loans."
+msgstr "Visualizes the reduction of your debt over time as you repay your loans. <br><br>Manage in <a href=\"/admin/finance/loan/\" target=\"_blank\" class=\"alert-link\">Loans</a>."
 
 msgid "CHART_DESC_REAL_ESTATE"
-msgstr "Shows the value development of your real estate properties over time."
+msgstr "Shows the value development of your real estate properties over time. <br><br>Manage in <a href=\"/admin/finance/realestate/\" target=\"_blank\" class=\"alert-link\">Real Estate</a>."
 
 msgid "CHART_DESC_PHYSICAL_ASSETS"
-msgstr ""
-"Visualizes the value history of your physical assets like gold or vehicles."
+msgstr "Visualizes the value history of your physical assets like gold or vehicles. <br><br>Manage in <a href=\"/admin/finance/physicalasset/\" target=\"_blank\" class=\"alert-link\">Physical Assets</a>."
 
 msgid "CHART_DESC_LIQUID_PENSION"
-msgstr ""
-"Compares your available cash/investments with your accumulated pension "
-"capital."
+msgstr "Compares your available cash/investments with your accumulated pension capital. <br><br>Sources: <a href=\"/admin/finance/asset/\" target=\"_blank\" class=\"alert-link\">Assets</a> and <a href=\"/admin/finance/pension/\" target=\"_blank\" class=\"alert-link\">Pensions</a>."
 
 msgid "SUMMARY_DESC_ASSETS"
-msgstr "Total liquid capital (accounts, stocks, cash) at the selected date."
+msgstr "Total liquid capital (accounts, stocks, cash) at the selected date. <br><br>Manage in <a href=\"/admin/finance/asset/\" target=\"_blank\" class=\"alert-link\">Assets</a>."
 
 msgid "SUMMARY_DESC_INCOME"
-msgstr "Total monthly net income (salary, rent, etc.)."
+msgstr "Total monthly net income (salary, rent, etc.). <br><br>Manage in <a href=\"/admin/finance/cashflowsource/\" target=\"_blank\" class=\"alert-link\">Cash Flows (Income)</a>."
 
 msgid "SUMMARY_DESC_EXPENSES"
-msgstr "Total monthly expenses including simulated inflation."
+msgstr "Total monthly expenses including simulated inflation. <br><br>Manage in <a href=\"/admin/finance/cashflowsource/\" target=\"_blank\" class=\"alert-link\">Cash Flows (Expenses)</a>."
 
 msgid "SUMMARY_DESC_PENSION"
-msgstr ""
-"Current present value or surrender value of all your pension entitlements."
+msgstr "Current present value or surrender value of all your pension entitlements. <br><br>Manage in <a href=\"/admin/finance/pension/\" target=\"_blank\" class=\"alert-link\">Pensions</a>."
 
 msgid "SUMMARY_DESC_TARGET_PENSION"
 msgstr ""
@@ -297,17 +278,16 @@ msgstr ""
 "reference date (inflation-adjusted)."
 
 msgid "SUMMARY_DESC_PHYSICAL_ASSETS"
-msgstr ""
-"Total value of your physical assets like vehicles, gold, or collections."
+msgstr "Total value of your physical assets like gold or vehicles. <br><br>Manage in <a href=\"/admin/finance/physicalasset/\" target=\"_blank\" class=\"alert-link\">Physical Assets</a>."
 
 msgid "SUMMARY_DESC_REAL_ESTATE"
-msgstr "Market value of your real estate at the selected date."
+msgstr "Market value of your real estate at the selected date. <br><br>Manage in <a href=\"/admin/finance/realestate/\" target=\"_blank\" class=\"alert-link\">Real Estate</a>."
 
 msgid "SUMMARY_DESC_TOTAL_WEALTH"
 msgstr "Your net worth: sum of all assets minus all debts."
 
 msgid "SUMMARY_DESC_DEBTS"
-msgstr "Your total debt load (remaining balance) at the selected date."
+msgstr "Your total debt load (remaining balance) at the selected date. <br><br>Manage in <a href=\"/admin/finance/loan/\" target=\"_blank\" class=\"alert-link\">Loans</a>."
 
 msgid "Display Name"
 msgstr "Name"
