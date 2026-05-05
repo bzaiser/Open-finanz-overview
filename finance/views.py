@@ -965,6 +965,47 @@ def dashboard_view(request):
                 'year': str(l.end_date.year) if l.end_date else continuous_label
             })
 
+    # 4. Physical Asset storage costs (Expense)
+    for pa in user.physical_assets.all():
+        if pa.storage_costs_monthly and pa.storage_costs_monthly > 0:
+            is_owned = True
+            if pa.acquisition_date and pa.acquisition_date.replace(day=1) > target_date:
+                is_owned = False
+            if pa.sale_date and pa.sale_date.replace(day=1) <= target_date:
+                is_owned = False
+            if pa.is_sold and target_date >= (pa.sale_date or today).replace(day=1):
+                is_owned = False
+            
+            if is_owned:
+                table_data_expense.append({
+                    'name': f"{_('Storage')}: {pa.name}", 
+                    'amount': float(pa.storage_costs_monthly), 
+                    'category': _('Physical Assets'),
+                    'type': _('Manual'),
+                    'year': str(pa.sale_date.year) if pa.sale_date else continuous_label
+                })
+
+    # 5. Real Estate maintenance and ancillary costs (Expense)
+    for re in user.real_estates.all():
+        costs = (re.maintenance_costs_monthly or 0) + (re.ancillary_costs_monthly or 0)
+        if costs > 0:
+            is_owned = True
+            if re.acquisition_date and re.acquisition_date.replace(day=1) > target_date:
+                is_owned = False
+            if re.sale_date and re.sale_date.replace(day=1) <= target_date:
+                is_owned = False
+            if re.is_sold and target_date >= (re.sale_date or today).replace(day=1):
+                is_owned = False
+
+            if is_owned:
+                table_data_expense.append({
+                    'name': f"{_('Maintenance/Costs')}: {re.name}", 
+                    'amount': float(costs), 
+                    'category': _('Real Estate'),
+                    'type': _('Manual'),
+                    'year': str(re.sale_date.year) if re.sale_date else continuous_label
+                })
+
     table_data_asset = []
     for a in user.assets.all():
         rate_display = f"{a.growth_rate or 0}%"
