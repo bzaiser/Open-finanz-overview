@@ -651,11 +651,14 @@ def dashboard_view(request):
         # 1. Determine a global first data index to synchronize all charts
         # We check net worth, income, expenses, and loans to find the earliest point of interest
         all_datasets_for_sync = [
-            {'data': net_worth_nominal},
-            {'data': income_yearly},
-            {'data': expenses_yearly},
-            {'data': one_time_yearly}
-        ] + loan_evo_datasets + income_evo_datasets + expense_evo_datasets
+            [{'data': net_worth_nominal}],
+            [{'data': income_yearly}],
+            [{'data': expenses_yearly}],
+            [{'data': one_time_yearly}],
+            loan_evo_datasets,
+            income_evo_datasets,
+            expense_evo_datasets
+        ]
         
         global_first_idx = get_first_data_index(labels_yearly, all_datasets_for_sync)
 
