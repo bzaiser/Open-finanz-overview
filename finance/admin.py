@@ -94,7 +94,7 @@ class BaseOwnedModelAdmin(admin.ModelAdmin):
 class AssetSnapshotInline(GenericTabularInline):
     model = AssetSnapshot
     extra = 0
-    fields = ('user', 'content_type', 'object_id', 'date', 'value', 'notes')
+    fields = ('user', 'date', 'value', 'notes')
     classes = ['collapse']
 
 @admin.register(Pension)
