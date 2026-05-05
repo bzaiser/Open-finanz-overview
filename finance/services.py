@@ -345,8 +345,14 @@ class SimulationEngine:
             
             for p_item in pensions_state:
                 p = p_item['pension']
-                # Contrib: only if before end date
-                if not p.contribution_end_date or current_date < p.contribution_end_date.replace(day=1):
+                # Contributions (only if currently paying)
+                is_paying = True
+                if p.contribution_start_date and current_date < p.contribution_start_date.replace(day=1):
+                    is_paying = False
+                if p.contribution_end_date and current_date >= p.contribution_end_date.replace(day=1):
+                    is_paying = False
+                
+                if is_paying and p.monthly_contribution and p.monthly_contribution > 0:
                     current_monthly_pension_contribution += p.monthly_contribution
                 
                 # Payout: only if after/at start payout date

@@ -2296,3 +2296,6 @@ msgstr "Filter erfolgreich geändert."
 
 msgid "Filter deleted."
 msgstr "Filter gelöscht."
+
+msgid "Contribution Start Date"
+msgstr "Beitrags-Startdatum"

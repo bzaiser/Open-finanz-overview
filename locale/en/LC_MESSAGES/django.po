@@ -301,3 +301,6 @@ msgstr "Historical Data"
 
 msgid "Acquisition Date"
 msgstr "Acquisition Date"
+
+msgid "Contribution Start Date"
+msgstr "Contribution Start Date"
