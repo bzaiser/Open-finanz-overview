@@ -224,6 +224,9 @@
                 {% elif item.id == 'budget_pie_chart' %}
                 config.type = 'pie';
                 config.options.scales = { x: { display: false }, y: { display: false } };
+                {% elif item.id == 'expense_evolution_chart' %}
+                config.type = 'line';
+                config.options.scales = { y: { stacked: true } };
                 {% elif item.id == 'income_evolution_chart' %}
                 config.type = 'bar';
                 config.options.scales = {
