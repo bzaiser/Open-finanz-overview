@@ -717,15 +717,18 @@ def dashboard_view(request):
             },
             'cashflow_chart': {
                  'labels': cf_labels,
-                 'datasets': cf_datasets
+                 'datasets': cf_datasets,
+                 'stichtag_index': nw_stichtag # Use same index as Net Worth
             },
             'income_evolution_chart': {
                 'labels': ie_labels,
                 'datasets': ie_datasets,
+                'stichtag_index': nw_stichtag
             },
             'expense_evolution_chart': {
                 'labels': ee_labels,
                 'datasets': ee_datasets,
+                'stichtag_index': nw_stichtag
             },
             'budget_pie_chart': {
                 'labels': budget_labels,
