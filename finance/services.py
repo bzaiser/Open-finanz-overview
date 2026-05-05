@@ -530,7 +530,7 @@ class SimulationEngine:
             total_nominal = min(max(total_nominal, Decimal('-1e15')), Decimal('1e15'))
 
             # Inflation Factor for Real Value (Purchasing Power relative to TODAY)
-            inflation_factor = (1 + self.inflation_rate) ** year_passed_decimal
+            inflation_factor = Decimal(str(pow(float(1 + self.inflation_rate), float(year_passed_decimal))))
             total_real = total_nominal / inflation_factor
 
             data.append({
