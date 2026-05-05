@@ -1354,7 +1354,7 @@ msgstr "Schließen"
 
 #: templates/finance/dashboard.html:261
 msgid "Save Changes"
-msgstr ""
+msgstr "Änderungen übernehmen"
 
 #: templates/finance/dashboard.html:331
 msgid "Verstanden"
@@ -1712,7 +1712,7 @@ msgid "Purchasing Power Loss"
 msgstr "Kaufkraftverlust"
 
 msgid "Uncategorized"
-msgstr "Kategorien"
+msgstr "Nicht kategorisiert"
 
 msgid "Profile"
 msgstr "Benutzerprofil"
