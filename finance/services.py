@@ -525,6 +525,13 @@ class SimulationEngine:
             loan_total = sum(item['balance'] for item in loans_state)
             
             total_nominal = asset_total + pension_total + accumulated_cash + physical_asset_total + real_estate_total - loan_total
+            
+            # Final JSON Safety: ensure no NaN or Infinity
+            total_nominal = min(max(total_nominal, Decimal('-1e15')), Decimal('1e15'))
+
+            # Inflation Factor for Real Value (Purchasing Power relative to TODAY)
+            inflation_factor = (1 + self.inflation_rate) ** year_passed_decimal
+            total_real = total_nominal / inflation_factor
 
             data.append({
                 'date': current_date,
