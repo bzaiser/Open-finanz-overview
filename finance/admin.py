@@ -91,8 +91,17 @@ class BaseOwnedModelAdmin(admin.ModelAdmin):
             return tuple(f for f in filters if f != 'user')
         return filters
 
+class AssetSnapshotInlineForm(forms.ModelForm):
+    class Meta:
+        model = AssetSnapshot
+        fields = '__all__'
+        widgets = {
+            'notes': forms.Textarea(attrs={'rows': 1, 'style': 'width: 400px;'}),
+        }
+
 class AssetSnapshotInline(GenericTabularInline):
     model = AssetSnapshot
+    form = AssetSnapshotInlineForm
     extra = 0
     fields = ('user', 'date', 'value', 'notes')
     classes = ['collapse']
