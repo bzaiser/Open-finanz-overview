@@ -358,9 +358,13 @@ msgstr "Ungefähres Datum, wann die Rentenzahlung beginnt"
 msgid "Pension"
 msgstr "Rente/Vorsorge"
 
-#: finance/models.py:106
+#: finance/models.py:108
 msgid "Pensions"
 msgstr "Renten & Vorsorge"
+
+#: finance/models.py:325
+msgid "Historical Data"
+msgstr "Historische Daten"
 
 #: finance/models.py:118
 msgid "AI Log / Errors"
@@ -2057,10 +2061,10 @@ msgid "Physical Assets (Nominal)"
 msgstr "Sachwerte (Nominal)"
 
 msgid "Asset Snapshot"
-msgstr "Vermögens-Snapshot"
+msgstr "Historische Daten"
 
 msgid "Asset Snapshots"
-msgstr "Vermögens-Snapshots"
+msgstr "Historische Daten"
 
 msgid "Asset/Object"
 msgstr "Asset / Objekt"

@@ -62,10 +62,26 @@ class BaseOwnedModelAdmin(admin.ModelAdmin):
     def save_formset(self, request, form, formset, change):
         """Ensure inlines (like AssetSnapshots) get the correct user from the parent."""
         instances = formset.save(commit=False)
+        
+        # Determine the user to assign
+        parent_obj = formset.instance
+        # Default to parent object's user, or the parent itself if it's a user, 
+        # or fallback to current request user
+        assigned_user = getattr(parent_obj, 'user', None)
+        if not assigned_user and isinstance(parent_obj, CustomUser):
+            assigned_user = parent_obj
+        if not assigned_user:
+            assigned_user = request.user
+            
         for instance in instances:
             if hasattr(instance, 'user') and not getattr(instance, 'user_id', None):
-                instance.user = formset.instance.user
+                instance.user = assigned_user
             instance.save()
+            
+        # Handle deletions (which commit=False misses)
+        for obj in formset.deleted_objects:
+            obj.delete()
+            
         formset.save_m2m()
 
     def get_list_filter(self, request):

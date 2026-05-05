@@ -322,8 +322,8 @@ class AssetSnapshot(models.Model):
     notes = models.TextField(_("Notes"), blank=True)
 
     class Meta:
-        verbose_name = _("Asset Snapshot")
-        verbose_name_plural = _("Asset Snapshots")
+        verbose_name = _("Historical Data")
+        verbose_name_plural = _("Historical Data")
         ordering = ['-date']
         indexes = [
             models.Index(fields=["content_type", "object_id"]),
