@@ -647,6 +647,7 @@ def dashboard_view(request):
         return trimmed_labels, trimmed_datasets, new_stichtag_index
 
     # Force language activation for chart data to ensure consistent translation
+    with translation.override(translation.get_language()):
         # 1. Trim each chart individually for maximum compactness (no leading zeros)
         nw_labels, nw_datasets, nw_stichtag = trim_chart_data(labels_yearly, [
             {'label': _('Net Worth (Nominal)'), 'data': net_worth_nominal, 'borderColor': '#0d6efd', 'fill': False, 'borderWidth': 4},
