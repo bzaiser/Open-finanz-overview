@@ -109,8 +109,11 @@ class SimulationEngine:
             else:
                 months = 360 # Default 30 years
         
-        months = max(1, min(months, 720)) 
+        months = max(1, min(months, 1200)) # Increased to 100 years for long histories
         data = []
+        
+        today = datetime.date.today()
+        today_year_start = today.replace(month=1, day=1)
         
         # Initial State
         assets = list(self.user.assets.all())
@@ -149,8 +152,18 @@ class SimulationEngine:
             
         accumulated_cash = Decimal('0.00')
 
-        for i in range(months):
+        i = 0
+        while i < months:
             current_date = start_date + relativedelta(months=i)
+            
+            # Use yearly steps for history if possible (only if we start in January)
+            is_history = current_date < today_year_start
+            is_january = current_date.month == 1
+            can_do_yearly = is_history and is_january and (months - i) >= 12
+            
+            step_months = 12 if can_do_yearly else 1
+            year_passed_decimal_step = Decimal(str(step_months)) / 12
+
             # Inflation calculation relative to Simulation Start (today), not Stichtag
             today_normalized = datetime.date.today().replace(day=1)
             months_from_today = (current_date.year - today_normalized.year) * 12 + (current_date.month - today_normalized.month)
@@ -170,22 +183,28 @@ class SimulationEngine:
                         asset_growth_rate = asset.interest_teaser_rate
                         
                     rate = (asset_growth_rate / 100) + self.investment_return_offset
-                    item['balance'] *= (1 + (rate / 12))
+                    item['balance'] *= ((1 + (rate / 12)) ** step_months)
 
                     if asset.withdrawal_start_date and current_date >= asset.withdrawal_start_date.replace(day=1):
-                        withdrawal = (asset.withdrawal_amount or Decimal('0.00'))
+                        withdrawal = (asset.withdrawal_amount or Decimal('0.00')) * step_months
                         item['balance'] = max(Decimal('0'), item['balance'] - withdrawal)
                         current_monthly_asset_withdrawal += withdrawal
+                    
+                    # Numerical Safety
+                    item['balance'] = min(item['balance'], Decimal('1e15'))
                 
                 # Apply Pension Growth & Contribution
                 for item in pensions_state:
                     pension = item['pension']
                     # Growth applies to current balance
                     rate = (pension.growth_rate or Decimal('0.00')) / 100
-                    item['balance'] *= (1 + (rate / 12))
+                    item['balance'] *= ((1 + (rate / 12)) ** step_months)
                     # Contribution only if before end date
                     if not pension.contribution_end_date or current_date < pension.contribution_end_date.replace(day=1):
-                        item['balance'] += (pension.monthly_contribution or Decimal('0.00'))
+                        item['balance'] += ((pension.monthly_contribution or Decimal('0.00')) * step_months)
+                    
+                    # Numerical Safety
+                    item['balance'] = min(item['balance'], Decimal('1e15'))
 
                 # Apply Sachwerte Growth
                 for item in physical_assets_state:
@@ -199,8 +218,10 @@ class SimulationEngine:
                         continue
                         
                     rate = pa.appreciation_rate
-                        
-                    item['balance'] *= (1 + (rate / 100 / 12))
+                    item['balance'] *= ((1 + (rate / 100 / 12)) ** step_months)
+                    
+                    # Numerical Safety
+                    item['balance'] = min(item['balance'], Decimal('1e15'))
                     
                 # Apply Immobilien Growth
                 for item in real_estates_state:
@@ -222,7 +243,10 @@ class SimulationEngine:
                     if rate == 0 and global_re_growth != 0:
                         rate = global_re_growth
 
-                    item['balance'] *= (1 + (rate / 100 / 12))
+                    item['balance'] *= ((1 + (rate / 100 / 12)) ** step_months)
+                    
+                    # Numerical Safety
+                    item['balance'] = min(item['balance'], Decimal('1e15'))
 
             # 2. Dynamic Pension Contributions and Payouts for this month
             current_monthly_pension_contribution = Decimal('0.00')
@@ -249,13 +273,13 @@ class SimulationEngine:
                         # Grow Nominal Payout by pension_increase rate annually (step function) if indexed
                         actual_increase = self.pension_increase if p.is_indexed else Decimal('0.00')
                         payout_val = payout_val * ((1 + actual_increase) ** full_years_since_start)
-                        current_monthly_pension_payout += payout_val
+                        current_monthly_pension_payout += payout_val * step_months
                         
                         # Split by capital base
                         if p.current_value > 0:
-                            current_monthly_pension_payout_capital += payout_val
+                            current_monthly_pension_payout_capital += payout_val * step_months
                         else:
-                            current_monthly_pension_payout_fixed += payout_val
+                            current_monthly_pension_payout_fixed += payout_val * step_months
 
             # 3. Process Cash Flows (Income/Expenses)
             monthly_income = current_monthly_pension_payout + current_monthly_asset_withdrawal
@@ -285,13 +309,13 @@ class SimulationEngine:
                 val = amount if cf.frequency == 'monthly' else amount / 12
 
                 if cf.is_income:
-                    monthly_income += val
+                    monthly_income += val * step_months
                     cat_name = cf.category.name if cf.category else "Uncategorized"
-                    income_category_breakdown[cat_name] = income_category_breakdown.get(cat_name, Decimal('0')) + val
+                    income_category_breakdown[cat_name] = income_category_breakdown.get(cat_name, Decimal('0')) + (val * step_months)
                 else:
-                    monthly_expenses += val
+                    monthly_expenses += val * step_months
                     cat_name = cf.category.name if cf.category else "Uncategorized"
-                    category_breakdown[cat_name] = category_breakdown.get(cat_name, Decimal('0')) + val
+                    category_breakdown[cat_name] = category_breakdown.get(cat_name, Decimal('0')) + (val * step_months)
 
             # Cash flows from PhysicalAssets and RealEstate
             for item in physical_assets_state:
@@ -347,6 +371,9 @@ class SimulationEngine:
                         if i > 0: # Only update balance from second month of core loop
                             reduction = (installment - interest) + extras_this_month
                             item['balance'] = max(Decimal('0'), item['balance'] - reduction)
+                        
+                        # Numerical Safety: Cap values to prevent JSON-breaking Infinity
+                        item['balance'] = min(item['balance'], Decimal('1e15'))
 
                         # Track Loan Events for Chart Annotations
                         loan_events = []
@@ -398,6 +425,9 @@ class SimulationEngine:
             
             total_nominal = asset_total + pension_total + accumulated_cash + physical_asset_total + real_estate_total - loan_total
             
+            # Final JSON Safety: ensure no NaN or Infinity
+            total_nominal = min(max(total_nominal, Decimal('-1e15')), Decimal('1e15'))
+
             # Inflation Factor for Real Value (Purchasing Power relative to TODAY)
             inflation_factor = (1 + self.inflation_rate) ** year_passed_decimal
             total_real = total_nominal / inflation_factor
@@ -433,6 +463,8 @@ class SimulationEngine:
                 'one_time_impact': float(round(event_impact, 2)),
                 'one_time_events': events_this_month,
             })
+            
+            i += step_months
             
         self.loan_interest_totals = {str(item['loan'].id): item['total_interest_paid'] for item in loans_state}
             
