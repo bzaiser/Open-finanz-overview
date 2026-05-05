@@ -2217,11 +2217,8 @@ msgstr "Actifs liquides (Réel)"
 msgid "Physical Assets (Nominal)"
 msgstr "Actifs physiques (Nominal)"
 
-msgid "Asset Snapshot"
-msgstr "Instantané d'actif"
-
-msgid "Asset Snapshots"
-msgstr "Instantanés d'actifs"
+msgid "Historical Data"
+msgstr "Données historiques"
 
 msgid "Asset/Object"
 msgstr "Actif/Objet"

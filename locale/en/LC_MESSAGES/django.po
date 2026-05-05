@@ -314,3 +314,7 @@ msgstr "Name"
 
 msgid "Entry Date"
 msgstr "Date"
+
+msgid "Historical Data"
+msgstr "Historical Data"
+

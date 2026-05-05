@@ -2209,11 +2209,8 @@ msgstr "Beni materiali (Nominale)"
 msgid "Physical Assets (Real)"
 msgstr "Beni materiali (Reale)"
 
-msgid "Asset Snapshot"
-msgstr "Snapshot dell'attività"
-
-msgid "Asset Snapshots"
-msgstr "Snapshot delle attività"
+msgid "Historical Data"
+msgstr "Dati storici"
 
 msgid "Asset/Object"
 msgstr "Attività / Oggetto"

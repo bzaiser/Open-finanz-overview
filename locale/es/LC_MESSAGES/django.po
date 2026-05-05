@@ -2198,11 +2198,8 @@ msgstr "Konten/Liquidität (Real)"
 msgid "Physical Assets (Nominal)"
 msgstr "Sachwerte (Nominal)"
 
-msgid "Asset Snapshot"
-msgstr "Vermögens-Snapshot"
-
-msgid "Asset Snapshots"
-msgstr "Vermögens-Snapshots"
+msgid "Historical Data"
+msgstr "Datos históricos"
 
 msgid "Asset/Object"
 msgstr "Asset / Objekt"
