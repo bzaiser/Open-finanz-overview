@@ -1211,23 +1211,23 @@ msgstr ""
 
 #: templates/core/profile.html:175
 msgid "Tab. Header BG"
-msgstr "Tabellenkopf-Text"
+msgstr "Tab. Kopf BG"
 
 #: templates/core/profile.html:176
 msgid "Tab. Header Text"
-msgstr "Tabellenkopf-Text"
+msgstr "Tab. Kopf Text"
 
 #: templates/core/profile.html:177
 msgid "Tab. Body BG"
-msgstr "Tabellenkopf-Text"
+msgstr "Tab. Hintergrund"
 
 #: templates/core/profile.html:178
 msgid "Tab. Body Text"
-msgstr "Tabellenkopf-Text"
+msgstr "Tab. Text"
 
 #: templates/core/profile.html:179
 msgid "Tab. Border"
-msgstr "Sekundärfarbe"
+msgstr "Tab. Rand"
 
 #: templates/core/profile.html:192
 msgid "Save Changes & Design"
