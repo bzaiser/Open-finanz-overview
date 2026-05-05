@@ -409,12 +409,8 @@ class SimulationEngine:
             # Cash flows from PhysicalAssets and RealEstate
             for item in physical_assets_state:
                 pa = item['asset']
-                # Only process costs if currently owned (checked by balance > 0 and acquisition date)
-                is_owned = item['balance'] > 0
-                if pa.acquisition_date and current_date < pa.acquisition_date.replace(day=1):
-                    is_owned = False
-                
-                if is_owned and pa.storage_costs_monthly:
+                # Only process costs if currently owned and costs are > 0
+                if item['balance'] > 0 and pa.storage_costs_monthly and pa.storage_costs_monthly > 0:
                     val = pa.storage_costs_monthly
                     monthly_expenses += val
                     cat_name = str(_('Sachwerte'))
@@ -422,14 +418,22 @@ class SimulationEngine:
                     
             for item in real_estates_state:
                 re = item['asset']
-                # Only process income/expenses if currently owned
-                if item['balance'] > 0:
-                    if re.rental_income_monthly:
+                # Possession Check (Acquisition & Sale)
+                is_owned = item['balance'] > 0
+                if re.acquisition_date and current_date < re.acquisition_date.replace(day=1):
+                    is_owned = False
+                if re.sale_date and current_date >= re.sale_date.replace(day=1):
+                    is_owned = False
+                if re.is_sold and i == 0 and (not re.sale_date or current_date >= re.sale_date.replace(day=1)):
+                    is_owned = False
+
+                if is_owned:
+                    if re.rental_income_monthly and re.rental_income_monthly > 0:
                         val = re.rental_income_monthly
                         monthly_income += val
                         cat_name = str(_('Immobilien'))
                         income_category_breakdown[cat_name] = income_category_breakdown.get(cat_name, Decimal('0')) + val
-                    
+                        
                     # Maintenance and ancillary costs
                     costs = (re.maintenance_costs_monthly or Decimal('0')) + (re.ancillary_costs_monthly or Decimal('0'))
                     if costs > 0:
