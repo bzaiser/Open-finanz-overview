@@ -136,7 +136,6 @@
                                         };
                                     },
                                     label: function(context) {
-                                        console.log('DEBUG Tooltip:', context.dataset.label, 'Index:', context.dataIndex, 'DebugData:', context.dataset.debugData);
                                         let label = context.dataset.label || '';
                                         if (label) { label += ': '; }
                                         label += context.formattedValue + ' {{ profile.currency }}';
@@ -156,31 +155,6 @@
                                             return lines;
                                         }
 
-                                        // 2. Check for 'debugData' (Itemized Breakdown)
-                                        const debugData = context.dataset.debugData ? context.dataset.debugData[context.dataIndex] : null;
-                                        if (debugData) {
-                                            let lines = [label];
-                                            let items = [];
-                                            
-                                            if (typeof debugData === 'object') {
-                                                let subItems = debugData;
-                                                if (debugData[context.dataset.label]) {
-                                                    subItems = debugData[context.dataset.label];
-                                                }
-                                                
-                                                items = Object.entries(subItems)
-                                                    .filter(([name, val]) => Math.abs(val) > 0.01)
-                                                    .sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]));
-                                            }
-
-                                            if (items.length > 0) {
-                                                lines.push('--- Details ---');
-                                                items.forEach(([name, val]) => {
-                                                    lines.push('  \u2022 ' + name + ': ' + Math.abs(val).toLocaleString() + ' {{ profile.currency }}');
-                                                });
-                                                return lines;
-                                            }
-                                        }
                                         return label;
                                     }
                                 }
