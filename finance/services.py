@@ -263,11 +263,16 @@ class SimulationEngine:
                         item['balance'] = pa.value
                         continue
 
-                    # Sale Date Check
-                    if pa.sale_date and current_date >= pa.sale_date:
-                        item['balance'] = Decimal('0.00')
-                        continue
-                    if pa.is_sold and i == 0: # Already sold at simulation start
+                    # Possession Check (Acquisition & Sale)
+                    is_owned = True
+                    if pa.acquisition_date and current_date < pa.acquisition_date.replace(day=1):
+                        is_owned = False
+                    if pa.sale_date and current_date >= pa.sale_date.replace(day=1):
+                        is_owned = False
+                    if pa.is_sold and i == 0 and (not pa.sale_date or current_date >= pa.sale_date.replace(day=1)):
+                        is_owned = False
+
+                    if not is_owned:
                         item['balance'] = Decimal('0.00')
                         continue
                         
@@ -404,8 +409,12 @@ class SimulationEngine:
             # Cash flows from PhysicalAssets and RealEstate
             for item in physical_assets_state:
                 pa = item['asset']
-                # Only process costs if currently owned (has a value in snapshots or future)
-                if item['balance'] > 0 and pa.storage_costs_monthly:
+                # Only process costs if currently owned (checked by balance > 0 and acquisition date)
+                is_owned = item['balance'] > 0
+                if pa.acquisition_date and current_date < pa.acquisition_date.replace(day=1):
+                    is_owned = False
+                
+                if is_owned and pa.storage_costs_monthly:
                     val = pa.storage_costs_monthly
                     monthly_expenses += val
                     cat_name = str(_('Sachwerte'))

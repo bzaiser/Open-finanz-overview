@@ -298,3 +298,6 @@ msgstr "Date"
 msgid "Historical Data"
 msgstr "Historical Data"
 
+
+msgid "Acquisition Date"
+msgstr "Acquisition Date"

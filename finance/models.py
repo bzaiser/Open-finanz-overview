@@ -191,6 +191,7 @@ class PhysicalAsset(models.Model):
     appreciation_rate = models.DecimalField(_("Annual Appreciation Rate (%)"), max_digits=5, decimal_places=2, default=0.0)
     location = models.CharField(_("Location / Storage"), max_length=255, blank=True)
     storage_costs_monthly = models.DecimalField(_("Monthly Storage/Maintenance Costs"), max_digits=10, decimal_places=2, default=0.0)
+    acquisition_date = models.DateField(_("Acquisition Date"), null=True, blank=True)
     is_sold = models.BooleanField(_("Is Sold"), default=False)
     sale_date = models.DateField(_("Sale Date"), null=True, blank=True)
     
