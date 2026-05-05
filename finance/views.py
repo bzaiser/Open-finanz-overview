@@ -614,147 +614,110 @@ def dashboard_view(request):
         trimmed_datasets = []
         for ds in datasets:
             new_ds = ds.copy()
-            new_ds['data'] = ds['data'][first_idx:]
-            # Also trim tooltipData if present (used in loan and income charts)
-            if 'tooltipData' in ds:
-                new_ds['tooltipData'] = ds['tooltipData'][first_idx:]
+            # Automatically trim any list that has the same length as the original labels
+            for key, value in ds.items():
+                if isinstance(value, list) and len(value) == len(labels):
+                    new_ds[key] = value[first_idx:]
             trimmed_datasets.append(new_ds)
             
         # Adjust stichtag_index
         new_stichtag_index = stichtag_index
         if stichtag_index is not None:
             new_stichtag_index = max(0, stichtag_index - first_idx)
-                
         return trimmed_labels, trimmed_datasets, new_stichtag_index
 
     # Force language activation for chart data to ensure consistent translation
     with translation.override(translation.get_language()):
+        nw_labels, nw_datasets, nw_stichtag = trim_chart_data(labels_yearly, [
+            {'label': _('Net Worth (Nominal)'), 'data': net_worth_nominal, 'borderColor': '#0d6efd', 'fill': False, 'borderWidth': 4},
+            {'label': _('Net Worth (Real)'), 'data': net_worth_real, 'borderColor': '#0d6efd', 'borderDash': [5, 5], 'fill': False, 'borderWidth': 2},
+        ], stichtag_year_index)
+
+        re_labels, re_datasets, re_stichtag = trim_chart_data(labels_yearly, [
+            {'label': _('Real Estate (Nominal)'), 'data': real_estate_yearly, 'borderColor': '#fd7e14', 'backgroundColor': 'rgba(253, 126, 20, 0.1)', 'fill': True},
+            {'label': _('Real Estate (Real)'), 'data': real_estate_real_yearly, 'borderColor': '#fd7e14', 'borderDash': [5, 5], 'fill': False},
+        ], stichtag_year_index)
+
+        pa_labels, pa_datasets, pa_stichtag = trim_chart_data(labels_yearly, [
+            {'label': _('Physical Assets (Nominal)'), 'data': physical_asset_yearly, 'borderColor': '#8a2be2', 'backgroundColor': 'rgba(138, 43, 226, 0.1)', 'fill': True},
+            {'label': _('Physical Assets (Real)'), 'data': physical_asset_real_yearly, 'borderColor': '#8a2be2', 'borderDash': [5, 5], 'fill': False},
+        ], stichtag_year_index)
+
+        lp_labels, lp_datasets, lp_stichtag = trim_chart_data(labels_yearly, [
+            {'label': _('Liquid Assets (Nominal)'), 'data': liquid_assets_yearly, 'borderColor': '#198754', 'fill': False},
+            {'label': _('Liquid Assets (Real)'), 'data': liquid_assets_real_yearly, 'borderColor': '#198754', 'borderDash': [5, 5], 'fill': False},
+            {'label': _('Pension Capital (Nominal)'), 'data': pension_yearly, 'borderColor': '#6f42c1', 'fill': False},
+            {'label': _('Pension Capital (Real)'), 'data': pension_real_yearly, 'borderColor': '#6f42c1', 'borderDash': [5, 5], 'fill': False},
+        ], stichtag_year_index)
+
+        cf_labels, cf_datasets, _ = trim_chart_data(labels_yearly, [
+            {'label': _('Income'), 'data': income_yearly, 'backgroundColor': 'rgba(25, 135, 84, 0.7)', 'order': 2},
+            {'label': _('Expenses'), 'data': expenses_yearly, 'backgroundColor': 'rgba(220, 53, 69, 0.7)', 'order': 2},
+            {'label': _('Net Savings'), 'data': net_savings_yearly, 'type': 'line', 'borderColor': '#0d6efd', 'borderWidth': 2, 'fill': False, 'pointRadius': 3, 'order': 1},
+        ])
+
+        ie_labels, ie_datasets, _ = trim_chart_data(labels_yearly, income_evo_datasets)
+        ee_labels, ee_datasets, _ = trim_chart_data(labels_yearly, expense_evo_datasets)
+        le_labels, le_datasets, le_stichtag = trim_chart_data(labels_yearly, loan_evo_datasets, stichtag_year_index)
+
+        im_labels, im_datasets, im_stichtag = trim_chart_data(labels_yearly, [
+            {'label': _('Nominal Value'), 'data': net_worth_nominal, 'borderColor': '#0d6efd', 'fill': False},
+            {'label': _('Real Value (Purchasing Power)'), 'data': net_worth_real, 'borderColor': '#198754', 'fill': False},
+            {
+                'label': _('Purchasing Power Loss'), 
+                'data': inflation_loss, 
+                'backgroundColor': 'rgba(220, 53, 69, 0.5)', 
+                'type': 'bar',
+                'percentData': inflation_loss_percent
+            }
+        ], stichtag_year_index)
+
         chart_datasets = {
             'net_worth_chart': {
-                'labels': trim_chart_data(labels_yearly, [
-                    {'label': _('Net Worth (Nominal)'), 'data': net_worth_nominal, 'borderColor': '#0d6efd', 'fill': False, 'borderWidth': 4},
-                    {'label': _('Net Worth (Real)'), 'data': net_worth_real, 'borderColor': '#0d6efd', 'borderDash': [5, 5], 'fill': False, 'borderWidth': 2},
-                ], stichtag_year_index)[0],
-                'datasets': trim_chart_data(labels_yearly, [
-                    {'label': _('Net Worth (Nominal)'), 'data': net_worth_nominal, 'borderColor': '#0d6efd', 'fill': False, 'borderWidth': 4},
-                    {'label': _('Net Worth (Real)'), 'data': net_worth_real, 'borderColor': '#0d6efd', 'borderDash': [5, 5], 'fill': False, 'borderWidth': 2},
-                ], stichtag_year_index)[1],
-                'stichtag_index': trim_chart_data(labels_yearly, [
-                    {'label': _('Net Worth (Nominal)'), 'data': net_worth_nominal, 'borderColor': '#0d6efd', 'fill': False, 'borderWidth': 4},
-                    {'label': _('Net Worth (Real)'), 'data': net_worth_real, 'borderColor': '#0d6efd', 'borderDash': [5, 5], 'fill': False, 'borderWidth': 2},
-                ], stichtag_year_index)[2]
+                'labels': nw_labels,
+                'datasets': nw_datasets,
+                'stichtag_index': nw_stichtag
             },
             'real_estate_forecast_chart': {
-                'labels': trim_chart_data(labels_yearly, [
-                    {'label': _('Real Estate (Nominal)'), 'data': real_estate_yearly, 'borderColor': '#fd7e14', 'backgroundColor': 'rgba(253, 126, 20, 0.1)', 'fill': True},
-                    {'label': _('Real Estate (Real)'), 'data': real_estate_real_yearly, 'borderColor': '#fd7e14', 'borderDash': [5, 5], 'fill': False},
-                ], stichtag_year_index)[0],
-                'datasets': trim_chart_data(labels_yearly, [
-                    {'label': _('Real Estate (Nominal)'), 'data': real_estate_yearly, 'borderColor': '#fd7e14', 'backgroundColor': 'rgba(253, 126, 20, 0.1)', 'fill': True},
-                    {'label': _('Real Estate (Real)'), 'data': real_estate_real_yearly, 'borderColor': '#fd7e14', 'borderDash': [5, 5], 'fill': False},
-                ], stichtag_year_index)[1],
-                'stichtag_index': trim_chart_data(labels_yearly, [
-                    {'label': _('Real Estate (Nominal)'), 'data': real_estate_yearly, 'borderColor': '#fd7e14', 'backgroundColor': 'rgba(253, 126, 20, 0.1)', 'fill': True},
-                    {'label': _('Real Estate (Real)'), 'data': real_estate_real_yearly, 'borderColor': '#fd7e14', 'borderDash': [5, 5], 'fill': False},
-                ], stichtag_year_index)[2]
+                'labels': re_labels,
+                'datasets': re_datasets,
+                'stichtag_index': re_stichtag
             },
             'physical_asset_forecast_chart': {
-                'labels': trim_chart_data(labels_yearly, [
-                    {'label': _('Physical Assets (Nominal)'), 'data': physical_asset_yearly, 'borderColor': '#8a2be2', 'backgroundColor': 'rgba(138, 43, 226, 0.1)', 'fill': True},
-                    {'label': _('Physical Assets (Real)'), 'data': physical_asset_real_yearly, 'borderColor': '#8a2be2', 'borderDash': [5, 5], 'fill': False},
-                ], stichtag_year_index)[0],
-                'datasets': trim_chart_data(labels_yearly, [
-                    {'label': _('Physical Assets (Nominal)'), 'data': physical_asset_yearly, 'borderColor': '#8a2be2', 'backgroundColor': 'rgba(138, 43, 226, 0.1)', 'fill': True},
-                    {'label': _('Physical Assets (Real)'), 'data': physical_asset_real_yearly, 'borderColor': '#8a2be2', 'borderDash': [5, 5], 'fill': False},
-                ], stichtag_year_index)[1],
-                'stichtag_index': trim_chart_data(labels_yearly, [
-                    {'label': _('Physical Assets (Nominal)'), 'data': physical_asset_yearly, 'borderColor': '#8a2be2', 'backgroundColor': 'rgba(138, 43, 226, 0.1)', 'fill': True},
-                    {'label': _('Physical Assets (Real)'), 'data': physical_asset_real_yearly, 'borderColor': '#8a2be2', 'borderDash': [5, 5], 'fill': False},
-                ], stichtag_year_index)[2]
+                'labels': pa_labels,
+                'datasets': pa_datasets,
+                'stichtag_index': pa_stichtag
             },
             'liquid_pension_forecast_chart': {
-                'labels': trim_chart_data(labels_yearly, [
-                    {'label': _('Liquid Assets (Nominal)'), 'data': liquid_assets_yearly, 'borderColor': '#198754', 'fill': False},
-                    {'label': _('Liquid Assets (Real)'), 'data': liquid_assets_real_yearly, 'borderColor': '#198754', 'borderDash': [5, 5], 'fill': False},
-                    {'label': _('Pension Capital (Nominal)'), 'data': pension_yearly, 'borderColor': '#6f42c1', 'fill': False},
-                    {'label': _('Pension Capital (Real)'), 'data': pension_real_yearly, 'borderColor': '#6f42c1', 'borderDash': [5, 5], 'fill': False},
-                ], stichtag_year_index)[0],
-                'datasets': trim_chart_data(labels_yearly, [
-                    {'label': _('Liquid Assets (Nominal)'), 'data': liquid_assets_yearly, 'borderColor': '#198754', 'fill': False},
-                    {'label': _('Liquid Assets (Real)'), 'data': liquid_assets_real_yearly, 'borderColor': '#198754', 'borderDash': [5, 5], 'fill': False},
-                    {'label': _('Pension Capital (Nominal)'), 'data': pension_yearly, 'borderColor': '#6f42c1', 'fill': False},
-                    {'label': _('Pension Capital (Real)'), 'data': pension_real_yearly, 'borderColor': '#6f42c1', 'borderDash': [5, 5], 'fill': False},
-                ], stichtag_year_index)[1],
-                'stichtag_index': trim_chart_data(labels_yearly, [
-                    {'label': _('Liquid Assets (Nominal)'), 'data': liquid_assets_yearly, 'borderColor': '#198754', 'fill': False},
-                    {'label': _('Liquid Assets (Real)'), 'data': liquid_assets_real_yearly, 'borderColor': '#198754', 'borderDash': [5, 5], 'fill': False},
-                    {'label': _('Pension Capital (Nominal)'), 'data': pension_yearly, 'borderColor': '#6f42c1', 'fill': False},
-                    {'label': _('Pension Capital (Real)'), 'data': pension_real_yearly, 'borderColor': '#6f42c1', 'borderDash': [5, 5], 'fill': False},
-                ], stichtag_year_index)[2]
+                'labels': lp_labels,
+                'datasets': lp_datasets,
+                'stichtag_index': lp_stichtag
             },
             'cashflow_chart': {
-                 'labels': trim_chart_data(labels_yearly, [
-                     {'label': _('Income'), 'data': income_yearly, 'backgroundColor': 'rgba(25, 135, 84, 0.7)', 'order': 2},
-                     {'label': _('Expenses'), 'data': expenses_yearly, 'backgroundColor': 'rgba(220, 53, 69, 0.7)', 'order': 2},
-                     {'label': _('Net Savings'), 'data': net_savings_yearly, 'type': 'line', 'borderColor': '#0d6efd', 'borderWidth': 2, 'fill': False, 'pointRadius': 3, 'order': 1},
-                 ])[0],
-                 'datasets': trim_chart_data(labels_yearly, [
-                     {'label': _('Income'), 'data': income_yearly, 'backgroundColor': 'rgba(25, 135, 84, 0.7)', 'order': 2},
-                     {'label': _('Expenses'), 'data': expenses_yearly, 'backgroundColor': 'rgba(220, 53, 69, 0.7)', 'order': 2},
-                     {'label': _('Net Savings'), 'data': net_savings_yearly, 'type': 'line', 'borderColor': '#0d6efd', 'borderWidth': 2, 'fill': False, 'pointRadius': 3, 'order': 1},
-                 ])[1]
+                 'labels': cf_labels,
+                 'datasets': cf_datasets
             },
             'income_evolution_chart': {
-                'labels': trim_chart_data(labels_yearly, income_evo_datasets)[0],
-                'datasets': trim_chart_data(labels_yearly, income_evo_datasets)[1],
+                'labels': ie_labels,
+                'datasets': ie_datasets,
             },
             'expense_evolution_chart': {
-                'labels': trim_chart_data(labels_yearly, expense_evo_datasets)[0],
-                'datasets': trim_chart_data(labels_yearly, expense_evo_datasets)[1]
+                'labels': ee_labels,
+                'datasets': ee_datasets,
             },
             'budget_pie_chart': {
                 'labels': budget_labels,
                 'datasets': [{'data': budget_data, 'backgroundColor': budget_colors}]
             },
             'loan_evolution_chart': {
-                'labels': trim_chart_data(labels_yearly, loan_evo_datasets, stichtag_year_index)[0],
-                'datasets': trim_chart_data(labels_yearly, loan_evo_datasets, stichtag_year_index)[1],
-                'stichtag_index': trim_chart_data(labels_yearly, loan_evo_datasets, stichtag_year_index)[2]
+                'labels': le_labels,
+                'datasets': le_datasets,
+                'stichtag_index': le_stichtag
             },
             'inflation_monitor_chart': {
-                'labels': trim_chart_data(labels_yearly, [
-                    {'label': _('Nominal Value'), 'data': net_worth_nominal, 'borderColor': '#0d6efd', 'fill': False},
-                    {'label': _('Real Value (Purchasing Power)'), 'data': net_worth_real, 'borderColor': '#198754', 'fill': False},
-                    {
-                        'label': _('Purchasing Power Loss'), 
-                        'data': inflation_loss, 
-                        'backgroundColor': 'rgba(220, 53, 69, 0.5)', 
-                        'type': 'bar',
-                        'percentData': inflation_loss_percent
-                    }
-                ], stichtag_year_index)[0],
-                'datasets': trim_chart_data(labels_yearly, [
-                    {'label': _('Nominal Value'), 'data': net_worth_nominal, 'borderColor': '#0d6efd', 'fill': False},
-                    {'label': _('Real Value (Purchasing Power)'), 'data': net_worth_real, 'borderColor': '#198754', 'fill': False},
-                    {
-                        'label': _('Purchasing Power Loss'), 
-                        'data': inflation_loss, 
-                        'backgroundColor': 'rgba(220, 53, 69, 0.5)', 
-                        'type': 'bar',
-                        'percentData': inflation_loss_percent
-                    }
-                ], stichtag_year_index)[1],
-                'stichtag_index': trim_chart_data(labels_yearly, [
-                    {'label': _('Nominal Value'), 'data': net_worth_nominal, 'borderColor': '#0d6efd', 'fill': False},
-                    {'label': _('Real Value (Purchasing Power)'), 'data': net_worth_real, 'borderColor': '#198754', 'fill': False},
-                    {
-                        'label': _('Purchasing Power Loss'), 
-                        'data': inflation_loss, 
-                        'backgroundColor': 'rgba(220, 53, 69, 0.5)', 
-                        'type': 'bar',
-                        'percentData': inflation_loss_percent
-                    }
-                ], stichtag_year_index)[2]
+                'labels': im_labels,
+                'datasets': im_datasets,
+                'stichtag_index': im_stichtag
             },
             'asset_allocation_chart': {
                 'labels': [
