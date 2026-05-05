@@ -338,15 +338,14 @@ class SimulationEngine:
             current_monthly_pension_payout_fixed = Decimal('0.00')
             current_monthly_pension_payout_capital = Decimal('0.00')
             
-            if is_future:
-                for p_item in pensions_state:
-                    p = p_item['pension']
-                    # Contrib: only if before end date
-                    if not p.contribution_end_date or current_date < p.contribution_end_date.replace(day=1):
-                        current_monthly_pension_contribution += p.monthly_contribution
-                    
-                    # Payout: only if after/at start payout date
-                    if p.start_payout_date and current_date >= p.start_payout_date.replace(day=1):
+            for p_item in pensions_state:
+                p = p_item['pension']
+                # Contrib: only if before end date
+                if not p.contribution_end_date or current_date < p.contribution_end_date.replace(day=1):
+                    current_monthly_pension_contribution += p.monthly_contribution
+                
+                # Payout: only if after/at start payout date
+                if p.start_payout_date and current_date >= p.start_payout_date.replace(day=1):
                         if p.expected_payout_at_retirement:
                             # Use the contract value but apply growth from start of payout until now
                             payout_val = Decimal(str(p.expected_payout_at_retirement))
@@ -382,52 +381,51 @@ class SimulationEngine:
                 cat_name = str(_('Rente'))
                 income_category_breakdown[cat_name] = income_category_breakdown.get(cat_name, Decimal('0')) + current_monthly_pension_payout_capital
             
-            if is_future:
-                for cf in cash_flows:
-                    if cf.start_date and cf.start_date.replace(day=1) > current_date: continue
-                    if cf.end_date and cf.end_date.replace(day=1) < current_date: continue
+            for cf in cash_flows:
+                if cf.start_date and cf.start_date.replace(day=1) > current_date: continue
+                if cf.end_date and cf.end_date.replace(day=1) < current_date: continue
+                
+                amount = cf.value
+                if cf.is_inflation_adjusted:
+                    rate = self.salary_increase if cf.is_income else self.inflation_rate
+                    amount = amount * ((1 + rate) ** year_passed_decimal)
+
+                val = amount if cf.frequency == 'monthly' else amount / 12
+
+                if cf.is_income:
+                    monthly_income += val * step_months
+                    cat_name = cf.category.name if cf.category else "Uncategorized"
+                    income_category_breakdown[cat_name] = income_category_breakdown.get(cat_name, Decimal('0')) + (val * step_months)
+                else:
+                    monthly_expenses += val * step_months
+                    cat_name = cf.category.name if cf.category else "Uncategorized"
+                    category_breakdown[cat_name] = category_breakdown.get(cat_name, Decimal('0')) + (val * step_months)
+
+            # Cash flows from PhysicalAssets and RealEstate
+            for item in physical_assets_state:
+                pa = item['asset']
+                if pa.storage_costs_monthly:
+                    val = pa.storage_costs_monthly
+                    monthly_expenses += val
+                    cat_name = str(_('Sachwerte'))
+                    category_breakdown[cat_name] = category_breakdown.get(cat_name, Decimal('0')) + val
                     
-                    amount = cf.value
-                    if cf.is_inflation_adjusted:
-                        rate = self.salary_increase if cf.is_income else self.inflation_rate
-                        amount = amount * ((1 + rate) ** year_passed_decimal)
-
-                    val = amount if cf.frequency == 'monthly' else amount / 12
-
-                    if cf.is_income:
-                        monthly_income += val * step_months
-                        cat_name = cf.category.name if cf.category else "Uncategorized"
-                        income_category_breakdown[cat_name] = income_category_breakdown.get(cat_name, Decimal('0')) + (val * step_months)
-                    else:
-                        monthly_expenses += val * step_months
-                        cat_name = cf.category.name if cf.category else "Uncategorized"
-                        category_breakdown[cat_name] = category_breakdown.get(cat_name, Decimal('0')) + (val * step_months)
-
-                # Cash flows from PhysicalAssets and RealEstate
-                for item in physical_assets_state:
-                    pa = item['asset']
-                    if pa.storage_costs_monthly:
-                        val = pa.storage_costs_monthly
-                        monthly_expenses += val
-                        cat_name = str(_('Sachwerte'))
-                        category_breakdown[cat_name] = category_breakdown.get(cat_name, Decimal('0')) + val
-                        
-                for item in real_estates_state:
-                    re = item['asset']
-                    # Only process income/expenses if currently owned
-                    if item['balance'] > 0:
-                        if re.rental_income_monthly:
-                            val = re.rental_income_monthly
-                            monthly_income += val
-                            cat_name = str(_('Immobilien'))
-                            income_category_breakdown[cat_name] = income_category_breakdown.get(cat_name, Decimal('0')) + val
-                        
-                        # Maintenance and ancillary costs
-                        costs = (re.maintenance_costs_monthly or Decimal('0')) + (re.ancillary_costs_monthly or Decimal('0'))
-                        if costs > 0:
-                            monthly_expenses += costs
-                            cat_name = str(_('Immobilien'))
-                            category_breakdown[cat_name] = category_breakdown.get(cat_name, Decimal('0')) + costs
+            for item in real_estates_state:
+                re = item['asset']
+                # Only process income/expenses if currently owned
+                if item['balance'] > 0:
+                    if re.rental_income_monthly:
+                        val = re.rental_income_monthly
+                        monthly_income += val
+                        cat_name = str(_('Immobilien'))
+                        income_category_breakdown[cat_name] = income_category_breakdown.get(cat_name, Decimal('0')) + val
+                    
+                    # Maintenance and ancillary costs
+                    costs = (re.maintenance_costs_monthly or Decimal('0')) + (re.ancillary_costs_monthly or Decimal('0'))
+                    if costs > 0:
+                        monthly_expenses += costs
+                        cat_name = str(_('Immobilien'))
+                        category_breakdown[cat_name] = category_breakdown.get(cat_name, Decimal('0')) + costs
 
             # 2.1 Process Loans (Installments and Interest)
             events_this_month = []
