@@ -648,37 +648,49 @@ def dashboard_view(request):
 
     # Force language activation for chart data to ensure consistent translation
     with translation.override(translation.get_language()):
+        # 1. Determine a global first data index to synchronize all charts
+        # We check net worth, income, expenses, and loans to find the earliest point of interest
+        all_datasets_for_sync = [
+            {'data': net_worth_nominal},
+            {'data': income_yearly},
+            {'data': expenses_yearly},
+            {'data': one_time_yearly}
+        ] + loan_evo_datasets + income_evo_datasets + expense_evo_datasets
+        
+        global_first_idx = get_first_data_index(labels_yearly, all_datasets_for_sync)
+
+        # 2. Trim all charts using the global index for perfect alignment
         nw_labels, nw_datasets, nw_stichtag = trim_chart_data(labels_yearly, [
             {'label': _('Net Worth (Nominal)'), 'data': net_worth_nominal, 'borderColor': '#0d6efd', 'fill': False, 'borderWidth': 4},
             {'label': _('Net Worth (Real)'), 'data': net_worth_real, 'borderColor': '#0d6efd', 'borderDash': [5, 5], 'fill': False, 'borderWidth': 2},
-        ], stichtag_year_index)
+        ], stichtag_year_index, fixed_start_idx=global_first_idx)
 
         re_labels, re_datasets, re_stichtag = trim_chart_data(labels_yearly, [
             {'label': _('Real Estate (Nominal)'), 'data': real_estate_yearly, 'borderColor': '#fd7e14', 'backgroundColor': 'rgba(253, 126, 20, 0.1)', 'fill': True},
             {'label': _('Real Estate (Real)'), 'data': real_estate_real_yearly, 'borderColor': '#fd7e14', 'borderDash': [5, 5], 'fill': False},
-        ], stichtag_year_index)
+        ], stichtag_year_index, fixed_start_idx=global_first_idx)
 
         pa_labels, pa_datasets, pa_stichtag = trim_chart_data(labels_yearly, [
             {'label': _('Physical Assets (Nominal)'), 'data': physical_asset_yearly, 'borderColor': '#8a2be2', 'backgroundColor': 'rgba(138, 43, 226, 0.1)', 'fill': True},
             {'label': _('Physical Assets (Real)'), 'data': physical_asset_real_yearly, 'borderColor': '#8a2be2', 'borderDash': [5, 5], 'fill': False},
-        ], stichtag_year_index)
+        ], stichtag_year_index, fixed_start_idx=global_first_idx)
 
         lp_labels, lp_datasets, lp_stichtag = trim_chart_data(labels_yearly, [
             {'label': _('Liquid Assets (Nominal)'), 'data': liquid_assets_yearly, 'borderColor': '#198754', 'fill': False},
             {'label': _('Liquid Assets (Real)'), 'data': liquid_assets_real_yearly, 'borderColor': '#198754', 'borderDash': [5, 5], 'fill': False},
             {'label': _('Pension Capital (Nominal)'), 'data': pension_yearly, 'borderColor': '#6f42c1', 'fill': False},
             {'label': _('Pension Capital (Real)'), 'data': pension_real_yearly, 'borderColor': '#6f42c1', 'borderDash': [5, 5], 'fill': False},
-        ], stichtag_year_index)
+        ], stichtag_year_index, fixed_start_idx=global_first_idx)
 
         cf_labels, cf_datasets, __ = trim_chart_data(labels_yearly, [
             {'label': _('Income'), 'data': income_yearly, 'backgroundColor': 'rgba(25, 135, 84, 0.7)', 'order': 2},
             {'label': _('Expenses'), 'data': expenses_yearly, 'backgroundColor': 'rgba(220, 53, 69, 0.7)', 'order': 2},
             {'label': _('Net Savings'), 'data': net_savings_yearly, 'type': 'line', 'borderColor': '#0d6efd', 'borderWidth': 2, 'fill': False, 'pointRadius': 3, 'order': 1},
-        ])
+        ], fixed_start_idx=global_first_idx)
 
-        ie_labels, ie_datasets, __ = trim_chart_data(labels_yearly, income_evo_datasets)
-        ee_labels, ee_datasets, __ = trim_chart_data(labels_yearly, expense_evo_datasets)
-        le_labels, le_datasets, le_stichtag = trim_chart_data(labels_yearly, loan_evo_datasets, stichtag_year_index)
+        ie_labels, ie_datasets, __ = trim_chart_data(labels_yearly, income_evo_datasets, fixed_start_idx=global_first_idx)
+        ee_labels, ee_datasets, __ = trim_chart_data(labels_yearly, expense_evo_datasets, fixed_start_idx=global_first_idx)
+        le_labels, le_datasets, le_stichtag = trim_chart_data(labels_yearly, loan_evo_datasets, stichtag_year_index, fixed_start_idx=global_first_idx)
 
         im_labels, im_datasets, im_stichtag = trim_chart_data(labels_yearly, [
             {'label': _('Nominal Value'), 'data': net_worth_nominal, 'borderColor': '#0d6efd', 'fill': False},
