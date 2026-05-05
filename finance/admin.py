@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django import forms
 from django.utils.safestring import mark_safe
 from .models import Category, CashFlowSource, Asset, OneTimeEvent, Pension, FinancialStatusProxy, PhysicalAsset, RealEstate, Loan, LoanExtraRepayment, AssetSnapshot
 from django.contrib.contenttypes.admin import GenericTabularInline
