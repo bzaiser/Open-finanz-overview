@@ -97,6 +97,18 @@ class AssetSnapshotInline(GenericTabularInline):
     fields = ('user', 'date', 'value', 'notes')
     classes = ['collapse']
 
+    def get_formset(self, request, obj=None, **kwargs):
+        formset = super().get_formset(request, obj, **kwargs)
+        if obj:
+            # Determine user from parent object
+            user = getattr(obj, 'user', None)
+            if not user and isinstance(obj, CustomUser):
+                user = obj
+            
+            if user:
+                formset.form.base_fields['user'].initial = user
+        return formset
+
 @admin.register(Pension)
 class PensionAdmin(BaseOwnedModelAdmin):
     list_display = ('provider', 'user', 'current_value', 'monthly_contribution', 'expected_payout_at_retirement', 'is_indexed', 'contribution_end_date', 'start_payout_date')
