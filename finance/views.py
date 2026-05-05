@@ -472,8 +472,11 @@ def dashboard_view(request):
             'stack': 'income',
         })
     
-    # Add One-Time Effects dataset (if any exist)
-    if any(v != 0 for v in one_time_yearly):
+    # Filter out income categories that are entirely zero
+    income_evo_datasets = [ds for ds in income_evo_datasets if any(abs(v) > 0.1 for v in ds['data'])]
+    
+    # Add One-Time Effects dataset (if any exist and are non-zero)
+    if any(abs(v) > 0.1 for v in one_time_yearly):
         income_evo_datasets.append({
             'label': _eager('One-Time Effects'),
             'data': one_time_yearly,
@@ -498,6 +501,9 @@ def dashboard_view(request):
             'pointBorderColor': '#000000',
             'fill': True
         })
+    
+    # Filter out expense categories that are entirely zero
+    expense_evo_datasets = [ds for ds in expense_evo_datasets if any(abs(v) > 0.1 for v in ds['data'])]
 
     # 2.2 Loan Evolution Chart
     loan_evo_datasets = []
