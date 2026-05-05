@@ -440,10 +440,14 @@ class SimulationEngine:
                 pa = item['asset']
                 # Only process costs if currently owned and costs are > 0
                 if item['balance'] > 0 and pa.storage_costs_monthly and pa.storage_costs_monthly > 0:
-                    val = pa.storage_costs_monthly
-                    monthly_expenses += val
-                    cat_name = str(_('Sachwerte'))
-                    category_breakdown[cat_name] = category_breakdown.get(cat_name, Decimal('0')) + val
+                    # GHOST FILTER: Only apply ongoing costs from today onwards
+                    if current_date >= today_normalized:
+                        val = pa.storage_costs_monthly
+                        monthly_expenses += val
+                        cat_name = "Sachwerte"
+                        category_breakdown[cat_name] = category_breakdown.get(cat_name, Decimal('0')) + val
+                        if cat_name not in debug_breakdown: debug_breakdown[cat_name] = {}
+                        debug_breakdown[cat_name][f"PA: {pa.name}"] = debug_breakdown[cat_name].get(f"PA: {pa.name}", Decimal('0')) + val
                     
             for item in real_estates_state:
                 re = item['asset']
@@ -457,20 +461,24 @@ class SimulationEngine:
                     is_owned = False
 
                 if is_owned:
-                    if re.rental_income_monthly and re.rental_income_monthly > 0:
-                        val = re.rental_income_monthly
-                        monthly_income += val
-                        cat_name = str(_('Immobilien'))
-                        income_category_breakdown[cat_name] = income_category_breakdown.get(cat_name, Decimal('0')) + val
-                        
-                    # Maintenance and ancillary costs
-                    costs = (re.maintenance_costs_monthly or Decimal('0')) + (re.ancillary_costs_monthly or Decimal('0'))
-                    if costs > 0:
-                        monthly_expenses += costs
-                        cat_name = "Immobilien"
-                        category_breakdown[cat_name] = category_breakdown.get(cat_name, Decimal('0')) + costs
-                        if cat_name not in debug_breakdown: debug_breakdown[cat_name] = {}
-                        debug_breakdown[cat_name][f"RE: {re.name}"] = debug_breakdown[cat_name].get(f"RE: {re.name}", Decimal('0')) + costs
+                    # GHOST FILTER: Only apply ongoing income/costs from today onwards
+                    if current_date >= today_normalized:
+                        if re.rental_income_monthly and re.rental_income_monthly > 0:
+                            val = re.rental_income_monthly
+                            monthly_income += val
+                            cat_name = "Immobilien"
+                            income_category_breakdown[cat_name] = income_category_breakdown.get(cat_name, Decimal('0')) + val
+                            if cat_name not in debug_breakdown: debug_breakdown[cat_name] = {}
+                            debug_breakdown[cat_name][f"RE Income: {re.name}"] = debug_breakdown[cat_name].get(f"RE Income: {re.name}", Decimal('0')) + val
+                            
+                        # Maintenance and ancillary costs
+                        costs = (re.maintenance_costs_monthly or Decimal('0')) + (re.ancillary_costs_monthly or Decimal('0'))
+                        if costs > 0:
+                            monthly_expenses += costs
+                            cat_name = "Immobilien"
+                            category_breakdown[cat_name] = category_breakdown.get(cat_name, Decimal('0')) + costs
+                            if cat_name not in debug_breakdown: debug_breakdown[cat_name] = {}
+                            debug_breakdown[cat_name][f"RE Costs: {re.name}"] = debug_breakdown[cat_name].get(f"RE Costs: {re.name}", Decimal('0')) + costs
 
             # 2.1 Process Loans (Installments and Interest)
             events_this_month = []
