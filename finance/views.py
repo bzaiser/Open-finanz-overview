@@ -611,7 +611,19 @@ def dashboard_view(request):
             idx = stichtag_index if stichtag_index is not None and 0 <= stichtag_index < len(labels) else 0
             return [labels[idx]], [], 0
 
-        first_idx = fixed_start_idx if fixed_start_idx is not None else 0
+        # If fixed_start_idx is provided, use it. Otherwise, auto-detect the first non-zero index.
+        if fixed_start_idx is not None:
+            first_idx = fixed_start_idx
+        else:
+            first_idx = len(labels)
+            for ds in datasets:
+                data = ds.get('data', [])
+                for i, val in enumerate(data):
+                    if val is not None and val != 0:
+                        if i < first_idx:
+                            first_idx = i
+                        break
+        
         if first_idx >= len(labels):
             first_idx = 0
             
