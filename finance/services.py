@@ -40,44 +40,13 @@ class SimulationEngine:
         Finds the earliest relevant date across all models for the user.
         If a manual start date is set in the profile, it takes precedence.
         """
-        if self.profile.simulation_start_date:
-            return self.profile.simulation_start_date.replace(day=1)
-
-        today = datetime.date.today().replace(day=1)
-        dates = [today]
-
-        # Check Asset Snapshots (Historical Data)
-        from .models import AssetSnapshot
-        snapshot_start = AssetSnapshot.objects.filter(user=self.user).order_by('date').first()
-        if snapshot_start:
-            dates.append(snapshot_start.date)
-
-        # Check Cash Flows
-        cf_start = self.user.cash_flows.filter(start_date__isnull=False).order_by('start_date').first()
-        if cf_start:
-            dates.append(cf_start.start_date)
-
-        # Check One Time Events
-        event_start = self.user.events.order_by('date').first()
-        if event_start:
-            dates.append(event_start.date)
-            
-        # Check Pensions
-        pension_start = self.user.pensions.filter(start_payout_date__isnull=False).order_by('start_payout_date').first()
-        if pension_start:
-            dates.append(pension_start.start_payout_date)
-            
-        # Check Assets
-        asset_start = self.user.assets.filter(withdrawal_start_date__isnull=False).order_by('withdrawal_start_date').first()
-        if asset_start:
-            dates.append(asset_start.withdrawal_start_date)
-
-        # Check Loans
-        loan_start = self.user.loans.order_by('start_date').first()
-        if loan_start:
-            dates.append(loan_start.start_date)
-
         min_date = min(dates)
+        
+        # If a manual start date is set in the profile, use it as a lower bound (floor)
+        if self.profile.simulation_start_date:
+            profile_start = self.profile.simulation_start_date.replace(day=1)
+            min_date = max(min_date, profile_start)
+
         # Normalize to the 1st of the month
         return min_date.replace(day=1)
 
