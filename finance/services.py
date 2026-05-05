@@ -345,15 +345,23 @@ class SimulationEngine:
             
             for p_item in pensions_state:
                 p = p_item['pension']
-                # Contributions (only if currently paying)
-                is_paying = True
-                if p.contribution_start_date and current_date < p.contribution_start_date.replace(day=1):
-                    is_paying = False
-                if p.contribution_end_date and current_date >= p.contribution_end_date.replace(day=1):
-                    is_paying = False
-                
-                if is_paying and p.monthly_contribution and p.monthly_contribution > 0:
-                    current_monthly_pension_contribution += p.monthly_contribution
+                # Contributions (only if currently paying AND NOT IN THE PAST to avoid ghost entries)
+                is_paying = False
+                if p.monthly_contribution and p.monthly_contribution > 0:
+                    # Contribution window check
+                    in_window = True
+                    if p.contribution_end_date and current_date >= p.contribution_end_date.replace(day=1):
+                        in_window = False
+                    
+                    if in_window:
+                        # GHOST FILTER: Only count as cashflow if it is not in the past
+                        # (Past values are already captured by snapshots)
+                        if current_date >= today_normalized:
+                            is_paying = True
+                            current_monthly_pension_contribution += p.monthly_contribution
+                            cat_name = "Sparen"
+                            if cat_name not in debug_breakdown: debug_breakdown[cat_name] = {}
+                            debug_breakdown[cat_name][f"Pension: {p.provider}"] = debug_breakdown[cat_name].get(f"Pension: {p.provider}", Decimal('0')) + p.monthly_contribution
                 
                 # Payout: only if after/at start payout date
                 if p.start_payout_date and current_date >= p.start_payout_date.replace(day=1):
@@ -380,8 +388,19 @@ class SimulationEngine:
             monthly_income = current_monthly_pension_payout + current_monthly_asset_withdrawal
             monthly_expenses = current_monthly_pension_contribution
             category_breakdown = {
-                str(_('Sparen')): current_monthly_pension_contribution
+                "Sparen": current_monthly_pension_contribution
             }
+            debug_breakdown = {}
+            if current_monthly_pension_contribution > 0:
+                cat_name = "Sparen"
+                if cat_name not in debug_breakdown: debug_breakdown[cat_name] = {}
+                for p_item in pensions_state:
+                    p = p_item['pension']
+                    # We use the same 'ghost filter' logic here
+                    if current_date >= today_normalized and p.monthly_contribution and p.monthly_contribution > 0:
+                        if not p.contribution_end_date or current_date < p.contribution_end_date.replace(day=1):
+                            debug_breakdown[cat_name][f"Pension: {p.provider}"] = debug_breakdown[cat_name].get(f"Pension: {p.provider}", Decimal('0')) + p.monthly_contribution
+
             income_category_breakdown = {}
             if current_monthly_asset_withdrawal > 0:
                 income_category_breakdown[str(_('Vermögen'))] = current_monthly_asset_withdrawal
@@ -407,10 +426,14 @@ class SimulationEngine:
                     monthly_income += val * step_months
                     cat_name = cf.category.name if cf.category else "Uncategorized"
                     income_category_breakdown[cat_name] = income_category_breakdown.get(cat_name, Decimal('0')) + (val * step_months)
+                    if cat_name not in debug_breakdown: debug_breakdown[cat_name] = {}
+                    debug_breakdown[cat_name][f"CF: {cf.name}"] = debug_breakdown[cat_name].get(f"CF: {cf.name}", Decimal('0')) + (val * step_months)
                 else:
                     monthly_expenses += val * step_months
                     cat_name = cf.category.name if cf.category else "Uncategorized"
                     category_breakdown[cat_name] = category_breakdown.get(cat_name, Decimal('0')) + (val * step_months)
+                    if cat_name not in debug_breakdown: debug_breakdown[cat_name] = {}
+                    debug_breakdown[cat_name][f"CF: {cf.name}"] = debug_breakdown[cat_name].get(f"CF: {cf.name}", Decimal('0')) + (val * step_months)
 
             # Cash flows from PhysicalAssets and RealEstate
             for item in physical_assets_state:
@@ -444,8 +467,10 @@ class SimulationEngine:
                     costs = (re.maintenance_costs_monthly or Decimal('0')) + (re.ancillary_costs_monthly or Decimal('0'))
                     if costs > 0:
                         monthly_expenses += costs
-                        cat_name = str(_('Immobilien'))
+                        cat_name = "Immobilien"
                         category_breakdown[cat_name] = category_breakdown.get(cat_name, Decimal('0')) + costs
+                        if cat_name not in debug_breakdown: debug_breakdown[cat_name] = {}
+                        debug_breakdown[cat_name][f"RE: {re.name}"] = debug_breakdown[cat_name].get(f"RE: {re.name}", Decimal('0')) + costs
 
             # 2.1 Process Loans (Installments and Interest)
             events_this_month = []
@@ -465,8 +490,10 @@ class SimulationEngine:
                         
                         current_monthly_loan_installment += installment
                         item['total_interest_paid'] += interest
-                        cat_name = str(_('Kredit'))
+                        cat_name = "Kredit"
                         category_breakdown[cat_name] = category_breakdown.get(cat_name, Decimal('0')) + installment
+                        if cat_name not in debug_breakdown: debug_breakdown[cat_name] = {}
+                        debug_breakdown[cat_name][f"Loan: {loan.name}"] = debug_breakdown[cat_name].get(f"Loan: {loan.name}", Decimal('0')) + installment
                         
                         # Extra repayments lookup (O(1))
                         extras_this_month = sum(e.amount for e in repayments_by_loan_month.get(loan.id, {}).get((current_date.year, current_date.month), []))
@@ -581,6 +608,7 @@ class SimulationEngine:
                 'loan_balances': {str(item['loan'].id): float(round(item['balance'], 2)) for item in loans_state},
                 'one_time_impact': float(round(event_impact, 2)),
                 'one_time_events': events_this_month,
+                'debug_breakdown': {k: float(round(v, 2)) for k, v in debug_breakdown.items()},
             })
             
             i += step_months

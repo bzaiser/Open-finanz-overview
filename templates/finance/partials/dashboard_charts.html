@@ -96,6 +96,7 @@
         cleanupCharts();
 
         const chartData = JSON.parse(dataElement.textContent);
+        console.log('DEBUG: FULL CHART DATA:', chartData);
         
         // Helper to get theme-aware colors for Chart.js
         const getThemeColors = () => {
@@ -133,6 +134,54 @@
                                             borderColor: context.dataset.borderColor,
                                             backgroundColor: context.dataset.backgroundColor || context.dataset.borderColor
                                         };
+                                    },
+                                    label: function(context) {
+                                        console.log('DEBUG Tooltip:', context.dataset.label, 'Index:', context.dataIndex, 'DebugData:', context.dataset.debugData);
+                                        let label = context.dataset.label || '';
+                                        if (label) { label += ': '; }
+                                        label += context.formattedValue + ' {{ profile.currency }}';
+                                        
+                                        // 1. Check for 'tooltipData' (used for One-Time Events and Loans)
+                                        const tooltipData = context.dataset.tooltipData ? context.dataset.tooltipData[context.dataIndex] : null;
+                                        if (tooltipData && tooltipData.length > 0) {
+                                            let lines = [label];
+                                            tooltipData.forEach(function (e) {
+                                                if (typeof e === 'object' && e.name) {
+                                                    lines.push('  \u2022 ' + e.name + ' (' + (e.date || '') + ')');
+                                                    if (e.value) lines.push('    ' + e.value.toLocaleString() + ' {{ profile.currency }}');
+                                                } else if (e.label) {
+                                                    lines.push('  \u2022 ' + e.label);
+                                                }
+                                            });
+                                            return lines;
+                                        }
+
+                                        // 2. Check for 'debugData' (Itemized Breakdown)
+                                        const debugData = context.dataset.debugData ? context.dataset.debugData[context.dataIndex] : null;
+                                        if (debugData) {
+                                            let lines = [label];
+                                            let items = [];
+                                            
+                                            if (typeof debugData === 'object') {
+                                                let subItems = debugData;
+                                                if (debugData[context.dataset.label]) {
+                                                    subItems = debugData[context.dataset.label];
+                                                }
+                                                
+                                                items = Object.entries(subItems)
+                                                    .filter(([name, val]) => Math.abs(val) > 0.01)
+                                                    .sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]));
+                                            }
+
+                                            if (items.length > 0) {
+                                                lines.push('--- Details ---');
+                                                items.forEach(([name, val]) => {
+                                                    lines.push('  \u2022 ' + name + ': ' + Math.abs(val).toLocaleString() + ' {{ profile.currency }}');
+                                                });
+                                                return lines;
+                                            }
+                                        }
+                                        return label;
                                     }
                                 }
                             }
@@ -201,39 +250,11 @@
                 {% elif item.id == 'budget_pie_chart' %}
                 config.type = 'pie';
                 config.options.scales = { x: { display: false }, y: { display: false } };
-                {% elif item.id == 'expense_evolution_chart' %}
-                config.type = 'line';
-                config.options.scales = { y: { stacked: true } };
                 {% elif item.id == 'income_evolution_chart' %}
                 config.type = 'bar';
                 config.options.scales = {
                     x: { stacked: true },
                     y: { stacked: true, beginAtZero: true }
-                };
-                // Custom tooltip for one-time events
-                const evtDatasetIdx = data.datasets.length - 1;
-                const evtDataset = data.datasets[evtDatasetIdx];
-                const tooltipMeta = evtDataset.tooltipData || [];
-                config.options.plugins.tooltip.callbacks = {
-                    labelColor: function(context) {
-                        return {
-                            borderColor: context.dataset.borderColor,
-                            backgroundColor: context.dataset.backgroundColor || context.dataset.borderColor
-                        };
-                    },
-                    label: function (context) {
-                        if (context.datasetIndex === evtDatasetIdx && tooltipMeta[context.dataIndex] && tooltipMeta[context.dataIndex].length > 0) {
-                            const events = tooltipMeta[context.dataIndex];
-                            let lines = [context.dataset.label + ': ' + context.formattedValue];
-                            events.forEach(function (e) {
-                                lines.push('  \u2022 ' + e.name + ' (' + e.date + ')');
-                                if (e.description) { lines.push('    ' + e.description); }
-                                lines.push('    ' + e.value.toLocaleString() + ' {{ profile.currency }}');
-                            });
-                            return lines;
-                        }
-                        return context.dataset.label + ': ' + context.formattedValue;
-                    }
                 };
                 {% elif item.id == 'inflation_monitor_chart' %}
                 config.options.plugins.tooltip.callbacks = {

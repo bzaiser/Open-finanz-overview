@@ -359,6 +359,7 @@ def dashboard_view(request):
                 'one_time_total': 0,
                 'category_breakdown': {},
                 'income_category_breakdown': {},
+                'debug_breakdown': {},
             }
         
         bucket = yearly_buckets[year]
@@ -387,6 +388,13 @@ def dashboard_view(request):
             bucket['category_breakdown'][cat] = bucket['category_breakdown'].get(cat, 0) + val
         for cat, val in d['income_category_breakdown'].items():
             bucket['income_category_breakdown'][cat] = bucket['income_category_breakdown'].get(cat, 0) + val
+            
+        # Debug Breakdown (Detailed items)
+        for cat, items in d.get('debug_breakdown', {}).items():
+            if cat not in bucket['debug_breakdown']:
+                bucket['debug_breakdown'][cat] = {}
+            for item_name, val in items.items():
+                bucket['debug_breakdown'][cat][item_name] = bucket['debug_breakdown'][cat].get(item_name, 0) + val
             
         # Loan Balances (Snapshot at end of year)
         if 'loan_balances' in d:
@@ -490,10 +498,14 @@ def dashboard_view(request):
     expense_evo_datasets = []
     for idx, cat in enumerate(sorted(list(expense_categories))):
         cat_data = [float(yearly_buckets[y]['category_breakdown'].get(cat, 0)) for y in sorted_years]
+        # Collect debug breakdown for this specific category across years
+        cat_debug = [yearly_buckets[y]['debug_breakdown'].get(cat, {}) for y in sorted_years]
+        
         color = category_color_map.get(cat, fallback_colors[idx % len(fallback_colors)])
         expense_evo_datasets.append({
             'label': cat,
             'data': cat_data,
+            'debugData': cat_debug,
             'backgroundColor': color,
             'borderColor': '#000000',
             'borderWidth': 1.5,
@@ -606,6 +618,11 @@ def dashboard_view(request):
             return 0
         return first_idx
 
+    # DEBUG: Check debugData before trimming
+    for ds in expense_evo_datasets:
+        if 'debugData' in ds:
+            print(f"DEBUG: Dataset {ds['label']} has debugData with length {len(ds['debugData'])}")
+
     def trim_chart_data(labels, datasets, stichtag_index=None, fixed_start_idx=None):
         """
         Trims leading zero-data periods using either a fixed index or auto-detection.
@@ -641,8 +658,13 @@ def dashboard_view(request):
             new_ds = ds.copy()
             # Automatically trim any list that has the same length as the original labels
             for key, value in ds.items():
-                if isinstance(value, list) and len(value) == len(labels):
+                if isinstance(value, (list, tuple)) and len(value) == len(labels):
                     new_ds[key] = value[first_idx:]
+                    # Write to a file since terminal logs are hard to see
+                    with open('/tmp/debug_log.txt', 'a') as f:
+                        f.write(f"DEBUG: Trimmed key '{key}' for dataset '{ds.get('label')}'. Length: {len(new_ds[key])}\n")
+                        if key == 'debugData' and len(new_ds[key]) > 0:
+                            f.write(f"  First item: {str(new_ds[key][0])[:100]}\n")
             trimmed_datasets.append(new_ds)
             
         # Adjust stichtag_index
@@ -679,8 +701,10 @@ def dashboard_view(request):
 
         # Cashflow Trend (Income vs Expenses)
         cf_labels, cf_datasets, cf_stichtag = trim_chart_data(labels_yearly, [
-            {'label': _('Income'), 'data': income_yearly, 'backgroundColor': 'rgba(25, 135, 84, 0.7)', 'order': 2},
-            {'label': _('Expenses'), 'data': expenses_yearly, 'backgroundColor': 'rgba(220, 53, 69, 0.7)', 'order': 2},
+            {'label': _('Income'), 'data': income_yearly, 'backgroundColor': 'rgba(25, 135, 84, 0.7)', 'order': 2, 
+             'debugData': [yearly_buckets[y]['income_category_breakdown'] for y in sorted_years]},
+            {'label': _('Expenses'), 'data': expenses_yearly, 'backgroundColor': 'rgba(220, 53, 69, 0.7)', 'order': 2,
+             'debugData': [yearly_buckets[y]['category_breakdown'] for y in sorted_years]},
             {'label': _('Net Savings'), 'data': net_savings_yearly, 'type': 'line', 'borderColor': '#0d6efd', 'borderWidth': 2, 'fill': False, 'pointRadius': 3, 'order': 1},
         ], stichtag_year_index)
 
