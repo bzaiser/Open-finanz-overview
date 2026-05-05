@@ -1191,7 +1191,7 @@ msgstr "Primär"
 
 #: templates/core/profile.html:170
 msgid "Start"
-msgstr "Startdatum"
+msgstr "Start"
 
 #: templates/core/profile.html:171
 msgid "End"
