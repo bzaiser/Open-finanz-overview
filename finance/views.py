@@ -619,7 +619,8 @@ def dashboard_view(request):
             for ds in datasets:
                 data = ds.get('data', [])
                 for i, val in enumerate(data):
-                    if val is not None and val != 0:
+                    # Use a threshold to ignore rounding errors
+                    if val is not None and abs(val) > 0.1:
                         if i < first_idx:
                             first_idx = i
                         break
