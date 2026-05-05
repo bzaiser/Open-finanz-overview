@@ -170,9 +170,17 @@ class SimulationEngine:
         ct_re = ContentType.objects.get_for_model(RealEstate).id
         
         snapshots_by_obj = {}
+        # Track which (content_type, object_id) we have snapshots for, grouped by month
+        snapshots_by_month_type = {} 
+        
         for s in self.user.asset_snapshots.all():
-            key = (s.content_type_id, s.object_id, s.date.year, s.date.month)
-            snapshots_by_obj[key] = s.value
+            key_obj = (s.content_type_id, s.object_id, s.date.year, s.date.month)
+            snapshots_by_obj[key_obj] = s.value
+            
+            key_month = (s.content_type_id, s.date.year, s.date.month)
+            if key_month not in snapshots_by_month_type:
+                snapshots_by_month_type[key_month] = {}
+            snapshots_by_month_type[key_month][s.object_id] = s.value
 
         loans_state = []
         for l in user_loans:
@@ -496,21 +504,27 @@ class SimulationEngine:
                 # but usually, we want accumulated_cash to stay at 0 unless snapshots exist
                 accumulated_cash = Decimal('0.00')
             
-            # Totals
-            asset_total = sum(item['balance'] for item in assets_state)
-            pension_total = sum(item['balance'] for item in pensions_state)
-            physical_asset_total = sum(item['balance'] for item in physical_assets_state)
-            real_estate_total = sum(item['balance'] for item in real_estates_state)
+            # Totals calculation
+            # Helper to get orphan snapshot totals (snapshots for objects not in the current active list)
+            def get_category_total(state_list, ct_id, year, month, attr_name='asset'):
+                # 1. Sum up active objects
+                total = sum(item['balance'] for item in state_list)
+                
+                # 2. Add snapshots for objects NOT in the state_list (orphans or old data)
+                active_ids = {item[attr_name].id for item in state_list}
+                month_snapshots = snapshots_by_month_type.get((ct_id, year, month), {})
+                for obj_id, val in month_snapshots.items():
+                    if obj_id not in active_ids:
+                        total += val
+                return total
+
+            asset_total = get_category_total(assets_state, ct_asset, current_date.year, current_date.month)
+            pension_total = get_category_total(pensions_state, ct_pension, current_date.year, current_date.month, 'pension')
+            physical_asset_total = get_category_total(physical_assets_state, ct_pa, current_date.year, current_date.month)
+            real_estate_total = get_category_total(real_estates_state, ct_re, current_date.year, current_date.month)
             loan_total = sum(item['balance'] for item in loans_state)
             
             total_nominal = asset_total + pension_total + accumulated_cash + physical_asset_total + real_estate_total - loan_total
-            
-            # Final JSON Safety: ensure no NaN or Infinity
-            total_nominal = min(max(total_nominal, Decimal('-1e15')), Decimal('1e15'))
-
-            # Inflation Factor for Real Value (Purchasing Power relative to TODAY)
-            inflation_factor = (1 + self.inflation_rate) ** year_passed_decimal
-            total_real = total_nominal / inflation_factor
 
             data.append({
                 'date': current_date,
