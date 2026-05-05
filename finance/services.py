@@ -141,6 +141,7 @@ class SimulationEngine:
         for re in real_estates:
             real_estates_state.append({'asset': re, 'balance': re.property_value})
 
+        user_loans = list(self.user.loans.prefetch_related('extra_repayments').all())
         loans_state = []
         # 0. Pre-index Events and Repayments for O(1) lookup performance
         events_by_month = {}
