@@ -296,27 +296,28 @@
             pointer-events: none;
         }
 
-        /* Clean Frameless Simulation Icon & High-Contrast Active State */
-        @keyframes intense-sim-blink {
+        /* Unmissable Simulation Blinking Effect */
+        @keyframes sim-blink-anim {
             0% {
-                color: #ff9800;
                 opacity: 1;
+                color: #ff9800;
                 transform: scale(1.2);
-                filter: drop-shadow(0 0 8px #ff9800);
+                filter: drop-shadow(0 0 10px #ff9800);
             }
             50% {
-                color: #ffeb3b;
                 opacity: 0.15;
+                color: #ffea00;
                 transform: scale(0.85);
-                filter: drop-shadow(0 0 1px #ffeb3b);
+                filter: drop-shadow(0 0 0px transparent);
             }
             100% {
-                color: #ff9800;
                 opacity: 1;
+                color: #ff9800;
                 transform: scale(1.2);
-                filter: drop-shadow(0 0 8px #ff9800);
+                filter: drop-shadow(0 0 10px #ff9800);
             }
         }
+        
         .simulation-icon-btn {
             display: inline-flex;
             align-items: center;
@@ -334,14 +335,14 @@
         }
         .simulation-icon-btn:hover {
             opacity: 1;
-            transform: scale(1.2);
+            transform: scale(1.25);
             color: var(--app-primary);
         }
-        .simulation-icon-btn.is-active,
-        .simulation-icon-btn.is-active i {
+
+        .sim-blinking,
+        .sim-blinking * {
+            animation: sim-blink-anim 0.7s infinite linear !important;
             color: #ff9800 !important;
-            opacity: 1 !important;
-            animation: intense-sim-blink 0.8s ease-in-out infinite;
         }
         .sim-active-badge {
             font-size: 0.65rem;
@@ -350,10 +351,9 @@
             padding: 2px 6px;
             border-radius: 10px;
             background-color: #ff9800;
-            color: #000000;
+            color: #000000 !important;
             box-shadow: 0 0 10px #ff9800;
             vertical-align: middle;
-            animation: intense-sim-blink 0.8s ease-in-out infinite;
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

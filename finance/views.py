@@ -351,11 +351,19 @@ def dashboard_view(request):
             except (ValueError, TypeError):
                 pass
 
-    # Check if simulation is active (different from profile defaults)
-    is_simulation_active = any(
+    # Check if simulation is active (different from profile defaults or active session)
+    param_diff = any(
         abs(float(simulation_params[k]) - float(profile_params[k])) > 0.001
         for k in profile_params
     )
+    stichtag_diff = False
+    if 'stichtag' in simulation_params and simulation_params['stichtag']:
+        current_month = timezone.now().date().replace(day=1)
+        stichtag_month = simulation_params['stichtag'].replace(day=1)
+        if current_month != stichtag_month:
+            stichtag_diff = True
+
+    is_simulation_active = param_diff or stichtag_diff or ('active_simulation' in request.session)
 
     # Charts and tables affected by simulation and target date
     affected_charts = list(AVAILABLE_CHARTS.keys())

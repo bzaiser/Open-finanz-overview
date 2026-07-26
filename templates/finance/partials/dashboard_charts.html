@@ -16,7 +16,7 @@
                        onclick="showHelp('{{ item.display_title|escapejs }}', '{{ item.help_text|escapejs }}')"></i>
                 </span>
                 {% if item.id in affected_charts %}
-                <span class="simulation-icon-btn {% if is_simulation_active %}is-active{% endif %}"
+                <span class="simulation-icon-btn {% if is_simulation_active %}sim-blinking{% endif %}"
                       data-bs-toggle="offcanvas" data-bs-target="#simulationOffcanvas"
                       data-bs-html="true"
                       data-bs-title="{% trans 'Simulation Parameters' %}:&lt;br&gt;{% trans 'Inflation' %}: {{ simulation_params.inflation_rate }}%&lt;br&gt;{% trans 'Salary' %}: {{ simulation_params.salary_increase }}%&lt;br&gt;{% trans 'Return Offset' %}: {{ simulation_params.investment_return_offset }}%">
