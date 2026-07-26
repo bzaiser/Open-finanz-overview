@@ -296,16 +296,39 @@
             pointer-events: none;
         }
 
-        /* Simulation Blinker Effect */
+        /* Simulation Badge & Glow Effects */
         @keyframes blinker {
             0% { opacity: 1; filter: brightness(1); transform: scale(1); }
-            50% { opacity: 0.8; filter: brightness(2.2) drop-shadow(0 0 10px var(--app-primary)); transform: scale(1.2); }
+            50% { opacity: 0.85; filter: brightness(1.5) drop-shadow(0 0 6px rgba(253, 126, 20, 0.6)); transform: scale(1.08); }
             100% { opacity: 1; filter: brightness(1); transform: scale(1); }
+        }
+        .simulation-badge-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border: 1px solid var(--bs-border-color, rgba(13, 110, 253, 0.3));
+            background-color: rgba(13, 110, 253, 0.1);
+            color: var(--app-primary) !important;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        .simulation-badge-icon:hover {
+            background-color: rgba(13, 110, 253, 0.22);
+            border-color: var(--app-primary);
+            transform: translateY(-1px);
         }
         .simulation-glow {
             animation: blinker 1.5s ease-in-out infinite;
-            color: var(--app-primary) !important;
-            display: inline-block;
+            background-color: rgba(253, 126, 20, 0.18) !important;
+            border-color: rgba(253, 126, 20, 0.6) !important;
+            color: #fd7e14 !important;
+            box-shadow: 0 0 8px rgba(253, 126, 20, 0.3);
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

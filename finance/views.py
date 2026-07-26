@@ -334,8 +334,8 @@ def dashboard_view(request):
         for k in profile_params
     )
 
-    # Charts affected by simulation
-    affected_charts = ['net_worth_chart', 'cashflow_chart', 'income_evolution_chart', 'expense_evolution_chart', 'inflation_monitor_chart']
+    # Charts and tables affected by simulation and target date
+    affected_charts = list(AVAILABLE_CHARTS.keys())
 
     engine = SimulationEngine(user, simulation_params)
     forecast_data = engine.get_forecast()
