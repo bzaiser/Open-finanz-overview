@@ -306,6 +306,16 @@ def dashboard_view(request):
         'real_estate_growth_rate': get_safe_profile_val(profile, 'real_estate_growth_rate', 0.0),
     }
     
+    simulation_params = profile_params.copy()
+    stichtag_raw = request.GET.get('stichtag') or request.POST.get('stichtag')
+    if stichtag_raw:
+        try:
+            simulation_params['stichtag'] = datetime.datetime.strptime(stichtag_raw, '%Y-%m-%d').date()
+        except (ValueError, TypeError):
+            simulation_params['stichtag'] = timezone.now().date()
+    else:
+        simulation_params['stichtag'] = timezone.now().date()
+
     # Session handling for persistent active simulation state
     if request.GET.get('reset_simulation'):
         if 'active_simulation' in request.session:
