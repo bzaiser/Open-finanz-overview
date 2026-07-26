@@ -16,13 +16,13 @@
                        onclick="showHelp('{{ item.display_title|escapejs }}', '{{ item.help_text|escapejs }}')"></i>
                 </span>
                 {% if item.id in affected_charts %}
-                <span class="simulation-badge-icon {% if is_simulation_active %}simulation-glow{% endif %}"
+                <span class="simulation-icon-btn {% if is_simulation_active %}is-active{% endif %}"
                       data-bs-toggle="offcanvas" data-bs-target="#simulationOffcanvas"
                       data-bs-html="true"
                       data-bs-title="{% trans 'Simulation Parameters' %}:&lt;br&gt;{% trans 'Inflation' %}: {{ simulation_params.inflation_rate }}%&lt;br&gt;{% trans 'Salary' %}: {{ simulation_params.salary_increase }}%&lt;br&gt;{% trans 'Return Offset' %}: {{ simulation_params.investment_return_offset }}%">
                     <i class="bi bi-sliders2-vertical"></i>
                     {% if is_simulation_active %}
-                    <span class="badge bg-warning text-dark px-1 ms-1" style="font-size: 0.6rem; vertical-align: middle;">SIM</span>
+                    <span class="sim-active-badge">SIM</span>
                     {% endif %}
                 </span>
                 {% endif %}
