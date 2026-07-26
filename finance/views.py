@@ -330,7 +330,7 @@ def dashboard_view(request):
 
     # Check if simulation is active (different from profile defaults)
     is_simulation_active = any(
-        simulation_params[k] != profile_params[k] 
+        abs(float(simulation_params[k]) - float(profile_params[k])) > 0.001
         for k in profile_params
     )
 
