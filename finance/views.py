@@ -306,20 +306,16 @@ def dashboard_view(request):
         'real_estate_growth_rate': get_safe_profile_val(profile, 'real_estate_growth_rate', 0.0),
     }
     
-    simulation_params = profile_params.copy()
-    stichtag_raw = request.GET.get('stichtag') or request.POST.get('stichtag')
-    if stichtag_raw:
-        try:
-            simulation_params['stichtag'] = datetime.datetime.strptime(stichtag_raw, '%Y-%m-%d').date()
-        except (ValueError, TypeError):
-            simulation_params['stichtag'] = timezone.now().date()
-    else:
+    # Session handling for persistent active simulation state
+    if request.GET.get('reset_simulation'):
+        if 'active_simulation' in request.session:
+            del request.session['active_simulation']
+        simulation_params = profile_params.copy()
         simulation_params['stichtag'] = timezone.now().date()
-
-    if request.method == 'POST' and 'config_update' not in request.POST:
-        # Handle Simulation Update
+    elif request.method == 'POST' and 'config_update' not in request.POST:
+        # Handle Simulation Update from POST form
         def safe_float(val, default):
-            try: return float(val) if val else default
+            try: return float(val) if val is not None and val != '' else default
             except (ValueError, TypeError): return default
                 
         simulation_params['inflation_rate'] = safe_float(request.POST.get('inflation_rate'), profile_params['inflation_rate'])
@@ -327,6 +323,23 @@ def dashboard_view(request):
         simulation_params['pension_increase'] = safe_float(request.POST.get('pension_increase'), profile_params['pension_increase'])
         simulation_params['investment_return_offset'] = safe_float(request.POST.get('investment_return_offset'), profile_params['investment_return_offset'])
         simulation_params['real_estate_growth_rate'] = safe_float(request.POST.get('real_estate_growth_rate'), profile_params['real_estate_growth_rate'])
+        
+        # Store in session for persistence across page views
+        sess_params = {k: float(v) for k, v in simulation_params.items() if k != 'stichtag'}
+        if 'stichtag' in simulation_params and simulation_params['stichtag']:
+            sess_params['stichtag'] = simulation_params['stichtag'].strftime('%Y-%m-%d')
+        request.session['active_simulation'] = sess_params
+    elif 'active_simulation' in request.session:
+        # Restore active simulation parameters from session
+        sess = request.session['active_simulation']
+        for k in profile_params:
+            if k in sess:
+                simulation_params[k] = float(sess[k])
+        if 'stichtag' in sess:
+            try:
+                simulation_params['stichtag'] = datetime.datetime.strptime(sess['stichtag'], '%Y-%m-%d').date()
+            except (ValueError, TypeError):
+                pass
 
     # Check if simulation is active (different from profile defaults)
     is_simulation_active = any(
@@ -1188,7 +1201,7 @@ def dashboard_view(request):
         'chart_datasets': chart_datasets,
         'simulation_params': simulation_params,
         'is_simulation_active': is_simulation_active,
-        'affected_charts': json.dumps(affected_charts),
+        'affected_charts': affected_charts,
         'current_net_worth': current_net_worth,
         'projected_net_worth': projected_net_worth,
         'simulated_end_age': simulated_end_age,
