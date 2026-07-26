@@ -369,8 +369,18 @@ def dashboard_view(request):
     stichtag_diff = simulation_params['stichtag'].replace(day=1) != current_today.replace(day=1)
     is_simulation_active = param_diff or stichtag_diff
 
-    # Charts and tables affected by simulation and target date
-    affected_charts = list(AVAILABLE_CHARTS.keys())
+    # Charts affected by simulation parameters (future projections and forecast models)
+    affected_charts = [
+        'net_worth_chart',
+        'cashflow_chart',
+        'income_evolution_chart',
+        'expense_evolution_chart',
+        'inflation_monitor_chart',
+        'real_estate_forecast_chart',
+        'physical_asset_forecast_chart',
+        'liquid_pension_forecast_chart',
+        'loan_evolution_chart',
+    ]
 
     engine = SimulationEngine(user, simulation_params)
     forecast_data = engine.get_forecast()
