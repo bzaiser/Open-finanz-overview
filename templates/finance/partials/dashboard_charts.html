@@ -21,9 +21,6 @@
                       data-bs-html="true"
                       data-bs-title="{% trans 'Simulation Parameters' %}:&lt;br&gt;{% trans 'Inflation' %}: {{ simulation_params.inflation_rate }}%&lt;br&gt;{% trans 'Salary' %}: {{ simulation_params.salary_increase }}%&lt;br&gt;{% trans 'Return Offset' %}: {{ simulation_params.investment_return_offset }}%">
                     <i class="bi bi-sliders2-vertical"></i>
-                    {% if is_simulation_active %}
-                    <span class="sim-active-badge">SIM</span>
-                    {% endif %}
                 </span>
                 {% endif %}
             </div>
