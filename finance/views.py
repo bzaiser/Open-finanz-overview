@@ -922,9 +922,19 @@ def dashboard_view(request):
     continuous_label = _('Continuous')
     # 7. Dynamic Table Widgets (Filtered by target_date)
     continuous_label = _('Continuous')
+    # Helper for formatting validity periods
+    def format_period(start_dt, end_dt):
+        if start_dt and end_dt:
+            return f"{start_dt.strftime('%m/%Y')} - {end_dt.strftime('%m/%Y')}"
+        elif start_dt:
+            return f"ab {start_dt.strftime('%m/%Y')}"
+        elif end_dt:
+            return f"bis {end_dt.strftime('%m/%Y')}"
+        return continuous_label
+
     table_data_income = []
     
-    # 1. Manual Cash Flows
+    # 1. Manual Cash Flows (Income)
     for cf in user.cash_flows.select_related('category').filter(is_income=True):
         if (not cf.start_date or cf.start_date.replace(day=1) <= target_date) and \
            (not cf.end_date or cf.end_date.replace(day=1) >= target_date):
@@ -934,29 +944,42 @@ def dashboard_view(request):
                 'amount': float(amt), 
                 'category': cf.category.translated_name if cf.category else _('Income'),
                 'type': _('Manual'),
-                'year': str(cf.start_date.year) if cf.start_date else continuous_label
+                'year': format_period(cf.start_date, cf.end_date)
             })
     
-    # 2. Asset withdrawals (Income)
+    # 2. Asset withdrawals (Income, only if > 0)
     for a in user.assets.all():
-        if a.withdrawal_start_date and a.withdrawal_start_date.replace(day=1) <= target_date:
+        w_amt = float(a.withdrawal_amount or 0)
+        if w_amt > 0 and a.withdrawal_start_date and a.withdrawal_start_date.replace(day=1) <= target_date:
             table_data_income.append({
                 'name': f"{_('Withdrawal')}: {a.name}", 
-                'amount': float(a.withdrawal_amount or 0), 
+                'amount': w_amt, 
                 'category': _('Assets'),
                 'type': _('Simulation'),
-                'year': str(a.withdrawal_start_date.year)
+                'year': format_period(a.withdrawal_start_date, None)
             })
 
-    # 3. Pension payouts (Income)
+    # 3. Pension payouts (Income, only if > 0)
     for p in user.pensions.all():
-        if p.start_payout_date and p.start_payout_date.replace(day=1) <= target_date:
+        p_amt = float(p.expected_payout_at_retirement or 0)
+        if p_amt > 0 and p.start_payout_date and p.start_payout_date.replace(day=1) <= target_date:
             table_data_income.append({
                 'name': f"{_('Pension')}: {p.provider}", 
-                'amount': float(p.expected_payout_at_retirement or 0), 
+                'amount': p_amt, 
                 'category': _('Pension'),
                 'type': _('Contract'),
-                'year': str(p.start_payout_date.year)
+                'year': format_period(p.start_payout_date, None)
+            })
+
+    # 4. One-Time Income Events occurring at target_date month
+    for e in user.events.all():
+        if e.value and e.value > 0 and e.date and e.date.year == target_date.year and e.date.month == target_date.month:
+            table_data_income.append({
+                'name': f"{_('Event')}: {e.name}",
+                'amount': float(e.value),
+                'category': _('One-Time'),
+                'type': _('Event'),
+                'year': e.date.strftime('%d.%m.%Y')
             })
 
     table_data_expense = []

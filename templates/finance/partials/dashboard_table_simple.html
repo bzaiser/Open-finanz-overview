@@ -85,7 +85,7 @@
                     <th class="py-2 px-3 border-0 cursor-pointer" @click="sortCol = 'year'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
                         style="background-color: var(--app-table-header-bg) !important; color: var(--app-table-header-text) !important;">
                         <div class="d-flex align-items-center justify-content-between">
-                            <span>{% trans 'Year' %}</span>
+                            <span>{% trans 'Period' %}</span>
                             <i class="bi" :class="sortCol === 'year' ? (sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
                         </div>
                     </th>
@@ -106,7 +106,7 @@
                         <input type="text" x-model="colFilters.cat" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-white" style="font-size: 0.75rem;" placeholder="Filter...">
                     </td>
                     <td class="p-1 border-0" style="background-color: var(--app-table-filter-bg) !important;">
-                        <input type="text" x-model="colFilters.year" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-white" style="font-size: 0.75rem;" placeholder="Jahr...">
+                        <input type="text" x-model="colFilters.year" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-white" style="font-size: 0.75rem;" placeholder="Zeitraum...">
                     </td>
                     <td class="p-1 px-3 border-0" style="background-color: var(--app-table-filter-bg) !important;">
                         <input type="text" x-model="colFilters.amount" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-white text-end" style="font-size: 0.75rem;" placeholder="{% trans 'Amount' %}...">
