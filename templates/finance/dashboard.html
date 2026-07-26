@@ -122,7 +122,7 @@
                     <i class="bi bi-arrow-repeat"></i>
                     {% trans "Update Simulation" %}
                 </button>
-                <a href="{% url 'finance:dashboard' %}" class="btn btn-outline-secondary btn-sm border-0 py-2">
+                <a href="{% url 'finance:dashboard' %}?reset_simulation=1" class="btn btn-outline-secondary btn-sm border-0 py-2">
                     <i class="bi bi-x-circle"></i> {% trans "Reset to Defaults" %}
                 </a>
             </div>

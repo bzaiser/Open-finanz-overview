@@ -307,21 +307,15 @@ def dashboard_view(request):
     }
     
     simulation_params = profile_params.copy()
-    stichtag_raw = request.GET.get('stichtag') or request.POST.get('stichtag')
-    if stichtag_raw:
-        try:
-            simulation_params['stichtag'] = datetime.datetime.strptime(stichtag_raw, '%Y-%m-%d').date()
-        except (ValueError, TypeError):
-            simulation_params['stichtag'] = timezone.now().date()
-    else:
-        simulation_params['stichtag'] = timezone.now().date()
+    current_today = timezone.now().date()
+    simulation_params['stichtag'] = current_today
 
     # Session handling for persistent active simulation state
     if request.GET.get('reset_simulation'):
         if 'active_simulation' in request.session:
             del request.session['active_simulation']
         simulation_params = profile_params.copy()
-        simulation_params['stichtag'] = timezone.now().date()
+        simulation_params['stichtag'] = current_today
     elif request.method == 'POST' and 'config_update' not in request.POST:
         # Handle Simulation Update from POST form
         def safe_float(val, default):
@@ -334,11 +328,27 @@ def dashboard_view(request):
         simulation_params['investment_return_offset'] = safe_float(request.POST.get('investment_return_offset'), profile_params['investment_return_offset'])
         simulation_params['real_estate_growth_rate'] = safe_float(request.POST.get('real_estate_growth_rate'), profile_params['real_estate_growth_rate'])
         
-        # Store in session for persistence across page views
-        sess_params = {k: float(v) for k, v in simulation_params.items() if k != 'stichtag'}
-        if 'stichtag' in simulation_params and simulation_params['stichtag']:
+        stichtag_raw = request.POST.get('stichtag') or request.GET.get('stichtag')
+        if stichtag_raw:
+            try:
+                simulation_params['stichtag'] = datetime.datetime.strptime(stichtag_raw, '%Y-%m-%d').date()
+            except (ValueError, TypeError):
+                simulation_params['stichtag'] = current_today
+
+        # Check if parameters actually differ from profile defaults
+        param_diff = any(
+            abs(float(simulation_params[k]) - float(profile_params[k])) > 0.001
+            for k in profile_params
+        )
+        stichtag_diff = simulation_params['stichtag'].replace(day=1) != current_today.replace(day=1)
+        
+        if param_diff or stichtag_diff:
+            sess_params = {k: float(v) for k, v in simulation_params.items() if k != 'stichtag'}
             sess_params['stichtag'] = simulation_params['stichtag'].strftime('%Y-%m-%d')
-        request.session['active_simulation'] = sess_params
+            request.session['active_simulation'] = sess_params
+        else:
+            if 'active_simulation' in request.session:
+                del request.session['active_simulation']
     elif 'active_simulation' in request.session:
         # Restore active simulation parameters from session
         sess = request.session['active_simulation']
@@ -349,21 +359,15 @@ def dashboard_view(request):
             try:
                 simulation_params['stichtag'] = datetime.datetime.strptime(sess['stichtag'], '%Y-%m-%d').date()
             except (ValueError, TypeError):
-                pass
+                simulation_params['stichtag'] = current_today
 
-    # Check if simulation is active (different from profile defaults or active session)
+    # Final check if active simulation differs from defaults
     param_diff = any(
         abs(float(simulation_params[k]) - float(profile_params[k])) > 0.001
         for k in profile_params
     )
-    stichtag_diff = False
-    if 'stichtag' in simulation_params and simulation_params['stichtag']:
-        current_month = timezone.now().date().replace(day=1)
-        stichtag_month = simulation_params['stichtag'].replace(day=1)
-        if current_month != stichtag_month:
-            stichtag_diff = True
-
-    is_simulation_active = param_diff or stichtag_diff or ('active_simulation' in request.session)
+    stichtag_diff = simulation_params['stichtag'].replace(day=1) != current_today.replace(day=1)
+    is_simulation_active = param_diff or stichtag_diff
 
     # Charts and tables affected by simulation and target date
     affected_charts = list(AVAILABLE_CHARTS.keys())
