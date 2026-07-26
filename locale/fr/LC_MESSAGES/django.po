@@ -1663,6 +1663,10 @@ msgid "Category/Date"
 msgstr "Catégorie/Date"
 
 #: templates/finance/partials/dashboard_table_simple.html:88
+msgid "Period"
+msgstr "Période"
+
+#: templates/finance/partials/dashboard_table_simple.html:88
 msgid "Year"
 msgstr "Année"
 

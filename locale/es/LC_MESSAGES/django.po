@@ -1644,6 +1644,10 @@ msgid "Category/Date"
 msgstr "Categoría/Fecha"
 
 #: templates/finance/partials/dashboard_table_simple.html:88
+msgid "Period"
+msgstr "Período"
+
+#: templates/finance/partials/dashboard_table_simple.html:88
 msgid "Year"
 msgstr "Anual"
 

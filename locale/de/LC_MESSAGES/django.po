@@ -1578,6 +1578,10 @@ msgid "Category/Date"
 msgstr "Kategorie/Datum"
 
 #: templates/finance/partials/dashboard_table_simple.html:88
+msgid "Period"
+msgstr "Zeitraum"
+
+#: templates/finance/partials/dashboard_table_simple.html:88
 msgid "Year"
 msgstr "Jährlich"
 

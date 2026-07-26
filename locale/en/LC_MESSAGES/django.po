@@ -165,8 +165,9 @@ msgstr "Filtered view: %(count)s open transactions."
 msgid "2. Vorschau: Import-Bereit (Zusammengefasst)"
 msgstr "2. Preview: Ready to Import (Summarized)"
 
+#: templates/finance/partials/dashboard_table_simple.html:88
 #: templates/finance/partials/import_ready_pane.html:13
-msgid "Zeitraum"
+msgid "Period"
 msgstr "Period"
 
 #: templates/finance/partials/import_ready_pane.html:15
