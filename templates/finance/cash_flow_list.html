@@ -1,0 +1,512 @@
+{% extends "base.html" %}
+{% load i18n humanize %}
+
+{% block title %}{% trans "Income & Expenses" %} - Finanzplan{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4" x-data="cashFlowApp()">
+    <!-- Page Title & Main Actions -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+        <div>
+            <h2 class="fw-bold mb-1 d-flex align-items-center gap-2" style="color: var(--app-text-main);">
+                <i class="bi bi-arrow-down-up text-primary"></i>
+                {% trans "Income & Expenses" %}
+            </h2>
+            <p class="text-muted small mb-0">{% trans "Manage your recurring cash flows and carry out annual adjustments effortlessly." %}</p>
+        </div>
+        <div class="d-flex gap-2">
+            <button class="btn btn-outline-primary d-flex align-items-center gap-2 shadow-sm rounded-pill px-3 py-2"
+                    data-bs-toggle="modal" data-bs-target="#annualAdjustmentWizardModal">
+                <i class="bi bi-magic"></i>
+                <span>{% trans "Annual Adjustment Wizard" %}</span>
+            </button>
+            <button class="btn btn-primary d-flex align-items-center gap-2 shadow-sm rounded-pill px-3 py-2"
+                    style="background: var(--app-gradient); border: none;"
+                    @click="openAddModal()">
+                <i class="bi bi-plus-lg"></i>
+                <span>{% trans "New Entry" %}</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Summary Metric Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100 p-3" style="background: linear-gradient(135deg, rgba(25,135,84,0.1) 0%, rgba(25,135,84,0.02) 100%); border-left: 4px solid #198754 !important;">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <span class="text-uppercase fw-bold opacity-75 small" style="font-size: 0.7rem; letter-spacing: 0.05em; color: #198754;">
+                            {% trans "Monthly Income" %}
+                        </span>
+                        <h3 class="fw-bold mb-0 mt-1 font-monospace text-success">
+                            +{{ monthly_income_sum|intcomma }} <span class="fs-6 opacity-75">EUR</span>
+                        </h3>
+                        <span class="small text-muted" style="font-size: 0.75rem;">
+                            {{ yearly_income_sum|intcomma }} EUR / {% trans "year" %}
+                        </span>
+                    </div>
+                    <div class="p-2 rounded-circle bg-success bg-opacity-10 text-success">
+                        <i class="bi bi-graph-up-arrow fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100 p-3" style="background: linear-gradient(135deg, rgba(220,53,69,0.1) 0%, rgba(220,53,69,0.02) 100%); border-left: 4px solid #dc3545 !important;">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <span class="text-uppercase fw-bold opacity-75 small" style="font-size: 0.7rem; letter-spacing: 0.05em; color: #dc3545;">
+                            {% trans "Monthly Expenses" %}
+                        </span>
+                        <h3 class="fw-bold mb-0 mt-1 font-monospace text-danger">
+                            -{{ monthly_expense_sum|intcomma }} <span class="fs-6 opacity-75">EUR</span>
+                        </h3>
+                        <span class="small text-muted" style="font-size: 0.75rem;">
+                            {{ yearly_expense_sum|intcomma }} EUR / {% trans "year" %}
+                        </span>
+                    </div>
+                    <div class="p-2 rounded-circle bg-danger bg-opacity-10 text-danger">
+                        <i class="bi bi-graph-down-arrow fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100 p-3" style="background: linear-gradient(135deg, rgba(13,110,253,0.1) 0%, rgba(13,110,253,0.02) 100%); border-left: 4px solid var(--app-primary) !important;">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <span class="text-uppercase fw-bold opacity-75 small" style="font-size: 0.7rem; letter-spacing: 0.05em; color: var(--app-primary);">
+                            {% trans "Net Monthly Surplus" %}
+                        </span>
+                        <h3 class="fw-bold mb-0 mt-1 font-monospace {% if monthly_net_surplus >= 0 %}text-primary{% else %}text-danger{% endif %}">
+                            {% if monthly_net_surplus >= 0 %}+{% endif %}{{ monthly_net_surplus|intcomma }} <span class="fs-6 opacity-75">EUR</span>
+                        </h3>
+                        <span class="small text-muted" style="font-size: 0.75rem;">
+                            {{ yearly_net_surplus|intcomma }} EUR / {% trans "year" %}
+                        </span>
+                    </div>
+                    <div class="p-2 rounded-circle bg-primary bg-opacity-10 text-primary">
+                        <i class="bi bi-piggy-bank fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Bar & Search -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+        <div class="card-body p-3">
+            <div class="row g-3 align-items-center">
+                <div class="col-md-4">
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text bg-transparent border-end-0 text-muted">
+                            <i class="bi bi-search"></i>
+                        </span>
+                        <input type="text" x-model="searchQuery" class="form-control border-start-0" placeholder="{% trans 'Search by name, category, or note...' %}">
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="btn-group btn-group-sm w-100" role="group">
+                        <button type="button" class="btn btn-outline-secondary" :class="{'active': activeTab === 'all'}" @click="activeTab = 'all'">
+                            {% trans "All" %} ({{ cash_flows|length }})
+                        </button>
+                        <button type="button" class="btn btn-outline-success" :class="{'active': activeTab === 'income'}" @click="activeTab = 'income'">
+                            <i class="bi bi-arrow-up-right"></i> {% trans "Income" %}
+                        </button>
+                        <button type="button" class="btn btn-outline-danger" :class="{'active': activeTab === 'expense'}" @click="activeTab = 'expense'">
+                            <i class="bi bi-arrow-down-right"></i> {% trans "Expenses" %}
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-3 text-end">
+                    <select x-model="categoryFilter" class="form-select form-select-sm">
+                        <option value="">{% trans "All Categories" %}</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat.name }}">{{ cat.translated_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cash Flows Table -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-5" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0" style="font-size: 0.88rem; --bs-table-bg: transparent; --bs-table-color: inherit;">
+                <thead class="table-light text-uppercase small" style="font-size: 0.7rem; letter-spacing: 0.05em;">
+                    <tr>
+                        <th class="py-3 px-4">{% trans "Name" %}</th>
+                        <th class="py-3 px-3">{% trans "Type" %} / {% trans "Category" %}</th>
+                        <th class="py-3 px-3">{% trans "Validity Period" %}</th>
+                        <th class="py-3 px-3 text-center">{% trans "Frequency" %}</th>
+                        <th class="py-3 px-3 text-end">{% trans "Monthly Amount" %}</th>
+                        <th class="py-3 px-3 text-end">{% trans "Original Amount" %}</th>
+                        <th class="py-3 px-4 text-end">{% trans "Actions" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cf in cash_flows %}
+                    <tr x-show="matchesFilter('{{ cf.name|escapejs }}', '{{ cf.category.name|default:''|escapejs }}', {{ cf.is_income|yesno:'true,false' }})"
+                        class="{% if cf.end_date and cf.end_date < today %}opacity-50{% endif %}">
+                        <td class="py-3 px-4 fw-semibold">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="badge rounded-circle p-2 {% if cf.is_income %}bg-success bg-opacity-10 text-success{% else %}bg-danger bg-opacity-10 text-danger{% endif %}">
+                                    <i class="bi {% if cf.is_income %}bi-arrow-up-right{% else %}bi-arrow-down-right{% endif %}"></i>
+                                </span>
+                                <div>
+                                    <span class="d-block">{{ cf.name }}</span>
+                                    {% if cf.notes %}
+                                    <span class="small text-muted opacity-75" style="font-size: 0.75rem;">{{ cf.notes }}</span>
+                                    {% endif %}
+                                </div>
+                                {% if cf.is_inflation_adjusted %}
+                                <i class="bi bi-shield-check text-primary ms-1" title="{% trans 'Indexed to Inflation' %}" style="font-size: 0.85rem;"></i>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td class="py-3 px-3">
+                            <span class="badge rounded-pill {% if cf.is_income %}bg-success-subtle text-success border border-success-subtle{% else %}bg-danger-subtle text-danger border border-danger-subtle{% endif %} me-1" style="font-size: 0.7rem;">
+                                {% if cf.is_income %}{% trans "Income" %}{% else %}{% trans "Expense" %}{% endif %}
+                            </span>
+                            {% if cf.category %}
+                            <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary-subtle rounded-pill" style="font-size: 0.7rem;">
+                                {{ cf.category.translated_name }}
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td class="py-3 px-3 small font-monospace">
+                            {% if cf.start_date and cf.end_date %}
+                                {{ cf.start_date|date:"m/Y" }} - {{ cf.end_date|date:"m/Y" }}
+                            {% elif cf.start_date %}
+                                ab {{ cf.start_date|date:"m/Y" }}
+                            {% elif cf.end_date %}
+                                bis {{ cf.end_date|date:"m/Y" }}
+                            {% else %}
+                                <span class="badge bg-info bg-opacity-10 text-info rounded-pill">{% trans "Continuous" %}</span>
+                            {% endif %}
+                        </td>
+                        <td class="py-3 px-3 text-center small">
+                            {% if cf.frequency == 'monthly' %}
+                                <span class="badge bg-light text-dark border">{% trans "Monthly" %}</span>
+                            {% else %}
+                                <span class="badge bg-warning bg-opacity-10 text-warning border border-warning-subtle">{% trans "Yearly" %}</span>
+                            {% endif %}
+                        </td>
+                        <td class="py-3 px-3 text-end font-monospace fw-bold {% if cf.is_income %}text-success{% else %}text-danger{% endif %}">
+                            {% if cf.is_income %}+{% else %}-{% endif %}
+                            {% if cf.frequency == 'monthly' %}
+                                {{ cf.value|intcomma }} €
+                            {% else %}
+                                {{ cf.value|divisibleby:12|default:cf.value|intcomma }} €
+                            {% endif %}
+                        </td>
+                        <td class="py-3 px-3 text-end font-monospace text-muted small">
+                            {{ cf.value|intcomma }} € / {{ cf.get_frequency_display }}
+                        </td>
+                        <td class="py-3 px-4 text-end">
+                            <div class="btn-group btn-group-sm">
+                                <button type="button" class="btn btn-outline-secondary border-0" 
+                                        @click="openEditModal({{ cf.id }}, '{{ cf.name|escapejs }}', '{{ cf.value }}', {{ cf.is_income|yesno:'true,false' }}, '{{ cf.frequency }}', '{{ cf.category.id|default:'' }}', '{{ cf.start_date|date:'Y-m-d' }}', '{{ cf.end_date|date:'Y-m-d' }}', {{ cf.is_inflation_adjusted|yesno:'true,false' }}, '{{ cf.notes|escapejs }}')">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <form method="post" action="{% url 'finance:cash_flow_delete' cf.id %}" class="d-inline" onsubmit="return confirm('{% trans "Are you sure you want to delete this cash flow entry?" %}');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-outline-danger border-0">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center py-5 text-muted">
+                            <i class="bi bi-inbox fs-1 d-block mb-2 text-opacity-50"></i>
+                            {% trans "No income or expense entries found." %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Create / Edit Modal -->
+    <div class="modal fade" id="cashFlowModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold" x-text="editId ? '{% trans "Edit Cash Flow" %}' : '{% trans "New Cash Flow" %}'"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="post" :action="editId ? '/finance/cash-flows/save/' + editId + '/' : '{% url "finance:cash_flow_add" %}'">
+                    {% csrf_token %}
+                    <div class="modal-body pt-3">
+                        <!-- Type selector -->
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Entry Type" %}</label>
+                            <div class="btn-group w-100" role="group">
+                                <input type="radio" class="btn-check" name="is_income" id="type_income" value="True" x-model="form.is_income">
+                                <label class="btn btn-outline-success py-2" for="type_income">
+                                    <i class="bi bi-arrow-up-right me-1"></i> {% trans "Income" %}
+                                </label>
+                                <input type="radio" class="btn-check" name="is_income" id="type_expense" value="False" x-model="form.is_income">
+                                <label class="btn btn-outline-danger py-2" for="type_expense">
+                                    <i class="bi bi-arrow-down-right me-1"></i> {% trans "Expense" %}
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Name & Amount -->
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-7">
+                                <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Name" %}</label>
+                                <input type="text" name="name" x-model="form.name" class="form-control" placeholder="{% trans 'e.g. Salary, Rent, Netflix' %}" required>
+                            </div>
+                            <div class="col-md-5">
+                                <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Amount (EUR)" %}</label>
+                                <input type="number" step="0.01" name="value" x-model="form.value" class="form-control font-monospace" placeholder="0.00" required>
+                            </div>
+                        </div>
+
+                        <!-- Category & Frequency -->
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Category" %}</label>
+                                <select name="category" x-model="form.category" class="form-select">
+                                    <option value="">{% trans "-- Select Category --" %}</option>
+                                    {% for cat in categories %}
+                                    <option value="{{ cat.id }}">{{ cat.translated_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Frequency" %}</label>
+                                <select name="frequency" x-model="form.frequency" class="form-select">
+                                    <option value="monthly">{% trans "Monthly" %}</option>
+                                    <option value="yearly">{% trans "Yearly" %}</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Validity Period (Start & End Date) -->
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Start Date" %}</label>
+                                <input type="date" name="start_date" x-model="form.start_date" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "End Date (Optional)" %}</label>
+                                <input type="date" name="end_date" x-model="form.end_date" class="form-control">
+                            </div>
+                        </div>
+
+                        <!-- Options & Notes -->
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" name="is_inflation_adjusted" id="is_inflation_adjusted" x-model="form.is_inflation_adjusted">
+                            <label class="form-check-label small" for="is_inflation_adjusted">
+                                {% trans "Indexed to Inflation" %}
+                            </label>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Notes" %}</label>
+                            <textarea name="notes" x-model="form.notes" class="form-control" rows="2" placeholder="{% trans 'Optional notes...' %}"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer border-0 pt-0">
+                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
+                        <button type="submit" class="btn btn-primary rounded-pill px-4" style="background: var(--app-gradient); border: none;">{% trans "Save Entry" %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Annual Adjustment Wizard Modal (3 Steps) -->
+    <div class="modal fade" id="annualAdjustmentWizardModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg rounded-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+                <div class="modal-header border-0 shadow-sm" style="background: var(--app-gradient); color: #ffffff;">
+                    <h5 class="modal-title fw-bold d-flex align-items-center gap-2">
+                        <i class="bi bi-magic"></i>
+                        {% trans "Annual Adjustment Wizard" %}
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <form method="post" action="{% url 'finance:cash_flow_annual_adjustment' %}">
+                    {% csrf_token %}
+                    <div class="modal-body p-4">
+                        <div class="alert alert-info py-2 small mb-4">
+                            <i class="bi bi-info-circle me-1"></i>
+                            {% trans "Select active entries to adjust for the new year. Original records will automatically receive an end date (e.g. 31.12.), and new copied records will start on your chosen date." %}
+                        </div>
+
+                        <!-- Step 1: Select Date & Percentage Adjustment -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small text-uppercase">{% trans "New Start Date" %}</label>
+                                <input type="date" name="new_start_date" x-model="wizard.newStartDate" class="form-control" required>
+                                <span class="form-text small opacity-75">
+                                    {% trans "Previous records will automatically be ended on" %}: <strong x-text="wizardPreviousEndDate()"></strong>
+                                </span>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small text-uppercase">{% trans "Percentage Adjustment (Optional)" %}</label>
+                                <div class="input-group">
+                                    <input type="number" step="0.1" name="adjustment_percent" x-model="wizard.adjustmentPercent" class="form-control" placeholder="0.0">
+                                    <span class="input-group-text">%</span>
+                                </div>
+                                <span class="form-text small opacity-75">{% trans "e.g. +2.5 for salary raise or inflation adjustment." %}</span>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Select Entries to Copy & Adjust -->
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <label class="form-label fw-bold small text-uppercase mb-0">{% trans "Select Entries to Adjust" %}</label>
+                            <button type="button" class="btn btn-link btn-sm text-decoration-none p-0" @click="toggleSelectAllWizard()">
+                                <span x-text="allWizardSelected ? '{% trans "Deselect All" %}' : '{% trans "Select All" %}'"></span>
+                            </button>
+                        </div>
+
+                        <div class="border rounded-3 p-2 overflow-auto" style="max-height: 300px;">
+                            <table class="table table-sm table-hover mb-0" style="font-size: 0.82rem;">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 40px;"></th>
+                                        <th>{% trans "Name" %}</th>
+                                        <th>{% trans "Category" %}</th>
+                                        <th class="text-end">{% trans "Current Amount" %}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for cf in cash_flows %}
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" name="selected_items" value="{{ cf.id }}" class="form-check-input" x-model="wizard.selectedIds">
+                                        </td>
+                                        <td class="fw-semibold">{{ cf.name }}</td>
+                                        <td>{{ cf.category.translated_name|default:'-' }}</td>
+                                        <td class="text-end font-monospace {% if cf.is_income %}text-success{% else %}text-danger{% endif %}">
+                                            {{ cf.value|intcomma }} € / {{ cf.get_frequency_display }}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
+                        <button type="submit" class="btn btn-primary rounded-pill px-4" style="background: var(--app-gradient); border: none;" :disabled="wizard.selectedIds.length === 0">
+                            <i class="bi bi-check2-circle me-1"></i>
+                            {% trans "Apply Adjustment" %} (<span x-text="wizard.selectedIds.length"></span>)
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function cashFlowApp() {
+        // Calculate default next year start date 01.01.YYYY+1
+        const now = new Date();
+        const nextYear = now.getFullYear() + 1;
+        const defaultNextStartDate = `${nextYear}-01-01`;
+
+        return {
+            searchQuery: '',
+            activeTab: 'all',
+            categoryFilter: '',
+            editId: null,
+            form: {
+                name: '',
+                value: '',
+                is_income: 'True',
+                frequency: 'monthly',
+                category: '',
+                start_date: '',
+                end_date: '',
+                is_inflation_adjusted: false,
+                notes: ''
+            },
+            wizard: {
+                newStartDate: defaultNextStartDate,
+                adjustmentPercent: 0,
+                selectedIds: []
+            },
+            allWizardSelected: false,
+
+            wizardPreviousEndDate() {
+                if (!this.wizard.newStartDate) return '-';
+                const d = new Date(this.wizard.newStartDate);
+                d.setDate(d.getDate() - 1);
+                return d.toLocaleDateString('de-DE');
+            },
+
+            matchesFilter(name, category, isIncome) {
+                const q = this.searchQuery.toLowerCase();
+                const n = (name || '').toLowerCase();
+                const c = (category || '').toLowerCase();
+
+                if (q && !n.includes(q) && !c.includes(q)) return false;
+                if (this.categoryFilter && c !== this.categoryFilter.toLowerCase()) return false;
+                if (this.activeTab === 'income' && !isIncome) return false;
+                if (this.activeTab === 'expense' && isIncome) return false;
+
+                return true;
+            },
+
+            openAddModal() {
+                this.editId = null;
+                this.form = {
+                    name: '',
+                    value: '',
+                    is_income: 'True',
+                    frequency: 'monthly',
+                    category: '',
+                    start_date: '',
+                    end_date: '',
+                    is_inflation_adjusted: false,
+                    notes: ''
+                };
+                new bootstrap.Modal(document.getElementById('cashFlowModal')).show();
+            },
+
+            openEditModal(id, name, value, isIncome, frequency, categoryId, startDate, endDate, isInflationAdjusted, notes) {
+                this.editId = id;
+                this.form = {
+                    name: name,
+                    value: value,
+                    is_income: isIncome ? 'True' : 'False',
+                    frequency: frequency,
+                    category: categoryId,
+                    start_date: startDate,
+                    end_date: endDate,
+                    is_inflation_adjusted: isInflationAdjusted,
+                    notes: notes
+                };
+                new bootstrap.Modal(document.getElementById('cashFlowModal')).show();
+            },
+
+            toggleSelectAllWizard() {
+                this.allWizardSelected = !this.allWizardSelected;
+                if (this.allWizardSelected) {
+                    const checkboxes = document.querySelectorAll('#annualAdjustmentWizardModal input[name="selected_items"]');
+                    this.wizard.selectedIds = Array.from(checkboxes).map(cb => cb.value);
+                } else {
+                    this.wizard.selectedIds = [];
+                }
+            }
+        };
+    }
+</script>
+{% endblock %}

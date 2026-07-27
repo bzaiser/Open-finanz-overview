@@ -2269,3 +2269,128 @@ def dynamic_theme_css(request):
         }}
     """
     return HttpResponse(css_content, content_type="text/css")
+
+
+from .forms import CashFlowSourceForm
+from django.db import transaction
+
+@login_required
+def cash_flow_list(request):
+    user = request.user
+    cash_flows = user.cash_flows.select_related('category').order_by('-is_income', 'category__name', 'name')
+    categories = Category.objects.all().order_by('name')
+    
+    monthly_income_sum = Decimal('0.00')
+    monthly_expense_sum = Decimal('0.00')
+    yearly_income_sum = Decimal('0.00')
+    yearly_expense_sum = Decimal('0.00')
+    
+    today = timezone.now().date()
+    
+    for cf in cash_flows:
+        is_active = (not cf.start_date or cf.start_date <= today) and (not cf.end_date or cf.end_date >= today)
+        if is_active:
+            m_val = cf.value if cf.frequency == 'monthly' else cf.value / Decimal('12')
+            y_val = cf.value * Decimal('12') if cf.frequency == 'monthly' else cf.value
+            
+            if cf.is_income:
+                monthly_income_sum += m_val
+                yearly_income_sum += y_val
+            else:
+                monthly_expense_sum += m_val
+                yearly_expense_sum += y_val
+                
+    monthly_net_surplus = monthly_income_sum - monthly_expense_sum
+    yearly_net_surplus = yearly_income_sum - yearly_expense_sum
+    
+    context = {
+        'cash_flows': cash_flows,
+        'categories': categories,
+        'monthly_income_sum': monthly_income_sum,
+        'monthly_expense_sum': monthly_expense_sum,
+        'monthly_net_surplus': monthly_net_surplus,
+        'yearly_income_sum': yearly_income_sum,
+        'yearly_expense_sum': yearly_expense_sum,
+        'yearly_net_surplus': yearly_net_surplus,
+        'today': today,
+        'form': CashFlowSourceForm(),
+    }
+    return render(request, 'finance/cash_flow_list.html', context)
+
+
+@login_required
+def cash_flow_save(request, pk=None):
+    user = request.user
+    instance = get_object_or_404(CashFlowSource, id=pk, user=user) if pk else None
+    
+    if request.method == 'POST':
+        form = CashFlowSourceForm(request.POST, instance=instance)
+        if form.is_valid():
+            cf = form.save(commit=False)
+            cf.user = user
+            cf.save()
+            messages.success(request, _('Cash flow entry saved successfully.'))
+        else:
+            messages.error(request, _('Error saving entry. Please check your inputs.'))
+    return redirect('finance:cash_flow_list')
+
+
+@login_required
+def cash_flow_delete(request, pk):
+    user = request.user
+    cf = get_object_or_404(CashFlowSource, id=pk, user=user)
+    if request.method == 'POST':
+        cf.delete()
+        messages.success(request, _('Cash flow entry deleted.'))
+    return redirect('finance:cash_flow_list')
+
+
+@login_required
+def cash_flow_annual_adjustment(request):
+    if request.method == 'POST':
+        user = request.user
+        selected_ids = request.POST.getlist('selected_items')
+        new_start_date_str = request.POST.get('new_start_date')
+        adj_percent_str = request.POST.get('adjustment_percent', '0')
+        
+        if not selected_ids or not new_start_date_str:
+            messages.error(request, _('Please select at least one entry and specify a valid new start date.'))
+            return redirect('finance:cash_flow_list')
+            
+        try:
+            new_start_date = datetime.datetime.strptime(new_start_date_str, '%Y-%m-%d').date()
+            prev_end_date = new_start_date - datetime.timedelta(days=1)
+            adj_percent = Decimal(str(adj_percent_str or '0'))
+            multiplier = Decimal('1.0') + (adj_percent / Decimal('100'))
+        except (ValueError, TypeError):
+            messages.error(request, _('Invalid date or percentage value.'))
+            return redirect('finance:cash_flow_list')
+            
+        sources = user.cash_flows.filter(id__in=selected_ids)
+        copied_count = 0
+        
+        with transaction.atomic():
+            for cf in sources:
+                cf.end_date = prev_end_date
+                cf.save()
+                
+                new_value = (cf.value * multiplier).quantize(Decimal('0.01'))
+                note_suffix = f" [Anpassung ab {new_start_date.strftime('%d.%m.%Y')}]"
+                new_notes = ((cf.notes or '') + note_suffix).strip()
+                
+                CashFlowSource.objects.create(
+                    user=user,
+                    name=cf.name,
+                    value=new_value,
+                    is_income=cf.is_income,
+                    frequency=cf.frequency,
+                    category=cf.category,
+                    start_date=new_start_date,
+                    end_date=None,
+                    is_inflation_adjusted=cf.is_inflation_adjusted,
+                    notes=new_notes
+                )
+                copied_count += 1
+                
+        messages.success(request, f"{_('Annual adjustment completed successfully.')} {copied_count} {_('entries updated and copied.')}")
+    return redirect('finance:cash_flow_list')

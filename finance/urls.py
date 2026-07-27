@@ -22,5 +22,10 @@ urlpatterns = [
     path('import/group/<int:batch_id>/', views.import_search_as_group, name='import_search_as_group'),
     path('category/quick-create/', views.quick_create_category, name='quick_create_category'),
     path('cash-flow/quick-create/', views.quick_create_cash_flow, name='quick_create_cash_flow'),
+    path('cash-flows/', views.cash_flow_list, name='cash_flow_list'),
+    path('cash-flows/save/', views.cash_flow_save, name='cash_flow_add'),
+    path('cash-flows/save/<int:pk>/', views.cash_flow_save, name='cash_flow_edit'),
+    path('cash-flows/delete/<int:pk>/', views.cash_flow_delete, name='cash_flow_delete'),
+    path('cash-flows/annual-adjustment/', views.cash_flow_annual_adjustment, name='cash_flow_annual_adjustment'),
     path('dynamic-theme.css', views.dynamic_theme_css, name='dynamic_theme_css'),
 ]
