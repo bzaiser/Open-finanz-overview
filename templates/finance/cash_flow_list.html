@@ -135,7 +135,7 @@
                         </span>
                         <select name="year" class="form-select form-select-sm border-start-0 font-monospace fw-bold" onchange="document.getElementById('yearFilterForm').submit()">
                             {% for y in available_years %}
-                            <option value="{{ y }}" {% if selected_year == y|stringformat:"i" %}selected{% endif %}>
+                            <option value="{{ y }}" {% if selected_year == y %}selected{% endif %}>
                                 {{ y }}{% if y == current_year %} ({% trans "Current" %}){% endif %}
                             </option>
                             {% endfor %}

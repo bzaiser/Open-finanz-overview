@@ -2294,6 +2294,10 @@ def cash_flow_list(request):
     
     # Read year filter parameter (defaulting to current year)
     selected_year_str = request.GET.get('year', str(current_year))
+    try:
+        selected_year_val = int(selected_year_str)
+    except (ValueError, TypeError):
+        selected_year_val = 'all'
     
     monthly_income_sum = Decimal('0.00')
     monthly_expense_sum = Decimal('0.00')
@@ -2301,16 +2305,13 @@ def cash_flow_list(request):
     yearly_expense_sum = Decimal('0.00')
     
     for cf in cash_flows:
-        if selected_year_str == 'all':
+        if selected_year_val == 'all':
             is_active = True
         else:
-            try:
-                target_year = int(selected_year_str)
-                year_start = datetime.date(target_year, 1, 1)
-                year_end = datetime.date(target_year, 12, 31)
-                is_active = (not cf.start_date or cf.start_date <= year_end) and (not cf.end_date or cf.end_date >= year_start)
-            except (ValueError, TypeError):
-                is_active = True
+            target_year = int(selected_year_val)
+            year_start = datetime.date(target_year, 1, 1)
+            year_end = datetime.date(target_year, 12, 31)
+            is_active = (not cf.start_date or cf.start_date <= year_end) and (not cf.end_date or cf.end_date >= year_start)
                 
         cf.is_active_in_selected_year = is_active
         
@@ -2340,7 +2341,7 @@ def cash_flow_list(request):
         'all_cash_flows': cash_flows,
         'categories': categories,
         'available_years': available_years,
-        'selected_year': selected_year_str,
+        'selected_year': selected_year_val,
         'current_year': current_year,
         'monthly_income_sum': monthly_income_sum,
         'monthly_expense_sum': monthly_expense_sum,
