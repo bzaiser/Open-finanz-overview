@@ -105,7 +105,7 @@ if os.getenv('FINANZPLAN_DB_PATH'):
 elif os.getenv('RUNNING_IN_MOBILE_APP'):
     # On mobile, we use the specific subdirectory to keep things isolated (Desktop fallback)
     db_path = BASE_DIR / 'mobile-app' / 'db.sqlite3'
-elif os.getenv('RUNNING_IN_DOCKER'):
+elif os.getenv('RUNNING_IN_DOCKER') or (BASE_DIR / 'data' / 'db.sqlite3').exists():
     db_path = BASE_DIR / 'data' / 'db.sqlite3'
 else:
     db_path = BASE_DIR / 'db.sqlite3'
@@ -182,7 +182,7 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Media files
 MEDIA_URL = 'media/'
-if os.getenv('RUNNING_IN_DOCKER'):
+if os.getenv('RUNNING_IN_DOCKER') or (BASE_DIR / 'data' / 'media').exists():
     MEDIA_ROOT = BASE_DIR / 'data' / 'media'
 else:
     MEDIA_ROOT = BASE_DIR / 'media'
