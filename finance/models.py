@@ -5,6 +5,7 @@ from core.models import CustomUser
 from django.utils.text import slugify
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from decimal import Decimal
 
 
 class Category(models.Model):
