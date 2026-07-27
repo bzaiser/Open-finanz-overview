@@ -2277,19 +2277,43 @@ from django.db import transaction
 @login_required
 def cash_flow_list(request):
     user = request.user
-    cash_flows = user.cash_flows.select_related('category').order_by('-is_income', 'category__name', 'name')
+    cash_flows = list(user.cash_flows.select_related('category').order_by('-is_income', 'category__name', 'name'))
     categories = Category.objects.all().order_by('name')
+    
+    today = timezone.now().date()
+    current_year = today.year
+    
+    # Determine available years for dropdown (e.g. from existing entries + range around current year)
+    years_set = {current_year - 2, current_year - 1, current_year, current_year + 1, current_year + 2}
+    for cf in cash_flows:
+        if cf.start_date:
+            years_set.add(cf.start_date.year)
+        if cf.end_date:
+            years_set.add(cf.end_date.year)
+    available_years = sorted(list(years_set), reverse=True)
+    
+    # Read year filter parameter (defaulting to current year)
+    selected_year_str = request.GET.get('year', str(current_year))
     
     monthly_income_sum = Decimal('0.00')
     monthly_expense_sum = Decimal('0.00')
     yearly_income_sum = Decimal('0.00')
     yearly_expense_sum = Decimal('0.00')
     
-    today = timezone.now().date()
-    
     for cf in cash_flows:
-        # An entry is active if it has not expired in the past
-        is_active = not (cf.end_date and cf.end_date < today)
+        if selected_year_str == 'all':
+            is_active = True
+        else:
+            try:
+                target_year = int(selected_year_str)
+                year_start = datetime.date(target_year, 1, 1)
+                year_end = datetime.date(target_year, 12, 31)
+                is_active = (not cf.start_date or cf.start_date <= year_end) and (not cf.end_date or cf.end_date >= year_start)
+            except (ValueError, TypeError):
+                is_active = True
+                
+        cf.is_active_in_selected_year = is_active
+        
         if is_active:
             m_val = cf.value if cf.frequency == 'monthly' else (cf.value / Decimal('12'))
             y_val = cf.value * Decimal('12') if cf.frequency == 'monthly' else cf.value
@@ -2308,9 +2332,16 @@ def cash_flow_list(request):
     yearly_expense_sum = yearly_expense_sum.quantize(Decimal('0.01'))
     yearly_net_surplus = (yearly_income_sum - yearly_expense_sum).quantize(Decimal('0.01'))
     
+    # Display cash flows filtered by selected year
+    filtered_cash_flows = [cf for cf in cash_flows if cf.is_active_in_selected_year]
+    
     context = {
-        'cash_flows': cash_flows,
+        'cash_flows': filtered_cash_flows,
+        'all_cash_flows': cash_flows,
         'categories': categories,
+        'available_years': available_years,
+        'selected_year': selected_year_str,
+        'current_year': current_year,
         'monthly_income_sum': monthly_income_sum,
         'monthly_expense_sum': monthly_expense_sum,
         'monthly_net_surplus': monthly_net_surplus,

@@ -98,8 +98,8 @@
     <!-- Filter Bar & Search -->
     <div class="card border-0 shadow-sm rounded-4 mb-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
         <div class="card-body p-3">
-            <div class="row g-3 align-items-center">
-                <div class="col-md-4">
+            <form method="get" id="yearFilterForm" class="row g-3 align-items-center">
+                <div class="col-md-3">
                     <div class="input-group input-group-sm">
                         <span class="input-group-text bg-transparent border-end-0 text-muted">
                             <i class="bi bi-search"></i>
@@ -107,7 +107,7 @@
                         <input type="text" x-model="searchQuery" class="form-control border-start-0" placeholder="{% trans 'Search by name, category, or note...' %}">
                     </div>
                 </div>
-                <div class="col-md-5">
+                <div class="col-md-4">
                     <div class="btn-group btn-group-sm w-100" role="group">
                         <button type="button" class="btn btn-outline-secondary" :class="{'active': activeTab === 'all'}" @click="activeTab = 'all'">
                             {% trans "All" %} ({{ cash_flows|length }})
@@ -120,7 +120,7 @@
                         </button>
                     </div>
                 </div>
-                <div class="col-md-3 text-end">
+                <div class="col-md-3">
                     <select x-model="categoryFilter" class="form-select form-select-sm">
                         <option value="">{% trans "All Categories" %}</option>
                         {% for cat in categories %}
@@ -128,7 +128,22 @@
                         {% endfor %}
                     </select>
                 </div>
-            </div>
+                <div class="col-md-2">
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text bg-transparent border-end-0 text-muted" title="{% trans 'Filter by Year' %}">
+                            <i class="bi bi-calendar3"></i>
+                        </span>
+                        <select name="year" class="form-select form-select-sm border-start-0 font-monospace fw-bold" onchange="document.getElementById('yearFilterForm').submit()">
+                            {% for y in available_years %}
+                            <option value="{{ y }}" {% if selected_year == y|stringformat:"i" %}selected{% endif %}>
+                                {{ y }}{% if y == current_year %} ({% trans "Current" %}){% endif %}
+                            </option>
+                            {% endfor %}
+                            <option value="all" {% if selected_year == 'all' %}selected{% endif %}>{% trans "All Years" %}</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 
