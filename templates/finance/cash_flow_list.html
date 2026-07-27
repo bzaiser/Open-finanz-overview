@@ -39,10 +39,10 @@
                             {% trans "Monthly Income" %}
                         </span>
                         <h3 class="fw-bold mb-0 mt-1 font-monospace text-success">
-                            +{{ monthly_income_sum|intcomma }} <span class="fs-6 opacity-75">EUR</span>
+                            +{{ monthly_income_sum|floatformat:2|intcomma }} <span class="fs-6 opacity-75">EUR</span>
                         </h3>
                         <span class="small text-muted" style="font-size: 0.75rem;">
-                            {{ yearly_income_sum|intcomma }} EUR / {% trans "year" %}
+                            {{ yearly_income_sum|floatformat:2|intcomma }} EUR / {% trans "year" %}
                         </span>
                     </div>
                     <div class="p-2 rounded-circle bg-success bg-opacity-10 text-success">
@@ -60,10 +60,10 @@
                             {% trans "Monthly Expenses" %}
                         </span>
                         <h3 class="fw-bold mb-0 mt-1 font-monospace text-danger">
-                            -{{ monthly_expense_sum|intcomma }} <span class="fs-6 opacity-75">EUR</span>
+                            -{{ monthly_expense_sum|floatformat:2|intcomma }} <span class="fs-6 opacity-75">EUR</span>
                         </h3>
                         <span class="small text-muted" style="font-size: 0.75rem;">
-                            {{ yearly_expense_sum|intcomma }} EUR / {% trans "year" %}
+                            {{ yearly_expense_sum|floatformat:2|intcomma }} EUR / {% trans "year" %}
                         </span>
                     </div>
                     <div class="p-2 rounded-circle bg-danger bg-opacity-10 text-danger">
@@ -81,10 +81,10 @@
                             {% trans "Net Monthly Surplus" %}
                         </span>
                         <h3 class="fw-bold mb-0 mt-1 font-monospace {% if monthly_net_surplus >= 0 %}text-primary{% else %}text-danger{% endif %}">
-                            {% if monthly_net_surplus >= 0 %}+{% endif %}{{ monthly_net_surplus|intcomma }} <span class="fs-6 opacity-75">EUR</span>
+                            {% if monthly_net_surplus >= 0 %}+{% endif %}{{ monthly_net_surplus|floatformat:2|intcomma }} <span class="fs-6 opacity-75">EUR</span>
                         </h3>
                         <span class="small text-muted" style="font-size: 0.75rem;">
-                            {{ yearly_net_surplus|intcomma }} EUR / {% trans "year" %}
+                            {{ yearly_net_surplus|floatformat:2|intcomma }} EUR / {% trans "year" %}
                         </span>
                     </div>
                     <div class="p-2 rounded-circle bg-primary bg-opacity-10 text-primary">
@@ -196,15 +196,10 @@
                             {% endif %}
                         </td>
                         <td class="py-3 px-3 text-end font-monospace fw-bold {% if cf.is_income %}text-success{% else %}text-danger{% endif %}">
-                            {% if cf.is_income %}+{% else %}-{% endif %}
-                            {% if cf.frequency == 'monthly' %}
-                                {{ cf.value|intcomma }} €
-                            {% else %}
-                                {{ cf.value|divisibleby:12|default:cf.value|intcomma }} €
-                            {% endif %}
+                            {% if cf.is_income %}+{% else %}-{% endif %}{{ cf.monthly_amount|floatformat:2|intcomma }} €
                         </td>
                         <td class="py-3 px-3 text-end font-monospace text-muted small">
-                            {{ cf.value|intcomma }} € / {{ cf.get_frequency_display }}
+                            {{ cf.value|floatformat:2|intcomma }} € / {{ cf.get_frequency_display }}
                         </td>
                         <td class="py-3 px-4 text-end">
                             <div class="btn-group btn-group-sm">
@@ -393,7 +388,7 @@
                                         <td class="fw-semibold">{{ cf.name }}</td>
                                         <td>{{ cf.category.translated_name|default:'-' }}</td>
                                         <td class="text-end font-monospace {% if cf.is_income %}text-success{% else %}text-danger{% endif %}">
-                                            {{ cf.value|intcomma }} € / {{ cf.get_frequency_display }}
+                                            {{ cf.value|floatformat:2|intcomma }} € / {{ cf.get_frequency_display }}
                                         </td>
                                     </tr>
                                     {% endfor %}

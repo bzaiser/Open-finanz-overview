@@ -2288,9 +2288,10 @@ def cash_flow_list(request):
     today = timezone.now().date()
     
     for cf in cash_flows:
-        is_active = (not cf.start_date or cf.start_date <= today) and (not cf.end_date or cf.end_date >= today)
+        # An entry is active if it has not expired in the past
+        is_active = not (cf.end_date and cf.end_date < today)
         if is_active:
-            m_val = cf.value if cf.frequency == 'monthly' else cf.value / Decimal('12')
+            m_val = cf.value if cf.frequency == 'monthly' else (cf.value / Decimal('12'))
             y_val = cf.value * Decimal('12') if cf.frequency == 'monthly' else cf.value
             
             if cf.is_income:
@@ -2300,8 +2301,12 @@ def cash_flow_list(request):
                 monthly_expense_sum += m_val
                 yearly_expense_sum += y_val
                 
-    monthly_net_surplus = monthly_income_sum - monthly_expense_sum
-    yearly_net_surplus = yearly_income_sum - yearly_expense_sum
+    monthly_income_sum = monthly_income_sum.quantize(Decimal('0.01'))
+    monthly_expense_sum = monthly_expense_sum.quantize(Decimal('0.01'))
+    monthly_net_surplus = (monthly_income_sum - monthly_expense_sum).quantize(Decimal('0.01'))
+    yearly_income_sum = yearly_income_sum.quantize(Decimal('0.01'))
+    yearly_expense_sum = yearly_expense_sum.quantize(Decimal('0.01'))
+    yearly_net_surplus = (yearly_income_sum - yearly_expense_sum).quantize(Decimal('0.01'))
     
     context = {
         'cash_flows': cash_flows,

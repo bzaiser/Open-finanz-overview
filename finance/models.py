@@ -55,6 +55,12 @@ class CashFlowSource(models.Model):
         verbose_name = _("Cash Flow Source")
         verbose_name_plural = _("Cash Flow Sources")
 
+    @property
+    def monthly_amount(self):
+        if self.frequency == 'yearly' and self.value:
+            return (self.value / Decimal('12')).quantize(Decimal('0.01'))
+        return self.value
+
     def __str__(self):
         return f"{self.name} ({self.value})"
 
