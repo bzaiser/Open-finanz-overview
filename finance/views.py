@@ -2336,8 +2336,42 @@ def cash_flow_list(request):
     # Display cash flows filtered by selected year
     filtered_cash_flows = [cf for cf in cash_flows if cf.is_active_in_selected_year]
     
+    cash_flows_json = []
+    for cf in filtered_cash_flows:
+        s_date_str = cf.start_date.strftime('%Y-%m-%d') if cf.start_date else ''
+        e_date_str = cf.end_date.strftime('%Y-%m-%d') if cf.end_date else ''
+        
+        if cf.start_date and cf.end_date:
+            period_fmt = f"{cf.start_date.strftime('%m/%Y')} - {cf.end_date.strftime('%m/%Y')}"
+        elif cf.start_date:
+            period_fmt = f"ab {cf.start_date.strftime('%m/%Y')}"
+        elif cf.end_date:
+            period_fmt = f"bis {cf.start_date.strftime('%m/%Y')}"
+        else:
+            period_fmt = str(_("Continuous"))
+
+        cash_flows_json.append({
+            'id': cf.id,
+            'name': cf.name,
+            'value': float(cf.value),
+            'monthly_amount': float(cf.monthly_amount),
+            'is_income': cf.is_income,
+            'frequency': cf.frequency,
+            'frequency_display': str(cf.get_frequency_display()),
+            'category_id': cf.category.id if cf.category else None,
+            'category_name': cf.category.name if cf.category else '',
+            'category_translated': cf.category.translated_name if cf.category else '-',
+            'start_date': s_date_str,
+            'end_date': e_date_str,
+            'period_formatted': period_fmt,
+            'is_inflation_adjusted': cf.is_inflation_adjusted,
+            'notes': cf.notes or '',
+            'is_expired': bool(cf.end_date and cf.end_date < today)
+        })
+
     context = {
         'cash_flows': filtered_cash_flows,
+        'cash_flows_json': json.dumps(cash_flows_json),
         'all_cash_flows': cash_flows,
         'categories': categories,
         'available_years': available_years,
