@@ -383,3 +383,36 @@ msgstr "Edit source model"
 
 msgid "Income & Expenses"
 msgstr "Income & Expenses"
+
+msgid "Validity Period"
+msgstr "Validity Period"
+
+msgid "Frequency"
+msgstr "Frequency"
+
+msgid "Monthly Amount"
+msgstr "Monthly Amount"
+
+msgid "Original Amount"
+msgstr "Original Amount"
+
+msgid "Actions"
+msgstr "Actions"
+
+msgid "Sort by Name"
+msgstr "Sort by Name"
+
+msgid "Sort by Category"
+msgstr "Sort by Category"
+
+msgid "Sort by Period"
+msgstr "Sort by Period"
+
+msgid "Sort by Frequency"
+msgstr "Sort by Frequency"
+
+msgid "Sort by Monthly Amount"
+msgstr "Sort by Monthly Amount"
+
+msgid "Sort by Original Amount"
+msgstr "Sort by Original Amount"

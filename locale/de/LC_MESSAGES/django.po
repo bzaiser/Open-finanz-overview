@@ -2381,3 +2381,36 @@ msgstr "Quellmodell bearbeiten"
 
 msgid "Income & Expenses"
 msgstr "Einnahmen & Ausgaben"
+
+msgid "Validity Period"
+msgstr "Gültigkeitszeitraum"
+
+msgid "Frequency"
+msgstr "Turnus"
+
+msgid "Monthly Amount"
+msgstr "Monatlicher Betrag"
+
+msgid "Original Amount"
+msgstr "Ursprünglicher Betrag"
+
+msgid "Actions"
+msgstr "Aktionen"
+
+msgid "Sort by Name"
+msgstr "Nach Name sortieren"
+
+msgid "Sort by Category"
+msgstr "Nach Kategorie sortieren"
+
+msgid "Sort by Period"
+msgstr "Nach Zeitraum sortieren"
+
+msgid "Sort by Frequency"
+msgstr "Nach Turnus sortieren"
+
+msgid "Sort by Monthly Amount"
+msgstr "Nach Monatsbetrag sortieren"
+
+msgid "Sort by Original Amount"
+msgstr "Nach Ursprungsbetrag sortieren"

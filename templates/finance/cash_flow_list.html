@@ -292,7 +292,7 @@
                         </th>
 
                         <!-- Header: Actions -->
-                        <th class="py-3 px-4 text-end text-nowrap" style="background-color: var(--app-table-header-bg) !important; color: var(--app-table-header-text) !important;">{% trans "Actions" %}</th>
+                        <th class="py-3 px-2 text-end text-nowrap" style="background-color: var(--app-table-header-bg) !important; color: var(--app-table-header-text) !important; width: 1%;">{% trans "Actions" %}</th>
                     </tr>
                 </thead>
 
@@ -327,7 +327,7 @@
                             <td class="py-3 px-3 text-end font-monospace opacity-75 small">
                                 <span x-text="formatEuro(item.value) + ' € / ' + item.frequency_display"></span>
                             </td>
-                            <td class="py-3 px-4 text-end">
+                            <td class="py-3 px-2 text-end text-nowrap" style="width: 1%;">
                                 <div x-show="item.can_edit" class="btn-group btn-group-sm">
                                     <button type="button" class="btn btn-outline-secondary border-0" @click="openEditModalFromObj(item)">
                                         <i class="bi bi-pencil"></i>
@@ -405,7 +405,7 @@
                                 <td class="py-3 px-3 text-end font-monospace opacity-75 small">
                                     <span x-text="formatEuro(item.value) + ' € / ' + item.frequency_display"></span>
                                 </td>
-                                <td class="py-3 px-4 text-end">
+                                <td class="py-3 px-2 text-end text-nowrap" style="width: 1%;">
                                     <div x-show="item.can_edit" class="btn-group btn-group-sm">
                                         <button type="button" class="btn btn-outline-secondary border-0" @click="openEditModalFromObj(item)">
                                             <i class="bi bi-pencil"></i>
