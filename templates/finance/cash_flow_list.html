@@ -156,19 +156,19 @@
     </div>
 
     <!-- Active Grouping Indicator Bar (if grouped) -->
-    <div x-show="groupColumn" class="alert alert-primary py-2 px-3 rounded-4 shadow-sm mb-3 d-flex justify-content-between align-items-center">
+    <div x-show="groupColumn" class="alert alert-warning py-2 px-3 rounded-4 shadow-sm mb-3 d-flex justify-content-between align-items-center" style="background-color: rgba(255, 152, 0, 0.12); border: 1px solid rgba(255, 152, 0, 0.3); color: var(--app-card-color);">
         <div class="d-flex align-items-center gap-2 small">
-            <i class="bi bi-folder-check fs-5"></i>
+            <i class="bi bi-diagram-2-fill fs-5" style="color: #ff9800;"></i>
             <span>
-                {% trans "Grouped by" %}: <strong x-text="getGroupColumnLabel()"></strong>
+                {% trans "Grouped by" %}: <strong x-text="getGroupColumnLabel()" style="color: #ff9800;"></strong>
             </span>
         </div>
         <div class="d-flex align-items-center gap-2">
-            <button type="button" class="btn btn-sm btn-outline-primary py-1 px-2 text-nowrap" @click="toggleAllGroups()">
+            <button type="button" class="btn btn-sm btn-outline-warning py-1 px-2 text-nowrap" style="color: #ff9800; border-color: #ff9800;" @click="toggleAllGroups()">
                 <i class="bi" :class="allGroupsCollapsed ? 'bi-arrows-expand' : 'bi-arrows-collapse'"></i>
                 <span x-text="allGroupsCollapsed ? '{% trans "Expand All" %}' : '{% trans "Collapse All" %}'"></span>
             </button>
-            <button type="button" class="btn btn-sm btn-link text-danger p-0" @click="setGroupColumn('')">
+            <button type="button" class="btn btn-sm btn-link text-danger p-0 ms-2" @click="setGroupColumn('')" title="{% trans 'Remove grouping' %}">
                 <i class="bi bi-x-circle fs-5"></i>
             </button>
         </div>
@@ -183,10 +183,10 @@
                         <!-- Header: Name -->
                         <th class="py-3 px-4 text-nowrap user-select-none" style="background-color: var(--app-table-header-bg) !important; color: var(--app-table-header-text) !important;">
                             <div class="d-flex align-items-center justify-content-between gap-2">
-                                <span @click="sortBy('name')" style="cursor: pointer;" class="fw-bold">
+                                <span @click="sortBy('name')" style="cursor: pointer;" class="fw-bold me-2">
                                     {% trans "Name" %}
                                 </span>
-                                <div class="d-inline-flex align-items-center gap-1">
+                                <div class="d-inline-flex align-items-center ms-auto" style="gap: 4px;">
                                     <i class="bi p-1" 
                                        :class="getSortIcon('name')" 
                                        :style="sortColumn === 'name' ? 'color: #ff9800 !important; font-weight: bold;' : 'color: inherit; opacity: 0.75;'" 
@@ -204,10 +204,10 @@
                         <!-- Header: Category & Source -->
                         <th class="py-3 px-3 text-nowrap user-select-none" style="background-color: var(--app-table-header-bg) !important; color: var(--app-table-header-text) !important;">
                             <div class="d-flex align-items-center justify-content-between gap-2">
-                                <span @click="sortBy('category')" style="cursor: pointer;" class="fw-bold">
+                                <span @click="sortBy('category')" style="cursor: pointer;" class="fw-bold me-2">
                                     {% trans "Category / Source" %}
                                 </span>
-                                <div class="d-inline-flex align-items-center gap-1">
+                                <div class="d-inline-flex align-items-center ms-auto" style="gap: 4px;">
                                     <i class="bi p-1" 
                                        :class="getSortIcon('category')" 
                                        :style="sortColumn === 'category' ? 'color: #ff9800 !important; font-weight: bold;' : 'color: inherit; opacity: 0.75;'" 
@@ -225,10 +225,10 @@
                         <!-- Header: Validity Period -->
                         <th class="py-3 px-3 text-nowrap user-select-none" style="background-color: var(--app-table-header-bg) !important; color: var(--app-table-header-text) !important;">
                             <div class="d-flex align-items-center justify-content-between gap-2">
-                                <span @click="sortBy('period')" style="cursor: pointer;" class="fw-bold">
+                                <span @click="sortBy('period')" style="cursor: pointer;" class="fw-bold me-2">
                                     {% trans "Validity Period" %}
                                 </span>
-                                <div class="d-inline-flex align-items-center gap-1">
+                                <div class="d-inline-flex align-items-center ms-auto" style="gap: 4px;">
                                     <i class="bi p-1" 
                                        :class="getSortIcon('period')" 
                                        :style="sortColumn === 'period' ? 'color: #ff9800 !important; font-weight: bold;' : 'color: inherit; opacity: 0.75;'" 
@@ -241,10 +241,10 @@
                         <!-- Header: Frequency -->
                         <th class="py-3 px-3 text-center text-nowrap user-select-none" style="background-color: var(--app-table-header-bg) !important; color: var(--app-table-header-text) !important;">
                             <div class="d-flex align-items-center justify-content-center gap-2">
-                                <span @click="sortBy('frequency')" style="cursor: pointer;" class="fw-bold">
+                                <span @click="sortBy('frequency')" style="cursor: pointer;" class="fw-bold me-2">
                                     {% trans "Frequency" %}
                                 </span>
-                                <div class="d-inline-flex align-items-center gap-1">
+                                <div class="d-inline-flex align-items-center" style="gap: 4px;">
                                     <i class="bi p-1" 
                                        :class="getSortIcon('frequency')" 
                                        :style="sortColumn === 'frequency' ? 'color: #ff9800 !important; font-weight: bold;' : 'color: inherit; opacity: 0.75;'" 
@@ -262,28 +262,32 @@
                         <!-- Header: Monthly Amount -->
                         <th class="py-3 px-3 text-end text-nowrap user-select-none" style="background-color: var(--app-table-header-bg) !important; color: var(--app-table-header-text) !important;">
                             <div class="d-flex align-items-center justify-content-end gap-2">
-                                <span @click="sortBy('monthly_amount')" style="cursor: pointer;" class="fw-bold">
+                                <span @click="sortBy('monthly_amount')" style="cursor: pointer;" class="fw-bold me-2">
                                     {% trans "Monthly Amount" %}
                                 </span>
-                                <i class="bi p-1" 
-                                   :class="getSortIcon('monthly_amount')" 
-                                   :style="sortColumn === 'monthly_amount' ? 'color: #ff9800 !important; font-weight: bold;' : 'color: inherit; opacity: 0.75;'" 
-                                   @click.stop="sortBy('monthly_amount')" 
-                                   title="{% trans 'Sort by Monthly Amount' %}" style="cursor: pointer;"></i>
+                                <div class="d-inline-flex align-items-center" style="gap: 4px;">
+                                    <i class="bi p-1" 
+                                       :class="getSortIcon('monthly_amount')" 
+                                       :style="sortColumn === 'monthly_amount' ? 'color: #ff9800 !important; font-weight: bold;' : 'color: inherit; opacity: 0.75;'" 
+                                       @click.stop="sortBy('monthly_amount')" 
+                                       title="{% trans 'Sort by Monthly Amount' %}" style="cursor: pointer;"></i>
+                                </div>
                             </div>
                         </th>
 
                         <!-- Header: Original Amount -->
                         <th class="py-3 px-3 text-end text-nowrap user-select-none" style="background-color: var(--app-table-header-bg) !important; color: var(--app-table-header-text) !important;">
                             <div class="d-flex align-items-center justify-content-end gap-2">
-                                <span @click="sortBy('value')" style="cursor: pointer;" class="fw-bold">
+                                <span @click="sortBy('value')" style="cursor: pointer;" class="fw-bold me-2">
                                     {% trans "Original Amount" %}
                                 </span>
-                                <i class="bi p-1" 
-                                   :class="getSortIcon('value')" 
-                                   :style="sortColumn === 'value' ? 'color: #ff9800 !important; font-weight: bold;' : 'color: inherit; opacity: 0.75;'" 
-                                   @click.stop="sortBy('value')" 
-                                   title="{% trans 'Sort by Original Amount' %}" style="cursor: pointer;"></i>
+                                <div class="d-inline-flex align-items-center" style="gap: 4px;">
+                                    <i class="bi p-1" 
+                                       :class="getSortIcon('value')" 
+                                       :style="sortColumn === 'value' ? 'color: #ff9800 !important; font-weight: bold;' : 'color: inherit; opacity: 0.75;'" 
+                                       @click.stop="sortBy('value')" 
+                                       title="{% trans 'Sort by Original Amount' %}" style="cursor: pointer;"></i>
+                                </div>
                             </div>
                         </th>
 
@@ -350,9 +354,9 @@
                     </tr>
                 </tbody>
 
-                <!-- Collapsible Grouped View -->
-                <tbody x-show="groupColumn" style="background-color: var(--app-table-body-bg); color: var(--app-table-body-text);">
-                    <template x-for="group in groupedItems" :key="group.groupName">
+                <!-- Collapsible Grouped View (Each group gets a dedicated <tbody> to comply with Alpine.js single root template node rule) -->
+                <template x-for="group in groupedItems" :key="group.groupName">
+                    <tbody x-show="groupColumn" style="background-color: var(--app-table-body-bg); color: var(--app-table-body-text);">
                         <!-- Group Header Row -->
                         <tr style="background-color: var(--app-table-filter-bg) !important; color: var(--app-table-body-text) !important; border-bottom: 1px solid var(--app-table-border-color);" 
                             class="fw-bold user-select-none" 
@@ -419,8 +423,8 @@
                                 </td>
                             </tr>
                         </template>
-                    </template>
-                </tbody>
+                    </tbody>
+                </template>
             </table>
         </div>
     </div>
