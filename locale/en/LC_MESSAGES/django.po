@@ -380,3 +380,6 @@ msgstr "Remove grouping"
 
 msgid "Edit source model"
 msgstr "Edit source model"
+
+msgid "Income & Expenses"
+msgstr "Income & Expenses"

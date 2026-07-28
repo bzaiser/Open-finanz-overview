@@ -2358,6 +2358,9 @@ msgstr "Type (Revenu/Dépense)"
 msgid "Auto-linked"
 msgstr "Lié automatiquement"
 
+msgid "Income & Expenses"
+msgstr "Revenus et Dépenses"
+
 msgid "Overview of all cash flows (manual entries, pensions, rental income, asset withdrawals, and loan payments)."
 msgstr "Aperçu de tous les flux de trésorerie (saisies manuelles, pensions, loyers, retraits de patrimoine et crédits)."
 

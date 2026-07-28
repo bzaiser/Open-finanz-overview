@@ -2343,4 +2343,7 @@ msgid "Select Manual Entries to Adjust"
 msgstr "Seleccionar entradas manuales para ajustar"
 
 msgid "Select active manual cash flow entries to adjust for the new year. Original records will automatically receive an end date (e.g. 31.12.), and new copied records will start on your chosen date."
-msgstr "Seleccione las entradas manuales activas para ajustar el nuevo año. Los registros originales recibirán una fecha de fin y las copias comenzarán en la fecha elegida."
+msgstr "Seleccionar entradas manuales activas para ajustar para el nuevo año."
+
+msgid "Income & Expenses"
+msgstr "Ingresos y Gastos"

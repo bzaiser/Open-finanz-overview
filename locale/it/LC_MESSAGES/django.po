@@ -2347,6 +2347,9 @@ msgstr "Tipo (Entrata/Uscita)"
 msgid "Auto-linked"
 msgstr "Collegato"
 
+msgid "Income & Expenses"
+msgstr "Entrate e Uscite"
+
 msgid "Overview of all cash flows (manual entries, pensions, rental income, asset withdrawals, and loan payments)."
 msgstr "Panoramica di tutti i flussi di cassa (inserimenti manuali, pensioni, affitti, prelievi e prestiti)."
 
