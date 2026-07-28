@@ -12,7 +12,7 @@
                 <i class="bi bi-arrow-down-up text-primary"></i>
                 {% trans "Income & Expenses" %}
             </h2>
-            <p class="text-muted small mb-0">{% trans "Manage your recurring cash flows and carry out annual adjustments effortlessly." %}</p>
+            <p class="text-muted small mb-0">{% trans "Overview of all cash flows (manual entries, pensions, rental income, asset withdrawals, and loan payments)." %}</p>
         </div>
         <div class="d-flex gap-2">
             <button class="btn btn-outline-primary d-flex align-items-center gap-2 shadow-sm rounded-pill px-3 py-2"
@@ -95,7 +95,7 @@
         </div>
     </div>
 
-    <!-- Filter Bar & Search -->
+    <!-- Filter Bar & Controls -->
     <div class="card border-0 shadow-sm rounded-4 mb-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
         <div class="card-body p-3">
             <form method="get" id="yearFilterForm" class="row g-3 align-items-center">
@@ -104,7 +104,7 @@
                         <span class="input-group-text bg-transparent border-end-0 text-muted">
                             <i class="bi bi-search"></i>
                         </span>
-                        <input type="text" x-model="searchQuery" class="form-control border-start-0" placeholder="{% trans 'Search by name, category, or note...' %}">
+                        <input type="text" x-model="searchQuery" class="form-control border-start-0" placeholder="{% trans 'Search by name, category, note...' %}">
                     </div>
                 </div>
                 <div class="col-md-3">
@@ -144,22 +144,33 @@
                     </div>
                 </div>
                 <div class="col-md-2 text-end">
-                    <div class="d-flex gap-1">
-                        <button type="button" class="btn btn-sm w-100 btn-outline-primary d-flex align-items-center justify-content-center gap-1"
-                                :class="{'active': groupByCategory}"
-                                @click="groupByCategory = !groupByCategory">
-                            <i class="bi" :class="groupByCategory ? 'bi-folder-check' : 'bi-folder2-open'"></i>
-                            <span x-text="groupByCategory ? '{% trans "Grouped" %}' : '{% trans "Group by Category" %}'"></span>
-                        </button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary d-flex align-items-center justify-content-center px-2"
-                                x-show="groupByCategory"
-                                @click="toggleAllGroups()"
-                                :title="allGroupsCollapsed ? '{% trans "Expand All" %}' : '{% trans "Collapse All" %}'">
-                            <i class="bi" :class="allGroupsCollapsed ? 'bi-arrows-expand' : 'bi-arrows-collapse'"></i>
-                        </button>
-                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-secondary w-100 d-flex align-items-center justify-content-center gap-1"
+                            @click="resetAllFilters()"
+                            title="{% trans 'Reset all search, sorting and grouping settings' %}">
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                        <span>{% trans "Reset Filters" %}</span>
+                    </button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Active Grouping Indicator Bar (if grouped) -->
+    <div x-show="groupColumn" class="alert alert-primary py-2 px-3 rounded-4 shadow-sm mb-3 d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center gap-2 small">
+            <i class="bi bi-folder-check fs-5"></i>
+            <span>
+                {% trans "Grouped by" %}: <strong x-text="getGroupColumnLabel()"></strong>
+            </span>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <button type="button" class="btn btn-sm btn-outline-primary py-1 px-2 text-nowrap" @click="toggleAllGroups()">
+                <i class="bi" :class="allGroupsCollapsed ? 'bi-arrows-expand' : 'bi-arrows-collapse'"></i>
+                <span x-text="allGroupsCollapsed ? '{% trans "Expand All" %}' : '{% trans "Collapse All" %}'"></span>
+            </button>
+            <button type="button" class="btn btn-sm btn-link text-danger p-0" @click="setGroupColumn('')">
+                <i class="bi bi-x-circle fs-5"></i>
+            </button>
         </div>
     </div>
 
@@ -169,30 +180,74 @@
             <table class="table table-hover align-middle mb-0" style="font-size: 0.88rem; --bs-table-bg: transparent; --bs-table-color: inherit;">
                 <thead class="table-light text-uppercase small" style="font-size: 0.7rem; letter-spacing: 0.05em;">
                     <tr>
-                        <th class="py-3 px-4 user-select-none" @click="sortBy('name')" style="cursor: pointer;">
-                            {% trans "Name" %} <i class="bi" :class="getSortIcon('name')"></i>
+                        <!-- Header: Name -->
+                        <th class="py-3 px-4 user-select-none">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <span @click="sortBy('name')" style="cursor: pointer;" class="fw-bold">
+                                    {% trans "Name" %} <i class="bi" :class="getSortIcon('name')"></i>
+                                </span>
+                                <i class="bi bi-diagram-2 p-1 text-muted opacity-50 hover-opacity-100 ms-1" 
+                                   @click.stop="setGroupColumn('name')" 
+                                   title="{% trans 'Group by Name' %}" style="cursor: pointer;"></i>
+                            </div>
                         </th>
-                        <th class="py-3 px-3 user-select-none" @click="sortBy('category')" style="cursor: pointer;">
-                            {% trans "Type" %} / {% trans "Category" %} <i class="bi" :class="getSortIcon('category')"></i>
+
+                        <!-- Header: Category & Source -->
+                        <th class="py-3 px-3 user-select-none">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <span @click="sortBy('category')" style="cursor: pointer;" class="fw-bold">
+                                    {% trans "Category / Source" %} <i class="bi" :class="getSortIcon('category')"></i>
+                                </span>
+                                <div class="d-flex gap-1">
+                                    <i class="bi bi-diagram-2 p-1 text-muted opacity-50 hover-opacity-100 ms-1" 
+                                       @click.stop="setGroupColumn('category')" 
+                                       title="{% trans 'Group by Category' %}" style="cursor: pointer;"></i>
+                                </div>
+                            </div>
                         </th>
-                        <th class="py-3 px-3 user-select-none" @click="sortBy('period')" style="cursor: pointer;">
-                            {% trans "Validity Period" %} <i class="bi" :class="getSortIcon('period')"></i>
+
+                        <!-- Header: Validity Period -->
+                        <th class="py-3 px-3 user-select-none">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <span @click="sortBy('period')" style="cursor: pointer;" class="fw-bold">
+                                    {% trans "Validity Period" %} <i class="bi" :class="getSortIcon('period')"></i>
+                                </span>
+                            </div>
                         </th>
-                        <th class="py-3 px-3 text-center user-select-none" @click="sortBy('frequency')" style="cursor: pointer;">
-                            {% trans "Frequency" %} <i class="bi" :class="getSortIcon('frequency')"></i>
+
+                        <!-- Header: Frequency -->
+                        <th class="py-3 px-3 text-center user-select-none">
+                            <div class="d-flex align-items-center justify-content-center gap-1">
+                                <span @click="sortBy('frequency')" style="cursor: pointer;" class="fw-bold">
+                                    {% trans "Frequency" %} <i class="bi" :class="getSortIcon('frequency')"></i>
+                                </span>
+                                <i class="bi bi-diagram-2 p-1 text-muted opacity-50 hover-opacity-100 ms-1" 
+                                   @click.stop="setGroupColumn('frequency')" 
+                                   title="{% trans 'Group by Frequency' %}" style="cursor: pointer;"></i>
+                            </div>
                         </th>
-                        <th class="py-3 px-3 text-end user-select-none" @click="sortBy('monthly_amount')" style="cursor: pointer;">
-                            {% trans "Monthly Amount" %} <i class="bi" :class="getSortIcon('monthly_amount')"></i>
+
+                        <!-- Header: Monthly Amount -->
+                        <th class="py-3 px-3 text-end user-select-none">
+                            <span @click="sortBy('monthly_amount')" style="cursor: pointer;" class="fw-bold">
+                                {% trans "Monthly Amount" %} <i class="bi" :class="getSortIcon('monthly_amount')"></i>
+                            </span>
                         </th>
-                        <th class="py-3 px-3 text-end user-select-none" @click="sortBy('value')" style="cursor: pointer;">
-                            {% trans "Original Amount" %} <i class="bi" :class="getSortIcon('value')"></i>
+
+                        <!-- Header: Original Amount -->
+                        <th class="py-3 px-3 text-end user-select-none">
+                            <span @click="sortBy('value')" style="cursor: pointer;" class="fw-bold">
+                                {% trans "Original Amount" %} <i class="bi" :class="getSortIcon('value')"></i>
+                            </span>
                         </th>
+
+                        <!-- Header: Actions -->
                         <th class="py-3 px-4 text-end">{% trans "Actions" %}</th>
                     </tr>
                 </thead>
 
                 <!-- Standard Table View (Not Grouped) -->
-                <tbody x-show="!groupByCategory">
+                <tbody x-show="!groupColumn">
                     <template x-for="item in sortedItems" :key="item.id">
                         <tr :class="{'opacity-50': item.is_expired}">
                             <td class="py-3 px-4 fw-semibold">
@@ -209,7 +264,8 @@
                             </td>
                             <td class="py-3 px-3">
                                 <span class="badge rounded-pill me-1" :class="item.is_income ? 'bg-success-subtle text-success border border-success-subtle' : 'bg-danger-subtle text-danger border border-danger-subtle'" style="font-size: 0.7rem;" x-text="item.is_income ? '{% trans "Income" %}' : '{% trans "Expense" %}'"></span>
-                                <span x-show="item.category_translated !== '-'" class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary-subtle rounded-pill" style="font-size: 0.7rem;" x-text="item.category_translated"></span>
+                                <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary-subtle rounded-pill me-1" style="font-size: 0.7rem;" x-text="item.category_translated"></span>
+                                <span x-show="item.source_type !== 'manual'" class="badge bg-info bg-opacity-10 text-info border border-info-subtle rounded-pill" style="font-size: 0.7rem;" x-text="item.source_label"></span>
                             </td>
                             <td class="py-3 px-3 small font-monospace" x-text="item.period_formatted"></td>
                             <td class="py-3 px-3 text-center small">
@@ -222,17 +278,20 @@
                                 <span x-text="formatEuro(item.value) + ' € / ' + item.frequency_display"></span>
                             </td>
                             <td class="py-3 px-4 text-end">
-                                <div class="btn-group btn-group-sm">
+                                <div x-show="item.can_edit" class="btn-group btn-group-sm">
                                     <button type="button" class="btn btn-outline-secondary border-0" @click="openEditModalFromObj(item)">
                                         <i class="bi bi-pencil"></i>
                                     </button>
-                                    <form method="post" :action="'/finance/cash-flows/delete/' + item.id + '/'" class="d-inline" onsubmit="return confirm('{% trans "Are you sure you want to delete this cash flow entry?" %}');">
+                                    <form method="post" :action="'/finance/cash-flows/delete/' + item.raw_id + '/'" class="d-inline" onsubmit="return confirm('{% trans "Are you sure you want to delete this cash flow entry?" %}');">
                                         {% csrf_token %}
                                         <button type="submit" class="btn btn-outline-danger border-0">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </form>
                                 </div>
+                                <span x-show="!item.can_edit" class="badge bg-light text-secondary border small">
+                                    <i class="bi bi-link-45deg me-1"></i>{% trans "Auto-linked" %}
+                                </span>
                             </td>
                         </tr>
                     </template>
@@ -245,17 +304,17 @@
                     </tr>
                 </tbody>
 
-                <!-- Collapsible Grouped View By Category -->
-                <tbody x-show="groupByCategory">
-                    <template x-for="group in groupedCategories" :key="group.categoryName">
-                        <!-- Category Header Row -->
+                <!-- Collapsible Grouped View -->
+                <tbody x-show="groupColumn">
+                    <template x-for="group in groupedItems" :key="group.groupName">
+                        <!-- Group Header Row -->
                         <tr class="table-secondary bg-opacity-20 fw-bold border-bottom user-select-none" 
-                            @click="toggleGroup(group.categoryName)" 
+                            @click="toggleGroup(group.groupName)" 
                             style="cursor: pointer;"
                             title="{% trans 'Click to toggle group' %}">
                             <td colspan="4" class="py-2 px-4">
-                                <i class="bi" :class="isGroupCollapsed(group.categoryName) ? 'bi-chevron-right text-muted' : 'bi-chevron-down text-primary'"></i>
-                                <span x-text="group.categoryName" class="ms-1 fw-bold"></span>
+                                <i class="bi" :class="isGroupCollapsed(group.groupName) ? 'bi-chevron-right text-muted' : 'bi-chevron-down text-primary'"></i>
+                                <span x-text="group.groupName" class="ms-1 fw-bold"></span>
                                 <span class="badge bg-secondary rounded-pill ms-2" x-text="group.items.length"></span>
                             </td>
                             <td class="py-2 px-3 text-end font-monospace small">
@@ -265,9 +324,9 @@
                             <td colspan="2"></td>
                         </tr>
 
-                        <!-- Category Item Rows -->
+                        <!-- Group Item Rows -->
                         <template x-for="item in group.items" :key="item.id">
-                            <tr x-show="!isGroupCollapsed(group.categoryName)" :class="{'opacity-50': item.is_expired}">
+                            <tr x-show="!isGroupCollapsed(group.groupName)" :class="{'opacity-50': item.is_expired}">
                                 <td class="py-3 px-4 fw-semibold ps-5">
                                     <div class="d-flex align-items-center gap-2">
                                         <span class="badge rounded-circle p-2" :class="item.is_income ? 'bg-success bg-opacity-10 text-success' : 'bg-danger bg-opacity-10 text-danger'">
@@ -281,7 +340,9 @@
                                     </div>
                                 </td>
                                 <td class="py-3 px-3">
-                                    <span class="badge rounded-pill" :class="item.is_income ? 'bg-success-subtle text-success border border-success-subtle' : 'bg-danger-subtle text-danger border border-danger-subtle'" style="font-size: 0.7rem;" x-text="item.is_income ? '{% trans "Income" %}' : '{% trans "Expense" %}'"></span>
+                                    <span class="badge rounded-pill me-1" :class="item.is_income ? 'bg-success-subtle text-success border border-success-subtle' : 'bg-danger-subtle text-danger border border-danger-subtle'" style="font-size: 0.7rem;" x-text="item.is_income ? '{% trans "Income" %}' : '{% trans "Expense" %}'"></span>
+                                    <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary-subtle rounded-pill me-1" style="font-size: 0.7rem;" x-text="item.category_translated"></span>
+                                    <span x-show="item.source_type !== 'manual'" class="badge bg-info bg-opacity-10 text-info border border-info-subtle rounded-pill" style="font-size: 0.7rem;" x-text="item.source_label"></span>
                                 </td>
                                 <td class="py-3 px-3 small font-monospace" x-text="item.period_formatted"></td>
                                 <td class="py-3 px-3 text-center small">
@@ -294,17 +355,20 @@
                                     <span x-text="formatEuro(item.value) + ' € / ' + item.frequency_display"></span>
                                 </td>
                                 <td class="py-3 px-4 text-end">
-                                    <div class="btn-group btn-group-sm">
+                                    <div x-show="item.can_edit" class="btn-group btn-group-sm">
                                         <button type="button" class="btn btn-outline-secondary border-0" @click="openEditModalFromObj(item)">
                                             <i class="bi bi-pencil"></i>
                                         </button>
-                                        <form method="post" :action="'/finance/cash-flows/delete/' + item.id + '/'" class="d-inline" onsubmit="return confirm('{% trans "Are you sure you want to delete this cash flow entry?" %}');">
+                                        <form method="post" :action="'/finance/cash-flows/delete/' + item.raw_id + '/'" class="d-inline" onsubmit="return confirm('{% trans "Are you sure you want to delete this cash flow entry?" %}');">
                                             {% csrf_token %}
                                             <button type="submit" class="btn btn-outline-danger border-0">
                                                 <i class="bi bi-trash"></i>
                                             </button>
                                         </form>
                                     </div>
+                                    <span x-show="!item.can_edit" class="badge bg-light text-secondary border small">
+                                        <i class="bi bi-link-45deg me-1"></i>{% trans "Auto-linked" %}
+                                    </span>
                                 </td>
                             </tr>
                         </template>
@@ -325,7 +389,6 @@
                 <form method="post" :action="editId ? '/finance/cash-flows/save/' + editId + '/' : '{% url "finance:cash_flow_add" %}'">
                     {% csrf_token %}
                     <div class="modal-body pt-3">
-                        <!-- Type selector -->
                         <div class="mb-3">
                             <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Entry Type" %}</label>
                             <div class="btn-group w-100" role="group">
@@ -340,7 +403,6 @@
                             </div>
                         </div>
 
-                        <!-- Name & Amount -->
                         <div class="row g-2 mb-3">
                             <div class="col-md-7">
                                 <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Name" %}</label>
@@ -352,7 +414,6 @@
                             </div>
                         </div>
 
-                        <!-- Category & Frequency -->
                         <div class="row g-2 mb-3">
                             <div class="col-md-6">
                                 <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Category" %}</label>
@@ -372,7 +433,6 @@
                             </div>
                         </div>
 
-                        <!-- Validity Period (Start & End Date) -->
                         <div class="row g-2 mb-3">
                             <div class="col-md-6">
                                 <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Start Date" %}</label>
@@ -384,7 +444,6 @@
                             </div>
                         </div>
 
-                        <!-- Options & Notes -->
                         <div class="form-check form-switch mb-3">
                             <input class="form-check-input" type="checkbox" name="is_inflation_adjusted" id="is_inflation_adjusted" x-model="form.is_inflation_adjusted">
                             <label class="form-check-label small" for="is_inflation_adjusted">
@@ -407,7 +466,7 @@
         </div>
     </div>
 
-    <!-- Annual Adjustment Wizard Modal (3 Steps) -->
+    <!-- Annual Adjustment Wizard Modal (Only Manual Entries) -->
     <div class="modal fade" id="annualAdjustmentWizardModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content border-0 shadow-lg rounded-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
@@ -424,10 +483,9 @@
                     <div class="modal-body p-4">
                         <div class="alert alert-info py-2 small mb-4">
                             <i class="bi bi-info-circle me-1"></i>
-                            {% trans "Select active entries to adjust for the new year. Original records will automatically receive an end date (e.g. 31.12.), and new copied records will start on your chosen date." %}
+                            {% trans "Select active manual cash flow entries to adjust for the new year. Original records will automatically receive an end date (e.g. 31.12.), and new copied records will start on your chosen date." %}
                         </div>
 
-                        <!-- Step 1: Select Date & Percentage Adjustment -->
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
                                 <label class="form-label fw-bold small text-uppercase">{% trans "New Start Date" %}</label>
@@ -446,9 +504,8 @@
                             </div>
                         </div>
 
-                        <!-- Step 2: Select Entries to Copy & Adjust -->
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                            <label class="form-label fw-bold small text-uppercase mb-0">{% trans "Select Entries to Adjust" %}</label>
+                            <label class="form-label fw-bold small text-uppercase mb-0">{% trans "Select Manual Entries to Adjust" %}</label>
                             <button type="button" class="btn btn-link btn-sm text-decoration-none p-0" @click="toggleSelectAllWizard()">
                                 <span x-text="allWizardSelected ? '{% trans "Deselect All" %}' : '{% trans "Select All" %}'"></span>
                             </button>
@@ -508,7 +565,7 @@
             categoryFilter: '',
             sortColumn: 'name',
             sortAsc: true,
-            groupByCategory: false,
+            groupColumn: '',
             collapsedGroups: {},
             allGroupsCollapsed: false,
 
@@ -534,6 +591,38 @@
             formatEuro(val) {
                 if (val === null || val === undefined) return '0,00';
                 return Number(val).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            },
+
+            resetAllFilters() {
+                this.searchQuery = '';
+                this.activeTab = 'all';
+                this.categoryFilter = '';
+                this.sortColumn = 'name';
+                this.sortAsc = true;
+                this.groupColumn = '';
+                this.collapsedGroups = {};
+                this.allGroupsCollapsed = false;
+                if (window.location.search.includes('year=')) {
+                    window.location.href = window.location.pathname;
+                }
+            },
+
+            setGroupColumn(col) {
+                if (this.groupColumn === col) {
+                    this.groupColumn = '';
+                } else {
+                    this.groupColumn = col;
+                }
+                this.collapsedGroups = {};
+                this.allGroupsCollapsed = false;
+            },
+
+            getGroupColumnLabel() {
+                if (this.groupColumn === 'category') return '{% trans "Category / Source" %}';
+                if (this.groupColumn === 'name') return '{% trans "Name" %}';
+                if (this.groupColumn === 'frequency') return '{% trans "Frequency" %}';
+                if (this.groupColumn === 'type') return '{% trans "Type (Income/Expense)" %}';
+                return this.groupColumn;
             },
 
             sortBy(col) {
@@ -565,8 +654,8 @@
                 this.allGroupsCollapsed = !this.allGroupsCollapsed;
                 const newCollapsed = {};
                 if (this.allGroupsCollapsed) {
-                    this.groupedCategories.forEach(g => {
-                        newCollapsed[g.categoryName] = true;
+                    this.groupedItems.forEach(g => {
+                        newCollapsed[g.groupName] = true;
                     });
                 }
                 this.collapsedGroups = newCollapsed;
@@ -579,9 +668,10 @@
                 return this.items.filter(item => {
                     const n = (item.name || '').toLowerCase();
                     const c = (item.category_translated || '').toLowerCase();
+                    const src = (item.source_label || '').toLowerCase();
                     const notes = (item.notes || '').toLowerCase();
 
-                    if (q && !n.includes(q) && !c.includes(q) && !notes.includes(q)) return false;
+                    if (q && !n.includes(q) && !c.includes(q) && !src.includes(q) && !notes.includes(q)) return false;
                     if (catFilter && c !== catFilter) return false;
                     if (this.activeTab === 'income' && !item.is_income) return false;
                     if (this.activeTab === 'expense' && item.is_income) return false;
@@ -623,23 +713,32 @@
                 });
             },
 
-            get groupedCategories() {
+            get groupedItems() {
+                if (!this.groupColumn) return [];
                 const map = {};
+                const keyProp = this.groupColumn === 'category' ? 'category_translated' : this.groupColumn;
+
                 this.sortedItems.forEach(item => {
-                    const catName = item.category_translated || '-';
-                    if (!map[catName]) {
-                        map[catName] = {
-                            categoryName: catName,
+                    let gName = item[keyProp] || '-';
+                    if (this.groupColumn === 'type') {
+                        gName = item.is_income ? '{% trans "Income" %}' : '{% trans "Expense" %}';
+                    } else if (this.groupColumn === 'frequency') {
+                        gName = item.frequency_display;
+                    }
+
+                    if (!map[gName]) {
+                        map[gName] = {
+                            groupName: gName,
                             items: [],
                             totalIncome: 0,
                             totalExpense: 0
                         };
                     }
-                    map[catName].items.push(item);
+                    map[gName].items.push(item);
                     if (item.is_income) {
-                        map[catName].totalIncome += item.monthly_amount;
+                        map[gName].totalIncome += item.monthly_amount;
                     } else {
-                        map[catName].totalExpense += item.monthly_amount;
+                        map[gName].totalExpense += item.monthly_amount;
                     }
                 });
                 return Object.values(map);
@@ -669,7 +768,8 @@
             },
 
             openEditModalFromObj(item) {
-                this.editId = item.id;
+                if (!item.can_edit) return;
+                this.editId = item.raw_id;
                 this.form = {
                     name: item.name,
                     value: item.value,

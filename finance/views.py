@@ -2277,19 +2277,216 @@ from django.db import transaction
 @login_required
 def cash_flow_list(request):
     user = request.user
-    cash_flows = list(user.cash_flows.select_related('category').order_by('-is_income', 'category__name', 'name'))
-    categories = Category.objects.all().order_by('name')
-    
     today = timezone.now().date()
     current_year = today.year
     
-    # Determine available years for dropdown (e.g. from existing entries + range around current year)
+    # 1. Fetch Manual Cash Flow Sources
+    manual_cfs = list(user.cash_flows.select_related('category').order_by('-is_income', 'category__name', 'name'))
+    categories = Category.objects.all().order_by('name')
+    
+    # 2. Build Unified Items List (Manual + Pensions + Real Estate + Assets + Physical Assets + Loans)
+    unified_items = []
+    
+    # 2a. Manual Cash Flows
+    for cf in manual_cfs:
+        unified_items.append({
+            'id': f"manual_{cf.id}",
+            'raw_id': cf.id,
+            'name': cf.name,
+            'value': Decimal(str(cf.value)),
+            'monthly_amount': Decimal(str(cf.monthly_amount)),
+            'is_income': cf.is_income,
+            'frequency': cf.frequency,
+            'frequency_display': str(cf.get_frequency_display()),
+            'category_id': cf.category.id if cf.category else None,
+            'category_name': cf.category.name if cf.category else '',
+            'category_translated': cf.category.translated_name if cf.category else '-',
+            'start_date': cf.start_date,
+            'end_date': cf.end_date,
+            'is_inflation_adjusted': cf.is_inflation_adjusted,
+            'notes': cf.notes or '',
+            'source_type': 'manual',
+            'source_label': str(_('Manuell')),
+            'can_edit': True,
+            'can_wizard': True,
+        })
+        
+    # 2b. Pensions
+    for p in user.pensions.all():
+        if p.monthly_contribution and p.monthly_contribution > 0:
+            unified_items.append({
+                'id': f"pension_contrib_{p.id}",
+                'raw_id': p.id,
+                'name': f"{_('Sparbeitrag')}: {p.provider}",
+                'value': Decimal(str(p.monthly_contribution)),
+                'monthly_amount': Decimal(str(p.monthly_contribution)),
+                'is_income': False,
+                'frequency': 'monthly',
+                'frequency_display': str(_('Monatlich')),
+                'category_id': None,
+                'category_name': 'Rente',
+                'category_translated': str(_('Rente & Vorsorge')),
+                'start_date': None,
+                'end_date': p.contribution_end_date,
+                'is_inflation_adjusted': p.is_indexed,
+                'notes': f"{_('Modell Rente')}: {p.provider}",
+                'source_type': 'pension',
+                'source_label': str(_('Rente (Beitrag)')),
+                'can_edit': False,
+                'can_wizard': False,
+            })
+        if p.expected_payout_at_retirement and p.expected_payout_at_retirement > 0:
+            unified_items.append({
+                'id': f"pension_payout_{p.id}",
+                'raw_id': p.id,
+                'name': f"{_('Rentenauszahlung')}: {p.provider}",
+                'value': Decimal(str(p.expected_payout_at_retirement)),
+                'monthly_amount': Decimal(str(p.expected_payout_at_retirement)),
+                'is_income': True,
+                'frequency': 'monthly',
+                'frequency_display': str(_('Monatlich')),
+                'category_id': None,
+                'category_name': 'Rente',
+                'category_translated': str(_('Rente & Vorsorge')),
+                'start_date': p.start_payout_date,
+                'end_date': None,
+                'is_inflation_adjusted': p.is_indexed,
+                'notes': f"{_('Modell Rente')}: {p.provider}",
+                'source_type': 'pension',
+                'source_label': str(_('Rente (Auszahlung)')),
+                'can_edit': False,
+                'can_wizard': False,
+            })
+
+    # 2c. Real Estate
+    for re in user.real_estates.all():
+        if re.rental_income_monthly and re.rental_income_monthly > 0:
+            unified_items.append({
+                'id': f"re_income_{re.id}",
+                'raw_id': re.id,
+                'name': f"{_('Mieteinnahme')}: {re.name}",
+                'value': Decimal(str(re.rental_income_monthly)),
+                'monthly_amount': Decimal(str(re.rental_income_monthly)),
+                'is_income': True,
+                'frequency': 'monthly',
+                'frequency_display': str(_('Monatlich')),
+                'category_id': None,
+                'category_name': 'Immobilien',
+                'category_translated': str(_('Immobilien')),
+                'start_date': re.acquisition_date,
+                'end_date': re.sale_date,
+                'is_inflation_adjusted': False,
+                'notes': f"{_('Modell Immobilie')}: {re.name}",
+                'source_type': 'real_estate',
+                'source_label': str(_('Immobilie (Miete)')),
+                'can_edit': False,
+                'can_wizard': False,
+            })
+        if re.maintenance_costs_monthly and re.maintenance_costs_monthly > 0:
+            unified_items.append({
+                'id': f"re_expense_{re.id}",
+                'raw_id': re.id,
+                'name': f"{_('Instandhaltung')}: {re.name}",
+                'value': Decimal(str(re.maintenance_costs_monthly)),
+                'monthly_amount': Decimal(str(re.maintenance_costs_monthly)),
+                'is_income': False,
+                'frequency': 'monthly',
+                'frequency_display': str(_('Monatlich')),
+                'category_id': None,
+                'category_name': 'Immobilien',
+                'category_translated': str(_('Immobilien')),
+                'start_date': re.acquisition_date,
+                'end_date': re.sale_date,
+                'is_inflation_adjusted': False,
+                'notes': f"{_('Modell Immobilie')}: {re.name}",
+                'source_type': 'real_estate',
+                'source_label': str(_('Immobilie (Kosten)')),
+                'can_edit': False,
+                'can_wizard': False,
+            })
+
+    # 2d. Assets (Withdrawals)
+    for a in user.assets.all():
+        if a.withdrawal_amount and a.withdrawal_amount > 0:
+            unified_items.append({
+                'id': f"asset_withdrawal_{a.id}",
+                'raw_id': a.id,
+                'name': f"{_('Entnahme')}: {a.name}",
+                'value': Decimal(str(a.withdrawal_amount)),
+                'monthly_amount': Decimal(str(a.withdrawal_amount)),
+                'is_income': True,
+                'frequency': 'monthly',
+                'frequency_display': str(_('Monatlich')),
+                'category_id': None,
+                'category_name': 'Vermögen',
+                'category_translated': str(_('Vermögensentnahme')),
+                'start_date': a.withdrawal_start_date,
+                'end_date': None,
+                'is_inflation_adjusted': False,
+                'notes': f"{_('Modell Entnahme')}: {a.name}",
+                'source_type': 'asset',
+                'source_label': str(_('Entnahme')),
+                'can_edit': False,
+                'can_wizard': False,
+            })
+
+    # 2e. Physical Assets
+    for pa in user.physical_assets.all():
+        if pa.storage_costs_monthly and pa.storage_costs_monthly > 0:
+            unified_items.append({
+                'id': f"pa_expense_{pa.id}",
+                'raw_id': pa.id,
+                'name': f"{_('Stellplatz/Lager')}: {pa.name}",
+                'value': Decimal(str(pa.storage_costs_monthly)),
+                'monthly_amount': Decimal(str(pa.storage_costs_monthly)),
+                'is_income': False,
+                'frequency': 'monthly',
+                'frequency_display': str(_('Monatlich')),
+                'category_id': None,
+                'category_name': 'Sachwerte',
+                'category_translated': str(_('Sachwerte')),
+                'start_date': pa.acquisition_date,
+                'end_date': pa.sale_date,
+                'is_inflation_adjusted': False,
+                'notes': f"{_('Modell Sachwert')}: {pa.name}",
+                'source_type': 'physical_asset',
+                'source_label': str(_('Sachwert (Kosten)')),
+                'can_edit': False,
+                'can_wizard': False,
+            })
+
+    # 2f. Loans
+    for loan in user.loans.all():
+        if loan.monthly_installment and loan.monthly_installment > 0:
+            unified_items.append({
+                'id': f"loan_{loan.id}",
+                'raw_id': loan.id,
+                'name': f"{_('Kreditrate')}: {loan.name}",
+                'value': Decimal(str(loan.monthly_installment)),
+                'monthly_amount': Decimal(str(loan.monthly_installment)),
+                'is_income': False,
+                'frequency': 'monthly',
+                'frequency_display': str(_('Monatlich')),
+                'category_id': None,
+                'category_name': 'Kredite',
+                'category_translated': str(_('Kredite & Schulden')),
+                'start_date': loan.start_date,
+                'end_date': loan.end_date,
+                'is_inflation_adjusted': False,
+                'notes': f"{_('Modell Kredit')}: {loan.name}",
+                'source_type': 'loan',
+                'source_label': str(_('Kreditrate')),
+                'can_edit': False,
+                'can_wizard': False,
+            })
+
+    # 3. Determine available years
     years_set = {current_year - 2, current_year - 1, current_year, current_year + 1, current_year + 2}
-    for cf in cash_flows:
-        if cf.start_date:
-            years_set.add(cf.start_date.year)
-        if cf.end_date:
-            years_set.add(cf.end_date.year)
+    for item in unified_items:
+        if item['start_date']:
+            years_set.add(item['start_date'].year)
+        if item['end_date']:
+            years_set.add(item['end_date'].year)
     available_years = sorted(list(years_set), reverse=True)
     
     # Read year filter parameter (defaulting to current year)
@@ -2304,22 +2501,22 @@ def cash_flow_list(request):
     yearly_income_sum = Decimal('0.00')
     yearly_expense_sum = Decimal('0.00')
     
-    for cf in cash_flows:
+    for item in unified_items:
         if selected_year_val == 'all':
             is_active = True
         else:
             target_year = int(selected_year_val)
             year_start = datetime.date(target_year, 1, 1)
             year_end = datetime.date(target_year, 12, 31)
-            is_active = (not cf.start_date or cf.start_date <= year_end) and (not cf.end_date or cf.end_date >= year_start)
+            is_active = (not item['start_date'] or item['start_date'] <= year_end) and (not item['end_date'] or item['end_date'] >= year_start)
                 
-        cf.is_active_in_selected_year = is_active
+        item['is_active_in_selected_year'] = is_active
         
         if is_active:
-            m_val = cf.value if cf.frequency == 'monthly' else (cf.value / Decimal('12'))
-            y_val = cf.value * Decimal('12') if cf.frequency == 'monthly' else cf.value
+            m_val = item['monthly_amount']
+            y_val = m_val * Decimal('12') if item['frequency'] == 'monthly' else item['value']
             
-            if cf.is_income:
+            if item['is_income']:
                 monthly_income_sum += m_val
                 yearly_income_sum += y_val
             else:
@@ -2333,46 +2530,49 @@ def cash_flow_list(request):
     yearly_expense_sum = yearly_expense_sum.quantize(Decimal('0.01'))
     yearly_net_surplus = (yearly_income_sum - yearly_expense_sum).quantize(Decimal('0.01'))
     
-    # Display cash flows filtered by selected year
-    filtered_cash_flows = [cf for cf in cash_flows if cf.is_active_in_selected_year]
+    filtered_items = [item for item in unified_items if item['is_active_in_selected_year']]
     
-    cash_flows_json = []
-    for cf in filtered_cash_flows:
-        s_date_str = cf.start_date.strftime('%Y-%m-%d') if cf.start_date else ''
-        e_date_str = cf.end_date.strftime('%Y-%m-%d') if cf.end_date else ''
+    items_json = []
+    for item in filtered_items:
+        s_date_str = item['start_date'].strftime('%Y-%m-%d') if item['start_date'] else ''
+        e_date_str = item['end_date'].strftime('%Y-%m-%d') if item['end_date'] else ''
         
-        if cf.start_date and cf.end_date:
-            period_fmt = f"{cf.start_date.strftime('%m/%Y')} - {cf.end_date.strftime('%m/%Y')}"
-        elif cf.start_date:
-            period_fmt = f"ab {cf.start_date.strftime('%m/%Y')}"
-        elif cf.end_date:
-            period_fmt = f"bis {cf.start_date.strftime('%m/%Y')}"
+        if item['start_date'] and item['end_date']:
+            period_fmt = f"{item['start_date'].strftime('%m/%Y')} - {item['end_date'].strftime('%m/%Y')}"
+        elif item['start_date']:
+            period_fmt = f"ab {item['start_date'].strftime('%m/%Y')}"
+        elif item['end_date']:
+            period_fmt = f"bis {item['end_date'].strftime('%m/%Y')}"
         else:
             period_fmt = str(_("Continuous"))
 
-        cash_flows_json.append({
-            'id': cf.id,
-            'name': cf.name,
-            'value': float(cf.value),
-            'monthly_amount': float(cf.monthly_amount),
-            'is_income': cf.is_income,
-            'frequency': cf.frequency,
-            'frequency_display': str(cf.get_frequency_display()),
-            'category_id': cf.category.id if cf.category else None,
-            'category_name': cf.category.name if cf.category else '',
-            'category_translated': cf.category.translated_name if cf.category else '-',
+        items_json.append({
+            'id': item['id'],
+            'raw_id': item['raw_id'],
+            'name': item['name'],
+            'value': float(item['value']),
+            'monthly_amount': float(item['monthly_amount']),
+            'is_income': item['is_income'],
+            'frequency': item['frequency'],
+            'frequency_display': item['frequency_display'],
+            'category_id': item['category_id'],
+            'category_name': item['category_name'],
+            'category_translated': item['category_translated'],
             'start_date': s_date_str,
             'end_date': e_date_str,
             'period_formatted': period_fmt,
-            'is_inflation_adjusted': cf.is_inflation_adjusted,
-            'notes': cf.notes or '',
-            'is_expired': bool(cf.end_date and cf.end_date < today)
+            'is_inflation_adjusted': item['is_inflation_adjusted'],
+            'notes': item['notes'],
+            'source_type': item['source_type'],
+            'source_label': item['source_label'],
+            'can_edit': item['can_edit'],
+            'can_wizard': item['can_wizard'],
+            'is_expired': bool(item['end_date'] and item['end_date'] < today)
         })
 
     context = {
-        'cash_flows': filtered_cash_flows,
-        'cash_flows_json': json.dumps(cash_flows_json),
-        'all_cash_flows': cash_flows,
+        'cash_flows': manual_cfs,
+        'cash_flows_json': json.dumps(items_json),
         'categories': categories,
         'available_years': available_years,
         'selected_year': selected_year_val,
