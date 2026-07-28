@@ -237,14 +237,6 @@ msgstr "È un'entrata"
 msgid "Indexed (Inflation Adjustment)"
 msgstr "Indicizzato (Adeguamento all'inflazione)"
 
-#: finance/models.py:47 finance/models.py:100
-msgid ""
-"If checked, the payout will increase annually based on the global pension "
-"increase rate."
-msgstr ""
-"Se selezionato, il pagamento aumenterà annualmente in base al tasso globale "
-"di aumento delle pensioni."
-
 #: finance/models.py:49 finance/models.py:140
 msgid "Frequency"
 msgstr "Frequenza"
@@ -280,13 +272,6 @@ msgstr "Tasso d'interesse promozionale più elevato (es. per i nuovi clienti)"
 #: finance/models.py:65
 msgid "Teaser Rate Expiry Date"
 msgstr "Data di scadenza tasso promozionale"
-
-#: finance/models.py:65
-msgid ""
-"Date when the teaser rate expires and falls back to the standard growth rate"
-msgstr ""
-"Data in cui scade il tasso promozionale e si torna al tasso di crescita "
-"standard"
 
 #: finance/models.py:69
 msgid "Monthly Withdrawal"
@@ -707,17 +692,6 @@ msgstr "Prossimi eventi finanziari una tantum."
 msgid "WIDGET_DESC_LOAN_TABLE"
 msgstr "Stato attuale dei tuoi prestiti, incluso il saldo rimanente e i costi degli interessi. <br><br>Modifica qui: <a href=\"/admin/finance/loan/\" target=\"_blank\" class=\"alert-link\">Prestiti</a>."
 
-#: finance/views.py:118
-msgid ""
-"Visualisiert, wie schnell deine Schulden durch Tilgung schrumpfen. Hilft bei "
-"der Planung von Sondertilgungen. <br><br>Datenquelle: <a href=\"/admin/"
-"finance/loan/\" target=\"_blank\" class=\"alert-link\">Kredite</a>."
-msgstr ""
-"Visualizza la velocità con cui il tuo debito diminuisce tramite "
-"l'ammortamento. Aiuta a pianificare i rimborsi extra. <br><br>Fonte dati: <a "
-"href=\"/admin/finance/loan/\" target=\"_blank\" class=\"alert-"
-"link\">Prestiti</a>."
-
 #: finance/views.py:124
 msgid "Current Assets"
 msgstr "Asset attuali"
@@ -899,57 +873,13 @@ msgstr "Registrati"
 msgid "About the Project"
 msgstr "Informazioni sul progetto"
 
-#: templates/core/about.html:12
-msgid ""
-"Welcome to your personal financial cockpit. This platform is designed to "
-"give you a clear and realistic look at your long-term financial future."
-msgstr ""
-"Benvenuto nel tuo cockpit finanziario personale. Questa piattaforma è "
-"progettata per offrirti una visione chiara e realistica del tuo futuro "
-"finanziario a lungo termine."
-
-#: templates/core/about.html:15
-msgid ""
-"Our goal is to demystify complex financial planning by offering simple, "
-"visual, and highly customizable tools to help you reach your goals."
-msgstr ""
-"Il nostro obiettivo è semplificare la pianificazione finanziaria complessa "
-"offrendo strumenti semplici, visivi e altamente personalizzabili per "
-"aiutarti a raggiungere i tuoi obiettivi."
-
 #: templates/core/about.html:23
 msgid "Personal Data Security"
 msgstr "Sicurezza dati personali"
 
-#: templates/core/about.html:24
-msgid ""
-"Your data is only stored in your personal database and is not shared with "
-"third parties."
-msgstr ""
-"I tuoi dati sono archiviati solo nel tuo database personale e non sono "
-"condivisi con terze parti."
-
-#: templates/core/about.html:34
-msgid ""
-"We use high-precision calculations for inflation and compound interest over "
-"a 30-year period."
-msgstr ""
-"Utilizziamo calcoli ad alta precisione per l'inflazione e l'interesse "
-"composto su un periodo di 30 anni."
-
 #: templates/core/about.html:47
 msgid "Lead Developer & Architect"
 msgstr "Sviluppatore capo e architetto"
-
-#: templates/core/about.html:50
-msgid ""
-"Financial Independence is a goal for many, but for most it remains just a "
-"dream. My passion is to create tools that turn those dreams into actionable "
-"plans."
-msgstr ""
-"L'indipendenza finanziaria è un obiettivo per molti, ma per la maggior parte "
-"rimane solo un sogno. La mia passione è creare strumenti che trasformino "
-"quei sogni in piani realizzabili."
 
 #: templates/core/help.html:4
 msgid "Help & Knowledge Base"
@@ -980,26 +910,9 @@ msgstr ""
 msgid "Learn More"
 msgstr "Scopri di più"
 
-#: templates/core/help.html:45
-msgid ""
-"Understand the math behind real vs. nominal value, inflation buffers, and "
-"how growth rates impact your 30-year forecast."
-msgstr ""
-"Comprendi la matematica dietro il valore reale vs nominale, le riserve di "
-"inflazione e come i tassi di crescita influiscono sulla tua previsione a 30 "
-"anni."
-
 #: templates/core/help.html:59 templates/core/profile.html:144
 msgid "Design Studio"
 msgstr "Studio di design"
-
-#: templates/core/help.html:61
-msgid ""
-"Master the Art of Design Harmony. Explore how our color engine ensures your "
-"dashboard always looks premium."
-msgstr ""
-"Padroneggia l'arte dell'armonia del design. Scopri come il nostro motore di "
-"colori assicura che il tuo dashboard abbia sempre un aspetto premium."
 
 #: templates/core/help.html:73
 msgid "Advanced FAQ"
@@ -1011,30 +924,9 @@ msgstr ""
 "Perché il mio patrimonio netto diminuisce anche se il mio flusso di cassa è "
 "positivo?"
 
-#: templates/core/help.html:86
-msgid ""
-"This is likely due to the Inflation Monitor. While your nominal wealth "
-"increases, higher inflation rates can \"eat\" your purchasing power faster "
-"than you save. Check your \"Real Value\" vs \"Nominal Value\" in the charts."
-msgstr ""
-"Ciò è probabilmente dovuto al monitor inflazione. Mentre la tua ricchezza "
-"nominale aumenta, tassi di inflazione più elevati possono \"mangiare\" il "
-"tuo potere d'acquisto più velocemente di quanto risparmi. Controlla il "
-"\"Valore Reale\" rispetto al \"Valore Nominale\" nei grafici."
-
 #: templates/core/help.html:107
 msgid "Are my bank details and financial data safe?"
 msgstr "I miei dati bancari e finanziari sono al sicuro?"
-
-#: templates/core/help.html:112
-msgid ""
-"Yes. Your data stays in your instance. Our AI processing for bank imports is "
-"designed to respect your privacy, and no financial secrets ever leave your "
-"dedicated environment."
-msgstr ""
-"Sì. I tuoi dati rimangono nella tua istanza. La nostra elaborazione AI per "
-"le importazioni bancarie è progettata per rispettare la tua privacy e nessun "
-"segreto finanziario lascia mai il tuo ambiente dedicato."
 
 #: templates/core/help.html:130
 msgid "AI-Assisted Bank Import"
@@ -1044,56 +936,17 @@ msgstr "Importazione banca assistita dall'AI"
 msgid "1. Pattern Recognition"
 msgstr "1. Riconoscimento di pattern"
 
-#: templates/core/help.html:137
-msgid ""
-"Our system cleans bank descriptions and searches for repeating patterns. It "
-"remembers your previous manual categorizations and applies them to new "
-"imports automatically."
-msgstr ""
-"Il nostro sistema pulisce le descrizioni bancarie e cerca pattern "
-"ripetitivi. Ricorda le tue categorizzazioni manuali precedenti e le applica "
-"automaticamente alle nuove importazioni."
-
 #: templates/core/help.html:140
 msgid "2. Duplicate Protection"
 msgstr "2. Protezione dai duplicati"
-
-#: templates/core/help.html:141
-msgid ""
-"Every imported row gets a unique fingerprint. If you upload the same file "
-"twice, or overlapping files, the system will detect and ignore already "
-"existing transactions."
-msgstr ""
-"Ogni riga importata riceve un'impronta digitale univoca. Se carichi lo "
-"stesso file due volte, o file sovrapposti, il sistema rileverà e ignorerà le "
-"transazioni già esistenti."
 
 #: templates/core/help.html:144
 msgid "3. Bridge to Plan"
 msgstr "3. Ponte verso il piano"
 
-#: templates/core/help.html:145
-msgid ""
-"Detected transactions can be \"Linked\" to your financial plan. This allows "
-"you to track if your reality (Bank) matches your expectations (Plan)."
-msgstr ""
-"Le transazioni rilevate possono essere \"collegate\" al tuo piano "
-"finanziario. Ciò ti consente di monitorare se la tua realtà (Banca) "
-"corrisponde alle tue aspettative (Piano)."
-
 #: templates/core/help.html:148
 msgid "4. The Review Process"
 msgstr "4. Il processo di revisione"
-
-#: templates/core/help.html:149
-msgid ""
-"Nothing is saved directly. You always have a \"Pending Transactions\" area "
-"where you can verify, correct, or ignore rows before they impact your "
-"history."
-msgstr ""
-"Nulla viene salvato direttamente. Hai sempre un'area \"Transazioni in "
-"sospeso\" dove puoi verificare, correggere o ignorare le righe prima che "
-"influenzino la tua cronologia."
 
 #: templates/core/help.html:166
 msgid "Mathematical Foundations"
@@ -1522,14 +1375,6 @@ msgstr "Analisi completata - Visualizza transazioni"
 msgid "Abstimmung & Import"
 msgstr "Riconciliazione e importazione"
 
-#: templates/finance/import_review.html:27
-msgid ""
-"Bereinige die offenen Posten oben, bis sie in der Import-Vorschau unten "
-"korrekt zusammengefasst sind."
-msgstr ""
-"Pulisci le posizioni aperte in alto finché non sono correttamente riassunte "
-"nell'anteprima di importazione in basso."
-
 #: templates/finance/import_review.html:32
 #: templates/finance/import_upload.html:17
 #: templates/finance/import_review.html:39
@@ -1898,51 +1743,16 @@ msgstr "Mes."
 msgid "Glossary & Charts"
 msgstr "Glossario e grafici"
 
-msgid ""
-" Do you want to know what \"Pension Capital\" or the \"Inflation Monitor\"  "
-"is? Find all definitions here."
-msgstr ""
-" Vuoi sapere cos'è il \"Capitale pensionistico\" o il \"Monitor "
-"dell'inflazione\"? Trova tutte le definizioni qui."
-
 msgid "Glossary of Dashboard Terms & Charts"
 msgstr "Glossario dei termini e dei grafici della dashboard"
 
 msgid "Summary Widgets"
 msgstr "Widget di riepilogo"
 
-msgid ""
-" The accumulated value of all your bank accounts, properties, and  "
-"investments, excluding pensions."
-msgstr ""
-" Il valore accumulato di tutti i tuoi conti bancari, proprietà e "
-"investimenti, escluse le pensioni."
-
-msgid ""
-" Your total active regular incoming cash flow (e.g., salary, rent income)  "
-"at the selected date."
-msgstr ""
-" Il tuo flusso di cassa in entrata regolare attivo totale (ad esempio, "
-"stipendio, reddito da affitto) alla data selezionata."
-
 msgid "Your total active regular outgoing cash flow at the selected date."
 msgstr ""
 "Il tuo flusso di cassa in uscita regolare attivo totale alla data "
 "selezionata."
-
-msgid ""
-" The accumulated lump sum balance (savings) sitting in all your pension  and "
-"retirement accounts."
-msgstr ""
-" Il saldo forfettario accumulato (risparmi) in tutti i tuoi conti "
-"pensionistici."
-
-msgid ""
-" Your desired retirement income. This is simply the raw total of the  target "
-"payouts you defined in your pension contracts."
-msgstr ""
-" Il reddito pensionistico desiderato. Questo è semplicemente il totale lordo "
-"dei pagamenti target definiti nei contratti pensionistici."
 
 msgid "Interactive Charts"
 msgstr "Grafici interattivi"
@@ -1950,81 +1760,26 @@ msgstr "Grafici interattivi"
 msgid "Net Worth Development"
 msgstr "Sviluppo del patrimonio netto"
 
-msgid ""
-" A line chart showing how your total wealth grows over time, comparing  "
-"nominal values to inflation-adjusted purchasing power."
-msgstr ""
-" Un grafico a linee che mostra come cresce la tua ricchezza totale nel "
-"tempo, confrontando i valori nominali con il potere d'acquisto adeguato "
-"all'inflazione."
-
 msgid "Cash Flow Forecast"
 msgstr "Previsione del flusso di cassa"
-
-msgid ""
-" Visualizes the evolution of your monthly income versus your monthly  "
-"expenses over the years."
-msgstr ""
-" Visualizza l'evoluzione delle tue entrate mensili rispetto alle tue uscite "
-"mensili nel corso degli anni."
 
 msgid "Wealth Breakdown"
 msgstr "Scomposizione del patrimonio"
 
-msgid ""
-" An area chart illustrating the composition of your total wealth,  comparing "
-"liquid assets and locked pension capital."
-msgstr ""
-" Un grafico ad area che illustra la composizione della tua ricchezza totale, "
-"confrontando le attività liquide e il capitale pensionistico vincolato."
-
 msgid "Income vs Expenses"
 msgstr "Entrate vs Uscite"
-
-msgid ""
-" A direct bar chart comparison of money coming in versus money going out."
-msgstr ""
-" Un confronto diretto tramite grafico a barre del denaro in entrata rispetto "
-"al denaro in uscita."
 
 msgid "Category Breakdown"
 msgstr "Scomposizione per categoria"
 
-msgid ""
-" A pie chart dividing your cash flow into individual categories (e.g.,  "
-"Housing, Food, Transport)."
-msgstr ""
-" Un grafico a torta che divide il tuo flusso di cassa in singole categorie "
-"(ad esempio, casa, cibo, trasporti)."
-
-msgid ""
-" Highlights the expanding gap between the absolute money you have and its  "
-"real value due to inflation."
-msgstr ""
-" Evidenzia il crescente divario tra il denaro assoluto che possiedi e il suo "
-"valore reale a causa dell'inflazione."
-
 msgid "Event Impact"
 msgstr "Impatto dell'evento"
-
-msgid ""
-" Visualizes the financial spikes caused by configured one-time events,  like "
-"buying a car or receiving an inheritance."
-msgstr ""
-" Visualizza i picchi finanziari causati da eventi una tantum configurati, "
-"come l'acquisto di un'auto o la ricezione di un'eredità."
 
 msgid "Liquid Assets"
 msgstr "Attività liquide e investimenti"
 
 msgid "Accumulated Cash"
 msgstr "Contanti accumulati"
-
-msgid ""
-" A snapshot donut chart showing the percentage distribution of your assets."
-msgstr ""
-" Un grafico a ciambella che mostra la distribuzione percentuale dei tuoi "
-"beni."
 
 msgid "Kreditrate"
 msgstr "Rata del prestito"
@@ -2049,62 +1804,6 @@ msgstr "Aumento salariale (%)"
 
 msgid "Expert Knowledge Base"
 msgstr "Base di conoscenza esperta"
-
-msgid ""
-" Learn how our pattern recognition and learned memory automate your data  "
-"entry while maintaining 100% control."
-msgstr ""
-" Scopri come il nostro riconoscimento dei pattern e la memoria appresa "
-"automatizzano l'inserimento dei tuoi dati mantenendo il controllo al 100%."
-
-msgid ""
-" We calculate growth for each asset class individually. A 5% growth on a  "
-"100k asset is calculated monthly to account for the compound effect over  "
-"30+ years."
-msgstr ""
-" Calcoliamo la crescita per ogni classe di attività individualmente. Una "
-"crescita del 5% su un patrimonio di 100.000€ viene calcolata mensilmente per "
-"tener conto dell'effetto composto in oltre 30 anni."
-
-msgid ""
-" If you set a 2% \"Dynamics\" rate, your income doesn't stay level. It  "
-"grows every year, simulating career growth or contract-based indexing."
-msgstr ""
-" Se imposti un tasso di \"Dinamica\" del 2%, il tuo reddito non rimane "
-"stabile. Cresce ogni anno, simulando la crescita professionale o "
-"l'indicizzazione basata sui contratti."
-
-msgid ""
-" Retirement planning is a marathon. We chose a 30-year horizon to  visualize "
-"the late-stage effects of inflation and interest, where small  differences "
-"today become massive gaps tomorrow."
-msgstr ""
-" La pianificazione pensionistica è una maratona. Abbiamo scelto un orizzonte "
-"di 30 anni per visualizzare gli effetti tardivi dell'inflazione e degli "
-"interessi."
-
-msgid ""
-" A \"Harmony\" isn't just a set of colors. It's a mathematical  relationship "
-"(Complementary, Analogous, etc.) based on your Primary Color  choice."
-msgstr ""
-" Una \"Armonia\" non è solo un insieme di colori. È una relazione matematica "
-"basata sulla scelta del colore primario."
-
-msgid ""
-" We use backdrop filters and translucency to create depth. This allows  your "
-"personalized brand color to shine through while keeping the  interface "
-"readable."
-msgstr ""
-" Usiamo filtri di sfondo e traslucidità per creare profondità. Questo "
-"permette al colore del tuo marchio di trasparire mantenendo l'interfaccia "
-"leggibile."
-
-msgid ""
-" Use a Darker background and high-vibrancy primary colors for the absolute  "
-"premium \"High-End\" look."
-msgstr ""
-" Usa uno sfondo più scuro e colori primari vivaci per un aspetto premium di "
-"fascia alta."
 
 msgid "Net Worth (Nominal)"
 msgstr "Patrimonio netto (Nominale)"
@@ -2145,13 +1844,6 @@ msgstr "Dati storici"
 msgid "Asset/Object"
 msgstr "Attività / Oggetto"
 
-msgid ""
-"Select the concrete asset to create a snapshot for. This will automatically "
-"fill the Type and ID fields."
-msgstr ""
-"Seleziona il bene concreto per il quale creare uno snapshot. Questo "
-"compilerà automaticamente i campi Tipo e ID."
-
 msgid "Account / Asset"
 msgstr "Conto / Attività"
 
@@ -2167,29 +1859,8 @@ msgstr "Liquidità e pensione"
 msgid "Sim. Start Date"
 msgstr "Data inizio sim."
 
-msgid ""
-"Earliest date to show in charts. Leave empty for automatic (based on oldest "
-"snapshot or current year)."
-msgstr ""
-"Data più remota da mostrare nei grafici. Lascia vuoto per il rilevamento "
-"automatico."
-
-msgid ""
-"The expected annual inflation rate. This reduces the real value (purchasing "
-"power) of your future wealth. A value of 2% is a common benchmark."
-msgstr ""
-"Il tasso di inflazione annuale atteso. Questo riduce il valore reale (il "
-"potere d'acquisto) della tua ricchezza futura."
-
 msgid "The average annual increase in your gross salary until retirement."
 msgstr "L'aumento medio annuo dello stipendio lordo fino al pensionamento."
-
-msgid ""
-"The annual adjustment of your pension benefits. In many countries, this "
-"value often follows general wage development."
-msgstr ""
-"L'adeguamento annuale dei benefici pensionistici. In molti paesi, questo "
-"valore segue spesso l'andamento generale dei salari."
 
 msgid "WIDGET_DESC_EVENT_TABLE"
 msgstr "Elenco cronologico degli eventi finanziari una tantum configurati. <br><br>Modifica qui: <a href=\"/admin/finance/onetimeevent/\" target=\"_blank\" class=\"alert-link\">Eventi una tantum</a>."
