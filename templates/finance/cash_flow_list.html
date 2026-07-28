@@ -300,8 +300,8 @@
                             <td class="py-3 px-3 text-end font-monospace fw-bold" :class="item.is_income ? 'text-success' : 'text-danger'">
                                 <span x-text="(item.is_income ? '+' : '-') + formatEuro(item.monthly_amount) + ' €'"></span>
                             </td>
-                            <td class="py-3 px-3 text-end font-monospace opacity-75 small">
-                                <span x-text="formatEuro(item.value) + ' € / ' + getFrequencySuffix(item)"></span>
+                            <td class="py-3 px-3 text-end font-monospace fw-bold" :class="item.is_income ? 'text-success' : 'text-danger'">
+                                <span x-text="(item.is_income ? '+' : '-') + formatEuro(item.value) + ' € / ' + getFrequencySuffix(item)"></span>
                             </td>
                             <td class="py-3 px-1 text-end text-nowrap" style="width: 1%;">
                                 <div x-show="item.can_edit" class="btn-group btn-group-sm">
@@ -375,8 +375,8 @@
                                 <td class="py-3 px-3 text-end font-monospace fw-bold" :class="item.is_income ? 'text-success' : 'text-danger'">
                                     <span x-text="(item.is_income ? '+' : '-') + formatEuro(item.monthly_amount) + ' €'"></span>
                                 </td>
-                                <td class="py-3 px-3 text-end font-monospace opacity-75 small">
-                                    <span x-text="formatEuro(item.value) + ' € / ' + getFrequencySuffix(item)"></span>
+                                <td class="py-3 px-3 text-end font-monospace fw-bold" :class="item.is_income ? 'text-success' : 'text-danger'">
+                                    <span x-text="(item.is_income ? '+' : '-') + formatEuro(item.value) + ' € / ' + getFrequencySuffix(item)"></span>
                                 </td>
                                 <td class="py-3 px-1 text-end text-nowrap" style="width: 1%;">
                                     <div x-show="item.can_edit" class="btn-group btn-group-sm">
