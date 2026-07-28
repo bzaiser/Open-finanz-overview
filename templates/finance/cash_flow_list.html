@@ -144,12 +144,20 @@
                     </div>
                 </div>
                 <div class="col-md-2 text-end">
-                    <button type="button" class="btn btn-sm w-100 btn-outline-primary d-flex align-items-center justify-content-center gap-1"
-                            :class="{'active': groupByCategory}"
-                            @click="groupByCategory = !groupByCategory">
-                        <i class="bi" :class="groupByCategory ? 'bi-folder-check' : 'bi-folder2-open'"></i>
-                        <span x-text="groupByCategory ? '{% trans "Grouped" %}' : '{% trans "Group by Category" %}'"></span>
-                    </button>
+                    <div class="d-flex gap-1">
+                        <button type="button" class="btn btn-sm w-100 btn-outline-primary d-flex align-items-center justify-content-center gap-1"
+                                :class="{'active': groupByCategory}"
+                                @click="groupByCategory = !groupByCategory">
+                            <i class="bi" :class="groupByCategory ? 'bi-folder-check' : 'bi-folder2-open'"></i>
+                            <span x-text="groupByCategory ? '{% trans "Grouped" %}' : '{% trans "Group by Category" %}'"></span>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary d-flex align-items-center justify-content-center px-2"
+                                x-show="groupByCategory"
+                                @click="toggleAllGroups()"
+                                :title="allGroupsCollapsed ? '{% trans "Expand All" %}' : '{% trans "Collapse All" %}'">
+                            <i class="bi" :class="allGroupsCollapsed ? 'bi-arrows-expand' : 'bi-arrows-collapse'"></i>
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -237,14 +245,17 @@
                     </tr>
                 </tbody>
 
-                <!-- Grouped View By Category -->
+                <!-- Collapsible Grouped View By Category -->
                 <tbody x-show="groupByCategory">
                     <template x-for="group in groupedCategories" :key="group.categoryName">
                         <!-- Category Header Row -->
-                        <tr class="table-secondary bg-opacity-20 fw-bold border-bottom">
+                        <tr class="table-secondary bg-opacity-20 fw-bold border-bottom user-select-none" 
+                            @click="toggleGroup(group.categoryName)" 
+                            style="cursor: pointer;"
+                            title="{% trans 'Click to toggle group' %}">
                             <td colspan="4" class="py-2 px-4">
-                                <i class="bi bi-folder-fill me-2 text-primary"></i>
-                                <span x-text="group.categoryName"></span>
+                                <i class="bi" :class="isGroupCollapsed(group.categoryName) ? 'bi-chevron-right text-muted' : 'bi-chevron-down text-primary'"></i>
+                                <span x-text="group.categoryName" class="ms-1 fw-bold"></span>
                                 <span class="badge bg-secondary rounded-pill ms-2" x-text="group.items.length"></span>
                             </td>
                             <td class="py-2 px-3 text-end font-monospace small">
@@ -256,7 +267,7 @@
 
                         <!-- Category Item Rows -->
                         <template x-for="item in group.items" :key="item.id">
-                            <tr :class="{'opacity-50': item.is_expired}">
+                            <tr x-show="!isGroupCollapsed(group.categoryName)" :class="{'opacity-50': item.is_expired}">
                                 <td class="py-3 px-4 fw-semibold ps-5">
                                     <div class="d-flex align-items-center gap-2">
                                         <span class="badge rounded-circle p-2" :class="item.is_income ? 'bg-success bg-opacity-10 text-success' : 'bg-danger bg-opacity-10 text-danger'">
@@ -498,6 +509,8 @@
             sortColumn: 'name',
             sortAsc: true,
             groupByCategory: false,
+            collapsedGroups: {},
+            allGroupsCollapsed: false,
 
             editId: null,
             form: {
@@ -538,6 +551,25 @@
                     return this.sortAsc ? 'bi-sort-numeric-down text-primary ms-1' : 'bi-sort-numeric-down-alt text-primary ms-1';
                 }
                 return this.sortAsc ? 'bi-sort-alpha-down text-primary ms-1' : 'bi-sort-alpha-down-alt text-primary ms-1';
+            },
+
+            isGroupCollapsed(name) {
+                return !!this.collapsedGroups[name];
+            },
+
+            toggleGroup(name) {
+                this.collapsedGroups[name] = !this.collapsedGroups[name];
+            },
+
+            toggleAllGroups() {
+                this.allGroupsCollapsed = !this.allGroupsCollapsed;
+                const newCollapsed = {};
+                if (this.allGroupsCollapsed) {
+                    this.groupedCategories.forEach(g => {
+                        newCollapsed[g.categoryName] = true;
+                    });
+                }
+                this.collapsedGroups = newCollapsed;
             },
 
             get filteredItems() {
