@@ -416,3 +416,18 @@ msgstr "Sort by Monthly Amount"
 
 msgid "Sort by Original Amount"
 msgstr "Sort by Original Amount"
+
+msgid "Period"
+msgstr "Period"
+
+msgid "Monthly"
+msgstr "Monthly"
+
+msgid "Amount"
+msgstr "Amount"
+
+msgid "M"
+msgstr "M"
+
+msgid "J"
+msgstr "Y"

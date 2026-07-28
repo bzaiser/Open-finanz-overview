@@ -174,14 +174,14 @@
         </div>
     </div>
 
-    <!-- Cash Flows Table -->
+    <!-- Cash Flows Table (Optimized Layout: 5 data columns + 1 tight action column) -->
     <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-5" style="background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color);">
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0" style="font-size: 0.88rem; --bs-table-bg: var(--app-table-body-bg); --bs-table-color: var(--app-table-body-text); border-color: var(--app-table-border-color);">
                 <thead class="text-uppercase small" style="background-color: var(--app-table-header-bg) !important; color: var(--app-table-header-text) !important; font-size: 0.7rem; letter-spacing: 0.05em;">
                     <tr>
                         <!-- Header: Name -->
-                        <th class="py-3 px-4 text-nowrap user-select-none" style="background-color: var(--app-table-header-bg) !important; color: var(--app-table-header-text) !important;">
+                        <th class="py-3 px-3 text-nowrap user-select-none" style="background-color: var(--app-table-header-bg) !important; color: var(--app-table-header-text) !important;">
                             <div class="d-flex align-items-center justify-content-between gap-2">
                                 <span @click="sortBy('name')" style="cursor: pointer;" class="fw-bold me-2">
                                     {% trans "Name" %}
@@ -222,11 +222,11 @@
                             </div>
                         </th>
 
-                        <!-- Header: Validity Period -->
+                        <!-- Header: Period -->
                         <th class="py-3 px-3 text-nowrap user-select-none" style="background-color: var(--app-table-header-bg) !important; color: var(--app-table-header-text) !important;">
                             <div class="d-flex align-items-center justify-content-between gap-2">
                                 <span @click="sortBy('period')" style="cursor: pointer;" class="fw-bold me-2">
-                                    {% trans "Validity Period" %}
+                                    {% trans "Period" %}
                                 </span>
                                 <div class="d-inline-flex align-items-center ms-auto" style="gap: 4px;">
                                     <i class="bi p-1" 
@@ -238,32 +238,11 @@
                             </div>
                         </th>
 
-                        <!-- Header: Frequency -->
-                        <th class="py-3 px-3 text-center text-nowrap user-select-none" style="background-color: var(--app-table-header-bg) !important; color: var(--app-table-header-text) !important;">
-                            <div class="d-flex align-items-center justify-content-center gap-2">
-                                <span @click="sortBy('frequency')" style="cursor: pointer;" class="fw-bold me-2">
-                                    {% trans "Frequency" %}
-                                </span>
-                                <div class="d-inline-flex align-items-center" style="gap: 4px;">
-                                    <i class="bi p-1" 
-                                       :class="getSortIcon('frequency')" 
-                                       :style="sortColumn === 'frequency' ? 'color: #ff9800 !important; font-weight: bold;' : 'color: inherit; opacity: 0.75;'" 
-                                       @click.stop="sortBy('frequency')" 
-                                       title="{% trans 'Sort by Frequency' %}" style="cursor: pointer;"></i>
-                                    <i class="bi p-1" 
-                                       :class="groupColumn === 'frequency' ? 'bi-diagram-2-fill' : 'bi-diagram-2'" 
-                                       :style="groupColumn === 'frequency' ? 'color: #ff9800 !important; font-weight: bold;' : 'color: inherit; opacity: 0.75;'" 
-                                       @click.stop="setGroupColumn('frequency')" 
-                                       title="{% trans 'Group by Frequency' %}" style="cursor: pointer;"></i>
-                                </div>
-                            </div>
-                        </th>
-
-                        <!-- Header: Monthly Amount -->
+                        <!-- Header: Monthly -->
                         <th class="py-3 px-3 text-end text-nowrap user-select-none" style="background-color: var(--app-table-header-bg) !important; color: var(--app-table-header-text) !important;">
                             <div class="d-flex align-items-center justify-content-end gap-2">
                                 <span @click="sortBy('monthly_amount')" style="cursor: pointer;" class="fw-bold me-2">
-                                    {% trans "Monthly Amount" %}
+                                    {% trans "Monthly" %}
                                 </span>
                                 <div class="d-inline-flex align-items-center" style="gap: 4px;">
                                     <i class="bi p-1" 
@@ -275,11 +254,11 @@
                             </div>
                         </th>
 
-                        <!-- Header: Original Amount -->
+                        <!-- Header: Amount -->
                         <th class="py-3 px-3 text-end text-nowrap user-select-none" style="background-color: var(--app-table-header-bg) !important; color: var(--app-table-header-text) !important;">
                             <div class="d-flex align-items-center justify-content-end gap-2">
                                 <span @click="sortBy('value')" style="cursor: pointer;" class="fw-bold me-2">
-                                    {% trans "Original Amount" %}
+                                    {% trans "Amount" %}
                                 </span>
                                 <div class="d-inline-flex align-items-center" style="gap: 4px;">
                                     <i class="bi p-1" 
@@ -291,7 +270,7 @@
                             </div>
                         </th>
 
-                        <!-- Header: Actions -->
+                        <!-- Header: Actions (Ultra-tight column width) -->
                         <th class="py-3 px-2 text-end text-nowrap" style="background-color: var(--app-table-header-bg) !important; color: var(--app-table-header-text) !important; width: 1%;">{% trans "Actions" %}</th>
                     </tr>
                 </thead>
@@ -300,7 +279,7 @@
                 <tbody x-show="!groupColumn" style="background-color: var(--app-table-body-bg); color: var(--app-table-body-text);">
                     <template x-for="item in sortedItems" :key="item.id">
                         <tr :class="{'opacity-50': item.is_expired}" style="border-bottom: 1px solid var(--app-table-border-color);">
-                            <td class="py-3 px-4 fw-semibold">
+                            <td class="py-3 px-3 fw-semibold">
                                 <div class="d-flex align-items-center gap-2">
                                     <span class="badge rounded-circle p-2" :class="item.is_income ? 'bg-success bg-opacity-10 text-success' : 'bg-danger bg-opacity-10 text-danger'">
                                         <i class="bi" :class="item.is_income ? 'bi-arrow-up-right' : 'bi-arrow-down-right'"></i>
@@ -318,28 +297,25 @@
                                 <span x-show="item.source_type !== 'manual'" class="badge bg-info bg-opacity-10 text-info border border-info-subtle rounded-pill" style="font-size: 0.7rem;" x-text="item.source_label"></span>
                             </td>
                             <td class="py-3 px-3 small font-monospace" x-text="item.period_formatted"></td>
-                            <td class="py-3 px-3 text-center small">
-                                <span class="badge" :class="item.frequency === 'monthly' ? 'bg-light text-dark border' : 'bg-warning bg-opacity-10 text-warning border border-warning-subtle'" x-text="item.frequency_display"></span>
-                            </td>
                             <td class="py-3 px-3 text-end font-monospace fw-bold" :class="item.is_income ? 'text-success' : 'text-danger'">
                                 <span x-text="(item.is_income ? '+' : '-') + formatEuro(item.monthly_amount) + ' €'"></span>
                             </td>
                             <td class="py-3 px-3 text-end font-monospace opacity-75 small">
-                                <span x-text="formatEuro(item.value) + ' € / ' + item.frequency_display"></span>
+                                <span x-text="formatEuro(item.value) + ' € / ' + getFrequencySuffix(item)"></span>
                             </td>
-                            <td class="py-3 px-2 text-end text-nowrap" style="width: 1%;">
+                            <td class="py-3 px-1 text-end text-nowrap" style="width: 1%;">
                                 <div x-show="item.can_edit" class="btn-group btn-group-sm">
-                                    <button type="button" class="btn btn-outline-secondary border-0" @click="openEditModalFromObj(item)">
-                                        <i class="bi bi-pencil"></i>
+                                    <button type="button" class="btn btn-outline-secondary border-0 px-1 py-0" @click="openEditModalFromObj(item)" title="{% trans 'Edit' %}">
+                                        <i class="bi bi-pencil fs-6"></i>
                                     </button>
                                     <form method="post" :action="'/finance/cash-flows/delete/' + item.raw_id + '/'" class="d-inline" onsubmit="return confirm('{% trans "Are you sure you want to delete this cash flow entry?" %}');">
                                         {% csrf_token %}
-                                        <button type="submit" class="btn btn-outline-danger border-0">
-                                            <i class="bi bi-trash"></i>
+                                        <button type="submit" class="btn btn-outline-danger border-0 px-1 py-0" title="{% trans 'Delete' %}">
+                                            <i class="bi bi-trash fs-6"></i>
                                         </button>
                                     </form>
                                 </div>
-                                <a x-show="!item.can_edit && item.edit_url" :href="item.edit_url" target="_blank" class="btn btn-sm btn-outline-secondary border-0 text-nowrap" title="{% trans 'Edit source model' %}">
+                                <a x-show="!item.can_edit && item.edit_url" :href="item.edit_url" target="_blank" class="btn btn-sm btn-outline-secondary border-0 px-1 py-0 text-nowrap" title="{% trans 'Edit source model' %}">
                                     <i class="bi bi-pencil me-1"></i><span class="small" x-text="item.source_label"></span>
                                 </a>
                             </td>
@@ -347,14 +323,14 @@
                     </template>
 
                     <tr x-show="sortedItems.length === 0">
-                        <td colspan="7" class="text-center py-5 opacity-75">
+                        <td colspan="6" class="text-center py-5 opacity-75">
                             <i class="bi bi-inbox fs-1 d-block mb-2 opacity-50"></i>
                             {% trans "No matching income or expense entries found." %}
                         </td>
                     </tr>
                 </tbody>
 
-                <!-- Collapsible Grouped View (Each group gets a dedicated <tbody> to comply with Alpine.js single root template node rule) -->
+                <!-- Collapsible Grouped View -->
                 <template x-for="group in groupedItems" :key="group.groupName">
                     <tbody x-show="groupColumn" style="background-color: var(--app-table-body-bg); color: var(--app-table-body-text);">
                         <!-- Group Header Row -->
@@ -363,7 +339,7 @@
                             @click="toggleGroup(group.groupName)" 
                             style="cursor: pointer;"
                             title="{% trans 'Click to toggle group' %}">
-                            <td colspan="4" class="py-2 px-4">
+                            <td colspan="3" class="py-2 px-3">
                                 <i class="bi" :class="isGroupCollapsed(group.groupName) ? 'bi-chevron-right opacity-50' : 'bi-chevron-down text-primary'"></i>
                                 <span x-text="group.groupName" class="ms-1 fw-bold"></span>
                                 <span class="badge bg-secondary rounded-pill ms-2" x-text="group.items.length"></span>
@@ -372,13 +348,13 @@
                                 <span x-show="group.totalIncome > 0" class="text-success me-2" x-text="'+' + formatEuro(group.totalIncome) + ' €'"></span>
                                 <span x-show="group.totalExpense > 0" class="text-danger" x-text="'-' + formatEuro(group.totalExpense) + ' €'"></span>
                             </td>
-                            <td colspan="2" class="py-2 px-3"></td>
+                            <td colspan="2" class="py-2 px-2"></td>
                         </tr>
 
                         <!-- Group Item Rows -->
                         <template x-for="item in group.items" :key="item.id">
                             <tr x-show="!isGroupCollapsed(group.groupName)" :class="{'opacity-50': item.is_expired}" style="border-bottom: 1px solid var(--app-table-border-color);">
-                                <td class="py-3 px-4 fw-semibold ps-5">
+                                <td class="py-3 px-3 fw-semibold ps-4">
                                     <div class="d-flex align-items-center gap-2">
                                         <span class="badge rounded-circle p-2" :class="item.is_income ? 'bg-success bg-opacity-10 text-success' : 'bg-danger bg-opacity-10 text-danger'">
                                             <i class="bi" :class="item.is_income ? 'bi-arrow-up-right' : 'bi-arrow-down-right'"></i>
@@ -396,28 +372,25 @@
                                     <span x-show="item.source_type !== 'manual'" class="badge bg-info bg-opacity-10 text-info border border-info-subtle rounded-pill" style="font-size: 0.7rem;" x-text="item.source_label"></span>
                                 </td>
                                 <td class="py-3 px-3 small font-monospace" x-text="item.period_formatted"></td>
-                                <td class="py-3 px-3 text-center small">
-                                    <span class="badge" :class="item.frequency === 'monthly' ? 'bg-light text-dark border' : 'bg-warning bg-opacity-10 text-warning border border-warning-subtle'" x-text="item.frequency_display"></span>
-                                </td>
                                 <td class="py-3 px-3 text-end font-monospace fw-bold" :class="item.is_income ? 'text-success' : 'text-danger'">
                                     <span x-text="(item.is_income ? '+' : '-') + formatEuro(item.monthly_amount) + ' €'"></span>
                                 </td>
                                 <td class="py-3 px-3 text-end font-monospace opacity-75 small">
-                                    <span x-text="formatEuro(item.value) + ' € / ' + item.frequency_display"></span>
+                                    <span x-text="formatEuro(item.value) + ' € / ' + getFrequencySuffix(item)"></span>
                                 </td>
-                                <td class="py-3 px-2 text-end text-nowrap" style="width: 1%;">
+                                <td class="py-3 px-1 text-end text-nowrap" style="width: 1%;">
                                     <div x-show="item.can_edit" class="btn-group btn-group-sm">
-                                        <button type="button" class="btn btn-outline-secondary border-0" @click="openEditModalFromObj(item)">
-                                            <i class="bi bi-pencil"></i>
+                                        <button type="button" class="btn btn-outline-secondary border-0 px-1 py-0" @click="openEditModalFromObj(item)" title="{% trans 'Edit' %}">
+                                            <i class="bi bi-pencil fs-6"></i>
                                         </button>
                                         <form method="post" :action="'/finance/cash-flows/delete/' + item.raw_id + '/'" class="d-inline" onsubmit="return confirm('{% trans "Are you sure you want to delete this cash flow entry?" %}');">
                                             {% csrf_token %}
-                                            <button type="submit" class="btn btn-outline-danger border-0">
-                                                <i class="bi bi-trash"></i>
+                                            <button type="submit" class="btn btn-outline-danger border-0 px-1 py-0" title="{% trans 'Delete' %}">
+                                                <i class="bi bi-trash fs-6"></i>
                                             </button>
                                         </form>
                                     </div>
-                                    <a x-show="!item.can_edit && item.edit_url" :href="item.edit_url" target="_blank" class="btn btn-sm btn-outline-secondary border-0 text-nowrap" title="{% trans 'Edit source model' %}">
+                                    <a x-show="!item.can_edit && item.edit_url" :href="item.edit_url" target="_blank" class="btn btn-sm btn-outline-secondary border-0 px-1 py-0 text-nowrap" title="{% trans 'Edit source model' %}">
                                         <i class="bi bi-pencil me-1"></i><span class="small" x-text="item.source_label"></span>
                                     </a>
                                 </td>
@@ -644,6 +617,12 @@
                 return Number(val).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             },
 
+            getFrequencySuffix(item) {
+                if (item.frequency === 'monthly') return '{% trans "M" %}';
+                if (item.frequency === 'yearly') return '{% trans "J" %}';
+                return item.frequency_display;
+            },
+
             resetAllFilters() {
                 this.searchQuery = '';
                 this.activeTab = 'all';
@@ -671,7 +650,6 @@
             getGroupColumnLabel() {
                 if (this.groupColumn === 'category') return '{% trans "Category / Source" %}';
                 if (this.groupColumn === 'name') return '{% trans "Name" %}';
-                if (this.groupColumn === 'frequency') return '{% trans "Frequency" %}';
                 if (this.groupColumn === 'type') return '{% trans "Type (Income/Expense)" %}';
                 return this.groupColumn;
             },
@@ -749,9 +727,6 @@
                     } else if (col === 'period') {
                         valA = a.period_formatted;
                         valB = b.period_formatted;
-                    } else if (col === 'frequency') {
-                        valA = a.frequency_display;
-                        valB = b.frequency_display;
                     }
 
                     if (typeof valA === 'number' && typeof valB === 'number') {
@@ -776,8 +751,6 @@
                                 : item.source_label;
                     } else if (this.groupColumn === 'type') {
                         gName = item.is_income ? '{% trans "Income" %}' : '{% trans "Expense" %}';
-                    } else if (this.groupColumn === 'frequency') {
-                        gName = item.frequency_display || '-';
                     } else {
                         gName = item[this.groupColumn] || '-';
                     }
