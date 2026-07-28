@@ -2102,15 +2102,6 @@ msgstr "Nach Monatsbetrag sortieren"
 msgid "Sort by Original Amount"
 msgstr "Nach Ursprungsbetrag sortieren"
 
-msgid "Period"
-msgstr "Zeitraum"
-
-msgid "Monthly"
-msgstr "Monatlich"
-
-msgid "Amount"
-msgstr "Betrag"
-
 msgid "M"
 msgstr "M"
 

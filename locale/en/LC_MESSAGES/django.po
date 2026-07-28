@@ -417,9 +417,6 @@ msgstr "Sort by Monthly Amount"
 msgid "Sort by Original Amount"
 msgstr "Sort by Original Amount"
 
-msgid "Period"
-msgstr "Period"
-
 msgid "Monthly"
 msgstr "Monthly"
 
