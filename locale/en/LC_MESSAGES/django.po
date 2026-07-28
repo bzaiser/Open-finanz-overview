@@ -428,3 +428,6 @@ msgstr "M"
 
 msgid "J"
 msgstr "Y"
+
+msgid "Edit in module"
+msgstr "Edit in module"

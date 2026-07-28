@@ -315,8 +315,8 @@
                                         </button>
                                     </form>
                                 </div>
-                                <a x-show="!item.can_edit && item.edit_url" :href="item.edit_url" target="_blank" class="btn btn-sm btn-outline-secondary border-0 px-1 py-0 text-nowrap" title="{% trans 'Edit source model' %}">
-                                    <i class="bi bi-pencil me-1"></i><span class="small" x-text="item.source_label"></span>
+                                <a x-show="!item.can_edit && item.edit_url" :href="item.edit_url" target="_blank" class="btn btn-sm btn-outline-secondary border-0 px-1 py-0 text-nowrap" :title="'{% trans "Edit in module" %}: ' + item.source_label">
+                                    <i class="bi bi-pencil fs-6"></i>
                                 </a>
                             </td>
                         </tr>
@@ -390,8 +390,8 @@
                                             </button>
                                         </form>
                                     </div>
-                                    <a x-show="!item.can_edit && item.edit_url" :href="item.edit_url" target="_blank" class="btn btn-sm btn-outline-secondary border-0 px-1 py-0 text-nowrap" title="{% trans 'Edit source model' %}">
-                                        <i class="bi bi-pencil me-1"></i><span class="small" x-text="item.source_label"></span>
+                                    <a x-show="!item.can_edit && item.edit_url" :href="item.edit_url" target="_blank" class="btn btn-sm btn-outline-secondary border-0 px-1 py-0 text-nowrap" :title="'{% trans "Edit in module" %}: ' + item.source_label">
+                                        <i class="bi bi-pencil fs-6"></i>
                                     </a>
                                 </td>
                             </tr>

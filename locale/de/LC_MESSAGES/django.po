@@ -2107,3 +2107,6 @@ msgstr "M"
 
 msgid "J"
 msgstr "J"
+
+msgid "Edit in module"
+msgstr "Im Modul bearbeiten"
