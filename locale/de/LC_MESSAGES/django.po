@@ -2339,3 +2339,42 @@ msgstr "Manuelle Einträge zur Anpassung auswählen"
 
 msgid "Select active manual cash flow entries to adjust for the new year. Original records will automatically receive an end date (e.g. 31.12.), and new copied records will start on your chosen date."
 msgstr "Wähle aktive manuelle Einnahmen und Ausgaben zur Anpassung für das neue Jahr aus. Ursprungseinträge erhalten automatisch ein Enddatum (z.B. 31.12.), und neu kopierte Einträge starten am gewählten Datum."
+
+msgid "Annual Adjustment Wizard"
+msgstr "Jahresanpassungs-Wizard"
+
+msgid "New Entry"
+msgstr "Neuer Eintrag"
+
+msgid "Net Monthly Surplus"
+msgstr "Monatlicher Netto-Überschuss"
+
+msgid "Search by name, category, note..."
+msgstr "Nach Name, Kategorie, Notiz suchen..."
+
+msgid "All Categories"
+msgstr "Alle Kategorien"
+
+msgid "Current"
+msgstr "Aktuell"
+
+msgid "All Years"
+msgstr "Alle Jahre"
+
+msgid "year"
+msgstr "Jahr"
+
+msgid "Expand All"
+msgstr "Alle aufklappen"
+
+msgid "Collapse All"
+msgstr "Alle zuklappen"
+
+msgid "Filter by Year"
+msgstr "Nach Jahr filtern"
+
+msgid "Remove grouping"
+msgstr "Gruppierung aufheben"
+
+msgid "Edit source model"
+msgstr "Quellmodell bearbeiten"
