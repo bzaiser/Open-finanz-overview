@@ -305,3 +305,39 @@ msgstr "Acquisition Date"
 
 msgid "Contribution Start Date"
 msgstr "Contribution Start Date"
+
+msgid "Category / Source"
+msgstr "Category / Source"
+
+msgid "Group by Name"
+msgstr "Group by Name"
+
+msgid "Group by Category"
+msgstr "Group by Category"
+
+msgid "Group by Frequency"
+msgstr "Group by Frequency"
+
+msgid "Reset Filters"
+msgstr "Reset Filters"
+
+msgid "Reset all search, sorting and grouping settings"
+msgstr "Reset all search, sorting and grouping settings"
+
+msgid "Grouped by"
+msgstr "Grouped by"
+
+msgid "Type (Income/Expense)"
+msgstr "Type (Income/Expense)"
+
+msgid "Auto-linked"
+msgstr "Auto-linked"
+
+msgid "Overview of all cash flows (manual entries, pensions, rental income, asset withdrawals, and loan payments)."
+msgstr "Overview of all cash flows (manual entries, pensions, rental income, asset withdrawals, and loan payments)."
+
+msgid "Select Manual Entries to Adjust"
+msgstr "Select Manual Entries to Adjust"
+
+msgid "Select active manual cash flow entries to adjust for the new year. Original records will automatically receive an end date (e.g. 31.12.), and new copied records will start on your chosen date."
+msgstr "Select active manual cash flow entries to adjust for the new year. Original records will automatically receive an end date (e.g. 31.12.), and new copied records will start on your chosen date."

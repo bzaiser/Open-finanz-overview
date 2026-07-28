@@ -181,68 +181,69 @@
                 <thead class="table-light text-uppercase small" style="font-size: 0.7rem; letter-spacing: 0.05em;">
                     <tr>
                         <!-- Header: Name -->
-                        <th class="py-3 px-4 user-select-none">
-                            <div class="d-flex align-items-center justify-content-between">
-                                <span @click="sortBy('name')" style="cursor: pointer;" class="fw-bold">
+                        <th class="py-3 px-4 text-nowrap user-select-none">
+                            <div class="d-flex align-items-center justify-content-between gap-2">
+                                <span @click="sortBy('name')" style="cursor: pointer;" class="fw-bold text-dark">
                                     {% trans "Name" %} <i class="bi" :class="getSortIcon('name')"></i>
                                 </span>
-                                <i class="bi bi-diagram-2 p-1 text-muted opacity-50 hover-opacity-100 ms-1" 
+                                <i class="bi p-1 style-cursor-pointer" 
+                                   :class="groupColumn === 'name' ? 'bi-diagram-2-fill text-primary fw-bold' : 'bi-diagram-2 text-dark opacity-75'"
                                    @click.stop="setGroupColumn('name')" 
                                    title="{% trans 'Group by Name' %}" style="cursor: pointer;"></i>
                             </div>
                         </th>
 
                         <!-- Header: Category & Source -->
-                        <th class="py-3 px-3 user-select-none">
-                            <div class="d-flex align-items-center justify-content-between">
-                                <span @click="sortBy('category')" style="cursor: pointer;" class="fw-bold">
+                        <th class="py-3 px-3 text-nowrap user-select-none">
+                            <div class="d-flex align-items-center justify-content-between gap-2">
+                                <span @click="sortBy('category')" style="cursor: pointer;" class="fw-bold text-dark">
                                     {% trans "Category / Source" %} <i class="bi" :class="getSortIcon('category')"></i>
                                 </span>
-                                <div class="d-flex gap-1">
-                                    <i class="bi bi-diagram-2 p-1 text-muted opacity-50 hover-opacity-100 ms-1" 
-                                       @click.stop="setGroupColumn('category')" 
-                                       title="{% trans 'Group by Category' %}" style="cursor: pointer;"></i>
-                                </div>
+                                <i class="bi p-1 style-cursor-pointer" 
+                                   :class="groupColumn === 'category' ? 'bi-diagram-2-fill text-primary fw-bold' : 'bi-diagram-2 text-dark opacity-75'"
+                                   @click.stop="setGroupColumn('category')" 
+                                   title="{% trans 'Group by Category' %}" style="cursor: pointer;"></i>
                             </div>
                         </th>
 
                         <!-- Header: Validity Period -->
-                        <th class="py-3 px-3 user-select-none">
-                            <div class="d-flex align-items-center justify-content-between">
-                                <span @click="sortBy('period')" style="cursor: pointer;" class="fw-bold">
+                        <th class="py-3 px-3 text-nowrap user-select-none">
+                            <div class="d-flex align-items-center justify-content-between gap-2">
+                                <span @click="sortBy('period')" style="cursor: pointer;" class="fw-bold text-dark">
                                     {% trans "Validity Period" %} <i class="bi" :class="getSortIcon('period')"></i>
                                 </span>
                             </div>
                         </th>
 
                         <!-- Header: Frequency -->
-                        <th class="py-3 px-3 text-center user-select-none">
-                            <div class="d-flex align-items-center justify-content-center gap-1">
-                                <span @click="sortBy('frequency')" style="cursor: pointer;" class="fw-bold">
+                        <th class="py-3 px-3 text-center text-nowrap user-select-none">
+                            <div class="d-flex align-items-center justify-content-center gap-2">
+                                <span @click="sortBy('frequency')" style="cursor: pointer;" class="fw-bold text-dark">
                                     {% trans "Frequency" %} <i class="bi" :class="getSortIcon('frequency')"></i>
                                 </span>
-                                <i class="bi bi-diagram-2 p-1 text-muted opacity-50 hover-opacity-100 ms-1" 
+                                <i class="bi p-1 style-cursor-pointer" 
+                                   :class="groupColumn === 'frequency' ? 'bi-diagram-2-fill text-primary fw-bold' : 'bi-diagram-2 text-dark opacity-75'"
                                    @click.stop="setGroupColumn('frequency')" 
                                    title="{% trans 'Group by Frequency' %}" style="cursor: pointer;"></i>
                             </div>
                         </th>
 
                         <!-- Header: Monthly Amount -->
-                        <th class="py-3 px-3 text-end user-select-none">
-                            <span @click="sortBy('monthly_amount')" style="cursor: pointer;" class="fw-bold">
+                        <th class="py-3 px-3 text-end text-nowrap user-select-none">
+                            <span @click="sortBy('monthly_amount')" style="cursor: pointer;" class="fw-bold text-dark">
                                 {% trans "Monthly Amount" %} <i class="bi" :class="getSortIcon('monthly_amount')"></i>
                             </span>
                         </th>
 
                         <!-- Header: Original Amount -->
-                        <th class="py-3 px-3 text-end user-select-none">
-                            <span @click="sortBy('value')" style="cursor: pointer;" class="fw-bold">
+                        <th class="py-3 px-3 text-end text-nowrap user-select-none">
+                            <span @click="sortBy('value')" style="cursor: pointer;" class="fw-bold text-dark">
                                 {% trans "Original Amount" %} <i class="bi" :class="getSortIcon('value')"></i>
                             </span>
                         </th>
 
                         <!-- Header: Actions -->
-                        <th class="py-3 px-4 text-end">{% trans "Actions" %}</th>
+                        <th class="py-3 px-4 text-end text-nowrap">{% trans "Actions" %}</th>
                     </tr>
                 </thead>
 
@@ -635,11 +636,11 @@
             },
 
             getSortIcon(col) {
-                if (this.sortColumn !== col) return 'bi-arrow-down-up opacity-25 ms-1';
+                if (this.sortColumn !== col) return 'bi-arrow-down-up text-dark opacity-75 ms-1';
                 if (['monthly_amount', 'value'].includes(col)) {
-                    return this.sortAsc ? 'bi-sort-numeric-down text-primary ms-1' : 'bi-sort-numeric-down-alt text-primary ms-1';
+                    return this.sortAsc ? 'bi-sort-numeric-down text-primary fw-bold ms-1' : 'bi-sort-numeric-down-alt text-primary fw-bold ms-1';
                 }
-                return this.sortAsc ? 'bi-sort-alpha-down text-primary ms-1' : 'bi-sort-alpha-down-alt text-primary ms-1';
+                return this.sortAsc ? 'bi-sort-alpha-down text-primary fw-bold ms-1' : 'bi-sort-alpha-down-alt text-primary fw-bold ms-1';
             },
 
             isGroupCollapsed(name) {

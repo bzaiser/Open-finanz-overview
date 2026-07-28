@@ -2308,3 +2308,39 @@ msgstr "Filtro actualizado con éxito."
 
 msgid "Filter deleted."
 msgstr "Filtro eliminado."
+
+msgid "Category / Source"
+msgstr "Categoría / Fuente"
+
+msgid "Group by Name"
+msgstr "Agrupar por nombre"
+
+msgid "Group by Category"
+msgstr "Agrupar por categoría"
+
+msgid "Group by Frequency"
+msgstr "Agrupar por frecuencia"
+
+msgid "Reset Filters"
+msgstr "Restablecer filtros"
+
+msgid "Reset all search, sorting and grouping settings"
+msgstr "Restablecer todos los ajustes de búsqueda, ordenación y agrupación"
+
+msgid "Grouped by"
+msgstr "Agrupado por"
+
+msgid "Type (Income/Expense)"
+msgstr "Tipo (Ingreso/Gasto)"
+
+msgid "Auto-linked"
+msgstr "Vinculado"
+
+msgid "Overview of all cash flows (manual entries, pensions, rental income, asset withdrawals, and loan payments)."
+msgstr "Resumen de todos los flujos de efectivo (entradas manuales, pensiones, alquileres, retiradas de patrimonio y préstamos)."
+
+msgid "Select Manual Entries to Adjust"
+msgstr "Seleccionar entradas manuales para ajustar"
+
+msgid "Select active manual cash flow entries to adjust for the new year. Original records will automatically receive an end date (e.g. 31.12.), and new copied records will start on your chosen date."
+msgstr "Seleccione las entradas manuales activas para ajustar el nuevo año. Los registros originales recibirán una fecha de fin y las copias comenzarán en la fecha elegida."
