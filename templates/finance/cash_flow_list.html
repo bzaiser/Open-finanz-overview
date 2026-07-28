@@ -339,9 +339,9 @@
                                         </button>
                                     </form>
                                 </div>
-                                <span x-show="!item.can_edit" class="badge bg-light text-secondary border small">
-                                    <i class="bi bi-link-45deg me-1"></i>{% trans "Auto-linked" %}
-                                </span>
+                                <a x-show="!item.can_edit && item.edit_url" :href="item.edit_url" target="_blank" class="btn btn-sm btn-outline-secondary border-0 text-nowrap" title="{% trans 'Edit source model' %}">
+                                    <i class="bi bi-pencil me-1"></i><span class="small" x-text="item.source_label"></span>
+                                </a>
                             </td>
                         </tr>
                     </template>
@@ -417,9 +417,9 @@
                                             </button>
                                         </form>
                                     </div>
-                                    <span x-show="!item.can_edit" class="badge bg-light text-secondary border small">
-                                        <i class="bi bi-link-45deg me-1"></i>{% trans "Auto-linked" %}
-                                    </span>
+                                    <a x-show="!item.can_edit && item.edit_url" :href="item.edit_url" target="_blank" class="btn btn-sm btn-outline-secondary border-0 text-nowrap" title="{% trans 'Edit source model' %}">
+                                        <i class="bi bi-pencil me-1"></i><span class="small" x-text="item.source_label"></span>
+                                    </a>
                                 </td>
                             </tr>
                         </template>

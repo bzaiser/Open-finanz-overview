@@ -2307,6 +2307,7 @@ def cash_flow_list(request):
             'notes': cf.notes or '',
             'source_type': 'manual',
             'source_label': str(_('Manuell')),
+            'edit_url': '',
             'can_edit': True,
             'can_wizard': True,
         })
@@ -2332,6 +2333,7 @@ def cash_flow_list(request):
                 'notes': f"{_('Modell Rente')}: {p.provider}",
                 'source_type': 'pension',
                 'source_label': str(_('Rente (Beitrag)')),
+                'edit_url': f"/admin/finance/pension/{p.id}/change/",
                 'can_edit': False,
                 'can_wizard': False,
             })
@@ -2354,6 +2356,7 @@ def cash_flow_list(request):
                 'notes': f"{_('Modell Rente')}: {p.provider}",
                 'source_type': 'pension',
                 'source_label': str(_('Rente (Auszahlung)')),
+                'edit_url': f"/admin/finance/pension/{p.id}/change/",
                 'can_edit': False,
                 'can_wizard': False,
             })
@@ -2379,6 +2382,7 @@ def cash_flow_list(request):
                 'notes': f"{_('Modell Immobilie')}: {re.name}",
                 'source_type': 'real_estate',
                 'source_label': str(_('Immobilie (Miete)')),
+                'edit_url': f"/admin/finance/realestate/{re.id}/change/",
                 'can_edit': False,
                 'can_wizard': False,
             })
@@ -2401,6 +2405,7 @@ def cash_flow_list(request):
                 'notes': f"{_('Modell Immobilie')}: {re.name}",
                 'source_type': 'real_estate',
                 'source_label': str(_('Immobilie (Kosten)')),
+                'edit_url': f"/admin/finance/realestate/{re.id}/change/",
                 'can_edit': False,
                 'can_wizard': False,
             })
@@ -2426,6 +2431,7 @@ def cash_flow_list(request):
                 'notes': f"{_('Modell Entnahme')}: {a.name}",
                 'source_type': 'asset',
                 'source_label': str(_('Entnahme')),
+                'edit_url': f"/admin/finance/asset/{a.id}/change/",
                 'can_edit': False,
                 'can_wizard': False,
             })
@@ -2451,6 +2457,7 @@ def cash_flow_list(request):
                 'notes': f"{_('Modell Sachwert')}: {pa.name}",
                 'source_type': 'physical_asset',
                 'source_label': str(_('Sachwert (Kosten)')),
+                'edit_url': f"/admin/finance/physicalasset/{pa.id}/change/",
                 'can_edit': False,
                 'can_wizard': False,
             })
@@ -2476,6 +2483,7 @@ def cash_flow_list(request):
                 'notes': f"{_('Modell Kredit')}: {loan.name}",
                 'source_type': 'loan',
                 'source_label': str(_('Kreditrate')),
+                'edit_url': f"/admin/finance/loan/{loan.id}/change/",
                 'can_edit': False,
                 'can_wizard': False,
             })
@@ -2504,23 +2512,35 @@ def cash_flow_list(request):
     for item in unified_items:
         if selected_year_val == 'all':
             is_active = True
+            is_currently_running = not item['end_date'] or item['end_date'] >= today
         else:
             target_year = int(selected_year_val)
             year_start = datetime.date(target_year, 1, 1)
             year_end = datetime.date(target_year, 12, 31)
+            
+            # An item is active in target_year if its validity window overlaps target_year
             is_active = (not item['start_date'] or item['start_date'] <= year_end) and (not item['end_date'] or item['end_date'] >= year_start)
+            # An item is currently running in target_year if it has not expired before target_year_end
+            is_currently_running = is_active and (not item['end_date'] or item['end_date'] >= (today if target_year == current_year else year_end))
                 
         item['is_active_in_selected_year'] = is_active
+        item['is_expired_in_selected_year'] = not is_currently_running
         
         if is_active:
             m_val = item['monthly_amount']
             y_val = m_val * Decimal('12') if item['frequency'] == 'monthly' else item['value']
             
+            # Only add to MONTHLY metric cards if the item is currently active (not expired)
+            if is_currently_running:
+                if item['is_income']:
+                    monthly_income_sum += m_val
+                else:
+                    monthly_expense_sum += m_val
+            
+            # Add to YEARLY metric cards
             if item['is_income']:
-                monthly_income_sum += m_val
                 yearly_income_sum += y_val
             else:
-                monthly_expense_sum += m_val
                 yearly_expense_sum += y_val
                 
     monthly_income_sum = monthly_income_sum.quantize(Decimal('0.01'))
@@ -2565,9 +2585,10 @@ def cash_flow_list(request):
             'notes': item['notes'],
             'source_type': item['source_type'],
             'source_label': item['source_label'],
+            'edit_url': item['edit_url'],
             'can_edit': item['can_edit'],
             'can_wizard': item['can_wizard'],
-            'is_expired': bool(item['end_date'] and item['end_date'] < today)
+            'is_expired': item['is_expired_in_selected_year']
         })
 
     context = {
