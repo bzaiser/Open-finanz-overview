@@ -121,7 +121,7 @@ class AssetSnapshotInline(GenericTabularInline):
 
 @admin.register(Pension)
 class PensionAdmin(BaseOwnedModelAdmin):
-    list_display = ('provider', 'pension_type', 'user', 'pension_points', 'point_value', 'current_value', 'monthly_contribution', 'expected_payout_at_retirement', 'is_indexed', 'notes')
+    list_display = ('provider', 'pension_type', 'user', 'pension_points', 'point_value', 'social_deduction_rate', 'current_value', 'monthly_contribution', 'expected_payout_at_retirement', 'is_indexed', 'notes')
     list_editable = ('is_indexed',)
     search_fields = ('provider', 'user__username')
     list_filter = ('pension_type', 'user')

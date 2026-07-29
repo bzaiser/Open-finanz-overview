@@ -115,8 +115,9 @@ class Pension(models.Model):
     # Statutory pension fields
     pension_points = models.DecimalField(_("Pension Points (Entgeltpunkte)"), max_digits=8, decimal_places=4, null=True, blank=True, help_text=_("Number of statutory pension points accumulated"))
     point_value = models.DecimalField(_("Point Value (€)"), max_digits=6, decimal_places=2, null=True, blank=True, help_text=_("Value of 1 pension point in EUR (e.g. 39.32)"))
+    social_deduction_rate = models.DecimalField(_("Social Security Deduction (%)"), max_digits=5, decimal_places=2, default=11.50, help_text=_("Health and nursing care insurance deduction percentage (default ~11.5%)"))
 
-    expected_payout_at_retirement = models.DecimalField(_("Expected Monthly Payout"), max_digits=10, decimal_places=2, blank=True, null=True)
+    expected_payout_at_retirement = models.DecimalField(_("Expected Monthly Net Payout"), max_digits=10, decimal_places=2, blank=True, null=True, help_text=_("Net payout after KV/PV deductions"))
     is_indexed = models.BooleanField(_("Indexed (Inflation Adjustment)"), default=True, help_text=_("If checked, the payout will increase annually based on the global pension increase rate."))
     contribution_end_date = models.DateField(verbose_name=_("Contribution End Date"), blank=True, null=True, help_text=_("Date when you stop paying into this pension"))
     start_payout_date = models.DateField(_("Payout Start Date"), blank=True, null=True, help_text=_("Approximate date when pension payout starts"))
@@ -126,10 +127,18 @@ class Pension(models.Model):
         verbose_name = _("Pension")
         verbose_name_plural = _("Pensions")
 
+    @property
+    def gross_payout(self):
+        if self.pension_type == 'statutory' and self.pension_points is not None and self.point_value is not None:
+            return (self.pension_points * self.point_value).quantize(Decimal('0.01'))
+        return self.expected_payout_at_retirement
+
     def save(self, *args, **kwargs):
         if self.pension_type == 'statutory' and self.pension_points is not None and self.point_value is not None:
-            calculated_payout = (self.pension_points * self.point_value).quantize(Decimal('0.01'))
-            self.expected_payout_at_retirement = calculated_payout
+            gross = self.pension_points * self.point_value
+            rate = (self.social_deduction_rate or Decimal('0.00')) / Decimal('100.00')
+            net = gross * (Decimal('1.00') - rate)
+            self.expected_payout_at_retirement = net.quantize(Decimal('0.01'))
         super().save(*args, **kwargs)
 
     def __str__(self):
