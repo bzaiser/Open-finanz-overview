@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='pension',
             name='social_deduction_rate',
-            field=models.DecimalField(decimal_places=2, default=11.5, help_text='Health and nursing care insurance deduction percentage (default ~11.5%)', max_digits=5, verbose_name='Social Security Deduction (%)'),
+            field=models.DecimalField(decimal_places=2, default=11.5, help_text='Health and nursing care insurance deduction percentage (e.g. 12.79%)', max_digits=5, verbose_name='Social Security Deduction (%)'),
         ),
         migrations.AlterField(
             model_name='pension',
