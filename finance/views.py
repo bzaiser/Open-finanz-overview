@@ -1142,7 +1142,6 @@ def dashboard_view(request):
             'amount': float(p.current_value or 0), 
             'category': _('Pension'),
             'contribution': float(p.monthly_contribution or 0),
-            'notes': p.notes or '',
             'year': year
         })
 
