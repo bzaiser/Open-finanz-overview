@@ -6,17 +6,13 @@ description: Synchronize 'main' branch across all project repositories
 This workflow ensures that the `main` branch is kept in sync across all target repositories.
 
 ## Configured Repositories
-- **origin**: `finanzplan.git` (Main internal development)
-- **overview**: `Open-finanz-overview.git` (Public/Overview version)
+- **origin**: `finanzplan.git` (Main development repository)
 
 ## Synchronization Steps
 
-// turbo-all
-1. **Push to All Remotes**
-   - Push the `main` branch to all configured remotes to ensure they are identical everywhere.
+1. **Push to Origin**
    ```bash
    git push origin main
-   git push overview main
    ```
 
 ## Rules for New Repositories
