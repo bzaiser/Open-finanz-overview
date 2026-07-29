@@ -120,6 +120,7 @@ class Pension(models.Model):
     is_indexed = models.BooleanField(_("Indexed (Inflation Adjustment)"), default=True, help_text=_("If checked, the payout will increase annually based on the global pension increase rate."))
     contribution_end_date = models.DateField(verbose_name=_("Contribution End Date"), blank=True, null=True, help_text=_("Date when you stop paying into this pension"))
     start_payout_date = models.DateField(_("Payout Start Date"), blank=True, null=True, help_text=_("Approximate date when pension payout starts"))
+    notes = models.TextField(_("Notes"), blank=True, null=True, help_text=_("Additional multiline notes or details"))
 
     class Meta:
         verbose_name = _("Pension")
