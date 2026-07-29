@@ -100,11 +100,22 @@ class OneTimeEvent(models.Model):
         return self.name
 
 class Pension(models.Model):
+    PENSION_TYPE_CHOICES = [
+        ('capital', _('Capital / Private Pension')),
+        ('statutory', _('Statutory Pension (Gesetzliche Rente)')),
+    ]
+
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='pensions')
     provider = models.CharField(_("Provider/Name"), max_length=100)
+    pension_type = models.CharField(_("Pension Type"), max_length=20, choices=PENSION_TYPE_CHOICES, default='capital')
     current_value = models.DecimalField(_("Current Value"), max_digits=12, decimal_places=2, default=0.00)
     monthly_contribution = models.DecimalField(_("Monthly Contribution"), max_digits=10, decimal_places=2, default=0.00)
     growth_rate = models.DecimalField(_("Annual Growth Rate (%)"), max_digits=5, decimal_places=2, default=0.00)
+    
+    # Statutory pension fields
+    pension_points = models.DecimalField(_("Pension Points (Entgeltpunkte)"), max_digits=8, decimal_places=4, null=True, blank=True, help_text=_("Number of statutory pension points accumulated"))
+    point_value = models.DecimalField(_("Point Value (€)"), max_digits=6, decimal_places=2, null=True, blank=True, help_text=_("Value of 1 pension point in EUR (e.g. 39.32)"))
+
     expected_payout_at_retirement = models.DecimalField(_("Expected Monthly Payout"), max_digits=10, decimal_places=2, blank=True, null=True)
     is_indexed = models.BooleanField(_("Indexed (Inflation Adjustment)"), default=True, help_text=_("If checked, the payout will increase annually based on the global pension increase rate."))
     contribution_end_date = models.DateField(verbose_name=_("Contribution End Date"), blank=True, null=True, help_text=_("Date when you stop paying into this pension"))
@@ -113,6 +124,12 @@ class Pension(models.Model):
     class Meta:
         verbose_name = _("Pension")
         verbose_name_plural = _("Pensions")
+
+    def save(self, *args, **kwargs):
+        if self.pension_type == 'statutory' and self.pension_points is not None and self.point_value is not None:
+            calculated_payout = (self.pension_points * self.point_value).quantize(Decimal('0.01'))
+            self.expected_payout_at_retirement = calculated_payout
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.provider
@@ -327,6 +344,11 @@ class AssetSnapshot(models.Model):
     
     date = models.DateField(_("Date"))
     value = models.DecimalField(_("Value"), max_digits=15, decimal_places=2)
+    
+    # Optional statutory pension historical tracking
+    pension_points = models.DecimalField(_("Pension Points (Entgeltpunkte)"), max_digits=8, decimal_places=4, null=True, blank=True)
+    point_value = models.DecimalField(_("Point Value (€)"), max_digits=6, decimal_places=2, null=True, blank=True)
+
     notes = models.TextField(_("Notes"), blank=True)
 
     class Meta:
