@@ -2715,3 +2715,228 @@ def cash_flow_annual_adjustment(request):
                 
         messages.success(request, f"{_('Annual adjustment completed successfully.')} {copied_count} {_('entries updated and copied.')}")
     return redirect('finance:cash_flow_list')
+
+
+from .forms import PensionForm
+
+@login_required
+def pension_plan_view(request):
+    user = request.user
+    profile = user.profile
+    today = timezone.now().date()
+    current_year = today.year
+
+    pensions = list(user.pensions.all().order_by('pension_type', 'provider'))
+
+    # Calculate retirement age & retirement year
+    retirement_age = profile.retirement_age or 67
+    birth_date = profile.birth_date
+    if birth_date:
+        retirement_year = birth_date.year + retirement_age
+    else:
+        retirement_year = current_year + (retirement_age - 40) # Default estimate
+
+    # Fetch Snapshots for pensions
+    from django.contrib.contenttypes.models import ContentType
+    from .models import AssetSnapshot
+    ct_pension = ContentType.objects.get_for_model(Pension)
+
+    pension_ids = [p.id for p in pensions]
+    snapshots = list(AssetSnapshot.objects.filter(
+        user=user,
+        content_type=ct_pension,
+        object_id__in=pension_ids
+    ).order_by('date'))
+
+    # Metrics
+    total_statutory_points = Decimal('0.0000')
+    statutory_monthly_net = Decimal('0.00')
+    private_monthly_net = Decimal('0.00')
+    total_monthly_net = Decimal('0.00')
+    total_capital_value = Decimal('0.00')
+
+    for p in pensions:
+        if p.pension_type == 'statutory':
+            if p.pension_points:
+                total_statutory_points += p.pension_points
+            if p.expected_payout_at_retirement:
+                statutory_monthly_net += p.expected_payout_at_retirement
+        else:
+            if p.expected_payout_at_retirement:
+                private_monthly_net += p.expected_payout_at_retirement
+            if p.current_value:
+                total_capital_value += p.current_value
+
+        if p.expected_payout_at_retirement:
+            total_monthly_net += p.expected_payout_at_retirement
+
+    target_monthly_payout = profile.expected_payout if hasattr(profile, 'expected_payout') and profile.expected_payout else total_monthly_net
+    pension_gap = (target_monthly_payout - total_monthly_net).quantize(Decimal('0.01')) if target_monthly_payout else Decimal('0.00')
+
+    # Build historical & forecast timeline (e.g. Current Year - 5 to Retirement Year + 5)
+    start_year = current_year - 5
+    end_year = max(retirement_year + 5, current_year + 10)
+    timeline_years = list(range(start_year, end_year + 1))
+
+    # Group snapshots by year
+    snapshots_by_year = {}
+    for s in snapshots:
+        y = s.date.year
+        if y not in snapshots_by_year:
+            snapshots_by_year[y] = {'points': Decimal('0.00'), 'val': Decimal('0.00')}
+        if s.pension_points:
+            snapshots_by_year[y]['points'] += s.pension_points
+        if s.value:
+            snapshots_by_year[y]['val'] += s.value
+
+    # Build chart data series
+    chart_years = []
+    points_series = []
+    net_payout_series = []
+    target_series = []
+
+    current_points_acc = total_statutory_points
+    pension_increase_rate = profile.pension_increase / Decimal('100.0')
+
+    for y in timeline_years:
+        chart_years.append(str(y))
+        target_series.append(float(target_monthly_payout))
+
+        if y < current_year:
+            # Historical data from snapshots or estimate
+            y_snap = snapshots_by_year.get(y)
+            pts = float(y_snap['points']) if y_snap and y_snap['points'] > 0 else None
+            val = float(y_snap['val']) if y_snap and y_snap['val'] > 0 else None
+            points_series.append(pts)
+            net_payout_series.append(val)
+        elif y == current_year:
+            points_series.append(float(total_statutory_points))
+            net_payout_series.append(float(total_monthly_net))
+        else:
+            # Forecast (Future)
+            years_from_now = y - current_year
+            # Project pension payouts with annual increase rate
+            projected_payout = total_monthly_net * ((Decimal('1.0') + pension_increase_rate) ** Decimal(str(years_from_now)))
+            net_payout_series.append(float(projected_payout.quantize(Decimal('0.01'))))
+
+            # Project points (assuming user continues accumulating current average or static)
+            points_series.append(float(total_statutory_points))
+
+    # Dashboard colors
+    dashboard_config = profile.dashboard_config or {}
+    summary_layout = dashboard_config.get('summary_layout', [])
+    summary_colors = {item['id']: item for item in summary_layout if isinstance(item, dict) and 'id' in item}
+
+    statutory_color = summary_colors.get('current_pension_payout', {}).get('bg_color') or '#fd7e14'
+    private_color = summary_colors.get('total_pensions', {}).get('bg_color') or '#0dcaf0'
+    target_color = summary_colors.get('expected_payout', {}).get('bg_color') or '#6f42c1'
+
+    pensions_json = []
+    for p in pensions:
+        pensions_json.append({
+            'id': p.id,
+            'provider': p.provider,
+            'pension_type': p.pension_type,
+            'pension_type_display': str(p.get_pension_type_display()),
+            'pension_points': float(p.pension_points) if p.pension_points is not None else None,
+            'point_value': float(p.point_value) if p.point_value is not None else None,
+            'gross_payout_amount': float(p.gross_payout_amount) if p.gross_payout_amount is not None else None,
+            'social_deduction_rate': float(p.social_deduction_rate) if p.social_deduction_rate is not None else 11.5,
+            'expected_payout_at_retirement': float(p.expected_payout_at_retirement) if p.expected_payout_at_retirement is not None else None,
+            'current_value': float(p.current_value) if p.current_value is not None else 0.0,
+            'monthly_contribution': float(p.monthly_contribution) if p.monthly_contribution is not None else 0.0,
+            'start_payout_date': p.start_payout_date.strftime('%Y-%m-%d') if p.start_payout_date else '',
+            'contribution_end_date': p.contribution_end_date.strftime('%Y-%m-%d') if p.contribution_end_date else '',
+            'is_indexed': p.is_indexed,
+            'notes': p.notes or ''
+        })
+
+    context = {
+        'pensions': pensions,
+        'pensions_json': json.dumps(pensions_json),
+        'total_statutory_points': total_statutory_points,
+        'statutory_monthly_net': statutory_monthly_net,
+        'private_monthly_net': private_monthly_net,
+        'total_monthly_net': total_monthly_net,
+        'total_capital_value': total_capital_value,
+        'target_monthly_payout': target_monthly_payout,
+        'pension_gap': pension_gap,
+        'retirement_age': retirement_age,
+        'retirement_year': retirement_year,
+        'chart_years_json': json.dumps(chart_years),
+        'points_series_json': json.dumps(points_series),
+        'net_payout_series_json': json.dumps(net_payout_series),
+        'target_series_json': json.dumps(target_series),
+        'statutory_color': statutory_color,
+        'private_color': private_color,
+        'target_color': target_color,
+        'form': PensionForm(),
+    }
+    return render(request, 'finance/pension_plan.html', context)
+
+
+@login_required
+def pension_save(request, pk=None):
+    user = request.user
+    instance = get_object_or_404(Pension, id=pk, user=user) if pk else None
+
+    if request.method == 'POST':
+        form = PensionForm(request.POST, instance=instance)
+        if form.is_valid():
+            pension = form.save(commit=False)
+            pension.user = user
+            pension.save()
+            messages.success(request, _('Pension entry saved successfully.'))
+        else:
+            messages.error(request, _('Error saving pension entry. Please check your inputs.'))
+    return redirect('finance:pension_plan')
+
+
+@login_required
+def pension_delete(request, pk):
+    user = request.user
+    pension = get_object_or_404(Pension, id=pk, user=user)
+    if request.method == 'POST':
+        pension.delete()
+        messages.success(request, _('Pension entry deleted.'))
+    return redirect('finance:pension_plan')
+
+
+@login_required
+def pension_snapshot_save(request):
+    if request.method == 'POST':
+        user = request.user
+        pension_id = request.POST.get('pension_id')
+        snapshot_date_str = request.POST.get('date')
+        points_str = request.POST.get('pension_points')
+        point_val_str = request.POST.get('point_value')
+        value_str = request.POST.get('value')
+        notes = request.POST.get('notes', '')
+
+        pension = get_object_or_404(Pension, id=pension_id, user=user)
+        from django.contrib.contenttypes.models import ContentType
+        from .models import AssetSnapshot
+
+        try:
+            snap_date = datetime.datetime.strptime(snapshot_date_str, '%Y-%m-%d').date()
+            pts = Decimal(points_str) if points_str else None
+            pt_val = Decimal(point_val_str) if point_val_str else None
+            val = Decimal(value_str) if value_str else (pts * pt_val if pts and pt_val else Decimal('0.00'))
+
+            AssetSnapshot.objects.update_or_create(
+                user=user,
+                content_type=ContentType.objects.get_for_model(Pension),
+                object_id=pension.id,
+                date=snap_date,
+                defaults={
+                    'value': val,
+                    'pension_points': pts,
+                    'point_value': pt_val,
+                    'notes': notes
+                }
+            )
+            messages.success(request, _('Historical snapshot saved successfully.'))
+        except Exception as e:
+            messages.error(request, f"{_('Error saving snapshot')}: {str(e)}")
+
+    return redirect('finance:pension_plan')

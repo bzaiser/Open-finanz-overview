@@ -2167,3 +2167,69 @@ msgstr "Indiziert (Inflationsanpassung)"
 
 msgid "Cancel"
 msgstr "Abbrechen"
+
+msgid "Retirement Planning"
+msgstr "Vorsorgeplanung"
+
+msgid "Retirement Age"
+msgstr "Renteneintrittsalter"
+
+msgid "Target Retirement Age"
+msgstr "Ziel-Renteneintrittsalter"
+
+msgid "Record Historical Snapshot"
+msgstr "Historischen Stichtag erfassen"
+
+msgid "New Pension Plan"
+msgstr "Neuer Vorsorgevertrag"
+
+msgid "Statutory Pension (Net)"
+msgstr "Gesetzliche Rente (Netto)"
+
+msgid "Private Pension Capital"
+msgstr "Privates Vorsorgekapital"
+
+msgid "Total Monthly Net Payout"
+msgstr "Erwartete Netto-Gesamtrente"
+
+msgid "Pension Gap"
+msgstr "Rentenlücke"
+
+msgid "Historical Trend & Projection Timeline"
+msgstr "Historie & Prognose-Zeitleiste"
+
+msgid "Pension Portfolio Breakdown"
+msgstr "Aufteilung der Vorsorge"
+
+msgid "Active Pension Contracts & Provisions"
+msgstr "Aktive Vorsorgeverträge & Ansprüche"
+
+msgid "Edit Pension Contract"
+msgstr "Vorsorgevertrag bearbeiten"
+
+msgid "New Pension Contract"
+msgstr "Neuer Vorsorgevertrag"
+
+msgid "Statutory Pension Point Calculation"
+msgstr "Gesetzliche Rentenpunkte-Berechnung"
+
+msgid "Gross Monthly Payout (€)"
+msgstr "Brutto-Monatsrente (€)"
+
+msgid "Expected Net Payout (€)"
+msgstr "Erwartete Netto-Monatsrente (€)"
+
+msgid "Current Capital Value (€)"
+msgstr "Aktueller Kapitalwert (€)"
+
+msgid "Monthly Contribution (€)"
+msgstr "Monatlicher Beitrag (€)"
+
+msgid "Payout Start Date"
+msgstr "Rentenbeginn (Datum)"
+
+msgid "Contribution End Date"
+msgstr "Beitragsende (Datum)"
+
+msgid "Save Snapshot"
+msgstr "Stichtag speichern"

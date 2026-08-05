@@ -27,5 +27,10 @@ urlpatterns = [
     path('cash-flows/save/<int:pk>/', views.cash_flow_save, name='cash_flow_edit'),
     path('cash-flows/delete/<int:pk>/', views.cash_flow_delete, name='cash_flow_delete'),
     path('cash-flows/annual-adjustment/', views.cash_flow_annual_adjustment, name='cash_flow_annual_adjustment'),
+    path('pensions/', views.pension_plan_view, name='pension_plan'),
+    path('pensions/save/', views.pension_save, name='pension_add'),
+    path('pensions/save/<int:pk>/', views.pension_save, name='pension_edit'),
+    path('pensions/delete/<int:pk>/', views.pension_delete, name='pension_delete'),
+    path('pensions/snapshot/save/', views.pension_snapshot_save, name='pension_snapshot_save'),
     path('dynamic-theme.css', views.dynamic_theme_css, name='dynamic_theme_css'),
 ]

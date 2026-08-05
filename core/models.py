@@ -50,6 +50,7 @@ class UserProfile(models.Model):
         ('it', 'Italiano'),
     ])
     simulation_max_age = models.PositiveIntegerField(_("Simulation Max Age"), default=90)
+    retirement_age = models.PositiveIntegerField(_("Retirement Age"), default=67, help_text=_("Target retirement age for planning and gap calculation (default 67)"))
     simulation_start_date = models.DateField(_("Simulation Start Date"), blank=True, null=True, help_text=_("Earliest date to show in charts. Leave empty for automatic (based on oldest snapshot or current year)."))
     
     # Simulation Parameters (Defaults)
