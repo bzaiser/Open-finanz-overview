@@ -2225,11 +2225,5 @@ msgstr "Aktueller Kapitalwert (€)"
 msgid "Monthly Contribution (€)"
 msgstr "Monatlicher Beitrag (€)"
 
-msgid "Payout Start Date"
-msgstr "Rentenbeginn (Datum)"
-
-msgid "Contribution End Date"
-msgstr "Beitragsende (Datum)"
-
 msgid "Save Snapshot"
 msgstr "Stichtag speichern"
