@@ -2043,3 +2043,54 @@ msgstr "Sélectionner les saisies manuelles à ajuster"
 
 msgid "Select active manual cash flow entries to adjust for the new year. Original records will automatically receive an end date (e.g. 31.12.), and new copied records will start on your chosen date."
 msgstr "Sélectionnez les entrées manuelles actives à ajuster pour la nouvelle année. Les enregistrements originaux recevront une date de fin et les copies commenceront à la date choisie."
+
+msgid "Edit Cash Flow"
+msgstr "Modifier le flux de trésorerie"
+
+msgid "New Cash Flow"
+msgstr "Nouveau flux de trésorerie"
+
+msgid "Entry Type"
+msgstr "Type d'entrée"
+
+msgid "Amount (EUR)"
+msgstr "Montant (EUR)"
+
+msgid "-- Select Category --"
+msgstr "-- Sélectionner la catégorie --"
+
+msgid "End Date (Optional)"
+msgstr "Date de fin (Optionnelle)"
+
+msgid "e.g. Salary, Rent, Netflix"
+msgstr "ex. Salaire, Loyer, Netflix"
+
+msgid "Optional notes..."
+msgstr "Notes optionnelles..."
+
+msgid "Save Entry"
+msgstr "Enregistrer l'entrée"
+
+msgid "New Start Date"
+msgstr "Nouvelle date de début"
+
+msgid "Previous records will automatically be ended on"
+msgstr "Les enregistrements précédents se termineront automatiquement le"
+
+msgid "Percentage Adjustment (Optional)"
+msgstr "Ajustement pourcentage (Optionnel)"
+
+msgid "e.g. +2.5 for salary raise or inflation adjustment."
+msgstr "ex. +2,5 pour augmentation de salaire ou inflation."
+
+msgid "Deselect All"
+msgstr "Tout désélectionner"
+
+msgid "Select All"
+msgstr "Tout sélectionner"
+
+msgid "Current Amount"
+msgstr "Montant actuel"
+
+msgid "Apply Adjustment"
+msgstr "Appliquer l'ajustement"

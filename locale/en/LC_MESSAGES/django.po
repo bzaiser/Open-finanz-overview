@@ -431,3 +431,54 @@ msgstr "Y"
 
 msgid "Edit in module"
 msgstr "Edit in module"
+
+msgid "Edit Cash Flow"
+msgstr "Edit Cash Flow"
+
+msgid "New Cash Flow"
+msgstr "New Cash Flow"
+
+msgid "Entry Type"
+msgstr "Entry Type"
+
+msgid "Amount (EUR)"
+msgstr "Amount (EUR)"
+
+msgid "-- Select Category --"
+msgstr "-- Select Category --"
+
+msgid "End Date (Optional)"
+msgstr "End Date (Optional)"
+
+msgid "e.g. Salary, Rent, Netflix"
+msgstr "e.g. Salary, Rent, Netflix"
+
+msgid "Optional notes..."
+msgstr "Optional notes..."
+
+msgid "Save Entry"
+msgstr "Save Entry"
+
+msgid "New Start Date"
+msgstr "New Start Date"
+
+msgid "Previous records will automatically be ended on"
+msgstr "Previous records will automatically be ended on"
+
+msgid "Percentage Adjustment (Optional)"
+msgstr "Percentage Adjustment (Optional)"
+
+msgid "e.g. +2.5 for salary raise or inflation adjustment."
+msgstr "e.g. +2.5 for salary raise or inflation adjustment."
+
+msgid "Deselect All"
+msgstr "Deselect All"
+
+msgid "Select All"
+msgstr "Select All"
+
+msgid "Current Amount"
+msgstr "Current Amount"
+
+msgid "Apply Adjustment"
+msgstr "Apply Adjustment"
