@@ -14,7 +14,7 @@
             </h2>
             <p class="text-muted small mb-0">
                 {% trans "Overview, historical trend and future projections of statutory and private pensions." %}
-                <span class="ms-1 border-start ps-2">{% trans "Target Retirement Age" %}: <strong class="text-primary" x-text="retirementAge + ' {% trans "years" %} (' + retirementYear + ')'"></strong></span>
+                <span class="ms-1 border-start ps-2">{% trans "Target Retirement Age" %}: <strong class="text-primary" x-text="retirementAge + ' {% trans 'years' %} (' + retirementYear + ')'"></strong></span>
             </p>
         </div>
         <div class="d-flex gap-2">
@@ -184,7 +184,7 @@
     <div class="card border-0 shadow-sm rounded-4 mb-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
         <div class="card-header border-0 d-flex justify-content-between align-items-center">
             <span class="fw-bold"><i class="bi bi-list-task me-2"></i>{% trans "Active Pension Contracts & Provisions" %}</span>
-            <span class="badge bg-white bg-opacity-20 rounded-pill" x-text="pensions.length + ' {% trans "Contracts" %}'"></span>
+            <span class="badge bg-white bg-opacity-20 rounded-pill" x-text="pensions.length + ' {% trans 'Contracts' %}'"></span>
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
