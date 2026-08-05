@@ -6,3 +6,4 @@
 
 ## 2. Git Workflow
 - Default push remote: `origin main` (`git push origin main`).
+- **Translation Check**: ALWAYS verify that `.po` files do NOT contain duplicate `msgid` definitions before committing or pushing changes to `locale/`.
