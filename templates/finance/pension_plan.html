@@ -256,7 +256,7 @@
                     <h5 class="modal-title fw-bold" x-text="editId ? '{% trans 'Edit Pension Contract' %}' : '{% trans 'New Pension Contract' %}'"></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form method="post" :action="editId ? '/finance/pensions/save/' + editId + '/' : '{% url \'finance:pension_add\' %}'">
+                <form method="post" :action="editId ? '/finance/pensions/save/' + editId + '/' : '{% url "finance:pension_add" %}'">
                     {% csrf_token %}
                     <div class="modal-body pt-3">
                         <div class="row g-3 mb-3">
