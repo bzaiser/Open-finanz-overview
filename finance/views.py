@@ -2814,13 +2814,9 @@ def pension_plan_view(request):
             cap = float(y_snap['val']) if y_snap and y_snap['val'] > 0 else None
             stat_net = float(y_snap['statutory_net']) if y_snap and y_snap['statutory_net'] > 0 else None
             net_payout_series.append(0.0)
-        elif y == current_year:
-            cap = float(total_capital_value)
-            stat_net = float(statutory_monthly_net)
-            net_payout_series.append(float(statutory_monthly_net + private_monthly_net if current_year >= retirement_year else Decimal('0.00')))
-        else: # y > current_year
-            cap = None
-            stat_net = None
+        else: # y >= current_year
+            cap = float(total_capital_value) if y == current_year else None
+            stat_net = float(statutory_monthly_net) if y == current_year else None
             yearly_projected_net = Decimal('0.00')
             for p in pensions:
                 p_start_year = p.start_payout_date.year if p.start_payout_date else retirement_year
@@ -2831,6 +2827,10 @@ def pension_plan_view(request):
                     else:
                         p_payout = p.expected_payout_at_retirement
                     yearly_projected_net += p_payout
+
+            # If no specific start_payout_date is reached yet, show the current expected total monthly net payout as benchmark from current_year onwards
+            if yearly_projected_net == Decimal('0.00') and total_monthly_net > Decimal('0.00'):
+                yearly_projected_net = total_monthly_net
 
             net_payout_series.append(float(yearly_projected_net.quantize(Decimal('0.01'))))
 
