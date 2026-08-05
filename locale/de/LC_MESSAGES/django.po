@@ -2299,3 +2299,18 @@ msgstr "Prognostizierte Netto-Monatsrente"
 
 msgid "Target Monthly Payout"
 msgstr "Monatliche Ziel-Nettorrente"
+
+msgid "Monthly Payout Projection Timeline"
+msgstr "Prognose-Zeitleiste (Monatliche Netto-Ausbuchtungen)"
+
+msgid "Capital & Pension Points Development"
+msgstr "Kapital- & Rentenpunkte-Entwicklung"
+
+msgid "Historical Snapshots & Current Status"
+msgstr "Historische Stichtage & Aktueller Stand"
+
+msgid "Private Capital Value"
+msgstr "Privates Vorsorgekapital"
+
+msgid "Statutory Pension Points"
+msgstr "Gesetzliche Rentenpunkte"

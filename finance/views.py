@@ -2792,6 +2792,7 @@ def pension_plan_view(request):
 
     # Build chart data series
     chart_years = []
+    capital_series = []
     points_series = []
     net_payout_series = []
     target_series = []
@@ -2802,15 +2803,17 @@ def pension_plan_view(request):
         chart_years.append(str(y))
         target_series.append(float(target_monthly_payout))
 
+        # 1. Historical Snapshots (Capital value & Points)
+        y_snap = snapshots_by_year.get(y)
+        pts = float(y_snap['points']) if y_snap and y_snap['points'] > 0 else (float(total_statutory_points) if y >= current_year else None)
+        cap = float(y_snap['val']) if y_snap and y_snap['val'] > 0 else (float(total_capital_value) if y >= current_year else None)
+        points_series.append(pts)
+        capital_series.append(cap)
+
+        # 2. Monthly Net Payout Projection Series (ONLY monthly net amounts, never capital value!)
         if y < current_year:
-            # Historical data from snapshots (tracking accumulated points / value at that time)
-            y_snap = snapshots_by_year.get(y)
-            pts = float(y_snap['points']) if y_snap and y_snap['points'] > 0 else None
-            val = float(y_snap['val']) if y_snap and y_snap['val'] > 0 else 0.0
-            points_series.append(pts)
-            net_payout_series.append(val)
+            net_payout_series.append(0.0)
         else:
-            # Forecast: Check which pensions are active for payout in year y based on start_payout_date (or retirement_year)
             yearly_projected_net = Decimal('0.00')
             for p in pensions:
                 p_start_year = p.start_payout_date.year if p.start_payout_date else retirement_year
@@ -2823,7 +2826,6 @@ def pension_plan_view(request):
                     yearly_projected_net += p_payout
 
             net_payout_series.append(float(yearly_projected_net.quantize(Decimal('0.01'))))
-            points_series.append(float(total_statutory_points))
 
     # Dashboard colors
     dashboard_config = profile.dashboard_config or {}
@@ -2868,6 +2870,7 @@ def pension_plan_view(request):
         'retirement_age': retirement_age,
         'retirement_year': retirement_year,
         'chart_years_json': json.dumps(chart_years),
+        'capital_series_json': json.dumps(capital_series),
         'points_series_json': json.dumps(points_series),
         'net_payout_series_json': json.dumps(net_payout_series),
         'target_series_json': json.dumps(target_series),
