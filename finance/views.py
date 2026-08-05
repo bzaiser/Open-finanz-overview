@@ -2804,10 +2804,6 @@ def pension_plan_view(request):
 
     pension_increase_rate = profile.pension_increase / Decimal('100.0')
 
-    # Last known values for continuous forward propagation if missing
-    running_capital = total_capital_value
-    running_stat_net = statutory_monthly_net
-
     for y in timeline_years:
         chart_years.append(str(y))
         target_series.append(float(target_monthly_payout))
@@ -2832,9 +2828,10 @@ def pension_plan_view(request):
                 cap_val = total_capital_value
             else:
                 # Calculate capital for year y based on previous year capital
-                prev_cap = Decimal(str(capital_series[-1])) if capital_series[-1] is not None else total_capital_value
-                annual_contrib = sum([p.monthly_contribution * Decimal('12.0') for p in pensions if p.pension_type != 'statutory' and (not p.contribution_end_date or p.contribution_end_date.year >= y)])
-                annual_payout = sum([p.expected_payout_at_retirement * Decimal('12.0') for p in pensions if p.pension_type != 'statutory' and (p.start_payout_date and p.start_payout_date.year <= y)])
+                prev_cap_val = capital_series[-1] if (capital_series and capital_series[-1] is not None) else None
+                prev_cap = Decimal(str(prev_cap_val)) if prev_cap_val is not None else total_capital_value
+                annual_contrib = sum([(p.monthly_contribution or Decimal('0.00')) * Decimal('12.0') for p in pensions if p.pension_type != 'statutory' and (not p.contribution_end_date or p.contribution_end_date.year >= y)])
+                annual_payout = sum([(p.expected_payout_at_retirement or Decimal('0.00')) * Decimal('12.0') for p in pensions if p.pension_type != 'statutory' and (p.start_payout_date and p.start_payout_date.year <= y)])
                 cap_val = max(Decimal('0.00'), prev_cap + annual_contrib - annual_payout)
             cap = float(cap_val.quantize(Decimal('0.01')))
 
