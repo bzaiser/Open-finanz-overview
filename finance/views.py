@@ -2861,6 +2861,7 @@ def pension_plan_view(request):
         'total_capital_value': total_capital_value,
         'target_monthly_payout': target_monthly_payout,
         'pension_gap': pension_gap,
+        'pension_gap_abs': abs(pension_gap),
         'retirement_age': retirement_age,
         'retirement_year': retirement_year,
         'chart_years_json': json.dumps(chart_years),

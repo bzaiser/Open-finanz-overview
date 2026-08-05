@@ -113,7 +113,7 @@
                             {% trans "Pension Gap" %}
                         </span>
                         <h3 class="fw-bold mb-0 mt-1 font-monospace">
-                            {% if pension_gap > 0 %}-{% else %}+{% endif %}{{ pension_gap|abs|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span>
+                            {% if pension_gap > 0 %}-{% else %}+{% endif %}{{ pension_gap_abs|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span>
                         </h3>
                         <span class="small opacity-75" style="font-size: 0.75rem;">
                             {% if pension_gap <= 0 %}{% trans "Target payout met!" %}{% else %}{% trans "Gap to target monthly payout" %}{% endif %}
