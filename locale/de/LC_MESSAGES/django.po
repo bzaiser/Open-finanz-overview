@@ -2161,3 +2161,9 @@ msgstr "Aktueller Betrag"
 
 msgid "Apply Adjustment"
 msgstr "Anpassung anwenden"
+
+msgid "Indexed to Inflation"
+msgstr "Indiziert (Inflationsanpassung)"
+
+msgid "Cancel"
+msgstr "Abbrechen"

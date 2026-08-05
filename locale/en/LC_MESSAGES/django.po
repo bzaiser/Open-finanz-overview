@@ -482,3 +482,9 @@ msgstr "Current Amount"
 
 msgid "Apply Adjustment"
 msgstr "Apply Adjustment"
+
+msgid "Indexed to Inflation"
+msgstr "Indexed to Inflation"
+
+msgid "Cancel"
+msgstr "Cancel"

@@ -2094,3 +2094,9 @@ msgstr "Montant actuel"
 
 msgid "Apply Adjustment"
 msgstr "Appliquer l'ajustement"
+
+msgid "Indexed to Inflation"
+msgstr "Indexé sur l'inflation"
+
+msgid "Cancel"
+msgstr "Annuler"

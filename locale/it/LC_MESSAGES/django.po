@@ -2080,3 +2080,9 @@ msgstr "Importo attuale"
 
 msgid "Apply Adjustment"
 msgstr "Applica regolazione"
+
+msgid "Indexed to Inflation"
+msgstr "Indicizzato all'inflazione"
+
+msgid "Cancel"
+msgstr "Annulla"
