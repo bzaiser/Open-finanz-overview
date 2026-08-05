@@ -2784,16 +2784,21 @@ def pension_plan_view(request):
     for s in snapshots:
         y = s.date.year
         if y not in snapshots_by_year:
-            snapshots_by_year[y] = {'points': Decimal('0.00'), 'val': Decimal('0.00')}
+            snapshots_by_year[y] = {'points': Decimal('0.00'), 'statutory_net': Decimal('0.00'), 'val': Decimal('0.00')}
         if s.pension_points:
             snapshots_by_year[y]['points'] += s.pension_points
+            # Net pension calculation for statutory points in snapshot: points * point_value minus social deduction (~11.5%)
+            pt_val = s.point_value or Decimal('39.32')
+            gross = s.pension_points * pt_val
+            net = gross * Decimal('0.885')  # ~11.5% deduction
+            snapshots_by_year[y]['statutory_net'] += net
         if s.value:
             snapshots_by_year[y]['val'] += s.value
 
     # Build chart data series
     chart_years = []
     capital_series = []
-    points_series = []
+    statutory_net_history_series = []
     net_payout_series = []
     target_series = []
 
@@ -2803,17 +2808,19 @@ def pension_plan_view(request):
         chart_years.append(str(y))
         target_series.append(float(target_monthly_payout))
 
-        # 1. Historical Snapshots (Capital value & Points)
+        # 1. Historical Snapshots / Current Status
         y_snap = snapshots_by_year.get(y)
-        pts = float(y_snap['points']) if y_snap and y_snap['points'] > 0 else (float(total_statutory_points) if y >= current_year else None)
-        cap = float(y_snap['val']) if y_snap and y_snap['val'] > 0 else (float(total_capital_value) if y >= current_year else None)
-        points_series.append(pts)
-        capital_series.append(cap)
-
-        # 2. Monthly Net Payout Projection Series (ONLY monthly net amounts, never capital value!)
         if y < current_year:
+            cap = float(y_snap['val']) if y_snap and y_snap['val'] > 0 else None
+            stat_net = float(y_snap['statutory_net']) if y_snap and y_snap['statutory_net'] > 0 else None
             net_payout_series.append(0.0)
-        else:
+        elif y == current_year:
+            cap = float(total_capital_value)
+            stat_net = float(statutory_monthly_net)
+            net_payout_series.append(float(statutory_monthly_net + private_monthly_net if current_year >= retirement_year else Decimal('0.00')))
+        else: # y > current_year
+            cap = None
+            stat_net = None
             yearly_projected_net = Decimal('0.00')
             for p in pensions:
                 p_start_year = p.start_payout_date.year if p.start_payout_date else retirement_year
@@ -2826,6 +2833,9 @@ def pension_plan_view(request):
                     yearly_projected_net += p_payout
 
             net_payout_series.append(float(yearly_projected_net.quantize(Decimal('0.01'))))
+
+        capital_series.append(cap)
+        statutory_net_history_series.append(stat_net)
 
     # Dashboard colors
     dashboard_config = profile.dashboard_config or {}
@@ -2871,7 +2881,7 @@ def pension_plan_view(request):
         'retirement_year': retirement_year,
         'chart_years_json': json.dumps(chart_years),
         'capital_series_json': json.dumps(capital_series),
-        'points_series_json': json.dumps(points_series),
+        'statutory_net_history_series_json': json.dumps(statutory_net_history_series),
         'net_payout_series_json': json.dumps(net_payout_series),
         'target_series_json': json.dumps(target_series),
         'statutory_color': statutory_color,

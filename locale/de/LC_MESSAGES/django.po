@@ -2317,3 +2317,6 @@ msgstr "Gesetzliche Rentenpunkte"
 
 msgid "Pension Portfolio Breakdown (Individual Contracts)"
 msgstr "Aufteilung der Vorsorgebausteine"
+
+msgid "Statutory Net Pension"
+msgstr "Gesetzliche Netto-Rente"

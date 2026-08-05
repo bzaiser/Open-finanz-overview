@@ -548,6 +548,8 @@
             });
         }
 
+        const statutoryNetSeries = {{ statutory_net_history_series_json|safe }};
+
         const ctxCapital = document.getElementById('pensionCapitalChart');
         if (ctxCapital) {
             new Chart(ctxCapital, {
@@ -563,16 +565,17 @@
                             fill: true,
                             tension: 0.3,
                             borderWidth: 2.5,
+                            spanGaps: true,
                             yAxisID: 'yCapital'
                         },
                         {
-                            label: '{% trans "Statutory Pension Points" %} (EP)',
-                            data: pointsSeries,
+                            label: '{% trans "Statutory Net Pension" %} (€/{% trans "month net" %})',
+                            data: statutoryNetSeries,
                             borderColor: '{{ statutory_color }}',
                             backgroundColor: 'transparent',
-                            borderDash: [3, 3],
-                            borderWidth: 2,
-                            yAxisID: 'yPoints'
+                            borderWidth: 2.5,
+                            spanGaps: true,
+                            yAxisID: 'yNet'
                         }
                     ]
                 },
@@ -592,14 +595,14 @@
                                 callback: function(value) { return value.toLocaleString('de-DE') + ' €'; }
                             }
                         },
-                        yPoints: {
+                        yNet: {
                             type: 'linear',
                             display: true,
                             position: 'right',
                             beginAtZero: true,
                             grid: { drawOnChartArea: false },
                             ticks: {
-                                callback: function(value) { return value + ' EP'; }
+                                callback: function(value) { return value.toLocaleString('de-DE') + ' €'; }
                             }
                         }
                     }
