@@ -2023,3 +2023,54 @@ msgstr "Seleccionar entradas manuales activas para ajustar para el nuevo año."
 
 msgid "Income & Expenses"
 msgstr "Ingresos y Gastos"
+
+msgid "Edit Cash Flow"
+msgstr "Editar flujo de efectivo"
+
+msgid "New Cash Flow"
+msgstr "Nuevo flujo de efectivo"
+
+msgid "Entry Type"
+msgstr "Tipo de entrada"
+
+msgid "Amount (EUR)"
+msgstr "Monto (EUR)"
+
+msgid "-- Select Category --"
+msgstr "-- Seleccionar categoría --"
+
+msgid "End Date (Optional)"
+msgstr "Fecha de fin (Opcional)"
+
+msgid "e.g. Salary, Rent, Netflix"
+msgstr "ej. Salario, Alquiler, Netflix"
+
+msgid "Optional notes..."
+msgstr "Notas opcionales..."
+
+msgid "Save Entry"
+msgstr "Guardar entrada"
+
+msgid "New Start Date"
+msgstr "Nueva fecha de inicio"
+
+msgid "Previous records will automatically be ended on"
+msgstr "Los registros anteriores finalizarán automáticamente el"
+
+msgid "Percentage Adjustment (Optional)"
+msgstr "Ajuste porcentual (Opcional)"
+
+msgid "e.g. +2.5 for salary raise or inflation adjustment."
+msgstr "ej. +2.5 para aumento salarial o inflación."
+
+msgid "Deselect All"
+msgstr "Desmarcar todo"
+
+msgid "Select All"
+msgstr "Seleccionar todo"
+
+msgid "Current Amount"
+msgstr "Monto actual"
+
+msgid "Apply Adjustment"
+msgstr "Aplicar ajuste"

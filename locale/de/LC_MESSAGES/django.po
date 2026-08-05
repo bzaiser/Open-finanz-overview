@@ -2110,3 +2110,54 @@ msgstr "J"
 
 msgid "Edit in module"
 msgstr "Im Modul bearbeiten"
+
+msgid "Edit Cash Flow"
+msgstr "Geldfluss bearbeiten"
+
+msgid "New Cash Flow"
+msgstr "Neuer Geldfluss"
+
+msgid "Entry Type"
+msgstr "Eintrags-Typ"
+
+msgid "Amount (EUR)"
+msgstr "Betrag (EUR)"
+
+msgid "-- Select Category --"
+msgstr "-- Kategorie auswählen --"
+
+msgid "End Date (Optional)"
+msgstr "Enddatum (optional)"
+
+msgid "e.g. Salary, Rent, Netflix"
+msgstr "z.B. Gehalt, Miete, Netflix"
+
+msgid "Optional notes..."
+msgstr "Optionale Notizen..."
+
+msgid "Save Entry"
+msgstr "Eintrag speichern"
+
+msgid "New Start Date"
+msgstr "Neues Startdatum"
+
+msgid "Previous records will automatically be ended on"
+msgstr "Bisherige Einträge enden automatisch am"
+
+msgid "Percentage Adjustment (Optional)"
+msgstr "Prozentuale Anpassung (optional)"
+
+msgid "e.g. +2.5 for salary raise or inflation adjustment."
+msgstr "z.B. +2,5 für Gehaltserhöhung oder Inflationsanpassung."
+
+msgid "Deselect All"
+msgstr "Alle abwählen"
+
+msgid "Select All"
+msgstr "Alle auswählen"
+
+msgid "Current Amount"
+msgstr "Aktueller Betrag"
+
+msgid "Apply Adjustment"
+msgstr "Anpassung anwenden"
