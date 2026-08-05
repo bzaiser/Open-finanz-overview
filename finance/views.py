@@ -2803,21 +2803,26 @@ def pension_plan_view(request):
         target_series.append(float(target_monthly_payout))
 
         if y < current_year:
-            # Historical data from snapshots
+            # Historical data from snapshots (tracking accumulated points / value at that time)
             y_snap = snapshots_by_year.get(y)
             pts = float(y_snap['points']) if y_snap and y_snap['points'] > 0 else None
             val = float(y_snap['val']) if y_snap and y_snap['val'] > 0 else 0.0
             points_series.append(pts)
             net_payout_series.append(val)
-        elif y < retirement_year:
-            # Accumulation phase before retirement
-            points_series.append(float(total_statutory_points))
-            net_payout_series.append(0.0)  # Payouts not yet active
         else:
-            # Retirement Phase (Payouts active with annual increase)
-            years_in_retirement = y - retirement_year
-            projected_payout = total_monthly_net * ((Decimal('1.0') + pension_increase_rate) ** Decimal(str(years_in_retirement)))
-            net_payout_series.append(float(projected_payout.quantize(Decimal('0.01'))))
+            # Forecast: Check which pensions are active for payout in year y based on start_payout_date (or retirement_year)
+            yearly_projected_net = Decimal('0.00')
+            for p in pensions:
+                p_start_year = p.start_payout_date.year if p.start_payout_date else retirement_year
+                if y >= p_start_year and p.expected_payout_at_retirement:
+                    years_in_payout = y - p_start_year
+                    if p.is_indexed:
+                        p_payout = p.expected_payout_at_retirement * ((Decimal('1.0') + pension_increase_rate) ** Decimal(str(years_in_payout)))
+                    else:
+                        p_payout = p.expected_payout_at_retirement
+                    yearly_projected_net += p_payout
+
+            net_payout_series.append(float(yearly_projected_net.quantize(Decimal('0.01'))))
             points_series.append(float(total_statutory_points))
 
     # Dashboard colors
