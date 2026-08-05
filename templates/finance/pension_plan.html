@@ -501,7 +501,7 @@
         const netSeries = {{ net_payout_series_json|safe }};
         const targetSeries = {{ target_series_json|safe }};
         const capitalSeries = {{ capital_series_json|safe }};
-        const pointsSeries = {{ points_series_json|safe }};
+        const statutoryNetSeries = {{ statutory_net_history_series_json|safe }};
 
         const ctxTimeline = document.getElementById('pensionTimelineChart');
         if (ctxTimeline) {
@@ -546,10 +546,6 @@
                     }
                 }
             });
-        }
-
-        const statutoryNetSeries = {{ statutory_net_history_series_json|safe }};
-
         const ctxCapital = document.getElementById('pensionCapitalChart');
         if (ctxCapital) {
             new Chart(ctxCapital, {
