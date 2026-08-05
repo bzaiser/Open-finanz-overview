@@ -47,8 +47,8 @@
                             {{ yearly_income_sum|floatformat:2|intcomma }} {{ user.profile.currency }} / {% trans "year" %}
                         </span>
                     </div>
-                    <div class="p-2 rounded-circle bg-white bg-opacity-20">
-                        <i class="bi {{ income_card_icon|default:'bi-graph-up-arrow' }} fs-4" style="color: inherit;"></i>
+                    <div class="ms-2">
+                        <i class="bi {{ income_card_icon|default:'bi-graph-up-arrow' }} fs-5"></i>
                     </div>
                 </div>
             </div>
@@ -69,8 +69,8 @@
                             {{ yearly_expense_sum|floatformat:2|intcomma }} {{ user.profile.currency }} / {% trans "year" %}
                         </span>
                     </div>
-                    <div class="p-2 rounded-circle bg-white bg-opacity-20">
-                        <i class="bi {{ expense_card_icon|default:'bi-graph-down-arrow' }} fs-4" style="color: inherit;"></i>
+                    <div class="ms-2">
+                        <i class="bi {{ expense_card_icon|default:'bi-graph-down-arrow' }} fs-5"></i>
                     </div>
                 </div>
             </div>
@@ -91,8 +91,8 @@
                             {{ yearly_net_surplus|floatformat:2|intcomma }} {{ user.profile.currency }} / {% trans "year" %}
                         </span>
                     </div>
-                    <div class="p-2 rounded-circle bg-white bg-opacity-20">
-                        <i class="bi {{ surplus_card_icon|default:'bi-piggy-bank' }} fs-4" style="color: inherit;"></i>
+                    <div class="ms-2">
+                        <i class="bi {{ surplus_card_icon|default:'bi-piggy-bank' }} fs-5"></i>
                     </div>
                 </div>
             </div>
