@@ -32,63 +32,66 @@
     <!-- Summary Metric Cards -->
     <div class="row g-3 mb-4">
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm rounded-4 h-100 p-3" style="background: linear-gradient(135deg, rgba(25,135,84,0.1) 0%, rgba(25,135,84,0.02) 100%); border-left: 4px solid #198754 !important;">
+            <div class="card metric-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ income_card_bg }}; color: {{ income_card_text }}; border: none;">
+                <div class="card-glass-glow"></div>
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
-                        <span class="text-uppercase fw-bold opacity-75 small" style="font-size: 0.7rem; letter-spacing: 0.05em; color: #198754;">
+                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.7rem; letter-spacing: 0.05em; color: inherit;">
                             {% trans "Monthly Income" %}
                         </span>
-                        <h3 class="fw-bold mb-0 mt-1 font-monospace text-success">
-                            +{{ monthly_income_sum|floatformat:2|intcomma }} <span class="fs-6 opacity-75">EUR</span>
+                        <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
+                            +{{ monthly_income_sum|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span>
                         </h3>
-                        <span class="small text-muted" style="font-size: 0.75rem;">
-                            {{ yearly_income_sum|floatformat:2|intcomma }} EUR / {% trans "year" %}
+                        <span class="small opacity-75" style="font-size: 0.75rem; color: inherit;">
+                            {{ yearly_income_sum|floatformat:2|intcomma }} {{ user.profile.currency }} / {% trans "year" %}
                         </span>
                     </div>
-                    <div class="p-2 rounded-circle bg-success bg-opacity-10 text-success">
-                        <i class="bi bi-graph-up-arrow fs-4"></i>
+                    <div class="p-2 rounded-circle bg-white bg-opacity-20">
+                        <i class="bi bi-graph-up-arrow fs-4" style="color: inherit;"></i>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm rounded-4 h-100 p-3" style="background: linear-gradient(135deg, rgba(220,53,69,0.1) 0%, rgba(220,53,69,0.02) 100%); border-left: 4px solid #dc3545 !important;">
+            <div class="card metric-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ expense_card_bg }}; color: {{ expense_card_text }}; border: none;">
+                <div class="card-glass-glow"></div>
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
-                        <span class="text-uppercase fw-bold opacity-75 small" style="font-size: 0.7rem; letter-spacing: 0.05em; color: #dc3545;">
+                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.7rem; letter-spacing: 0.05em; color: inherit;">
                             {% trans "Monthly Expenses" %}
                         </span>
-                        <h3 class="fw-bold mb-0 mt-1 font-monospace text-danger">
-                            -{{ monthly_expense_sum|floatformat:2|intcomma }} <span class="fs-6 opacity-75">EUR</span>
+                        <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
+                            -{{ monthly_expense_sum|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span>
                         </h3>
-                        <span class="small text-muted" style="font-size: 0.75rem;">
-                            {{ yearly_expense_sum|floatformat:2|intcomma }} EUR / {% trans "year" %}
+                        <span class="small opacity-75" style="font-size: 0.75rem; color: inherit;">
+                            {{ yearly_expense_sum|floatformat:2|intcomma }} {{ user.profile.currency }} / {% trans "year" %}
                         </span>
                     </div>
-                    <div class="p-2 rounded-circle bg-danger bg-opacity-10 text-danger">
-                        <i class="bi bi-graph-down-arrow fs-4"></i>
+                    <div class="p-2 rounded-circle bg-white bg-opacity-20">
+                        <i class="bi bi-graph-down-arrow fs-4" style="color: inherit;"></i>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm rounded-4 h-100 p-3" style="background: linear-gradient(135deg, rgba(13,110,253,0.1) 0%, rgba(13,110,253,0.02) 100%); border-left: 4px solid var(--app-primary) !important;">
+            <div class="card metric-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), var(--app-primary); color: #ffffff; border: none;">
+                <div class="card-glass-glow"></div>
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
-                        <span class="text-uppercase fw-bold opacity-75 small" style="font-size: 0.7rem; letter-spacing: 0.05em; color: var(--app-primary);">
+                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.7rem; letter-spacing: 0.05em; color: inherit;">
                             {% trans "Net Monthly Surplus" %}
                         </span>
-                        <h3 class="fw-bold mb-0 mt-1 font-monospace {% if monthly_net_surplus >= 0 %}text-primary{% else %}text-danger{% endif %}">
-                            {% if monthly_net_surplus >= 0 %}+{% endif %}{{ monthly_net_surplus|floatformat:2|intcomma }} <span class="fs-6 opacity-75">EUR</span>
+                        <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
+                            {% if monthly_net_surplus >= 0 %}+{% endif %}{{ monthly_net_surplus|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span>
                         </h3>
-                        <span class="small text-muted" style="font-size: 0.75rem;">
-                            {{ yearly_net_surplus|floatformat:2|intcomma }} EUR / {% trans "year" %}
+                        <span class="small opacity-75" style="font-size: 0.75rem; color: inherit;">
+                            {{ yearly_net_surplus|floatformat:2|intcomma }} {{ user.profile.currency }} / {% trans "year" %}
                         </span>
                     </div>
-                    <div class="p-2 rounded-circle bg-primary bg-opacity-10 text-primary">
-                        <i class="bi bi-piggy-bank fs-4"></i>
+                    <div class="p-2 rounded-circle bg-white bg-opacity-20">
+                        <i class="bi bi-piggy-bank fs-4" style="color: inherit;"></i>
                     </div>
                 </div>
             </div>

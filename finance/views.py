@@ -2277,6 +2277,7 @@ from django.db import transaction
 @login_required
 def cash_flow_list(request):
     user = request.user
+    profile = user.profile
     today = timezone.now().date()
     current_year = today.year
     
@@ -2591,6 +2592,22 @@ def cash_flow_list(request):
             'is_expired': item['is_expired_in_selected_year']
         })
 
+    # 4. Extract widget color settings from user's dashboard config
+    dashboard_config = profile.dashboard_config or {}
+    summary_layout = dashboard_config.get('summary_layout', [])
+    summary_colors = {}
+    for item in summary_layout:
+        if isinstance(item, dict) and 'id' in item:
+            summary_colors[item['id']] = {
+                'bg_color': item.get('bg_color', ''),
+                'text_color': item.get('text_color', '')
+            }
+
+    income_card_bg = summary_colors.get('monthly_income', {}).get('bg_color') or '#198754'
+    income_card_text = summary_colors.get('monthly_income', {}).get('text_color') or '#ffffff'
+    expense_card_bg = summary_colors.get('monthly_expenses', {}).get('bg_color') or '#dc3545'
+    expense_card_text = summary_colors.get('monthly_expenses', {}).get('text_color') or '#ffffff'
+
     context = {
         'cash_flows': manual_cfs,
         'cash_flows_json': json.dumps(items_json),
@@ -2606,6 +2623,10 @@ def cash_flow_list(request):
         'yearly_net_surplus': yearly_net_surplus,
         'today': today,
         'form': CashFlowSourceForm(),
+        'income_card_bg': income_card_bg,
+        'income_card_text': income_card_text,
+        'expense_card_bg': expense_card_bg,
+        'expense_card_text': expense_card_text,
     }
     return render(request, 'finance/cash_flow_list.html', context)
 
