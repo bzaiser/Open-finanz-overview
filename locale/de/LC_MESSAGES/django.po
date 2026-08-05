@@ -2227,3 +2227,78 @@ msgstr "Monatlicher Beitrag (€)"
 
 msgid "Save Snapshot"
 msgstr "Stichtag speichern"
+
+msgid "Overview, historical trend and future projections of statutory and private pensions."
+msgstr "Übersicht, historische Entwicklung und Zukunftsprognosen für gesetzliche und private Vorsorgen."
+
+msgid "Pension Points"
+msgstr "Rentenpunkte (EP)"
+
+msgid "month net"
+msgstr "Monat Netto"
+
+msgid "Total expected net income at retirement"
+msgstr "Erwartetes Netto-Gesamteinkommen bei Renteneintritt"
+
+msgid "Target payout met!"
+msgstr "Ziel-Auszahlung erreicht!"
+
+msgid "Gap to target monthly payout"
+msgstr "Lücke zur monatlichen Ziel-Auszahlung"
+
+msgid "Target Age"
+msgstr "Zielalter"
+
+msgid "Contracts"
+msgstr "Verträge"
+
+msgid "Provider / Name"
+msgstr "Anbieter / Name"
+
+msgid "Point Value"
+msgstr "Rentenwert (€)"
+
+msgid "Gross Payout"
+msgstr "Brutto-Auszahlung"
+
+msgid "Net Payout"
+msgstr "Netto-Auszahlung"
+
+msgid "Contribution"
+msgstr "Beitrag"
+
+msgid "No pension plans configured yet."
+msgstr "Noch keine Vorsorgeverträge angelegt."
+
+msgid "Provider / Contract Name"
+msgstr "Anbieter / Vertragsname"
+
+msgid "Pension Type"
+msgstr "Vorsorge-Typ"
+
+msgid "Capital / Private Pension"
+msgstr "Kapital- / Private Vorsorge"
+
+msgid "Statutory Pension (Gesetzliche Rente)"
+msgstr "Gesetzliche Rente"
+
+msgid "Pension Points (EP)"
+msgstr "Entgeltpunkte (EP)"
+
+msgid "Social Deduction (%)"
+msgstr "Sozialabgaben (%)"
+
+msgid "Select Pension Contract"
+msgstr "Vorsorgevertrag auswählen"
+
+msgid "Snapshot Date"
+msgstr "Stichtags-Datum"
+
+msgid "Capital Value (€)"
+msgstr "Kapitalwert (€)"
+
+msgid "Projected Monthly Net Payout"
+msgstr "Prognostizierte Netto-Monatsrente"
+
+msgid "Target Monthly Payout"
+msgstr "Monatliche Ziel-Nettorrente"

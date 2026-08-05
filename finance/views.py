@@ -2773,9 +2773,10 @@ def pension_plan_view(request):
     target_monthly_payout = profile.expected_payout if hasattr(profile, 'expected_payout') and profile.expected_payout else total_monthly_net
     pension_gap = (target_monthly_payout - total_monthly_net).quantize(Decimal('0.01')) if target_monthly_payout else Decimal('0.00')
 
-    # Build historical & forecast timeline (e.g. Current Year - 5 to Retirement Year + 5)
-    start_year = current_year - 5
-    end_year = max(retirement_year + 5, current_year + 10)
+    # Build historical & forecast timeline
+    earliest_snap_year = min([s.date.year for s in snapshots]) if snapshots else current_year - 5
+    start_year = min(earliest_snap_year, current_year - 3)
+    end_year = max(retirement_year + 5, current_year + 5)
     timeline_years = list(range(start_year, end_year + 1))
 
     # Group snapshots by year
@@ -2795,7 +2796,6 @@ def pension_plan_view(request):
     net_payout_series = []
     target_series = []
 
-    current_points_acc = total_statutory_points
     pension_increase_rate = profile.pension_increase / Decimal('100.0')
 
     for y in timeline_years:
@@ -2803,23 +2803,21 @@ def pension_plan_view(request):
         target_series.append(float(target_monthly_payout))
 
         if y < current_year:
-            # Historical data from snapshots or estimate
+            # Historical data from snapshots
             y_snap = snapshots_by_year.get(y)
             pts = float(y_snap['points']) if y_snap and y_snap['points'] > 0 else None
-            val = float(y_snap['val']) if y_snap and y_snap['val'] > 0 else None
+            val = float(y_snap['val']) if y_snap and y_snap['val'] > 0 else 0.0
             points_series.append(pts)
             net_payout_series.append(val)
-        elif y == current_year:
+        elif y < retirement_year:
+            # Accumulation phase before retirement
             points_series.append(float(total_statutory_points))
-            net_payout_series.append(float(total_monthly_net))
+            net_payout_series.append(0.0)  # Payouts not yet active
         else:
-            # Forecast (Future)
-            years_from_now = y - current_year
-            # Project pension payouts with annual increase rate
-            projected_payout = total_monthly_net * ((Decimal('1.0') + pension_increase_rate) ** Decimal(str(years_from_now)))
+            # Retirement Phase (Payouts active with annual increase)
+            years_in_retirement = y - retirement_year
+            projected_payout = total_monthly_net * ((Decimal('1.0') + pension_increase_rate) ** Decimal(str(years_in_retirement)))
             net_payout_series.append(float(projected_payout.quantize(Decimal('0.01'))))
-
-            # Project points (assuming user continues accumulating current average or static)
             points_series.append(float(total_statutory_points))
 
     # Dashboard colors
