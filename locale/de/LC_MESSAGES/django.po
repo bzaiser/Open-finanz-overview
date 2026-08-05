@@ -2314,3 +2314,6 @@ msgstr "Privates Vorsorgekapital"
 
 msgid "Statutory Pension Points"
 msgstr "Gesetzliche Rentenpunkte"
+
+msgid "Pension Portfolio Breakdown (Individual Contracts)"
+msgstr "Aufteilung der Vorsorgebausteine"
