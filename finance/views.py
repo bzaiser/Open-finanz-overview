@@ -2605,8 +2605,13 @@ def cash_flow_list(request):
 
     income_card_bg = summary_colors.get('monthly_income', {}).get('bg_color') or '#198754'
     income_card_text = summary_colors.get('monthly_income', {}).get('text_color') or '#ffffff'
+    income_card_icon = SUMMARY_WIDGETS.get('monthly_income', {}).get('icon', 'bi-graph-up-arrow')
+
     expense_card_bg = summary_colors.get('monthly_expenses', {}).get('bg_color') or '#dc3545'
     expense_card_text = summary_colors.get('monthly_expenses', {}).get('text_color') or '#ffffff'
+    expense_card_icon = SUMMARY_WIDGETS.get('monthly_expenses', {}).get('icon', 'bi-graph-down-arrow')
+
+    surplus_card_icon = SUMMARY_WIDGETS.get('current_assets', {}).get('icon', 'bi-piggy-bank')
 
     context = {
         'cash_flows': manual_cfs,
@@ -2625,8 +2630,11 @@ def cash_flow_list(request):
         'form': CashFlowSourceForm(),
         'income_card_bg': income_card_bg,
         'income_card_text': income_card_text,
+        'income_card_icon': income_card_icon,
         'expense_card_bg': expense_card_bg,
         'expense_card_text': expense_card_text,
+        'expense_card_icon': expense_card_icon,
+        'surplus_card_icon': surplus_card_icon,
     }
     return render(request, 'finance/cash_flow_list.html', context)
 
