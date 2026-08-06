@@ -2820,15 +2820,24 @@ def pension_plan_view(request):
         sp_base_net = sp.expected_payout_at_retirement or Decimal('0.00')
         color = palette_stat[idx % len(palette_stat)]
 
+        # Determine payout start year for this statutory pension
+        if sp.start_payout_date:
+            sp_start_year = sp.start_payout_date.year
+        elif sp.retirement_age and birth_date:
+            sp_start_year = current_year + max(0, sp.retirement_age - (today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))))
+        else:
+            sp_start_year = retirement_year
+
         for y in timeline_years:
             if y < current_year:
                 y_snap = snapshots_by_pension_year.get(sp.id, {}).get(y)
                 val = float(y_snap['statutory_net']) if y_snap and y_snap['statutory_net'] > 0 else None
-            elif y == current_year:
-                val = float(sp_base_net)
+            elif y < sp_start_year:
+                # Before retirement start, payout is 0.00
+                val = 0.0
             else:
-                years_ahead = y - current_year
-                sp_net_val = sp_base_net * ((Decimal('1.0') + pension_increase_rate) ** Decimal(str(years_ahead)))
+                years_in_payout = y - sp_start_year
+                sp_net_val = sp_base_net * ((Decimal('1.0') + pension_increase_rate) ** Decimal(str(years_in_payout)))
                 val = float(sp_net_val.quantize(Decimal('0.01')))
             sp_series.append(val)
 
@@ -2840,6 +2849,20 @@ def pension_plan_view(request):
             'borderWidth': 2.5,
             'spanGaps': True,
             'yAxisID': 'yNet'
+        })
+
+    # Build list of dynamic retirement markers per contract / statutory pension
+    retirement_markers = []
+    for sp in statutory_pensions:
+        if sp.start_payout_date:
+            sp_year = sp.start_payout_date.year
+        elif sp.retirement_age and birth_date:
+            sp_year = current_year + max(0, sp.retirement_age - (today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))))
+        else:
+            sp_year = retirement_year
+        retirement_markers.append({
+            'name': sp.provider,
+            'year': sp_year
         })
 
     # Group total snapshots by year for capital
@@ -2915,9 +2938,6 @@ def pension_plan_view(request):
                         p_payout = p.expected_payout_at_retirement
                     yearly_projected_net += p_payout
 
-            if yearly_projected_net == Decimal('0.00') and total_monthly_net > Decimal('0.00'):
-                yearly_projected_net = total_monthly_net
-
             net_payout_series.append(float(yearly_projected_net.quantize(Decimal('0.01'))))
 
         capital_series.append(cap)
@@ -2966,6 +2986,7 @@ def pension_plan_view(request):
         'pension_gap_abs': abs(pension_gap),
         'retirement_age': retirement_age,
         'retirement_year': retirement_year,
+        'retirement_markers_json': json.dumps(retirement_markers),
         'chart_years_json': json.dumps(chart_years),
         'capital_series_json': json.dumps(capital_series),
         'statutory_datasets_json': json.dumps(statutory_datasets),

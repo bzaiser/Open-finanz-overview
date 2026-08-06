@@ -521,7 +521,8 @@
         const targetSeries = {{ target_series_json|safe }};
         const inflationTargetSeries = {{ inflation_target_series_json|safe }};
         const capitalSeries = {{ capital_series_json|safe }};
-        const retirementYear = {{ retirement_year }};
+        const statutoryDatasets = {{ statutory_datasets_json|safe }};
+        const retirementMarkers = {{ retirement_markers_json|safe }};
         const transLabels = {{ trans_labels_json|safe }};
 
         const ctxTimeline = document.getElementById('pensionTimelineChart');
@@ -579,32 +580,34 @@
                 plugins: [{
                     id: 'retirementYearMarker',
                     afterDraw: function(chart) {
-                        const index = chart.data.labels.indexOf(String(retirementYear));
-                        if (index !== -1) {
-                            const xAxis = chart.scales.x;
-                            const yAxis = chart.scales.y;
-                            const x = xAxis.getPixelForValue(index);
-                            const ctx = chart.ctx;
-                            ctx.save();
-                            ctx.beginPath();
-                            ctx.setLineDash([4, 4]);
-                            ctx.moveTo(x, yAxis.top);
-                            ctx.lineTo(x, yAxis.bottom);
-                            ctx.lineWidth = 2;
-                            ctx.strokeStyle = '#dc3545';
-                            ctx.stroke();
+                        const xAxis = chart.scales.x;
+                        const yAxis = chart.scales.y;
+                        const ctx = chart.ctx;
+                        
+                        retirementMarkers.forEach((m, idx) => {
+                            const index = chart.data.labels.indexOf(String(m.year));
+                            if (index !== -1) {
+                                const x = xAxis.getPixelForValue(index);
+                                ctx.save();
+                                ctx.beginPath();
+                                ctx.setLineDash([4, 4]);
+                                ctx.moveTo(x, yAxis.top);
+                                ctx.lineTo(x, yAxis.bottom);
+                                ctx.lineWidth = 2;
+                                ctx.strokeStyle = idx === 0 ? '#dc3545' : '#0d6efd';
+                                ctx.stroke();
 
-                            ctx.fillStyle = '#dc3545';
-                            ctx.font = 'bold 11px sans-serif';
-                            ctx.fillText(transLabels.retirement + ' (' + retirementYear + ')', x + 5, yAxis.top + 15);
-                            ctx.restore();
-                        }
+                                ctx.fillStyle = idx === 0 ? '#dc3545' : '#0d6efd';
+                                ctx.font = 'bold 11px sans-serif';
+                                const labelText = m.name + ' (' + m.year + ')';
+                                ctx.fillText(labelText, x + 5, yAxis.top + 15 + (idx * 16));
+                                ctx.restore();
+                            }
+                        });
                     }
                 }]
             });
         }
-
-        const statutoryDatasets = {{ statutory_datasets_json|safe }};
 
         const ctxCapital = document.getElementById('pensionCapitalChart');
         if (ctxCapital) {
