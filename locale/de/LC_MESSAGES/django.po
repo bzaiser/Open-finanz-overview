@@ -2332,3 +2332,9 @@ msgstr "Ziel-Nettorente (Inflationsangepasst)"
 
 msgid "Retirement"
 msgstr "Renteneintritt"
+
+msgid "Target Monthly Payout (€)"
+msgstr "Monatliche Ziel-Nettorente (€)"
+
+msgid "Retirement Age (Years)"
+msgstr "Renteneintrittsalter (Jahre)"

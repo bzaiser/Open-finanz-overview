@@ -45,6 +45,7 @@ class PensionForm(forms.ModelForm):
         fields = [
             'provider', 'pension_type', 'pension_points', 'point_value',
             'gross_payout_amount', 'social_deduction_rate', 'expected_payout_at_retirement',
+            'retirement_age', 'target_pension_payout',
             'monthly_contribution', 'contribution_end_date', 'start_payout_date',
             'is_indexed', 'notes'
         ]

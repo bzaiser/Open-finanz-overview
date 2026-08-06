@@ -119,6 +119,8 @@ class Pension(models.Model):
     social_deduction_rate = models.DecimalField(_("Social Security Deduction (%)"), max_digits=5, decimal_places=2, default=11.50, help_text=_("Health and nursing care insurance deduction percentage (e.g. 12.79%)"))
 
     expected_payout_at_retirement = models.DecimalField(_("Expected Monthly Net Payout"), max_digits=10, decimal_places=2, blank=True, null=True, help_text=_("Net payout after KV/PV deductions (Enter manually or auto-calculated)"))
+    retirement_age = models.PositiveIntegerField(_("Retirement Age"), blank=True, null=True, help_text=_("Target retirement age for this specific pension contract (e.g. 67)"))
+    target_pension_payout = models.DecimalField(_("Target Monthly Payout (€)"), max_digits=12, decimal_places=2, blank=True, null=True, help_text=_("Target net monthly payout desired for this specific contract"))
     is_indexed = models.BooleanField(_("Indexed (Inflation Adjustment)"), default=True, help_text=_("If checked, the payout will increase annually based on the global pension increase rate."))
     contribution_end_date = models.DateField(verbose_name=_("Contribution End Date"), blank=True, null=True, help_text=_("Date when you stop paying into this pension"))
     start_payout_date = models.DateField(_("Payout Start Date"), blank=True, null=True, help_text=_("Approximate date when pension payout starts"))

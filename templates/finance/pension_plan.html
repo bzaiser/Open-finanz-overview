@@ -309,6 +309,17 @@
 
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">
+                                <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Target Monthly Payout (€)" %}</label>
+                                <input type="number" step="0.01" name="target_pension_payout" x-model="form.target_pension_payout" class="form-control font-monospace" placeholder="0.00">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Retirement Age (Years)" %}</label>
+                                <input type="number" name="retirement_age" x-model="form.retirement_age" class="form-control font-monospace" placeholder="67">
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
                                 <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Current Capital Value (€)" %}</label>
                                 <input type="number" step="0.01" name="current_value" x-model="form.current_value" class="form-control font-monospace" placeholder="0.00">
                             </div>
@@ -423,6 +434,8 @@
                 gross_payout_amount: '',
                 social_deduction_rate: '11.50',
                 expected_payout_at_retirement: '',
+                target_pension_payout: '',
+                retirement_age: '',
                 current_value: '',
                 monthly_contribution: '',
                 start_payout_date: '',
@@ -453,6 +466,8 @@
                     gross_payout_amount: '',
                     social_deduction_rate: '11.50',
                     expected_payout_at_retirement: '',
+                    target_pension_payout: '',
+                    retirement_age: '',
                     current_value: '',
                     monthly_contribution: '',
                     start_payout_date: '',
@@ -473,6 +488,8 @@
                     gross_payout_amount: p.gross_payout_amount,
                     social_deduction_rate: p.social_deduction_rate || '11.50',
                     expected_payout_at_retirement: p.expected_payout_at_retirement,
+                    target_pension_payout: p.target_pension_payout,
+                    retirement_age: p.retirement_age,
                     current_value: p.current_value,
                     monthly_contribution: p.monthly_contribution,
                     start_payout_date: p.start_payout_date,

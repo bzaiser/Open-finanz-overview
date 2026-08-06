@@ -2777,7 +2777,12 @@ def pension_plan_view(request):
         if p.expected_payout_at_retirement:
             total_monthly_net += p.expected_payout_at_retirement
 
-    target_monthly_payout = profile.target_pension_payout if profile.target_pension_payout else total_monthly_net
+    # Target payout sum across contracts (or fallback to profile / total)
+    contract_targets_sum = sum([p.target_pension_payout for p in pensions if p.target_pension_payout])
+    if contract_targets_sum and contract_targets_sum > Decimal('0.00'):
+        target_monthly_payout = contract_targets_sum
+    else:
+        target_monthly_payout = profile.target_pension_payout if profile.target_pension_payout else total_monthly_net
     pension_gap = (target_monthly_payout - total_monthly_net).quantize(Decimal('0.01')) if target_monthly_payout else Decimal('0.00')
 
     # Build historical & forecast timeline up to simulation_max_year
@@ -2895,7 +2900,13 @@ def pension_plan_view(request):
             # Monthly Net Payout Timeline
             yearly_projected_net = Decimal('0.00')
             for p in pensions:
-                p_start_year = p.start_payout_date.year if p.start_payout_date else retirement_year
+                if p.start_payout_date:
+                    p_start_year = p.start_payout_date.year
+                elif p.retirement_age and birth_date:
+                    p_start_year = current_year + max(0, p.retirement_age - (today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))))
+                else:
+                    p_start_year = retirement_year
+
                 if y >= p_start_year and p.expected_payout_at_retirement:
                     years_in_payout = y - p_start_year
                     if p.is_indexed:
@@ -2932,6 +2943,8 @@ def pension_plan_view(request):
             'gross_payout_amount': float(p.gross_payout_amount) if p.gross_payout_amount is not None else None,
             'social_deduction_rate': float(p.social_deduction_rate) if p.social_deduction_rate is not None else 11.5,
             'expected_payout_at_retirement': float(p.expected_payout_at_retirement) if p.expected_payout_at_retirement is not None else None,
+            'retirement_age': p.retirement_age,
+            'target_pension_payout': float(p.target_pension_payout) if p.target_pension_payout is not None else None,
             'current_value': float(p.current_value) if p.current_value is not None else 0.0,
             'monthly_contribution': float(p.monthly_contribution) if p.monthly_contribution is not None else 0.0,
             'start_payout_date': p.start_payout_date.strftime('%Y-%m-%d') if p.start_payout_date else '',
