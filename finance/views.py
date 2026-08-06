@@ -2959,6 +2959,13 @@ def pension_plan_view(request):
         'net_payout_series_json': json.dumps(net_payout_series),
         'target_series_json': json.dumps(target_series),
         'inflation_target_series_json': json.dumps(inflation_target_series),
+        'trans_labels_json': json.dumps({
+            'projected_net': str(_("Projected Monthly Net Payout")),
+            'target_today': str(_("Target Payout (Today's Purchasing Power)")),
+            'target_inflation': str(_("Target Payout (Inflation Adjusted)")),
+            'retirement': str(_("Retirement")),
+            'private_capital': str(_("Private Capital Value"))
+        }),
         'statutory_color': statutory_color,
         'private_color': private_color,
         'target_color': target_color,

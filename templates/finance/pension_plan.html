@@ -506,6 +506,7 @@
         const capitalSeries = {{ capital_series_json|safe }};
         const statutoryNetSeries = {{ statutory_net_history_series_json|safe }};
         const retirementYear = {{ retirement_year }};
+        const transLabels = {{ trans_labels_json|safe }};
 
         const ctxTimeline = document.getElementById('pensionTimelineChart');
         if (ctxTimeline) {
@@ -515,7 +516,7 @@
                     labels: years,
                     datasets: [
                         {
-                            label: '{% trans "Projected Monthly Net Payout" %} (€)',
+                            label: transLabels.projected_net + ' (€)',
                             data: netSeries,
                             borderColor: '{{ statutory_color }}',
                             backgroundColor: 'rgba(253, 126, 20, 0.1)',
@@ -524,7 +525,7 @@
                             borderWidth: 3
                         },
                         {
-                            label: "{% trans "Target Payout (Today's Purchasing Power)" %} (€)",
+                            label: transLabels.target_today + ' (€)',
                             data: targetSeries,
                             borderColor: '{{ target_color }}',
                             borderDash: [6, 6],
@@ -533,7 +534,7 @@
                             pointRadius: 0
                         },
                         {
-                            label: '{% trans "Target Payout (Inflation Adjusted)" %} (€)',
+                            label: transLabels.target_inflation + ' (€)',
                             data: inflationTargetSeries,
                             borderColor: '#dc3545',
                             borderDash: [3, 3],
@@ -579,7 +580,7 @@
 
                             ctx.fillStyle = '#dc3545';
                             ctx.font = 'bold 11px sans-serif';
-                            ctx.fillText('{% trans "Retirement" %} (' + retirementYear + ')', x + 5, yAxis.top + 15);
+                            ctx.fillText(transLabels.retirement + ' (' + retirementYear + ')', x + 5, yAxis.top + 15);
                             ctx.restore();
                         }
                     }
@@ -592,7 +593,7 @@
         const ctxCapital = document.getElementById('pensionCapitalChart');
         if (ctxCapital) {
             const capitalDataset = {
-                label: '{% trans "Private Capital Value" %} (€)',
+                label: transLabels.private_capital + ' (€)',
                 data: capitalSeries,
                 borderColor: '{{ private_color }}',
                 backgroundColor: 'rgba(13, 202, 240, 0.1)',
