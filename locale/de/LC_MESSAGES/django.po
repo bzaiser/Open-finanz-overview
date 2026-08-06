@@ -2338,3 +2338,6 @@ msgstr "Monatliche Ziel-Nettorente (€)"
 
 msgid "Retirement Age (Years)"
 msgstr "Renteneintrittsalter (Jahre)"
+
+msgid "Breakdown by Contract"
+msgstr "Aufschlüsselung nach Vertrag"

@@ -525,6 +525,8 @@
         const retirementMarkers = {{ retirement_markers_json|safe }};
         const transLabels = {{ trans_labels_json|safe }};
 
+        const monthlyBreakdown = {{ monthly_breakdown_json|safe }};
+
         const ctxTimeline = document.getElementById('pensionTimelineChart');
         if (ctxTimeline) {
             new Chart(ctxTimeline, {
@@ -545,27 +547,57 @@
                             label: transLabels.target_today + ' (€)',
                             data: targetSeries,
                             borderColor: '{{ target_color }}',
+                            backgroundColor: '{{ target_color }}',
                             borderDash: [6, 6],
                             fill: false,
                             borderWidth: 2,
-                            pointRadius: 0
+                            pointRadius: 3,
+                            pointHoverRadius: 6,
+                            hitRadius: 10
                         },
                         {
                             label: transLabels.target_inflation + ' (€)',
                             data: inflationTargetSeries,
                             borderColor: '#dc3545',
+                            backgroundColor: '#dc3545',
                             borderDash: [3, 3],
                             fill: false,
                             borderWidth: 2,
-                            pointRadius: 0
+                            pointRadius: 3,
+                            pointHoverRadius: 6,
+                            hitRadius: 10
                         }
                     ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
                     plugins: {
-                        legend: { position: 'top' }
+                        legend: { position: 'top' },
+                        tooltip: {
+                            callbacks: {
+                                footer: function(tooltipItems) {
+                                    if (!tooltipItems.length) return '';
+                                    const yearLabel = tooltipItems[0].label;
+                                    const yearData = monthlyBreakdown[yearLabel];
+                                    if (!yearData) return '';
+                                    
+                                    let lines = [];
+                                    lines.push('-------------------');
+                                    lines.push('{% trans "Breakdown by Contract" %}:');
+                                    for (const [provider, val] of Object.entries(yearData)) {
+                                        if (val > 0) {
+                                            lines.push(' • ' + provider + ': ' + val.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €');
+                                        }
+                                    }
+                                    return lines.join('\n');
+                                }
+                            }
+                        }
                     },
                     scales: {
                         y: {

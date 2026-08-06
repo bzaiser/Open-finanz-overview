@@ -2880,6 +2880,7 @@ def pension_plan_view(request):
     net_payout_series = []
     target_series = []
     inflation_target_series = []
+    monthly_breakdown_by_year = {}
 
     for y in timeline_years:
         chart_years.append(str(y))
@@ -2920,8 +2921,9 @@ def pension_plan_view(request):
                 cap_val = max(Decimal('0.00'), prev_cap + annual_contrib - annual_payout)
             cap = float(cap_val.quantize(Decimal('0.01')))
 
-            # Monthly Net Payout Timeline
+            # Monthly Net Payout Timeline & Breakdown per contract
             yearly_projected_net = Decimal('0.00')
+            year_breakdown = {}
             for p in pensions:
                 if p.start_payout_date:
                     p_start_year = p.start_payout_date.year
@@ -2936,8 +2938,13 @@ def pension_plan_view(request):
                         p_payout = p.expected_payout_at_retirement * ((Decimal('1.0') + pension_increase_rate) ** Decimal(str(years_in_payout)))
                     else:
                         p_payout = p.expected_payout_at_retirement
+                    p_payout_val = float(p_payout.quantize(Decimal('0.01')))
                     yearly_projected_net += p_payout
+                    year_breakdown[p.provider] = p_payout_val
+                else:
+                    year_breakdown[p.provider] = 0.0
 
+            monthly_breakdown_by_year[str(y)] = year_breakdown
             net_payout_series.append(float(yearly_projected_net.quantize(Decimal('0.01'))))
 
         capital_series.append(cap)
@@ -2991,6 +2998,7 @@ def pension_plan_view(request):
         'capital_series_json': json.dumps(capital_series),
         'statutory_datasets_json': json.dumps(statutory_datasets),
         'net_payout_series_json': json.dumps(net_payout_series),
+        'monthly_breakdown_json': json.dumps(monthly_breakdown_by_year),
         'target_series_json': json.dumps(target_series),
         'inflation_target_series_json': json.dumps(inflation_target_series),
         'trans_labels_json': json.dumps({
