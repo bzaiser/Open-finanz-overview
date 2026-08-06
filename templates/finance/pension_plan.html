@@ -193,6 +193,7 @@
                         <tr>
                             <th class="py-3 px-3 border-0">{% trans "Provider / Name" %}</th>
                             <th class="py-3 px-3 border-0">{% trans "Type" %}</th>
+                            <th class="py-3 px-3 border-0 text-end">{% trans "Capital Value" %}</th>
                             <th class="py-3 px-3 border-0 text-center">{% trans "Pension Points" %}</th>
                             <th class="py-3 px-3 border-0 text-center">{% trans "Point Value" %}</th>
                             <th class="py-3 px-3 border-0 text-end">{% trans "Gross Payout" %}</th>
@@ -216,6 +217,7 @@
                                 <td class="py-3 px-3">
                                     <span class="badge rounded-pill" :class="p.pension_type === 'statutory' ? 'bg-warning bg-opacity-10 text-warning border border-warning-subtle' : 'bg-info bg-opacity-10 text-info border border-info-subtle'" x-text="p.pension_type_display"></span>
                                 </td>
+                                <td class="py-3 px-3 text-end font-monospace fw-bold" x-text="p.current_value > 0 ? formatEuro(p.current_value) + ' €' : '-'"></td>
                                 <td class="py-3 px-3 text-center font-monospace" x-text="p.pension_points !== null ? p.pension_points : '-'"></td>
                                 <td class="py-3 px-3 text-center font-monospace" x-text="p.point_value !== null ? formatEuro(p.point_value) + ' €' : '-'"></td>
                                 <td class="py-3 px-3 text-end font-monospace" x-text="p.gross_payout_amount !== null ? formatEuro(p.gross_payout_amount) + ' €' : '-'"></td>
@@ -237,7 +239,7 @@
                             </tr>
                         </template>
                         <tr x-show="pensions.length === 0">
-                            <td colspan="8" class="text-center py-5 opacity-75">
+                            <td colspan="9" class="text-center py-5 opacity-75">
                                 <i class="bi bi-inbox fs-1 d-block mb-2 opacity-50"></i>
                                 {% trans "No pension plans configured yet." %}
                             </td>

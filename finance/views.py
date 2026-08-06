@@ -2836,15 +2836,24 @@ def pension_plan_view(request):
                 stat_net_val = statutory_monthly_net * ((Decimal('1.0') + pension_increase_rate) ** Decimal(str(years_ahead)))
             stat_net = float(stat_net_val.quantize(Decimal('0.01')))
 
-            # Private Capital Projection (accumulates contributions, remains constant until payout start, then depletes by annual payout)
+            # Private Capital Projection (accumulates contributions and continues tracking total capital wealth)
             if y == current_year:
                 cap_val = total_capital_value
             else:
-                # Calculate capital for year y based on previous year capital
                 prev_cap_val = capital_series[-1] if (capital_series and capital_series[-1] is not None) else None
                 prev_cap = Decimal(str(prev_cap_val)) if prev_cap_val is not None else total_capital_value
                 annual_contrib = sum([(p.monthly_contribution or Decimal('0.00')) * Decimal('12.0') for p in pensions if p.pension_type != 'statutory' and (not p.contribution_end_date or p.contribution_end_date.year >= y)])
-                annual_payout = sum([(p.expected_payout_at_retirement or Decimal('0.00')) * Decimal('12.0') for p in pensions if p.pension_type != 'statutory' and (p.start_payout_date and p.start_payout_date.year <= y)])
+                
+                # Only deduct ongoing monthly living expenses payouts if specified; lump-sum payouts stay in total wealth
+                annual_payout = Decimal('0.00')
+                for p in pensions:
+                    if p.pension_type != 'statutory':
+                        p_start_year = p.start_payout_date.year if p.start_payout_date else retirement_year
+                        if p.expected_payout_at_retirement and p.expected_payout_at_retirement > 0:
+                            # Ongoing monthly payout contract -> deducts 12x monthly amount each active year
+                            if y >= p_start_year:
+                                annual_payout += p.expected_payout_at_retirement * Decimal('12.0')
+
                 cap_val = max(Decimal('0.00'), prev_cap + annual_contrib - annual_payout)
             cap = float(cap_val.quantize(Decimal('0.01')))
 
