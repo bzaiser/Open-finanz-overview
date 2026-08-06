@@ -2828,7 +2828,7 @@ def pension_plan_view(request):
             sp_series.append(val)
 
         statutory_datasets.append({
-            'label': sp.provider + ' (€/' + _("month net") + ')',
+            'label': sp.provider + ' (€/' + str(_("month net")) + ')',
             'data': sp_series,
             'borderColor': color,
             'backgroundColor': 'transparent',
