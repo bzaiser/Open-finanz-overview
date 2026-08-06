@@ -430,7 +430,7 @@
                 </div>
                 <div class="modal-body p-4" style="font-size: 0.9rem; line-height: 1.6;">
                     <h6 class="fw-bold text-primary">{% trans "Woher kommen die Daten?" %}</h6>
-                    <p>{% trans "Die Auszahlungswerte basieren auf deinen eingetragenen Vorsorgebausteinen in der" %} <a href="#pensionsTable" data-bs-dismiss="modal" class="fw-bold text-decoration-underline">{% trans "Tabelle Aktive Vorsorgeverträge" %}</a>.</p>
+                    <p>{% trans "Die Auszahlungswerte basieren auf deinen eingetragenen Vorsorgebausteinen in der" %} <a href="#pensionsTable" data-bs-dismiss="modal" onclick="setTimeout(() => document.getElementById('pensionsTable')?.scrollIntoView({behavior: 'smooth'}), 300)" class="fw-bold text-decoration-underline text-primary">{% trans "Tabelle Aktive Vorsorgeverträge" %}</a>.</p>
                     
                     <h6 class="fw-bold text-primary mt-3">{% trans "Wie wird gerechnet?" %}</h6>
                     <ul class="ps-3 mb-3">
@@ -454,7 +454,7 @@
                 </div>
                 <div class="modal-body p-4" style="font-size: 0.9rem; line-height: 1.6;">
                     <h6 class="fw-bold text-info">{% trans "Woher kommen die Daten?" %}</h6>
-                    <p>{% trans "Die Kurven kombinieren historische Stichtags-Snapshots (erfasst über 'Historischen Stichtag erfassen') mit der Zukunfts-Projektion aus deinen" %} <a href="#pensionsTable" data-bs-dismiss="modal" class="fw-bold text-decoration-underline">{% trans "aktiven Verträgen" %}</a>.</p>
+                    <p>{% trans "Die Kurven kombinieren historische Stichtags-Snapshots (erfasst über 'Historischen Stichtag erfassen') mit der Zukunfts-Projektion aus deinen" %} <a href="#pensionsTable" data-bs-dismiss="modal" onclick="setTimeout(() => document.getElementById('pensionsTable')?.scrollIntoView({behavior: 'smooth'}), 300)" class="fw-bold text-decoration-underline text-info">{% trans "aktiven Verträgen" %}</a>.</p>
 
                     <h6 class="fw-bold text-info mt-3">{% trans "Berechnung & Logik" %}</h6>
                     <ul class="ps-3 mb-0">
@@ -477,7 +477,7 @@
                 <div class="modal-body p-4" style="font-size: 0.9rem; line-height: 1.6;">
                     <h6 class="fw-bold text-purple">{% trans "Woher kommen die Daten?" %}</h6>
                     <p>{% trans "Zeigt den prozentualen Anteil jedes einzelnen Vertrages an deinen gesammelten monatlichen Netto-Rentenansprüchen am Tag des Renteneintritts." %}</p>
-                    <p class="mb-0">{% trans "Direkt verknüpft mit deinen" %} <a href="#pensionsTable" data-bs-dismiss="modal" class="fw-bold text-decoration-underline">{% trans "Vorsorgeverträgen" %}</a>.</p>
+                    <p class="mb-0">{% trans "Direkt verknüpft mit deinen" %} <a href="#pensionsTable" data-bs-dismiss="modal" onclick="setTimeout(() => document.getElementById('pensionsTable')?.scrollIntoView({behavior: 'smooth'}), 300)" class="fw-bold text-decoration-underline text-purple">{% trans "Vorsorgeverträgen" %}</a>.</p>
                 </div>
             </div>
         </div>
