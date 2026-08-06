@@ -2733,11 +2733,15 @@ def pension_plan_view(request):
     sim_max_age = profile.simulation_max_age or 90
     birth_date = profile.birth_date
     if birth_date:
-        retirement_year = birth_date.year + retirement_age
-        sim_max_year = birth_date.year + sim_max_age
+        user_current_age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
+        years_to_retirement = max(0, retirement_age - user_current_age)
+        years_to_sim_max = max(0, sim_max_age - user_current_age)
+        retirement_year = current_year + years_to_retirement
+        sim_max_year = current_year + years_to_sim_max
     else:
-        retirement_year = current_year + (retirement_age - 40) # Default estimate
-        sim_max_year = current_year + (sim_max_age - 40)
+        # Fallback if user birth_date is not configured yet in /profile/
+        retirement_year = current_year + max(0, retirement_age - 40)
+        sim_max_year = current_year + max(0, sim_max_age - 40)
 
     # Fetch Snapshots for pensions
     from django.contrib.contenttypes.models import ContentType
@@ -2786,6 +2790,9 @@ def pension_plan_view(request):
     statutory_pensions = [p for p in pensions if p.pension_type == 'statutory']
     statutory_datasets = []
     palette_stat = ['#fd7e14', '#0d6efd', '#20c997', '#e83e8c', '#6610f2']
+
+    pension_increase_rate = profile.pension_increase / Decimal('100.0')
+    inflation_rate = profile.inflation_rate / Decimal('100.0')
 
     # Group snapshots by pension object_id and year
     snapshots_by_pension_year = {}
@@ -2845,9 +2852,6 @@ def pension_plan_view(request):
     net_payout_series = []
     target_series = []
     inflation_target_series = []
-
-    pension_increase_rate = profile.pension_increase / Decimal('100.0')
-    inflation_rate = profile.inflation_rate / Decimal('100.0')
 
     for y in timeline_years:
         chart_years.append(str(y))
