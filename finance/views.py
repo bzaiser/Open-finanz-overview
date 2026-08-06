@@ -2874,21 +2874,34 @@ def pension_plan_view(request):
         if s.value:
             snapshots_by_year[y]['val'] += s.value
 
-    # Calculate current base monthly expenses from CashFlowSources (is_income=False) + Loans
-    from .models import CashFlowSource, Loan
+    # Calculate current base monthly expenses using exact Cashflow Analysis logic
+    from .models import CashFlowSource, RealEstate, PhysicalAsset, Loan
     base_expenses = Decimal('0.00')
-    cfs = CashFlowSource.objects.filter(user=user, is_income=False)
-    for cf in cfs:
-        if cf.value:
-            if cf.frequency == 'yearly':
-                base_expenses += (cf.value / Decimal('12.0'))
-            else: # monthly
-                base_expenses += cf.value
+    
+    # 1. Manual CashFlowSources (outflows currently active)
+    manual_cfs = user.cash_flows.filter(is_income=False)
+    for cf in manual_cfs:
+        is_currently_running = (not cf.start_date or cf.start_date <= today) and (not cf.end_date or cf.end_date >= today)
+        if is_currently_running:
+            base_expenses += cf.monthly_amount
 
-    loans = Loan.objects.filter(user=user)
-    for l in loans:
-        if l.monthly_installment:
-            base_expenses += l.monthly_installment
+    # 2. Real Estate Maintenance Costs
+    for re in user.real_estates.all():
+        is_currently_running = (not re.acquisition_date or re.acquisition_date <= today) and (not re.sale_date or re.sale_date >= today)
+        if is_currently_running and re.maintenance_costs_monthly and re.maintenance_costs_monthly > 0:
+            base_expenses += Decimal(str(re.maintenance_costs_monthly))
+
+    # 3. Physical Asset Storage Costs
+    for pa in user.physical_assets.all():
+        is_currently_running = (not pa.acquisition_date or pa.acquisition_date <= today) and (not pa.sale_date or pa.sale_date >= today)
+        if is_currently_running and pa.storage_costs_monthly and pa.storage_costs_monthly > 0:
+            base_expenses += Decimal(str(pa.storage_costs_monthly))
+
+    # 4. Loans Monthly Installment
+    for loan in user.loans.all():
+        is_currently_running = (not loan.start_date or loan.start_date <= today) and (not loan.end_date or loan.end_date >= today)
+        if is_currently_running and loan.monthly_installment and loan.monthly_installment > 0:
+            base_expenses += Decimal(str(loan.monthly_installment))
 
     # Build chart data series
     chart_years = []
