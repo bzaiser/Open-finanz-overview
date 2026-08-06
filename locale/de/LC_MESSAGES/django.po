@@ -2341,3 +2341,9 @@ msgstr "Renteneintrittsalter (Jahre)"
 
 msgid "Breakdown by Contract"
 msgstr "Aufschlüsselung nach Vertrag"
+
+msgid "Chart Information & Calculation"
+msgstr "Diagramm-Informationen & Berechnung"
+
+msgid "Table Information & Calculation"
+msgstr "Tabellen-Informationen & Berechnung"

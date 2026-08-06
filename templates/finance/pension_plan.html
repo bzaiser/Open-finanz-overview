@@ -133,10 +133,10 @@
         <div class="col-12">
             <div class="card border-0 shadow-sm rounded-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
                 <div class="card-header border-0 d-flex justify-content-between align-items-center">
-                    <span class="fw-bold"><i class="bi bi-graph-up me-2"></i>{% trans "Monthly Payout Projection Timeline" %}</span>
-                    <span class="badge bg-white bg-opacity-20 rounded-pill font-monospace" style="font-size: 0.7rem;">
-                        {% trans "Target Age" %}: {{ retirement_age }}
-                    </span>
+                    <span class="fw-bold"><i class="bi bi-graph-up me-2 text-primary"></i>{% trans "Monthly Payout Projection Timeline" %}</span>
+                    <button type="button" class="btn btn-sm btn-outline-info rounded-circle border-0 px-2 py-1" data-bs-toggle="modal" data-bs-target="#infoTimelineModal" title="{% trans 'Chart Information & Calculation' %}">
+                        <i class="bi bi-info-circle-fill fs-6"></i>
+                    </button>
                 </div>
                 <div class="card-body p-3">
                     <div style="height: 340px;">
@@ -150,10 +150,10 @@
         <div class="col-12">
             <div class="card border-0 shadow-sm rounded-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
                 <div class="card-header border-0 d-flex justify-content-between align-items-center">
-                    <span class="fw-bold"><i class="bi bi-piggy-bank me-2"></i>{% trans "Capital & Pension Points Development" %}</span>
-                    <span class="badge bg-white bg-opacity-20 rounded-pill" style="font-size: 0.7rem;">
-                        {% trans "Historical Snapshots & Current Status" %}
-                    </span>
+                    <span class="fw-bold"><i class="bi bi-piggy-bank me-2 text-info"></i>{% trans "Capital & Pension Points Development" %}</span>
+                    <button type="button" class="btn btn-sm btn-outline-info rounded-circle border-0 px-2 py-1" data-bs-toggle="modal" data-bs-target="#infoCapitalModal" title="{% trans 'Chart Information & Calculation' %}">
+                        <i class="bi bi-info-circle-fill fs-6"></i>
+                    </button>
                 </div>
                 <div class="card-body p-3">
                     <div style="height: 340px;">
@@ -168,8 +168,11 @@
     <div class="row g-4 mb-4">
         <div class="col-12">
             <div class="card border-0 shadow-sm rounded-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
-                <div class="card-header border-0">
-                    <span class="fw-bold"><i class="bi bi-pie-chart me-2"></i>{% trans "Pension Portfolio Breakdown (Individual Contracts)" %}</span>
+                <div class="card-header border-0 d-flex justify-content-between align-items-center">
+                    <span class="fw-bold"><i class="bi bi-pie-chart me-2 text-purple"></i>{% trans "Pension Portfolio Breakdown (Individual Contracts)" %}</span>
+                    <button type="button" class="btn btn-sm btn-outline-info rounded-circle border-0 px-2 py-1" data-bs-toggle="modal" data-bs-target="#infoBreakdownModal" title="{% trans 'Chart Information & Calculation' %}">
+                        <i class="bi bi-info-circle-fill fs-6"></i>
+                    </button>
                 </div>
                 <div class="card-body p-3 d-flex align-items-center justify-content-center">
                     <div style="height: 260px; width: 100%;">
@@ -181,10 +184,12 @@
     </div>
 
     <!-- Pension Plans Table Card -->
-    <div class="card border-0 shadow-sm rounded-4 mb-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+    <div class="card border-0 shadow-sm rounded-4 mb-4" id="pensionsTable" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
         <div class="card-header border-0 d-flex justify-content-between align-items-center">
-            <span class="fw-bold"><i class="bi bi-list-task me-2"></i>{% trans "Active Pension Contracts & Provisions" %}</span>
-            <span class="badge bg-white bg-opacity-20 rounded-pill" x-text="pensions.length + ' {% trans 'Contracts' %}'"></span>
+            <span class="fw-bold"><i class="bi bi-list-task me-2 text-warning"></i>{% trans "Active Pension Contracts & Provisions" %}</span>
+            <button type="button" class="btn btn-sm btn-outline-info rounded-circle border-0 px-2 py-1" data-bs-toggle="modal" data-bs-target="#infoTableModal" title="{% trans 'Table Information & Calculation' %}">
+                <i class="bi bi-info-circle-fill fs-6"></i>
+            </button>
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
@@ -411,6 +416,89 @@
                         </button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Modal: Timeline Projection -->
+    <div class="modal fade" id="infoTimelineModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-info-circle text-primary me-2"></i>{% trans "Prognose-Zeitleiste (Monatliche Netto-Auszahlungen)" %}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4" style="font-size: 0.9rem; line-height: 1.6;">
+                    <h6 class="fw-bold text-primary">{% trans "Woher kommen die Daten?" %}</h6>
+                    <p>{% trans "Die Auszahlungswerte basieren auf deinen eingetragenen Vorsorgebausteinen in der" %} <a href="#pensionsTable" data-bs-dismiss="modal" class="fw-bold text-decoration-underline">{% trans "Tabelle Aktive Vorsorgeverträge" %}</a>.</p>
+                    
+                    <h6 class="fw-bold text-primary mt-3">{% trans "Wie wird gerechnet?" %}</h6>
+                    <ul class="ps-3 mb-3">
+                        <li><strong>{% trans "Prognostizierte Netto-Rente" %}:</strong> {% trans "Summiert alle monatlichen Nettoauszahlungen der Verträge, deren Renteneintrittsalter oder Auszahlungsbeginn im jeweiligen Jahr erreicht ist." %}</li>
+                        <li><strong>{% trans "Dynamik / Rentenanpassung" %}:</strong> {% trans "Ist 'Indexiert (Inflationsanpassung)' aktiviert, steigen die Auszahlungen ab Renteneintritt jährlich um die eingestellte Rentenanpassungsrate." %}</li>
+                        <li><strong>{% trans "Ziel-Nettorente (Heutige Kaufkraft)" %}:</strong> {% trans "Stellt deinen Wunschbetrag dar (aus den Verträgen oder deinen Profileinstellungen)." %}</li>
+                        <li><strong>{% trans "Ziel-Nettorente (Inflationsangepasst)" %}:</strong> {% trans "Rechnet deinen Wunschbetrag mit der im Profil hinterlegten jährlichen Inflationsrate (z. B. 2,0 %) in die Zukunft hoch, um die echte Kaufkraftlücke aufzuzeigen." %}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Modal: Capital & Points -->
+    <div class="modal fade" id="infoCapitalModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-info-circle text-info me-2"></i>{% trans "Kapital- & Rentenpunkte-Entwicklung" %}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4" style="font-size: 0.9rem; line-height: 1.6;">
+                    <h6 class="fw-bold text-info">{% trans "Woher kommen die Daten?" %}</h6>
+                    <p>{% trans "Die Kurven kombinieren historische Stichtags-Snapshots (erfasst über 'Historischen Stichtag erfassen') mit der Zukunfts-Projektion aus deinen" %} <a href="#pensionsTable" data-bs-dismiss="modal" class="fw-bold text-decoration-underline">{% trans "aktiven Verträgen" %}</a>.</p>
+
+                    <h6 class="fw-bold text-info mt-3">{% trans "Berechnung & Logik" %}</h6>
+                    <ul class="ps-3 mb-0">
+                        <li><strong>{% trans "Privates Vorsorgekapital" %}:</strong> {% trans "Akkumuliert monatliche Sparbeiträge bis zum Beitragsende. Einmalige Auszahlungen verbleiben im Gesamtvermögen." %}</li>
+                        <li><strong>{% trans "Gesetzliche Rentenpunkte" %}:</strong> {% trans "Jeder gesetzliche Rentenvertrag (z. B. Bernd, Birgit) wird einzeln mit seinen Entgeltpunkten und Steigerungen abgebildet." %}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Modal: Breakdown -->
+    <div class="modal fade" id="infoBreakdownModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-info-circle text-purple me-2"></i>{% trans "Aufteilung der Vorsorgebausteine" %}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4" style="font-size: 0.9rem; line-height: 1.6;">
+                    <h6 class="fw-bold text-purple">{% trans "Woher kommen die Daten?" %}</h6>
+                    <p>{% trans "Zeigt den prozentualen Anteil jedes einzelnen Vertrages an deinen gesammelten monatlichen Netto-Rentenansprüchen am Tag des Renteneintritts." %}</p>
+                    <p class="mb-0">{% trans "Direkt verknüpft mit deinen" %} <a href="#pensionsTable" data-bs-dismiss="modal" class="fw-bold text-decoration-underline">{% trans "Vorsorgeverträgen" %}</a>.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Modal: Table -->
+    <div class="modal fade" id="infoTableModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-info-circle text-warning me-2"></i>{% trans "Aktive Vorsorgeverträge & Ansprüche" %}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4" style="font-size: 0.9rem; line-height: 1.6;">
+                    <h6 class="fw-bold text-warning">{% trans "Verwaltung der Vorsorgebausteine" %}</h6>
+                    <p>{% trans "Hier werden alle deine gesetzlichen und privaten Vorsorgeverträge verwaltet. Jeder Eintrag bildet das Fundament für die Berechnungen in allen Diagrammen oben." %}</p>
+                    <ul class="ps-3 mb-0">
+                        <li><strong>{% trans "Gesetzliche Rente" %}:</strong> {% trans "Wird aus Entgeltpunkten × Aktuellem Rentenwert abzüglich Kranken- & Pflegeversicherungsbeiträgen (~11,5 %) berechnet." %}</li>
+                        <li><strong>{% trans "Private Vorsorge" %}:</strong> {% trans "Enthält Kapitalwert, monatliche Sparrate und erwartete Auszahlungen." %}</li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
