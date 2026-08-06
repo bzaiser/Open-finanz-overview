@@ -2728,13 +2728,16 @@ def pension_plan_view(request):
 
     pensions = list(user.pensions.all().order_by('pension_type', 'provider'))
 
-    # Calculate retirement age & retirement year
+    # Calculate retirement age & retirement year & simulation max year
     retirement_age = profile.retirement_age or 67
+    sim_max_age = profile.simulation_max_age or 90
     birth_date = profile.birth_date
     if birth_date:
         retirement_year = birth_date.year + retirement_age
+        sim_max_year = birth_date.year + sim_max_age
     else:
         retirement_year = current_year + (retirement_age - 40) # Default estimate
+        sim_max_year = current_year + (sim_max_age - 40)
 
     # Fetch Snapshots for pensions
     from django.contrib.contenttypes.models import ContentType
@@ -2773,10 +2776,10 @@ def pension_plan_view(request):
     target_monthly_payout = profile.expected_payout if hasattr(profile, 'expected_payout') and profile.expected_payout else total_monthly_net
     pension_gap = (target_monthly_payout - total_monthly_net).quantize(Decimal('0.01')) if target_monthly_payout else Decimal('0.00')
 
-    # Build historical & forecast timeline
+    # Build historical & forecast timeline up to simulation_max_year
     earliest_snap_year = min([s.date.year for s in snapshots]) if snapshots else current_year - 5
     start_year = min(earliest_snap_year, current_year - 3)
-    end_year = max(retirement_year + 5, current_year + 5)
+    end_year = max(sim_max_year, current_year + 5)
     timeline_years = list(range(start_year, end_year + 1))
 
     # Group snapshots by year
