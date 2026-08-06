@@ -2773,7 +2773,7 @@ def pension_plan_view(request):
         if p.expected_payout_at_retirement:
             total_monthly_net += p.expected_payout_at_retirement
 
-    target_monthly_payout = profile.expected_payout if hasattr(profile, 'expected_payout') and profile.expected_payout else total_monthly_net
+    target_monthly_payout = profile.target_pension_payout if profile.target_pension_payout else total_monthly_net
     pension_gap = (target_monthly_payout - total_monthly_net).quantize(Decimal('0.01')) if target_monthly_payout else Decimal('0.00')
 
     # Build historical & forecast timeline up to simulation_max_year
@@ -2804,12 +2804,22 @@ def pension_plan_view(request):
     statutory_net_history_series = []
     net_payout_series = []
     target_series = []
+    inflation_target_series = []
 
     pension_increase_rate = profile.pension_increase / Decimal('100.0')
+    inflation_rate = profile.inflation_rate / Decimal('100.0')
 
     for y in timeline_years:
         chart_years.append(str(y))
         target_series.append(float(target_monthly_payout))
+
+        # Inflation adjusted target monthly payout (compounded from current_year into future)
+        if y <= current_year:
+            inf_target = target_monthly_payout
+        else:
+            years_inf = y - current_year
+            inf_target = target_monthly_payout * ((Decimal('1.0') + inflation_rate) ** Decimal(str(years_inf)))
+        inflation_target_series.append(float(inf_target.quantize(Decimal('0.01'))))
 
         # 1. Historical Snapshots (years < current_year)
         y_snap = snapshots_by_year.get(y)
@@ -2905,6 +2915,7 @@ def pension_plan_view(request):
         'statutory_net_history_series_json': json.dumps(statutory_net_history_series),
         'net_payout_series_json': json.dumps(net_payout_series),
         'target_series_json': json.dumps(target_series),
+        'inflation_target_series_json': json.dumps(inflation_target_series),
         'statutory_color': statutory_color,
         'private_color': private_color,
         'target_color': target_color,

@@ -2320,3 +2320,15 @@ msgstr "Aufteilung der Vorsorgebausteine"
 
 msgid "Statutory Net Pension"
 msgstr "Gesetzliche Netto-Rente"
+
+msgid "Target Monthly Net Pension (€)"
+msgstr "Monatliche Ziel-Nettorente (€)"
+
+msgid "Target Payout (Today's Purchasing Power)"
+msgstr "Ziel-Nettorente (Heutige Kaufkraft)"
+
+msgid "Target Payout (Inflation Adjusted)"
+msgstr "Ziel-Nettorente (Inflationsangepasst)"
+
+msgid "Retirement"
+msgstr "Renteneintritt"

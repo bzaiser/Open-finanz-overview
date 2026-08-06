@@ -500,8 +500,10 @@
         const years = {{ chart_years_json|safe }};
         const netSeries = {{ net_payout_series_json|safe }};
         const targetSeries = {{ target_series_json|safe }};
+        const inflationTargetSeries = {{ inflation_target_series_json|safe }};
         const capitalSeries = {{ capital_series_json|safe }};
         const statutoryNetSeries = {{ statutory_net_history_series_json|safe }};
+        const retirementYear = {{ retirement_year }};
 
         const ctxTimeline = document.getElementById('pensionTimelineChart');
         if (ctxTimeline) {
@@ -520,10 +522,19 @@
                             borderWidth: 3
                         },
                         {
-                            label: '{% trans "Target Monthly Payout" %} (€)',
+                            label: '{% trans "Target Payout (Today\'s Purchasing Power)" %} (€)',
                             data: targetSeries,
                             borderColor: '{{ target_color }}',
                             borderDash: [6, 6],
+                            fill: false,
+                            borderWidth: 2,
+                            pointRadius: 0
+                        },
+                        {
+                            label: '{% trans "Target Payout (Inflation Adjusted)" %} (€)',
+                            data: inflationTargetSeries,
+                            borderColor: '#dc3545',
+                            borderDash: [3, 3],
                             fill: false,
                             borderWidth: 2,
                             pointRadius: 0
@@ -541,11 +552,36 @@
                             beginAtZero: true,
                             grace: '15%',
                             ticks: {
-                                callback: function(value) { return value + ' €'; }
+                                callback: function(value) { return value.toLocaleString('de-DE') + ' €'; }
                             }
                         }
                     }
-                }
+                },
+                plugins: [{
+                    id: 'retirementYearMarker',
+                    afterDraw: function(chart) {
+                        const index = chart.data.labels.indexOf(String(retirementYear));
+                        if (index !== -1) {
+                            const xAxis = chart.scales.x;
+                            const yAxis = chart.scales.y;
+                            const x = xAxis.getPixelForValue(index);
+                            const ctx = chart.ctx;
+                            ctx.save();
+                            ctx.beginPath();
+                            ctx.setLineDash([4, 4]);
+                            ctx.moveTo(x, yAxis.top);
+                            ctx.lineTo(x, yAxis.bottom);
+                            ctx.lineWidth = 2;
+                            ctx.strokeStyle = '#dc3545';
+                            ctx.stroke();
+
+                            ctx.fillStyle = '#dc3545';
+                            ctx.font = 'bold 11px sans-serif';
+                            ctx.fillText('{% trans "Retirement" %} (' + retirementYear + ')', x + 5, yAxis.top + 15);
+                            ctx.restore();
+                        }
+                    }
+                }]
             });
         }
 
