@@ -2874,25 +2874,47 @@ def pension_plan_view(request):
         if s.value:
             snapshots_by_year[y]['val'] += s.value
 
+    # Calculate current base monthly expenses from CashFlowSources (outflow) + Loans
+    from .models import CashFlowSource, Loan
+    base_expenses = Decimal('0.00')
+    cfs = CashFlowSource.objects.filter(user=user, is_active=True, flow_type='outflow')
+    for cf in cfs:
+        if cf.frequency == 'monthly':
+            base_expenses += cf.amount
+        elif cf.frequency == 'yearly':
+            base_expenses += (cf.amount / Decimal('12.0'))
+        elif cf.frequency == 'quarterly':
+            base_expenses += (cf.amount / Decimal('3.0'))
+
+    loans = Loan.objects.filter(user=user)
+    for l in loans:
+        if l.monthly_installment:
+            base_expenses += l.monthly_installment
+
     # Build chart data series
     chart_years = []
     capital_series = []
     net_payout_series = []
     target_series = []
     inflation_target_series = []
+    expenses_series = []
     monthly_breakdown_by_year = {}
 
     for y in timeline_years:
         chart_years.append(str(y))
         target_series.append(float(target_monthly_payout))
 
-        # Inflation adjusted target monthly payout (compounded from current_year into future)
+        # Inflation adjusted target monthly payout & monthly expenses (compounded into future)
         if y <= current_year:
             inf_target = target_monthly_payout
+            exp_val = base_expenses
         else:
             years_inf = y - current_year
             inf_target = target_monthly_payout * ((Decimal('1.0') + inflation_rate) ** Decimal(str(years_inf)))
+            exp_val = base_expenses * ((Decimal('1.0') + inflation_rate) ** Decimal(str(years_inf)))
+
         inflation_target_series.append(float(inf_target.quantize(Decimal('0.01'))))
+        expenses_series.append(float(exp_val.quantize(Decimal('0.01'))))
 
         # 1. Historical Snapshots (years < current_year)
         y_snap = snapshots_by_year.get(y)
@@ -3001,10 +3023,12 @@ def pension_plan_view(request):
         'monthly_breakdown_json': json.dumps(monthly_breakdown_by_year),
         'target_series_json': json.dumps(target_series),
         'inflation_target_series_json': json.dumps(inflation_target_series),
+        'expenses_series_json': json.dumps(expenses_series),
         'trans_labels_json': json.dumps({
             'projected_net': str(_("Projected Monthly Net Payout")),
             'target_today': str(_("Target Payout (Today's Purchasing Power)")),
             'target_inflation': str(_("Target Payout (Inflation Adjusted)")),
+            'monthly_expenses': str(_("Monthly Expenses (Inflation Adjusted)")),
             'retirement': str(_("Retirement")),
             'private_capital': str(_("Private Capital Value"))
         }),

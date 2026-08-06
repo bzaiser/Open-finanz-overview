@@ -2347,3 +2347,6 @@ msgstr "Diagramm-Informationen & Berechnung"
 
 msgid "Table Information & Calculation"
 msgstr "Tabellen-Informationen & Berechnung"
+
+msgid "Monthly Expenses (Inflation Adjusted)"
+msgstr "Monatliche Ausgaben (Inflationsangepasst)"

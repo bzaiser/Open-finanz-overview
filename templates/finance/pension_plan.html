@@ -630,6 +630,8 @@
 
         const monthlyBreakdown = {{ monthly_breakdown_json|safe }};
 
+        const expensesSeries = {{ expenses_series_json|safe }};
+
         const ctxTimeline = document.getElementById('pensionTimelineChart');
         if (ctxTimeline) {
             new Chart(ctxTimeline, {
@@ -647,6 +649,18 @@
                             borderWidth: 3
                         },
                         {
+                            label: transLabels.monthly_expenses + ' (€)',
+                            data: expensesSeries,
+                            borderColor: '#e63946',
+                            backgroundColor: '#e63946',
+                            borderDash: [5, 5],
+                            fill: false,
+                            borderWidth: 2,
+                            pointRadius: 3,
+                            pointHoverRadius: 6,
+                            hitRadius: 10
+                        },
+                        {
                             label: transLabels.target_today + ' (€)',
                             data: targetSeries,
                             borderColor: '{{ target_color }}',
@@ -661,8 +675,8 @@
                         {
                             label: transLabels.target_inflation + ' (€)',
                             data: inflationTargetSeries,
-                            borderColor: '#dc3545',
-                            backgroundColor: '#dc3545',
+                            borderColor: '#d62828',
+                            backgroundColor: '#d62828',
                             borderDash: [3, 3],
                             fill: false,
                             borderWidth: 2,
