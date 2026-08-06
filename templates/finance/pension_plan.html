@@ -587,34 +587,29 @@
             });
         }
 
+        const statutoryDatasets = {{ statutory_datasets_json|safe }};
+
         const ctxCapital = document.getElementById('pensionCapitalChart');
         if (ctxCapital) {
+            const capitalDataset = {
+                label: '{% trans "Private Capital Value" %} (€)',
+                data: capitalSeries,
+                borderColor: '{{ private_color }}',
+                backgroundColor: 'rgba(13, 202, 240, 0.1)',
+                fill: true,
+                tension: 0.3,
+                borderWidth: 2.5,
+                spanGaps: true,
+                yAxisID: 'yCapital'
+            };
+
+            const chartDatasets = [capitalDataset, ...statutoryDatasets];
+
             new Chart(ctxCapital, {
                 type: 'line',
                 data: {
                     labels: years,
-                    datasets: [
-                        {
-                            label: '{% trans "Private Capital Value" %} (€)',
-                            data: capitalSeries,
-                            borderColor: '{{ private_color }}',
-                            backgroundColor: 'rgba(13, 202, 240, 0.1)',
-                            fill: true,
-                            tension: 0.3,
-                            borderWidth: 2.5,
-                            spanGaps: true,
-                            yAxisID: 'yCapital'
-                        },
-                        {
-                            label: '{% trans "Statutory Net Pension" %} (€/{% trans "month net" %})',
-                            data: statutoryNetSeries,
-                            borderColor: '{{ statutory_color }}',
-                            backgroundColor: 'transparent',
-                            borderWidth: 2.5,
-                            spanGaps: true,
-                            yAxisID: 'yNet'
-                        }
-                    ]
+                    datasets: chartDatasets
                 },
                 options: {
                     responsive: true,
