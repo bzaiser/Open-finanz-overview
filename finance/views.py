@@ -2874,17 +2874,16 @@ def pension_plan_view(request):
         if s.value:
             snapshots_by_year[y]['val'] += s.value
 
-    # Calculate current base monthly expenses from CashFlowSources (outflow) + Loans
+    # Calculate current base monthly expenses from CashFlowSources (is_income=False) + Loans
     from .models import CashFlowSource, Loan
     base_expenses = Decimal('0.00')
-    cfs = CashFlowSource.objects.filter(user=user, is_active=True, flow_type='outflow')
+    cfs = CashFlowSource.objects.filter(user=user, is_income=False)
     for cf in cfs:
-        if cf.frequency == 'monthly':
-            base_expenses += cf.amount
-        elif cf.frequency == 'yearly':
-            base_expenses += (cf.amount / Decimal('12.0'))
-        elif cf.frequency == 'quarterly':
-            base_expenses += (cf.amount / Decimal('3.0'))
+        if cf.value:
+            if cf.frequency == 'yearly':
+                base_expenses += (cf.value / Decimal('12.0'))
+            else: # monthly
+                base_expenses += cf.value
 
     loans = Loan.objects.filter(user=user)
     for l in loans:
