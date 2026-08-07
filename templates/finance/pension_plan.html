@@ -584,6 +584,55 @@
                             <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Notes" %}</label>
                             <textarea name="notes" x-model="snapshot.notes" class="form-control" rows="2" placeholder="{% trans 'Optional notes...' %}"></textarea>
                         </div>
+
+                        <!-- Compact Historical Snapshots for Selected Contract -->
+                        <div x-show="snapshot.pension_id" class="mt-4 pt-3 border-top border-secondary border-opacity-25">
+                            <h6 class="fw-bold mb-2 text-info d-flex align-items-center justify-content-between" style="font-size: 0.8rem;">
+                                <span><i class="bi bi-clock-history me-1"></i>{% trans "Bisherige Stichtage dieses Vertrags" %}</span>
+                                <span class="badge bg-info bg-opacity-10 text-info" x-text="getContractSnapshots().length + ' Stichtage'"></span>
+                            </h6>
+                            <div class="table-responsive rounded-3 border border-secondary border-opacity-20" style="max-height: 180px; overflow-y: auto;">
+                                <table class="table table-sm table-hover align-middle mb-0" style="font-size: 0.75rem;">
+                                    <thead class="bg-body-tertiary">
+                                        <tr>
+                                            <th class="py-1 px-2 border-0">{% trans "Stichtag" %}</th>
+                                            <template x-if="getSelectedContractType() === 'statutory'">
+                                                <th class="py-1 px-2 border-0 text-center">EP</th>
+                                            </template>
+                                            <template x-if="getSelectedContractType() === 'statutory'">
+                                                <th class="py-1 px-2 border-0 text-end">{% trans "Netto (€)" %}</th>
+                                            </template>
+                                            <template x-if="getSelectedContractType() !== 'statutory'">
+                                                <th class="py-1 px-2 border-0 text-end">{% trans "Kapital (€)" %}</th>
+                                            </template>
+                                            <th class="py-1 px-2 border-0">{% trans "Notiz" %}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <template x-for="s in getContractSnapshots()" :key="s.id">
+                                            <tr>
+                                                <td class="py-1 px-2 fw-bold font-monospace" x-text="s.date"></td>
+                                                <template x-if="getSelectedContractType() === 'statutory'">
+                                                    <td class="py-1 px-2 text-center font-monospace" x-text="s.pension_points !== null ? s.pension_points : '-'"></td>
+                                                </template>
+                                                <template x-if="getSelectedContractType() === 'statutory'">
+                                                    <td class="py-1 px-2 text-end font-monospace fw-bold text-success" x-text="s.expected_payout_net !== null ? formatEuro(s.expected_payout_net) + ' €' : (s.value > 0 ? formatEuro(s.value) + ' €' : '-')"></td>
+                                                </template>
+                                                <template x-if="getSelectedContractType() !== 'statutory'">
+                                                    <td class="py-1 px-2 text-end font-monospace fw-bold" x-text="formatEuro(s.value) + ' €'"></td>
+                                                </template>
+                                                <td class="py-1 px-2 text-muted truncate" style="max-width: 100px;" x-text="s.notes || '-'"></td>
+                                            </tr>
+                                        </template>
+                                        <tr x-show="getContractSnapshots().length === 0">
+                                            <td colspan="4" class="text-center py-2 opacity-75 text-muted">
+                                                {% trans "Noch keine historischen Stichtage erfasst." %}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer border-0 pt-0">
                         <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
@@ -747,6 +796,11 @@
                 if (!this.snapshot.pension_id) return 'capital';
                 const p = this.pensions.find(item => item.id == this.snapshot.pension_id);
                 return p ? p.pension_type : 'capital';
+            },
+
+            getContractSnapshots() {
+                if (!this.snapshot.pension_id) return [];
+                return this.snapshots.filter(s => s.pension_id == this.snapshot.pension_id);
             },
 
             onSnapshotContractChange() {
