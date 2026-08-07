@@ -164,24 +164,21 @@ def create_demo_user():
     Asset.objects.create(
         user=user,
         name="Girokonto Sparkasse",
-        asset_type="account",
         value=Decimal("18500.00")
     )
 
     Asset.objects.create(
         user=user,
         name="Tagesgeld (Notgroschen)",
-        asset_type="account",
         value=Decimal("3500.00"),
-        interest_rate=Decimal("2.50")
+        growth_rate=Decimal("2.50")
     )
 
     Asset.objects.create(
         user=user,
         name="ETF Depot (MSCI World / All World)",
-        asset_type="depot",
         value=Decimal("125000.00"),
-        interest_rate=Decimal("6.00") # Erwartete Rendite
+        growth_rate=Decimal("6.00")
     )
 
     # 5. Renten & Vorsorgeverträge
