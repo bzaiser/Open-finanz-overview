@@ -5,10 +5,18 @@
 
 {% block content %}
 <style>
+.metric-card-col {
+    position: relative;
+    z-index: 1;
+}
+.metric-card-col:hover {
+    z-index: 9999 !important;
+}
 .widget-expand-card {
     transition: transform 0.25s ease, box-shadow 0.25s ease;
     position: relative;
     cursor: pointer;
+    overflow: visible !important;
 }
 .widget-hover-details {
     position: absolute;
@@ -19,17 +27,17 @@
     opacity: 0;
     overflow: hidden;
     transition: max-height 0.35s ease, opacity 0.3s ease;
-    z-index: 1060;
+    z-index: 99999 !important;
     background: inherit;
     border-bottom-left-radius: 1rem;
     border-bottom-right-radius: 1rem;
-    box-shadow: 0 14px 28px rgba(0,0,0,0.3);
+    box-shadow: 0 16px 32px rgba(0,0,0,0.4);
     padding: 0 1rem;
 }
 .widget-expand-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 12px 24px rgba(0,0,0,0.25) !important;
-    z-index: 1050;
+    z-index: 99999 !important;
     border-bottom-left-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
 }
@@ -82,7 +90,7 @@
     <!-- Summary Metric Cards (Life-Stage Aware) -->
     <div class="row g-3 mb-4">
         <!-- 1. Statutory Pension Net -->
-        <div class="col-md-3">
+        <div class="col-md-3 metric-card-col">
             <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ statutory_color }}; color: #ffffff;">
                 <div class="card-glass-glow"></div>
                 <div class="d-flex justify-content-between align-items-start">
@@ -120,7 +128,7 @@
         </div>
 
         <!-- 2. Private Pension Capital & Current Payout -->
-        <div class="col-md-3">
+        <div class="col-md-3 metric-card-col">
             <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ private_color }}; color: #ffffff;">
                 <div class="card-glass-glow"></div>
                 <div class="d-flex justify-content-between align-items-start">
@@ -140,7 +148,7 @@
                         </span>
                     </div>
                     <div class="ms-2">
-                        <i class="bi bi-piggy-bank fs-5"></i>
+                        <i class="bi bi-wallet2 fs-5"></i>
                     </div>
                 </div>
                 <!-- Hover Expand Details: Private Contracts with Payout -->
@@ -161,7 +169,7 @@
         </div>
 
         <!-- 3. Total Monthly Net Payout (Today vs Retirement) -->
-        <div class="col-md-3">
+        <div class="col-md-3 metric-card-col">
             <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ target_color }}; color: #ffffff;">
                 <div class="card-glass-glow"></div>
                 <div class="d-flex justify-content-between align-items-start">
@@ -181,22 +189,18 @@
                         </span>
                     </div>
                     <div class="ms-2">
-                        <i class="bi bi-bullseye fs-5"></i>
+                        <i class="bi bi-graph-up-arrow fs-5"></i>
                     </div>
                 </div>
-                <!-- Hover Expand Details: All Contracts with Start Dates -->
+                <!-- Hover Expand Details: Breakdown of all contracts -->
                 <div class="widget-hover-details border-top border-white border-opacity-25 pt-2">
-                    <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Alle Verträge & Rentenbeginn" %}:</span>
+                    <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Alle Verträge (Nettorente & Beginn)" %}:</span>
                     {% for p in pensions %}
                     <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10" style="font-size: 0.75rem;">
-                        <div>
-                            <span>{{ p.provider }}</span>
-                            <span class="d-block opacity-75" style="font-size: 0.65rem;">
-                                {% if p.start_payout_date %}{% trans "Beginn" %}: {{ p.start_payout_date|date:"d.m.Y" }}{% elif p.retirement_age %}{% trans "Alter" %}: {{ p.retirement_age }}{% else %}{% trans "Renteneintritt" %}{% endif %}
-                            </span>
-                        </div>
+                        <span>{{ p.provider }}</span>
                         <span class="font-monospace fw-bold">
                             {% if p.expected_payout_at_retirement %}{{ p.expected_payout_at_retirement|floatformat:2|intcomma }} €{% else %}-{% endif %}
+                            <span class="opacity-75 font-normal">({% if p.start_payout_date %}{{ p.start_payout_date|date:"Y" }}{% else %}{{ retirement_year }}{% endif %})</span>
                         </span>
                     </div>
                     {% endfor %}
@@ -205,7 +209,7 @@
         </div>
 
         <!-- 4. Pension Gap / Surplus -->
-        <div class="col-md-3">
+        <div class="col-md-3 metric-card-col">
             <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {% if pension_gap <= 0 %}#198754{% else %}#dc3545{% endif %}; color: #ffffff;">
                 <div class="card-glass-glow"></div>
                 <div class="d-flex justify-content-between align-items-start">
