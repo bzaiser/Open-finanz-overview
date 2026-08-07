@@ -10,22 +10,34 @@
     position: relative;
     cursor: pointer;
 }
-.widget-expand-card:hover {
-    transform: translateY(-4px) scale(1.02);
-    box-shadow: 0 12px 24px rgba(0,0,0,0.25) !important;
-    z-index: 1050;
-}
 .widget-hover-details {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
     max-height: 0;
     opacity: 0;
     overflow: hidden;
-    transition: max-height 0.35s ease, opacity 0.3s ease, margin-top 0.3s ease;
+    transition: max-height 0.35s ease, opacity 0.3s ease;
+    z-index: 1060;
+    background: inherit;
+    border-bottom-left-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+    box-shadow: 0 14px 28px rgba(0,0,0,0.3);
+    padding: 0 1rem;
+}
+.widget-expand-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.25) !important;
+    z-index: 1050;
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
 }
 .widget-expand-card:hover .widget-hover-details {
     max-height: 280px;
     opacity: 1;
-    margin-top: 0.75rem;
     overflow-y: auto;
+    padding: 0.75rem 1rem 1rem 1rem;
 }
 </style>
 
