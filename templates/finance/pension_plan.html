@@ -600,6 +600,9 @@
                                                 <th class="py-1 px-2 border-0 text-center">EP</th>
                                             </template>
                                             <template x-if="getSelectedContractType() === 'statutory'">
+                                                <th class="py-1 px-2 border-0 text-center">{% trans "Punktwert (€)" %}</th>
+                                            </template>
+                                            <template x-if="getSelectedContractType() === 'statutory'">
                                                 <th class="py-1 px-2 border-0 text-end">{% trans "Netto (€)" %}</th>
                                             </template>
                                             <template x-if="getSelectedContractType() !== 'statutory'">
@@ -616,6 +619,9 @@
                                                     <td class="py-1 px-2 text-center font-monospace" x-text="s.pension_points !== null ? s.pension_points : '-'"></td>
                                                 </template>
                                                 <template x-if="getSelectedContractType() === 'statutory'">
+                                                    <td class="py-1 px-2 text-center font-monospace" x-text="s.point_value !== null ? formatEuro(s.point_value) + ' €' : '-'"></td>
+                                                </template>
+                                                <template x-if="getSelectedContractType() === 'statutory'">
                                                     <td class="py-1 px-2 text-end font-monospace fw-bold text-success" x-text="s.expected_payout_net !== null ? formatEuro(s.expected_payout_net) + ' €' : (s.value > 0 ? formatEuro(s.value) + ' €' : '-')"></td>
                                                 </template>
                                                 <template x-if="getSelectedContractType() !== 'statutory'">
@@ -625,7 +631,7 @@
                                             </tr>
                                         </template>
                                         <tr x-show="getContractSnapshots().length === 0">
-                                            <td colspan="4" class="text-center py-2 opacity-75 text-muted">
+                                            <td colspan="5" class="text-center py-2 opacity-75 text-muted">
                                                 {% trans "Noch keine historischen Stichtage erfasst." %}
                                             </td>
                                         </tr>
