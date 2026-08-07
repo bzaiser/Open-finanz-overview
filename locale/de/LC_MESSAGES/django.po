@@ -2360,5 +2360,23 @@ msgstr "Lebensphase: Ruhestand"
 msgid "Lebensphase: Übergang (0-5 Jahre)"
 msgstr "Lebensphase: Übergang (0-5 Jahre)"
 
+msgid "Lebensphase: Übergang"
+msgstr "Lebensphase: Übergang"
+
 msgid "Lebensphase: Ansparen & Aufbau"
 msgstr "Lebensphase: Ansparen & Aufbau"
+
+msgid "Jahre"
+msgstr "Jahre"
+
+msgid "Bisherige Stichtage dieses Vertrags"
+msgstr "Bisherige Stichtage dieses Vertrags"
+
+msgid "Stichtage"
+msgstr "Stichtage"
+
+msgid "Noch keine historischen Stichtage erfasst."
+msgstr "Noch keine historischen Stichtage erfasst."
+
+msgid "Wird für die historische Auszahlungskurve der gesetzlichen Rente verwendet."
+msgstr "Wird für die historische Auszahlungskurve der gesetzlichen Rente verwendet."

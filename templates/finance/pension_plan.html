@@ -59,16 +59,18 @@
             </h2>
             <p class="text-muted small mb-0 d-flex align-items-center flex-wrap gap-2">
                 <span>{% trans "Overview, historical trend and future projections of statutory and private pensions." %}</span>
-                <span class="border-start ps-2">{% trans "Target Retirement Age" %}: <strong class="text-primary" x-text="retirementAge + ' {% trans 'years' %} (' + retirementYear + ')'"></strong></span>
                 <span class="badge rounded-pill bg-body-tertiary text-body border border-secondary border-opacity-25 px-2.5 py-1" style="font-size: 0.75rem;">
                     <i class="bi {% if life_stage == 'retirement' %}bi-balloon-heart text-success{% elif life_stage == 'transition' %}bi-hourglass-split text-warning{% else %}bi-piggy-bank text-info{% endif %} me-1"></i>
                     {% if life_stage == 'retirement' %}
                         {% trans "Lebensphase: Ruhestand" %}
                     {% elif life_stage == 'transition' %}
-                        {% trans "Lebensphase: Übergang (0-5 Jahre)" %}
+                        {% trans "Lebensphase: Übergang" %}
                     {% else %}
                         {% trans "Lebensphase: Ansparen & Aufbau" %}
                     {% endif %}
+                    <span class="ms-1 border-start ps-1.5 opacity-75">
+                        {% trans "Target Retirement Age" %}: <strong class="text-primary" x-text="retirementAge + ' {% trans 'Jahre' %} (' + retirementYear + ')'"></strong>
+                    </span>
                 </span>
             </p>
         </div>
