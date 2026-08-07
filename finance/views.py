@@ -2728,7 +2728,7 @@ def pension_plan_view(request):
 
     pensions = list(user.pensions.all().order_by('pension_type', 'provider'))
 
-    # Calculate retirement age & retirement year & simulation max year
+    # Calculate retirement age & retirement year & simulation max year & life_stage
     retirement_age = profile.retirement_age or 67
     sim_max_age = profile.simulation_max_age or 90
     birth_date = profile.birth_date
@@ -2740,8 +2740,19 @@ def pension_plan_view(request):
         sim_max_year = current_year + years_to_sim_max
     else:
         # Fallback if user birth_date is not configured yet in /profile/
-        retirement_year = current_year + max(0, retirement_age - 40)
-        sim_max_year = current_year + max(0, sim_max_age - 40)
+        user_current_age = 40
+        years_to_retirement = max(0, retirement_age - user_current_age)
+        years_to_sim_max = max(0, sim_max_age - user_current_age)
+        retirement_year = current_year + years_to_retirement
+        sim_max_year = current_year + years_to_sim_max
+
+    # Life Stage Determination
+    if user_current_age >= retirement_age:
+        life_stage = 'retirement'  # Already in retirement
+    elif years_to_retirement <= 5:
+        life_stage = 'transition'   # 0 to 5 years before retirement
+    else:
+        life_stage = 'accumulation' # More than 5 years to retirement
 
     # Fetch Snapshots for pensions
     from django.contrib.contenttypes.models import ContentType
@@ -2758,6 +2769,7 @@ def pension_plan_view(request):
     # Metrics
     total_statutory_points = Decimal('0.0000')
     statutory_monthly_net = Decimal('0.00')
+    statutory_current_monthly_payout = Decimal('0.00')
     private_monthly_net = Decimal('0.00')
     private_current_monthly_payout = Decimal('0.00')
     total_monthly_net = Decimal('0.00')
@@ -2769,16 +2781,24 @@ def pension_plan_view(request):
                 total_statutory_points += p.pension_points
             if p.expected_payout_at_retirement:
                 statutory_monthly_net += p.expected_payout_at_retirement
+                if p.start_payout_date and p.start_payout_date <= today:
+                    statutory_current_monthly_payout += p.expected_payout_at_retirement
+                elif p.retirement_age and user_current_age >= p.retirement_age:
+                    statutory_current_monthly_payout += p.expected_payout_at_retirement
         else:
             if p.expected_payout_at_retirement:
                 private_monthly_net += p.expected_payout_at_retirement
                 if p.start_payout_date and p.start_payout_date <= today:
+                    private_current_monthly_payout += p.expected_payout_at_retirement
+                elif p.retirement_age and user_current_age >= p.retirement_age:
                     private_current_monthly_payout += p.expected_payout_at_retirement
             if p.current_value:
                 total_capital_value += p.current_value
 
         if p.expected_payout_at_retirement:
             total_monthly_net += p.expected_payout_at_retirement
+
+    current_total_monthly_payout = statutory_current_monthly_payout + private_current_monthly_payout
 
     # Target payout sum across contracts (or fallback to profile / total)
     contract_targets_sum = sum([p.target_pension_payout for p in pensions if p.target_pension_payout])
@@ -3020,10 +3040,14 @@ def pension_plan_view(request):
     context = {
         'pensions': pensions,
         'pensions_json': json.dumps(pensions_json),
+        'life_stage': life_stage,
+        'user_current_age': user_current_age,
         'total_statutory_points': total_statutory_points,
         'statutory_monthly_net': statutory_monthly_net,
+        'statutory_current_monthly_payout': statutory_current_monthly_payout,
         'private_monthly_net': private_monthly_net,
         'private_current_monthly_payout': private_current_monthly_payout,
+        'current_total_monthly_payout': current_total_monthly_payout,
         'total_monthly_net': total_monthly_net,
         'total_capital_value': total_capital_value,
         'target_monthly_payout': target_monthly_payout,

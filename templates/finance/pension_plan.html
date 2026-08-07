@@ -1,3 +1,8 @@
+{% extends "base.html" %}
+{% load i18n humanize %}
+
+{% block title %}{% trans "Retirement Planning" %} - Finanzplan{% endblock %}
+
 {% block extra_head %}
 <style>
 .widget-expand-card {
@@ -54,7 +59,7 @@
         </div>
     </div>
 
-    <!-- Summary Metric Cards -->
+    <!-- Summary Metric Cards (Life-Stage Aware) -->
     <div class="row g-3 mb-4">
         <!-- 1. Statutory Pension Net -->
         <div class="col-md-3">
@@ -63,10 +68,10 @@
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
                         <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">
-                            {% trans "Statutory Pension (Net)" %}
+                            {% if life_stage == 'retirement' %}{% trans "Gesetzliche Rente (Aktuell)" %}{% else %}{% trans "Gesetzliche Rente (Netto)" %}{% endif %}
                         </span>
                         <h3 class="fw-bold mb-0 mt-1 font-monospace">
-                            {{ statutory_monthly_net|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span>
+                            {% if life_stage == 'retirement' %}{{ statutory_current_monthly_payout|floatformat:2|intcomma }}{% else %}{{ statutory_monthly_net|floatformat:2|intcomma }}{% endif %} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span>
                         </h3>
                         <span class="small opacity-75" style="font-size: 0.75rem;">
                             {{ total_statutory_points|floatformat:2 }} {% trans "Pension Points" %}
@@ -107,16 +112,20 @@
                             {{ total_capital_value|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span>
                         </h3>
                         <span class="small opacity-75" style="font-size: 0.75rem;">
-                            +{{ private_current_monthly_payout|floatformat:2|intcomma }} {{ user.profile.currency }} / {% trans "month net today" %}
+                            {% if life_stage == 'retirement' %}
+                                +{{ private_current_monthly_payout|floatformat:2|intcomma }} {{ user.profile.currency }} / {% trans "month net today" %}
+                            {% else %}
+                                +{{ private_monthly_net|floatformat:2|intcomma }} {{ user.profile.currency }} / {% trans "month net at retirement" %}
+                            {% endif %}
                         </span>
                     </div>
                     <div class="ms-2">
                         <i class="bi bi-piggy-bank fs-5"></i>
                     </div>
                 </div>
-                <!-- Hover Expand Details: Private Contracts with Payout at Retirement -->
+                <!-- Hover Expand Details: Private Contracts with Payout -->
                 <div class="widget-hover-details border-top border-white border-opacity-25 pt-2">
-                    <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Private Verträge (Netto ab Renteneintritt)" %}:</span>
+                    <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Private Verträge (Netto-Auszahlung)" %}:</span>
                     {% for p in pensions %}
                         {% if p.pension_type != 'statutory' %}
                         <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10" style="font-size: 0.75rem;">
@@ -131,20 +140,24 @@
             </div>
         </div>
 
-        <!-- 3. Expected Total Monthly Net -->
+        <!-- 3. Total Monthly Net Payout (Today vs Retirement) -->
         <div class="col-md-3">
             <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ target_color }}; color: #ffffff;">
                 <div class="card-glass-glow"></div>
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
                         <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">
-                            {% trans "Total Monthly Net Payout" %}
+                            {% if life_stage == 'retirement' %}{% trans "Aktuelle Netto-Einnahmen" %}{% else %}{% trans "Total Monthly Net Payout" %}{% endif %}
                         </span>
                         <h3 class="fw-bold mb-0 mt-1 font-monospace">
-                            {{ total_monthly_net|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span>
+                            {% if life_stage == 'retirement' %}{{ current_total_monthly_payout|floatformat:2|intcomma }}{% else %}{{ total_monthly_net|floatformat:2|intcomma }}{% endif %} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span>
                         </h3>
                         <span class="small opacity-75" style="font-size: 0.75rem;">
-                            {% trans "Total expected net income at retirement" %}
+                            {% if life_stage == 'retirement' %}
+                                {% trans "Tatsächlich heute fließende Rentenauszahlung" %}
+                            {% else %}
+                                {% trans "Total expected net income at retirement" %}
+                            {% endif %}
                         </span>
                     </div>
                     <div class="ms-2">
