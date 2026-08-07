@@ -2776,21 +2776,26 @@ def pension_plan_view(request):
     total_capital_value = Decimal('0.00')
 
     for p in pensions:
+        # Determine contract start payout year / date
+        is_payout_active = False
+        if p.start_payout_date and p.start_payout_date <= today:
+            is_payout_active = True
+        elif p.retirement_age and user_current_age >= p.retirement_age:
+            is_payout_active = True
+        elif not p.start_payout_date and not p.retirement_age and user_current_age >= retirement_age:
+            is_payout_active = True
+
         if p.pension_type == 'statutory':
             if p.pension_points:
                 total_statutory_points += p.pension_points
             if p.expected_payout_at_retirement:
                 statutory_monthly_net += p.expected_payout_at_retirement
-                if p.start_payout_date and p.start_payout_date <= today:
-                    statutory_current_monthly_payout += p.expected_payout_at_retirement
-                elif p.retirement_age and user_current_age >= p.retirement_age:
+                if is_payout_active:
                     statutory_current_monthly_payout += p.expected_payout_at_retirement
         else:
             if p.expected_payout_at_retirement:
                 private_monthly_net += p.expected_payout_at_retirement
-                if p.start_payout_date and p.start_payout_date <= today:
-                    private_current_monthly_payout += p.expected_payout_at_retirement
-                elif p.retirement_age and user_current_age >= p.retirement_age:
+                if is_payout_active:
                     private_current_monthly_payout += p.expected_payout_at_retirement
             if p.current_value:
                 total_capital_value += p.current_value
@@ -2799,6 +2804,10 @@ def pension_plan_view(request):
             total_monthly_net += p.expected_payout_at_retirement
 
     current_total_monthly_payout = statutory_current_monthly_payout + private_current_monthly_payout
+
+    # Override life_stage to 'retirement' if user_current_age >= retirement_age or current_total_monthly_payout > 0
+    if user_current_age >= retirement_age or current_total_monthly_payout > Decimal('0.00'):
+        life_stage = 'retirement'
 
     # Target payout sum across contracts (or fallback to profile / total)
     contract_targets_sum = sum([p.target_pension_payout for p in pensions if p.target_pension_payout])
