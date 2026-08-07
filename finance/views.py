@@ -2869,13 +2869,25 @@ def pension_plan_view(request):
         else:
             sp_start_year = retirement_year
 
+        # Track last known historical claim to carry forward smoothly
+        last_known_snap_net = None
+
         for y in timeline_years:
             if y < current_year:
                 y_snap = snapshots_by_pension_year.get(sp.id, {}).get(y)
-                val = float(y_snap['statutory_net']) if y_snap and y_snap['statutory_net'] > 0 else None
+                if y_snap and y_snap['statutory_net'] > 0:
+                    val = float(y_snap['statutory_net'])
+                    last_known_snap_net = y_snap['statutory_net']
+                else:
+                    val = float(last_known_snap_net) if last_known_snap_net else None
             elif y < sp_start_year:
-                # Before retirement start, payout is 0.00
-                val = 0.0
+                # Before retirement start, carry forward last known claim or current expected net
+                if last_known_snap_net and last_known_snap_net > 0:
+                    val = float(last_known_snap_net)
+                elif sp_base_net > 0:
+                    val = float(sp_base_net)
+                else:
+                    val = 0.0
             else:
                 years_in_payout = y - sp_start_year
                 sp_net_val = sp_base_net * ((Decimal('1.0') + pension_increase_rate) ** Decimal(str(years_in_payout)))
