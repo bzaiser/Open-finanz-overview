@@ -334,6 +334,9 @@
 
 <script>
     function wizardApp() {
+        const initialData = {{ wizard_initial_json|safe }};
+        const prof = initialData.profile || {};
+
         return {
             currentStep: 1,
             isSubmitting: false,
@@ -345,15 +348,15 @@
                 "Vermögen & Immobilien"
             ],
             form: {
-                household_type: 'single',
-                target_monthly_payout: '',
-                p1_name: '',
-                p1_birth_date: '',
-                p1_retirement_age: 67,
-                p2_name: '',
+                household_type: prof.display_name && prof.display_name.includes('&') ? 'couple' : 'single',
+                target_monthly_payout: prof.target_monthly_payout || '',
+                p1_name: prof.display_name ? prof.display_name.split('&')[0].trim() : '',
+                p1_birth_date: prof.birth_date || '',
+                p1_retirement_age: prof.retirement_age || 67,
+                p2_name: prof.display_name && prof.display_name.includes('&') ? prof.display_name.split('&')[1].trim() : '',
                 p2_birth_date: '',
                 p2_retirement_age: 67,
-                drv_statements: [
+                drv_statements: initialData.drv_statements && initialData.drv_statements.length ? initialData.drv_statements : [
                     {
                         provider: 'Gesetzliche Rente Person 1',
                         statement_date: '',
@@ -366,7 +369,7 @@
                         retirement_age: 67
                     }
                 ],
-                private_statements: [
+                private_statements: initialData.private_statements && initialData.private_statements.length ? initialData.private_statements : [
                     {
                         provider: '',
                         policy_number: '',
@@ -379,19 +382,19 @@
                         expected_monthly_payout: ''
                     }
                 ],
-                incomes: [
+                incomes: initialData.incomes && initialData.incomes.length ? initialData.incomes : [
                     { name: 'Gehalt Vollzeit', amount: '' }
                 ],
-                expenses: [
+                expenses: initialData.expenses && initialData.expenses.length ? initialData.expenses : [
                     { name: 'Lebenshaltung & Einkäufe', amount: '', frequency: 'monthly' }
                 ],
-                assets: [
+                assets: initialData.assets && initialData.assets.length ? initialData.assets : [
                     { name: 'Girokonto / Tagesgeld', value: '', growth_rate: '2.0' }
                 ],
-                real_estates: [
+                real_estates: initialData.real_estates && initialData.real_estates.length ? initialData.real_estates : [
                     { name: 'Eigenheim', property_value: '', appreciation_rate: '1.5' }
                 ],
-                loans: [
+                loans: initialData.loans && initialData.loans.length ? initialData.loans : [
                     { name: 'Immobiliendarlehen', nominal_amount: '', monthly_installment: '', interest_rate: '2.25' }
                 ]
             },

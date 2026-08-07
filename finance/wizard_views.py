@@ -31,26 +31,63 @@ def wizard_page_view(request):
     profile = getattr(request.user, 'profile', None)
     categories = Category.objects.all().order_by('name')
     
-    # Pre-populate user contracts for document update selection
+    # Pre-populate existing user data so existing data isn't lost
+    profile_data = {
+        'display_name': profile.display_name if profile else '',
+        'birth_date': profile.birth_date.strftime('%Y-%m-%d') if (profile and profile.birth_date) else '',
+        'retirement_age': profile.retirement_age if profile else 67,
+        'target_monthly_payout': float(profile.target_pension_payout) if (profile and profile.target_pension_payout) else '',
+    }
+
+    # Pre-populate existing pensions
     pensions = Pension.objects.filter(user=request.user)
-    pensions_data = []
+    pensions_stat = []
+    pensions_priv = []
     for p in pensions:
-        pensions_data.append({
-            'id': p.id,
+        p_dict = {
+            'existing_pension_id': p.id,
             'provider': p.provider,
             'pension_type': p.pension_type,
-            'pension_points': float(p.pension_points) if p.pension_points is not None else None,
+            'pension_points': float(p.pension_points) if p.pension_points is not None else '',
             'point_value': float(p.point_value) if p.point_value is not None else 39.32,
-            'expected_payout_at_retirement': float(p.expected_payout_at_retirement) if p.expected_payout_at_retirement is not None else None,
-            'current_value': float(p.current_value) if p.current_value is not None else 0.0,
-            'growth_rate': float(p.growth_rate) if p.growth_rate is not None else 0.0,
-            'monthly_contribution': float(p.monthly_contribution) if p.monthly_contribution is not None else 0.0,
-        })
+            'expected_monthly_payout': float(p.expected_payout_at_retirement) if p.expected_payout_at_retirement is not None else '',
+            'forecast_net': float(p.expected_payout_at_retirement) if p.expected_payout_at_retirement is not None else '',
+            'current_capital': float(p.current_value) if p.current_value is not None else '',
+            'growth_rate': float(p.growth_rate) if p.growth_rate is not None else '',
+            'monthly_contribution': float(p.monthly_contribution) if p.monthly_contribution is not None else '',
+            'statement_date': '',
+            'retirement_date': p.start_payout_date.strftime('%Y-%m-%d') if p.start_payout_date else '',
+        }
+        if p.pension_type == 'statutory':
+            pensions_stat.append(p_dict)
+        else:
+            pensions_priv.append(p_dict)
+
+    # Pre-populate cash flows
+    cash_flows = CashFlowSource.objects.filter(user=request.user)
+    incomes = [{'name': c.name, 'amount': float(c.value), 'frequency': c.frequency} for c in cash_flows if c.is_income]
+    expenses = [{'name': c.name, 'amount': float(c.value), 'frequency': c.frequency} for c in cash_flows if not c.is_income]
+
+    # Pre-populate assets, real estate & loans
+    assets = [{'name': a.name, 'value': float(a.value), 'growth_rate': float(a.growth_rate)} for a in Asset.objects.filter(user=request.user)]
+    real_estates = [{'name': re.name, 'property_value': float(re.property_value), 'appreciation_rate': float(re.appreciation_rate)} for re in RealEstate.objects.filter(user=request.user)]
+    loans = [{'name': l.name, 'nominal_amount': float(l.nominal_amount), 'monthly_installment': float(l.monthly_installment), 'interest_rate': float(l.interest_rate)} for l in Loan.objects.filter(user=request.user)]
+
+    wizard_initial_json = {
+        'profile': profile_data,
+        'drv_statements': pensions_stat,
+        'private_statements': pensions_priv,
+        'incomes': incomes,
+        'expenses': expenses,
+        'assets': assets,
+        'real_estates': real_estates,
+        'loans': loans,
+    }
 
     context = {
         'profile': profile,
         'categories': categories,
-        'pensions_json': json.dumps(pensions_data),
+        'wizard_initial_json': json.dumps(wizard_initial_json),
     }
     return render(request, 'finance/setup_wizard.html', context)
 
