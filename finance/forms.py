@@ -43,21 +43,24 @@ class PensionForm(forms.ModelForm):
     class Meta:
         model = Pension
         fields = [
-            'provider', 'pension_type', 'pension_points', 'point_value',
-            'gross_payout_amount', 'social_deduction_rate', 'expected_payout_at_retirement',
-            'retirement_age', 'target_pension_payout',
-            'monthly_contribution', 'contribution_end_date', 'start_payout_date',
-            'is_indexed', 'notes'
+            'provider', 'pension_type', 'current_value', 'monthly_contribution', 'growth_rate',
+            'pension_points', 'point_value', 'gross_payout_amount', 'social_deduction_rate',
+            'expected_payout_at_retirement', 'retirement_age', 'target_pension_payout',
+            'contribution_end_date', 'start_payout_date', 'is_indexed', 'notes'
         ]
         widgets = {
             'provider': forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('e.g. Statutory Pension, Allianz Riester')}),
             'pension_type': forms.Select(attrs={'class': 'form-select'}),
+            'current_value': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
+            'monthly_contribution': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
+            'growth_rate': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
             'pension_points': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.0001'}),
             'point_value': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
             'gross_payout_amount': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
             'social_deduction_rate': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
             'expected_payout_at_retirement': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
-            'monthly_contribution': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
+            'retirement_age': forms.NumberInput(attrs={'class': 'form-control font-monospace'}),
+            'target_pension_payout': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
             'contribution_end_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'start_payout_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'is_indexed': forms.CheckboxInput(attrs={'class': 'form-check-input'}),

@@ -446,13 +446,17 @@
                         </div>
 
                         <div class="row g-3 mb-3">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Current Capital Value (€)" %}</label>
                                 <input type="number" step="0.01" name="current_value" x-model="form.current_value" class="form-control font-monospace" placeholder="0.00">
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Monthly Contribution (€)" %}</label>
                                 <input type="number" step="0.01" name="monthly_contribution" x-model="form.monthly_contribution" class="form-control font-monospace" placeholder="0.00">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Annual Growth Rate (%)" %}</label>
+                                <input type="number" step="0.01" name="growth_rate" x-model="form.growth_rate" class="form-control font-monospace" placeholder="0.00">
                             </div>
                         </div>
 
@@ -749,6 +753,7 @@
                 retirement_age: '',
                 current_value: '',
                 monthly_contribution: '',
+                growth_rate: '',
                 start_payout_date: '',
                 contribution_end_date: '',
                 is_indexed: true,
@@ -818,6 +823,7 @@
                     retirement_age: '',
                     current_value: '',
                     monthly_contribution: '',
+                    growth_rate: '',
                     start_payout_date: '',
                     contribution_end_date: '',
                     is_indexed: true,
@@ -840,6 +846,7 @@
                     retirement_age: p.retirement_age,
                     current_value: p.current_value,
                     monthly_contribution: p.monthly_contribution,
+                    growth_rate: p.growth_rate,
                     start_payout_date: p.start_payout_date,
                     contribution_end_date: p.contribution_end_date,
                     is_indexed: p.is_indexed,

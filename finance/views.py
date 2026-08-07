@@ -3049,6 +3049,7 @@ def pension_plan_view(request):
             'target_pension_payout': float(p.target_pension_payout) if p.target_pension_payout is not None else None,
             'current_value': float(p.current_value) if p.current_value is not None else 0.0,
             'monthly_contribution': float(p.monthly_contribution) if p.monthly_contribution is not None else 0.0,
+            'growth_rate': float(p.growth_rate) if p.growth_rate is not None else 0.0,
             'start_payout_date': p.start_payout_date.strftime('%Y-%m-%d') if p.start_payout_date else '',
             'contribution_end_date': p.contribution_end_date.strftime('%Y-%m-%d') if p.contribution_end_date else '',
             'is_indexed': p.is_indexed,
