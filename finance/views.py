@@ -2881,17 +2881,22 @@ def pension_plan_view(request):
                 else:
                     val = float(last_known_snap_net) if last_known_snap_net else None
             elif y < sp_start_year:
-                # Before retirement start, carry forward last known claim or current expected net
-                if last_known_snap_net and last_known_snap_net > 0:
-                    val = float(last_known_snap_net)
-                elif sp_base_net > 0:
-                    val = float(sp_base_net)
+                # Before retirement start: compound claim from current_year to y using pension_increase_rate
+                years_from_now = y - current_year
+                base_claim = last_known_snap_net if (last_known_snap_net and last_known_snap_net > 0) else sp_base_net
+                if base_claim and base_claim > 0:
+                    compounded_claim = base_claim * ((Decimal('1.0') + pension_increase_rate) ** Decimal(str(years_from_now)))
+                    val = float(compounded_claim.quantize(Decimal('0.01')))
                 else:
                     val = 0.0
             else:
-                years_in_payout = y - sp_start_year
-                sp_net_val = sp_base_net * ((Decimal('1.0') + pension_increase_rate) ** Decimal(str(years_in_payout)))
-                val = float(sp_net_val.quantize(Decimal('0.01')))
+                # At/After retirement start: compound from current_year to y
+                years_from_now = y - current_year
+                if sp_base_net > 0:
+                    compounded_payout = sp_base_net * ((Decimal('1.0') + pension_increase_rate) ** Decimal(str(years_from_now)))
+                    val = float(compounded_payout.quantize(Decimal('0.01')))
+                else:
+                    val = 0.0
             sp_series.append(val)
 
         statutory_datasets.append({
