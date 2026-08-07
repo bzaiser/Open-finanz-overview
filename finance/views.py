@@ -2981,19 +2981,32 @@ def pension_plan_view(request):
             else:
                 prev_cap_val = capital_series[-1] if (capital_series and capital_series[-1] is not None) else None
                 prev_cap = Decimal(str(prev_cap_val)) if prev_cap_val is not None else total_capital_value
+
+                # Apply annual growth rate (compound interest) per private pension contract on remaining capital
+                # If specific growth_rate is set on contract, use it; otherwise fallback to profile default or 0.0
+                weighted_growth = Decimal('0.00')
+                total_cap_weight = Decimal('0.00')
+                for p in pensions:
+                    if p.pension_type != 'statutory' and p.current_value and p.current_value > 0:
+                        g_rate = p.growth_rate if p.growth_rate is not None else Decimal('0.00')
+                        weighted_growth += p.current_value * (g_rate / Decimal('100.0'))
+                        total_cap_weight += p.current_value
+                
+                avg_growth_rate = (weighted_growth / total_cap_weight) if total_cap_weight > 0 else Decimal('0.00')
+                capital_with_growth = prev_cap * (Decimal('1.0') + avg_growth_rate)
+
                 annual_contrib = sum([(p.monthly_contribution or Decimal('0.00')) * Decimal('12.0') for p in pensions if p.pension_type != 'statutory' and (not p.contribution_end_date or p.contribution_end_date.year >= y)])
                 
-                # Only deduct ongoing monthly living expenses payouts if specified; lump-sum payouts stay in total wealth
+                # Only deduct ongoing monthly living expenses payouts if specified
                 annual_payout = Decimal('0.00')
                 for p in pensions:
                     if p.pension_type != 'statutory':
                         p_start_year = p.start_payout_date.year if p.start_payout_date else retirement_year
                         if p.expected_payout_at_retirement and p.expected_payout_at_retirement > 0:
-                            # Ongoing monthly payout contract -> deducts 12x monthly amount each active year
                             if y >= p_start_year:
                                 annual_payout += p.expected_payout_at_retirement * Decimal('12.0')
 
-                cap_val = max(Decimal('0.00'), prev_cap + annual_contrib - annual_payout)
+                cap_val = max(Decimal('0.00'), capital_with_growth + annual_contrib - annual_payout)
             cap = float(cap_val.quantize(Decimal('0.01')))
 
             # Monthly Net Payout Timeline & Breakdown per contract
