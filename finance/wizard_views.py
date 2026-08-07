@@ -255,7 +255,7 @@ def wizard_save_api(request):
                     }
                 )
 
-        # 4. Income & Expenses
+        # 4. Income & Expenses (Update or create to prevent duplication)
         cat_gehalt = _get_category_by_slug_or_name('gehalt', 'Gehalt', '#11ff00')
         cat_leben = _get_category_by_slug_or_name('lebenshaltung', 'Lebenshaltung', '#fd7e14')
         cat_steuern = _get_category_by_slug_or_name('steuern-abgaben', 'Steuern & Abgaben', '#dc3545')
@@ -263,67 +263,91 @@ def wizard_save_api(request):
         incomes = data.get('incomes', [])
         for inc in incomes:
             amt = _to_decimal(inc.get('amount'))
-            if amt and amt > 0:
-                CashFlowSource.objects.create(
+            name = inc.get('name', 'Gehalt / Einnahme').strip()
+            if amt and amt > 0 and name:
+                CashFlowSource.objects.update_or_create(
                     user=user,
-                    name=inc.get('name', 'Gehalt / Einnahme'),
-                    value=amt,
+                    name=name,
                     is_income=True,
-                    frequency=inc.get('frequency', 'monthly'),
-                    category=cat_gehalt
+                    defaults={
+                        'value': amt,
+                        'frequency': inc.get('frequency', 'monthly'),
+                        'category': cat_gehalt
+                    }
                 )
 
         expenses = data.get('expenses', [])
         for exp in expenses:
             amt = _to_decimal(exp.get('amount'))
-            if amt and amt > 0:
-                cat_exp = cat_steuern if 'steuer' in exp.get('name', '').lower() else cat_leben
-                CashFlowSource.objects.create(
+            name = exp.get('name', 'Ausgabe').strip()
+            if amt and amt > 0 and name:
+                cat_exp = cat_steuern if 'steuer' in name.lower() else cat_leben
+                CashFlowSource.objects.update_or_create(
                     user=user,
-                    name=exp.get('name', 'Ausgabe'),
-                    value=amt,
+                    name=name,
                     is_income=False,
-                    frequency=exp.get('frequency', 'monthly'),
-                    category=cat_exp
+                    defaults={
+                        'value': amt,
+                        'frequency': exp.get('frequency', 'monthly'),
+                        'category': cat_exp
+                    }
                 )
 
-        # 5. Liquid Assets (Konten / Depots)
+        # 5. Liquid Assets (Konten / Depots) (Update or create to prevent duplication)
         assets = data.get('assets', [])
         for ast in assets:
-            if ast.get('value') and float(ast.get('value')) > 0:
-                Asset.objects.create(
+            amt = _to_decimal(ast.get('value'))
+            name = ast.get('name', 'Konto / Depot').strip()
+            if amt and amt > 0 and name:
+                growth = _to_decimal(ast.get('growth_rate')) or Decimal('0.0')
+                Asset.objects.update_or_create(
                     user=user,
-                    name=ast.get('name', 'Konto / Depot'),
-                    value=Decimal(str(ast.get('value'))),
-                    growth_rate=Decimal(str(ast.get('growth_rate', '0.0')))
+                    name=name,
+                    defaults={
+                        'value': amt,
+                        'growth_rate': growth
+                    }
                 )
 
-        # 6. Real Estate & Mortgages
+        # 6. Real Estate & Mortgages (Update or create to prevent duplication)
         real_estates = data.get('real_estates', [])
         for re_item in real_estates:
-            if re_item.get('property_value') and float(re_item.get('property_value')) > 0:
-                RealEstate.objects.create(
+            prop_val = _to_decimal(re_item.get('property_value'))
+            name = re_item.get('name', 'Eigenheim / Immobilie').strip()
+            if prop_val and prop_val > 0 and name:
+                apprec = _to_decimal(re_item.get('appreciation_rate')) or Decimal('1.5')
+                maint = _to_decimal(re_item.get('maintenance_monthly')) or Decimal('0.0')
+                ancill = _to_decimal(re_item.get('ancillary_monthly')) or Decimal('0.0')
+                RealEstate.objects.update_or_create(
                     user=user,
-                    name=re_item.get('name', 'Eigenheim / Immobilie'),
-                    property_value=Decimal(str(re_item.get('property_value'))),
-                    appreciation_rate=Decimal(str(re_item.get('appreciation_rate', '1.5'))),
-                    location=re_item.get('location', ''),
-                    maintenance_costs_monthly=Decimal(str(re_item.get('maintenance_monthly', '0.0'))),
-                    ancillary_costs_monthly=Decimal(str(re_item.get('ancillary_monthly', '0.0')))
+                    name=name,
+                    defaults={
+                        'property_value': prop_val,
+                        'appreciation_rate': apprec,
+                        'location': re_item.get('location', ''),
+                        'maintenance_costs_monthly': maint,
+                        'ancillary_costs_monthly': ancill
+                    }
                 )
 
         loans = data.get('loans', [])
         for ln in loans:
-            if ln.get('nominal_amount') and float(ln.get('nominal_amount')) > 0:
+            nominal = _to_decimal(ln.get('nominal_amount'))
+            name = ln.get('name', 'Immobiliendarlehen').strip()
+            if nominal and nominal > 0 and name:
+                installment = _to_decimal(ln.get('monthly_installment')) or Decimal('0.0')
+                rate = _to_decimal(ln.get('interest_rate')) or Decimal('2.0')
                 start_d = datetime.strptime(ln.get('start_date'), '%Y-%m-%d').date() if ln.get('start_date') else date.today()
-                Loan.objects.create(
+                Loan.objects.update_or_create(
                     user=user,
-                    name=ln.get('name', 'Immobiliendarlehen'),
-                    provider=ln.get('provider', ''),
-                    nominal_amount=Decimal(str(ln.get('nominal_amount'))),
-                    interest_rate=Decimal(str(ln.get('interest_rate', '2.0'))),
-                    monthly_installment=Decimal(str(ln.get('monthly_installment', '0.0'))),
-                    start_date=start_d
+                    name=name,
+                    defaults={
+                        'provider': ln.get('provider', ''),
+                        'nominal_amount': nominal,
+                        'interest_rate': rate,
+                        'monthly_installment': installment,
+                        'start_date': start_d
+                    }
                 )
 
         messages.success(request, _('Finanzdaten und Stichtagsmitteilungen wurden erfolgreich gespeichert!'))
