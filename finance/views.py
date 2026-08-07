@@ -2759,6 +2759,7 @@ def pension_plan_view(request):
     total_statutory_points = Decimal('0.0000')
     statutory_monthly_net = Decimal('0.00')
     private_monthly_net = Decimal('0.00')
+    private_current_monthly_payout = Decimal('0.00')
     total_monthly_net = Decimal('0.00')
     total_capital_value = Decimal('0.00')
 
@@ -2771,6 +2772,8 @@ def pension_plan_view(request):
         else:
             if p.expected_payout_at_retirement:
                 private_monthly_net += p.expected_payout_at_retirement
+                if p.start_payout_date and p.start_payout_date <= today:
+                    private_current_monthly_payout += p.expected_payout_at_retirement
             if p.current_value:
                 total_capital_value += p.current_value
 
@@ -3020,6 +3023,7 @@ def pension_plan_view(request):
         'total_statutory_points': total_statutory_points,
         'statutory_monthly_net': statutory_monthly_net,
         'private_monthly_net': private_monthly_net,
+        'private_current_monthly_payout': private_current_monthly_payout,
         'total_monthly_net': total_monthly_net,
         'total_capital_value': total_capital_value,
         'target_monthly_payout': target_monthly_payout,

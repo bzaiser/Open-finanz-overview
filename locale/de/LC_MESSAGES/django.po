@@ -2234,8 +2234,11 @@ msgstr "Übersicht, historische Entwicklung und Zukunftsprognosen für gesetzlic
 msgid "Pension Points"
 msgstr "Rentenpunkte (EP)"
 
-msgid "month net"
-msgstr "Monat Netto"
+msgid "month net today"
+msgstr "Monat Netto aktuell"
+
+msgid "month net at retirement"
+msgstr "Monat Netto bei Renteneintritt"
 
 msgid "Total expected net income at retirement"
 msgstr "Erwartetes Netto-Gesamteinkommen bei Renteneintritt"
