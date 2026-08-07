@@ -367,46 +367,6 @@
                         </tr>
                     </tbody>
                 </table>
-    <!-- Historical Snapshots Table Card -->
-    <div class="card border-0 shadow-sm rounded-4 mb-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
-        <div class="card-header border-0 d-flex justify-content-between align-items-center">
-            <span class="fw-bold"><i class="bi bi-clock-history me-2 text-info"></i>{% trans "Historische Stichtags-Snapshots" %}</span>
-            <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#snapshotModal">
-                <i class="bi bi-plus-lg me-1"></i>{% trans "Stichtag erfassen" %}
-            </button>
-        </div>
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0" style="font-size: 0.85rem;">
-                    <thead>
-                        <tr>
-                            <th class="py-3 px-3 border-0">{% trans "Stichtag" %}</th>
-                            <th class="py-3 px-3 border-0">{% trans "Vertrag / Anbieter" %}</th>
-                            <th class="py-3 px-3 border-0 text-end">{% trans "Kapitalwert (€)" %}</th>
-                            <th class="py-3 px-3 border-0 text-end text-success">{% trans "Netto-Rente (€)" %}</th>
-                            <th class="py-3 px-3 border-0 text-center">{% trans "Entgeltpunkte (EP)" %}</th>
-                            <th class="py-3 px-3 border-0">{% trans "Notizen" %}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <template x-for="s in snapshots" :key="s.id">
-                            <tr>
-                                <td class="py-3 px-3 fw-bold font-monospace" x-text="s.date"></td>
-                                <td class="py-3 px-3 fw-semibold" x-text="getContractName(s.pension_id)"></td>
-                                <td class="py-3 px-3 text-end font-monospace" x-text="getContractType(s.pension_id) !== 'statutory' ? formatEuro(s.value) + ' €' : '-'"></td>
-                                <td class="py-3 px-3 text-end font-monospace fw-bold text-success" x-text="s.expected_payout_net !== null ? formatEuro(s.expected_payout_net) + ' €' : (getContractType(s.pension_id) === 'statutory' && s.value > 0 ? formatEuro(s.value) + ' €' : '-')"></td>
-                                <td class="py-3 px-3 text-center font-monospace" x-text="s.pension_points !== null ? s.pension_points : '-'"></td>
-                                <td class="py-3 px-3 text-muted small" x-text="s.notes || '-'"></td>
-                            </tr>
-                        </template>
-                        <tr x-show="snapshots.length === 0">
-                            <td colspan="6" class="text-center py-4 opacity-75">
-                                <i class="bi bi-clock-history fs-3 d-block mb-1 opacity-50"></i>
-                                {% trans "Noch keine historischen Stichtagsdaten erfasst." %}
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
             </div>
         </div>
     </div>
