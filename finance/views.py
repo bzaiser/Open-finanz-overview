@@ -2831,23 +2831,30 @@ def pension_plan_view(request):
     pension_increase_rate = profile.pension_increase / Decimal('100.0')
     inflation_rate = profile.inflation_rate / Decimal('100.0')
 
-    # Group snapshots by pension object_id and year
+    # Group snapshots by pension object_id and year (taking the LATEST snapshot of the year, not summing)
     snapshots_by_pension_year = {}
-    for s in snapshots:
+    for s in snapshots: # snapshots are already sorted by date ascending
         pid = s.object_id
         y = s.date.year
         if pid not in snapshots_by_pension_year:
             snapshots_by_pension_year[pid] = {}
-        if y not in snapshots_by_pension_year[pid]:
-            snapshots_by_pension_year[pid][y] = {'points': Decimal('0.00'), 'statutory_net': Decimal('0.00')}
+        
+        stat_net = Decimal('0.00')
+        pts = Decimal('0.00')
         if s.expected_payout_net and s.expected_payout_net > 0:
-            snapshots_by_pension_year[pid][y]['statutory_net'] += s.expected_payout_net
+            stat_net = s.expected_payout_net
         elif s.pension_points:
-            snapshots_by_pension_year[pid][y]['points'] += s.pension_points
+            pts = s.pension_points
             pt_val = s.point_value or Decimal('39.32')
             gross = s.pension_points * pt_val
-            net = gross * Decimal('0.885')
-            snapshots_by_pension_year[pid][y]['statutory_net'] += net
+            stat_net = gross * Decimal('0.885')
+
+        # Overwrite with latest snapshot of that year
+        snapshots_by_pension_year[pid][y] = {
+            'points': pts,
+            'statutory_net': stat_net,
+            'value': s.value
+        }
 
     for idx, sp in enumerate(statutory_pensions):
         sp_series = []
