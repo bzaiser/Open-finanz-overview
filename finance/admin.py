@@ -104,7 +104,7 @@ class AssetSnapshotInline(GenericTabularInline):
     model = AssetSnapshot
     form = AssetSnapshotInlineForm
     extra = 0
-    fields = ('user', 'date', 'value', 'pension_points', 'point_value', 'notes')
+    fields = ('user', 'date', 'value', 'expected_payout_net', 'pension_points', 'point_value', 'notes')
     classes = ['collapse']
 
     def get_formset(self, request, obj=None, **kwargs):
@@ -447,7 +447,7 @@ class AssetSnapshotForm(forms.ModelForm):
 @admin.register(AssetSnapshot)
 class AssetSnapshotAdmin(BaseOwnedModelAdmin):
     form = AssetSnapshotForm
-    list_display = ('date', 'content_object', 'value', 'user')
+    list_display = ('date', 'content_object', 'value', 'expected_payout_net', 'pension_points', 'point_value', 'user')
     list_filter = ('date', 'user')
     search_fields = ('notes',)
     
