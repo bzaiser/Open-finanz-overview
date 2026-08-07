@@ -42,13 +42,13 @@ class Command(BaseCommand):
         Pension.objects.filter(user=user).delete()
         AssetSnapshot.objects.filter(user=user).delete()
 
-        # Get or create categories
-        cat_gehalt, _ = Category.objects.get_or_create(name="Gehalt", defaults={'color': '#198754'})
-        cat_wohnen, _ = Category.objects.get_or_create(name="Wohnen & Immo", defaults={'color': '#0d6efd'})
-        cat_kinder, _ = Category.objects.get_or_create(name="Familie & Kinder", defaults={'color': '#ffc107'})
-        cat_leben, _ = Category.objects.get_or_create(name="Lebenshaltung", defaults={'color': '#fd7e14'})
-        cat_vorsorge, _ = Category.objects.get_or_create(name="Vorsorge & Sparen", defaults={'color': '#6f42c1'})
-        cat_steuern, _ = Category.objects.get_or_create(name="Steuern & Abgaben", defaults={'color': '#dc3545'})
+        # Get or create categories with exact user slug and color defaults
+        cat_gehalt, _ = Category.objects.get_or_create(slug="gehalt", defaults={'name': "Gehalt", 'color': '#11ff00'})
+        cat_wohnen, _ = Category.objects.get_or_create(slug="wohnen-immo", defaults={'name': "Wohnen & Immo", 'color': '#0d6efd'})
+        cat_kinder, _ = Category.objects.get_or_create(slug="familie-kinder", defaults={'name': "Familie & Kinder", 'color': '#ffc107'})
+        cat_leben, _ = Category.objects.get_or_create(slug="lebenshaltung", defaults={'name': "Lebenshaltung", 'color': '#fd7e14'})
+        cat_vorsorge, _ = Category.objects.get_or_create(slug="vorsorge-sparen", defaults={'name': "Vorsorge & Sparen", 'color': '#6f42c1'})
+        cat_steuern, _ = Category.objects.get_or_create(slug="steuern-abgaben", defaults={'name': "Steuern & Abgaben", 'color': '#dc3545'})
 
         # 1. Einnahmen (Familie)
         # Mann (50 Jahre, Besserverdiener): 5.200 € Netto / Monat

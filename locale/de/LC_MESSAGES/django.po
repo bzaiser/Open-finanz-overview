@@ -2383,3 +2383,12 @@ msgstr "Wird für die historische Auszahlungskurve der gesetzlichen Rente verwen
 
 msgid "Historische Daten"
 msgstr "Historische Daten"
+
+msgid "Standmitteilung / Wizard"
+msgstr "Standmitteilung / Wizard"
+
+msgid "Einrichtungs- & Standmitteilungs-Wizard"
+msgstr "Einrichtungs- & Standmitteilungs-Wizard"
+
+msgid "Historische Daten"
+msgstr "Historische Daten"

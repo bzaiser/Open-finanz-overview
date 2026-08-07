@@ -1,0 +1,468 @@
+{% extends "base.html" %}
+{% load i18n humanize %}
+
+{% block title %}{% trans "Einrichtungs- & Mitteilungs-Wizard" %} - Finanzplan{% endblock %}
+
+{% block content %}
+<div class="container py-4" x-data="wizardApp()">
+    <!-- Header Title -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1 d-flex align-items-center gap-2" style="color: var(--app-text-main);">
+                <i class="bi bi-magic text-primary"></i>
+                {% trans "Einrichtungs- & Standmitteilungs-Wizard" %}
+            </h2>
+            <p class="text-muted small mb-0">
+                {% trans "Schritt-für-Schritt-Erfassung deiner Familienfinanzen und offiziellen Mitteilungen (DRV, Allianz bAV, Riester u.a.)." %}
+            </p>
+        </div>
+        <a href="{% url 'finance:pension_plan' %}" class="btn btn-outline-secondary rounded-pill px-3">
+            <i class="bi bi-x-lg me-1"></i>{% trans "Abbrechen" %}
+        </a>
+    </div>
+
+    <!-- Step Progress Bar -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4 p-3" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="small fw-bold text-uppercase text-primary" x-text="'Schritt ' + currentStep + ' von 5: ' + stepTitles[currentStep - 1]"></span>
+            <span class="small font-monospace text-muted" x-text="Math.round((currentStep / 5) * 100) + '% abgeschlossen'"></span>
+        </div>
+        <div class="progress" style="height: 8px;">
+            <div class="progress-bar bg-primary" role="progressbar" :style="'width: ' + ((currentStep / 5) * 100) + '%'"></div>
+        </div>
+    </div>
+
+    <!-- Step 1: Haushalt & Personen -->
+    <div x-show="currentStep === 1" class="card border-0 shadow-sm rounded-4 p-4 mb-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+        <h4 class="fw-bold mb-3 d-flex align-items-center gap-2 text-primary">
+            <i class="bi bi-people"></i> {% trans "1. Haushalt & Personen" %}
+        </h4>
+        <div class="row g-3 mb-4">
+            <div class="col-md-6">
+                <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Haushalts-Typ" %}</label>
+                <select x-model="form.household_type" class="form-select">
+                    <option value="single">{% trans "Einzelperson / Single" %}</option>
+                    <option value="couple">{% trans "Ehepaar / Partnerschaft" %}</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Ziel-Nettorente im Ruhestand (€/mtl. für Haushalt)" %}</label>
+                <input type="number" step="0.01" x-model="form.target_monthly_payout" class="form-control font-monospace" placeholder="z. B. 3500.00">
+            </div>
+        </div>
+
+        <!-- Person 1 -->
+        <div class="p-3 rounded-3 bg-body-tertiary mb-3">
+            <h6 class="fw-bold mb-3 text-secondary"><i class="bi bi-person me-1"></i>{% trans "Person 1 (Hauptverdiener / Du)" %}</h6>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label small opacity-75">{% trans "Name / Bezeichnung" %}</label>
+                    <input type="text" x-model="form.p1_name" class="form-control" placeholder="z. B. Person 1">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small opacity-75">{% trans "Geburtsdatum" %}</label>
+                    <input type="date" x-model="form.p1_birth_date" class="form-control">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small opacity-75">{% trans "Ziel-Renteneintrittsalter" %}</label>
+                    <input type="number" x-model="form.p1_retirement_age" class="form-control font-monospace" placeholder="67">
+                </div>
+            </div>
+        </div>
+
+        <!-- Person 2 (Couple) -->
+        <div x-show="form.household_type === 'couple'" class="p-3 rounded-3 bg-body-tertiary mb-3">
+            <h6 class="fw-bold mb-3 text-secondary"><i class="bi bi-person-heart me-1"></i>{% trans "Person 2 (Partner/in)" %}</h6>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label small opacity-75">{% trans "Name / Bezeichnung" %}</label>
+                    <input type="text" x-model="form.p2_name" class="form-control" placeholder="z. B. Person 2">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small opacity-75">{% trans "Geburtsdatum" %}</label>
+                    <input type="date" x-model="form.p2_birth_date" class="form-control">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small opacity-75">{% trans "Ziel-Renteneintrittsalter" %}</label>
+                    <input type="number" x-model="form.p2_retirement_age" class="form-control font-monospace" placeholder="67">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 2: Gesetzliche Renteninformation (DRV) -->
+    <div x-show="currentStep === 2" class="card border-0 shadow-sm rounded-4 p-4 mb-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="fw-bold mb-0 d-flex align-items-center gap-2 text-primary">
+                <i class="bi bi-bank"></i> {% trans "2. Gesetzliche Renteninformation (DRV)" %}
+            </h4>
+            <button type="button" @click="addDrvStatement()" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                <i class="bi bi-plus-lg me-1"></i>{% trans "Weitere DRV-Mitteilung hinzufügen" %}
+            </button>
+        </div>
+        <p class="text-muted small mb-4">
+            {% trans "Übernahme der exakten Angaben aus dem offiziellen DRV-Schreiben ('Ihre Renteninformation')." %}
+        </p>
+
+        <template x-for="(drv, index) in form.drv_statements" :key="index">
+            <div class="p-3 border rounded-3 mb-4 bg-body-tertiary position-relative">
+                <button type="button" x-show="form.drv_statements.length > 1" @click="removeDrvStatement(index)" class="btn-close position-absolute top-0 end-0 m-3" aria-label="Close"></button>
+                <h6 class="fw-bold text-primary mb-3" x-text="'Mitteilung #' + (index + 1) + ': ' + (drv.provider || 'Gesetzliche Rente')"></h6>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label small opacity-75">{% trans "Bezeichnung / Inhaber" %}</label>
+                        <input type="text" x-model="drv.provider" class="form-control" placeholder="z. B. Gesetzliche Rente Person 1">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small opacity-75">{% trans "Stand vom (Datum der Mitteilung)" %}</label>
+                        <input type="date" x-model="drv.statement_date" class="form-control">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small opacity-75">{% trans "Regelaltersrente am (Beginn)" %}</label>
+                        <input type="date" x-model="drv.retirement_date" class="form-control">
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-4">
+                        <label class="form-label small opacity-75">{% trans "Entgeltpunkte (EP)" %}</label>
+                        <input type="number" step="0.0001" x-model="drv.pension_points" class="form-control font-monospace" placeholder="z. B. 60.4610">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small opacity-75">{% trans "Punktwert (€)" %}</label>
+                        <input type="number" step="0.01" x-model="drv.point_value" class="form-control font-monospace" placeholder="39.32">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small opacity-75">{% trans "Rente Erwerbsminderung (€/mtl.)" %}</label>
+                        <input type="number" step="0.01" x-model="drv.erwerbsminderung_net" class="form-control font-monospace" placeholder="z. B. 1913.68">
+                    </div>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label small opacity-75 fw-bold text-success">{% trans "Bislang erreichte Anwartschaft (Stand heute €/mtl.)" %}</label>
+                        <input type="number" step="0.01" x-model="drv.stand_today_net" class="form-control font-monospace fw-bold text-success" placeholder="z. B. 1876.10">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small opacity-75 fw-bold text-primary">{% trans "Hochrechnung Regelaltersrente (€/mtl. ohne Anpassung)" %}</label>
+                        <input type="number" step="0.01" x-model="drv.forecast_net" class="form-control font-monospace fw-bold text-primary" placeholder="z. B. 2526.60">
+                    </div>
+                </div>
+            </div>
+        </template>
+    </div>
+
+    <!-- Step 3: Private & Betriebliche Vorsorge (bAV, Allianz, Riester etc.) -->
+    <div x-show="currentStep === 3" class="card border-0 shadow-sm rounded-4 p-4 mb-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="fw-bold mb-0 d-flex align-items-center gap-2 text-primary">
+                <i class="bi bi-piggy-bank"></i> {% trans "3. Private & Betriebliche Vorsorge (bAV, Allianz, Riester)" %}
+            </h4>
+            <button type="button" @click="addPrivateStatement()" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                <i class="bi bi-plus-lg me-1"></i>{% trans "Weitere Mitteilung / Vertrag hinzufügen" %}
+            </button>
+        </div>
+        <p class="text-muted small mb-4">
+            {% trans "Erfassung von Standmitteilungen aus bAV, Direktversicherungen, Riester, Rürup oder privaten Lebensversicherungen." %}
+        </p>
+
+        <template x-for="(priv, index) in form.private_statements" :key="index">
+            <div class="p-3 border rounded-3 mb-4 bg-body-tertiary position-relative">
+                <button type="button" x-show="form.private_statements.length > 1" @click="removePrivateStatement(index)" class="btn-close position-absolute top-0 end-0 m-3" aria-label="Close"></button>
+                <h6 class="fw-bold text-info mb-3" x-text="'Vertrag #' + (index + 1) + ': ' + (priv.provider || 'Private Vorsorge')"></h6>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-5">
+                        <label class="form-label small opacity-75">{% trans "Anbieter / Gesellschaft / Vertrag" %}</label>
+                        <input type="text" x-model="priv.provider" class="form-control" placeholder="z. B. Allianz Direktversicherung Perspektive">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small opacity-75">{% trans "Versicherungsnummer / Police-Nr." %}</label>
+                        <input type="text" x-model="priv.policy_number" class="form-control font-monospace" placeholder="z. B. 5/455262/799">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small opacity-75">{% trans "Stand vom (Datum)" %}</label>
+                        <input type="date" x-model="priv.statement_date" class="form-control">
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-4">
+                        <label class="form-label small opacity-75">{% trans "Garantierte Mindestrente (€/mtl.)" %}</label>
+                        <input type="number" step="0.01" x-model="priv.garantierente" class="form-control font-monospace" placeholder="z. B. 104.49">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small opacity-75">{% trans "Garantiekapital zum Rentenbeginn (€)" %}</label>
+                        <input type="number" step="0.01" x-model="priv.garantiekapital" class="form-control font-monospace" placeholder="z. B. 31947.12">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small opacity-75">{% trans "Rückkaufswert / Aktueller Wert (€)" %}</label>
+                        <input type="number" step="0.01" x-model="priv.current_capital" class="form-control font-monospace" placeholder="z. B. 144320.45">
+                    </div>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label small opacity-75">{% trans "Monatliche Sparrate / Beitrag (€)" %}</label>
+                        <input type="number" step="0.01" x-model="priv.monthly_contribution" class="form-control font-monospace" placeholder="z. B. 150.00">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small opacity-75">{% trans "Verzinsung / Wachstumsrate (%/Jahr)" %}</label>
+                        <input type="number" step="0.01" x-model="priv.growth_rate" class="form-control font-monospace" placeholder="z. B. 3.80">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small opacity-75">{% trans "Erwartete Netto-Rente (€/mtl.)" %}</label>
+                        <input type="number" step="0.01" x-model="priv.expected_monthly_payout" class="form-control font-monospace fw-bold text-success" placeholder="z. B. 350.00">
+                    </div>
+                </div>
+            </div>
+        </template>
+    </div>
+
+    <!-- Step 4: Einkommen & Haushaltsausgaben -->
+    <div x-show="currentStep === 4" class="card border-0 shadow-sm rounded-4 p-4 mb-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+        <h4 class="fw-bold mb-3 d-flex align-items-center gap-2 text-primary">
+            <i class="bi bi-wallet2"></i> {% trans "4. Monatliches Einkommen & Ausgaben" %}
+        </h4>
+        
+        <h6 class="fw-bold text-secondary mb-2">{% trans "Monatliche Einnahmen" %}</h6>
+        <template x-for="(inc, index) in form.incomes" :key="index">
+            <div class="row g-2 mb-2 align-items-center">
+                <div class="col-md-6">
+                    <input type="text" x-model="inc.name" class="form-control" placeholder="z. B. Gehalt Vollzeit / Teilzeit">
+                </div>
+                <div class="col-md-4">
+                    <input type="number" step="0.01" x-model="inc.amount" class="form-control font-monospace" placeholder="Betrag in €">
+                </div>
+                <div class="col-md-2">
+                    <button type="button" @click="removeIncome(index)" class="btn btn-outline-danger btn-sm w-100" x-show="form.incomes.length > 1"><i class="bi bi-trash"></i></button>
+                </div>
+            </div>
+        </template>
+        <button type="button" @click="addIncome()" class="btn btn-sm btn-link text-decoration-none p-0 mb-4">+ {% trans "Weitere Einnahme hinzufügen" %}</button>
+
+        <h6 class="fw-bold text-secondary mb-2">{% trans "Regelmäßige Ausgaben & Steuern" %}</h6>
+        <template x-for="(exp, index) in form.expenses" :key="index">
+            <div class="row g-2 mb-2 align-items-center">
+                <div class="col-md-5">
+                    <input type="text" x-model="exp.name" class="form-control" placeholder="z. B. Lebensmittel, Nebenkosten, Steuern">
+                </div>
+                <div class="col-md-3">
+                    <input type="number" step="0.01" x-model="exp.amount" class="form-control font-monospace" placeholder="Betrag in €">
+                </div>
+                <div class="col-md-2">
+                    <select x-model="exp.frequency" class="form-select">
+                        <option value="monthly">Monatlich</option>
+                        <option value="yearly">Jährlich</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="button" @click="removeExpense(index)" class="btn btn-outline-danger btn-sm w-100" x-show="form.expenses.length > 1"><i class="bi bi-trash"></i></button>
+                </div>
+            </div>
+        </template>
+        <button type="button" @click="addExpense()" class="btn btn-sm btn-link text-decoration-none p-0">+ {% trans "Weitere Ausgabe hinzufügen" %}</button>
+    </div>
+
+    <!-- Step 5: Konten, Depots, Immobilien & Kredite -->
+    <div x-show="currentStep === 5" class="card border-0 shadow-sm rounded-4 p-4 mb-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+        <h4 class="fw-bold mb-3 d-flex align-items-center gap-2 text-primary">
+            <i class="bi bi-house-door"></i> {% trans "5. Vermögen, Immobilien & Kredite" %}
+        </h4>
+
+        <!-- Assets -->
+        <h6 class="fw-bold text-secondary mb-2">{% trans "Konten, Tagesgeld & ETF Depots" %}</h6>
+        <template x-for="(ast, index) in form.assets" :key="index">
+            <div class="row g-2 mb-2 align-items-center">
+                <div class="col-md-5">
+                    <input type="text" x-model="ast.name" class="form-control" placeholder="z. B. Tagesgeld Notgroschen / ETF Depot">
+                </div>
+                <div class="col-md-4">
+                    <input type="number" step="0.01" x-model="ast.value" class="form-control font-monospace" placeholder="Aktueller Wert in €">
+                </div>
+                <div class="col-md-2">
+                    <input type="number" step="0.01" x-model="ast.growth_rate" class="form-control font-monospace" placeholder="Rendite %">
+                </div>
+                <div class="col-md-1">
+                    <button type="button" @click="removeAsset(index)" class="btn btn-outline-danger btn-sm w-100" x-show="form.assets.length > 1"><i class="bi bi-trash"></i></button>
+                </div>
+            </div>
+        </template>
+        <button type="button" @click="addAsset()" class="btn btn-sm btn-link text-decoration-none p-0 mb-4">+ {% trans "Weitern Vermögenswert hinzufügen" %}</button>
+
+        <!-- Real Estate & Loans -->
+        <h6 class="fw-bold text-secondary mb-2">{% trans "Immobilien & Darlehen" %}</h6>
+        <div class="p-3 border rounded-3 mb-3 bg-body-tertiary">
+            <div class="row g-3 mb-2">
+                <div class="col-md-6">
+                    <label class="form-label small opacity-75">{% trans "Immobilie (z. B. Eigenheim)" %}</label>
+                    <input type="text" x-model="form.real_estates[0].name" class="form-control" placeholder="z. B. Einfamilienhaus">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label small opacity-75">{% trans "Geschätzter Immobilienwert (€)" %}</label>
+                    <input type="number" step="0.01" x-model="form.real_estates[0].property_value" class="form-control font-monospace" placeholder="z. B. 800000.00">
+                </div>
+            </div>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label small opacity-75">{% trans "Darlehen Restschuld (€)" %}</label>
+                    <input type="number" step="0.01" x-model="form.loans[0].nominal_amount" class="form-control font-monospace" placeholder="z. B. 450000.00">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label small opacity-75">{% trans "Monatliche Kreditrate (€/mtl.)" %}</label>
+                    <input type="number" step="0.01" x-model="form.loans[0].monthly_installment" class="form-control font-monospace" placeholder="z. B. 2100.00">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="d-flex justify-content-between align-items-center pt-2">
+        <button type="button" @click="currentStep--" x-show="currentStep > 1" class="btn btn-outline-secondary rounded-pill px-4 py-2">
+            <i class="bi bi-arrow-left me-1"></i>{% trans "Zurück" %}
+        </button>
+        <div></div>
+        <button type="button" @click="currentStep++" x-show="currentStep < 5" class="btn btn-primary rounded-pill px-4 py-2" style="background: var(--app-gradient); border: none;">
+            {% trans "Weiter" %}<i class="bi bi-arrow-right ms-1"></i>
+        </button>
+        <button type="button" @click="submitWizard()" x-show="currentStep === 5" class="btn btn-success rounded-pill px-4 py-2 shadow" :disabled="isSubmitting">
+            <i class="bi bi-check-circle me-1"></i>{% trans "Jetzt speichern & Berechnungen aktualisieren" %}
+        </button>
+    </div>
+</div>
+
+<script>
+    function wizardApp() {
+        return {
+            currentStep: 1,
+            isSubmitting: false,
+            stepTitles: [
+                "Haushalt & Personen",
+                "Gesetzliche Rentenmitteilungen",
+                "Private & Betriebsrenten",
+                "Einkommen & Ausgaben",
+                "Vermögen & Immobilien"
+            ],
+            form: {
+                household_type: 'single',
+                target_monthly_payout: '',
+                p1_name: '',
+                p1_birth_date: '',
+                p1_retirement_age: 67,
+                p2_name: '',
+                p2_birth_date: '',
+                p2_retirement_age: 67,
+                drv_statements: [
+                    {
+                        provider: 'Gesetzliche Rente Person 1',
+                        statement_date: '',
+                        retirement_date: '',
+                        pension_points: '',
+                        point_value: '39.32',
+                        erwerbsminderung_net: '',
+                        stand_today_net: '',
+                        forecast_net: '',
+                        retirement_age: 67
+                    }
+                ],
+                private_statements: [
+                    {
+                        provider: '',
+                        policy_number: '',
+                        statement_date: '',
+                        garantierente: '',
+                        garantiekapital: '',
+                        current_capital: '',
+                        monthly_contribution: '',
+                        growth_rate: '',
+                        expected_monthly_payout: ''
+                    }
+                ],
+                incomes: [
+                    { name: 'Gehalt Vollzeit', amount: '' }
+                ],
+                expenses: [
+                    { name: 'Lebenshaltung & Einkäufe', amount: '', frequency: 'monthly' }
+                ],
+                assets: [
+                    { name: 'Girokonto / Tagesgeld', value: '', growth_rate: '2.0' }
+                ],
+                real_estates: [
+                    { name: 'Eigenheim', property_value: '', appreciation_rate: '1.5' }
+                ],
+                loans: [
+                    { name: 'Immobiliendarlehen', nominal_amount: '', monthly_installment: '', interest_rate: '2.25' }
+                ]
+            },
+
+            addDrvStatement() {
+                this.form.drv_statements.push({
+                    provider: 'Gesetzliche Rente',
+                    statement_date: '',
+                    retirement_date: '',
+                    pension_points: '',
+                    point_value: '39.32',
+                    erwerbsminderung_net: '',
+                    stand_today_net: '',
+                    forecast_net: '',
+                    retirement_age: 67
+                });
+            },
+            removeDrvStatement(idx) {
+                this.form.drv_statements.splice(idx, 1);
+            },
+
+            addPrivateStatement() {
+                this.form.private_statements.push({
+                    provider: '',
+                    policy_number: '',
+                    statement_date: '',
+                    garantierente: '',
+                    garantiekapital: '',
+                    current_capital: '',
+                    monthly_contribution: '',
+                    growth_rate: '',
+                    expected_monthly_payout: ''
+                });
+            },
+            removePrivateStatement(idx) {
+                this.form.private_statements.splice(idx, 1);
+            },
+
+            addIncome() { this.form.incomes.push({ name: '', amount: '' }); },
+            removeIncome(idx) { this.form.incomes.splice(idx, 1); },
+
+            addExpense() { this.form.expenses.push({ name: '', amount: '', frequency: 'monthly' }); },
+            removeExpense(idx) { this.form.expenses.splice(idx, 1); },
+
+            addAsset() { this.form.assets.push({ name: '', value: '', growth_rate: '' }); },
+            removeAsset(idx) { this.form.assets.splice(idx, 1); },
+
+            async submitWizard() {
+                this.isSubmitting = true;
+                try {
+                    const response = await fetch('/finance/wizard/save/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: JSON.stringify(this.form)
+                    });
+                    const res = await response.json();
+                    if (res.status === 'success') {
+                        window.location.href = res.redirect_url;
+                    } else {
+                        alert('Fehler beim Speichern: ' + res.message);
+                    }
+                } catch (err) {
+                    alert('Verbindungsfehler beim Speichern der Daten.');
+                } finally {
+                    this.isSubmitting = false;
+                }
+            }
+        };
+    }
+</script>
+{% endblock %}
