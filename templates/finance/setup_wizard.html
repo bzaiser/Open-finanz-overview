@@ -457,10 +457,13 @@
                     if (res.status === 'success') {
                         window.location.href = res.redirect_url;
                     } else {
+                        if (res.step) {
+                            this.currentStep = res.step;
+                        }
                         alert('Fehler beim Speichern: ' + res.message);
                     }
                 } catch (err) {
-                    alert('Verbindungsfehler beim Speichern der Daten.');
+                    alert('Verbindungsfehler beim Speichern der Daten: ' + err);
                 } finally {
                     this.isSubmitting = false;
                 }

@@ -138,9 +138,14 @@ def wizard_save_api(request):
             ret_date_str = drv.get('retirement_date') # Regelaltersrente am
             statement_date_str = drv.get('statement_date') # Stand vom
 
-            pts = Decimal(str(pts_str)) if pts_str else None
-            pt_val = Decimal(str(pt_val_str)) if pt_val_str else Decimal('39.32')
-            expected_net = Decimal(str(forecast_net_str)) if forecast_net_str else (Decimal(str(stand_today_str)) if stand_today_str else None)
+            def _to_decimal(val):
+                if val is None or val == '' or str(val).strip() == '':
+                    return None
+                return Decimal(str(val).replace(',', '.'))
+
+            pts = _to_decimal(pts_str)
+            pt_val = _to_decimal(pt_val_str) or Decimal('39.32')
+            expected_net = _to_decimal(forecast_net_str) or _to_decimal(stand_today_str)
 
             # Match or create pension contract
             pension_id = drv.get('existing_pension_id')
@@ -175,7 +180,7 @@ def wizard_save_api(request):
             # Record Snapshot if statement_date is present
             if statement_date_str:
                 s_date = datetime.strptime(statement_date_str, '%Y-%m-%d').date()
-                snap_net = Decimal(str(stand_today_str)) if stand_today_str else expected_net
+                snap_net = _to_decimal(stand_today_str) or expected_net
                 AssetSnapshot.objects.update_or_create(
                     user=user,
                     content_type=ct_pension,
@@ -190,7 +195,7 @@ def wizard_save_api(request):
                     }
                 )
 
-        # 3. Private / Occupational Pension Statements (bAV, Riester, Allianz, etc.)
+        # 3. Private & Occupational Pension Statements (bAV, Riester, Allianz, etc.)
         private_entries = data.get('private_statements', [])
         for priv in private_entries:
             provider = priv.get('provider', 'Private Vorsorge')
@@ -213,14 +218,19 @@ def wizard_save_api(request):
             if not pension:
                 pension = Pension(user=user, provider=full_provider, pension_type='capital')
 
-            if cap_val_str:
-                pension.current_value = Decimal(str(cap_val_str))
-            if expected_net_str:
-                pension.expected_payout_at_retirement = Decimal(str(expected_net_str))
-            if contrib_str:
-                pension.monthly_contribution = Decimal(str(contrib_str))
-            if growth_str:
-                pension.growth_rate = Decimal(str(growth_str))
+            cap_val = _to_decimal(cap_val_str)
+            expected_net = _to_decimal(expected_net_str)
+            contrib = _to_decimal(contrib_str)
+            growth = _to_decimal(growth_str)
+
+            if cap_val is not None:
+                pension.current_value = cap_val
+            if expected_net is not None:
+                pension.expected_payout_at_retirement = expected_net
+            if contrib is not None:
+                pension.monthly_contribution = contrib
+            if growth is not None:
+                pension.growth_rate = growth
             if ret_date_str:
                 pension.start_payout_date = datetime.strptime(ret_date_str, '%Y-%m-%d').date()
 
@@ -231,17 +241,16 @@ def wizard_save_api(request):
 
             pension.save()
 
-            if statement_date_str and cap_val_str:
+            if statement_date_str and cap_val is not None:
                 s_date = datetime.strptime(statement_date_str, '%Y-%m-%d').date()
-                snap_val = Decimal(str(cap_val_str))
                 AssetSnapshot.objects.update_or_create(
                     user=user,
                     content_type=ct_pension,
                     object_id=pension.id,
                     date=s_date,
                     defaults={
-                        'value': snap_val,
-                        'expected_payout_net': Decimal(str(expected_net_str)) if expected_net_str else None,
+                        'value': cap_val,
+                        'expected_payout_net': expected_net,
                         'notes': f"Standmitteilung {s_date.strftime('%d.%m.%Y')}"
                     }
                 )
@@ -253,11 +262,12 @@ def wizard_save_api(request):
 
         incomes = data.get('incomes', [])
         for inc in incomes:
-            if inc.get('amount') and float(inc.get('amount')) > 0:
+            amt = _to_decimal(inc.get('amount'))
+            if amt and amt > 0:
                 CashFlowSource.objects.create(
                     user=user,
                     name=inc.get('name', 'Gehalt / Einnahme'),
-                    value=Decimal(str(inc.get('amount'))),
+                    value=amt,
                     is_income=True,
                     frequency=inc.get('frequency', 'monthly'),
                     category=cat_gehalt
@@ -265,12 +275,13 @@ def wizard_save_api(request):
 
         expenses = data.get('expenses', [])
         for exp in expenses:
-            if exp.get('amount') and float(exp.get('amount')) > 0:
+            amt = _to_decimal(exp.get('amount'))
+            if amt and amt > 0:
                 cat_exp = cat_steuern if 'steuer' in exp.get('name', '').lower() else cat_leben
                 CashFlowSource.objects.create(
                     user=user,
                     name=exp.get('name', 'Ausgabe'),
-                    value=Decimal(str(exp.get('amount'))),
+                    value=amt,
                     is_income=False,
                     frequency=exp.get('frequency', 'monthly'),
                     category=cat_exp
@@ -319,4 +330,6 @@ def wizard_save_api(request):
         return JsonResponse({'status': 'success', 'redirect_url': '/finance/pensions/'})
 
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
