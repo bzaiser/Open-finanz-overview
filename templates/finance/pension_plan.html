@@ -355,6 +355,46 @@
                         </tr>
                     </tbody>
                 </table>
+    <!-- Historical Snapshots Table Card -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+        <div class="card-header border-0 d-flex justify-content-between align-items-center">
+            <span class="fw-bold"><i class="bi bi-clock-history me-2 text-info"></i>{% trans "Historische Stichtags-Snapshots" %}</span>
+            <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#snapshotModal">
+                <i class="bi bi-plus-lg me-1"></i>{% trans "Stichtag erfassen" %}
+            </button>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0" style="font-size: 0.85rem;">
+                    <thead>
+                        <tr>
+                            <th class="py-3 px-3 border-0">{% trans "Stichtag" %}</th>
+                            <th class="py-3 px-3 border-0">{% trans "Vertrag / Anbieter" %}</th>
+                            <th class="py-3 px-3 border-0 text-end">{% trans "Kapitalwert (€)" %}</th>
+                            <th class="py-3 px-3 border-0 text-end text-success">{% trans "Netto-Rente (€)" %}</th>
+                            <th class="py-3 px-3 border-0 text-center">{% trans "Entgeltpunkte (EP)" %}</th>
+                            <th class="py-3 px-3 border-0">{% trans "Notizen" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template x-for="s in snapshots" :key="s.id">
+                            <tr>
+                                <td class="py-3 px-3 fw-bold font-monospace" x-text="s.date"></td>
+                                <td class="py-3 px-3 fw-semibold" x-text="getContractName(s.pension_id)"></td>
+                                <td class="py-3 px-3 text-end font-monospace" x-text="getContractType(s.pension_id) !== 'statutory' ? formatEuro(s.value) + ' €' : '-'"></td>
+                                <td class="py-3 px-3 text-end font-monospace fw-bold text-success" x-text="s.expected_payout_net !== null ? formatEuro(s.expected_payout_net) + ' €' : (getContractType(s.pension_id) === 'statutory' && s.value > 0 ? formatEuro(s.value) + ' €' : '-')"></td>
+                                <td class="py-3 px-3 text-center font-monospace" x-text="s.pension_points !== null ? s.pension_points : '-'"></td>
+                                <td class="py-3 px-3 text-muted small" x-text="s.notes || '-'"></td>
+                            </tr>
+                        </template>
+                        <tr x-show="snapshots.length === 0">
+                            <td colspan="6" class="text-center py-4 opacity-75">
+                                <i class="bi bi-clock-history fs-3 d-block mb-1 opacity-50"></i>
+                                {% trans "Noch keine historischen Stichtagsdaten erfasst." %}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -487,7 +527,7 @@
                     <div class="modal-body p-4">
                         <div class="mb-3">
                             <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Select Pension Contract" %}</label>
-                            <select name="pension_id" x-model="snapshot.pension_id" class="form-select" required>
+                            <select name="pension_id" x-model="snapshot.pension_id" @change="onSnapshotContractChange()" class="form-select" required>
                                 <option value="">{% trans "-- Select Contract --" %}</option>
                                 {% for p in pensions %}
                                 <option value="{{ p.id }}">{{ p.provider }} ({{ p.get_pension_type_display }})</option>
@@ -498,22 +538,42 @@
                             <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Snapshot Date" %}</label>
                             <input type="date" name="date" x-model="snapshot.date" class="form-control" required>
                         </div>
-                        <div class="row g-2 mb-3">
-                            <div class="col-md-6">
-                                <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Pension Points (EP)" %}</label>
-                                <input type="number" step="0.0001" name="pension_points" x-model="snapshot.pension_points" class="form-control font-monospace" placeholder="e.g. 65.20">
+
+                        <!-- Statutory Pension Snapshot Fields -->
+                        <template x-if="getSelectedContractType() === 'statutory'">
+                            <div>
+                                <div class="row g-2 mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Pension Points (EP)" %}</label>
+                                        <input type="number" step="0.0001" name="pension_points" x-model="snapshot.pension_points" @input="calcSnapshotStatutoryNet()" class="form-control font-monospace" placeholder="e.g. 65.20">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Point Value (€)" %}</label>
+                                        <input type="number" step="0.01" name="point_value" x-model="snapshot.point_value" @input="calcSnapshotStatutoryNet()" class="form-control font-monospace" placeholder="e.g. 39.32">
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold text-uppercase opacity-75 text-success">{% trans "Monthly Net Payout (€)" %}</label>
+                                    <input type="number" step="0.01" name="expected_payout_net" x-model="snapshot.expected_payout_net" class="form-control font-monospace fw-bold text-success" placeholder="0.00">
+                                    <span class="form-text small opacity-75">{% trans "Wird für die historische Auszahlungskurve der gesetzlichen Rente verwendet." %}</span>
+                                </div>
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Point Value (€)" %}</label>
-                                <input type="number" step="0.01" name="point_value" x-model="snapshot.point_value" class="form-control font-monospace" placeholder="e.g. 37.60">
+                        </template>
+
+                        <!-- Private Pension Snapshot Fields -->
+                        <template x-if="getSelectedContractType() !== 'statutory'">
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Capital Value (€)" %}</label>
+                                <input type="number" step="0.01" name="value" x-model="snapshot.value" class="form-control font-monospace fw-bold" placeholder="0.00">
                             </div>
-                        </div>
+                        </template>
+
                         <div class="mb-3">
-                            <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Capital Value (€)" %}</label>
-                            <input type="number" step="0.01" name="value" x-model="snapshot.value" class="form-control font-monospace" placeholder="0.00">
+                            <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Notes" %}</label>
+                            <textarea name="notes" x-model="snapshot.notes" class="form-control" rows="2" placeholder="{% trans 'Optional notes...' %}"></textarea>
                         </div>
                     </div>
-                    <div class="modal-footer border-0">
+                    <div class="modal-footer border-0 pt-0">
                         <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
                         <button type="submit" class="btn btn-primary rounded-pill px-4" style="background: var(--app-gradient); border: none;">
                             {% trans "Save Snapshot" %}
@@ -630,8 +690,19 @@
     function pensionPlanApp() {
         return {
             pensions: {{ pensions_json|safe }},
+            snapshots: {{ snapshots_json|safe }},
             retirementAge: {{ retirement_age }},
             retirementYear: {{ retirement_year }},
+
+            getContractName(id) {
+                const p = this.pensions.find(item => item.id == id);
+                return p ? p.provider + ' (' + p.pension_type_display + ')' : '-';
+            },
+
+            getContractType(id) {
+                const p = this.pensions.find(item => item.id == id);
+                return p ? p.pension_type : 'capital';
+            },
             editId: null,
             form: {
                 provider: '',
@@ -655,7 +726,39 @@
                 date: new Date().toISOString().split('T')[0],
                 pension_points: '',
                 point_value: '',
-                value: ''
+                expected_payout_net: '',
+                value: '',
+                notes: ''
+            },
+
+            getSelectedContractType() {
+                if (!this.snapshot.pension_id) return 'capital';
+                const p = this.pensions.find(item => item.id == this.snapshot.pension_id);
+                return p ? p.pension_type : 'capital';
+            },
+
+            onSnapshotContractChange() {
+                if (!this.snapshot.pension_id) return;
+                const p = this.pensions.find(item => item.id == this.snapshot.pension_id);
+                if (p) {
+                    if (p.pension_type === 'statutory') {
+                        this.snapshot.pension_points = p.pension_points !== null ? p.pension_points : '';
+                        this.snapshot.point_value = p.point_value !== null ? p.point_value : '39.32';
+                        this.snapshot.expected_payout_net = p.expected_payout_at_retirement !== null ? p.expected_payout_at_retirement : '';
+                    } else {
+                        this.snapshot.value = p.current_value !== null ? p.current_value : '';
+                    }
+                }
+            },
+
+            calcSnapshotStatutoryNet() {
+                const pts = parseFloat(this.snapshot.pension_points);
+                const val = parseFloat(this.snapshot.point_value);
+                if (!isNaN(pts) && !isNaN(val)) {
+                    const gross = pts * val;
+                    const net = gross * (1 - 0.115);
+                    this.snapshot.expected_payout_net = net.toFixed(2);
+                }
             },
 
             formatEuro(val) {

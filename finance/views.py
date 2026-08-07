@@ -2840,7 +2840,9 @@ def pension_plan_view(request):
             snapshots_by_pension_year[pid] = {}
         if y not in snapshots_by_pension_year[pid]:
             snapshots_by_pension_year[pid][y] = {'points': Decimal('0.00'), 'statutory_net': Decimal('0.00')}
-        if s.pension_points:
+        if s.expected_payout_net and s.expected_payout_net > 0:
+            snapshots_by_pension_year[pid][y]['statutory_net'] += s.expected_payout_net
+        elif s.pension_points:
             snapshots_by_pension_year[pid][y]['points'] += s.pension_points
             pt_val = s.point_value or Decimal('39.32')
             gross = s.pension_points * pt_val
@@ -3046,9 +3048,23 @@ def pension_plan_view(request):
             'notes': p.notes or ''
         })
 
+    snapshots_list = []
+    for s in snapshots:
+        snapshots_list.append({
+            'id': s.id,
+            'pension_id': s.object_id,
+            'date': s.date.strftime('%d.%m.%Y'),
+            'value': float(s.value) if s.value is not None else 0.0,
+            'pension_points': float(s.pension_points) if s.pension_points is not None else None,
+            'point_value': float(s.point_value) if s.point_value is not None else None,
+            'expected_payout_net': float(s.expected_payout_net) if s.expected_payout_net is not None else None,
+            'notes': s.notes or ''
+        })
+
     context = {
         'pensions': pensions,
         'pensions_json': json.dumps(pensions_json),
+        'snapshots_json': json.dumps(snapshots_list),
         'life_stage': life_stage,
         'user_current_age': user_current_age,
         'total_statutory_points': total_statutory_points,
@@ -3125,6 +3141,7 @@ def pension_snapshot_save(request):
         points_str = request.POST.get('pension_points')
         point_val_str = request.POST.get('point_value')
         value_str = request.POST.get('value')
+        net_str = request.POST.get('expected_payout_net')
         notes = request.POST.get('notes', '')
 
         pension = get_object_or_404(Pension, id=pension_id, user=user)
@@ -3135,7 +3152,8 @@ def pension_snapshot_save(request):
             snap_date = datetime.datetime.strptime(snapshot_date_str, '%Y-%m-%d').date()
             pts = Decimal(points_str) if points_str else None
             pt_val = Decimal(point_val_str) if point_val_str else None
-            val = Decimal(value_str) if value_str else (pts * pt_val if pts and pt_val else Decimal('0.00'))
+            exp_net = Decimal(net_str) if net_str else (pts * pt_val * Decimal('0.885') if pts and pt_val else None)
+            val = Decimal(value_str) if value_str else (exp_net if exp_net else Decimal('0.00'))
 
             AssetSnapshot.objects.update_or_create(
                 user=user,
@@ -3146,6 +3164,7 @@ def pension_snapshot_save(request):
                     'value': val,
                     'pension_points': pts,
                     'point_value': pt_val,
+                    'expected_payout_net': exp_net,
                     'notes': notes
                 }
             )

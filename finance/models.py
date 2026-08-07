@@ -370,9 +370,10 @@ class AssetSnapshot(models.Model):
     date = models.DateField(_("Date"))
     value = models.DecimalField(_("Value"), max_digits=15, decimal_places=2)
     
-    # Optional statutory pension historical tracking
+    # Optional statutory pension & private net payout historical tracking
     pension_points = models.DecimalField(_("Pension Points (Entgeltpunkte)"), max_digits=8, decimal_places=4, null=True, blank=True)
     point_value = models.DecimalField(_("Point Value (€)"), max_digits=6, decimal_places=2, null=True, blank=True)
+    expected_payout_net = models.DecimalField(_("Monthly Net Payout (€)"), max_digits=10, decimal_places=2, null=True, blank=True)
 
     notes = models.TextField(_("Notes"), blank=True)
 
