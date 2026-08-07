@@ -2380,3 +2380,6 @@ msgstr "Noch keine historischen Stichtage erfasst."
 
 msgid "Wird für die historische Auszahlungskurve der gesetzlichen Rente verwendet."
 msgstr "Wird für die historische Auszahlungskurve der gesetzlichen Rente verwendet."
+
+msgid "Historische Daten"
+msgstr "Historische Daten"
