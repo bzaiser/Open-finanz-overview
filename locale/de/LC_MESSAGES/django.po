@@ -2389,6 +2389,3 @@ msgstr "Standmitteilung / Wizard"
 
 msgid "Einrichtungs- & Standmitteilungs-Wizard"
 msgstr "Einrichtungs- & Standmitteilungs-Wizard"
-
-msgid "Historische Daten"
-msgstr "Historische Daten"
