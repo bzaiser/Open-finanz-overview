@@ -20,8 +20,18 @@ htmlcov/
 local_settings.py
 
 # Media and Static
-media/
+media/avatars/
 staticfiles/
+
+# Logs & Backups
+server.log
+*.bak
+*.log
+
+# Debug & Scratch Scripts
+clean_translations.py
+dump_debug.py
+test_*.py
 
 # Build and Dist
 build/
