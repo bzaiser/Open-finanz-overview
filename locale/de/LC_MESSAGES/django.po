@@ -2803,5 +2803,15 @@ msgstr "Datensicherheit:"
 msgid "Streng getrennte Mandantenfähigkeit (Multi-User-Support), sodass jeder Nutzer nur auf seine eigenen Finanzdaten zugreifen kann."
 msgstr "Streng getrennte Mandantenfähigkeit (Multi-User-Support), sodass jeder Nutzer nur auf seine eigenen Finanzdaten zugreifen kann."
 
+msgid "Type"
+msgstr "Vertragsart"
+
+msgid "Capital Value"
+msgstr "Kapitalwert (€)"
+
+
+
+
+
 
 
