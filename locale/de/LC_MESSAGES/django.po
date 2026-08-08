@@ -2392,3 +2392,44 @@ msgstr "Einrichtungs- & Standmitteilungs-Wizard"
 
 msgid "Historische Stichtage verwalten"
 msgstr "Historische Stichtage verwalten"
+
+msgid "Pension Points (Entgeltpunkte)"
+msgstr "Entgeltpunkte (EP)"
+
+msgid "Number of statutory pension points accumulated"
+msgstr "Anzahl der bisher gesammelten gesetzlichen Entgeltpunkte"
+
+msgid "Point Value (€)"
+msgstr "Aktueller Rentenwert (€)"
+
+msgid "Value of 1 pension point in EUR (e.g. 39.32)"
+msgstr "Wert eines Entgeltpunktes in EUR (z. B. 39,32 €)"
+
+
+msgid "Calculated automatically from points * point_value, or enter manually"
+msgstr "Wird automatisch berechnet (Entgeltpunkte × Rentenwert) oder manuell eingegeben"
+
+msgid "Social Security Deduction (%)"
+msgstr "Abzug Kranken- & Pflegeversicherung (%)"
+
+msgid "Health and nursing care insurance deduction percentage (e.g. 12.79%)"
+msgstr "Prozentsatz für Abzüge von Kranken- und Pflegeversicherung (ca. 11,5 %)"
+
+msgid "Expected Monthly Net Payout"
+msgstr "Erwartete Netto-Monatsrente (€)"
+
+msgid "Net payout after KV/PV deductions (Enter manually or auto-calculated)"
+msgstr "Geschätzte Netto-Ausbildung/Rente nach Abzug von KV/PV"
+
+msgid "Target retirement age for this specific pension contract (e.g. 67)"
+msgstr "Ziel-Renteneintrittsalter für diesen spezifischen Vertrag (z. B. 67 Jahre)"
+
+
+msgid "Target net monthly payout desired for this specific contract"
+msgstr "Gewünschte Ziel-Nettorente für diesen einzelnen Vertrag"
+
+
+msgid "If checked, the payout will increase annually based on the global pension increase rate."
+msgstr "Wenn aktiviert, steigt die Auszahlung jährlich mit der globalen Rentenanpassungsrate."
+
+
