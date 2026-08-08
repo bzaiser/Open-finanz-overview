@@ -499,7 +499,7 @@
 
     <!-- Record Historical Snapshot Modal -->
     <div class="modal fade" id="snapshotModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg rounded-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
                 <div class="modal-header border-0 shadow-sm" style="background: var(--app-gradient); color: #ffffff;">
                     <h5 class="modal-title fw-bold d-flex align-items-center gap-2">
@@ -511,37 +511,36 @@
                 <form method="post" action="{% url 'finance:pension_snapshot_save' %}">
                     {% csrf_token %}
                     <div class="modal-body p-4">
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Select Pension Contract" %}</label>
-                            <select name="pension_id" x-model="snapshot.pension_id" @change="onSnapshotContractChange()" class="form-select" required>
-                                <option value="">{% trans "-- Select Contract --" %}</option>
-                                {% for p in pensions %}
-                                <option value="{{ p.id }}">{{ p.provider }} ({{ p.get_pension_type_display }})</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Snapshot Date" %}</label>
-                            <input type="date" name="date" x-model="snapshot.date" class="form-control" required>
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-7">
+                                <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Select Pension Contract" %}</label>
+                                <select name="pension_id" x-model="snapshot.pension_id" @change="onSnapshotContractChange()" class="form-select" required>
+                                    <option value="">{% trans "-- Select Contract --" %}</option>
+                                    {% for p in pensions %}
+                                    <option value="{{ p.id }}">{{ p.provider }} ({{ p.get_pension_type_display }})</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-5">
+                                <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Snapshot Date" %}</label>
+                                <input type="date" name="date" x-model="snapshot.date" class="form-control" required>
+                            </div>
                         </div>
 
                         <!-- Statutory Pension Snapshot Fields -->
                         <template x-if="getSelectedContractType() === 'statutory'">
-                            <div>
-                                <div class="row g-2 mb-3">
-                                    <div class="col-md-6">
-                                        <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Pension Points (EP)" %}</label>
-                                        <input type="number" step="0.0001" name="pension_points" x-model="snapshot.pension_points" @input="calcSnapshotStatutoryNet()" class="form-control font-monospace" placeholder="e.g. 65.20">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Point Value (€)" %}</label>
-                                        <input type="number" step="0.01" name="point_value" x-model="snapshot.point_value" @input="calcSnapshotStatutoryNet()" class="form-control font-monospace" placeholder="e.g. 39.32">
-                                    </div>
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Pension Points (EP)" %}</label>
+                                    <input type="number" step="0.0001" name="pension_points" x-model="snapshot.pension_points" @input="calcSnapshotStatutoryNet()" class="form-control font-monospace" placeholder="e.g. 65.20">
                                 </div>
-                                <div class="mb-3">
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Point Value (€)" %}</label>
+                                    <input type="number" step="0.01" name="point_value" x-model="snapshot.point_value" @input="calcSnapshotStatutoryNet()" class="form-control font-monospace" placeholder="e.g. 39.32">
+                                </div>
+                                <div class="col-md-4">
                                     <label class="form-label small fw-bold text-uppercase opacity-75 text-success">{% trans "Monthly Net Payout (€)" %}</label>
                                     <input type="number" step="0.01" name="expected_payout_net" x-model="snapshot.expected_payout_net" class="form-control font-monospace fw-bold text-success" placeholder="0.00">
-                                    <span class="form-text small opacity-75">{% trans "Wird für die historische Auszahlungskurve der gesetzlichen Rente verwendet." %}</span>
                                 </div>
                             </div>
                         </template>
@@ -561,62 +560,62 @@
 
                         <!-- Compact Historical Snapshots for Selected Contract -->
                         <div x-show="snapshot.pension_id" class="mt-4 pt-3 border-top border-secondary border-opacity-25">
-                            <h6 class="fw-bold mb-2 text-info d-flex align-items-center justify-content-between" style="font-size: 0.8rem;">
+                            <h6 class="fw-bold mb-2 text-primary d-flex align-items-center justify-content-between" style="font-size: 0.85rem;">
                                 <span><i class="bi bi-clock-history me-1"></i>{% trans "Bisherige Stichtage dieses Vertrags" %}</span>
-                                <span class="badge bg-info bg-opacity-10 text-info" x-text="getContractSnapshots().length + ' Stichtage'"></span>
+                                <span class="badge rounded-pill bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2.5 py-1" x-text="getContractSnapshots().length + ' Stichtage'"></span>
                             </h6>
-                            <div class="table-responsive rounded-3 border border-secondary border-opacity-20" style="max-height: 200px; overflow-y: auto;">
-                                <table class="table table-sm table-hover align-middle mb-0" style="font-size: 0.75rem;">
+                            <div class="table-responsive rounded-3 border border-secondary border-opacity-20 shadow-sm" style="max-height: 220px; overflow-y: auto;">
+                                <table class="table table-sm table-hover align-middle mb-0" style="font-size: 0.8rem;">
                                     <thead class="bg-body-tertiary">
                                         <tr>
-                                            <th class="py-1 px-2 border-0">{% trans "Stichtag" %}</th>
+                                            <th class="py-2 px-3 border-0">{% trans "Stichtag" %}</th>
                                             <template x-if="getSelectedContractType() === 'statutory'">
-                                                <th class="py-1 px-2 border-0 text-center">EP</th>
+                                                <th class="py-2 px-2 border-0 text-center">EP</th>
                                             </template>
                                             <template x-if="getSelectedContractType() === 'statutory'">
-                                                <th class="py-1 px-2 border-0 text-center">{% trans "Punktwert (€)" %}</th>
+                                                <th class="py-2 px-2 border-0 text-center">{% trans "Punktwert (€)" %}</th>
                                             </template>
                                             <template x-if="getSelectedContractType() === 'statutory'">
-                                                <th class="py-1 px-2 border-0 text-end">{% trans "Netto (€)" %}</th>
+                                                <th class="py-2 px-3 border-0 text-end">{% trans "Netto (€)" %}</th>
                                             </template>
                                             <template x-if="getSelectedContractType() !== 'statutory'">
-                                                <th class="py-1 px-2 border-0 text-end">{% trans "Kapital (€)" %}</th>
+                                                <th class="py-2 px-3 border-0 text-end">{% trans "Kapital (€)" %}</th>
                                             </template>
-                                            <th class="py-1 px-2 border-0">{% trans "Notiz" %}</th>
-                                            <th class="py-1 px-2 border-0 text-center" style="width: 50px;">Aktion</th>
+                                            <th class="py-2 px-3 border-0">{% trans "Notiz" %}</th>
+                                            <th class="py-2 px-3 border-0 text-center" style="width: 70px;">Aktion</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <template x-for="s in getContractSnapshots()" :key="s.id">
                                             <tr>
-                                                <td class="py-1 px-2 fw-bold font-monospace" x-text="s.date"></td>
+                                                <td class="py-2 px-3 fw-bold font-monospace text-primary" x-text="s.date"></td>
                                                 <template x-if="getSelectedContractType() === 'statutory'">
-                                                    <td class="py-1 px-2 text-center font-monospace" x-text="s.pension_points !== null ? s.pension_points : '-'"></td>
+                                                    <td class="py-2 px-2 text-center font-monospace" x-text="s.pension_points !== null ? s.pension_points : '-'"></td>
                                                 </template>
                                                 <template x-if="getSelectedContractType() === 'statutory'">
-                                                    <td class="py-1 px-2 text-center font-monospace" x-text="s.point_value !== null ? formatEuro(s.point_value) + ' €' : '-'"></td>
+                                                    <td class="py-2 px-2 text-center font-monospace" x-text="s.point_value !== null ? formatEuro(s.point_value) + ' €' : '-'"></td>
                                                 </template>
                                                 <template x-if="getSelectedContractType() === 'statutory'">
-                                                    <td class="py-1 px-2 text-end font-monospace fw-bold text-success" x-text="s.expected_payout_net !== null ? formatEuro(s.expected_payout_net) + ' €' : (s.value > 0 ? formatEuro(s.value) + ' €' : '-')"></td>
+                                                    <td class="py-2 px-3 text-end font-monospace fw-bold text-success" x-text="s.expected_payout_net !== null ? formatEuro(s.expected_payout_net) + ' €' : (s.value > 0 ? formatEuro(s.value) + ' €' : '-')"></td>
                                                 </template>
                                                 <template x-if="getSelectedContractType() !== 'statutory'">
-                                                    <td class="py-1 px-2 text-end font-monospace fw-bold" x-text="formatEuro(s.value) + ' €'"></td>
+                                                    <td class="py-2 px-3 text-end font-monospace fw-bold text-info" x-text="formatEuro(s.value) + ' €'"></td>
                                                 </template>
-                                                <td class="py-1 px-2 text-muted truncate" style="max-width: 90px;" x-text="s.notes || '-'"></td>
-                                                <td class="py-1 px-2 text-center">
-                                                    <div class="d-flex gap-1 justify-content-center">
-                                                        <button type="button" @click="editSnapshot(s)" class="btn btn-link p-0 text-primary" title="{% trans 'Bearbeiten' %}">
-                                                            <i class="bi bi-pencil-square" style="font-size: 0.85rem;"></i>
+                                                <td class="py-2 px-3 text-muted truncate" style="max-width: 140px;" x-text="s.notes || '-'"></td>
+                                                <td class="py-2 px-3 text-center">
+                                                    <div class="d-flex gap-2 justify-content-center">
+                                                        <button type="button" @click="editSnapshot(s)" class="btn btn-sm btn-link p-0 text-primary" title="{% trans 'Bearbeiten' %}">
+                                                            <i class="bi bi-pencil-square" style="font-size: 0.95rem;"></i>
                                                         </button>
-                                                        <a :href="'/finance/pensions/snapshot/delete/' + s.id + '/'" onclick="return confirm('{% trans 'Diesen Stichtag wirklich löschen?' %}')" class="btn btn-link p-0 text-danger" title="{% trans 'Löschen' %}">
-                                                            <i class="bi bi-trash" style="font-size: 0.85rem;"></i>
+                                                        <a :href="'/finance/pensions/snapshot/delete/' + s.id + '/'" onclick="return confirm('{% trans 'Diesen Stichtag wirklich löschen?' %}')" class="btn btn-sm btn-link p-0 text-danger" title="{% trans 'Löschen' %}">
+                                                            <i class="bi bi-trash" style="font-size: 0.95rem;"></i>
                                                         </a>
                                                     </div>
                                                 </td>
                                             </tr>
                                         </template>
                                         <tr x-show="getContractSnapshots().length === 0">
-                                            <td colspan="6" class="text-center py-2 opacity-75 text-muted">
+                                            <td colspan="6" class="text-center py-3 opacity-75 text-muted">
                                                 {% trans "Noch keine historischen Stichtage erfasst." %}
                                             </td>
                                         </tr>
