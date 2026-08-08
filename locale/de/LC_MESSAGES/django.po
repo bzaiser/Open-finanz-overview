@@ -2698,5 +2698,110 @@ msgstr "Dashboard & Stichtag"
 msgid "Betrachte deine 30-Jahre-Finanzkurve im Dashboard. Verschiebe den 'Stichtag' in die Zukunft, um deine Kaufkraft im Ruhestand zu prüfen."
 msgstr "Betrachte deine 30-Jahre-Finanzkurve im Dashboard. Verschiebe den 'Stichtag' in die Zukunft, um deine Kaufkraft im Ruhestand zu prüfen."
 
+msgid "Profil, Farbwelten & Design Studio anpassen"
+msgstr "Profil, Farbwelten & Design Studio anpassen"
+
+msgid "Im Menü unter 'Profile & Design' kannst du deine Anwendung vollkommen individuell gestalten:"
+msgstr "Im Menü unter 'Profile & Design' kannst du deine Anwendung vollkommen individuell gestalten:"
+
+msgid "Stammdaten & Partner:"
+msgstr "Stammdaten & Partner:"
+
+msgid "Lege Geburtsdaten, Rentenalter von Person 1 und Person 2 (Partner) sowie dein Haushalts-Sparziel fest."
+msgstr "Lege Geburtsdaten, Rentenalter von Person 1 und Person 2 (Partner) sowie dein Haushalts-Sparziel fest."
+
+msgid "Farbharmonie-Engine:"
+msgstr "Farbharmonie-Engine:"
+
+msgid "Wähle aus fertigen Farb-Presets (Deep Ocean, Emerald Trust, Sunset Gold, Midnight Purple) oder erstelle dein eigenes Verlaufsmuster."
+msgstr "Wähle aus fertigen Farb-Presets (Deep Ocean, Emerald Trust, Sunset Gold, Midnight Purple) oder erstelle dein eigenes Verlaufsmuster."
+
+msgid "Automatischer Nachtmodus:"
+msgstr "Automatischer Nachtmodus:"
+
+msgid "Auf Wunsch passt sich die Anwendung automatisch an die Systemeinstellungen deines Betriebssystems (Dark / Light Mode) an."
+msgstr "Auf Wunsch passt sich die Anwendung automatisch an die Systemeinstellungen deines Betriebssystems (Dark / Light Mode) an."
+
+msgid "Wie werden Einnahmen und Ausgaben in die Zukunft fortgeschrieben?"
+msgstr "Wie werden Einnahmen und Ausgaben in die Zukunft fortgeschrieben?"
+
+msgid "Alle Zahlungsströme werden über den gesamten Simulationszeitraum intelligent berechnet:"
+msgstr "Alle Zahlungsströme werden über den gesamten Simulationszeitraum intelligent berechnet:"
+
+msgid "Gehalt & Einkommen:"
+msgstr "Gehalt & Einkommen:"
+
+msgid "Gehälter wachsen jährlich mit deiner individuellen Gehaltssteigerungsrate (z. B. +2,0 % p.a.) und enden automatisch mit Erreichen deines gesetzlichen Rentenalters."
+msgstr "Gehälter wachsen jährlich mit deiner individuellen Gehaltssteigerungsrate (z. B. +2,0 % p.a.) und enden automatisch mit Erreichen deines gesetzlichen Rentenalters."
+
+msgid "Lebenshaltungskosten & Ausgaben:"
+msgstr "Lebenshaltungskosten & Ausgaben:"
+
+msgid "Ausgaben passen sich kontinuierlich an die Inflationsrate an, um deinen tatsächlichen Lebensstandard im Alter realistisch abzubilden."
+msgstr "Ausgaben passen sich kontinuierlich an die Inflationsrate an, um deinen tatsächlichen Lebensstandard im Alter realistisch abzubilden."
+
+msgid "Einmalige vs. Monatliche Zahlungen:"
+msgstr "Einmalige vs. Monatliche Zahlungen:"
+
+msgid "Du kannst Start- und Enddaten festlegen (z. B. auslaufende Kredite oder befristete Einnahmen), um den genauen Verlauf zu steuern."
+msgstr "Du kannst Start- und Enddaten festlegen (z. B. auslaufende Kredite oder befristete Einnahmen), um den genauen Verlauf zu steuern."
+
+msgid "Was bedeuten die Info-Icons & Simulations-Indikatoren in den Charts?"
+msgstr "Was bedeuten die Info-Icons & Simulations-Indikatoren in den Charts?"
+
+msgid "Die interaktiven Diagramme bieten durch visuelle Icons direkt im Chart zusätzliche Transparenz:"
+msgstr "Die interaktiven Diagramme bieten durch visuelle Icons direkt im Chart zusätzliche Transparenz:"
+
+msgid "Info-Icons (ℹ️):"
+msgstr "Info-Icons (ℹ️):"
+
+msgid "Klicke auf die kleinen Info-Buttons in den Kurven, um genaue Details zu Formeln, Stichtagswerten und Berechnungsgrundlagen an diesem konkreten Punkt zu lesen."
+msgstr "Klicke auf die kleinen Info-Buttons in den Kurven, um genaue Details zu Formeln, Stichtagswerten und Berechnungsgrundlagen an diesem konkreten Punkt zu lesen."
+
+msgid "Simulations-Aktiv-Status:"
+msgstr "Simulations-Aktiv-Status:"
+
+msgid "Zeigt dir an, ob dein Schieberegler auf dem heutigen Datum steht oder ob du gerade eine Reise in ein zukünftiges Simulationsjahr machst."
+msgstr "Zeigt dir an, ob dein Schieberegler auf dem heutigen Datum steht oder ob du gerade eine Reise in ein zukünftiges Simulationsjahr machst."
+
+msgid "Gestrichelte Ziellinie:"
+msgstr "Gestrichelte Ziellinie:"
+
+msgid "Stellt deine im Profil definierte Netto-Wunschrente dar. So siehst du auf einen Blick, ab welchem Jahr eine Versorgungslücke entsteht."
+msgstr "Stellt deine im Profil definierte Netto-Wunschrente dar. So siehst du auf einen Blick, ab welchem Jahr eine Versorgungslücke entsteht."
+
+msgid "Mehrsprachigkeit & Sprachwechsel"
+msgstr "Mehrsprachigkeit & Sprachwechsel"
+
+msgid "Die Anwendung unterstützt 5 Sprachen vollumfänglich:"
+msgstr "Die Anwendung unterstützt 5 Sprachen vollumfänglich:"
+
+msgid "Du kannst deine bevorzugte Sprache im Benutzerprofil festlegen. Das gesamte Interface, Berichte und Hilfe-Texte passen sich augenblicklich an."
+msgstr "Du kannst deine bevorzugte Sprache im Benutzerprofil festlegen. Das gesamte Interface, Berichte und Hilfe-Texte passen sich augenblicklich an."
+
+msgid "Verwaltung über das Django Admin Interface"
+msgstr "Verwaltung über das Django Admin Interface"
+
+msgid "Für Administratoren steht unter '/admin/' eine leistungsfähige Verwaltungszentrale bereit:"
+msgstr "Für Administratoren steht unter '/admin/' eine leistungsfähige Verwaltungszentrale bereit:"
+
+msgid "Nutzer & Profile:"
+msgstr "Nutzer & Profile:"
+
+msgid "Detaillierte Verwaltung der Benutzerkonten, Partner-Stammdaten und Systemparameter."
+msgstr "Detaillierte Verwaltung der Benutzerkonten, Partner-Stammdaten und Systemparameter."
+
+msgid "Vorsorgeverträge & Kategorien:"
+msgstr "Vorsorgeverträge & Kategorien:"
+
+msgid "Direkter Zugriff auf alle Verträge, Stichtags-Snapshots und benutzerdefinierte Kategorien mit Farbcodes."
+msgstr "Direkter Zugriff auf alle Verträge, Stichtags-Snapshots und benutzerdefinierte Kategorien mit Farbcodes."
+
+msgid "Datensicherheit:"
+msgstr "Datensicherheit:"
+
+msgid "Streng getrennte Mandantenfähigkeit (Multi-User-Support), sodass jeder Nutzer nur auf seine eigenen Finanzdaten zugreifen kann."
+msgstr "Streng getrennte Mandantenfähigkeit (Multi-User-Support), sodass jeder Nutzer nur auf seine eigenen Finanzdaten zugreifen kann."
+
 
 

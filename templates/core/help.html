@@ -193,7 +193,7 @@
                             </div>
                         </div>
 
-                        <!-- Item 4: Stichtags-Regel (Max 2 pro Jahr) -->
+                        <!-- Item 4: Stichtags-Regel -->
                         <div class="accordion-item">
                             <h2 class="accordion-header">
                                 <button class="accordion-button collapsed px-4 py-4 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faqStichtagsSchutz">
@@ -206,6 +206,98 @@
                                     <ul>
                                         <li><strong>{% trans "Neueres Datum als bisher:" %}</strong> {% trans "Wenn du eine Renteninformation mit einem neueren Datum eingibst (z. B. Stand 2026 statt 2024), wird dein Hauptvertrag auf die neuen Werte aktualisiert und der alte Stand als historischer Snapshot gesichert." %}</li>
                                         <li><strong>{% trans "Älteres Datum als bisher:" %}</strong> {% trans "Trägst du nachträglich ein altes Dokument von 2022 ein, bleibt dein Hauptvertrag von 2026 unberührt. Das System fügt den Wert von 2022 lediglich als historischen Stichtag in deine Chronik ein." %}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Item 5: Profil, Design Studio & Farben -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed px-4 py-4 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faqSettingsDesign">
+                                    <i class="bi bi-palette me-2 text-primary"></i> {% trans "Profil, Farbwelten & Design Studio anpassen" %}
+                                </button>
+                            </h2>
+                            <div id="faqSettingsDesign" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
+                                <div class="accordion-body px-4 pb-4 text-muted">
+                                    <p>{% trans "Im Menü unter 'Profile & Design' kannst du deine Anwendung vollkommen individuell gestalten:" %}</p>
+                                    <ul>
+                                        <li><strong>{% trans "Stammdaten & Partner:" %}</strong> {% trans "Lege Geburtsdaten, Rentenalter von Person 1 und Person 2 (Partner) sowie dein Haushalts-Sparziel fest." %}</li>
+                                        <li><strong>{% trans "Farbharmonie-Engine:" %}</strong> {% trans "Wähle aus fertigen Farb-Presets (Deep Ocean, Emerald Trust, Sunset Gold, Midnight Purple) oder erstelle dein eigenes Verlaufsmuster." %}</li>
+                                        <li><strong>{% trans "Automatischer Nachtmodus:" %}</strong> {% trans "Auf Wunsch passt sich die Anwendung automatisch an die Systemeinstellungen deines Betriebssystems (Dark / Light Mode) an." %}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Item 6: Fortführung von Ausgaben & Einnahmen (Dynamisierung) -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed px-4 py-4 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faqCashflowProgression">
+                                    <i class="bi bi-graph-up-arrow me-2 text-warning"></i> {% trans "Wie werden Einnahmen und Ausgaben in die Zukunft fortgeschrieben?" %}
+                                </button>
+                            </h2>
+                            <div id="faqCashflowProgression" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
+                                <div class="accordion-body px-4 pb-4 text-muted">
+                                    <p>{% trans "Alle Zahlungsströme werden über den gesamten Simulationszeitraum intelligent berechnet:" %}</p>
+                                    <ul>
+                                        <li><strong>{% trans "Gehalt & Einkommen:" %}</strong> {% trans "Gehälter wachsen jährlich mit deiner individuellen Gehaltssteigerungsrate (z. B. +2,0 % p.a.) und enden automatisch mit Erreichen deines gesetzlichen Rentenalters." %}</li>
+                                        <li><strong>{% trans "Lebenshaltungskosten & Ausgaben:" %}</strong> {% trans "Ausgaben passen sich kontinuierlich an die Inflationsrate an, um deinen tatsächlichen Lebensstandard im Alter realistisch abzubilden." %}</li>
+                                        <li><strong>{% trans "Einmalige vs. Monatliche Zahlungen:" %}</strong> {% trans "Du kannst Start- und Enddaten festlegen (z. B. auslaufende Kredite oder befristete Einnahmen), um den genauen Verlauf zu steuern." %}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Item 7: Chart-Icons & Simulations-Indikatoren -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed px-4 py-4 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faqChartIcons">
+                                    <i class="bi bi-info-circle me-2 text-info"></i> {% trans "Was bedeuten die Info-Icons & Simulations-Indikatoren in den Charts?" %}
+                                </button>
+                            </h2>
+                            <div id="faqChartIcons" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
+                                <div class="accordion-body px-4 pb-4 text-muted">
+                                    <p>{% trans "Die interaktiven Diagramme bieten durch visuelle Icons direkt im Chart zusätzliche Transparenz:" %}</p>
+                                    <ul>
+                                        <li><strong>{% trans "Info-Icons (ℹ️):" %}</strong> {% trans "Klicke auf die kleinen Info-Buttons in den Kurven, um genaue Details zu Formeln, Stichtagswerten und Berechnungsgrundlagen an diesem konkreten Punkt zu lesen." %}</li>
+                                        <li><strong>{% trans "Simulations-Aktiv-Status:" %}</strong> {% trans "Zeigt dir an, ob dein Schieberegler auf dem heutigen Datum steht oder ob du gerade eine Reise in ein zukünftiges Simulationsjahr machst." %}</li>
+                                        <li><strong>{% trans "Gestrichelte Ziellinie:" %}</strong> {% trans "Stellt deine im Profil definierte Netto-Wunschrente dar. So siehst du auf einen Blick, ab welchem Jahr eine Versorgungslücke entsteht." %}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Item 8: Mehrsprachigkeit (Internationalisierung) -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed px-4 py-4 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faqLanguages">
+                                    <i class="bi bi-translate me-2 text-success"></i> {% trans "Mehrsprachigkeit & Sprachwechsel" %}
+                                </button>
+                            </h2>
+                            <div id="faqLanguages" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
+                                <div class="accordion-body px-4 pb-4 text-muted">
+                                    <p>{% trans "Die Anwendung unterstützt 5 Sprachen vollumfänglich:" %}</p>
+                                    <p class="mb-2">🇩🇪 <strong>Deutsch</strong> | 🇬🇧 <strong>Englisch</strong> | 🇫🇷 <strong>Französisch</strong> | 🇪🇸 <strong>Spanisch</strong> | 🇮🇹 <strong>Italienisch</strong></p>
+                                    <p>{% trans "Du kannst deine bevorzugte Sprache im Benutzerprofil festlegen. Das gesamte Interface, Berichte und Hilfe-Texte passen sich augenblicklich an." %}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Item 9: Django Admin Interface -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed px-4 py-4 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faqAdminInterface">
+                                    <i class="bi bi-sliders me-2 text-danger"></i> {% trans "Verwaltung über das Django Admin Interface" %}
+                                </button>
+                            </h2>
+                            <div id="faqAdminInterface" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
+                                <div class="accordion-body px-4 pb-4 text-muted">
+                                    <p>{% trans "Für Administratoren steht unter '/admin/' eine leistungsfähige Verwaltungszentrale bereit:" %}</p>
+                                    <ul>
+                                        <li><strong>{% trans "Nutzer & Profile:" %}</strong> {% trans "Detaillierte Verwaltung der Benutzerkonten, Partner-Stammdaten und Systemparameter." %}</li>
+                                        <li><strong>{% trans "Vorsorgeverträge & Kategorien:" %}</strong> {% trans "Direkter Zugriff auf alle Verträge, Stichtags-Snapshots und benutzerdefinierte Kategorien mit Farbcodes." %}</li>
+                                        <li><strong>{% trans "Datensicherheit:" %}</strong> {% trans "Streng getrennte Mandantenfähigkeit (Multi-User-Support), sodass jeder Nutzer nur auf seine eigenen Finanzdaten zugreifen kann." %}</li>
                                     </ul>
                                 </div>
                             </div>
