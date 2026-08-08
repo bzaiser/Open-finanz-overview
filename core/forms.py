@@ -124,10 +124,19 @@ class UserProfileForm(forms.ModelForm):
         required=False,
     )
 
+    partner_birth_date = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}, format='%Y-%m-%d'),
+        input_formats=['%Y-%m-%d', '%d.%m.%Y', '%d/%m/%Y'],
+        required=False,
+        label=_("Partner Birth Date")
+    )
+
     class Meta:
         model = UserProfile
         fields = [
-            'display_name', 'avatar', 'birth_date', 'language', 'currency', 'retirement_age', 'target_pension_payout', 'simulation_max_age', 'simulation_start_date',
+            'display_name', 'avatar', 'birth_date', 'retirement_age',
+            'partner_name', 'partner_birth_date', 'partner_retirement_age',
+            'language', 'currency', 'target_pension_payout', 'simulation_max_age', 'simulation_start_date',
             'inflation_rate', 'salary_increase', 'pension_increase', 'investment_return_offset',
             'real_estate_growth_rate',
             'auto_night_mode', 'dark_mode_config',

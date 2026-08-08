@@ -98,18 +98,36 @@
                             </div>
 
                             <div class="col-md-6 mb-1">
-                                <label class="form-label fw-bold mb-0 d-block" style="font-size: 0.7rem;">{% trans "Birth Date" %}</label>
+                                <label class="form-label fw-bold mb-0 d-block" style="font-size: 0.7rem;">{% trans "Birth Date (Person 1)" %}</label>
                                 {{ form.birth_date }}
                             </div>
                             <div class="col-md-6 mb-1">
-                                <label class="form-label fw-bold mb-0 d-block" style="font-size: 0.7rem;">{% trans "Retirement Age" %}</label>
+                                <label class="form-label fw-bold mb-0 d-block" style="font-size: 0.7rem;">{% trans "Retirement Age (Person 1)" %}</label>
                                 {{ form.retirement_age }}
                             </div>
+
+                            <!-- Partner Section -->
+                            <div class="col-12 my-2 pt-2 border-top border-secondary border-opacity-25">
+                                <span class="fw-bold text-primary small d-block mb-2"><i class="bi bi-person-heart me-1"></i>{% trans "Partner-Daten (Person 2)" %}</span>
+                            </div>
+                            <div class="col-12 mb-1">
+                                <label class="form-label fw-bold mb-0 d-block" style="font-size: 0.7rem;">{% trans "Partner Name" %}</label>
+                                {{ form.partner_name }}
+                            </div>
                             <div class="col-md-6 mb-1">
+                                <label class="form-label fw-bold mb-0 d-block" style="font-size: 0.7rem;">{% trans "Partner Geburtsdatum" %}</label>
+                                {{ form.partner_birth_date }}
+                            </div>
+                            <div class="col-md-6 mb-1">
+                                <label class="form-label fw-bold mb-0 d-block" style="font-size: 0.7rem;">{% trans "Partner Renteneintrittsalter" %}</label>
+                                {{ form.partner_retirement_age }}
+                            </div>
+
+                            <div class="col-md-6 mb-1 mt-2">
                                 <label class="form-label fw-bold mb-0 d-block" style="font-size: 0.7rem;">{% trans "Target Monthly Net Pension (€)" %}</label>
                                 {{ form.target_pension_payout }}
                             </div>
-                            <div class="col-md-6 mb-1">
+                            <div class="col-md-6 mb-1 mt-2">
                                 <label class="form-label fw-bold mb-0 d-block" style="font-size: 0.7rem;">{% trans "Sim. Max Age" %}</label>
                                 {{ form.simulation_max_age }}
                             </div>
