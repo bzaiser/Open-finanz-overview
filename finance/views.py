@@ -13,7 +13,7 @@ from django.contrib import messages
 from .services import SimulationEngine
 from .models import (
     Asset, CashFlowSource, OneTimeEvent, Pension, Category, 
-    ImportBatch, PendingTransaction, ImportFilter, ProcessedTransactionHash
+    ImportBatch, PendingTransaction, ImportFilter, ProcessedTransactionHash, AssetSnapshot
 )
 from .forms import BankImportForm
 from core.models import UserProfile
