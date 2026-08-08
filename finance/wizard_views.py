@@ -221,53 +221,46 @@ def wizard_save_api(request):
                         pension = Pension.objects.filter(id=pension_id, user=user).first()
                     if not pension:
                         pension = Pension.objects.filter(user=user, provider=provider_name, pension_type='statutory').first()
+                    
+                    is_new_pension = False
                     if not pension:
                         pension = Pension(user=user, provider=provider_name, pension_type='statutory')
+                        is_new_pension = True
 
-                    if pts is not None:
+                    changed = is_new_pension
+                    if pts is not None and pension.pension_points != pts:
                         pension.pension_points = pts
-                    pension.point_value = pt_val
-                    if expected_net is not None:
+                        changed = True
+                    if pension.point_value != pt_val:
+                        pension.point_value = pt_val
+                        changed = True
+                    if expected_net is not None and pension.expected_payout_at_retirement != expected_net:
                         pension.expected_payout_at_retirement = expected_net
-                    if em_net is not None:
+                        changed = True
+                    if em_net is not None and pension.disability_pension_net != em_net:
                         pension.disability_pension_net = em_net
+                        changed = True
+
                     try:
-                        pension.retirement_age = int(ret_age_str) if ret_age_str else 67
+                        new_ret_age = int(ret_age_str) if ret_age_str else 67
+                        if pension.retirement_age != new_ret_age:
+                            pension.retirement_age = new_ret_age
+                            changed = True
                     except (ValueError, TypeError):
-                        pension.retirement_age = 67
+                        pass
 
                     ret_d = _parse_date(ret_date_str)
-                    if ret_d:
+                    if ret_d and pension.start_payout_date != ret_d:
                         pension.start_payout_date = ret_d
+                        changed = True
 
-                    notes_parts = []
-                    if drv.get('versicherungsnummer'):
-                        notes_parts.append(f"VS-Nr: {drv.get('versicherungsnummer')}")
-                    if notes_parts:
-                        pension.notes = " | ".join(notes_parts)
-
-                    pension.save()
-                    drv_count += 1
+                    if changed:
+                        pension.save()
 
                     s_date = _parse_date(statement_date_str)
                     if s_date:
                         snap_net = _to_decimal(stand_today_str) or expected_net
-                        existing_snaps = AssetSnapshot.objects.filter(user=user, content_type=ct_pension, object_id=pension.id)
-                        latest_snap_date = existing_snaps.order_by('-date').values_list('date', flat=True).first()
-
-                        if not latest_snap_date or s_date >= latest_snap_date:
-                            if pts is not None:
-                                pension.pension_points = pts
-                            pension.point_value = pt_val
-                            if expected_net is not None:
-                                pension.expected_payout_at_retirement = expected_net
-                            if em_net is not None:
-                                pension.disability_pension_net = em_net
-                            if ret_d:
-                                pension.start_payout_date = ret_d
-                            pension.save()
-
-                        AssetSnapshot.objects.update_or_create(
+                        _, snap_created = AssetSnapshot.objects.update_or_create(
                             user=user,
                             content_type=ct_pension,
                             object_id=pension.id,
@@ -281,8 +274,11 @@ def wizard_save_api(request):
                                 'notes': f"Renteninformation Stand {s_date.strftime('%d.%m.%Y')}"
                             }
                         )
+                        if snap_created or changed:
+                            drv_count += 1
+
             if drv_count > 0:
-                saved_summary.append(f"{drv_count} Gesetzliche Rentenmitteilung(en) gespeichert")
+                saved_summary.append(f"{drv_count} Gesetzliche Rentenmitteilung(en) neu / aktualisiert")
 
             # 3. Private & bAV Pensions
             priv_count = 0
@@ -302,39 +298,37 @@ def wizard_save_api(request):
                             pension = Pension.objects.filter(id=pension_id, user=user).first()
                         if not pension:
                             pension = Pension.objects.filter(user=user, provider=provider).first()
+                        
+                        is_new = False
                         if not pension:
                             pension = Pension(user=user, provider=provider, pension_type=ptype)
+                            is_new = True
 
-                        pension.pension_type = ptype
-                        if cap_val is not None:
+                        changed = is_new
+                        if cap_val is not None and pension.current_value != cap_val:
                             pension.current_value = cap_val
-                        if payout_val is not None:
+                            changed = True
+                        if payout_val is not None and pension.expected_payout_at_retirement != payout_val:
                             pension.expected_payout_at_retirement = payout_val
+                            changed = True
                         
                         contrib = _to_decimal(priv.get('monthly_contribution'))
-                        if contrib is not None:
+                        if contrib is not None and pension.monthly_contribution != contrib:
                             pension.monthly_contribution = contrib
+                            changed = True
                         growth = _to_decimal(priv.get('growth_rate'))
-                        if growth is not None:
+                        if growth is not None and pension.growth_rate != growth:
                             pension.growth_rate = growth
+                            changed = True
 
-                        ret_d = _parse_date(priv.get('start_payout_date'))
-                        if ret_d:
-                            pension.start_payout_date = ret_d
-                        end_d = _parse_date(priv.get('contribution_end_date'))
-                        if end_d:
-                            pension.contribution_end_date = end_d
-
-                        if priv.get('policy_number'):
-                            pension.notes = f"Vertragsnummer: {priv.get('policy_number')}"
-
-                        pension.save()
-                        priv_count += 1
+                        if changed:
+                            pension.save()
 
                         s_date = _parse_date(priv.get('statement_date'))
+                        snap_created = False
                         if s_date:
                             snap_val = cap_val if cap_val is not None else (payout_val or Decimal('0.00'))
-                            AssetSnapshot.objects.update_or_create(
+                            _, snap_created = AssetSnapshot.objects.update_or_create(
                                 user=user,
                                 content_type=ct_pension,
                                 object_id=pension.id,
@@ -345,8 +339,11 @@ def wizard_save_api(request):
                                     'notes': f"Standmitteilung {s_date.strftime('%d.%m.%Y')}"
                                 }
                             )
+                        if changed or snap_created:
+                            priv_count += 1
+
             if priv_count > 0:
-                saved_summary.append(f"{priv_count} Private / Betriebliche Vorsorgevertrag(e) gespeichert")
+                saved_summary.append(f"{priv_count} Private / Betriebliche Vorsorgevertrag(e) neu / aktualisiert")
 
             # 4. Income & Expenses
             cat_salary = _get_category_by_slug_or_name('gehalt', 'Gehalt & Lohn', '#198754')
@@ -361,7 +358,7 @@ def wizard_save_api(request):
                     amt = _to_decimal(inc.get('amount'))
                     name = str(inc.get('name', 'Gehalt')).strip()
                     if amt and amt > 0 and name:
-                        CashFlowSource.objects.update_or_create(
+                        _, created = CashFlowSource.objects.update_or_create(
                             user=user,
                             name=name,
                             is_income=True,
@@ -371,9 +368,10 @@ def wizard_save_api(request):
                                 'frequency': inc.get('frequency', 'monthly')
                             }
                         )
-                        inc_count += 1
+                        if created:
+                            inc_count += 1
             if inc_count > 0:
-                saved_summary.append(f"{inc_count} Einnahmen-Position(en) aktualisiert")
+                saved_summary.append(f"{inc_count} neue Einnahmen-Position(en) angelegt")
 
             exp_count = 0
             expenses = data.get('expenses', [])
@@ -384,7 +382,7 @@ def wizard_save_api(request):
                     amt = _to_decimal(exp.get('amount'))
                     name = str(exp.get('name', 'Ausgabe')).strip()
                     if amt and amt > 0 and name:
-                        CashFlowSource.objects.update_or_create(
+                        _, created = CashFlowSource.objects.update_or_create(
                             user=user,
                             name=name,
                             is_income=False,
@@ -394,9 +392,10 @@ def wizard_save_api(request):
                                 'frequency': exp.get('frequency', 'monthly')
                             }
                         )
-                        exp_count += 1
+                        if created:
+                            exp_count += 1
             if exp_count > 0:
-                saved_summary.append(f"{exp_count} Ausgaben-Position(en) aktualisiert")
+                saved_summary.append(f"{exp_count} neue Ausgaben-Position(en) angelegt")
 
             # 5. Assets
             asset_count = 0
@@ -408,7 +407,7 @@ def wizard_save_api(request):
                     val = _to_decimal(ast.get('value'))
                     name = str(ast.get('name', 'Vermögen')).strip()
                     if val and val > 0 and name:
-                        Asset.objects.update_or_create(
+                        _, created = Asset.objects.update_or_create(
                             user=user,
                             name=name,
                             defaults={
@@ -416,9 +415,10 @@ def wizard_save_api(request):
                                 'growth_rate': _to_decimal(ast.get('growth_rate')) or Decimal('0.0')
                             }
                         )
-                        asset_count += 1
+                        if created:
+                            asset_count += 1
             if asset_count > 0:
-                saved_summary.append(f"{asset_count} Vermögenswert(e) aktualisiert")
+                saved_summary.append(f"{asset_count} neue(r) Vermögenswert(e) angelegt")
 
             # 6. Real Estate & Mortgages
             re_count = 0
@@ -433,7 +433,7 @@ def wizard_save_api(request):
                         apprec = _to_decimal(re_item.get('appreciation_rate')) or Decimal('1.5')
                         maint = _to_decimal(re_item.get('maintenance_monthly')) or Decimal('0.0')
                         ancill = _to_decimal(re_item.get('ancillary_monthly')) or Decimal('0.0')
-                        RealEstate.objects.update_or_create(
+                        _, created = RealEstate.objects.update_or_create(
                             user=user,
                             name=name,
                             defaults={
@@ -444,9 +444,10 @@ def wizard_save_api(request):
                                 'ancillary_costs_monthly': ancill
                             }
                         )
-                        re_count += 1
+                        if created:
+                            re_count += 1
             if re_count > 0:
-                saved_summary.append(f"{re_count} Immobilie(n) aktualisiert")
+                saved_summary.append(f"{re_count} neue Immobilie(n) angelegt")
 
             loan_count = 0
             loans = data.get('loans', [])
@@ -460,7 +461,7 @@ def wizard_save_api(request):
                         installment = _to_decimal(ln.get('monthly_installment')) or Decimal('0.0')
                         rate = _to_decimal(ln.get('interest_rate')) or Decimal('2.0')
                         start_d = _parse_date(ln.get('start_date')) or date.today()
-                        Loan.objects.update_or_create(
+                        _, created = Loan.objects.update_or_create(
                             user=user,
                             name=name,
                             defaults={
@@ -471,9 +472,10 @@ def wizard_save_api(request):
                                 'start_date': start_d
                             }
                         )
-                        loan_count += 1
+                        if created:
+                            loan_count += 1
             if loan_count > 0:
-                saved_summary.append(f"{loan_count} Darlehen / Kredite aktualisiert")
+                saved_summary.append(f"{loan_count} neue(s) Darlehen angelegt")
 
         messages.success(request, _('Finanzdaten und Stichtagsmitteilungen wurden erfolgreich gespeichert!'))
         return JsonResponse({'status': 'success', 'redirect_url': '/finance/pensions/', 'saved_summary': saved_summary})
