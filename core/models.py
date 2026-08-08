@@ -21,6 +21,11 @@ class UserProfile(models.Model):
     display_name = models.CharField(_("Display Name"), max_length=100, blank=True, null=True)
     avatar = models.ImageField(_("Avatar"), upload_to='avatars/', blank=True, null=True)
     birth_date = models.DateField(_("Birth Date"), blank=True, null=True)
+
+    # Partner details (for couples / married users)
+    partner_name = models.CharField(_("Partner Name"), max_length=100, blank=True, null=True)
+    partner_birth_date = models.DateField(_("Partner Birth Date"), blank=True, null=True)
+    partner_retirement_age = models.PositiveIntegerField(_("Partner Retirement Age"), default=67, blank=True, null=True)
     CURRENCY_CHOICES = [
         ('EUR', 'EUR \u2013 Euro'),
         ('USD', 'USD \u2013 US Dollar'),

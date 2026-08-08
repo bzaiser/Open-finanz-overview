@@ -348,14 +348,14 @@
                 "Vermögen & Immobilien"
             ],
             form: {
-                household_type: prof.display_name && prof.display_name.includes('&') ? 'couple' : 'single',
+                household_type: (prof.partner_name || (prof.display_name && prof.display_name.includes('&'))) ? 'couple' : 'single',
                 target_monthly_payout: prof.target_monthly_payout || '',
                 p1_name: prof.display_name ? prof.display_name.split('&')[0].trim() : '',
                 p1_birth_date: prof.birth_date || '',
                 p1_retirement_age: prof.retirement_age || 67,
-                p2_name: prof.display_name && prof.display_name.includes('&') ? prof.display_name.split('&')[1].trim() : '',
-                p2_birth_date: '',
-                p2_retirement_age: 67,
+                p2_name: prof.partner_name || (prof.display_name && prof.display_name.includes('&') ? prof.display_name.split('&')[1].trim() : ''),
+                p2_birth_date: prof.partner_birth_date || '',
+                p2_retirement_age: prof.partner_retirement_age || 67,
                 drv_statements: initialData.drv_statements && initialData.drv_statements.length ? initialData.drv_statements : [
                     {
                         provider: 'Gesetzliche Rente Person 1',

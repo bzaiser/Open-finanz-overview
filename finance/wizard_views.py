@@ -36,6 +36,9 @@ def wizard_page_view(request):
         'display_name': profile.display_name if profile else '',
         'birth_date': profile.birth_date.strftime('%Y-%m-%d') if (profile and profile.birth_date) else '',
         'retirement_age': profile.retirement_age if profile else 67,
+        'partner_name': profile.partner_name if profile else '',
+        'partner_birth_date': profile.partner_birth_date.strftime('%Y-%m-%d') if (profile and profile.partner_birth_date) else '',
+        'partner_retirement_age': profile.partner_retirement_age if profile else 67,
         'target_monthly_payout': float(profile.target_pension_payout) if (profile and profile.target_pension_payout) else '',
     }
 
@@ -111,16 +114,27 @@ def wizard_save_api(request):
         p1_birth = data.get('p1_birth_date')
         p1_ret_age = data.get('p1_retirement_age')
         
+        p2_name = data.get('p2_name', '').strip()
+        p2_birth = data.get('p2_birth_date')
+        p2_ret_age = data.get('p2_retirement_age')
+
         if p1_birth:
             profile.birth_date = datetime.strptime(p1_birth, '%Y-%m-%d').date()
         if p1_ret_age:
             profile.retirement_age = int(p1_ret_age)
+
+        if household_type == 'couple':
+            profile.partner_name = p2_name or "Partner"
+            if p2_birth:
+                profile.partner_birth_date = datetime.strptime(p2_birth, '%Y-%m-%d').date()
+            if p2_ret_age:
+                profile.partner_retirement_age = int(p2_ret_age)
         
         target_pension = data.get('target_monthly_payout')
         if target_pension:
             profile.target_pension_payout = Decimal(str(target_pension))
             
-        profile.display_name = p1_name if household_type == 'single' else f"{p1_name} & {data.get('p2_name', 'Partner')}"
+        profile.display_name = p1_name if household_type == 'single' else f"{p1_name} & {p2_name or 'Partner'}"
         profile.save()
 
         ct_pension = ContentType.objects.get_for_model(Pension)
