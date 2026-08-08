@@ -30,11 +30,14 @@ def create_demo_user():
     user.save()
 
     # User Profile (Mann 50 Jahre alt, verheiratet, Rente mit 67)
-    # Geburtsjahr 1976 -> 2026 genau 50 Jahre alt
+    # Geburtsjahr 1976 -> 2026 genau 50 Jahre alt; Frau Sandra (48 Jahre alt, Geburtsjahr 1978)
     profile, _ = UserProfile.objects.get_or_create(user=user)
     profile.display_name = "Markus & Sandra Mustermann"
-    profile.birth_date = date(1976, 5, 15) # Mann ist 50
+    profile.birth_date = date(1976, 5, 15) # Markus (50 J.)
     profile.retirement_age = 67
+    profile.partner_name = "Sandra"
+    profile.partner_birth_date = date(1978, 9, 1) # Sandra (48 J.)
+    profile.partner_retirement_age = 67
     profile.target_pension_payout = Decimal("4200.00") # Wunsch-Nettoeinkommen im Ruhestand
     profile.inflation_rate = Decimal("2.00")
     profile.pension_increase = Decimal("1.50")
