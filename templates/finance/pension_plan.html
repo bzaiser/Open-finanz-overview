@@ -80,15 +80,9 @@
             </a>
             <button class="btn btn-primary d-flex align-items-center gap-2 shadow-sm rounded-pill px-3 py-2"
                     style="background: var(--app-gradient); border: none;"
-                    data-bs-toggle="modal" data-bs-target="#snapshotModal">
-                <i class="bi bi-plus-lg"></i>
-                <span>{% trans "Historische Daten" %}</span>
-            </button>
-            <button class="btn btn-primary d-flex align-items-center gap-2 shadow-sm rounded-pill px-3 py-2"
-                    style="background: var(--app-gradient); border: none;"
                     @click="openAddModal()">
                 <i class="bi bi-plus-lg"></i>
-                <span>{% trans "New Pension Plan" %}</span>
+                <span>{% trans "Neuer Vorsorgevertrag" %}</span>
             </button>
         </div>
     </div>
@@ -566,144 +560,6 @@
         </div>
     </div>
 
-    <!-- Record Historical Snapshot Modal -->
-    <div class="modal fade" id="snapshotModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg rounded-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
-                <div class="modal-header border-0 shadow-sm" style="background: var(--app-gradient); color: #ffffff;">
-                    <h5 class="modal-title fw-bold d-flex align-items-center gap-2">
-                        <i class="bi bi-clock-history"></i>
-                        {% trans "Historische Stichtage verwalten" %}
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form method="post" action="{% url 'finance:pension_snapshot_save' %}">
-                    {% csrf_token %}
-                    <div class="modal-body p-4">
-                        <div class="row g-3 mb-3">
-                            <div class="col-md-7">
-                                <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Select Pension Contract" %}</label>
-                                <select name="pension_id" x-model="snapshot.pension_id" @change="onSnapshotContractChange()" class="form-select" required>
-                                    <option value="">{% trans "-- Select Contract --" %}</option>
-                                    {% for p in pensions %}
-                                    <option value="{{ p.id }}">{{ p.provider }} ({{ p.get_pension_type_display }})</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="col-md-5">
-                                <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Snapshot Date" %}</label>
-                                <input type="date" name="date" x-model="snapshot.date" class="form-control" required>
-                            </div>
-                        </div>
-
-                        <!-- Statutory Pension Snapshot Fields -->
-                        <template x-if="getSelectedContractType() === 'statutory'">
-                            <div class="row g-3 mb-3">
-                                <div class="col-md-4">
-                                    <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Pension Points (EP)" %}</label>
-                                    <input type="number" step="0.0001" name="pension_points" x-model="snapshot.pension_points" @input="calcSnapshotStatutoryNet()" class="form-control font-monospace" placeholder="e.g. 65.20">
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Point Value (€)" %}</label>
-                                    <input type="number" step="0.01" name="point_value" x-model="snapshot.point_value" @input="calcSnapshotStatutoryNet()" class="form-control font-monospace" placeholder="e.g. 39.32">
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label small fw-bold text-uppercase opacity-75 text-success">{% trans "Monthly Net Payout (€)" %}</label>
-                                    <input type="number" step="0.01" name="expected_payout_net" x-model="snapshot.expected_payout_net" class="form-control font-monospace fw-bold text-success" placeholder="0.00">
-                                </div>
-                            </div>
-                        </template>
-
-                        <!-- Private Pension Snapshot Fields -->
-                        <template x-if="getSelectedContractType() !== 'statutory'">
-                            <div class="mb-3">
-                                <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Capital Value (€)" %}</label>
-                                <input type="number" step="0.01" name="value" x-model="snapshot.value" class="form-control font-monospace fw-bold" placeholder="0.00">
-                            </div>
-                        </template>
-
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Notes" %}</label>
-                            <textarea name="notes" x-model="snapshot.notes" class="form-control" rows="2" placeholder="{% trans 'Optional notes...' %}"></textarea>
-                        </div>
-
-                        <!-- Compact Historical Snapshots for Selected Contract -->
-                        <div x-show="snapshot.pension_id" class="mt-4 pt-3 border-top border-secondary border-opacity-25">
-                            <h6 class="fw-bold mb-2 text-primary d-flex align-items-center justify-content-between" style="font-size: 0.85rem;">
-                                <span><i class="bi bi-clock-history me-1"></i>{% trans "Bisherige Stichtage dieses Vertrags" %}</span>
-                                <span class="badge rounded-pill bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2.5 py-1" x-text="getContractSnapshots().length + ' Stichtage'"></span>
-                            </h6>
-                            <div class="table-responsive rounded-3 border border-secondary border-opacity-20 shadow-sm" style="max-height: 220px; overflow-y: auto;">
-                                <table class="table table-sm table-hover align-middle mb-0" style="font-size: 0.8rem;">
-                                    <thead class="bg-body-tertiary">
-                                        <tr>
-                                            <th class="py-2 px-3 border-0">{% trans "Stichtag" %}</th>
-                                            <template x-if="getSelectedContractType() === 'statutory'">
-                                                <th class="py-2 px-2 border-0 text-center">EP</th>
-                                            </template>
-                                            <template x-if="getSelectedContractType() === 'statutory'">
-                                                <th class="py-2 px-2 border-0 text-center">{% trans "Punktwert (€)" %}</th>
-                                            </template>
-                                            <template x-if="getSelectedContractType() === 'statutory'">
-                                                <th class="py-2 px-3 border-0 text-end">{% trans "Netto (€)" %}</th>
-                                            </template>
-                                            <template x-if="getSelectedContractType() !== 'statutory'">
-                                                <th class="py-2 px-3 border-0 text-end">{% trans "Kapital (€)" %}</th>
-                                            </template>
-                                            <th class="py-2 px-3 border-0">{% trans "Notiz" %}</th>
-                                            <th class="py-2 px-3 border-0 text-center" style="width: 70px;">Aktion</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <template x-for="s in getContractSnapshots()" :key="s.id">
-                                            <tr>
-                                                <td class="py-2 px-3 fw-bold font-monospace text-primary" x-text="s.date"></td>
-                                                <template x-if="getSelectedContractType() === 'statutory'">
-                                                    <td class="py-2 px-2 text-center font-monospace" x-text="s.pension_points !== null ? s.pension_points : '-'"></td>
-                                                </template>
-                                                <template x-if="getSelectedContractType() === 'statutory'">
-                                                    <td class="py-2 px-2 text-center font-monospace" x-text="s.point_value !== null ? formatEuro(s.point_value) + ' €' : '-'"></td>
-                                                </template>
-                                                <template x-if="getSelectedContractType() === 'statutory'">
-                                                    <td class="py-2 px-3 text-end font-monospace fw-bold text-success" x-text="s.expected_payout_net !== null ? formatEuro(s.expected_payout_net) + ' €' : (s.value > 0 ? formatEuro(s.value) + ' €' : '-')"></td>
-                                                </template>
-                                                <template x-if="getSelectedContractType() !== 'statutory'">
-                                                    <td class="py-2 px-3 text-end font-monospace fw-bold text-info" x-text="formatEuro(s.value) + ' €'"></td>
-                                                </template>
-                                                <td class="py-2 px-3 text-muted truncate" style="max-width: 140px;" x-text="s.notes || '-'"></td>
-                                                <td class="py-2 px-3 text-center">
-                                                    <div class="d-flex gap-2 justify-content-center">
-                                                        <button type="button" @click="editSnapshot(s)" class="btn btn-sm btn-link p-0 text-primary" title="{% trans 'Bearbeiten' %}">
-                                                            <i class="bi bi-pencil-square" style="font-size: 0.95rem;"></i>
-                                                        </button>
-                                                        <a :href="'/finance/pensions/snapshot/delete/' + s.id + '/'" onclick="return confirm('{% trans 'Diesen Stichtag wirklich löschen?' %}')" class="btn btn-sm btn-link p-0 text-danger" title="{% trans 'Löschen' %}">
-                                                            <i class="bi bi-trash" style="font-size: 0.95rem;"></i>
-                                                        </a>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </template>
-                                        <tr x-show="getContractSnapshots().length === 0">
-                                            <td colspan="6" class="text-center py-3 opacity-75 text-muted">
-                                                {% trans "Noch keine historischen Stichtage erfasst." %}
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer border-0 pt-0">
-                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
-                        <button type="submit" class="btn btn-primary rounded-pill px-4" style="background: var(--app-gradient); border: none;">
-                            {% trans "Save Snapshot" %}
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
     <!-- Info Modal: Timeline Projection -->
     <div class="modal fade" id="infoTimelineModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -915,6 +771,7 @@
                 this.form = {
                     provider: '',
                     pension_type: 'capital',
+                    statement_date: new Date().toISOString().split('T')[0],
                     pension_points: '',
                     point_value: '',
                     gross_payout_amount: '',
@@ -938,6 +795,7 @@
                 this.form = {
                     provider: p.provider,
                     pension_type: p.pension_type,
+                    statement_date: new Date().toISOString().split('T')[0],
                     pension_points: p.pension_points,
                     point_value: p.point_value,
                     gross_payout_amount: p.gross_payout_amount,
