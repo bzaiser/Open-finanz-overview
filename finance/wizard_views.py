@@ -148,6 +148,7 @@ def wizard_save_api(request):
         data = json.loads(request.body.decode('utf-8'))
         user = request.user
 
+        saved_summary = []
         with transaction.atomic():
             profile, created = UserProfile.objects.get_or_create(user=user)
 
@@ -170,7 +171,7 @@ def wizard_save_api(request):
                     pass
 
             if household_type == 'couple':
-                profile.partner_name = p2_name or "Partner"
+                profile.partner_name = p2_name or "Partner/in"
                 if p2_birth:
                     profile.partner_birth_date = p2_birth
                 if p2_ret_age:
@@ -188,10 +189,12 @@ def wizard_save_api(request):
 
             profile.display_name = p1_name if household_type == 'single' else f"{p1_name} & {p2_name or 'Partner'}"
             profile.save()
+            saved_summary.append("Haushalts- & Personenstammdaten aktualisiert")
 
             ct_pension = ContentType.objects.get_for_model(Pension)
 
             # 2. Statutory Pension Statements (DRV Renteninformation)
+            drv_count = 0
             drv_entries = data.get('drv_statements', [])
             if isinstance(drv_entries, list):
                 for drv in drv_entries:
@@ -244,6 +247,7 @@ def wizard_save_api(request):
                         pension.notes = " | ".join(notes_parts)
 
                     pension.save()
+                    drv_count += 1
 
                     s_date = _parse_date(statement_date_str)
                     if s_date:
@@ -277,87 +281,85 @@ def wizard_save_api(request):
                                 'notes': f"Renteninformation Stand {s_date.strftime('%d.%m.%Y')}"
                             }
                         )
+            if drv_count > 0:
+                saved_summary.append(f"{drv_count} Gesetzliche Rentenmitteilung(en) gespeichert")
 
-            # 3. Private & Occupational Pension Statements
-            private_entries = data.get('private_statements', [])
-            if isinstance(private_entries, list):
-                for priv in private_entries:
+            # 3. Private & bAV Pensions
+            priv_count = 0
+            priv_entries = data.get('private_statements', [])
+            if isinstance(priv_entries, list):
+                for priv in priv_entries:
                     if not isinstance(priv, dict):
                         continue
-                    provider = str(priv.get('provider', 'Private Vorsorge')).strip()
-                    policy_nr = str(priv.get('policy_number', '')).strip()
-                    full_provider = f"{provider} (Pol.-Nr. {policy_nr})" if policy_nr else provider
+                    provider = str(priv.get('provider', '') or '').strip()
+                    cap_val = _to_decimal(priv.get('current_capital'))
+                    payout_val = _to_decimal(priv.get('expected_monthly_payout'))
+                    if provider and (cap_val is not None or payout_val is not None):
+                        ptype = priv.get('pension_type', 'private')
+                        pension_id = priv.get('existing_pension_id')
+                        pension = None
+                        if pension_id:
+                            pension = Pension.objects.filter(id=pension_id, user=user).first()
+                        if not pension:
+                            pension = Pension.objects.filter(user=user, provider=provider).first()
+                        if not pension:
+                            pension = Pension(user=user, provider=provider, pension_type=ptype)
 
-                    cap_val_str = priv.get('current_capital') or priv.get('garantiekapital') or priv.get('rueckkaufswert')
-                    expected_net_str = priv.get('expected_monthly_payout') or priv.get('garantierente')
-                    contrib_str = priv.get('monthly_contribution')
-                    growth_str = priv.get('growth_rate')
-                    ret_date_str = priv.get('payout_start_date')
-                    statement_date_str = priv.get('statement_date')
-
-                    pension_id = priv.get('existing_pension_id')
-                    pension = None
-                    if pension_id:
-                        pension = Pension.objects.filter(id=pension_id, user=user).first()
-                    if not pension:
-                        pension = Pension.objects.filter(user=user, provider=full_provider, pension_type='capital').first()
-                    if not pension:
-                        pension = Pension(user=user, provider=full_provider, pension_type='capital')
-
-                    cap_val = _to_decimal(cap_val_str)
-                    expected_net = _to_decimal(expected_net_str)
-                    contrib = _to_decimal(contrib_str)
-                    growth = _to_decimal(growth_str)
-                    s_date = _parse_date(statement_date_str)
-                    ret_d = _parse_date(ret_date_str)
-
-                    existing_snaps = AssetSnapshot.objects.filter(user=user, content_type=ct_pension, object_id=pension.id) if pension.id else []
-                    latest_snap_date = existing_snaps.order_by('-date').values_list('date', flat=True).first() if existing_snaps else None
-
-                    if not s_date or not latest_snap_date or s_date >= latest_snap_date:
+                        pension.pension_type = ptype
                         if cap_val is not None:
                             pension.current_value = cap_val
-                        if expected_net is not None:
-                            pension.expected_payout_at_retirement = expected_net
+                        if payout_val is not None:
+                            pension.expected_payout_at_retirement = payout_val
+                        
+                        contrib = _to_decimal(priv.get('monthly_contribution'))
                         if contrib is not None:
                             pension.monthly_contribution = contrib
+                        growth = _to_decimal(priv.get('growth_rate'))
                         if growth is not None:
                             pension.growth_rate = growth
+
+                        ret_d = _parse_date(priv.get('start_payout_date'))
                         if ret_d:
                             pension.start_payout_date = ret_d
+                        end_d = _parse_date(priv.get('contribution_end_date'))
+                        if end_d:
+                            pension.contribution_end_date = end_d
 
-                    notes = []
-                    if priv.get('garantiekapital'): notes.append(f"Garantiekapital: {priv.get('garantiekapital')} €")
-                    if priv.get('todesfallleistung'): notes.append(f"Todesfallleistung: {priv.get('todesfallleistung')} €")
-                    if notes: pension.notes = " | ".join(notes)
+                        if priv.get('policy_number'):
+                            pension.notes = f"Vertragsnummer: {priv.get('policy_number')}"
 
-                    pension.save()
+                        pension.save()
+                        priv_count += 1
 
-                    if s_date and cap_val is not None:
-                        AssetSnapshot.objects.update_or_create(
-                            user=user,
-                            content_type=ct_pension,
-                            object_id=pension.id,
-                            date=s_date,
-                            defaults={
-                                'value': cap_val,
-                                'expected_payout_net': expected_net,
-                                'notes': f"Standmitteilung {s_date.strftime('%d.%m.%Y')}"
-                            }
-                        )
+                        s_date = _parse_date(priv.get('statement_date'))
+                        if s_date:
+                            snap_val = cap_val if cap_val is not None else (payout_val or Decimal('0.00'))
+                            AssetSnapshot.objects.update_or_create(
+                                user=user,
+                                content_type=ct_pension,
+                                object_id=pension.id,
+                                date=s_date,
+                                defaults={
+                                    'value': snap_val,
+                                    'expected_payout_net': payout_val,
+                                    'notes': f"Standmitteilung {s_date.strftime('%d.%m.%Y')}"
+                                }
+                            )
+            if priv_count > 0:
+                saved_summary.append(f"{priv_count} Private / Betriebliche Vorsorgevertrag(e) gespeichert")
 
             # 4. Income & Expenses
-            cat_gehalt = _get_category_by_slug_or_name('gehalt', 'Gehalt', '#11ff00')
-            cat_leben = _get_category_by_slug_or_name('lebenshaltung', 'Lebenshaltung', '#fd7e14')
-            cat_steuern = _get_category_by_slug_or_name('steuern-abgaben', 'Steuern & Abgaben', '#dc3545')
-
+            cat_salary = _get_category_by_slug_or_name('gehalt', 'Gehalt & Lohn', '#198754')
+            cat_living = _get_category_by_slug_or_name('lebenshaltung', 'Lebenshaltung & Sonstiges', '#dc3545')
+            
+            inc_count = 0
             incomes = data.get('incomes', [])
             if isinstance(incomes, list):
                 for inc in incomes:
                     if not isinstance(inc, dict):
                         continue
                     amt = _to_decimal(inc.get('amount'))
-                    name = str(inc.get('name', 'Gehalt / Einnahme')).strip()
+                    name = str(inc.get('name', 'Gehalt')).strip()
                     if amt and amt > 0 and name:
                         CashFlowSource.objects.update_or_create(
                             user=user,
@@ -365,11 +367,15 @@ def wizard_save_api(request):
                             is_income=True,
                             defaults={
                                 'value': amt,
-                                'frequency': inc.get('frequency', 'monthly'),
-                                'category': cat_gehalt
+                                'category': cat_salary,
+                                'frequency': inc.get('frequency', 'monthly')
                             }
                         )
+                        inc_count += 1
+            if inc_count > 0:
+                saved_summary.append(f"{inc_count} Einnahmen-Position(en) aktualisiert")
 
+            exp_count = 0
             expenses = data.get('expenses', [])
             if isinstance(expenses, list):
                 for exp in expenses:
@@ -378,38 +384,44 @@ def wizard_save_api(request):
                     amt = _to_decimal(exp.get('amount'))
                     name = str(exp.get('name', 'Ausgabe')).strip()
                     if amt and amt > 0 and name:
-                        cat_exp = cat_steuern if 'steuer' in name.lower() else cat_leben
                         CashFlowSource.objects.update_or_create(
                             user=user,
                             name=name,
                             is_income=False,
                             defaults={
                                 'value': amt,
-                                'frequency': exp.get('frequency', 'monthly'),
-                                'category': cat_exp
+                                'category': cat_living,
+                                'frequency': exp.get('frequency', 'monthly')
                             }
                         )
+                        exp_count += 1
+            if exp_count > 0:
+                saved_summary.append(f"{exp_count} Ausgaben-Position(en) aktualisiert")
 
-            # 5. Liquid Assets
+            # 5. Assets
+            asset_count = 0
             assets = data.get('assets', [])
             if isinstance(assets, list):
                 for ast in assets:
                     if not isinstance(ast, dict):
                         continue
-                    amt = _to_decimal(ast.get('value'))
-                    name = str(ast.get('name', 'Konto / Depot')).strip()
-                    if amt and amt > 0 and name:
-                        growth = _to_decimal(ast.get('growth_rate')) or Decimal('0.0')
+                    val = _to_decimal(ast.get('value'))
+                    name = str(ast.get('name', 'Vermögen')).strip()
+                    if val and val > 0 and name:
                         Asset.objects.update_or_create(
                             user=user,
                             name=name,
                             defaults={
-                                'value': amt,
-                                'growth_rate': growth
+                                'value': val,
+                                'growth_rate': _to_decimal(ast.get('growth_rate')) or Decimal('0.0')
                             }
                         )
+                        asset_count += 1
+            if asset_count > 0:
+                saved_summary.append(f"{asset_count} Vermögenswert(e) aktualisiert")
 
             # 6. Real Estate & Mortgages
+            re_count = 0
             real_estates = data.get('real_estates', [])
             if isinstance(real_estates, list):
                 for re_item in real_estates:
@@ -432,7 +444,11 @@ def wizard_save_api(request):
                                 'ancillary_costs_monthly': ancill
                             }
                         )
+                        re_count += 1
+            if re_count > 0:
+                saved_summary.append(f"{re_count} Immobilie(n) aktualisiert")
 
+            loan_count = 0
             loans = data.get('loans', [])
             if isinstance(loans, list):
                 for ln in loans:
@@ -455,9 +471,12 @@ def wizard_save_api(request):
                                 'start_date': start_d
                             }
                         )
+                        loan_count += 1
+            if loan_count > 0:
+                saved_summary.append(f"{loan_count} Darlehen / Kredite aktualisiert")
 
         messages.success(request, _('Finanzdaten und Stichtagsmitteilungen wurden erfolgreich gespeichert!'))
-        return JsonResponse({'status': 'success', 'redirect_url': '/finance/pensions/'})
+        return JsonResponse({'status': 'success', 'redirect_url': '/finance/pensions/', 'saved_summary': saved_summary})
 
     except Exception as e:
         import traceback
