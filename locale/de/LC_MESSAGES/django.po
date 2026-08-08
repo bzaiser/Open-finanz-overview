@@ -2429,7 +2429,274 @@ msgid "Target net monthly payout desired for this specific contract"
 msgstr "Gewünschte Ziel-Nettorente für diesen einzelnen Vertrag"
 
 
-msgid "If checked, the payout will increase annually based on the global pension increase rate."
-msgstr "Wenn aktiviert, steigt die Auszahlung jährlich mit der globalen Rentenanpassungsrate."
+
+
+msgid "Welcome to your personal financial cockpit. This platform is designed to give you a clear and realistic look at your long-term financial future."
+msgstr "Willkommen in Ihrem persönlichen Finanz-Cockpit. Diese Plattform wurde entwickelt, um Ihnen einen klaren und realistischen Einblick in Ihre langfristige finanzielle Zukunft zu geben."
+
+msgid "Our goal is to demystify complex financial planning by offering simple, visual, and highly customizable tools to help you reach your goals."
+msgstr "Unser Ziel ist es, komplexe Finanzplanung verständlich zu machen – mit einfachen, visuellen und hochgradig anpassbaren Werkzeugen, die Sie beim Erreichen Ihrer Ziele unterstützen."
+
+
+msgid "Your data is only stored in your personal database and is not shared with third parties."
+msgstr "Ihre Daten werden ausschließlich in Ihrer persönlichen Datenbank gespeichert und niemals an Dritte weitergegeben."
+
+msgid "Advanced Simulation"
+msgstr "Präzise Finanzsimulation"
+
+msgid "We use high-precision calculations for inflation and compound interest over a 30-year period."
+msgstr "Wir nutzen hochpräzise Berechnungen für Inflation, Zinseszins und Vermögensverlauf über Ihren gesamten Planungszeitraum."
+
+
+msgid "Financial Independence is a goal for many, but for most it remains just a dream. My passion is to create tools that turn those dreams into actionable plans."
+msgstr "Finanzielle Unabhängigkeit ist für viele ein großes Ziel. Meine Leidenschaft ist es, Werkzeuge zu schaffen, die aus Träumen konkrete und umsetzbare Pläne machen."
+
+msgid "Hilfe & Wissensdatenbank"
+msgstr "Hilfe & Wissensdatenbank"
+
+msgid "Hilfe, Anleitungen & Finanz-Mathematik"
+msgstr "Hilfe, Anleitungen & Finanz-Mathematik"
+
+msgid "Hier findest du verständliche Erklärungen zu allen Funktionen, den mathematischen Berechnungen im Hintergrund, dem Einrichtungs-Wizard sowie zur Verwaltung deiner historischen Stichtage."
+msgstr "Hier findest du verständliche Erklärungen zu allen Funktionen, den mathematischen Berechnungen im Hintergrund, dem Einrichtungs-Wizard sowie zur Verwaltung deiner historischen Stichtage."
+
+msgid "Schritt-für-Schritt Anleitung zur Eingabe von DRV-Renteninformationen (Entgeltpunkte, Rentenwert) und privaten Vorsorge-Dokumenten ohne Datenverlust."
+msgstr "Schritt-für-Schritt Anleitung zur Eingabe von DRV-Renteninformationen (Entgeltpunkte, Rentenwert) und privaten Vorsorge-Dokumenten ohne Datenverlust."
+
+msgid "Anleitung lesen"
+msgstr "Anleitung lesen"
+
+msgid "Historische Stichtage"
+msgstr "Historische Stichtage"
+
+msgid "Erfahre, wie der Verlauf deines Vermögens und deiner Entgeltpunkte über Jahre hinweg aufgezeichnet, geschützt und in Diagrammen dargestellt wird."
+msgstr "Erfahre, wie der Verlauf deines Vermögens und deiner Entgeltpunkte über Jahre hinweg aufgezeichnet, geschützt und in Diagrammen dargestellt wird."
+
+msgid "Stichtage verstehen"
+msgstr "Stichtage verstehen"
+
+msgid "Berechnungen & Inflation"
+msgstr "Berechnungen & Inflation"
+
+msgid "Wie funktioniert die Kaufkraft-Berechnung? Unterschied zwischen nominalem und realem Vermögen, Abzüge für KV/PV und Rentenanpassung."
+msgstr "Wie funktioniert die Kaufkraft-Berechnung? Unterschied zwischen nominalem und realem Vermögen, Abzüge für KV/PV und Rentenanpassung."
+
+msgid "Formeln & Beispiele"
+msgstr "Formeln & Beispiele"
+
+msgid "Häufige Fragen & Funktionsweise im Detail"
+msgstr "Häufige Fragen & Funktionsweise im Detail"
+
+msgid "Wie berechnet sich die gesetzliche Rente (DRV)?"
+msgstr "Wie berechnet sich die gesetzliche Rente (DRV)?"
+
+msgid "Die monatliche Brutto-Rente berechnet sich aus der Formel:"
+msgstr "Die monatliche Brutto-Rente berechnet sich aus der Formel:"
+
+msgid "Bruttorente (€)"
+msgstr "Bruttorente (€)"
+
+msgid "Entgeltpunkte (EP)"
+msgstr "Entgeltpunkte (EP)"
+
+msgid "Aktueller Rentenwert (€)"
+msgstr "Aktueller Rentenwert (€)"
+
+msgid "Beispiel:"
+msgstr "Beispiel:"
+
+msgid "Du hast 65,20 Entgeltpunkte gesammelt. Bei einem Rentenwert von 39,32 € ergibt das:"
+msgstr "Du hast 65,20 Entgeltpunkte gesammelt. Bei einem Rentenwert von 39,32 € ergibt das:"
+
+msgid "Bruttorente pro Monat"
+msgstr "Bruttorente pro Monat"
+
+msgid "Abzug für Kranken- und Pflegeversicherung (KV/PV):"
+msgstr "Abzug für Kranken- und Pflegeversicherung (KV/PV):"
+
+msgid "Von der Bruttorente werden ca. 11,5 % für Kranken- und Pflegeversicherung abgezogen (ca. 7,3 % KV + 4,0 % PV abzüglich Bundeszuschuss). Die verbleibende Nettorente vor Steuern beträgt im Beispiel ca. 2.268,84 €."
+msgstr "Von der Bruttorente werden ca. 11,5 % für Kranken- und Pflegeversicherung abgezogen (ca. 7,3 % KV + 4,0 % PV abzüglich Bundeszuschuss). Die verbleibende Nettorente vor Steuern beträgt im Beispiel ca. 2.268,84 €."
+
+msgid "Was ist der Unterschied zwischen nominalem und realem Vermögen?"
+msgstr "Was ist der Unterschied zwischen nominalem und realem Vermögen?"
+
+msgid "Nominales Vermögen:"
+msgstr "Nominales Vermögen:"
+
+msgid "Der reine Euro-Betrag auf deinem Konto oder im Depot in der Zukunft."
+msgstr "Der reine Euro-Betrag auf deinem Konto oder im Depot in der Zukunft."
+
+msgid "Reales Vermögen (Kaufkraft):"
+msgstr "Reales Vermögen (Kaufkraft):"
+
+msgid "Was dieser Euro-Betrag in Zukunft unter Berücksichtigung der Inflation im Vergleich zu heutigen Preisen noch wert ist."
+msgstr "Was dieser Euro-Betrag in Zukunft unter Berücksichtigung der Inflation im Vergleich zu heutigen Preisen noch wert ist."
+
+msgid "Realer Wert (€)"
+msgstr "Realer Wert (€)"
+
+msgid "Nominaler Wert"
+msgstr "Nominaler Wert"
+
+msgid "Inflationsrate"
+msgstr "Inflationsrate"
+
+
+msgid "Rechenbeispiel bei 2,0 % Inflation:"
+msgstr "Rechenbeispiel bei 2,0 % Inflation:"
+
+msgid "Wenn du in 20 Jahren 4.000 € monatliche Rente erhältst, entspricht deren Kaufkraft bei 2 % jährlicher Inflation heute ca. 2.691,92 €."
+msgstr "Wenn du in 20 Jahren 4.000 € monatliche Rente erhältst, entspricht deren Kaufkraft bei 2 % jährlicher Inflation heute ca. 2.691,92 €."
+
+msgid "Wie entwickelt sich die gesetzliche Rente im Diagramm bis zum Ruhestand?"
+msgstr "Wie entwickelt sich die gesetzliche Rente im Diagramm bis zum Ruhestand?"
+
+msgid "Die gesetzliche Rente fällt im Diagramm vor deinem Renteneintritt nicht auf 0 € ab. Stattdessen bildet das System den kontinuierlichen Erwerbsverlauf ab:"
+msgstr "Die gesetzliche Rente fällt im Diagramm vor deinem Renteneintritt nicht auf 0 € ab. Stattdessen bildet das System den kontinuierlichen Erwerbsverlauf ab:"
+
+msgid "Bis zum Renteneintritt:"
+msgstr "Bis zum Renteneintritt:"
+
+msgid "Der angegebene Monatswert entwickelt sich durch jährliche Dynamisierung (z. B. +1,5 % Rentenanpassung) kontinuierlich weiter bis zum Starttermin."
+msgstr "Der angegebene Monatswert entwickelt sich durch jährliche Dynamisierung (z. B. +1,5 % Rentenanpassung) kontinuierlich weiter bis zum Starttermin."
+
+msgid "Ab dem Renteneintritt:"
+msgstr "Ab dem Renteneintritt:"
+
+msgid "Der gesetzliche Rentenanspruch schaltet von der Ansparphase nahtlos in die Auszahlungsphase um."
+msgstr "Der gesetzliche Rentenanspruch schaltet von der Ansparphase nahtlos in die Auszahlungsphase um."
+
+msgid "Warum wird mein Vertrag bei älteren Dokumenten nicht überschrieben?"
+msgstr "Warum wird mein Vertrag bei älteren Dokumenten nicht überschrieben?"
+
+msgid "Um deinen aktuellen Vertragsstand zu schützen, nutzt die Anwendung eine intelligente Datums-Logik:"
+msgstr "Um deinen aktuellen Vertragsstand zu schützen, nutzt die Anwendung eine intelligente Datums-Logik:"
+
+msgid "Neueres Datum als bisher:"
+msgstr "Neueres Datum als bisher:"
+
+msgid "Wenn du eine Renteninformation mit einem neueren Datum eingibst (z. B. Stand 2026 statt 2024), wird dein Hauptvertrag auf die neuen Werte aktualisiert und der alte Stand als historischer Snapshot gesichert."
+msgstr "Wenn du eine Renteninformation mit einem neueren Datum eingibst (z. B. Stand 2026 statt 2024), wird dein Hauptvertrag auf die neuen Werte aktualisiert und der alte Stand als historischer Snapshot gesichert."
+
+msgid "Älteres Datum als bisher:"
+msgstr "Älteres Datum als bisher:"
+
+msgid "Trägst du nachträglich ein altes Dokument von 2022 ein, bleibt dein Hauptvertrag von 2026 unberührt. Das System fügt den Wert von 2022 lediglich als historischen Stichtag in deine Chronik ein."
+msgstr "Trägst du nachträglich ein altes Dokument von 2022 ein, bleibt dein Hauptvertrag von 2026 unberührt. Das System fügt den Wert von 2022 lediglich als historischen Stichtag in deine Chronik ein."
+
+msgid "Der Standmitteilungs-Wizard im Detail"
+msgstr "Der Standmitteilungs-Wizard im Detail"
+
+msgid "Schritt-für-Schritt Einrichtung"
+msgstr "Schritt-für-Schritt Einrichtung"
+
+msgid "Haushalt & Personen:"
+msgstr "Haushalt & Personen:"
+
+msgid "Wähle zwischen Einzelperson oder Paar/Ehepaar und gib die Geburtsdaten sowie das geplante Renteneintrittsalter beider Personen ein."
+msgstr "Wähle zwischen Einzelperson oder Paar/Ehepaar und gib die Geburtsdaten sowie das geplante Renteneintrittsalter beider Personen ein."
+
+msgid "Gesetzliche Rentenmitteilungen (DRV):"
+msgstr "Gesetzliche Rentenmitteilungen (DRV):"
+
+msgid "Trage die Entgeltpunkte (EP), den aktuellen Rentenwert (z. B. 39,32 €) und den Stichtag 'Stand vom' aus deinem Brief der Deutschen Rentenversicherung ein."
+msgstr "Trage die Entgeltpunkte (EP), den aktuellen Rentenwert (z. B. 39,32 €) und den Stichtag 'Stand vom' aus deinem Brief der Deutschen Rentenversicherung ein."
+
+msgid "Private Vorsorge & Betriebsrenten:"
+msgstr "Private Vorsorge & Betriebsrenten:"
+
+msgid "Gib bestehende Verträge (Allianz, Riester, bAV) mit aktuellem Kapitalwert und garantierter bzw. hochgerechneter Rente ein."
+msgstr "Gib bestehende Verträge (Allianz, Riester, bAV) mit aktuellem Kapitalwert und garantierter bzw. hochgerechneter Rente ein."
+
+msgid "Einkommen & Ausgaben:"
+msgstr "Einkommen & Ausgaben:"
+
+msgid "Erfasse Gehalte, regelmäßige Sparraten und Lebenshaltungskosten inkl. Zuordnung zu deinen individuellen Kategorien."
+msgstr "Erfasse Gehalte, regelmäßige Sparraten und Lebenshaltungskosten inkl. Zuordnung zu deinen individuellen Kategorien."
+
+msgid "Keine Duplikate:"
+msgstr "Keine Duplikate:"
+
+msgid "Wenn du den Wizard erneut ausführst, werden bestehende Verträge aktualisiert anstatt doppelt angelegt zu werden."
+msgstr "Wenn du den Wizard erneut ausführst, werden bestehende Verträge aktualisiert anstatt doppelt angelegt zu werden."
+
+msgid "Jedes Mal, wenn du eine neue Standmitteilung oder ein Update zu deinen Verträgen erhältst, kannst du dafür einen historischen Stichtag anlegen."
+msgstr "Jedes Mal, wenn du eine neue Standmitteilung oder ein Update zu deinen Verträgen erhältst, kannst du dafür einen historischen Stichtag anlegen."
+
+msgid "Stichtag bearbeiten (✏️)"
+msgstr "Stichtag bearbeiten (✏️)"
+
+msgid "Über den Stift-Button in der Stichtags-Tabelle kannst du falsche Eingaben jederzeit nachträglich korrigieren."
+msgstr "Über den Stift-Button in der Stichtags-Tabelle kannst du falsche Eingaben jederzeit nachträglich korrigieren."
+
+msgid "Stichtag löschen (🗑️)"
+msgstr "Stichtag löschen (🗑️)"
+
+msgid "Fehlerhafte oder doppelte Stichtage lassen sich mit einem Klick löschen."
+msgstr "Fehlerhafte oder doppelte Stichtage lassen sich mit einem Klick löschen."
+
+msgid "Mathematische Berechnungslogik"
+msgstr "Mathematische Berechnungslogik"
+
+msgid "Formeln der Finanz-Simulation:"
+msgstr "Formeln der Finanz-Simulation:"
+
+msgid "Zinseszins Vermögen:"
+msgstr "Zinseszins Vermögen:"
+
+msgid "Vermögen"
+msgstr "Vermögen"
+
+msgid "Startkapital"
+msgstr "Startkapital"
+
+msgid "Rendite"
+msgstr "Rendite"
+
+msgid "Nettorente gesetzlich:"
+msgstr "Nettorente gesetzlich:"
+
+msgid "Schnelleinstieg – In 4 Schritten zum Finanzplan"
+msgstr "Schnelleinstieg – In 4 Schritten zum Finanzplan"
+
+msgid "Der schnellste Weg zu deiner persönlichen Vorsorge-Übersicht"
+msgstr "Der schnellste Weg zu deiner persönlichen Vorsorge-Übersicht"
+
+msgid "Schritt 1"
+msgstr "Schritt 1"
+
+msgid "Profil & Haushalt anlegen"
+msgstr "Profil & Haushalt anlegen"
+
+msgid "Gehe im Menü auf 'Einstellungen'. Lege fest, ob du Einzelperson oder ein Paar bist, und trage Geburtsdaten sowie Ziel-Renteneintrittsalter ein."
+msgstr "Gehe im Menü auf 'Einstellungen'. Lege fest, ob du Einzelperson oder ein Paar bist, und trage Geburtsdaten sowie Ziel-Renteneintrittsalter ein."
+
+msgid "Schritt 2"
+msgstr "Schritt 2"
+
+msgid "Wizard starten"
+msgstr "Wizard starten"
+
+msgid "Klicke im Bereich Vorsorge auf '🪄 Standmitteilung / Wizard'. Trage deine DRV-Rentenpunkte, Betriebsrenten und Sparverträge einfach ein."
+msgstr "Klicke im Bereich Vorsorge auf '🪄 Standmitteilung / Wizard'. Trage deine DRV-Rentenpunkte, Betriebsrenten und Sparverträge einfach ein."
+
+msgid "Schritt 3"
+msgstr "Schritt 3"
+
+msgid "Einnahmen & Ausgaben"
+msgstr "Einnahmen & Ausgaben"
+
+msgid "Erfasse im Wizard oder im Menü 'Einnahmen / Ausgaben' deine regelmäßigen Monatsströme (Gehalt, Miete, Lebenshaltung)."
+msgstr "Erfasse im Wizard oder im Menü 'Einnahmen / Ausgaben' deine regelmäßigen Monatsströme (Gehalt, Miete, Lebenshaltung)."
+
+msgid "Schritt 4"
+msgstr "Schritt 4"
+
+msgid "Dashboard & Stichtag"
+msgstr "Dashboard & Stichtag"
+
+msgid "Betrachte deine 30-Jahre-Finanzkurve im Dashboard. Verschiebe den 'Stichtag' in die Zukunft, um deine Kaufkraft im Ruhestand zu prüfen."
+msgstr "Betrachte deine 30-Jahre-Finanzkurve im Dashboard. Verschiebe den 'Stichtag' in die Zukunft, um deine Kaufkraft im Ruhestand zu prüfen."
+
 
 
