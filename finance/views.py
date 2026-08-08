@@ -3153,7 +3153,49 @@ def pension_save(request, pk=None):
         if form.is_valid():
             pension = form.save(commit=False)
             pension.user = user
-            pension.save()
+
+            # Optional snapshot date passed in request
+            statement_date_str = request.POST.get('statement_date') or request.POST.get('date')
+            from django.contrib.contenttypes.models import ContentType
+            from .models import AssetSnapshot
+            ct_pension = ContentType.objects.get_for_model(Pension)
+
+            if statement_date_str:
+                try:
+                    s_date = datetime.datetime.strptime(statement_date_str, '%Y-%m-%d').date()
+                    existing_snaps = AssetSnapshot.objects.filter(user=user, content_type=ct_pension, object_id=pension.id) if pension.id else []
+                    latest_snap_date = existing_snaps.order_by('-date').values_list('date', flat=True).first() if existing_snaps else None
+
+                    # If date is older than latest snapshot, do not overwrite main pension values
+                    if latest_snap_date and s_date < latest_snap_date and instance:
+                        # Restore previous contract values for main pension
+                        pension.pension_points = instance.pension_points
+                        pension.point_value = instance.point_value
+                        pension.current_value = instance.current_value
+                        pension.expected_payout_at_retirement = instance.expected_payout_at_retirement
+
+                    pension.save()
+
+                    # Record or update snapshot for this date
+                    snap_val = pension.current_value if pension.pension_type != 'statutory' else (pension.expected_payout_at_retirement or Decimal('0.00'))
+                    AssetSnapshot.objects.update_or_create(
+                        user=user,
+                        content_type=ct_pension,
+                        object_id=pension.id,
+                        date=s_date,
+                        defaults={
+                            'value': snap_val,
+                            'pension_points': pension.pension_points,
+                            'point_value': pension.point_value,
+                            'expected_payout_net': pension.expected_payout_at_retirement,
+                            'notes': pension.notes or f"Standmitteilung {s_date.strftime('%d.%m.%Y')}"
+                        }
+                    )
+                except Exception as ex:
+                    pension.save()
+            else:
+                pension.save()
+
             messages.success(request, _('Pension entry saved successfully.'))
         else:
             messages.error(request, _('Error saving pension entry. Please check your inputs.'))

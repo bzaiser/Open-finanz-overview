@@ -393,16 +393,20 @@
                     {% csrf_token %}
                     <div class="modal-body pt-3">
                         <div class="row g-3 mb-3">
-                            <div class="col-md-7">
+                            <div class="col-md-5">
                                 <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Provider / Contract Name" %}</label>
                                 <input type="text" name="provider" x-model="form.provider" class="form-control" placeholder="{% trans 'e.g. Statutory Pension, Allianz Riester' %}" required>
                             </div>
-                            <div class="col-md-5">
+                            <div class="col-md-4">
                                 <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Pension Type" %}</label>
                                 <select name="pension_type" x-model="form.pension_type" class="form-select">
                                     <option value="capital">{% trans "Capital / Private Pension" %}</option>
                                     <option value="statutory">{% trans "Statutory Pension (Gesetzliche Rente)" %}</option>
                                 </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Stichtag (Stand vom)" %}</label>
+                                <input type="date" name="statement_date" x-model="form.statement_date" class="form-control">
                             </div>
                         </div>
 
@@ -823,6 +827,7 @@
             form: {
                 provider: '',
                 pension_type: 'capital',
+                statement_date: new Date().toISOString().split('T')[0],
                 pension_points: '',
                 point_value: '',
                 gross_payout_amount: '',
