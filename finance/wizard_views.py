@@ -51,11 +51,11 @@ def wizard_page_view(request):
     ct_pension = ContentType.objects.get_for_model(Pension)
 
     for p in pensions:
-        latest_snap_date = AssetSnapshot.objects.filter(
+        latest_snap = AssetSnapshot.objects.filter(
             user=request.user, content_type=ct_pension, object_id=p.id
-        ).order_by('-date').values_list('date', flat=True).first()
+        ).order_by('-date').first()
         
-        stmt_date_str = latest_snap_date.strftime('%Y-%m-%d') if latest_snap_date else date.today().strftime('%Y-%m-%d')
+        stmt_date_str = latest_snap.date.strftime('%Y-%m-%d') if (latest_snap and latest_snap.date) else date.today().strftime('%Y-%m-%d')
 
         stand_today = None
         if p.pension_type == 'statutory' and p.pension_points is not None and p.point_value is not None:
@@ -63,13 +63,17 @@ def wizard_page_view(request):
         elif p.expected_payout_at_retirement is not None:
             stand_today = float(p.expected_payout_at_retirement)
 
+        em_val = p.disability_pension_net
+        if em_val is None and latest_snap and latest_snap.disability_pension_net is not None:
+            em_val = latest_snap.disability_pension_net
+
         p_dict = {
             'existing_pension_id': p.id,
             'provider': p.provider,
             'pension_type': p.pension_type,
             'pension_points': float(p.pension_points) if p.pension_points is not None else '',
             'point_value': float(p.point_value) if p.point_value is not None else 39.32,
-            'erwerbsminderung_net': float(p.disability_pension_net) if p.disability_pension_net is not None else '',
+            'erwerbsminderung_net': float(em_val) if em_val is not None else '',
             'stand_today_net': stand_today if stand_today is not None else '',
             'expected_monthly_payout': float(p.expected_payout_at_retirement) if p.expected_payout_at_retirement is not None else '',
             'forecast_net': float(p.expected_payout_at_retirement) if p.expected_payout_at_retirement is not None else '',
