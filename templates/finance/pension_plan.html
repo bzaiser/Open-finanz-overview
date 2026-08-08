@@ -533,7 +533,7 @@
                                                 <td class="py-2 px-3 text-muted truncate" style="max-width: 140px;" x-text="s.notes || '-'"></td>
                                                 <td class="py-2 px-3 text-center">
                                                     <div class="d-flex gap-2 justify-content-center">
-                                                        <a :href="'/finance/pensions/snapshot/delete/' + s.id + '/'" onclick="return confirm('{% trans 'Diesen Stichtag wirklich löschen?' %}')" class="btn btn-sm btn-link p-0 text-danger" title="{% trans 'Löschen' %}">
+                                                        <a :href="'/finance/pensions/snapshot/delete/' + s.id + '/?edit_pension_id=' + editId" onclick="return confirm('{% trans 'Diesen Stichtag wirklich löschen?' %}')" class="btn btn-sm btn-link p-0 text-danger" title="{% trans 'Löschen' %}">
                                                             <i class="bi bi-trash" style="font-size: 0.95rem;"></i>
                                                         </a>
                                                     </div>
@@ -669,6 +669,17 @@
             snapshots: {{ snapshots_json|safe }},
             retirementAge: {{ retirement_age }},
             retirementYear: {{ retirement_year }},
+
+            init() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const editPensionId = urlParams.get('edit_pension_id');
+                if (editPensionId) {
+                    const p = this.pensions.find(item => item.id == editPensionId);
+                    if (p) {
+                        this.openEditModal(p);
+                    }
+                }
+            },
 
             getContractName(id) {
                 const p = this.pensions.find(item => item.id == id);

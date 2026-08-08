@@ -3258,6 +3258,9 @@ def pension_snapshot_save(request):
 @login_required
 def pension_snapshot_delete(request, pk):
     snapshot = get_object_or_404(AssetSnapshot, id=pk, user=request.user)
+    edit_pension_id = request.GET.get('edit_pension_id')
     snapshot.delete()
     messages.success(request, _('Snapshot deleted successfully.'))
+    if edit_pension_id:
+        return redirect(f"{reverse('finance:pension_plan')}?edit_pension_id={edit_pension_id}")
     return redirect('finance:pension_plan')
