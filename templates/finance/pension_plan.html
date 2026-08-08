@@ -421,7 +421,7 @@
                                     <input type="number" step="0.01" name="point_value" x-model="form.point_value" @input="calculateStatutoryAmounts()" class="form-control font-monospace" placeholder="39.32">
                                 </div>
                                 <div class="col-md-4">
-                                    <label class="form-label small fw-bold opacity-75">{% trans "Social Deduction (%)" %}</label>
+                                    <label class="form-label small fw-bold opacity-75">{% trans "Social Security Deduction (%)" %}</label>
                                     <input type="number" step="0.01" name="social_deduction_rate" x-model="form.social_deduction_rate" @input="calculateStatutoryAmounts()" class="form-control font-monospace" placeholder="11.50">
                                 </div>
                             </div>
@@ -433,23 +433,25 @@
                                 <input type="number" step="0.01" name="gross_payout_amount" x-model="form.gross_payout_amount" class="form-control font-monospace" placeholder="0.00">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Expected Net Payout (€)" %}</label>
-                                <input type="number" step="0.01" name="expected_payout_at_retirement" x-model="form.expected_payout_at_retirement" class="form-control font-monospace" placeholder="0.00">
+                                <label class="form-label small fw-bold text-uppercase opacity-75 text-success">{% trans "Expected Net Payout (€)" %}</label>
+                                <input type="number" step="0.01" name="expected_payout_at_retirement" x-model="form.expected_payout_at_retirement" class="form-control font-monospace text-success fw-bold" placeholder="0.00">
                             </div>
                         </div>
 
                         <div class="row g-3 mb-3">
-                            <div class="col-md-6">
+                            <div class="col-md-6" x-show="form.pension_type !== 'statutory'">
                                 <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Target Monthly Payout (€)" %}</label>
                                 <input type="number" step="0.01" name="target_pension_payout" x-model="form.target_pension_payout" class="form-control font-monospace" placeholder="0.00">
+                                <span class="form-text small opacity-75">{% trans "Ziel-Nettorente für diesen einzelnen Vertrag" %}</span>
                             </div>
-                            <div class="col-md-6">
+                            <div :class="form.pension_type === 'statutory' ? 'col-md-12' : 'col-md-6'">
                                 <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Retirement Age (Years)" %}</label>
                                 <input type="number" name="retirement_age" x-model="form.retirement_age" class="form-control font-monospace" placeholder="67">
                             </div>
                         </div>
 
-                        <div class="row g-3 mb-3">
+                        <!-- Private Pension Specific Fields -->
+                        <div x-show="form.pension_type !== 'statutory'" class="row g-3 mb-3">
                             <div class="col-md-4">
                                 <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Current Capital Value (€)" %}</label>
                                 <input type="number" step="0.01" name="current_value" x-model="form.current_value" class="form-control font-monospace" placeholder="0.00">
@@ -465,11 +467,11 @@
                         </div>
 
                         <div class="row g-3 mb-3">
-                            <div class="col-md-6">
+                            <div :class="form.pension_type === 'statutory' ? 'col-md-12' : 'col-md-6'">
                                 <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Payout Start Date" %}</label>
                                 <input type="date" name="start_payout_date" x-model="form.start_payout_date" class="form-control">
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6" x-show="form.pension_type !== 'statutory'">
                                 <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Contribution End Date" %}</label>
                                 <input type="date" name="contribution_end_date" x-model="form.contribution_end_date" class="form-control">
                             </div>
