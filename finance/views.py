@@ -3211,3 +3211,11 @@ def pension_snapshot_save(request):
             messages.error(request, f"{_('Error saving snapshot')}: {str(e)}")
 
     return redirect('finance:pension_plan')
+
+
+@login_required
+def pension_snapshot_delete(request, pk):
+    snapshot = get_object_or_404(AssetSnapshot, id=pk, user=request.user)
+    snapshot.delete()
+    messages.success(request, _('Snapshot deleted successfully.'))
+    return redirect('finance:pension_plan')

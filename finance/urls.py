@@ -32,6 +32,7 @@ urlpatterns = [
     path('pensions/save/<int:pk>/', views.pension_save, name='pension_edit'),
     path('pensions/delete/<int:pk>/', views.pension_delete, name='pension_delete'),
     path('pensions/snapshot/save/', views.pension_snapshot_save, name='pension_snapshot_save'),
+    path('pensions/snapshot/delete/<int:pk>/', views.pension_snapshot_delete, name='pension_snapshot_delete'),
     path('wizard/', wizard_views.wizard_page_view, name='setup_wizard'),
     path('wizard/save/', wizard_views.wizard_save_api, name='setup_wizard_save'),
     path('dynamic-theme.css', views.dynamic_theme_css, name='dynamic_theme_css'),

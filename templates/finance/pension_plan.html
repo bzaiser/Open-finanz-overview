@@ -504,7 +504,7 @@
                 <div class="modal-header border-0 shadow-sm" style="background: var(--app-gradient); color: #ffffff;">
                     <h5 class="modal-title fw-bold d-flex align-items-center gap-2">
                         <i class="bi bi-clock-history"></i>
-                        {% trans "Record Historical Snapshot" %}
+                        {% trans "Historische Stichtage verwalten" %}
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -565,7 +565,7 @@
                                 <span><i class="bi bi-clock-history me-1"></i>{% trans "Bisherige Stichtage dieses Vertrags" %}</span>
                                 <span class="badge bg-info bg-opacity-10 text-info" x-text="getContractSnapshots().length + ' Stichtage'"></span>
                             </h6>
-                            <div class="table-responsive rounded-3 border border-secondary border-opacity-20" style="max-height: 180px; overflow-y: auto;">
+                            <div class="table-responsive rounded-3 border border-secondary border-opacity-20" style="max-height: 200px; overflow-y: auto;">
                                 <table class="table table-sm table-hover align-middle mb-0" style="font-size: 0.75rem;">
                                     <thead class="bg-body-tertiary">
                                         <tr>
@@ -583,6 +583,7 @@
                                                 <th class="py-1 px-2 border-0 text-end">{% trans "Kapital (€)" %}</th>
                                             </template>
                                             <th class="py-1 px-2 border-0">{% trans "Notiz" %}</th>
+                                            <th class="py-1 px-2 border-0 text-center" style="width: 50px;">Aktion</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -601,11 +602,21 @@
                                                 <template x-if="getSelectedContractType() !== 'statutory'">
                                                     <td class="py-1 px-2 text-end font-monospace fw-bold" x-text="formatEuro(s.value) + ' €'"></td>
                                                 </template>
-                                                <td class="py-1 px-2 text-muted truncate" style="max-width: 100px;" x-text="s.notes || '-'"></td>
+                                                <td class="py-1 px-2 text-muted truncate" style="max-width: 90px;" x-text="s.notes || '-'"></td>
+                                                <td class="py-1 px-2 text-center">
+                                                    <div class="d-flex gap-1 justify-content-center">
+                                                        <button type="button" @click="editSnapshot(s)" class="btn btn-link p-0 text-primary" title="{% trans 'Bearbeiten' %}">
+                                                            <i class="bi bi-pencil-square" style="font-size: 0.85rem;"></i>
+                                                        </button>
+                                                        <a :href="'/finance/pensions/snapshot/delete/' + s.id + '/'" onclick="return confirm('{% trans 'Diesen Stichtag wirklich löschen?' %}')" class="btn btn-link p-0 text-danger" title="{% trans 'Löschen' %}">
+                                                            <i class="bi bi-trash" style="font-size: 0.85rem;"></i>
+                                                        </a>
+                                                    </div>
+                                                </td>
                                             </tr>
                                         </template>
                                         <tr x-show="getContractSnapshots().length === 0">
-                                            <td colspan="5" class="text-center py-2 opacity-75 text-muted">
+                                            <td colspan="6" class="text-center py-2 opacity-75 text-muted">
                                                 {% trans "Noch keine historischen Stichtage erfasst." %}
                                             </td>
                                         </tr>
@@ -796,6 +807,18 @@
                         this.snapshot.value = p.current_value !== null ? p.current_value : '';
                     }
                 }
+            },
+
+            editSnapshot(s) {
+                this.snapshot = {
+                    pension_id: s.pension_id,
+                    date: s.date,
+                    pension_points: s.pension_points !== null ? s.pension_points : '',
+                    point_value: s.point_value !== null ? s.point_value : '39.32',
+                    expected_payout_net: s.expected_payout_net !== null ? s.expected_payout_net : '',
+                    value: s.value !== null ? s.value : '',
+                    notes: s.notes || ''
+                };
             },
 
             calcSnapshotStatutoryNet() {

@@ -195,6 +195,22 @@ def wizard_save_api(request):
             if statement_date_str:
                 s_date = datetime.strptime(statement_date_str, '%Y-%m-%d').date()
                 snap_net = _to_decimal(stand_today_str) or expected_net
+                
+                # Check existing snapshots for this pension contract
+                existing_snaps = AssetSnapshot.objects.filter(user=user, content_type=ct_pension, object_id=pension.id)
+                latest_snap_date = existing_snaps.order_by('-date').values_list('date', flat=True).first()
+
+                # Update main pension only if statement_date is newer or no previous snapshot exists
+                if not latest_snap_date or s_date >= latest_snap_date:
+                    if pts is not None:
+                        pension.pension_points = pts
+                    pension.point_value = pt_val
+                    if expected_net is not None:
+                        pension.expected_payout_at_retirement = expected_net
+                    if ret_date_str:
+                        pension.start_payout_date = datetime.strptime(ret_date_str, '%Y-%m-%d').date()
+                    pension.save()
+
                 AssetSnapshot.objects.update_or_create(
                     user=user,
                     content_type=ct_pension,
@@ -237,16 +253,23 @@ def wizard_save_api(request):
             contrib = _to_decimal(contrib_str)
             growth = _to_decimal(growth_str)
 
-            if cap_val is not None:
-                pension.current_value = cap_val
-            if expected_net is not None:
-                pension.expected_payout_at_retirement = expected_net
-            if contrib is not None:
-                pension.monthly_contribution = contrib
-            if growth is not None:
-                pension.growth_rate = growth
-            if ret_date_str:
-                pension.start_payout_date = datetime.strptime(ret_date_str, '%Y-%m-%d').date()
+            # Check existing snapshots for this contract
+            s_date = datetime.strptime(statement_date_str, '%Y-%m-%d').date() if statement_date_str else None
+            existing_snaps = AssetSnapshot.objects.filter(user=user, content_type=ct_pension, object_id=pension.id)
+            latest_snap_date = existing_snaps.order_by('-date').values_list('date', flat=True).first()
+
+            # Update main pension only if statement_date is newer or no previous snapshot exists
+            if not s_date or not latest_snap_date or s_date >= latest_snap_date:
+                if cap_val is not None:
+                    pension.current_value = cap_val
+                if expected_net is not None:
+                    pension.expected_payout_at_retirement = expected_net
+                if contrib is not None:
+                    pension.monthly_contribution = contrib
+                if growth is not None:
+                    pension.growth_rate = growth
+                if ret_date_str:
+                    pension.start_payout_date = datetime.strptime(ret_date_str, '%Y-%m-%d').date()
 
             notes = []
             if priv.get('garantiekapital'): notes.append(f"Garantiekapital: {priv.get('garantiekapital')} €")
@@ -255,8 +278,7 @@ def wizard_save_api(request):
 
             pension.save()
 
-            if statement_date_str and cap_val is not None:
-                s_date = datetime.strptime(statement_date_str, '%Y-%m-%d').date()
+            if s_date and cap_val is not None:
                 AssetSnapshot.objects.update_or_create(
                     user=user,
                     content_type=ct_pension,
