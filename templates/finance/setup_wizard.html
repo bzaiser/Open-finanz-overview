@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load i18n humanize %}
 
-{% block title %}{% trans "Einrichtungs- & Mitteilungs-Wizard" %} - Finanzplan{% endblock %}
+{% block title %}{% trans "Erst-Einrichtungs-Wizard" %} - Finanzplan{% endblock %}
 
 {% block content %}
 <div class="container py-4" x-data="wizardApp()">
@@ -10,13 +10,13 @@
         <div>
             <h2 class="fw-bold mb-1 d-flex align-items-center gap-2" style="color: var(--app-text-main);">
                 <i class="bi bi-magic text-primary"></i>
-                {% trans "Einrichtungs- & Standmitteilungs-Wizard" %}
+                {% trans "Erst-Einrichtungs-Wizard" %}
             </h2>
             <p class="text-muted small mb-0">
-                {% trans "Schritt-für-Schritt-Erfassung deiner Familienfinanzen und offiziellen Mitteilungen (DRV, Allianz bAV, Riester u.a.)." %}
+                {% trans "Schritt-für-Schritt-Erfassung deiner Stammdaten (Personen, Einnahmen, Ausgaben, Konten und Vorsorgeverträge)." %}
             </p>
         </div>
-        <a href="{% url 'finance:pension_plan' %}" class="btn btn-outline-secondary rounded-pill px-3">
+        <a href="{% url 'finance:dashboard' %}" class="btn btn-outline-secondary rounded-pill px-3">
             <i class="bi bi-x-lg me-1"></i>{% trans "Abbrechen" %}
         </a>
     </div>
