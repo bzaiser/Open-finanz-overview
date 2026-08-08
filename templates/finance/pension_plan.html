@@ -488,6 +488,69 @@
                             <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Notes" %}</label>
                             <textarea name="notes" x-model="form.notes" class="form-control" rows="2" placeholder="{% trans 'Optional notes...' %}"></textarea>
                         </div>
+
+                        <!-- Integrated Historical Snapshots Table in Edit Form -->
+                        <div x-show="editId" class="mt-4 pt-3 border-top border-secondary border-opacity-25">
+                            <h6 class="fw-bold mb-2 text-primary d-flex align-items-center justify-content-between" style="font-size: 0.85rem;">
+                                <span><i class="bi bi-clock-history me-1"></i>{% trans "Bisherige Stichtage dieses Vertrags" %}</span>
+                                <span class="badge rounded-pill bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2.5 py-1" x-text="getSnapshotsForEditId().length + ' Stichtage'"></span>
+                            </h6>
+                            <div class="table-responsive rounded-3 border border-secondary border-opacity-20 shadow-sm" style="max-height: 200px; overflow-y: auto;">
+                                <table class="table table-sm table-hover align-middle mb-0" style="font-size: 0.8rem;">
+                                    <thead class="bg-body-tertiary">
+                                        <tr>
+                                            <th class="py-2 px-3 border-0">{% trans "Stichtag" %}</th>
+                                            <template x-if="form.pension_type === 'statutory'">
+                                                <th class="py-2 px-2 border-0 text-center">EP</th>
+                                            </template>
+                                            <template x-if="form.pension_type === 'statutory'">
+                                                <th class="py-2 px-2 border-0 text-center">{% trans "Punktwert (€)" %}</th>
+                                            </template>
+                                            <template x-if="form.pension_type === 'statutory'">
+                                                <th class="py-2 px-3 border-0 text-end">{% trans "Netto (€)" %}</th>
+                                            </template>
+                                            <template x-if="form.pension_type !== 'statutory'">
+                                                <th class="py-2 px-3 border-0 text-end">{% trans "Kapital (€)" %}</th>
+                                            </template>
+                                            <th class="py-2 px-3 border-0">{% trans "Notiz" %}</th>
+                                            <th class="py-2 px-3 border-0 text-center" style="width: 70px;">Aktion</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <template x-for="s in getSnapshotsForEditId()" :key="s.id">
+                                            <tr>
+                                                <td class="py-2 px-3 fw-bold font-monospace text-primary" x-text="s.date"></td>
+                                                <template x-if="form.pension_type === 'statutory'">
+                                                    <td class="py-2 px-2 text-center font-monospace" x-text="s.pension_points !== null ? s.pension_points : '-'"></td>
+                                                </template>
+                                                <template x-if="form.pension_type === 'statutory'">
+                                                    <td class="py-2 px-2 text-center font-monospace" x-text="s.point_value !== null ? formatEuro(s.point_value) + ' €' : '-'"></td>
+                                                </template>
+                                                <template x-if="form.pension_type === 'statutory'">
+                                                    <td class="py-2 px-3 text-end font-monospace fw-bold text-success" x-text="s.expected_payout_net !== null ? formatEuro(s.expected_payout_net) + ' €' : (s.value > 0 ? formatEuro(s.value) + ' €' : '-')"></td>
+                                                </template>
+                                                <template x-if="form.pension_type !== 'statutory'">
+                                                    <td class="py-2 px-3 text-end font-monospace fw-bold text-info" x-text="formatEuro(s.value) + ' €'"></td>
+                                                </template>
+                                                <td class="py-2 px-3 text-muted truncate" style="max-width: 140px;" x-text="s.notes || '-'"></td>
+                                                <td class="py-2 px-3 text-center">
+                                                    <div class="d-flex gap-2 justify-content-center">
+                                                        <a :href="'/finance/pensions/snapshot/delete/' + s.id + '/'" onclick="return confirm('{% trans 'Diesen Stichtag wirklich löschen?' %}')" class="btn btn-sm btn-link p-0 text-danger" title="{% trans 'Löschen' %}">
+                                                            <i class="bi bi-trash" style="font-size: 0.95rem;"></i>
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </template>
+                                        <tr x-show="getSnapshotsForEditId().length === 0">
+                                            <td colspan="6" class="text-center py-3 opacity-75 text-muted">
+                                                {% trans "Noch keine historischen Stichtage erfasst." %}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="modal-footer border-0 pt-0">
@@ -794,6 +857,11 @@
             getContractSnapshots() {
                 if (!this.snapshot.pension_id) return [];
                 return this.snapshots.filter(s => s.pension_id == this.snapshot.pension_id);
+            },
+
+            getSnapshotsForEditId() {
+                if (!this.editId) return [];
+                return this.snapshots.filter(s => s.pension_id == this.editId);
             },
 
             onSnapshotContractChange() {
