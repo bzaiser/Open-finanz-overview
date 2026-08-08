@@ -3074,6 +3074,7 @@ def pension_plan_view(request):
             'point_value': float(p.point_value) if p.point_value is not None else None,
             'gross_payout_amount': float(p.gross_payout_amount) if p.gross_payout_amount is not None else None,
             'social_deduction_rate': float(p.social_deduction_rate) if p.social_deduction_rate is not None else 11.5,
+            'disability_pension_net': float(p.disability_pension_net) if p.disability_pension_net is not None else None,
             'expected_payout_at_retirement': float(p.expected_payout_at_retirement) if p.expected_payout_at_retirement is not None else None,
             'retirement_age': p.retirement_age,
             'target_pension_payout': float(p.target_pension_payout) if p.target_pension_payout is not None else None,
@@ -3096,6 +3097,7 @@ def pension_plan_view(request):
             'pension_points': float(s.pension_points) if s.pension_points is not None else None,
             'point_value': float(s.point_value) if s.point_value is not None else None,
             'expected_payout_net': float(s.expected_payout_net) if s.expected_payout_net is not None else None,
+            'disability_pension_net': float(s.disability_pension_net) if s.disability_pension_net is not None else None,
             'notes': s.notes or ''
         })
 
@@ -3188,6 +3190,7 @@ def pension_save(request, pk=None):
                             'pension_points': pension.pension_points,
                             'point_value': pension.point_value,
                             'expected_payout_net': pension.expected_payout_at_retirement,
+                            'disability_pension_net': pension.disability_pension_net,
                             'notes': pension.notes or f"Standmitteilung {s_date.strftime('%d.%m.%Y')}"
                         }
                     )

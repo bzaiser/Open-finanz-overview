@@ -53,6 +53,7 @@ def wizard_page_view(request):
             'pension_type': p.pension_type,
             'pension_points': float(p.pension_points) if p.pension_points is not None else '',
             'point_value': float(p.point_value) if p.point_value is not None else 39.32,
+            'erwerbsminderung_net': float(p.disability_pension_net) if p.disability_pension_net is not None else '',
             'expected_monthly_payout': float(p.expected_payout_at_retirement) if p.expected_payout_at_retirement is not None else '',
             'forecast_net': float(p.expected_payout_at_retirement) if p.expected_payout_at_retirement is not None else '',
             'current_capital': float(p.current_value) if p.current_value is not None else '',
@@ -95,296 +96,341 @@ def wizard_page_view(request):
     return render(request, 'finance/setup_wizard.html', context)
 
 
+from django.db import transaction
+
 @login_required
 def wizard_save_api(request):
     """
     API endpoint that accepts the JSON payload from the wizard and creates/updates all financial objects.
+    All operations are wrapped in an atomic transaction to ensure zero partial data corruption.
     """
     if request.method != 'POST':
         return JsonResponse({'status': 'error', 'message': 'Invalid request method.'}, status=400)
 
+    def _to_decimal(val):
+        if val is None or val == '' or str(val).strip() == '':
+            return None
+        try:
+            return Decimal(str(val).replace(',', '.').strip())
+        except Exception:
+            return None
+
+    def _parse_date(val_str):
+        if not val_str or not isinstance(val_str, str):
+            return None
+        try:
+            return datetime.strptime(val_str.strip(), '%Y-%m-%d').date()
+        except Exception:
+            return None
+
     try:
         data = json.loads(request.body.decode('utf-8'))
         user = request.user
-        profile, _ = UserProfile.objects.get_or_create(user=user)
 
-        # 1. Profile & Persons
-        household_type = data.get('household_type', 'single') # 'single' or 'couple'
-        p1_name = data.get('p1_name', '').strip() or user.first_name or "Person 1"
-        p1_birth = data.get('p1_birth_date')
-        p1_ret_age = data.get('p1_retirement_age')
-        
-        p2_name = data.get('p2_name', '').strip()
-        p2_birth = data.get('p2_birth_date')
-        p2_ret_age = data.get('p2_retirement_age')
+        with transaction.atomic():
+            profile, _ = UserProfile.objects.get_or_create(user=user)
 
-        if p1_birth:
-            profile.birth_date = datetime.strptime(p1_birth, '%Y-%m-%d').date()
-        if p1_ret_age:
-            profile.retirement_age = int(p1_ret_age)
-
-        if household_type == 'couple':
-            profile.partner_name = p2_name or "Partner"
-            if p2_birth:
-                profile.partner_birth_date = datetime.strptime(p2_birth, '%Y-%m-%d').date()
-            if p2_ret_age:
-                profile.partner_retirement_age = int(p2_ret_age)
-        
-        target_pension = data.get('target_monthly_payout')
-        if target_pension:
-            profile.target_pension_payout = Decimal(str(target_pension))
+            # 1. Profile & Persons
+            household_type = data.get('household_type', 'single')
+            p1_name = str(data.get('p1_name', '') or '').strip() or user.first_name or "Person 1"
+            p1_birth = _parse_date(data.get('p1_birth_date'))
+            p1_ret_age = data.get('p1_retirement_age')
             
-        profile.display_name = p1_name if household_type == 'single' else f"{p1_name} & {p2_name or 'Partner'}"
-        profile.save()
+            p2_name = str(data.get('p2_name', '') or '').strip()
+            p2_birth = _parse_date(data.get('p2_birth_date'))
+            p2_ret_age = data.get('p2_retirement_age')
 
-        ct_pension = ContentType.objects.get_for_model(Pension)
+            if p1_birth:
+                profile.birth_date = p1_birth
+            if p1_ret_age:
+                try:
+                    profile.retirement_age = int(p1_ret_age)
+                except (ValueError, TypeError):
+                    pass
 
-        # 2. Statutory Pension Statements (DRV Renteninformation)
-        drv_entries = data.get('drv_statements', [])
-        for drv in drv_entries:
-            provider_name = drv.get('provider') or f"Deutsche Rentenversicherung ({drv.get('person_name', p1_name)})"
-            pts_str = drv.get('pension_points')
-            pt_val_str = drv.get('point_value') or '39.32'
-            stand_today_str = drv.get('stand_today_net') # Bislang erreichte Rentenanwartschaft
-            forecast_net_str = drv.get('forecast_net') # Hochrechnung Regelaltersrente
-            erwerbsminderung_str = drv.get('erwerbsminderung_net')
-            ret_age_str = drv.get('retirement_age') or profile.retirement_age
-            ret_date_str = drv.get('retirement_date') # Regelaltersrente am
-            statement_date_str = drv.get('statement_date') # Stand vom
-
-            def _to_decimal(val):
-                if val is None or val == '' or str(val).strip() == '':
-                    return None
-                return Decimal(str(val).replace(',', '.'))
-
-            pts = _to_decimal(pts_str)
-            pt_val = _to_decimal(pt_val_str) or Decimal('39.32')
-            expected_net = _to_decimal(forecast_net_str) or _to_decimal(stand_today_str)
-
-            # Match or create pension contract
-            pension_id = drv.get('existing_pension_id')
-            if pension_id:
-                pension = Pension.objects.filter(id=pension_id, user=user).first()
-            else:
-                pension = Pension.objects.filter(user=user, provider=provider_name, pension_type='statutory').first()
-
-            if not pension:
-                pension = Pension(user=user, provider=provider_name, pension_type='statutory')
-
-            if pts is not None:
-                pension.pension_points = pts
-            pension.point_value = pt_val
-            if expected_net is not None:
-                pension.expected_payout_at_retirement = expected_net
-            pension.retirement_age = int(ret_age_str) if ret_age_str else 67
-
-            if ret_date_str:
-                pension.start_payout_date = datetime.strptime(ret_date_str, '%Y-%m-%d').date()
-
-            notes_parts = []
-            if erwerbsminderung_str:
-                notes_parts.append(f"Erwerbsminderungsrente: {erwerbsminderung_str} €")
-            if drv.get('versicherungsnummer'):
-                notes_parts.append(f"VS-Nr: {drv.get('versicherungsnummer')}")
-            if notes_parts:
-                pension.notes = " | ".join(notes_parts)
-
-            pension.save()
-
-            # Record Snapshot if statement_date is present
-            if statement_date_str:
-                s_date = datetime.strptime(statement_date_str, '%Y-%m-%d').date()
-                snap_net = _to_decimal(stand_today_str) or expected_net
+            if household_type == 'couple':
+                profile.partner_name = p2_name or "Partner"
+                if p2_birth:
+                    profile.partner_birth_date = p2_birth
+                if p2_ret_age:
+                    try:
+                        profile.partner_retirement_age = int(p2_ret_age)
+                    except (ValueError, TypeError):
+                        pass
+            
+            target_pension = _to_decimal(data.get('target_monthly_payout'))
+            if target_pension is not None:
+                profile.target_pension_payout = target_pension
                 
-                # Check existing snapshots for this pension contract
-                existing_snaps = AssetSnapshot.objects.filter(user=user, content_type=ct_pension, object_id=pension.id)
-                latest_snap_date = existing_snaps.order_by('-date').values_list('date', flat=True).first()
+            profile.display_name = p1_name if household_type == 'single' else f"{p1_name} & {p2_name or 'Partner'}"
+            profile.save()
 
-                # Update main pension only if statement_date is newer or no previous snapshot exists
-                if not latest_snap_date or s_date >= latest_snap_date:
+            ct_pension = ContentType.objects.get_for_model(Pension)
+
+            # 2. Statutory Pension Statements (DRV Renteninformation)
+            drv_entries = data.get('drv_statements', [])
+            if isinstance(drv_entries, list):
+                for drv in drv_entries:
+                    if not isinstance(drv, dict):
+                        continue
+                    provider_name = drv.get('provider') or f"Deutsche Rentenversicherung ({drv.get('person_name', p1_name)})"
+                    pts_str = drv.get('pension_points')
+                    pt_val_str = drv.get('point_value') or '39.32'
+                    stand_today_str = drv.get('stand_today_net')
+                    forecast_net_str = drv.get('forecast_net')
+                    erwerbsminderung_str = drv.get('erwerbsminderung_net')
+                    ret_age_str = drv.get('retirement_age') or profile.retirement_age
+                    ret_date_str = drv.get('retirement_date')
+                    statement_date_str = drv.get('statement_date')
+
+                    pts = _to_decimal(pts_str)
+                    pt_val = _to_decimal(pt_val_str) or Decimal('39.32')
+                    expected_net = _to_decimal(forecast_net_str) or _to_decimal(stand_today_str)
+                    em_net = _to_decimal(erwerbsminderung_str)
+
+                    pension_id = drv.get('existing_pension_id')
+                    pension = None
+                    if pension_id:
+                        pension = Pension.objects.filter(id=pension_id, user=user).first()
+                    if not pension:
+                        pension = Pension.objects.filter(user=user, provider=provider_name, pension_type='statutory').first()
+                    if not pension:
+                        pension = Pension(user=user, provider=provider_name, pension_type='statutory')
+
                     if pts is not None:
                         pension.pension_points = pts
                     pension.point_value = pt_val
                     if expected_net is not None:
                         pension.expected_payout_at_retirement = expected_net
-                    if ret_date_str:
-                        pension.start_payout_date = datetime.strptime(ret_date_str, '%Y-%m-%d').date()
+                    if em_net is not None:
+                        pension.disability_pension_net = em_net
+                    try:
+                        pension.retirement_age = int(ret_age_str) if ret_age_str else 67
+                    except (ValueError, TypeError):
+                        pension.retirement_age = 67
+
+                    ret_d = _parse_date(ret_date_str)
+                    if ret_d:
+                        pension.start_payout_date = ret_d
+
+                    notes_parts = []
+                    if drv.get('versicherungsnummer'):
+                        notes_parts.append(f"VS-Nr: {drv.get('versicherungsnummer')}")
+                    if notes_parts:
+                        pension.notes = " | ".join(notes_parts)
+
                     pension.save()
 
-                AssetSnapshot.objects.update_or_create(
-                    user=user,
-                    content_type=ct_pension,
-                    object_id=pension.id,
-                    date=s_date,
-                    defaults={
-                        'pension_points': pts,
-                        'point_value': pt_val,
-                        'expected_payout_net': snap_net,
-                        'value': snap_net if snap_net else Decimal('0.00'),
-                        'notes': f"Renteninformation Stand {s_date.strftime('%d.%m.%Y')}"
-                    }
-                )
+                    s_date = _parse_date(statement_date_str)
+                    if s_date:
+                        snap_net = _to_decimal(stand_today_str) or expected_net
+                        existing_snaps = AssetSnapshot.objects.filter(user=user, content_type=ct_pension, object_id=pension.id)
+                        latest_snap_date = existing_snaps.order_by('-date').values_list('date', flat=True).first()
 
-        # 3. Private & Occupational Pension Statements (bAV, Riester, Allianz, etc.)
-        private_entries = data.get('private_statements', [])
-        for priv in private_entries:
-            provider = priv.get('provider', 'Private Vorsorge')
-            policy_nr = priv.get('policy_number', '')
-            full_provider = f"{provider} (Pol.-Nr. {policy_nr})" if policy_nr else provider
+                        if not latest_snap_date or s_date >= latest_snap_date:
+                            if pts is not None:
+                                pension.pension_points = pts
+                            pension.point_value = pt_val
+                            if expected_net is not None:
+                                pension.expected_payout_at_retirement = expected_net
+                            if em_net is not None:
+                                pension.disability_pension_net = em_net
+                            if ret_d:
+                                pension.start_payout_date = ret_d
+                            pension.save()
 
-            cap_val_str = priv.get('current_capital') or priv.get('garantiekapital') or priv.get('rueckkaufswert')
-            expected_net_str = priv.get('expected_monthly_payout') or priv.get('garantierente')
-            contrib_str = priv.get('monthly_contribution')
-            growth_str = priv.get('growth_rate')
-            ret_date_str = priv.get('payout_start_date')
-            statement_date_str = priv.get('statement_date')
+                        AssetSnapshot.objects.update_or_create(
+                            user=user,
+                            content_type=ct_pension,
+                            object_id=pension.id,
+                            date=s_date,
+                            defaults={
+                                'pension_points': pts,
+                                'point_value': pt_val,
+                                'expected_payout_net': snap_net,
+                                'disability_pension_net': em_net,
+                                'value': snap_net if snap_net else Decimal('0.00'),
+                                'notes': f"Renteninformation Stand {s_date.strftime('%d.%m.%Y')}"
+                            }
+                        )
 
-            pension_id = priv.get('existing_pension_id')
-            if pension_id:
-                pension = Pension.objects.filter(id=pension_id, user=user).first()
-            else:
-                pension = Pension.objects.filter(user=user, provider=full_provider, pension_type='capital').first()
+            # 3. Private & Occupational Pension Statements
+            private_entries = data.get('private_statements', [])
+            if isinstance(private_entries, list):
+                for priv in private_entries:
+                    if not isinstance(priv, dict):
+                        continue
+                    provider = str(priv.get('provider', 'Private Vorsorge')).strip()
+                    policy_nr = str(priv.get('policy_number', '')).strip()
+                    full_provider = f"{provider} (Pol.-Nr. {policy_nr})" if policy_nr else provider
 
-            if not pension:
-                pension = Pension(user=user, provider=full_provider, pension_type='capital')
+                    cap_val_str = priv.get('current_capital') or priv.get('garantiekapital') or priv.get('rueckkaufswert')
+                    expected_net_str = priv.get('expected_monthly_payout') or priv.get('garantierente')
+                    contrib_str = priv.get('monthly_contribution')
+                    growth_str = priv.get('growth_rate')
+                    ret_date_str = priv.get('payout_start_date')
+                    statement_date_str = priv.get('statement_date')
 
-            cap_val = _to_decimal(cap_val_str)
-            expected_net = _to_decimal(expected_net_str)
-            contrib = _to_decimal(contrib_str)
-            growth = _to_decimal(growth_str)
+                    pension_id = priv.get('existing_pension_id')
+                    pension = None
+                    if pension_id:
+                        pension = Pension.objects.filter(id=pension_id, user=user).first()
+                    if not pension:
+                        pension = Pension.objects.filter(user=user, provider=full_provider, pension_type='capital').first()
+                    if not pension:
+                        pension = Pension(user=user, provider=full_provider, pension_type='capital')
 
-            # Check existing snapshots for this contract
-            s_date = datetime.strptime(statement_date_str, '%Y-%m-%d').date() if statement_date_str else None
-            existing_snaps = AssetSnapshot.objects.filter(user=user, content_type=ct_pension, object_id=pension.id)
-            latest_snap_date = existing_snaps.order_by('-date').values_list('date', flat=True).first()
+                    cap_val = _to_decimal(cap_val_str)
+                    expected_net = _to_decimal(expected_net_str)
+                    contrib = _to_decimal(contrib_str)
+                    growth = _to_decimal(growth_str)
+                    s_date = _parse_date(statement_date_str)
+                    ret_d = _parse_date(ret_date_str)
 
-            # Update main pension only if statement_date is newer or no previous snapshot exists
-            if not s_date or not latest_snap_date or s_date >= latest_snap_date:
-                if cap_val is not None:
-                    pension.current_value = cap_val
-                if expected_net is not None:
-                    pension.expected_payout_at_retirement = expected_net
-                if contrib is not None:
-                    pension.monthly_contribution = contrib
-                if growth is not None:
-                    pension.growth_rate = growth
-                if ret_date_str:
-                    pension.start_payout_date = datetime.strptime(ret_date_str, '%Y-%m-%d').date()
+                    existing_snaps = AssetSnapshot.objects.filter(user=user, content_type=ct_pension, object_id=pension.id) if pension.id else []
+                    latest_snap_date = existing_snaps.order_by('-date').values_list('date', flat=True).first() if existing_snaps else None
 
-            notes = []
-            if priv.get('garantiekapital'): notes.append(f"Garantiekapital: {priv.get('garantiekapital')} €")
-            if priv.get('todesfallleistung'): notes.append(f"Todesfallleistung: {priv.get('todesfallleistung')} €")
-            if notes: pension.notes = " | ".join(notes)
+                    if not s_date or not latest_snap_date or s_date >= latest_snap_date:
+                        if cap_val is not None:
+                            pension.current_value = cap_val
+                        if expected_net is not None:
+                            pension.expected_payout_at_retirement = expected_net
+                        if contrib is not None:
+                            pension.monthly_contribution = contrib
+                        if growth is not None:
+                            pension.growth_rate = growth
+                        if ret_d:
+                            pension.start_payout_date = ret_d
 
-            pension.save()
+                    notes = []
+                    if priv.get('garantiekapital'): notes.append(f"Garantiekapital: {priv.get('garantiekapital')} €")
+                    if priv.get('todesfallleistung'): notes.append(f"Todesfallleistung: {priv.get('todesfallleistung')} €")
+                    if notes: pension.notes = " | ".join(notes)
 
-            if s_date and cap_val is not None:
-                AssetSnapshot.objects.update_or_create(
-                    user=user,
-                    content_type=ct_pension,
-                    object_id=pension.id,
-                    date=s_date,
-                    defaults={
-                        'value': cap_val,
-                        'expected_payout_net': expected_net,
-                        'notes': f"Standmitteilung {s_date.strftime('%d.%m.%Y')}"
-                    }
-                )
+                    pension.save()
 
-        # 4. Income & Expenses (Update or create to prevent duplication)
-        cat_gehalt = _get_category_by_slug_or_name('gehalt', 'Gehalt', '#11ff00')
-        cat_leben = _get_category_by_slug_or_name('lebenshaltung', 'Lebenshaltung', '#fd7e14')
-        cat_steuern = _get_category_by_slug_or_name('steuern-abgaben', 'Steuern & Abgaben', '#dc3545')
+                    if s_date and cap_val is not None:
+                        AssetSnapshot.objects.update_or_create(
+                            user=user,
+                            content_type=ct_pension,
+                            object_id=pension.id,
+                            date=s_date,
+                            defaults={
+                                'value': cap_val,
+                                'expected_payout_net': expected_net,
+                                'notes': f"Standmitteilung {s_date.strftime('%d.%m.%Y')}"
+                            }
+                        )
 
-        incomes = data.get('incomes', [])
-        for inc in incomes:
-            amt = _to_decimal(inc.get('amount'))
-            name = inc.get('name', 'Gehalt / Einnahme').strip()
-            if amt and amt > 0 and name:
-                CashFlowSource.objects.update_or_create(
-                    user=user,
-                    name=name,
-                    is_income=True,
-                    defaults={
-                        'value': amt,
-                        'frequency': inc.get('frequency', 'monthly'),
-                        'category': cat_gehalt
-                    }
-                )
+            # 4. Income & Expenses
+            cat_gehalt = _get_category_by_slug_or_name('gehalt', 'Gehalt', '#11ff00')
+            cat_leben = _get_category_by_slug_or_name('lebenshaltung', 'Lebenshaltung', '#fd7e14')
+            cat_steuern = _get_category_by_slug_or_name('steuern-abgaben', 'Steuern & Abgaben', '#dc3545')
 
-        expenses = data.get('expenses', [])
-        for exp in expenses:
-            amt = _to_decimal(exp.get('amount'))
-            name = exp.get('name', 'Ausgabe').strip()
-            if amt and amt > 0 and name:
-                cat_exp = cat_steuern if 'steuer' in name.lower() else cat_leben
-                CashFlowSource.objects.update_or_create(
-                    user=user,
-                    name=name,
-                    is_income=False,
-                    defaults={
-                        'value': amt,
-                        'frequency': exp.get('frequency', 'monthly'),
-                        'category': cat_exp
-                    }
-                )
+            incomes = data.get('incomes', [])
+            if isinstance(incomes, list):
+                for inc in incomes:
+                    if not isinstance(inc, dict):
+                        continue
+                    amt = _to_decimal(inc.get('amount'))
+                    name = str(inc.get('name', 'Gehalt / Einnahme')).strip()
+                    if amt and amt > 0 and name:
+                        CashFlowSource.objects.update_or_create(
+                            user=user,
+                            name=name,
+                            is_income=True,
+                            defaults={
+                                'value': amt,
+                                'frequency': inc.get('frequency', 'monthly'),
+                                'category': cat_gehalt
+                            }
+                        )
 
-        # 5. Liquid Assets (Konten / Depots) (Update or create to prevent duplication)
-        assets = data.get('assets', [])
-        for ast in assets:
-            amt = _to_decimal(ast.get('value'))
-            name = ast.get('name', 'Konto / Depot').strip()
-            if amt and amt > 0 and name:
-                growth = _to_decimal(ast.get('growth_rate')) or Decimal('0.0')
-                Asset.objects.update_or_create(
-                    user=user,
-                    name=name,
-                    defaults={
-                        'value': amt,
-                        'growth_rate': growth
-                    }
-                )
+            expenses = data.get('expenses', [])
+            if isinstance(expenses, list):
+                for exp in expenses:
+                    if not isinstance(exp, dict):
+                        continue
+                    amt = _to_decimal(exp.get('amount'))
+                    name = str(exp.get('name', 'Ausgabe')).strip()
+                    if amt and amt > 0 and name:
+                        cat_exp = cat_steuern if 'steuer' in name.lower() else cat_leben
+                        CashFlowSource.objects.update_or_create(
+                            user=user,
+                            name=name,
+                            is_income=False,
+                            defaults={
+                                'value': amt,
+                                'frequency': exp.get('frequency', 'monthly'),
+                                'category': cat_exp
+                            }
+                        )
 
-        # 6. Real Estate & Mortgages (Update or create to prevent duplication)
-        real_estates = data.get('real_estates', [])
-        for re_item in real_estates:
-            prop_val = _to_decimal(re_item.get('property_value'))
-            name = re_item.get('name', 'Eigenheim / Immobilie').strip()
-            if prop_val and prop_val > 0 and name:
-                apprec = _to_decimal(re_item.get('appreciation_rate')) or Decimal('1.5')
-                maint = _to_decimal(re_item.get('maintenance_monthly')) or Decimal('0.0')
-                ancill = _to_decimal(re_item.get('ancillary_monthly')) or Decimal('0.0')
-                RealEstate.objects.update_or_create(
-                    user=user,
-                    name=name,
-                    defaults={
-                        'property_value': prop_val,
-                        'appreciation_rate': apprec,
-                        'location': re_item.get('location', ''),
-                        'maintenance_costs_monthly': maint,
-                        'ancillary_costs_monthly': ancill
-                    }
-                )
+            # 5. Liquid Assets
+            assets = data.get('assets', [])
+            if isinstance(assets, list):
+                for ast in assets:
+                    if not isinstance(ast, dict):
+                        continue
+                    amt = _to_decimal(ast.get('value'))
+                    name = str(ast.get('name', 'Konto / Depot')).strip()
+                    if amt and amt > 0 and name:
+                        growth = _to_decimal(ast.get('growth_rate')) or Decimal('0.0')
+                        Asset.objects.update_or_create(
+                            user=user,
+                            name=name,
+                            defaults={
+                                'value': amt,
+                                'growth_rate': growth
+                            }
+                        )
 
-        loans = data.get('loans', [])
-        for ln in loans:
-            nominal = _to_decimal(ln.get('nominal_amount'))
-            name = ln.get('name', 'Immobiliendarlehen').strip()
-            if nominal and nominal > 0 and name:
-                installment = _to_decimal(ln.get('monthly_installment')) or Decimal('0.0')
-                rate = _to_decimal(ln.get('interest_rate')) or Decimal('2.0')
-                start_d = datetime.strptime(ln.get('start_date'), '%Y-%m-%d').date() if ln.get('start_date') else date.today()
-                Loan.objects.update_or_create(
-                    user=user,
-                    name=name,
-                    defaults={
-                        'provider': ln.get('provider', ''),
-                        'nominal_amount': nominal,
-                        'interest_rate': rate,
-                        'monthly_installment': installment,
-                        'start_date': start_d
-                    }
-                )
+            # 6. Real Estate & Mortgages
+            real_estates = data.get('real_estates', [])
+            if isinstance(real_estates, list):
+                for re_item in real_estates:
+                    if not isinstance(re_item, dict):
+                        continue
+                    prop_val = _to_decimal(re_item.get('property_value'))
+                    name = str(re_item.get('name', 'Eigenheim / Immobilie')).strip()
+                    if prop_val and prop_val > 0 and name:
+                        apprec = _to_decimal(re_item.get('appreciation_rate')) or Decimal('1.5')
+                        maint = _to_decimal(re_item.get('maintenance_monthly')) or Decimal('0.0')
+                        ancill = _to_decimal(re_item.get('ancillary_monthly')) or Decimal('0.0')
+                        RealEstate.objects.update_or_create(
+                            user=user,
+                            name=name,
+                            defaults={
+                                'property_value': prop_val,
+                                'appreciation_rate': apprec,
+                                'location': re_item.get('location', ''),
+                                'maintenance_costs_monthly': maint,
+                                'ancillary_costs_monthly': ancill
+                            }
+                        )
+
+            loans = data.get('loans', [])
+            if isinstance(loans, list):
+                for ln in loans:
+                    if not isinstance(ln, dict):
+                        continue
+                    nominal = _to_decimal(ln.get('nominal_amount'))
+                    name = str(ln.get('name', 'Immobiliendarlehen')).strip()
+                    if nominal and nominal > 0 and name:
+                        installment = _to_decimal(ln.get('monthly_installment')) or Decimal('0.0')
+                        rate = _to_decimal(ln.get('interest_rate')) or Decimal('2.0')
+                        start_d = _parse_date(ln.get('start_date')) or date.today()
+                        Loan.objects.update_or_create(
+                            user=user,
+                            name=name,
+                            defaults={
+                                'provider': ln.get('provider', ''),
+                                'nominal_amount': nominal,
+                                'interest_rate': rate,
+                                'monthly_installment': installment,
+                                'start_date': start_d
+                            }
+                        )
 
         messages.success(request, _('Finanzdaten und Stichtagsmitteilungen wurden erfolgreich gespeichert!'))
         return JsonResponse({'status': 'success', 'redirect_url': '/finance/pensions/'})

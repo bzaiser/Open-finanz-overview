@@ -409,7 +409,7 @@
                             <h6 class="fw-bold mb-2 text-primary" style="font-size: 0.8rem;">
                                 <i class="bi bi-calculator me-1"></i>{% trans "Statutory Pension Point Calculation" %}
                             </h6>
-                            <div class="row g-2">
+                            <div class="row g-2 mb-2">
                                 <div class="col-md-4">
                                     <label class="form-label small fw-bold opacity-75">{% trans "Pension Points (EP)" %}</label>
                                     <input type="number" step="0.0001" name="pension_points" x-model="form.pension_points" @input="calculateStatutoryAmounts()" class="form-control font-monospace" placeholder="69.50">
@@ -421,6 +421,12 @@
                                 <div class="col-md-4">
                                     <label class="form-label small fw-bold opacity-75">{% trans "Social Security Deduction (%)" %}</label>
                                     <input type="number" step="0.01" name="social_deduction_rate" x-model="form.social_deduction_rate" @input="calculateStatutoryAmounts()" class="form-control font-monospace" placeholder="11.50">
+                                </div>
+                            </div>
+                            <div class="row g-2">
+                                <div class="col-md-12">
+                                    <label class="form-label small fw-bold opacity-75 text-info">{% trans "Erwerbsminderungsrente (€/mtl. netto)" %}</label>
+                                    <input type="number" step="0.01" name="disability_pension_net" x-model="form.disability_pension_net" class="form-control font-monospace" placeholder="z. B. 1450.00">
                                 </div>
                             </div>
                         </div>
@@ -507,6 +513,9 @@
                                             <template x-if="form.pension_type === 'statutory'">
                                                 <th class="py-2 px-3 border-0 text-end">{% trans "Netto (€)" %}</th>
                                             </template>
+                                            <template x-if="form.pension_type === 'statutory'">
+                                                <th class="py-2 px-2 border-0 text-end">{% trans "EM-Rente (€)" %}</th>
+                                            </template>
                                             <template x-if="form.pension_type !== 'statutory'">
                                                 <th class="py-2 px-3 border-0 text-end">{% trans "Kapital (€)" %}</th>
                                             </template>
@@ -526,6 +535,9 @@
                                                 </template>
                                                 <template x-if="form.pension_type === 'statutory'">
                                                     <td class="py-2 px-3 text-end font-monospace fw-bold text-success" x-text="s.expected_payout_net !== null ? formatEuro(s.expected_payout_net) + ' €' : (s.value > 0 ? formatEuro(s.value) + ' €' : '-')"></td>
+                                                </template>
+                                                <template x-if="form.pension_type === 'statutory'">
+                                                    <td class="py-2 px-2 text-end font-monospace text-info" x-text="s.disability_pension_net !== null ? formatEuro(s.disability_pension_net) + ' €' : '-'"></td>
                                                 </template>
                                                 <template x-if="form.pension_type !== 'statutory'">
                                                     <td class="py-2 px-3 text-end font-monospace fw-bold text-info" x-text="formatEuro(s.value) + ' €'"></td>
@@ -787,6 +799,7 @@
                     point_value: '',
                     gross_payout_amount: '',
                     social_deduction_rate: '11.50',
+                    disability_pension_net: '',
                     expected_payout_at_retirement: '',
                     target_pension_payout: '',
                     retirement_age: '',
@@ -811,6 +824,7 @@
                     point_value: p.point_value,
                     gross_payout_amount: p.gross_payout_amount,
                     social_deduction_rate: p.social_deduction_rate || '11.50',
+                    disability_pension_net: p.disability_pension_net,
                     expected_payout_at_retirement: p.expected_payout_at_retirement,
                     target_pension_payout: p.target_pension_payout,
                     retirement_age: p.retirement_age,

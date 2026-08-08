@@ -117,6 +117,7 @@ class Pension(models.Model):
     point_value = models.DecimalField(_("Point Value (€)"), max_digits=6, decimal_places=2, null=True, blank=True, help_text=_("Value of 1 pension point in EUR (e.g. 39.32)"))
     gross_payout_amount = models.DecimalField(_("Gross Monthly Payout (€)"), max_digits=10, decimal_places=2, null=True, blank=True, help_text=_("Calculated automatically from points * point_value, or enter manually"))
     social_deduction_rate = models.DecimalField(_("Social Security Deduction (%)"), max_digits=5, decimal_places=2, default=11.50, help_text=_("Health and nursing care insurance deduction percentage (e.g. 12.79%)"))
+    disability_pension_net = models.DecimalField(_("Disability Pension Net (€/month)"), max_digits=10, decimal_places=2, blank=True, null=True, help_text=_("Full disability monthly net payout from statutory pension statement"))
 
     expected_payout_at_retirement = models.DecimalField(_("Expected Monthly Net Payout"), max_digits=10, decimal_places=2, blank=True, null=True, help_text=_("Net payout after KV/PV deductions (Enter manually or auto-calculated)"))
     retirement_age = models.PositiveIntegerField(_("Retirement Age"), blank=True, null=True, help_text=_("Target retirement age for this specific pension contract (e.g. 67)"))
@@ -374,6 +375,7 @@ class AssetSnapshot(models.Model):
     pension_points = models.DecimalField(_("Pension Points (Entgeltpunkte)"), max_digits=8, decimal_places=4, null=True, blank=True)
     point_value = models.DecimalField(_("Point Value (€)"), max_digits=6, decimal_places=2, null=True, blank=True)
     expected_payout_net = models.DecimalField(_("Monthly Net Payout (€)"), max_digits=10, decimal_places=2, null=True, blank=True)
+    disability_pension_net = models.DecimalField(_("Disability Pension Net (€)"), max_digits=10, decimal_places=2, null=True, blank=True)
 
     notes = models.TextField(_("Notes"), blank=True)
 
