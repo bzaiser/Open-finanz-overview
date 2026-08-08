@@ -47,7 +47,16 @@ def wizard_page_view(request):
     pensions = Pension.objects.filter(user=request.user)
     pensions_stat = []
     pensions_priv = []
+    from django.contrib.contenttypes.models import ContentType
+    ct_pension = ContentType.objects.get_for_model(Pension)
+
     for p in pensions:
+        latest_snap_date = AssetSnapshot.objects.filter(
+            user=request.user, content_type=ct_pension, object_id=p.id
+        ).order_by('-date').values_list('date', flat=True).first()
+        
+        stmt_date_str = latest_snap_date.strftime('%Y-%m-%d') if latest_snap_date else date.today().strftime('%Y-%m-%d')
+
         p_dict = {
             'existing_pension_id': p.id,
             'provider': p.provider,
@@ -60,7 +69,7 @@ def wizard_page_view(request):
             'current_capital': float(p.current_value) if p.current_value is not None else '',
             'growth_rate': float(p.growth_rate) if p.growth_rate is not None else '',
             'monthly_contribution': float(p.monthly_contribution) if p.monthly_contribution is not None else '',
-            'statement_date': '',
+            'statement_date': stmt_date_str,
             'retirement_date': p.start_payout_date.strftime('%Y-%m-%d') if p.start_payout_date else '',
         }
         if p.pension_type == 'statutory':
