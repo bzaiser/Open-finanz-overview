@@ -417,7 +417,12 @@
                             {{ user.best_name }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end shadow border-0" style="z-index: 1050;">
-                            <li><a class="dropdown-item" href="{% url 'admin:index' %}">{% trans 'Admin' %}</a></li>
+                            <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="bi bi-person-gear me-1"></i> {% trans 'Settings & Profile' %}</a></li>
+                            <li><a class="dropdown-item fw-bold text-primary" href="{% url 'finance:setup_wizard' %}"><i class="bi bi-magic me-1"></i> {% trans 'Einrichtungs-Wizard' %}</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            {% if user.is_staff %}
+                            <li><a class="dropdown-item" href="{% url 'admin:index' %}"><i class="bi bi-shield-lock me-1"></i> {% trans 'Admin' %}</a></li>
+                            {% endif %}
                             <li><a class="dropdown-item" href="{% url 'help' %}"><i class="bi bi-question-circle me-1"></i> {% trans 'Help' %}</a></li>
                             <li><a class="dropdown-item" href="{% url 'about' %}"><i class="bi bi-info-circle me-1"></i> {% trans 'About' %}</a></li>
 

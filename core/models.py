@@ -69,6 +69,7 @@ class UserProfile(models.Model):
     
     # Night Mode / System Sync
     auto_night_mode = models.BooleanField(_("Follow System Design"), default=False)
+    hide_wizard_on_start = models.BooleanField(_("Hide Setup Wizard on Startup"), default=False)
     dark_mode_config = models.JSONField(_("Night Mode Colors"), default=dict, blank=True, null=True)
 
     # Gradient & Unified Design Fields

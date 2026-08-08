@@ -186,6 +186,10 @@ def dashboard_view(request):
     user = request.user
     profile, created = UserProfile.objects.get_or_create(user=user)
     
+    # Redirect to Erst-Einrichtungs-Wizard on first start unless hidden by user
+    if not profile.hide_wizard_on_start and request.GET.get('skip_wizard') != '1':
+        return redirect('finance:setup_wizard')
+    
     # Helper for safe merging of defaults
     def safe_merge(user_data, defaults):
         if not user_data: return defaults

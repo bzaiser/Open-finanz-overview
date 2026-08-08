@@ -40,6 +40,7 @@ def wizard_page_view(request):
         'partner_birth_date': profile.partner_birth_date.strftime('%Y-%m-%d') if (profile and profile.partner_birth_date) else '',
         'partner_retirement_age': profile.partner_retirement_age if profile else 67,
         'target_monthly_payout': float(profile.target_pension_payout) if (profile and profile.target_pension_payout) else '',
+        'hide_wizard_on_start': profile.hide_wizard_on_start if profile else False,
     }
 
     # Pre-populate existing pensions
@@ -162,6 +163,9 @@ def wizard_save_api(request):
             if target_pension is not None:
                 profile.target_pension_payout = target_pension
                 
+            if 'hide_wizard_on_start' in data:
+                profile.hide_wizard_on_start = bool(data.get('hide_wizard_on_start'))
+
             profile.display_name = p1_name if household_type == 'single' else f"{p1_name} & {p2_name or 'Partner'}"
             profile.save()
 
