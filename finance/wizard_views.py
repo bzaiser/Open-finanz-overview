@@ -149,7 +149,7 @@ def wizard_save_api(request):
         user = request.user
 
         with transaction.atomic():
-            profile, _ = UserProfile.objects.get_or_create(user=user)
+            profile, created = UserProfile.objects.get_or_create(user=user)
 
             # 1. Profile & Persons
             household_type = data.get('household_type', 'single')
