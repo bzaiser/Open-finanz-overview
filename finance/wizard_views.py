@@ -260,7 +260,7 @@ def wizard_save_api(request):
                     s_date = _parse_date(statement_date_str)
                     if s_date:
                         snap_net = _to_decimal(stand_today_str) or expected_net
-                        _, snap_created = AssetSnapshot.objects.update_or_create(
+                        dummy_obj, snap_created = AssetSnapshot.objects.update_or_create(
                             user=user,
                             content_type=ct_pension,
                             object_id=pension.id,
@@ -328,7 +328,7 @@ def wizard_save_api(request):
                         snap_created = False
                         if s_date:
                             snap_val = cap_val if cap_val is not None else (payout_val or Decimal('0.00'))
-                            _, snap_created = AssetSnapshot.objects.update_or_create(
+                            dummy_obj, snap_created = AssetSnapshot.objects.update_or_create(
                                 user=user,
                                 content_type=ct_pension,
                                 object_id=pension.id,
@@ -358,7 +358,7 @@ def wizard_save_api(request):
                     amt = _to_decimal(inc.get('amount'))
                     name = str(inc.get('name', 'Gehalt')).strip()
                     if amt and amt > 0 and name:
-                        _, created = CashFlowSource.objects.update_or_create(
+                        dummy_obj, created = CashFlowSource.objects.update_or_create(
                             user=user,
                             name=name,
                             is_income=True,
@@ -382,7 +382,7 @@ def wizard_save_api(request):
                     amt = _to_decimal(exp.get('amount'))
                     name = str(exp.get('name', 'Ausgabe')).strip()
                     if amt and amt > 0 and name:
-                        _, created = CashFlowSource.objects.update_or_create(
+                        dummy_obj, created = CashFlowSource.objects.update_or_create(
                             user=user,
                             name=name,
                             is_income=False,
@@ -407,7 +407,7 @@ def wizard_save_api(request):
                     val = _to_decimal(ast.get('value'))
                     name = str(ast.get('name', 'Vermögen')).strip()
                     if val and val > 0 and name:
-                        _, created = Asset.objects.update_or_create(
+                        dummy_obj, created = Asset.objects.update_or_create(
                             user=user,
                             name=name,
                             defaults={
@@ -433,7 +433,7 @@ def wizard_save_api(request):
                         apprec = _to_decimal(re_item.get('appreciation_rate')) or Decimal('1.5')
                         maint = _to_decimal(re_item.get('maintenance_monthly')) or Decimal('0.0')
                         ancill = _to_decimal(re_item.get('ancillary_monthly')) or Decimal('0.0')
-                        _, created = RealEstate.objects.update_or_create(
+                        dummy_obj, created = RealEstate.objects.update_or_create(
                             user=user,
                             name=name,
                             defaults={
@@ -461,7 +461,7 @@ def wizard_save_api(request):
                         installment = _to_decimal(ln.get('monthly_installment')) or Decimal('0.0')
                         rate = _to_decimal(ln.get('interest_rate')) or Decimal('2.0')
                         start_d = _parse_date(ln.get('start_date')) or date.today()
-                        _, created = Loan.objects.update_or_create(
+                        dummy_obj, created = Loan.objects.update_or_create(
                             user=user,
                             name=name,
                             defaults={
