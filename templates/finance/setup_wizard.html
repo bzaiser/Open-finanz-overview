@@ -460,7 +460,8 @@
                         if (res.step) {
                             this.currentStep = res.step;
                         }
-                        alert('Fehler beim Speichern: ' + res.message);
+                        const details = res.traceback ? '\n\nDetails:\n' + res.traceback.slice(0, 300) : '';
+                        alert('Fehler beim Speichern:\n' + res.message + details);
                     }
                 } catch (err) {
                     alert('Verbindungsfehler beim Speichern der Daten: ' + err);

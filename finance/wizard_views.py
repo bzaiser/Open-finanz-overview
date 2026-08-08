@@ -437,5 +437,7 @@ def wizard_save_api(request):
 
     except Exception as e:
         import traceback
-        traceback.print_exc()
-        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+        tb_str = traceback.format_exc()
+        print("=== WIZARD SAVE ERROR LOG ===")
+        print(tb_str)
+        return JsonResponse({'status': 'error', 'message': f"{type(e).__name__}: {str(e)}", 'traceback': tb_str}, status=500)
