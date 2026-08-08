@@ -57,6 +57,12 @@ def wizard_page_view(request):
         
         stmt_date_str = latest_snap_date.strftime('%Y-%m-%d') if latest_snap_date else date.today().strftime('%Y-%m-%d')
 
+        stand_today = None
+        if p.pension_type == 'statutory' and p.pension_points is not None and p.point_value is not None:
+            stand_today = float(p.pension_points * p.point_value)
+        elif p.expected_payout_at_retirement is not None:
+            stand_today = float(p.expected_payout_at_retirement)
+
         p_dict = {
             'existing_pension_id': p.id,
             'provider': p.provider,
@@ -64,6 +70,7 @@ def wizard_page_view(request):
             'pension_points': float(p.pension_points) if p.pension_points is not None else '',
             'point_value': float(p.point_value) if p.point_value is not None else 39.32,
             'erwerbsminderung_net': float(p.disability_pension_net) if p.disability_pension_net is not None else '',
+            'stand_today_net': stand_today if stand_today is not None else '',
             'expected_monthly_payout': float(p.expected_payout_at_retirement) if p.expected_payout_at_retirement is not None else '',
             'forecast_net': float(p.expected_payout_at_retirement) if p.expected_payout_at_retirement is not None else '',
             'current_capital': float(p.current_value) if p.current_value is not None else '',
