@@ -2822,6 +2822,13 @@ def pension_plan_view(request):
 
     inflation_rate = profile.inflation_rate / Decimal('100.0')
     
+    # Target payout sum across contracts (or fallback to profile / total)
+    contract_targets_sum = sum([p.target_pension_payout for p in pensions if p.target_pension_payout])
+    if contract_targets_sum and contract_targets_sum > Decimal('0.00'):
+        target_monthly_payout = contract_targets_sum
+    else:
+        target_monthly_payout = profile.target_pension_payout if profile.target_pension_payout else total_monthly_net
+
     # Inflate today's expenses and today's target payout to retirement year
     if years_to_retirement > 0:
         inflation_factor = (Decimal('1.0') + inflation_rate) ** Decimal(str(years_to_retirement))
