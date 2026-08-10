@@ -234,22 +234,41 @@
                 </div>
                 <!-- Hover Expand Details: Gap Formula & Details -->
                 <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem;">
+                    {% if life_stage == 'retirement' %}
                     <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
-                        <span>{% trans "Ziel-Nettorente" %}:</span>
-                        <span class="font-monospace fw-bold">{{ target_monthly_payout|floatformat:2|intcomma }} €</span>
-                    </div>
-                    <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
-                        <span>{% trans "Einnahmen heute fließend" %}:</span>
+                        <span>{% trans "Rente fließend heute" %}:</span>
                         <span class="font-monospace fw-bold">{{ current_total_monthly_payout|floatformat:2|intcomma }} €</span>
                     </div>
                     <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
-                        <span>{% trans "Stand heute (Lücke / Überschuss)" %}:</span>
-                        <span class="font-monospace fw-bold">{% if current_pension_gap <= 0 %}+{% else %}-{% endif %}{{ current_pension_gap_abs|floatformat:2|intcomma }} €</span>
+                        <span>{% trans "Monatliche Ausgaben heute" %}:</span>
+                        <span class="font-monospace fw-bold">{{ monthly_expenses_today|floatformat:2|intcomma }} €</span>
+                    </div>
+                    <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
+                        <span>{% trans "Freier Überschuss heute" %}:</span>
+                        <span class="font-monospace fw-bold">{% if current_net_surplus >= 0 %}+{% else %}-{% endif %}{{ current_net_surplus_abs|floatformat:2|intcomma }} €</span>
                     </div>
                     <div class="d-flex justify-content-between py-1 mt-1">
-                        <span class="fw-bold">{% trans "Prognose ab 2030 (mit allen Verträgen)" %}:</span>
-                        <span class="font-monospace fw-bold">{% if future_pension_gap <= 0 %}+{% else %}-{% endif %}{{ future_pension_gap_abs|floatformat:2|intcomma }} €</span>
+                        <span class="fw-bold">{% trans "Ziel-Rente (Kaufkraft heute)" %}:</span>
+                        <span class="font-monospace fw-bold">{{ target_monthly_payout|floatformat:2|intcomma }} €</span>
                     </div>
+                    {% else %}
+                    <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
+                        <span>{% trans "Ausgaben heute" %}:</span>
+                        <span class="font-monospace fw-bold">{{ monthly_expenses_today|floatformat:2|intcomma }} €</span>
+                    </div>
+                    <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
+                        <span>{% trans "Hochgerechnete Ausgaben (" %}{{ retirement_year }}{% trans " inkl. " %}{{ user.profile.inflation_rate }}{% trans "% Infl.)" %}:</span>
+                        <span class="font-monospace fw-bold text-warning">{{ monthly_expenses_at_retirement|floatformat:2|intcomma }} €</span>
+                    </div>
+                    <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
+                        <span>{% trans "Ziel-Rente hochgerechnet (" %}{{ retirement_year }}{% trans ")" %}:</span>
+                        <span class="font-monospace fw-bold">{{ target_monthly_payout_inflated|floatformat:2|intcomma }} €</span>
+                    </div>
+                    <div class="d-flex justify-content-between py-1 mt-1">
+                        <span class="fw-bold">{% trans "Hochgerechnete Netto-Rente" %}:</span>
+                        <span class="font-monospace fw-bold">{{ total_monthly_net|floatformat:2|intcomma }} €</span>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
         </div>

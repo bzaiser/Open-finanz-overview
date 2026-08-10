@@ -2813,19 +2813,34 @@ def pension_plan_view(request):
     if user_current_age >= retirement_age or current_total_monthly_payout > Decimal('0.00'):
         life_stage = 'retirement'
 
-    # Target payout sum across contracts (or fallback to profile / total)
-    contract_targets_sum = sum([p.target_pension_payout for p in pensions if p.target_pension_payout])
-    if contract_targets_sum and contract_targets_sum > Decimal('0.00'):
-        target_monthly_payout = contract_targets_sum
+    # Fetch monthly cash flows
+    cash_flows = list(user.cash_flow_sources.filter(is_active=True))
+    monthly_expenses_today = sum([
+        c.value if c.frequency == 'monthly' else (c.value / Decimal('12.0'))
+        for c in cash_flows if not c.is_income
+    ])
+
+    inflation_rate = profile.inflation_rate / Decimal('100.0')
+    
+    # Inflate today's expenses and today's target payout to retirement year
+    if years_to_retirement > 0:
+        inflation_factor = (Decimal('1.0') + inflation_rate) ** Decimal(str(years_to_retirement))
     else:
-        target_monthly_payout = profile.target_pension_payout if profile.target_pension_payout else total_monthly_net
+        inflation_factor = Decimal('1.0')
 
-    # Calculate gaps: current (flowing today) vs future (all contracts active)
-    current_pension_gap = (target_monthly_payout - current_total_monthly_payout).quantize(Decimal('0.01')) if target_monthly_payout else Decimal('0.00')
-    future_pension_gap = (target_monthly_payout - total_monthly_net).quantize(Decimal('0.01')) if target_monthly_payout else Decimal('0.00')
+    monthly_expenses_at_retirement = (monthly_expenses_today * inflation_factor).quantize(Decimal('0.01'))
+    target_monthly_payout_inflated = (target_monthly_payout * inflation_factor).quantize(Decimal('0.01')) if target_monthly_payout else Decimal('0.00')
 
-    # Effective gap for primary card display: current in retirement, future in accumulation
-    pension_gap = current_pension_gap if life_stage == 'retirement' else future_pension_gap
+    # Net surplus / gap calculation
+    if life_stage == 'retirement':
+        # In retirement: Compare current flowing pension income vs current expenses
+        current_net_surplus = (current_total_monthly_payout - monthly_expenses_today).quantize(Decimal('0.01'))
+        pension_gap = (target_monthly_payout - current_total_monthly_payout).quantize(Decimal('0.01')) if target_monthly_payout else Decimal('0.00')
+    else:
+        # In accumulation: Compare projected total pension vs target/expenses at retirement
+        future_pension_gap = (target_monthly_payout_inflated - total_monthly_net).quantize(Decimal('0.01'))
+        pension_gap = future_pension_gap
+        current_net_surplus = Decimal('0.00')
 
     # Build historical & forecast timeline up to simulation_max_year
     earliest_snap_year = min([s.date.year for s in snapshots]) if snapshots else current_year - 5
@@ -3126,6 +3141,11 @@ def pension_plan_view(request):
         'total_monthly_net': total_monthly_net,
         'total_capital_value': total_capital_value,
         'target_monthly_payout': target_monthly_payout,
+        'target_monthly_payout_inflated': target_monthly_payout_inflated,
+        'monthly_expenses_today': monthly_expenses_today,
+        'monthly_expenses_at_retirement': monthly_expenses_at_retirement,
+        'current_net_surplus': current_net_surplus,
+        'current_net_surplus_abs': abs(current_net_surplus),
         'pension_gap': pension_gap,
         'pension_gap_abs': abs(pension_gap),
         'current_pension_gap': current_pension_gap,
