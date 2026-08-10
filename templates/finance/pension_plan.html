@@ -47,6 +47,26 @@
     overflow-y: auto;
     padding: 0.75rem 1rem 1rem 1rem;
 }
+
+/* Mobile responsive inline expansion: push subsequent cards down smoothly on touch/hover */
+@media (max-width: 767.98px) {
+    .widget-expand-card {
+        overflow: hidden !important;
+    }
+    .widget-hover-details {
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        right: auto !important;
+        box-shadow: none !important;
+        border-bottom-left-radius: inherit !important;
+        border-bottom-right-radius: inherit !important;
+    }
+    .widget-expand-card:hover {
+        border-bottom-left-radius: 1rem !important;
+        border-bottom-right-radius: 1rem !important;
+    }
+}
 </style>
 
 <div class="container-fluid px-4" x-data="pensionPlanApp()">
@@ -344,13 +364,13 @@
                     <thead>
                         <tr>
                             <th class="py-3 px-3 border-0">{% trans "Provider / Name" %}</th>
-                            <th class="py-3 px-3 border-0">{% trans "Type" %}</th>
-                            <th class="py-3 px-3 border-0 text-end">{% trans "Capital Value" %}</th>
-                            <th class="py-3 px-3 border-0 text-center">{% trans "Pension Points" %}</th>
-                            <th class="py-3 px-3 border-0 text-center">{% trans "Point Value" %}</th>
-                            <th class="py-3 px-3 border-0 text-end">{% trans "Gross Payout" %}</th>
+                            <th class="py-3 px-3 border-0 d-none d-md-table-cell">{% trans "Type" %}</th>
+                            <th class="py-3 px-3 border-0 text-end d-none d-md-table-cell">{% trans "Capital Value" %}</th>
+                            <th class="py-3 px-3 border-0 text-center d-none d-md-table-cell">{% trans "Pension Points" %}</th>
+                            <th class="py-3 px-3 border-0 text-center d-none d-lg-table-cell">{% trans "Point Value" %}</th>
+                            <th class="py-3 px-3 border-0 text-end d-none d-lg-table-cell">{% trans "Gross Payout" %}</th>
                             <th class="py-3 px-3 border-0 text-end">{% trans "Net Payout" %}</th>
-                            <th class="py-3 px-3 border-0 text-end">{% trans "Contribution" %}</th>
+                            <th class="py-3 px-3 border-0 text-end d-none d-md-table-cell">{% trans "Contribution" %}</th>
                             <th class="py-3 px-3 border-0 text-end" style="width: 1%;">{% trans "Actions" %}</th>
                         </tr>
                     </thead>
@@ -362,19 +382,20 @@
                                         <i class="bi opacity-75" :class="p.pension_type === 'statutory' ? 'bi-bank' : 'bi-piggy-bank'"></i>
                                         <div>
                                             <span class="d-block" x-text="p.provider"></span>
+                                            <span class="badge rounded-pill bg-body-tertiary text-body border border-secondary border-opacity-20 opacity-90 d-md-none me-1" style="font-size: 0.65rem;" x-text="p.pension_type_display"></span>
                                             <span x-show="p.notes" class="small opacity-75" style="font-size: 0.7rem;" x-text="p.notes"></span>
                                         </div>
                                     </div>
                                 </td>
-                                <td class="py-3 px-3">
+                                <td class="py-3 px-3 d-none d-md-table-cell">
                                     <span class="badge rounded-pill bg-body-tertiary text-body border border-secondary border-opacity-20 opacity-90" x-text="p.pension_type_display"></span>
                                 </td>
-                                <td class="py-3 px-3 text-end font-monospace fw-bold" x-text="p.current_value > 0 ? formatEuro(p.current_value) + ' €' : '-'"></td>
-                                <td class="py-3 px-3 text-center font-monospace" x-text="p.pension_points !== null ? p.pension_points : '-'"></td>
-                                <td class="py-3 px-3 text-center font-monospace" x-text="p.point_value !== null ? formatEuro(p.point_value) + ' €' : '-'"></td>
-                                <td class="py-3 px-3 text-end font-monospace" x-text="p.gross_payout_amount !== null ? formatEuro(p.gross_payout_amount) + ' €' : '-'"></td>
+                                <td class="py-3 px-3 text-end font-monospace fw-bold d-none d-md-table-cell" x-text="p.current_value > 0 ? formatEuro(p.current_value) + ' €' : '-'"></td>
+                                <td class="py-3 px-3 text-center font-monospace d-none d-md-table-cell" x-text="p.pension_points !== null ? p.pension_points : '-'"></td>
+                                <td class="py-3 px-3 text-center font-monospace d-none d-lg-table-cell" x-text="p.point_value !== null ? formatEuro(p.point_value) + ' €' : '-'"></td>
+                                <td class="py-3 px-3 text-end font-monospace d-none d-lg-table-cell" x-text="p.gross_payout_amount !== null ? formatEuro(p.gross_payout_amount) + ' €' : '-'"></td>
                                 <td class="py-3 px-3 text-end font-monospace fw-bold text-success" x-text="p.expected_payout_at_retirement !== null ? formatEuro(p.expected_payout_at_retirement) + ' €' : '-'"></td>
-                                <td class="py-3 px-3 text-end font-monospace text-danger" x-text="p.monthly_contribution > 0 ? '-' + formatEuro(p.monthly_contribution) + ' €' : '-'"></td>
+                                <td class="py-3 px-3 text-end font-monospace text-danger d-none d-md-table-cell" x-text="p.monthly_contribution > 0 ? '-' + formatEuro(p.monthly_contribution) + ' €' : '-'"></td>
                                 <td class="py-3 px-3 text-end text-nowrap">
                                     <div class="btn-group btn-group-sm">
                                         <button type="button" class="btn btn-outline-secondary border-0 px-2 py-1" @click="openEditModal(p)" title="{% trans 'Edit' %}">

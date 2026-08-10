@@ -216,6 +216,29 @@
             display: none;
         }
 
+        /* Mobile Table & Layout Optimizations */
+        @media (max-width: 767.98px) {
+            .container-fluid {
+                padding-left: 0.75rem !important;
+                padding-right: 0.75rem !important;
+            }
+            .table-responsive {
+                border-radius: 0.75rem;
+                -webkit-overflow-scrolling: touch;
+            }
+            .table th, .table td {
+                padding: 0.65rem 0.5rem !important;
+                font-size: 0.8rem !important;
+                white-space: nowrap;
+            }
+            .metric-card-col {
+                margin-bottom: 0.75rem;
+            }
+            .modal-dialog {
+                margin: 0.5rem;
+            }
+        }
+
         /* Dropdown Fix: Lesbarkeit über Gradient */
         .dropdown-menu {
             background-color: var(--app-card-bg, #ffffff) !important;
