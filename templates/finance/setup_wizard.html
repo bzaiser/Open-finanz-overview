@@ -16,7 +16,7 @@
                 {% trans "Schritt-für-Schritt-Erfassung deiner Stammdaten (Personen, Einnahmen, Ausgaben, Konten und Vorsorgeverträge)." %}
             </p>
         </div>
-        <a href="{% url 'finance:dashboard' %}" class="btn btn-outline-secondary rounded-pill px-3">
+        <a href="{% url 'finance:dashboard' %}?skip_wizard=1" class="btn btn-outline-secondary rounded-pill px-3">
             <i class="bi bi-x-lg me-1"></i>{% trans "Abbrechen" %}
         </a>
     </div>
@@ -377,7 +377,7 @@
     <!-- Startup Checkbox & Navigation Buttons -->
     <div class="card border-0 shadow-sm rounded-4 p-3 mb-3 bg-body-tertiary">
         <div class="form-check form-switch d-flex align-items-center gap-2 m-0">
-            <input class="form-check-input" type="checkbox" id="hideWizardCheckbox" x-model="form.hide_wizard_on_start" style="cursor: pointer;">
+            <input class="form-check-input" type="checkbox" id="hideWizardCheckbox" x-model="form.hide_wizard_on_start" @change="toggleHideWizardSetting()" style="cursor: pointer;">
             <label class="form-check-label small" for="hideWizardCheckbox">
                 {% trans "Diesen Einrichtungs-Wizard bei künftigen Programmstarts ausblenden (kann jederzeit oben rechts unter deinem Benutzernamen neu gestartet werden)" %}
             </label>
@@ -523,6 +523,21 @@
                     const el = document.getElementById('errorTracebackTextarea');
                     if (el) { el.select(); document.execCommand('copy'); }
                 });
+            },
+
+            async toggleHideWizardSetting() {
+                try {
+                    await fetch('/finance/wizard/save/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: JSON.stringify({ hide_wizard_on_start: this.form.hide_wizard_on_start })
+                    });
+                } catch (e) {
+                    console.error('Error toggling hide_wizard_on_start:', e);
+                }
             },
 
             proceedAfterSuccess() {
