@@ -2819,7 +2819,13 @@ def pension_plan_view(request):
         target_monthly_payout = contract_targets_sum
     else:
         target_monthly_payout = profile.target_pension_payout if profile.target_pension_payout else total_monthly_net
-    pension_gap = (target_monthly_payout - total_monthly_net).quantize(Decimal('0.01')) if target_monthly_payout else Decimal('0.00')
+
+    # Calculate gaps: current (flowing today) vs future (all contracts active)
+    current_pension_gap = (target_monthly_payout - current_total_monthly_payout).quantize(Decimal('0.01')) if target_monthly_payout else Decimal('0.00')
+    future_pension_gap = (target_monthly_payout - total_monthly_net).quantize(Decimal('0.01')) if target_monthly_payout else Decimal('0.00')
+
+    # Effective gap for primary card display: current in retirement, future in accumulation
+    pension_gap = current_pension_gap if life_stage == 'retirement' else future_pension_gap
 
     # Build historical & forecast timeline up to simulation_max_year
     earliest_snap_year = min([s.date.year for s in snapshots]) if snapshots else current_year - 5
@@ -3122,6 +3128,10 @@ def pension_plan_view(request):
         'target_monthly_payout': target_monthly_payout,
         'pension_gap': pension_gap,
         'pension_gap_abs': abs(pension_gap),
+        'current_pension_gap': current_pension_gap,
+        'current_pension_gap_abs': abs(current_pension_gap),
+        'future_pension_gap': future_pension_gap,
+        'future_pension_gap_abs': abs(future_pension_gap),
         'retirement_age': retirement_age,
         'retirement_year': retirement_year,
         'retirement_markers_json': json.dumps(retirement_markers),
