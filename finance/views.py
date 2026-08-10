@@ -2814,7 +2814,7 @@ def pension_plan_view(request):
         life_stage = 'retirement'
 
     # Fetch monthly cash flows
-    cash_flows = list(user.cash_flows.filter(is_active=True))
+    cash_flows = list(user.cash_flows.all())
     monthly_expenses_today = sum([
         c.value if c.frequency == 'monthly' else (c.value / Decimal('12.0'))
         for c in cash_flows if not c.is_income
