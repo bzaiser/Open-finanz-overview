@@ -2813,11 +2813,12 @@ def pension_plan_view(request):
     if user_current_age >= retirement_age or current_total_monthly_payout > Decimal('0.00'):
         life_stage = 'retirement'
 
-    # Fetch monthly cash flows
+    # Fetch active monthly cash flows (currently valid today: start_date <= today <= end_date)
     cash_flows = list(user.cash_flows.all())
     monthly_expenses_today = sum([
         c.value if c.frequency == 'monthly' else (c.value / Decimal('12.0'))
-        for c in cash_flows if not c.is_income
+        for c in cash_flows
+        if not c.is_income and (not c.start_date or c.start_date <= today) and (not c.end_date or c.end_date >= today)
     ])
 
     inflation_rate = profile.inflation_rate / Decimal('100.0')
