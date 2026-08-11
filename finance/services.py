@@ -168,6 +168,8 @@ class SimulationEngine:
         ct_asset = ContentType.objects.get_for_model(Asset).id
         ct_pa = ContentType.objects.get_for_model(PhysicalAsset).id
         ct_re = ContentType.objects.get_for_model(RealEstate).id
+        ct_loan = ContentType.objects.get_for_model(Loan).id
+        ct_pension = ContentType.objects.get_for_model(Pension).id
         
         snapshots_by_obj = {}
         # Track which (content_type, object_id) we have snapshots for, grouped by month
@@ -338,6 +340,11 @@ class SimulationEngine:
                 if key in snapshots_by_obj:
                     item['balance'] = snapshots_by_obj[key]
             
+            for item in loans_state:
+                key = (ct_loan, item['loan'].id, current_date.year, current_date.month)
+                if key in snapshots_by_obj:
+                    item['balance'] = snapshots_by_obj[key]
+
             for item in pensions_state:
                 key = (ct_pension, item['pension'].id, current_date.year, current_date.month)
                 if key in snapshots_by_obj:
