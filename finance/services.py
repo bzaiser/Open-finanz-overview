@@ -341,6 +341,14 @@ class SimulationEngine:
                 key = (ct_loan, item['loan'].id, current_date.year, current_date.month)
                 if key in snapshots_by_obj:
                     item['balance'] = snapshots_by_obj[key]
+                elif is_today:
+                    # On "Today", if a recent snapshot exists, calibrate to the latest snapshot
+                    latest_snap = self.user.asset_snapshots.filter(
+                        content_type_id=ct_loan,
+                        object_id=item['loan'].id
+                    ).order_by('-date').first()
+                    if latest_snap and latest_snap.value is not None:
+                        item['balance'] = latest_snap.value
 
             for item in pensions_state:
                 key = (ct_pension, item['pension'].id, current_date.year, current_date.month)
