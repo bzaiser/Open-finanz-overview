@@ -352,23 +352,31 @@
         <h6 class="fw-bold text-secondary mb-2">{% trans "Immobilien & Darlehen" %}</h6>
         <div class="p-3 border rounded-3 mb-3 bg-body-tertiary">
             <div class="row g-3 mb-2">
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <label class="form-label small opacity-75">{% trans "Immobilie (z. B. Eigenheim)" %}</label>
                     <input type="text" x-model="form.real_estates[0].name" class="form-control" placeholder="z. B. Einfamilienhaus">
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <label class="form-label small opacity-75">{% trans "Geschätzter Immobilienwert (€)" %}</label>
                     <input type="number" step="0.01" x-model="form.real_estates[0].property_value" class="form-control font-monospace" placeholder="z. B. 800000.00">
                 </div>
+                <div class="col-md-4">
+                    <label class="form-label small opacity-75">{% trans "Kaufdatum der Immobilie" %}</label>
+                    <input type="date" x-model="form.real_estates[0].acquisition_date" class="form-control">
+                </div>
             </div>
             <div class="row g-3">
-                <div class="col-md-6">
-                    <label class="form-label small opacity-75">{% trans "Darlehen Restschuld (€)" %}</label>
+                <div class="col-md-4">
+                    <label class="form-label small opacity-75">{% trans "Darlehen Restschuld / Ursprung (€)" %}</label>
                     <input type="number" step="0.01" x-model="form.loans[0].nominal_amount" class="form-control font-monospace" placeholder="z. B. 450000.00">
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <label class="form-label small opacity-75">{% trans "Monatliche Kreditrate (€/mtl.)" %}</label>
                     <input type="number" step="0.01" x-model="form.loans[0].monthly_installment" class="form-control font-monospace" placeholder="z. B. 2100.00">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small opacity-75">{% trans "Kredit Startdatum" %}</label>
+                    <input type="date" x-model="form.loans[0].start_date" class="form-control">
                 </div>
             </div>
         </div>
@@ -464,10 +472,10 @@
                     { name: 'Girokonto / Tagesgeld', value: '', growth_rate: '2.0' }
                 ],
                 real_estates: initialData.real_estates && initialData.real_estates.length ? initialData.real_estates : [
-                    { name: 'Eigenheim', property_value: '', appreciation_rate: '1.5' }
+                    { name: 'Eigenheim', property_value: '', appreciation_rate: '1.5', acquisition_date: '' }
                 ],
                 loans: initialData.loans && initialData.loans.length ? initialData.loans : [
-                    { name: 'Immobiliendarlehen', nominal_amount: '', monthly_installment: '', interest_rate: '2.25' }
+                    { name: 'Immobiliendarlehen', nominal_amount: '', monthly_installment: '', interest_rate: '2.25', start_date: '' }
                 ]
             },
 

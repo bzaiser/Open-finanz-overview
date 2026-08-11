@@ -95,8 +95,8 @@ def wizard_page_view(request):
 
     # Pre-populate assets, real estate & loans
     assets = [{'name': a.name, 'value': float(a.value), 'growth_rate': float(a.growth_rate)} for a in Asset.objects.filter(user=request.user)]
-    real_estates = [{'name': re.name, 'property_value': float(re.property_value), 'appreciation_rate': float(re.appreciation_rate)} for re in RealEstate.objects.filter(user=request.user)]
-    loans = [{'name': l.name, 'nominal_amount': float(l.nominal_amount), 'monthly_installment': float(l.monthly_installment), 'interest_rate': float(l.interest_rate)} for l in Loan.objects.filter(user=request.user)]
+    real_estates = [{'name': re.name, 'property_value': float(re.property_value), 'appreciation_rate': float(re.appreciation_rate), 'acquisition_date': re.acquisition_date.strftime('%Y-%m-%d') if re.acquisition_date else ''} for re in RealEstate.objects.filter(user=request.user)]
+    loans = [{'name': l.name, 'nominal_amount': float(l.nominal_amount), 'monthly_installment': float(l.monthly_installment), 'interest_rate': float(l.interest_rate), 'start_date': l.start_date.strftime('%Y-%m-%d') if l.start_date else ''} for l in Loan.objects.filter(user=request.user)]
 
     wizard_initial_json = {
         'profile': profile_data,
@@ -433,6 +433,7 @@ def wizard_save_api(request):
                         apprec = _to_decimal(re_item.get('appreciation_rate')) or Decimal('1.5')
                         maint = _to_decimal(re_item.get('maintenance_monthly')) or Decimal('0.0')
                         ancill = _to_decimal(re_item.get('ancillary_monthly')) or Decimal('0.0')
+                        acq_date = _parse_date(re_item.get('acquisition_date'))
                         dummy_obj, created = RealEstate.objects.update_or_create(
                             user=user,
                             name=name,
@@ -441,7 +442,8 @@ def wizard_save_api(request):
                                 'appreciation_rate': apprec,
                                 'location': re_item.get('location', ''),
                                 'maintenance_costs_monthly': maint,
-                                'ancillary_costs_monthly': ancill
+                                'ancillary_costs_monthly': ancill,
+                                'acquisition_date': acq_date
                             }
                         )
                         if created:
