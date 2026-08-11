@@ -322,9 +322,6 @@ class SimulationEngine:
                 item['balance'] = min(item['balance'], Decimal('1e15'))
 
             # 1.1 Override with Snapshots (for past or present)
-            from .models import Pension
-            ct_pension = ContentType.objects.get_for_model(Pension).id
-            
             for item in assets_state:
                 key = (ct_asset, item['asset'].id, current_date.year, current_date.month)
                 if key in snapshots_by_obj:
