@@ -3223,21 +3223,51 @@ def pension_save(request, pk=None):
                     pension.save()
 
                     # Record or update snapshot for this date
+                    edit_snap_id = request.POST.get('edit_snapshot_id')
                     snap_val = pension.current_value if pension.pension_type != 'statutory' else (pension.expected_payout_at_retirement or Decimal('0.00'))
-                    AssetSnapshot.objects.update_or_create(
-                        user=user,
-                        content_type=ct_pension,
-                        object_id=pension.id,
-                        date=s_date,
-                        defaults={
-                            'value': snap_val,
-                            'pension_points': pension.pension_points,
-                            'point_value': pension.point_value,
-                            'expected_payout_net': pension.expected_payout_at_retirement,
-                            'disability_pension_net': pension.disability_pension_net,
-                            'notes': pension.notes or f"Standmitteilung {s_date.strftime('%d.%m.%Y')}"
-                        }
-                    )
+                    
+                    if edit_snap_id:
+                        snap_obj = AssetSnapshot.objects.filter(id=edit_snap_id, user=user, content_type=ct_pension, object_id=pension.id).first()
+                        if snap_obj:
+                            snap_obj.date = s_date
+                            snap_obj.value = snap_val
+                            snap_obj.pension_points = pension.pension_points
+                            snap_obj.point_value = pension.point_value
+                            snap_obj.expected_payout_net = pension.expected_payout_at_retirement
+                            snap_obj.disability_pension_net = pension.disability_pension_net
+                            if pension.notes:
+                                snap_obj.notes = pension.notes
+                            snap_obj.save()
+                        else:
+                            AssetSnapshot.objects.update_or_create(
+                                user=user,
+                                content_type=ct_pension,
+                                object_id=pension.id,
+                                date=s_date,
+                                defaults={
+                                    'value': snap_val,
+                                    'pension_points': pension.pension_points,
+                                    'point_value': pension.point_value,
+                                    'expected_payout_net': pension.expected_payout_at_retirement,
+                                    'disability_pension_net': pension.disability_pension_net,
+                                    'notes': pension.notes or f"Standmitteilung {s_date.strftime('%d.%m.%Y')}"
+                                }
+                            )
+                    else:
+                        AssetSnapshot.objects.update_or_create(
+                            user=user,
+                            content_type=ct_pension,
+                            object_id=pension.id,
+                            date=s_date,
+                            defaults={
+                                'value': snap_val,
+                                'pension_points': pension.pension_points,
+                                'point_value': pension.point_value,
+                                'expected_payout_net': pension.expected_payout_at_retirement,
+                                'disability_pension_net': pension.disability_pension_net,
+                                'notes': pension.notes or f"Standmitteilung {s_date.strftime('%d.%m.%Y')}"
+                            }
+                        )
                 except Exception as ex:
                     pension.save()
             else:

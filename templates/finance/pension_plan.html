@@ -436,6 +436,7 @@
                 </div>
                 <form method="post" :action="editId ? '/finance/pensions/save/' + editId + '/' : '{% url "finance:pension_add" %}'">
                     {% csrf_token %}
+                    <input type="hidden" name="edit_snapshot_id" x-model="form.edit_snapshot_id">
                     <div class="modal-body pt-3">
                         <div class="row g-3 mb-3">
                             <div class="col-md-5">
@@ -546,13 +547,13 @@
                             <textarea name="notes" x-model="form.notes" class="form-control" rows="2" placeholder="{% trans 'Optional notes...' %}"></textarea>
                         </div>
 
-                        <!-- Integrated Historical Snapshots Table in Edit Form -->
+                        <!-- Integrated Historical Snapshots Table with Direct Inline Editing -->
                         <div x-show="editId" class="mt-4 pt-3 border-top border-secondary border-opacity-25">
                             <h6 class="fw-bold mb-2 text-primary d-flex align-items-center justify-content-between" style="font-size: 0.85rem;">
                                 <span><i class="bi bi-clock-history me-1"></i>{% trans "Bisherige Stichtage dieses Vertrags" %}</span>
                                 <span class="badge rounded-pill bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2.5 py-1" x-text="getSnapshotsForEditId().length + ' Stichtage'"></span>
                             </h6>
-                            <div class="table-responsive rounded-3 border border-secondary border-opacity-20 shadow-sm" style="max-height: 200px; overflow-y: auto;">
+                            <div class="table-responsive rounded-3 border border-secondary border-opacity-20 shadow-sm" style="max-height: 250px; overflow-y: auto;">
                                 <table class="table table-sm table-hover align-middle mb-0" style="font-size: 0.8rem;">
                                     <thead class="bg-body-tertiary">
                                         <tr>
@@ -573,43 +574,99 @@
                                                 <th class="py-2 px-3 border-0 text-end">{% trans "Kapital (€)" %}</th>
                                             </template>
                                             <th class="py-2 px-3 border-0">{% trans "Notiz" %}</th>
-                                            <th class="py-2 px-3 border-0 text-center" style="width: 70px;">Aktion</th>
+                                            <th class="py-2 px-3 border-0 text-center" style="width: 80px;">Aktion</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <template x-for="s in getSnapshotsForEditId()" :key="s.id">
                                             <tr>
-                                                <td class="py-2 px-3 fw-bold font-monospace text-primary" x-text="s.date"></td>
-                                                <template x-if="form.pension_type === 'statutory'">
+                                                <!-- Normal View Row -->
+                                                <template x-if="editingSnapshotId !== s.id">
+                                                    <td class="py-2 px-3 fw-bold font-monospace text-primary" x-text="s.date"></td>
+                                                </template>
+                                                <template x-if="editingSnapshotId !== s.id && form.pension_type === 'statutory'">
                                                     <td class="py-2 px-2 text-center font-monospace" x-text="s.pension_points !== null ? s.pension_points : '-'"></td>
                                                 </template>
-                                                <template x-if="form.pension_type === 'statutory'">
+                                                <template x-if="editingSnapshotId !== s.id && form.pension_type === 'statutory'">
                                                     <td class="py-2 px-2 text-center font-monospace" x-text="s.point_value !== null ? formatEuro(s.point_value) + ' €' : '-'"></td>
                                                 </template>
-                                                <template x-if="form.pension_type === 'statutory'">
+                                                <template x-if="editingSnapshotId !== s.id && form.pension_type === 'statutory'">
                                                     <td class="py-2 px-3 text-end font-monospace fw-bold text-success" x-text="s.expected_payout_net !== null ? formatEuro(s.expected_payout_net) + ' €' : (s.value > 0 ? formatEuro(s.value) + ' €' : '-')"></td>
                                                 </template>
-                                                <template x-if="form.pension_type === 'statutory'">
+                                                <template x-if="editingSnapshotId !== s.id && form.pension_type === 'statutory'">
                                                     <td class="py-2 px-2 text-end font-monospace text-info" x-text="s.disability_pension_net !== null ? formatEuro(s.disability_pension_net) + ' €' : '-'"></td>
                                                 </template>
-                                                <template x-if="form.pension_type !== 'statutory'">
+                                                <template x-if="editingSnapshotId !== s.id && form.pension_type !== 'statutory'">
                                                     <td class="py-2 px-3 text-end font-monospace fw-bold text-info" x-text="formatEuro(s.value) + ' €'"></td>
                                                 </template>
-                                                <td class="py-2 px-3 text-muted truncate" style="max-width: 140px;" x-text="s.notes || '-'"></td>
-                                                <td class="py-2 px-3 text-center">
-                                                     <div class="d-flex gap-2 justify-content-center">
-                                                         <button type="button" @click="loadSnapshotIntoForm(s)" class="btn btn-sm btn-link p-0 text-primary" title="{% trans 'Stichtag in Formular laden & bearbeiten' %}">
-                                                             <i class="bi bi-pencil" style="font-size: 0.95rem;"></i>
-                                                         </button>
-                                                         <a :href="'/finance/pensions/snapshot/delete/' + s.id + '/?edit_pension_id=' + editId" onclick="return confirm('{% trans 'Diesen Stichtag wirklich löschen?' %}')" class="btn btn-sm btn-link p-0 text-danger" title="{% trans 'Löschen' %}">
-                                                             <i class="bi bi-trash" style="font-size: 0.95rem;"></i>
-                                                         </a>
-                                                     </div>
-                                                </td>
+                                                <template x-if="editingSnapshotId !== s.id">
+                                                    <td class="py-2 px-3 text-muted truncate" style="max-width: 140px;" x-text="s.notes || '-'"></td>
+                                                </template>
+                                                <template x-if="editingSnapshotId !== s.id">
+                                                    <td class="py-2 px-3 text-center">
+                                                         <div class="d-flex gap-2 justify-content-center">
+                                                             <button type="button" @click="startInlineEditSnapshot(s)" class="btn btn-sm btn-link p-0 text-primary" title="{% trans 'Direkt in Tabelle bearbeiten' %}">
+                                                                 <i class="bi bi-pencil" style="font-size: 0.95rem;"></i>
+                                                             </button>
+                                                             <a :href="'/finance/pensions/snapshot/delete/' + s.id + '/?edit_pension_id=' + editId" onclick="return confirm('{% trans 'Diesen Stichtag wirklich löschen?' %}')" class="btn btn-sm btn-link p-0 text-danger" title="{% trans 'Löschen' %}">
+                                                                 <i class="bi bi-trash" style="font-size: 0.95rem;"></i>
+                                                             </a>
+                                                         </div>
+                                                    </td>
+                                                </template>
+
+                                                <!-- Inline Edit Form Row -->
+                                                <template x-if="editingSnapshotId === s.id">
+                                                    <td class="py-1 px-2">
+                                                        <input type="date" x-model="inlineSnapshotForm.date" class="form-control form-control-sm p-1 font-monospace" style="font-size: 0.75rem;">
+                                                    </td>
+                                                </template>
+                                                <template x-if="editingSnapshotId === s.id && form.pension_type === 'statutory'">
+                                                    <td class="py-1 px-1 text-center">
+                                                        <input type="number" step="0.0001" x-model="inlineSnapshotForm.pension_points" @input="calcInlineStatutoryNet()" class="form-control form-control-sm p-1 text-center font-monospace" style="font-size: 0.75rem;">
+                                                    </td>
+                                                </template>
+                                                <template x-if="editingSnapshotId === s.id && form.pension_type === 'statutory'">
+                                                    <td class="py-1 px-1 text-center">
+                                                        <input type="number" step="0.01" x-model="inlineSnapshotForm.point_value" @input="calcInlineStatutoryNet()" class="form-control form-control-sm p-1 text-center font-monospace" style="font-size: 0.75rem;">
+                                                    </td>
+                                                </template>
+                                                <template x-if="editingSnapshotId === s.id && form.pension_type === 'statutory'">
+                                                    <td class="py-1 px-2 text-end">
+                                                        <input type="number" step="0.01" x-model="inlineSnapshotForm.expected_payout_net" class="form-control form-control-sm p-1 text-end font-monospace fw-bold text-success" style="font-size: 0.75rem;">
+                                                    </td>
+                                                </template>
+                                                <template x-if="editingSnapshotId === s.id && form.pension_type === 'statutory'">
+                                                    <td class="py-1 px-1 text-end">
+                                                        <input type="number" step="0.01" x-model="inlineSnapshotForm.disability_pension_net" class="form-control form-control-sm p-1 text-end font-monospace text-info" style="font-size: 0.75rem;">
+                                                    </td>
+                                                </template>
+                                                <template x-if="editingSnapshotId === s.id && form.pension_type !== 'statutory'">
+                                                    <td class="py-1 px-2 text-end">
+                                                        <input type="number" step="0.01" x-model="inlineSnapshotForm.value" class="form-control form-control-sm p-1 text-end font-monospace fw-bold text-info" style="font-size: 0.75rem;">
+                                                    </td>
+                                                </template>
+                                                <template x-if="editingSnapshotId === s.id">
+                                                    <td class="py-1 px-2">
+                                                        <input type="text" x-model="inlineSnapshotForm.notes" class="form-control form-control-sm p-1" placeholder="Notiz" style="font-size: 0.75rem;">
+                                                    </td>
+                                                </template>
+                                                <template x-if="editingSnapshotId === s.id">
+                                                    <td class="py-1 px-2 text-center">
+                                                        <div class="d-flex gap-1 justify-content-center">
+                                                            <button type="button" @click="saveInlineSnapshot(s.id)" class="btn btn-sm btn-success p-1 px-1.5 rounded-circle" title="{% trans 'Speichern' %}">
+                                                                <i class="bi bi-check-lg"></i>
+                                                            </button>
+                                                            <button type="button" @click="editingSnapshotId = null" class="btn btn-sm btn-outline-secondary p-1 px-1.5 rounded-circle" title="{% trans 'Abbrechen' %}">
+                                                                <i class="bi bi-x-lg"></i>
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </template>
                                             </tr>
                                         </template>
                                         <tr x-show="getSnapshotsForEditId().length === 0">
-                                            <td colspan="6" class="text-center py-3 opacity-75 text-muted">
+                                            <td colspan="7" class="text-center py-3 opacity-75 text-muted">
                                                 {% trans "Noch keine historischen Stichtage erfasst." %}
                                             </td>
                                         </tr>
@@ -778,6 +835,72 @@
                 is_indexed: true,
                 notes: ''
             },
+            editingSnapshotId: null,
+            inlineSnapshotForm: {
+                date: '',
+                pension_points: '',
+                point_value: '',
+                expected_payout_net: '',
+                disability_pension_net: '',
+                value: '',
+                notes: ''
+            },
+
+            startInlineEditSnapshot(s) {
+                this.editingSnapshotId = s.id;
+                let formattedDate = s.date;
+                if (s.date && s.date.includes('.')) {
+                    const parts = s.date.split('.');
+                    if (parts.length === 3) {
+                        formattedDate = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+                    }
+                }
+                this.inlineSnapshotForm = {
+                    date: formattedDate,
+                    pension_points: s.pension_points !== null ? s.pension_points : '',
+                    point_value: s.point_value !== null ? s.point_value : '39.32',
+                    expected_payout_net: s.expected_payout_net !== null ? s.expected_payout_net : '',
+                    disability_pension_net: s.disability_pension_net !== null ? s.disability_pension_net : '',
+                    value: s.value !== null ? s.value : '',
+                    notes: s.notes || ''
+                };
+            },
+
+            calcInlineStatutoryNet() {
+                const pts = parseFloat(this.inlineSnapshotForm.pension_points);
+                const val = parseFloat(this.inlineSnapshotForm.point_value);
+                if (!isNaN(pts) && !isNaN(val)) {
+                    const gross = pts * val;
+                    const net = gross * (1 - 0.115);
+                    this.inlineSnapshotForm.expected_payout_net = net.toFixed(2);
+                }
+            },
+
+            saveInlineSnapshot(snapId) {
+                const formData = new FormData();
+                formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+                formData.append('edit_snapshot_id', snapId);
+                formData.append('statement_date', this.inlineSnapshotForm.date);
+                if (this.inlineSnapshotForm.pension_points !== '') formData.append('pension_points', this.inlineSnapshotForm.pension_points);
+                if (this.inlineSnapshotForm.point_value !== '') formData.append('point_value', this.inlineSnapshotForm.point_value);
+                if (this.inlineSnapshotForm.expected_payout_net !== '') formData.append('expected_payout_at_retirement', this.inlineSnapshotForm.expected_payout_net);
+                if (this.inlineSnapshotForm.disability_pension_net !== '') formData.append('disability_pension_net', this.inlineSnapshotForm.disability_pension_net);
+                if (this.inlineSnapshotForm.value !== '') formData.append('current_value', this.inlineSnapshotForm.value);
+                if (this.inlineSnapshotForm.notes) formData.append('notes', this.inlineSnapshotForm.notes);
+                
+                // Copy current contract provider and pension_type to satisfy form validation
+                formData.append('provider', this.form.provider);
+                formData.append('pension_type', this.form.pension_type);
+
+                fetch('/finance/pensions/save/' + this.editId + '/', {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                }).then(() => {
+                    window.location.href = '/finance/pensions/?edit_pension_id=' + this.editId;
+                });
+            },
+
             snapshot: {
                 pension_id: '',
                 date: new Date().toISOString().split('T')[0],
@@ -806,6 +929,7 @@
 
             loadSnapshotIntoForm(s) {
                 if (!s) return;
+                this.form.edit_snapshot_id = s.id;
                 // Parse date format from DD.MM.YYYY to YYYY-MM-DD for date input field
                 let formattedDate = s.date;
                 if (s.date && s.date.includes('.')) {
@@ -880,6 +1004,7 @@
             openAddModal() {
                 this.editId = null;
                 this.form = {
+                    edit_snapshot_id: '',
                     provider: '',
                     pension_type: 'capital',
                     statement_date: new Date().toISOString().split('T')[0],
@@ -905,6 +1030,7 @@
             openEditModal(p) {
                 this.editId = p.id;
                 this.form = {
+                    edit_snapshot_id: '',
                     provider: p.provider,
                     pension_type: p.pension_type,
                     statement_date: new Date().toISOString().split('T')[0],
