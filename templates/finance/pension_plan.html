@@ -450,8 +450,8 @@
                                 </select>
                             </div>
                             <div class="col-md-3">
-                                <label class="form-label small fw-bold text-uppercase opacity-75 text-primary">
-                                    <i class="bi bi-calendar-event me-1"></i>{% trans "Stichtag (Stand vom)" %}
+                                <label class="form-label small fw-bold text-uppercase opacity-75 text-primary text-nowrap">
+                                    <i class="bi bi-calendar-event me-1"></i>{% trans "Stand vom" %}
                                 </label>
                                 <input type="date" name="statement_date" x-model="form.statement_date" class="form-control border-primary border-opacity-50">
                             </div>
@@ -496,12 +496,12 @@
                         </div>
 
                         <div class="row g-3 mb-3">
-                            <div class="col-md-6" x-show="form.pension_type !== 'statutory'">
+                            <div class="col-md-6">
                                 <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Target Monthly Payout (€)" %}</label>
                                 <input type="number" step="0.01" name="target_pension_payout" x-model="form.target_pension_payout" class="form-control font-monospace" placeholder="0.00">
                                 <span class="form-text small opacity-75">{% trans "Ziel-Nettorente für diesen einzelnen Vertrag" %}</span>
                             </div>
-                            <div :class="form.pension_type === 'statutory' ? 'col-md-12' : 'col-md-6'">
+                            <div class="col-md-6">
                                 <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Retirement Age (Years)" %}</label>
                                 <input type="number" name="retirement_age" x-model="form.retirement_age" class="form-control font-monospace" placeholder="67">
                             </div>
@@ -597,11 +597,14 @@
                                                 </template>
                                                 <td class="py-2 px-3 text-muted truncate" style="max-width: 140px;" x-text="s.notes || '-'"></td>
                                                 <td class="py-2 px-3 text-center">
-                                                    <div class="d-flex gap-2 justify-content-center">
-                                                        <a :href="'/finance/pensions/snapshot/delete/' + s.id + '/?edit_pension_id=' + editId" onclick="return confirm('{% trans 'Diesen Stichtag wirklich löschen?' %}')" class="btn btn-sm btn-link p-0 text-danger" title="{% trans 'Löschen' %}">
-                                                            <i class="bi bi-trash" style="font-size: 0.95rem;"></i>
-                                                        </a>
-                                                    </div>
+                                                     <div class="d-flex gap-2 justify-content-center">
+                                                         <button type="button" @click="loadSnapshotIntoForm(s)" class="btn btn-sm btn-link p-0 text-primary" title="{% trans 'Stichtag in Formular laden & bearbeiten' %}">
+                                                             <i class="bi bi-pencil" style="font-size: 0.95rem;"></i>
+                                                         </button>
+                                                         <a :href="'/finance/pensions/snapshot/delete/' + s.id + '/?edit_pension_id=' + editId" onclick="return confirm('{% trans 'Diesen Stichtag wirklich löschen?' %}')" class="btn btn-sm btn-link p-0 text-danger" title="{% trans 'Löschen' %}">
+                                                             <i class="bi bi-trash" style="font-size: 0.95rem;"></i>
+                                                         </a>
+                                                     </div>
                                                 </td>
                                             </tr>
                                         </template>
@@ -799,6 +802,38 @@
             getSnapshotsForEditId() {
                 if (!this.editId) return [];
                 return this.snapshots.filter(s => s.pension_id == this.editId);
+            },
+
+            loadSnapshotIntoForm(s) {
+                if (!s) return;
+                // Parse date format from DD.MM.YYYY to YYYY-MM-DD for date input field
+                let formattedDate = s.date;
+                if (s.date && s.date.includes('.')) {
+                    const parts = s.date.split('.');
+                    if (parts.length === 3) {
+                        formattedDate = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+                    }
+                }
+                this.form.statement_date = formattedDate;
+                if (s.pension_points !== null && s.pension_points !== undefined) {
+                    this.form.pension_points = s.pension_points;
+                }
+                if (s.point_value !== null && s.point_value !== undefined) {
+                    this.form.point_value = s.point_value;
+                }
+                if (s.expected_payout_net !== null && s.expected_payout_net !== undefined) {
+                    this.form.expected_payout_at_retirement = s.expected_payout_net;
+                }
+                if (s.disability_pension_net !== null && s.disability_pension_net !== undefined) {
+                    this.form.disability_pension_net = s.disability_pension_net;
+                }
+                if (s.value !== null && s.value !== undefined && s.value > 0) {
+                    this.form.current_value = s.value;
+                }
+                if (s.notes) {
+                    this.form.notes = s.notes;
+                }
+                this.calculateStatutoryAmounts();
             },
 
             onSnapshotContractChange() {
