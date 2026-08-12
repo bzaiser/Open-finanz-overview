@@ -869,12 +869,36 @@
             calcInlineStatutoryNet() {
                 const pts = parseFloat(this.inlineSnapshotForm.pension_points);
                 const val = parseFloat(this.inlineSnapshotForm.point_value);
-                if (!isNaN(pts) && !isNaN(val)) {
+                const explicitNet = parseFloat(this.inlineSnapshotForm.expected_payout_net);
+                
+                // Only auto-fill net if explicit Net is empty or invalid
+                if (!isNaN(pts) && !isNaN(val) && (isNaN(explicitNet) || explicitNet <= 0)) {
                     const gross = pts * val;
                     const net = gross * (1 - 0.115);
                     this.inlineSnapshotForm.expected_payout_net = net.toFixed(2);
                 }
             },
+
+            calculateStatutoryAmounts() {
+                const pts = parseFloat(this.form.pension_points) || 0;
+                const ptVal = parseFloat(this.form.point_value) || 0;
+                const explicitNet = parseFloat(this.form.expected_payout_at_retirement);
+
+                if (pts > 0 && ptVal > 0) {
+                    const gross = pts * ptVal;
+                    this.form.gross_payout_amount = gross.toFixed(2);
+                    
+                    // If Net is already set manually by user, calculate the exact deduction rate!
+                    if (!isNaN(explicitNet) && explicitNet > 0 && gross > 0) {
+                        const calculatedDedRate = ((gross - explicitNet) / gross) * 100;
+                        this.form.social_deduction_rate = calculatedDedRate.toFixed(2);
+                    } else {
+                        const dedRate = parseFloat(this.form.social_deduction_rate) || 11.50;
+                        const net = gross * (1 - (dedRate / 100));
+                        this.form.expected_payout_at_retirement = net.toFixed(2);
+                    }
+                }
+            }
 
             saveInlineSnapshot(snapId) {
                 const formData = new FormData();
@@ -1051,19 +1075,6 @@
                     notes: p.notes
                 };
                 new bootstrap.Modal(document.getElementById('pensionModal')).show();
-            },
-
-            calculateStatutoryAmounts() {
-                const pts = parseFloat(this.form.pension_points) || 0;
-                const ptVal = parseFloat(this.form.point_value) || 0;
-                const dedRate = parseFloat(this.form.social_deduction_rate) || 0;
-
-                if (pts > 0 && ptVal > 0) {
-                    const gross = pts * ptVal;
-                    this.form.gross_payout_amount = gross.toFixed(2);
-                    const net = gross * (1 - (dedRate / 100));
-                    this.form.expected_payout_at_retirement = net.toFixed(2);
-                }
             }
         };
     }
