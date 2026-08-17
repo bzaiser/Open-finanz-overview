@@ -551,14 +551,24 @@
                                 </thead>
                                 <tbody>
                                     {% for cf in cash_flows %}
-                                    <tr>
+                                    <tr class="{% if not cf.is_latest %}opacity-50 text-muted bg-body-tertiary{% endif %}">
                                         <td>
-                                            <input type="checkbox" name="selected_items" value="{{ cf.id }}" class="form-check-input" x-model="wizard.selectedIds">
+                                            <input type="checkbox" name="selected_items" value="{{ cf.id }}" class="form-check-input" x-model="wizard.selectedIds" {% if not cf.is_latest %}disabled{% endif %}>
                                         </td>
-                                        <td class="fw-semibold">{{ cf.name }}</td>
+                                        <td class="fw-semibold">
+                                            {{ cf.name }}
+                                            {% if not cf.is_latest %}
+                                            <span class="badge bg-secondary opacity-75 ms-1" style="font-size: 0.65rem;">{% trans "Älter" %}</span>
+                                            {% endif %}
+                                        </td>
                                         <td>{{ cf.category.translated_name|default:'-' }}</td>
                                         <td class="text-end font-monospace {% if cf.is_income %}text-success{% else %}text-danger{% endif %}">
                                             {{ cf.value|floatformat:2|intcomma }} € / {{ cf.get_frequency_display }}
+                                            {% if cf.start_date or cf.end_date %}
+                                            <div class="small opacity-75" style="font-size: 0.7rem;">
+                                                {% if cf.start_date %}{{ cf.start_date|date:"d.m.Y" }}{% else %}...{% endif %} - {% if cf.end_date %}{{ cf.end_date|date:"d.m.Y" }}{% else %}offen{% endif %}
+                                            </div>
+                                            {% endif %}
                                         </td>
                                     </tr>
                                     {% endfor %}
@@ -820,7 +830,7 @@
             toggleSelectAllWizard() {
                 this.allWizardSelected = !this.allWizardSelected;
                 if (this.allWizardSelected) {
-                    const checkboxes = document.querySelectorAll('#annualAdjustmentWizardModal input[name="selected_items"]');
+                    const checkboxes = document.querySelectorAll('#annualAdjustmentWizardModal input[name="selected_items"]:not(:disabled)');
                     this.wizard.selectedIds = Array.from(checkboxes).map(cb => cb.value);
                 } else {
                     this.wizard.selectedIds = [];

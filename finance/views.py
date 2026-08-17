@@ -2289,6 +2289,16 @@ def cash_flow_list(request):
     manual_cfs = list(user.cash_flows.select_related('category').order_by('-is_income', 'category__name', 'name'))
     categories = Category.objects.all().order_by('name')
     
+    # Identify latest entry for each (name, is_income) for annual adjustment wizard
+    latest_map = {}
+    for cf in sorted(manual_cfs, key=lambda x: (x.name.lower(), x.is_income, x.start_date or datetime.date(1900, 1, 1), x.id), reverse=True):
+        key = (cf.name.lower(), cf.is_income)
+        if key not in latest_map:
+            latest_map[key] = cf.id
+
+    for cf in manual_cfs:
+        cf.is_latest = (cf.id == latest_map.get((cf.name.lower(), cf.is_income)))
+    
     # 2. Build Unified Items List (Manual + Pensions + Real Estate + Assets + Physical Assets + Loans)
     unified_items = []
     
