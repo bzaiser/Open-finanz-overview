@@ -72,32 +72,22 @@
 
                     {% elif item.id == 'monthly_income' %}
                         <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Income Sources" %}:</span>
-                        {% for cf in user.cash_flows.all %}
-                            {% if cf.is_income %}
-                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10" style="font-size: 0.75rem;">
-                                <span>{{ cf.name }}</span>
-                                <span class="font-monospace fw-bold">+{{ cf.value|intcomma }} {{ profile.currency }}</span>
-                            </div>
-                            {% endif %}
-                        {% endfor %}
-                        {% for p in user.pensions.all %}
-                            {% if p.expected_payout_at_retirement %}
-                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10" style="font-size: 0.75rem;">
-                                <span>{{ p.provider }}</span>
-                                <span class="font-monospace fw-bold">+{{ p.expected_payout_at_retirement|intcomma }} {{ profile.currency }}</span>
-                            </div>
-                            {% endif %}
+                        {% for inc in table_datasets.income_table_widget %}
+                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10" style="font-size: 0.75rem;">
+                            <span>{{ inc.name }}</span>
+                            <span class="font-monospace fw-bold">+{{ inc.amount|floatformat:2|intcomma }} {{ profile.currency }}</span>
+                        </div>
+                        {% empty %}
+                        <div class="small opacity-75 py-1" style="font-size: 0.75rem;">{% trans "No entries." %}</div>
                         {% endfor %}
 
                     {% elif item.id == 'monthly_expenses' %}
                         <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Expenses Breakdown" %}:</span>
-                        {% for cf in user.cash_flows.all %}
-                            {% if not cf.is_income %}
-                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10" style="font-size: 0.75rem;">
-                                <span>{{ cf.name }}</span>
-                                <span class="font-monospace fw-bold">-{{ cf.value|intcomma }} {{ profile.currency }}</span>
-                            </div>
-                            {% endif %}
+                        {% for exp in table_datasets.expense_table_widget %}
+                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10" style="font-size: 0.75rem;">
+                            <span>{{ exp.name }}</span>
+                            <span class="font-monospace fw-bold">-{{ exp.amount|floatformat:2|intcomma }} {{ profile.currency }}</span>
+                        </div>
                         {% empty %}
                         <div class="small opacity-75 py-1" style="font-size: 0.75rem;">{% trans "No entries." %}</div>
                         {% endfor %}
