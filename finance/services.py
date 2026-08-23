@@ -1,11 +1,22 @@
 import datetime
 import math
+import json
+import hashlib
 from decimal import Decimal
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from django.core.cache import cache
 from .models import Asset, CashFlowSource, OneTimeEvent, Pension, PhysicalAsset, RealEstate, Loan, LoanExtraRepayment
 from core.models import UserProfile
+
+def clear_user_forecast_cache(user_id):
+    if not user_id:
+        return
+    try:
+        cache.set(f"forecast_ver_{user_id}", int(timezone.now().timestamp()), timeout=None)
+    except Exception:
+        pass
 
 class SimulationEngine:
     def __init__(self, user, simulation_params=None):
@@ -113,6 +124,22 @@ class SimulationEngine:
                 months = 360 # Default 30 years
         
         months = max(1, min(months, 1200)) # Increased to 100 years for long histories
+
+        user_id = getattr(self.user, 'id', None)
+        cache_key = None
+        if user_id:
+            ver = cache.get(f"forecast_ver_{user_id}", 0)
+            param_str = json.dumps(self.params or {}, sort_keys=True, default=str)
+            param_hash = hashlib.md5(param_str.encode('utf-8')).hexdigest()[:8]
+            cache_key = f"forecast_v1_{user_id}_v{ver}_{param_hash}_{months}_{start_date}"
+            try:
+                cached_payload = cache.get(cache_key)
+                if cached_payload is not None and isinstance(cached_payload, dict) and 'forecast' in cached_payload:
+                    self.loan_interest_totals = cached_payload.get('loan_interest_totals', {})
+                    return cached_payload['forecast']
+            except Exception:
+                pass
+
         data = []
         
         today = datetime.date.today()
@@ -641,4 +668,13 @@ class SimulationEngine:
             
         self.loan_interest_totals = {str(item['loan'].id): item['total_interest_paid'] for item in loans_state}
             
+        if cache_key:
+            try:
+                cache.set(cache_key, {
+                    'forecast': data,
+                    'loan_interest_totals': self.loan_interest_totals
+                }, timeout=86400)
+            except Exception:
+                pass
+
         return data

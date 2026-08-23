@@ -1,7 +1,11 @@
-from django.db.models.signals import post_migrate
+from django.db.models.signals import post_migrate, post_save, post_delete
 from django.dispatch import receiver
 from django.utils.translation import gettext_noop as _
-from .models import Category
+from .models import (
+    Category, Asset, CashFlowSource, OneTimeEvent, Pension,
+    PhysicalAsset, RealEstate, Loan, LoanExtraRepayment, AssetSnapshot
+)
+from .services import clear_user_forecast_cache
 
 @receiver(post_migrate)
 def create_system_categories(sender, **kwargs):
@@ -29,3 +33,19 @@ def create_system_categories(sender, **kwargs):
             if not created and not cat.is_system:
                 cat.is_system = True
                 cat.save()
+
+def invalidate_forecast_cache_receiver(sender, instance, **kwargs):
+    user_id = getattr(instance, 'user_id', None)
+    if user_id:
+        clear_user_forecast_cache(user_id)
+
+for model in [Asset, CashFlowSource, OneTimeEvent, Pension, PhysicalAsset, RealEstate, Loan, AssetSnapshot]:
+    post_save.connect(invalidate_forecast_cache_receiver, sender=model)
+    post_delete.connect(invalidate_forecast_cache_receiver, sender=model)
+
+@receiver(post_save, sender=LoanExtraRepayment)
+@receiver(post_delete, sender=LoanExtraRepayment)
+def invalidate_forecast_on_repayment(sender, instance, **kwargs):
+    if instance.loan and instance.loan.user_id:
+        clear_user_forecast_cache(instance.loan.user_id)
+

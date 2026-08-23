@@ -28,6 +28,15 @@ def get_brightness(hex_color):
         return 255
 
 @receiver(post_save, sender=UserProfile)
+def invalidate_forecast_on_profile_change(sender, instance, **kwargs):
+    if instance.user_id:
+        try:
+            from finance.services import clear_user_forecast_cache
+            clear_user_forecast_cache(instance.user_id)
+        except Exception:
+            pass
+
+@receiver(post_save, sender=UserProfile)
 def sync_admin_theme(sender, instance, created, **kwargs):
     if not getattr(settings, 'SYNC_ADMIN_INTERFACE_THEME', False):
         return
