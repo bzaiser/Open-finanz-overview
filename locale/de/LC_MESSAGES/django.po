@@ -2232,7 +2232,7 @@ msgid "Overview, historical trend and future projections of statutory and privat
 msgstr "Übersicht, historische Entwicklung und Zukunftsprognosen für gesetzliche und private Vorsorgen."
 
 msgid "Pension Points"
-msgstr "Rentenpunkte (EP)"
+msgstr "Rentenpunkte"
 
 msgid "month net today"
 msgstr "Monat Netto aktuell"
@@ -2259,7 +2259,7 @@ msgid "Provider / Name"
 msgstr "Anbieter / Name"
 
 msgid "Point Value"
-msgstr "Rentenwert (€)"
+msgstr "Rentenwert"
 
 msgid "Gross Payout"
 msgstr "Brutto-Auszahlung"
@@ -2295,7 +2295,7 @@ msgid "Snapshot Date"
 msgstr "Stichtags-Datum"
 
 msgid "Capital Value (€)"
-msgstr "Kapitalwert (€)"
+msgstr "Kapitalwert"
 
 msgid "Projected Monthly Net Payout"
 msgstr "Prognostizierte Netto-Monatsrente"
@@ -2807,7 +2807,7 @@ msgid "Type"
 msgstr "Vertragsart"
 
 msgid "Capital Value"
-msgstr "Kapitalwert (€)"
+msgstr "Kapitalwert"
 
 
 
