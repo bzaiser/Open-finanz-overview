@@ -2824,8 +2824,6 @@ msgstr "Ausgaben-Aufteilung"
 msgid "Pension Contracts"
 msgstr "Vorsorgeverträge"
 
-msgid "Physical Assets"
-msgstr "Sachwerte"
 
 msgid "Real Estate Objects"
 msgstr "Immobilienobjekte"
