@@ -58,7 +58,7 @@
                 </div>
 
                 <!-- Hover Expand Details (like in /pensions) -->
-                <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ item.bg_color|default:'var(--app-card-bg)' }}; color: {{ item.text_color|default:'inherit' }};">
+                <div class="widget-hover-details border-top border-white border-opacity-25 pt-2">
                     {% if item.id == 'current_assets' %}
                         <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Asset Breakdown" %}:</span>
                         {% for a in user.assets.all %}
