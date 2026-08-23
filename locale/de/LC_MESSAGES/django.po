@@ -2812,6 +2812,36 @@ msgstr "Kapitalwert"
 msgid "active"
 msgstr "aktiv"
 
+msgid "Asset Breakdown"
+msgstr "Geldvermögen-Aufteilung"
+
+msgid "Income Sources"
+msgstr "Einnahmequellen"
+
+msgid "Expenses Breakdown"
+msgstr "Ausgaben-Aufteilung"
+
+msgid "Pension Contracts"
+msgstr "Vorsorgeverträge"
+
+msgid "Physical Assets"
+msgstr "Sachwerte"
+
+msgid "Real Estate Objects"
+msgstr "Immobilienobjekte"
+
+msgid "Loans & Debts"
+msgstr "Kredite & Verbindlichkeiten"
+
+msgid "Net Worth Breakdown"
+msgstr "Gesamtvermögens-Struktur"
+
+msgid "No entries."
+msgstr "Keine Einträge vorhanden."
+
+msgid "Rentenbezug"
+msgstr "Rentenbezug"
+
 
 
 

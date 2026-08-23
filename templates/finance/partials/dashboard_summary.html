@@ -79,9 +79,13 @@
                                 <span class="font-monospace fw-bold">+{{ cf.value|intcomma }} {{ profile.currency }}</span>
                             </div>
                             {% endif %}
-                        {% empty %}
-                        <div class="small opacity-75 py-1" style="font-size: 0.75rem;">{% trans "No entries." %}</div>
                         {% endfor %}
+                        {% if simulated_pension_payout > 0 %}
+                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10" style="font-size: 0.75rem;">
+                            <span><i class="bi bi-bank me-1"></i>{% trans "Rentenbezug" %}</span>
+                            <span class="font-monospace fw-bold">+{{ simulated_pension_payout|intcomma }} {{ profile.currency }}</span>
+                        </div>
+                        {% endif %}
 
                     {% elif item.id == 'monthly_expenses' %}
                         <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Expenses Breakdown" %}:</span>
