@@ -3,7 +3,7 @@
     {% for item in summary_layout %}
     {% if item.visible %}
     <div class="col-md-3 mb-3" style="order: {{ item.order }};">
-        <div class="card metric-card h-100"
+        <div class="card metric-card widget-expand-card h-100"
              style="background: linear-gradient(135deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0) 100%), {{ item.bg_color|default:'#ffffff' }}; color: {{ item.text_color|default:'#212529' }};">
             <div class="card-glass-glow"></div>
             <div class="card-body p-3 d-flex flex-column justify-content-between">
@@ -56,9 +56,120 @@
                         {% endif %}
                     </div>
                 </div>
+
+                <!-- Hover Expand Details (like in /pensions) -->
+                <div class="widget-hover-details border-top border-white border-opacity-25 pt-2">
+                    {% if item.id == 'current_assets' %}
+                        <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Asset Breakdown" %}:</span>
+                        {% for a in user.assets.all %}
+                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10" style="font-size: 0.75rem;">
+                            <span>{{ a.name }}</span>
+                            <span class="font-monospace fw-bold">{{ a.value|intcomma }} {{ profile.currency }}</span>
+                        </div>
+                        {% empty %}
+                        <div class="small opacity-75 py-1" style="font-size: 0.75rem;">{% trans "No entries." %}</div>
+                        {% endfor %}
+
+                    {% elif item.id == 'monthly_income' %}
+                        <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Income Sources" %}:</span>
+                        {% for cf in user.cash_flows.all %}
+                            {% if cf.is_income %}
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10" style="font-size: 0.75rem;">
+                                <span>{{ cf.name }}</span>
+                                <span class="font-monospace fw-bold">+{{ cf.value|intcomma }} {{ profile.currency }}</span>
+                            </div>
+                            {% endif %}
+                        {% empty %}
+                        <div class="small opacity-75 py-1" style="font-size: 0.75rem;">{% trans "No entries." %}</div>
+                        {% endfor %}
+
+                    {% elif item.id == 'monthly_expenses' %}
+                        <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Expenses Breakdown" %}:</span>
+                        {% for cf in user.cash_flows.all %}
+                            {% if not cf.is_income %}
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10" style="font-size: 0.75rem;">
+                                <span>{{ cf.name }}</span>
+                                <span class="font-monospace fw-bold">-{{ cf.value|intcomma }} {{ profile.currency }}</span>
+                            </div>
+                            {% endif %}
+                        {% empty %}
+                        <div class="small opacity-75 py-1" style="font-size: 0.75rem;">{% trans "No entries." %}</div>
+                        {% endfor %}
+
+                    {% elif item.id == 'total_pensions' or item.id == 'expected_payout' or item.id == 'current_pension_payout' %}
+                        <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Pension Contracts" %}:</span>
+                        {% for p in user.pensions.all %}
+                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10" style="font-size: 0.75rem;">
+                            <span>{{ p.provider }}</span>
+                            <span class="font-monospace fw-bold">
+                                {% if p.pension_type == 'statutory' %}
+                                    {{ p.pension_points|floatformat:"-2" }} EP
+                                {% else %}
+                                    {{ p.current_value|intcomma }} {{ profile.currency }}
+                                {% endif %}
+                            </span>
+                        </div>
+                        {% empty %}
+                        <div class="small opacity-75 py-1" style="font-size: 0.75rem;">{% trans "No entries." %}</div>
+                        {% endfor %}
+
+                    {% elif item.id == 'total_physical_assets' %}
+                        <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Physical Assets" %}:</span>
+                        {% for pa in user.physical_assets.all %}
+                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10" style="font-size: 0.75rem;">
+                            <span>{{ pa.name }}</span>
+                            <span class="font-monospace fw-bold">{{ pa.value|intcomma }} {{ profile.currency }}</span>
+                        </div>
+                        {% empty %}
+                        <div class="small opacity-75 py-1" style="font-size: 0.75rem;">{% trans "No entries." %}</div>
+                        {% endfor %}
+
+                    {% elif item.id == 'total_real_estate' %}
+                        <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Real Estate Objects" %}:</span>
+                        {% for re in user.real_estates.all %}
+                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10" style="font-size: 0.75rem;">
+                            <span>{{ re.name }}</span>
+                            <span class="font-monospace fw-bold">{{ re.value|intcomma }} {{ profile.currency }}</span>
+                        </div>
+                        {% empty %}
+                        <div class="small opacity-75 py-1" style="font-size: 0.75rem;">{% trans "No entries." %}</div>
+                        {% endfor %}
+
+                    {% elif item.id == 'total_debts' %}
+                        <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Loans & Debts" %}:</span>
+                        {% for l in user.loans.all %}
+                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10" style="font-size: 0.75rem;">
+                            <span>{{ l.name }}</span>
+                            <span class="font-monospace fw-bold">{{ l.nominal_amount|intcomma }} {{ profile.currency }}</span>
+                        </div>
+                        {% empty %}
+                        <div class="small opacity-75 py-1" style="font-size: 0.75rem;">{% trans "No entries." %}</div>
+                        {% endfor %}
+
+                    {% elif item.id == 'total_combined_assets' %}
+                        <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Net Worth Breakdown" %}:</span>
+                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10" style="font-size: 0.75rem;">
+                            <span>{% trans "Geldvermögen" %}</span>
+                            <span class="font-monospace fw-bold">{{ current_assets_total|intcomma }} {{ profile.currency }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10" style="font-size: 0.75rem;">
+                            <span>{% trans "Sachwerte" %}</span>
+                            <span class="font-monospace fw-bold">{{ current_physical_assets_total|intcomma }} {{ profile.currency }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10" style="font-size: 0.75rem;">
+                            <span>{% trans "Immobilien" %}</span>
+                            <span class="font-monospace fw-bold">{{ current_real_estate_total|intcomma }} {{ profile.currency }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 text-danger" style="font-size: 0.75rem;">
+                            <span>{% trans "Verbindlichkeiten" %}</span>
+                            <span class="font-monospace fw-bold">-{{ current_debts_total|intcomma }} {{ profile.currency }}</span>
+                        </div>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
     {% endif %}
     {% endfor %}
 </div>
+
