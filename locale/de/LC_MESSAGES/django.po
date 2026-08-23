@@ -2304,7 +2304,7 @@ msgid "Target Monthly Payout"
 msgstr "Monatliche Ziel-Nettorrente"
 
 msgid "Monthly Payout Projection Timeline"
-msgstr "Prognose-Zeitleiste (Monatliche Netto-Ausbuchtungen)"
+msgstr "Prognose-Zeitleiste (Monatliche Netto-Auszahlungen)"
 
 msgid "Capital & Pension Points Development"
 msgstr "Kapital- & Rentenpunkte-Entwicklung"
