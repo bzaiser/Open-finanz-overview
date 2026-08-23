@@ -2809,6 +2809,9 @@ msgstr "Vertragsart"
 msgid "Capital Value"
 msgstr "Kapitalwert"
 
+msgid "active"
+msgstr "aktiv"
+
 
 
 
