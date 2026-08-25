@@ -382,7 +382,7 @@
             opacity: 0;
             overflow: hidden;
             transition: max-height 0.35s ease, opacity 0.3s ease;
-            z-index: 99999 !important;
+            z-index: 1020 !important;
             background-color: var(--app-card-bg);
             border-bottom-left-radius: 1rem;
             border-bottom-right-radius: 1rem;
@@ -392,7 +392,7 @@
         .widget-expand-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 12px 24px rgba(0,0,0,0.25) !important;
-            z-index: 99999 !important;
+            z-index: 1025 !important;
             border-bottom-left-radius: 0 !important;
             border-bottom-right-radius: 0 !important;
         }
@@ -401,6 +401,21 @@
             opacity: 1;
             overflow-y: auto;
             padding: 0.75rem 1rem 1rem 1rem;
+        }
+        /* Disable card hover expansion when offcanvas or modal panels are open */
+        body:has(.offcanvas.show) .widget-expand-card,
+        body:has(.modal.show) .widget-expand-card,
+        body.modal-open .widget-expand-card {
+            pointer-events: none !important;
+            transform: none !important;
+        }
+        body:has(.offcanvas.show) .widget-hover-details,
+        body:has(.modal.show) .widget-hover-details,
+        body.modal-open .widget-hover-details {
+            display: none !important;
+            opacity: 0 !important;
+            max-height: 0 !important;
+            pointer-events: none !important;
         }
         /* Mobile & Tablet responsive details formatting */
         @media (max-width: 991.98px) {
