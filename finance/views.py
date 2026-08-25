@@ -1011,11 +1011,12 @@ def dashboard_view(request):
                 'year': format_period(a.withdrawal_start_date, None)
             })
 
+    table_data_current_pension_payout = []
     # 3. Pension payouts (Income, only if > 0)
     for p in user.pensions.all():
         if p.start_payout_date and p.start_payout_date.replace(day=1) <= target_date:
             p_sim = month_pension_payouts.get(str(p.id))
-            p_amt = p_sim if p_sim is not None else float(p.expected_payout_at_retirement or 0)
+            p_amt = p_sim if p_sim is not None else float(p.expected_payout_at_retirement or p.gross_payout or 0)
             if p_amt > 0:
                 table_data_income.append({
                     'name': f"{_('Pension')}: {p.provider}", 
@@ -1023,6 +1024,10 @@ def dashboard_view(request):
                     'category': _('Pension'),
                     'type': _('Contract'),
                     'year': format_period(p.start_payout_date, None)
+                })
+                table_data_current_pension_payout.append({
+                    'name': p.provider,
+                    'amount': float(p_amt)
                 })
 
     # 4. One-Time Income Events occurring at target_date month
@@ -1207,6 +1212,7 @@ def dashboard_view(request):
         'expense_table_widget': table_data_expense,
         'asset_table_widget': table_data_asset,
         'pension_table_widget': table_data_pension,
+        'current_pension_payout_widget': table_data_current_pension_payout,
         'event_table_widget': table_data_event,
         'loan_table_widget': table_data_loan,
         'upcoming_dates_widget': table_data_upcoming_dates,
