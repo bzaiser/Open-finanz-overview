@@ -1138,12 +1138,19 @@ def dashboard_view(request):
             'year': continuous_label
         })
 
+    pension_balances_stichtag = current_month_data.get('pension_balances', {})
     table_data_pension = []
     for p in user.pensions.all():
         year = str(p.start_payout_date.year) if p.start_payout_date else continuous_label
+        bal = pension_balances_stichtag.get(str(p.id), float(p.current_value or 0))
         table_data_pension.append({
+            'id': p.id,
             'name': p.provider, 
-            'amount': float(p.current_value or 0), 
+            'amount': float(bal), 
+            'pension_type': p.pension_type,
+            'pension_points': float(p.pension_points) if p.pension_points else 0,
+            'gross_payout': float(p.gross_payout) if p.gross_payout else 0,
+            'expected_payout': float(p.expected_payout_at_retirement) if p.expected_payout_at_retirement else 0,
             'category': _('Pension'),
             'contribution': float(p.monthly_contribution or 0),
             'year': year

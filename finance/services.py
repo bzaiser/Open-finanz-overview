@@ -659,6 +659,7 @@ class SimulationEngine:
                 'category_breakdown': {k: float(round(v, 2)) for k, v in category_breakdown.items()},
                 'income_category_breakdown': {k: float(round(v, 2)) for k, v in income_category_breakdown.items()},
                 'loan_balances': {str(item['loan'].id): float(round(item['balance'], 2)) for item in loans_state},
+                'pension_balances': {str(item['pension'].id): float(round(item['balance'], 2)) for item in pensions_state},
                 'one_time_impact': float(round(event_impact, 2)),
                 'one_time_events': events_this_month,
                 'debug_breakdown': {k: {sub_k: float(round(sub_v, 2)) for sub_k, sub_v in v.items()} for k, v in debug_breakdown.items()},

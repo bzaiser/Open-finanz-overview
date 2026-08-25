@@ -127,32 +127,32 @@
 
                     {% elif item.id == 'total_pensions' or item.id == 'expected_payout' %}
                         <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Pension Contracts" %}:</span>
-                        {% for p in user.pensions.all %}
+                        {% for p in table_datasets.pension_table_widget %}
                             {% if p.pension_type == 'statutory' %}
                                 <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
-                                    <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ p.provider }} (EP)">{{ p.provider }} (EP)</span>
+                                    <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ p.name }} (EP)">{{ p.name }} (EP)</span>
                                     <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">
                                         {{ p.pension_points|floatformat:"-2" }} <span class="small font-normal opacity-75">EP</span>
                                     </span>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
-                                    <span class="text-truncate flex-grow-1 opacity-90" style="min-width: 0;" title="{{ p.provider }} (Betrag)">{{ p.provider }} (Betrag)</span>
+                                    <span class="text-truncate flex-grow-1 opacity-90" style="min-width: 0;" title="{{ p.name }} (Betrag)">{{ p.name }} (Betrag)</span>
                                     <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">
                                         {{ p.gross_payout|intcomma }} <span class="small font-normal opacity-75">{{ profile.currency }}</span>
                                     </span>
                                 </div>
                             {% else %}
                                 <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
-                                    <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ p.provider }}">{{ p.provider }}</span>
+                                    <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ p.name }}">{{ p.name }}</span>
                                     <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">
-                                        {{ p.current_value|intcomma }} <span class="small font-normal opacity-75">{{ profile.currency }}</span>
+                                        {{ p.amount|intcomma }} <span class="small font-normal opacity-75">{{ profile.currency }}</span>
                                     </span>
                                 </div>
-                                {% if p.expected_payout_at_retirement %}
+                                {% if p.expected_payout %}
                                 <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
-                                    <span class="text-truncate flex-grow-1 opacity-90" style="min-width: 0;" title="{{ p.provider }} (Rente)">{{ p.provider }} (Rente)</span>
+                                    <span class="text-truncate flex-grow-1 opacity-90" style="min-width: 0;" title="{{ p.name }} (Rente)">{{ p.name }} (Rente)</span>
                                     <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">
-                                        {{ p.expected_payout_at_retirement|intcomma }} <span class="small font-normal opacity-75">{{ profile.currency }}</span>
+                                        {{ p.expected_payout|intcomma }} <span class="small font-normal opacity-75">{{ profile.currency }}</span>
                                     </span>
                                 </div>
                                 {% endif %}
