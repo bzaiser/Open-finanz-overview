@@ -427,9 +427,10 @@ class SimulationEngine:
                             current_monthly_pension_payout += payout_val * step_months
                             month_pension_payouts[str(p.id)] = payout_val
                             
-                            # Split by capital base
+                            # Split by capital base and deduct payout from remaining balance
                             if p.current_value > 0:
                                 current_monthly_pension_payout_capital += payout_val * step_months
+                                p_item['balance'] = max(Decimal('0.00'), p_item['balance'] - (payout_val * step_months))
                             else:
                                 current_monthly_pension_payout_fixed += payout_val * step_months
 
@@ -664,7 +665,7 @@ class SimulationEngine:
                 'category_breakdown': {k: float(round(v, 2)) for k, v in category_breakdown.items()},
                 'income_category_breakdown': {k: float(round(v, 2)) for k, v in income_category_breakdown.items()},
                 'loan_balances': {str(item['loan'].id): float(round(item['balance'], 2)) for item in loans_state},
-                'pension_balances': {str(item['pension'].id): float(round(item['balance'], 2)) for item in pensions_state},
+                'pension_balances': {str(item['pension'].id): float(round(item['balance'] / inflation_factor, 2)) for item in pensions_state},
                 'cash_flow_values': {k: float(round(v, 2)) for k, v in month_cf_values.items()},
                 'pension_payout_values': {k: float(round(v, 2)) for k, v in month_pension_payouts.items()},
                 'one_time_impact': float(round(event_impact, 2)),
