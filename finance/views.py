@@ -982,12 +982,15 @@ def dashboard_view(request):
         return continuous_label
 
     table_data_income = []
+    month_cf_values = current_month_data.get('cash_flow_values', {})
+    month_pension_payouts = current_month_data.get('pension_payout_values', {})
     
     # 1. Manual Cash Flows (Income)
     for cf in user.cash_flows.select_related('category').filter(is_income=True):
         if (not cf.start_date or cf.start_date.replace(day=1) <= target_date) and \
            (not cf.end_date or cf.end_date.replace(day=1) >= target_date):
-            amt = cf.value if cf.frequency == 'monthly' else cf.value / 12
+            sim_val = month_cf_values.get(str(cf.id))
+            amt = sim_val if sim_val is not None else (float(cf.value) if cf.frequency == 'monthly' else float(cf.value) / 12)
             table_data_income.append({
                 'name': cf.name, 
                 'amount': float(amt), 
@@ -1010,15 +1013,17 @@ def dashboard_view(request):
 
     # 3. Pension payouts (Income, only if > 0)
     for p in user.pensions.all():
-        p_amt = float(p.expected_payout_at_retirement or 0)
-        if p_amt > 0 and p.start_payout_date and p.start_payout_date.replace(day=1) <= target_date:
-            table_data_income.append({
-                'name': f"{_('Pension')}: {p.provider}", 
-                'amount': p_amt, 
-                'category': _('Pension'),
-                'type': _('Contract'),
-                'year': format_period(p.start_payout_date, None)
-            })
+        if p.start_payout_date and p.start_payout_date.replace(day=1) <= target_date:
+            p_sim = month_pension_payouts.get(str(p.id))
+            p_amt = p_sim if p_sim is not None else float(p.expected_payout_at_retirement or 0)
+            if p_amt > 0:
+                table_data_income.append({
+                    'name': f"{_('Pension')}: {p.provider}", 
+                    'amount': float(p_amt), 
+                    'category': _('Pension'),
+                    'type': _('Contract'),
+                    'year': format_period(p.start_payout_date, None)
+                })
 
     # 4. One-Time Income Events occurring at target_date month
     for e in user.events.all():
@@ -1036,7 +1041,8 @@ def dashboard_view(request):
     for cf in user.cash_flows.select_related('category').filter(is_income=False):
         if (not cf.start_date or cf.start_date.replace(day=1) <= target_date) and \
            (not cf.end_date or cf.end_date.replace(day=1) >= target_date):
-            amt = cf.value if cf.frequency == 'monthly' else cf.value / 12
+            sim_val = month_cf_values.get(str(cf.id))
+            amt = sim_val if sim_val is not None else (float(cf.value) if cf.frequency == 'monthly' else float(cf.value) / 12)
             table_data_expense.append({
                 'name': cf.name, 
                 'amount': float(amt), 

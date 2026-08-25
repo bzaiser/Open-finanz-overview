@@ -388,6 +388,9 @@ class SimulationEngine:
             current_monthly_pension_payout_fixed = Decimal('0.00')
             current_monthly_pension_payout_capital = Decimal('0.00')
             
+            month_cf_values = {}
+            month_pension_payouts = {}
+
             for p_item in pensions_state:
                 p = p_item['pension']
                 # Contributions (only if currently paying AND NOT IN THE PAST to avoid ghost entries)
@@ -422,6 +425,7 @@ class SimulationEngine:
                             actual_increase = self.pension_increase if p.is_indexed else Decimal('0.00')
                             payout_val = payout_val * ((1 + actual_increase) ** full_years_since_start)
                             current_monthly_pension_payout += payout_val * step_months
+                            month_pension_payouts[str(p.id)] = payout_val
                             
                             # Split by capital base
                             if p.current_value > 0:
@@ -466,6 +470,7 @@ class SimulationEngine:
                     amount = amount * ((1 + rate) ** year_passed_decimal)
 
                 val = amount if cf.frequency == 'monthly' else amount / 12
+                month_cf_values[str(cf.id)] = val
 
                 if cf.is_income:
                     monthly_income += val * step_months
@@ -660,6 +665,8 @@ class SimulationEngine:
                 'income_category_breakdown': {k: float(round(v, 2)) for k, v in income_category_breakdown.items()},
                 'loan_balances': {str(item['loan'].id): float(round(item['balance'], 2)) for item in loans_state},
                 'pension_balances': {str(item['pension'].id): float(round(item['balance'], 2)) for item in pensions_state},
+                'cash_flow_values': {k: float(round(v, 2)) for k, v in month_cf_values.items()},
+                'pension_payout_values': {k: float(round(v, 2)) for k, v in month_pension_payouts.items()},
                 'one_time_impact': float(round(event_impact, 2)),
                 'one_time_events': events_this_month,
                 'debug_breakdown': {k: {sub_k: float(round(sub_v, 2)) for sub_k, sub_v in v.items()} for k, v in debug_breakdown.items()},
