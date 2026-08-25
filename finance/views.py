@@ -959,11 +959,11 @@ def dashboard_view(request):
     inflation_rate = Decimal(str(simulation_params.get('inflation_rate', profile.inflation_rate))) / 100
     inflation_factor = (1 + inflation_rate) ** (Decimal(str(max(0, months_diff))) / 12)
     
-    simulated_real_payout = current_month_data.get('real_monthly_pension_payout', 0)
+    simulated_nominal_payout = current_month_data.get('monthly_pension_payout', 0)
     
     # We strictly show the actual simulated cashflow at the Stichtag
     # (If not retired at Stichtag, it will correctly show 0)
-    total_expected_pensions = simulated_real_payout
+    total_expected_pensions = simulated_nominal_payout
     
     simulated_end_age = int(profile.simulation_max_age)
     
