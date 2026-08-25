@@ -102,7 +102,22 @@
                         <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No entries." %}</div>
                         {% endfor %}
 
-                    {% elif item.id == 'total_pensions' or item.id == 'expected_payout' or item.id == 'current_pension_payout' %}
+                    {% elif item.id == 'current_pension_payout' %}
+                        <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Aktuelle Rente (am Stichtag)" %}:</span>
+                        {% for p in user.pensions.all %}
+                            {% if p.start_payout_date and p.start_payout_date <= simulation_params.stichtag %}
+                                <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                                    <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ p.provider }}">{{ p.provider }}</span>
+                                    <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">
+                                        +{% if p.pension_type == 'statutory' %}{{ p.gross_payout|intcomma }}{% else %}{{ p.expected_payout_at_retirement|intcomma }}{% endif %} <span class="small font-normal opacity-75">{{ profile.currency }}</span>
+                                    </span>
+                                </div>
+                            {% endif %}
+                        {% empty %}
+                        <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No entries." %}</div>
+                        {% endfor %}
+
+                    {% elif item.id == 'total_pensions' or item.id == 'expected_payout' %}
                         <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Pension Contracts" %}:</span>
                         {% for p in user.pensions.all %}
                             {% if p.pension_type == 'statutory' %}
