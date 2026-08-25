@@ -76,11 +76,17 @@
                             {% if cf.is_income %}
                             <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
                                 <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ cf.name }}">{{ cf.name }}</span>
-                                <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto text-success">+{{ cf.value|intcomma }} <span class="small font-normal opacity-75">{{ profile.currency }}</span></span>
+                                <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">+{{ cf.value|intcomma }} <span class="small font-normal opacity-75">{{ profile.currency }}</span></span>
                             </div>
                             {% endif %}
-                        {% empty %}
-                        <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No entries." %}</div>
+                        {% endfor %}
+                        {% for p in user.pensions.all %}
+                            {% if p.expected_payout_at_retirement and p.start_payout_date and p.start_payout_date <= simulation_params.stichtag %}
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                                <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ p.provider }}">{{ p.provider }}</span>
+                                <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">+{{ p.expected_payout_at_retirement|intcomma }} <span class="small font-normal opacity-75">{{ profile.currency }}</span></span>
+                            </div>
+                            {% endif %}
                         {% endfor %}
 
                     {% elif item.id == 'monthly_expenses' %}
@@ -89,7 +95,7 @@
                             {% if not cf.is_income %}
                             <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
                                 <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ cf.name }}">{{ cf.name }}</span>
-                                <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto text-danger">-{{ cf.value|intcomma }} <span class="small font-normal opacity-75">{{ profile.currency }}</span></span>
+                                <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">-{{ cf.value|intcomma }} <span class="small font-normal opacity-75">{{ profile.currency }}</span></span>
                             </div>
                             {% endif %}
                         {% empty %}
@@ -140,7 +146,7 @@
                         {% for l in user.loans.all %}
                         <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
                             <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ l.name }}">{{ l.name }}</span>
-                            <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto text-danger">-{{ l.nominal_amount|intcomma }} <span class="small font-normal opacity-75">{{ profile.currency }}</span></span>
+                            <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">-{{ l.nominal_amount|intcomma }} <span class="small font-normal opacity-75">{{ profile.currency }}</span></span>
                         </div>
                         {% empty %}
                         <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No entries." %}</div>
@@ -162,7 +168,7 @@
                         </div>
                         <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
                             <span class="text-truncate flex-grow-1" style="min-width: 0;">{% trans "Verbindlichkeiten" %}</span>
-                            <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto text-danger">-{{ current_debts_total|intcomma }} <span class="small font-normal opacity-75">{{ profile.currency }}</span></span>
+                            <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">-{{ current_debts_total|intcomma }} <span class="small font-normal opacity-75">{{ profile.currency }}</span></span>
                         </div>
                     {% endif %}
                 </div>
