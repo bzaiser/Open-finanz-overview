@@ -271,7 +271,13 @@
                 {% elif item.id == 'asset_allocation_chart' %}
                 config.type = 'doughnut';
                 config.options.scales = { x: { display: false }, y: { display: false } };
+                config.options.interaction = {
+                    mode: 'nearest',
+                    intersect: true
+                };
                 config.options.plugins.legend = { position: 'bottom' };
+                config.options.plugins.tooltip.intersect = true;
+                config.options.plugins.tooltip.mode = 'nearest';
                 config.options.plugins.tooltip.callbacks = {
                     label: function(context) {
                         const idx = context.dataIndex;
