@@ -667,6 +667,7 @@ class SimulationEngine:
                 'income_category_breakdown': {k: float(round(v, 2)) for k, v in income_category_breakdown.items()},
                 'loan_balances': {str(item['loan'].id): float(round(item['balance'], 2)) for item in loans_state},
                 'pension_balances': {str(item['pension'].id): float(round(item['balance'] / inflation_factor, 2)) for item in pensions_state},
+                'asset_balances': {str(item['asset'].id): float(round(item['balance'] / inflation_factor, 2)) for item in assets_state},
                 'cash_flow_values': {k: float(round(v, 2)) for k, v in month_cf_values.items()},
                 'pension_payout_values': {k: float(round(v, 2)) for k, v in month_pension_payouts.items()},
                 'one_time_impact': float(round(event_impact, 2)),

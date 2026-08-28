@@ -1121,6 +1121,8 @@ def dashboard_view(request):
                     'year': str(re.sale_date.year) if re.sale_date else continuous_label
                 })
 
+    asset_balances_stichtag = current_month_data.get('asset_balances', {})
+    pension_balances_stichtag = current_month_data.get('pension_balances', {})
     table_data_asset = []
     for a in user.assets.all():
         rate_display = f"{a.growth_rate or 0}%"
@@ -1129,9 +1131,10 @@ def dashboard_view(request):
             rate_display = f"{a.interest_teaser_rate}% -> {a.growth_rate or 0}%"
             teaser_active = True
             
+        a_bal = asset_balances_stichtag.get(str(a.id), float(a.value or 0))
         table_data_asset.append({
             'name': a.name, 
-            'amount': float(a.value or 0), 
+            'amount': float(a_bal), 
             'category': _('Asset'),
             'rate': rate_display,
             'year': continuous_label,
@@ -1141,9 +1144,10 @@ def dashboard_view(request):
 
 
     for p in user.pensions.all():
+        p_bal = pension_balances_stichtag.get(str(p.id), float(p.current_value or 0))
         table_data_asset.append({
             'name': f"{_('Pension')}: {p.provider}", 
-            'amount': float(p.current_value or 0), 
+            'amount': float(p_bal), 
             'category': _('Pension'),
             'rate': f"{p.growth_rate or 0}%",
             'year': continuous_label
