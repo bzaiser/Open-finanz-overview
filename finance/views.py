@@ -384,6 +384,10 @@ def dashboard_view(request):
         'physical_asset_forecast_chart',
         'liquid_pension_forecast_chart',
         'loan_evolution_chart',
+        'asset_table_widget',
+        'income_table_widget',
+        'expense_table_widget',
+        'pension_table_widget',
     ]
 
     engine = SimulationEngine(user, simulation_params)
