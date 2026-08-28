@@ -390,6 +390,7 @@ class SimulationEngine:
             
             month_cf_values = {}
             month_pension_payouts = {}
+            month_pension_payout_categories = {}
 
             for p_item in pensions_state:
                 p = p_item['pension']
@@ -434,6 +435,9 @@ class SimulationEngine:
                             else:
                                 current_monthly_pension_payout_fixed += payout_val * step_months
 
+                            p_cat = p.provider if p.pension_type == 'statutory' else str(_('Auszahlung Vorsorgeverträge'))
+                            month_pension_payout_categories[p_cat] = month_pension_payout_categories.get(p_cat, Decimal('0')) + (payout_val * step_months)
+
             # 3. Process Cash Flows (Income/Expenses)
             monthly_income = current_monthly_pension_payout + current_monthly_asset_withdrawal
             monthly_expenses = current_monthly_pension_contribution
@@ -455,11 +459,8 @@ class SimulationEngine:
             if current_monthly_asset_withdrawal > 0:
                 income_category_breakdown[str(_('Vermögen'))] = current_monthly_asset_withdrawal
 
-            if current_monthly_pension_payout_fixed > 0:
-                income_category_breakdown[str(_('Rente'))] = current_monthly_pension_payout_fixed
-            if current_monthly_pension_payout_capital > 0:
-                cat_name = str(_('Rente'))
-                income_category_breakdown[cat_name] = income_category_breakdown.get(cat_name, Decimal('0')) + current_monthly_pension_payout_capital
+            for p_cat, p_amt in month_pension_payout_categories.items():
+                income_category_breakdown[p_cat] = income_category_breakdown.get(p_cat, Decimal('0')) + p_amt
             
             for cf in cash_flows:
                 if cf.start_date and cf.start_date.replace(day=1) > current_date: continue
