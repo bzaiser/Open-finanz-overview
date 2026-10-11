@@ -140,7 +140,7 @@ msgstr "Dashboard-Konfiguration"
 
 #: core/models.py:64
 msgid "Follow System Design"
-msgstr ""
+msgstr "Systemdesign folgen"
 
 #: core/models.py:65
 msgid "Night Mode Colors"
@@ -205,7 +205,7 @@ msgstr "Kategorien"
 
 #: finance/models.py:25
 msgid "System categories cannot be deleted."
-msgstr ""
+msgstr "Systemkategorien können nicht gelöscht werden."
 
 #: finance/models.py:37
 msgid "Monthly"
@@ -244,7 +244,7 @@ msgstr "Häufigkeit"
 
 #: finance/models.py:50 finance/models.py:241
 msgid "Notes"
-msgstr ""
+msgstr "Notizen"
 
 #: finance/models.py:53
 msgid "Cash Flow Source"
@@ -355,15 +355,15 @@ msgstr "Historische Daten"
 
 #: finance/models.py:118
 msgid "AI Log / Errors"
-msgstr ""
+msgstr "KI-Protokoll / Fehler"
 
 #: finance/models.py:121
 msgid "Import Batch"
-msgstr ""
+msgstr "Import-Stapel"
 
 #: finance/models.py:122
 msgid "Import Batches"
-msgstr ""
+msgstr "Import-Stapel"
 
 #: finance/models.py:133
 msgid "Suggested Category"
@@ -375,27 +375,27 @@ msgstr "Geplanter Verkauf"
 
 #: finance/models.py:139
 msgid "Is Recurring"
-msgstr ""
+msgstr "Ist wiederkehrend"
 
 #: finance/models.py:141
 msgid "AI Reasoning"
-msgstr ""
+msgstr "KI-Begründung"
 
 #: finance/models.py:142
 msgid "AI Confidence"
-msgstr ""
+msgstr "KI-Konfidenz"
 
 #: finance/models.py:142
 msgid "0.0 to 1.0"
-msgstr ""
+msgstr "0,0 bis 1,0"
 
 #: finance/models.py:145
 msgid "Ignore"
-msgstr ""
+msgstr "Ignorieren"
 
 #: finance/models.py:148
 msgid "Matched Terms (Notes)"
-msgstr ""
+msgstr "Gefundene Begriffe (Notizen)"
 
 #: finance/models.py:149
 msgid "Integration Count"
@@ -403,35 +403,35 @@ msgstr "Inflations-Monitor"
 
 #: finance/models.py:150
 msgid "Transaction Signature"
-msgstr ""
+msgstr "Transaktions-Signatur"
 
 #: finance/models.py:153
 msgid "Has Plan Conflict"
-msgstr ""
+msgstr "Hat Plan-Konflikt"
 
 #: finance/models.py:154
 msgid "Confirmed Conflict"
-msgstr ""
+msgstr "Bestätigter Konflikt"
 
 #: finance/models.py:158
 msgid "Raw Row Fingerprints"
-msgstr ""
+msgstr "Rohdaten-Fingerabdrücke"
 
 #: finance/models.py:158 finance/models.py:161
 msgid "Pending Transaction"
-msgstr ""
+msgstr "Ausstehende Transaktion"
 
 #: finance/models.py:162
 msgid "Pending Transactions"
-msgstr ""
+msgstr "Ausstehende Transaktionen"
 
 #: finance/models.py:181
 msgid "Processed Transaction Hash"
-msgstr ""
+msgstr "Verarbeiteter Transaktions-Hash"
 
 #: finance/models.py:182
 msgid "Processed Transaction Hashes"
-msgstr ""
+msgstr "Verarbeitete Transaktions-Hashes"
 
 #: finance/models.py:189 finance/models.py:207
 msgid "Annual Appreciation Rate (%)"
@@ -542,15 +542,15 @@ msgstr "Sondertilgungen"
 
 #: finance/models.py:264
 msgid "Search Query"
-msgstr ""
+msgstr "Suchbegriff"
 
 #: finance/models.py:264
 msgid "Separated by semicolon, e.g. EDEKA;REWE"
-msgstr ""
+msgstr "Getrennt durch Semikolon, z.B. EDEKA;REWE"
 
 #: finance/models.py:265 finance/models.py:268
 msgid "Is Active"
-msgstr ""
+msgstr "Aktiv"
 
 #: finance/models.py:272
 msgid "Linked Cash Flow Source"
@@ -558,7 +558,7 @@ msgstr "Einnahme-/Ausgabequelle"
 
 #: finance/models.py:275 finance/models.py:276
 msgid "Import Filters"
-msgstr ""
+msgstr "Import-Filter"
 
 #: finance/models.py:300
 msgid "Categorization Memory"
@@ -570,7 +570,7 @@ msgstr "Kategorie"
 
 #: finance/services.py:255
 msgid "Sparen"
-msgstr ""
+msgstr "Sparen"
 
 #: finance/services.py:327
 msgid "Kredit"
@@ -719,7 +719,7 @@ msgstr "Ereignis"
 
 #: finance/views.py:728 finance/views.py:730
 msgid "Continuous"
-msgstr ""
+msgstr "Fortlaufend"
 
 #: finance/views.py:741
 msgid "Income"
@@ -727,7 +727,7 @@ msgstr "Einnahmen"
 
 #: finance/views.py:742 finance/views.py:778
 msgid "Manual"
-msgstr ""
+msgstr "Manuell"
 
 #: finance/views.py:750
 msgid "Withdrawal"
@@ -763,15 +763,15 @@ msgstr "Hilfe"
 
 #: finance/views.py:1283 templates/finance/partials/import_mapping_pane.html:23
 msgid "Alle Posten zugeordnet!"
-msgstr ""
+msgstr "Alle Posten zugeordnet!"
 
 #: finance/views.py:1309
 msgid "Noch keine Buchungen bereit."
-msgstr ""
+msgstr "Noch keine Buchungen bereit."
 
 #: finance/views.py:1330
 msgid "Dieser Import wurde bereits angewendet."
-msgstr ""
+msgstr "Dieser Import wurde bereits angewendet."
 
 #: finance/views.py:1693 finance/views.py:1720 finance/views.py:1739
 #: finance/views.py:1826 templates/base.html:308
@@ -789,7 +789,7 @@ msgstr "KI Bank-Import"
 
 #: templates/base.html:327 templates/base.html:351
 msgid "Admin"
-msgstr ""
+msgstr "Administration"
 
 #: templates/base.html:336
 msgid "Toggle Night Mode"
@@ -806,12 +806,12 @@ msgstr "Abmelden"
 #: templates/base.html:365 templates/core/login.html:4
 #: templates/core/login.html:11 templates/core/login.html:17
 msgid "Login"
-msgstr ""
+msgstr "Anmelden"
 
 #: templates/base.html:366 templates/core/signup.html:4
 #: templates/core/signup.html:11 templates/core/signup.html:17
 msgid "Sign Up"
-msgstr ""
+msgstr "Registrieren"
 
 #: templates/core/about.html:10
 msgid "About the Project"
@@ -819,7 +819,7 @@ msgstr "Über das Projekt"
 
 #: templates/core/about.html:23
 msgid "Personal Data Security"
-msgstr ""
+msgstr "Sicherheit persönlicher Daten"
 
 #: templates/core/about.html:47
 msgid "Lead Developer & Architect"
@@ -972,7 +972,7 @@ msgstr ""
 
 #: templates/core/login.html:21
 msgid "No account yet? Sign up"
-msgstr ""
+msgstr "Noch kein Konto? Registrieren"
 
 #: templates/core/profile.html:4
 msgid "Profile & Design Studio"
@@ -1077,7 +1077,7 @@ msgstr "Sidebar-Hintergrund"
 
 #: templates/core/profile.html:174
 msgid "Text"
-msgstr ""
+msgstr "Text"
 
 #: templates/core/profile.html:175
 msgid "Tab. Header BG"
@@ -1105,24 +1105,24 @@ msgstr "Änderungen & Design speichern"
 
 #: templates/core/signup.html:21
 msgid "Already have an account? Login"
-msgstr ""
+msgstr "Bereits ein Konto? Anmelden"
 
 #: templates/finance/ai_status.html:22 templates/finance/ai_status.html:26
 #: templates/finance/ai_status.html:45
 msgid "Key Vorhanden"
-msgstr ""
+msgstr "Key vorhanden"
 
 #: templates/finance/ai_status.html:32 templates/finance/ai_status.html:47
 msgid "Kein Key gefunden"
-msgstr ""
+msgstr "Kein Key gefunden"
 
 #: templates/finance/ai_status.html:41
 msgid "Fallback & Prognosen"
-msgstr ""
+msgstr "Fallback & Prognosen"
 
 #: templates/finance/ai_status.html:55
 msgid "Hinweis:"
-msgstr ""
+msgstr "Hinweis:"
 
 #: templates/finance/ai_status.html:61 templates/finance/dashboard.html:22
 msgid "Configure Layout"
@@ -1228,7 +1228,7 @@ msgstr "Änderungen übernehmen"
 
 #: templates/finance/dashboard.html:331
 msgid "Verstanden"
-msgstr ""
+msgstr "Verstanden"
 
 #: templates/finance/import_filters.html:8
 #: templates/finance/import_filters.html:9
@@ -1238,7 +1238,7 @@ msgstr ""
 #: templates/finance/import_filters.html:28
 #: templates/finance/import_filters.html:30
 msgid "Alles kopieren"
-msgstr ""
+msgstr "Alles kopieren"
 
 #: templates/finance/import_filters.html:33
 #: templates/finance/import_filters.html:36
@@ -1261,12 +1261,12 @@ msgstr ""
 #: templates/finance/import_filters.html:75
 #: templates/finance/import_filters.html:167
 msgid "-- Kein Plan-Abgleich --"
-msgstr ""
+msgstr "-- Kein Plan-Abgleich --"
 
 #: templates/finance/import_filters.html:80
 #: templates/finance/import_filters.html:172
 msgid "Neuen Plan-Eintrag anlegen"
-msgstr ""
+msgstr "Neuen Plan-Eintrag anlegen"
 
 #: templates/finance/import_filters.html:84
 #: templates/finance/import_filters.html:87
@@ -1280,50 +1280,50 @@ msgstr ""
 #: templates/finance/import_review.html:35
 #, python-format
 msgid "Abbrechen"
-msgstr ""
+msgstr "Abbrechen"
 
 #: templates/finance/import_filters.html:180
 #: templates/finance/import_filters.html:192
 msgid "Kopiert!"
-msgstr ""
+msgstr "Kopiert!"
 
 #: templates/finance/import_filters.html:270
 #: templates/finance/import_review.html:277
 #: templates/finance/import_filters.html:280
 msgid "Farbe (Standard: Grau)"
-msgstr ""
+msgstr "Farbe (Standard: Grau)"
 
 #: templates/finance/import_filters.html:281
 #: templates/finance/import_filters.html:286
 #: templates/finance/import_filters.html:304
 msgid "Neuer Plan-Eintrag"
-msgstr ""
+msgstr "Neuer Plan-Eintrag"
 
 #: templates/finance/import_filters.html:314
 #: templates/finance/import_filters.html:319
 msgid "Einnahme?"
-msgstr ""
+msgstr "Einnahme?"
 
 #: templates/finance/import_filters.html:324
 msgid "Plan-Eintrag erstellen"
-msgstr ""
+msgstr "Plan-Eintrag erstellen"
 
 #: templates/finance/import_processing.html:25
 msgid "Analyse fehlgeschlagen"
-msgstr ""
+msgstr "Analyse fehlgeschlagen"
 
 #: templates/finance/import_processing.html:42
 msgid "KI analysiert Daten..."
-msgstr ""
+msgstr "KI analysiert Daten..."
 
 #: templates/finance/import_processing.html:48
 msgid "Analyse fertig – Buchungen ansehen"
-msgstr ""
+msgstr "Analyse fertig – Buchungen ansehen"
 
 #: templates/finance/import_processing.html:57
 #: templates/finance/import_review.html:27
 msgid "Abstimmung & Import"
-msgstr ""
+msgstr "Abstimmung & Import"
 
 #: templates/finance/import_review.html:32
 #: templates/finance/import_upload.html:17
@@ -1331,47 +1331,47 @@ msgstr ""
 #: templates/finance/import_review.html:41
 #: templates/finance/import_review.html:46
 msgid "Jetzt importieren"
-msgstr ""
+msgstr "Jetzt importieren"
 
 #: templates/finance/import_review.html:57
 msgid "1. Offene Posten (Noch zuordnen)"
-msgstr ""
+msgstr "1. Offene Posten (Noch zuordnen)"
 
 #: templates/finance/import_review.html:70
 msgid "Suchen & Gruppieren (z.B. Aldi)..."
-msgstr ""
+msgstr "Suchen & Gruppieren (z.B. Aldi)..."
 
 #: templates/finance/import_review.html:79
 #: templates/finance/import_review.html:91
 #: templates/finance/import_review.html:98
 msgid "Alle anzeigen"
-msgstr ""
+msgstr "Alle anzeigen"
 
 #: templates/finance/import_review.html:287
 msgid "Farbe"
-msgstr ""
+msgstr "Farbe"
 
 #: templates/finance/import_review.html:293
 msgid "Erstellen"
-msgstr ""
+msgstr "Erstellen"
 
 #: templates/finance/import_upload.html:12
 msgid "Bankbuchungen importieren"
-msgstr ""
+msgstr "Bankbuchungen importieren"
 
 #: templates/finance/import_upload.html:23
 msgid "Hinweise zum Import"
-msgstr ""
+msgstr "Hinweise zum Import"
 
 #: templates/finance/import_upload.html:39
 msgid "Analyse starten"
-msgstr ""
+msgstr "Analyse starten"
 
 #: templates/finance/import_upload.html:48
 #: templates/finance/import_upload.html:49
 #: templates/finance/import_upload.html:58
 msgid "Bisherige Importe"
-msgstr ""
+msgstr "Bisherige Importe"
 
 #: templates/finance/import_upload.html:62
 #: templates/finance/import_upload.html:70
@@ -1380,11 +1380,11 @@ msgstr ""
 #: templates/finance/import_upload.html:72
 #: templates/finance/import_upload.html:84
 msgid "Angewendet"
-msgstr ""
+msgstr "Angewendet"
 
 #: templates/finance/import_upload.html:88
 msgid "Offen"
-msgstr ""
+msgstr "Offen"
 
 #: templates/finance/import_upload.html:95
 #: templates/finance/import_upload.html:101
@@ -1392,7 +1392,7 @@ msgstr ""
 #: templates/finance/partials/import_ready_row.html:82
 #: templates/finance/import_upload.html:117
 msgid "Cache & Wartung"
-msgstr ""
+msgstr "Cache & Wartung"
 
 #: templates/finance/partials/dashboard_charts.html:21
 msgid "Inflation"
@@ -1460,7 +1460,7 @@ msgstr "Gesamt"
 #: templates/finance/partials/import_filter_row.html:15
 #: templates/finance/partials/import_filter_row.html:26
 msgid "Bearbeiten"
-msgstr ""
+msgstr "Bearbeiten"
 
 #: templates/finance/partials/import_filter_row.html:31
 #: templates/finance/partials/import_mapping_pane.html:8
@@ -1470,7 +1470,7 @@ msgstr ""
 #: templates/finance/partials/import_mapping_pane.html:37
 #, python-format
 msgid "Gefilterte Ansicht: %(count)s offene Buchungen."
-msgstr ""
+msgstr "Gefilterte Ansicht: %(count)s offene Buchungen."
 
 #: templates/finance/partials/import_mapping_pane.html:45
 #: templates/finance/partials/import_mapping_pane.html:52
@@ -1478,72 +1478,72 @@ msgstr ""
 #: templates/finance/partials/import_mapping_pane.html:71
 #: templates/finance/partials/import_ready_pane.html:5
 msgid "2. Vorschau: Import-Bereit (Zusammengefasst)"
-msgstr ""
+msgstr "2. Vorschau: Import-Bereit (Zusammengefasst)"
 
 #: templates/finance/partials/import_ready_pane.html:13
 msgid "Zeitraum"
-msgstr ""
+msgstr "Zeitraum"
 
 #: templates/finance/partials/import_ready_pane.html:14
 msgid "Details / Notiz"
-msgstr ""
+msgstr "Details / Notiz"
 
 #: templates/finance/partials/import_ready_pane.html:15
 msgid "Summe"
-msgstr ""
+msgstr "Summe"
 
 #: templates/finance/partials/import_ready_pane.html:16
 msgid "Anzahl"
-msgstr ""
+msgstr "Anzahl"
 
 #: templates/finance/partials/import_ready_pane.html:29
 #: templates/finance/partials/import_ready_pane.html:36
 msgid "GESAMTSUMME:"
-msgstr ""
+msgstr "GESAMTSUMME:"
 
 #: templates/finance/partials/import_ready_row.html:24
 #: templates/finance/partials/import_ready_row.html:25
 msgid "Plan-Konflikt"
-msgstr ""
+msgstr "Plan-Konflikt"
 
 #: templates/finance/partials/import_ready_row.html:34
 #: templates/finance/partials/import_ready_row.html:39
 #: templates/finance/partials/import_row.html:46
 msgid "Plan-Abweichung!"
-msgstr ""
+msgstr "Plan-Abweichung!"
 
 #: templates/finance/partials/import_ready_row.html:39
 #: templates/finance/partials/import_row.html:46
 msgid "Geplant:"
-msgstr ""
+msgstr "Geplant:"
 
 #: templates/finance/partials/import_ready_row.html:43
 #: templates/finance/partials/import_row.html:50
 msgid "Entspricht Plan"
-msgstr ""
+msgstr "Entspricht Plan"
 
 #: templates/finance/partials/import_ready_row.html:69
 #: templates/finance/partials/import_ready_row.html:81
 msgid "Diesen zusammengefassten Posten wirklich verwerten?"
-msgstr ""
+msgstr "Diesen zusammengefassten Posten wirklich verwerten?"
 
 #: templates/finance/partials/import_row.html:12
 msgid "Ignorieren"
-msgstr ""
+msgstr "Ignorieren"
 
 #: templates/finance/partials/import_row.html:31
 msgid "KI-Vertrauen"
-msgstr ""
+msgstr "KI-Vertrauen"
 
 #: templates/finance/partials/import_row.html:36
 #: templates/finance/partials/import_row.html:69
 #: templates/finance/partials/import_row.html:82
 msgid "Zu Ausgabe machen"
-msgstr ""
+msgstr "Zu Ausgabe machen"
 
 #: templates/finance/partials/import_row.html:82
 msgid "Zu Einnahme machen"
-msgstr ""
+msgstr "Zu Einnahme machen"
 
 #: templates/finance/partials/import_row.html:91
 msgid "Sachwert (Physical Asset)"
