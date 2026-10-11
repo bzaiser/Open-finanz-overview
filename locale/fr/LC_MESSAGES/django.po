@@ -2472,3 +2472,30 @@ msgstr "Valeur du capital privé"
 
 msgid "Breakdown by Contract"
 msgstr "Répartition par contrat"
+
+msgid "Active Pension Contracts & Provisions"
+msgstr "Contrats et droits de retraite actifs"
+
+msgid "Provider / Name"
+msgstr "Prestataire / Nom"
+
+msgid "Capital Value"
+msgstr "Valeur en capital"
+
+msgid "Pension Points"
+msgstr "Points de retraite"
+
+msgid "Point Value"
+msgstr "Valeur du point"
+
+msgid "Gross Payout"
+msgstr "Versement brut"
+
+msgid "Net Payout"
+msgstr "Versement net"
+
+msgid "Contribution"
+msgstr "Cotisation"
+
+msgid "Actions"
+msgstr "Actions"
