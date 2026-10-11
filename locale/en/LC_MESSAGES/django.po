@@ -488,3 +488,9 @@ msgstr "Indexed to Inflation"
 
 msgid "Cancel"
 msgstr "Cancel"
+
+msgid "Development & AI-Assistance"
+msgstr "Development & AI Assistance"
+
+msgid "Created via Vibe Coding using Google Antigravity. Simulations and calculations serve informational purposes only and do not constitute financial advice."
+msgstr "Created via Vibe Coding using Google Antigravity. Simulations and calculations serve informational purposes only and do not constitute financial advice."

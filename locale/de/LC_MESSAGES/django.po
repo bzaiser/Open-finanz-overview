@@ -2846,3 +2846,9 @@ msgstr "Rentenbezug"
 
 
 
+
+msgid "Development & AI-Assistance"
+msgstr "Entwicklung & KI-Unterstützung"
+
+msgid "Created via Vibe Coding using Google Antigravity. Simulations and calculations serve informational purposes only and do not constitute financial advice."
+msgstr "Erstellt mittels Vibe Coding unter Einsatz von Google Antigravity. Die Simulationen und Berechnungen dienen ausschließlich Informationszwecken und stellen keine Anlage- oder Finanzberatung dar."
