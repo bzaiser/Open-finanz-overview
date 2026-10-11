@@ -695,3 +695,78 @@ msgstr "Contains capital value, monthly savings rate, and expected payouts."
 
 msgid "Retirement Planning"
 msgstr "Retirement Planning"
+
+msgid "Hide older years"
+msgstr "Hide older years"
+
+msgid "Older"
+msgstr "Older"
+
+msgid "open"
+msgstr "open"
+
+msgid "Manual"
+msgstr "Manual"
+
+msgid "Savings contribution"
+msgstr "Savings contribution"
+
+msgid "Pension & Provision"
+msgstr "Pension & Provision"
+
+msgid "Pension model"
+msgstr "Pension model"
+
+msgid "Pension (Contribution)"
+msgstr "Pension (Contribution)"
+
+msgid "Pension payout"
+msgstr "Pension payout"
+
+msgid "Pension (Payout)"
+msgstr "Pension (Payout)"
+
+msgid "Rental income"
+msgstr "Rental income"
+
+msgid "Maintenance"
+msgstr "Maintenance"
+
+msgid "Real estate model"
+msgstr "Real estate model"
+
+msgid "Real Estate (Rent)"
+msgstr "Real Estate (Rent)"
+
+msgid "Real Estate (Costs)"
+msgstr "Real Estate (Costs)"
+
+msgid "Withdrawal"
+msgstr "Withdrawal"
+
+msgid "Asset withdrawal"
+msgstr "Asset withdrawal"
+
+msgid "Withdrawal model"
+msgstr "Withdrawal model"
+
+msgid "Storage costs"
+msgstr "Storage costs"
+
+msgid "Physical asset model"
+msgstr "Physical asset model"
+
+msgid "Physical Asset (Costs)"
+msgstr "Physical Asset (Costs)"
+
+msgid "Loan installment"
+msgstr "Loan installment"
+
+msgid "Loan model"
+msgstr "Loan model"
+
+msgid "from"
+msgstr "from"
+
+msgid "until"
+msgstr "until"

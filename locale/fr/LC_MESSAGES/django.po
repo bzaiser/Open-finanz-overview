@@ -2301,3 +2301,72 @@ msgstr "Contient la valeur du capital, le taux d'épargne mensuel et les verseme
 
 msgid "Retirement Planning"
 msgstr "Planification de la retraite"
+
+msgid "Hide older years"
+msgstr "Masquer les années antérieures"
+
+msgid "Older"
+msgstr "Antérieur"
+
+msgid "open"
+msgstr "ouvert"
+
+msgid "Savings contribution"
+msgstr "Cotisation d'épargne"
+
+msgid "Pension & Provision"
+msgstr "Retraite & prévoyance"
+
+msgid "Pension model"
+msgstr "Modèle retraite"
+
+msgid "Pension (Contribution)"
+msgstr "Retraite (Cotisation)"
+
+msgid "Pension payout"
+msgstr "Versement de retraite"
+
+msgid "Pension (Payout)"
+msgstr "Retraite (Versement)"
+
+msgid "Rental income"
+msgstr "Revenu locatif"
+
+msgid "Maintenance"
+msgstr "Entretien"
+
+msgid "Real estate model"
+msgstr "Modèle immobilier"
+
+msgid "Real Estate (Rent)"
+msgstr "Immobilier (Loyer)"
+
+msgid "Real Estate (Costs)"
+msgstr "Immobilier (Frais)"
+
+msgid "Asset withdrawal"
+msgstr "Retrait d'actifs"
+
+msgid "Withdrawal model"
+msgstr "Modèle retrait"
+
+msgid "Storage costs"
+msgstr "Frais de stockage"
+
+msgid "Physical asset model"
+msgstr "Modèle actif matériel"
+
+msgid "Physical Asset (Costs)"
+msgstr "Actif matériel (Frais)"
+
+msgid "Loan installment"
+msgstr "Mensualité de prêt"
+
+msgid "Loan model"
+msgstr "Modèle prêt"
+
+msgid "from"
+msgstr "dès"
+
+msgid "until"
+msgstr "jusqu'à"

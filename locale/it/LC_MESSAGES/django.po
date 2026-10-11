@@ -2287,3 +2287,72 @@ msgstr "Contiene valore del capitale, tasso di risparmio mensile ed erogazioni p
 
 msgid "Retirement Planning"
 msgstr "Pianificazione pensionistica"
+
+msgid "Hide older years"
+msgstr "Nascondi anni precedenti"
+
+msgid "Older"
+msgstr "Precedente"
+
+msgid "open"
+msgstr "aperto"
+
+msgid "Savings contribution"
+msgstr "Quota di risparmio"
+
+msgid "Pension & Provision"
+msgstr "Pensione e previdenza"
+
+msgid "Pension model"
+msgstr "Modello pensione"
+
+msgid "Pension (Contribution)"
+msgstr "Pensione (Contributo)"
+
+msgid "Pension payout"
+msgstr "Erogazione pensione"
+
+msgid "Pension (Payout)"
+msgstr "Pensione (Erogazione)"
+
+msgid "Rental income"
+msgstr "Canone di locazione"
+
+msgid "Maintenance"
+msgstr "Manutenzione"
+
+msgid "Real estate model"
+msgstr "Modello immobiliare"
+
+msgid "Real Estate (Rent)"
+msgstr "Immobile (Affitto)"
+
+msgid "Real Estate (Costs)"
+msgstr "Immobile (Costi)"
+
+msgid "Asset withdrawal"
+msgstr "Prelievo patrimoniale"
+
+msgid "Withdrawal model"
+msgstr "Modello prelievo"
+
+msgid "Storage costs"
+msgstr "Costi di deposito"
+
+msgid "Physical asset model"
+msgstr "Modello bene materiale"
+
+msgid "Physical Asset (Costs)"
+msgstr "Bene materiale (Costi)"
+
+msgid "Loan installment"
+msgstr "Rata del prestito"
+
+msgid "Loan model"
+msgstr "Modello prestito"
+
+msgid "from"
+msgstr "da"
+
+msgid "until"
+msgstr "fino a"

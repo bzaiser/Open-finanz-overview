@@ -3032,3 +3032,72 @@ msgstr "Wird aus Entgeltpunkten × Aktuellem Rentenwert abzüglich Kranken- & Pf
 
 msgid "Contains capital value, monthly savings rate, and expected payouts."
 msgstr "Enthält Kapitalwert, monatliche Sparrate und erwartete Auszahlungen."
+
+msgid "Hide older years"
+msgstr "Ältere Jahre ausblenden"
+
+msgid "Older"
+msgstr "Älter"
+
+msgid "open"
+msgstr "offen"
+
+msgid "Savings contribution"
+msgstr "Sparbeitrag"
+
+msgid "Pension & Provision"
+msgstr "Rente & Vorsorge"
+
+msgid "Pension model"
+msgstr "Modell Rente"
+
+msgid "Pension (Contribution)"
+msgstr "Rente (Beitrag)"
+
+msgid "Pension payout"
+msgstr "Rentenauszahlung"
+
+msgid "Pension (Payout)"
+msgstr "Rente (Auszahlung)"
+
+msgid "Rental income"
+msgstr "Mieteinnahme"
+
+msgid "Maintenance"
+msgstr "Instandhaltung"
+
+msgid "Real estate model"
+msgstr "Modell Immobilie"
+
+msgid "Real Estate (Rent)"
+msgstr "Immobilie (Miete)"
+
+msgid "Real Estate (Costs)"
+msgstr "Immobilie (Kosten)"
+
+msgid "Asset withdrawal"
+msgstr "Vermögensentnahme"
+
+msgid "Withdrawal model"
+msgstr "Modell Entnahme"
+
+msgid "Storage costs"
+msgstr "Stellplatz/Lager"
+
+msgid "Physical asset model"
+msgstr "Modell Sachwert"
+
+msgid "Physical Asset (Costs)"
+msgstr "Sachwert (Kosten)"
+
+msgid "Loan installment"
+msgstr "Kreditrate"
+
+msgid "Loan model"
+msgstr "Modell Kredit"
+
+msgid "from"
+msgstr "ab"
+
+msgid "until"
+msgstr "bis"

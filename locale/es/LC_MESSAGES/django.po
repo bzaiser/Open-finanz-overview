@@ -2281,3 +2281,72 @@ msgstr "Contiene valor de capital, tasa mensual de ahorro y pagos esperados."
 
 msgid "Retirement Planning"
 msgstr "Planificación de la jubilación"
+
+msgid "Hide older years"
+msgstr "Ocultar años anteriores"
+
+msgid "Older"
+msgstr "Anterior"
+
+msgid "open"
+msgstr "abierto"
+
+msgid "Savings contribution"
+msgstr "Aportación de ahorro"
+
+msgid "Pension & Provision"
+msgstr "Pensión y previsión"
+
+msgid "Pension model"
+msgstr "Modelo pensión"
+
+msgid "Pension (Contribution)"
+msgstr "Pensión (Aportación)"
+
+msgid "Pension payout"
+msgstr "Pago de pensión"
+
+msgid "Pension (Payout)"
+msgstr "Pensión (Pago)"
+
+msgid "Rental income"
+msgstr "Ingreso por alquiler"
+
+msgid "Maintenance"
+msgstr "Mantenimiento"
+
+msgid "Real estate model"
+msgstr "Modelo inmobiliario"
+
+msgid "Real Estate (Rent)"
+msgstr "Inmueble (Alquiler)"
+
+msgid "Real Estate (Costs)"
+msgstr "Inmueble (Costes)"
+
+msgid "Asset withdrawal"
+msgstr "Retiro patrimonial"
+
+msgid "Withdrawal model"
+msgstr "Modelo retiro"
+
+msgid "Storage costs"
+msgstr "Costes de almacenamiento"
+
+msgid "Physical asset model"
+msgstr "Modelo activo físico"
+
+msgid "Physical Asset (Costs)"
+msgstr "Activo físico (Costes)"
+
+msgid "Loan installment"
+msgstr "Cuota de préstamo"
+
+msgid "Loan model"
+msgstr "Modelo crédito"
+
+msgid "from"
+msgstr "desde"
+
+msgid "until"
+msgstr "hasta"
