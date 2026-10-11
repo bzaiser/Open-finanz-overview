@@ -15,11 +15,18 @@ def get_git_version_info():
 
     repo_dir = settings.BASE_DIR
 
-    # Check for version file written during build/deployment
+    # Check for version and date files written during build/deployment
     version_file = repo_dir / 'VERSION'
     if not version and version_file.exists():
         try:
             version = version_file.read_text(encoding='utf-8').strip()
+        except Exception:
+            pass
+
+    date_file = repo_dir / 'VERSION_DATE'
+    if not date and date_file.exists():
+        try:
+            date = date_file.read_text(encoding='utf-8').strip()
         except Exception:
             pass
 

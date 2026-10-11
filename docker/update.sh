@@ -16,6 +16,10 @@ cd "$ROOT_DIR"
 echo "Pulling from git repository..."
 git pull origin $(git rev-parse --abbrev-ref HEAD)
 
+# Write current version and date for the app
+git describe --tags --always > VERSION 2>/dev/null || git rev-parse --short HEAD > VERSION 2>/dev/null || true
+git log -1 --format="%cs" > VERSION_DATE 2>/dev/null || true
+
 # Fix permissions for the Docker user
 echo "Ensuring project-wide permissions..."
 chmod -R a+rwX .
