@@ -52,13 +52,11 @@
                     <div class="d-flex justify-content-center gap-3 mb-3">
                         <a href="https://github.com/bzaiser/Open-finanz-overview" target="_blank" class="btn btn-light btn-sm rounded-circle" title="GitHub"><i class="bi bi-github"></i></a>
                     </div>
-                    {% if APP_VERSION and APP_VERSION != 'unknown' %}
                     <div class="pt-2 border-top">
                         <span class="text-muted small">
-                            <i class="bi bi-tag me-1"></i>{% trans 'Version' %}: <code>{{ APP_VERSION }}</code>{% if APP_VERSION_DATE %} <span class="ms-1 text-secondary">({{ APP_VERSION_DATE }})</span>{% endif %}
+                            <i class="bi bi-tag me-1"></i>{% trans 'Version' %}: <code>{{ APP_VERSION|default:"v0.9-beta" }}</code>{% if APP_VERSION_DATE %} <span class="ms-1 text-secondary">({{ APP_VERSION_DATE }})</span>{% endif %}
                         </span>
                     </div>
-                    {% endif %}
                 </div>
             </div>
         </div>

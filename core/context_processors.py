@@ -4,6 +4,8 @@ import subprocess
 
 from django.conf import settings
 
+DEFAULT_APP_VERSION = 'v0.9-beta'
+
 @functools.lru_cache(maxsize=1)
 def get_git_version_info():
     version = os.getenv('APP_VERSION')
@@ -12,30 +14,39 @@ def get_git_version_info():
         return {'version': version, 'date': date}
 
     repo_dir = settings.BASE_DIR
-    try:
-        if not version:
+
+    # Check for version file written during build/deployment
+    version_file = repo_dir / 'VERSION'
+    if not version and version_file.exists():
+        try:
+            version = version_file.read_text(encoding='utf-8').strip()
+        except Exception:
+            pass
+
+    if not version:
+        try:
             version = subprocess.check_output(
                 ['git', 'describe', '--tags', '--always'],
                 cwd=repo_dir,
                 stderr=subprocess.DEVNULL,
                 text=True
             ).strip()
-    except Exception:
-        version = 'unknown'
+        except Exception:
+            version = DEFAULT_APP_VERSION
 
-    try:
-        if not date:
+    if not date:
+        try:
             date = subprocess.check_output(
                 ['git', 'log', '-1', '--format=%cs'],
                 cwd=repo_dir,
                 stderr=subprocess.DEVNULL,
                 text=True
             ).strip()
-    except Exception:
-        date = ''
+        except Exception:
+            date = ''
 
     return {
-        'version': version if version else 'unknown',
+        'version': version or DEFAULT_APP_VERSION,
         'date': date or ''
     }
 
