@@ -2086,3 +2086,195 @@ msgstr "Desarrollo y asistencia por IA"
 
 msgid "Created via Vibe Coding using Google Antigravity. Simulations and calculations serve informational purposes only and do not constitute financial advice."
 msgstr "Creado mediante Vibe Coding utilizando Google Antigravity. Las simulaciones y cálculos tienen fines meramente informativos y no constituyen asesoramiento financiero."
+
+msgid "Life Stage: Retirement"
+msgstr "Etapa de vida: Jubilación"
+
+msgid "Life Stage: Transition"
+msgstr "Etapa de vida: Transición"
+
+msgid "Life Stage: Accumulation & Growth"
+msgstr "Etapa de vida: Ahorro y crecimiento"
+
+msgid "years"
+msgstr "años"
+
+msgid "New Pension Plan"
+msgstr "Nuevo plan de pensiones"
+
+msgid "Statutory Pension (Current)"
+msgstr "Pensión pública (Actual)"
+
+msgid "Statutory Pension (Net)"
+msgstr "Pensión pública (Neta)"
+
+msgid "Statutory Contracts"
+msgstr "Contratos públicos"
+
+msgid "Private Contracts (Net Payout)"
+msgstr "Contratos privados (Pago neto)"
+
+msgid "Actual currently flowing pension payout"
+msgstr "Pago de pensión que fluye actualmente hoy"
+
+msgid "All Contracts (Net Pension & Start)"
+msgstr "Todos los contratos (Pensión neta e inicio)"
+
+msgid "Retirement Coverage (Current)"
+msgstr "Cobertura de jubilación (Actual)"
+
+msgid "Retirement Gap (Current)"
+msgstr "Brecha de jubilación (Actual)"
+
+msgid "Pension Surplus"
+msgstr "Superávit de pensión"
+
+msgid "Pension Gap in Retirement"
+msgstr "Brecha de pensión en la vejez"
+
+msgid "Current shortfall compared to target pension"
+msgstr "Déficit actual respecto a la pensión objetivo"
+
+msgid "Target payout reached in retirement!"
+msgstr "¡Pago objetivo alcanzado en la jubilación!"
+
+msgid "Gap to target pension in retirement"
+msgstr "Brecha respecto a la pensión objetivo en la jubilación"
+
+msgid "Pension flowing today"
+msgstr "Pensión que fluye hoy"
+
+msgid "Free surplus today"
+msgstr "Superávit disponible hoy"
+
+msgid "Target Pension (Today's purchasing power)"
+msgstr "Pensión objetivo (Poder adquisitivo actual)"
+
+msgid "Projected Target Pension ("
+msgstr "Pensión objetivo proyectada ("
+
+msgid "Projected Net Pension"
+msgstr "Pensión neta proyectada"
+
+msgid "Update Pension Plan & Annual Statement"
+msgstr "Actualizar plan de pensión y extracto anual"
+
+msgid "Enter new figures from your annual statements (record date) or contract amendments here."
+msgstr "Introduce aquí las nuevas cifras de tus extractos anuales o modificaciones contractuales."
+
+msgid "Information from the official statutory pension statement (DRV)"
+msgstr "Información del extracto oficial de la pensión pública"
+
+msgid "Disability Pension (€/mo. net)"
+msgstr "Pensión por incapacidad (€/mes neto)"
+
+msgid "Target net pension for this individual contract"
+msgstr "Pensión neta objetivo para este contrato individual"
+
+msgid "Previous Record Dates for this Contract"
+msgstr "Fechas de registro anteriores para este contrato"
+
+msgid "Record Date"
+msgstr "Fecha de corte"
+
+msgid "Disability Pension (€)"
+msgstr "Pensión de invalidez (€)"
+
+msgid "Capital (€)"
+msgstr "Capital (€)"
+
+msgid "Really delete this record date?"
+msgstr "¿Realmente deseas eliminar esta fecha de corte?"
+
+msgid "No historical record dates captured yet."
+msgstr "Aún no se han registrado fechas de corte históricas."
+
+msgid "Forecast Timeline (Monthly Net Payouts)"
+msgstr "Línea temporal de pronóstico (Pagos netos mensuales)"
+
+msgid "Where does the data come from?"
+msgstr "¿De dónde provienen los datos?"
+
+msgid "Payout figures are based on your recorded pension contracts in the"
+msgstr "Las cifras de pago se basan en los contratos de pensión registrados en la"
+
+msgid "Active Pension Contracts Table"
+msgstr "Tabla de contratos de pensión activos"
+
+msgid "How is it calculated?"
+msgstr "¿Cómo se calcula?"
+
+msgid "Sums up all monthly net payouts of contracts whose retirement age or payout start date is reached in the respective year."
+msgstr "Suma todos los pagos netos mensuales de los contratos cuya edad de jubilación o fecha de inicio de pago se alcance en el año correspondiente."
+
+msgid "Adjustment Rate / Dynamics"
+msgstr "Tasa de ajuste / Dinámica"
+
+msgid "If 'Indexed (Inflation Adjustment)' is activated, payouts increase annually by the configured pension adjustment rate upon retirement."
+msgstr "Si 'Indexado (Ajuste por inflación)' está activado, los pagos aumentan anualmente según la tasa de ajuste configurada a partir de la jubilación."
+
+msgid "Target Net Pension (Today's Purchasing Power)"
+msgstr "Pensión neta objetivo (Poder adquisitivo actual)"
+
+msgid "Represents your desired amount (from individual contracts or your profile settings)."
+msgstr "Representa la cantidad deseada (de los contratos individuales o la configuración de tu perfil)."
+
+msgid "Target Net Pension (Inflation-adjusted)"
+msgstr "Pensión neta objetivo (Ajustada por inflación)"
+
+msgid "Projects your desired amount into the future using the annual inflation rate stored in your profile (e.g. 2.0%) to show the real purchasing power gap."
+msgstr "Proyecta la cantidad deseada hacia el futuro utilizando la tasa de inflación anual configurada en tu perfil (ej. 2,0%) para mostrar la brecha real de poder adquisitivo."
+
+msgid "Capital & Pension Points Progression"
+msgstr "Evolución de capital y puntos de pensión"
+
+msgid "The curves combine historical snapshots (recorded via 'Record Historical Date') with future projections from your"
+msgstr "Las curvas combinan instantáneas históricas con proyecciones futuras de tus"
+
+msgid "active contracts"
+msgstr "contratos activos"
+
+msgid "Calculation & Logic"
+msgstr "Cálculo y lógica"
+
+msgid "Private Pension Capital"
+msgstr "Capital de pensión privada"
+
+msgid "Accumulates monthly savings contributions until contributions end. Lump-sum payouts remain in total wealth."
+msgstr "Acumula aportaciones mensuales de ahorro hasta el fin del periodo de pago. Los pagos únicos permanecen en el patrimonio total."
+
+msgid "Statutory Pension Points"
+msgstr "Puntos de pensión pública"
+
+msgid "Each statutory pension contract is mapped individually with its earnings points and annual increases."
+msgstr "Cada contrato de pensión pública se mapea individualmente con sus puntos de pensión e incrementos anuales."
+
+msgid "Pension Components Breakdown"
+msgstr "Desglose de componentes de pensión"
+
+msgid "Shows the percentage share of each individual contract in your accumulated monthly net pension entitlements on the retirement date."
+msgstr "Muestra el porcentaje que representa cada contrato individual en los derechos de pensión neta mensual acumulados a la fecha de jubilación."
+
+msgid "Directly linked to your"
+msgstr "Directamente vinculado a tus"
+
+msgid "pension contracts"
+msgstr "contratos de pensión"
+
+msgid "Active Pension Contracts & Entitlements"
+msgstr "Contratos de pensión activos y derechos"
+
+msgid "Pension Components Management"
+msgstr "Gestión de componentes de pensión"
+
+msgid "All your statutory and private pension contracts are managed here. Each entry forms the foundation for calculations across all charts above."
+msgstr "Aquí se gestionan todos tus contratos de pensión públicos y privados. Cada entrada constituye la base para los cálculos de todos los gráficos anteriores."
+
+msgid "Statutory Pension"
+msgstr "Pensión pública"
+
+msgid "Calculated from earnings points × current pension value minus health & long-term care insurance contributions (~11.5%)."
+msgstr "Calculado a partir de puntos de pensión × valor actual de la pensión menos aportaciones a la seguridad social y de salud (~11,5%)."
+
+msgid "Contains capital value, monthly savings rate, and expected payouts."
+msgstr "Contiene valor de capital, tasa mensual de ahorro y pagos esperados."

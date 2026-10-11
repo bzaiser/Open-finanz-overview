@@ -81,14 +81,14 @@
                 <span class="badge rounded-pill bg-body-tertiary text-body border border-secondary border-opacity-25 px-2.5 py-1" style="font-size: 0.75rem;">
                     <i class="bi {% if life_stage == 'retirement' %}bi-balloon-heart text-success{% elif life_stage == 'transition' %}bi-hourglass-split text-warning{% else %}bi-piggy-bank text-info{% endif %} me-1"></i>
                     {% if life_stage == 'retirement' %}
-                        {% trans "Lebensphase: Ruhestand" %}
+                        {% trans "Life Stage: Retirement" %}
                     {% elif life_stage == 'transition' %}
-                        {% trans "Lebensphase: Übergang" %}
+                        {% trans "Life Stage: Transition" %}
                     {% else %}
-                        {% trans "Lebensphase: Ansparen & Aufbau" %}
+                        {% trans "Life Stage: Accumulation & Growth" %}
                     {% endif %}
                     <span class="ms-1 border-start ps-1.5 opacity-75">
-                        {% trans "Target Retirement Age" %}: <strong class="text-primary" x-text="retirementAge + ' {% trans 'Jahre' %} (' + retirementYear + ')'"></strong>
+                        {% trans "Target Retirement Age" %}: <strong class="text-primary" x-text="retirementAge + ' {% trans "years" %} (' + retirementYear + ')'"></strong>
                     </span>
                 </span>
             </p>
@@ -98,7 +98,7 @@
                     style="background: var(--app-gradient); border: none;"
                     @click="openAddModal()">
                 <i class="bi bi-plus-lg fs-6"></i>
-                <span class="fw-semibold">{% trans "Neuer Vorsorgevertrag" %}</span>
+                <span class="fw-semibold">{% trans "New Pension Plan" %}</span>
             </button>
         </div>
     </div>
@@ -112,7 +112,7 @@
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
                         <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">
-                            {% if life_stage == 'retirement' %}{% trans "Gesetzliche Rente (Aktuell)" %}{% else %}{% trans "Gesetzliche Rente (Netto)" %}{% endif %}
+                            {% if life_stage == 'retirement' %}{% trans "Statutory Pension (Current)" %}{% else %}{% trans "Statutory Pension (Net)" %}{% endif %}
                         </span>
                         <h3 class="fw-bold mb-0 mt-1 font-monospace">
                             {% if life_stage == 'retirement' %}{{ statutory_current_monthly_payout|floatformat:2|intcomma }}{% else %}{{ statutory_monthly_net|floatformat:2|intcomma }}{% endif %} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span>
@@ -127,7 +127,7 @@
                 </div>
                 <!-- Hover Expand Details: Statutory Contracts -->
                 <div class="widget-hover-details border-top border-white border-opacity-25 pt-2">
-                    <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Gesetzliche Verträge" %}:</span>
+                    <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Statutory Contracts" %}:</span>
                     {% for p in pensions %}
                         {% if p.pension_type == 'statutory' %}
                         <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10" style="font-size: 0.75rem;">
@@ -169,7 +169,7 @@
                 </div>
                 <!-- Hover Expand Details: Private Contracts with Payout -->
                 <div class="widget-hover-details border-top border-white border-opacity-25 pt-2">
-                    <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Private Verträge (Netto-Auszahlung)" %}:</span>
+                    <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Private Contracts (Net Payout)" %}:</span>
                     {% for p in pensions %}
                         {% if p.pension_type != 'statutory' %}
                         <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10" style="font-size: 0.75rem;">
@@ -198,7 +198,7 @@
                         </h3>
                         <span class="small opacity-75" style="font-size: 0.75rem;">
                             {% if life_stage == 'retirement' %}
-                                {% trans "Tatsächlich heute fließende Rentenauszahlung" %}
+                                {% trans "Actual currently flowing pension payout" %}
                             {% else %}
                                 {% trans "Total expected net income at retirement" %}
                             {% endif %}
@@ -210,7 +210,7 @@
                 </div>
                 <!-- Hover Expand Details: Breakdown of all contracts -->
                 <div class="widget-hover-details border-top border-white border-opacity-25 pt-2">
-                    <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Alle Verträge (Nettorente & Beginn)" %}:</span>
+                    <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "All Contracts (Net Pension & Start)" %}:</span>
                     {% for p in pensions %}
                     <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10" style="font-size: 0.75rem;">
                         <span>{{ p.provider }}</span>
@@ -232,9 +232,9 @@
                     <div>
                         <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">
                             {% if life_stage == 'retirement' %}
-                                {% if pension_gap <= 0 %}{% trans "Ruhestands-Deckung (Aktuell)" %}{% else %}{% trans "Ruhestands-Lücke (Aktuell)" %}{% endif %}
+                                {% if pension_gap <= 0 %}{% trans "Retirement Coverage (Current)" %}{% else %}{% trans "Retirement Gap (Current)" %}{% endif %}
                             {% else %}
-                                {% if pension_gap <= 0 %}{% trans "Renten-Überschuss" %}{% else %}{% trans "Rentenlücke im Alter" %}{% endif %}
+                                {% if pension_gap <= 0 %}{% trans "Pension Surplus" %}{% else %}{% trans "Pension Gap in Retirement" %}{% endif %}
                             {% endif %}
                         </span>
                         <h3 class="fw-bold mb-0 mt-1 font-monospace">
@@ -242,9 +242,9 @@
                         </h3>
                         <span class="small opacity-75" style="font-size: 0.75rem;">
                             {% if life_stage == 'retirement' %}
-                                {% if pension_gap <= 0 %}{% trans "Aktuelle Einnahmen decken dein Ziel!" %}{% else %}{% trans "Aktuelle Unterdeckung zu Ziel-Rente" %}{% endif %}
+                                {% if pension_gap <= 0 %}{% trans "Aktuelle Einnahmen decken dein Ziel!" %}{% else %}{% trans "Current shortfall compared to target pension" %}{% endif %}
                             {% else %}
-                                {% if pension_gap <= 0 %}{% trans "Ziel-Auszahlung im Alter erreicht!" %}{% else %}{% trans "Lücke zur Ziel-Rente im Alter" %}{% endif %}
+                                {% if pension_gap <= 0 %}{% trans "Target payout reached in retirement!" %}{% else %}{% trans "Gap to target pension in retirement" %}{% endif %}
                             {% endif %}
                         </span>
                     </div>
@@ -256,7 +256,7 @@
                 <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem;">
                     {% if life_stage == 'retirement' %}
                     <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
-                        <span>{% trans "Rente fließend heute" %}:</span>
+                        <span>{% trans "Pension flowing today" %}:</span>
                         <span class="font-monospace fw-bold">{{ current_total_monthly_payout|floatformat:2|intcomma }} €</span>
                     </div>
                     <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
@@ -264,11 +264,11 @@
                         <span class="font-monospace fw-bold">{{ monthly_expenses_today|floatformat:2|intcomma }} €</span>
                     </div>
                     <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
-                        <span>{% trans "Freier Überschuss heute" %}:</span>
+                        <span>{% trans "Free surplus today" %}:</span>
                         <span class="font-monospace fw-bold">{% if current_net_surplus >= 0 %}+{% else %}-{% endif %}{{ current_net_surplus_abs|floatformat:2|intcomma }} €</span>
                     </div>
                     <div class="d-flex justify-content-between py-1 mt-1">
-                        <span class="fw-bold">{% trans "Ziel-Rente (Kaufkraft heute)" %}:</span>
+                        <span class="fw-bold">{% trans "Target Pension (Today's purchasing power)" %}:</span>
                         <span class="font-monospace fw-bold">{{ target_monthly_payout|floatformat:2|intcomma }} €</span>
                     </div>
                     {% else %}
@@ -281,11 +281,11 @@
                         <span class="font-monospace fw-bold text-warning">{{ monthly_expenses_at_retirement|floatformat:2|intcomma }} €</span>
                     </div>
                     <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
-                        <span>{% trans "Ziel-Rente hochgerechnet (" %}{{ retirement_year }}{% trans ")" %}:</span>
+                        <span>{% trans "Projected Target Pension (" %}{{ retirement_year }}{% trans ")" %}:</span>
                         <span class="font-monospace fw-bold">{{ target_monthly_payout_inflated|floatformat:2|intcomma }} €</span>
                     </div>
                     <div class="d-flex justify-content-between py-1 mt-1">
-                        <span class="fw-bold">{% trans "Hochgerechnete Netto-Rente" %}:</span>
+                        <span class="fw-bold">{% trans "Projected Net Pension" %}:</span>
                         <span class="font-monospace fw-bold">{{ total_monthly_net|floatformat:2|intcomma }} €</span>
                     </div>
                     {% endif %}
@@ -429,8 +429,8 @@
             <div class="modal-content border-0 shadow-lg rounded-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
                 <div class="modal-header border-0 pb-0">
                     <div>
-                        <h5 class="modal-title fw-bold d-flex align-items-center gap-2" x-text="editId ? '{% trans 'Vorsorgevertrag & Standmitteilung aktualisieren' %}' : '{% trans 'Neuer Vorsorgevertrag' %}'"></h5>
-                        <p class="text-muted small mb-0 opacity-75">{% trans "Trage hier neue Zahlen aus deinen jährlichen Standmitteilungen (Stichtag) oder Vertragsänderungen ein." %}</p>
+                        <h5 class="modal-title fw-bold d-flex align-items-center gap-2" x-text="editId ? '{% trans "Update Pension Plan & Annual Statement" %}' : '{% trans "New Pension Plan" %}'"></h5>
+                        <p class="text-muted small mb-0 opacity-75">{% trans "Enter new figures from your annual statements (record date) or contract amendments here." %}</p>
                     </div>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -447,7 +447,7 @@
                                 <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Pension Type" %}</label>
                                 <select name="pension_type" x-model="form.pension_type" class="form-select">
                                     <option value="capital">{% trans "Capital / Private Pension" %}</option>
-                                    <option value="statutory">{% trans "Statutory Pension (Gesetzliche Rente)" %}</option>
+                                    <option value="statutory">{% trans "Statutory Pension" %}</option>
                                 </select>
                             </div>
                             <div class="col-md-3">
@@ -461,7 +461,7 @@
                         <!-- Statutory Specific Fields (Neat 2-Row Layout) -->
                         <div x-show="form.pension_type === 'statutory'" class="card p-3 mb-3 border-0 bg-body-tertiary rounded-3 shadow-sm">
                             <h6 class="fw-bold mb-3 text-primary d-flex align-items-center gap-1" style="font-size: 0.85rem;">
-                                <i class="bi bi-calculator me-1"></i>{% trans "Angaben aus der offiziellen DRV-Renteninformation" %}
+                                <i class="bi bi-calculator me-1"></i>{% trans "Information from the official statutory pension statement (DRV)" %}
                             </h6>
                             <div class="row g-3 mb-2">
                                 <div class="col-md-6">
@@ -475,7 +475,7 @@
                             </div>
                             <div class="row g-3">
                                 <div class="col-md-6">
-                                    <label class="form-label small fw-bold opacity-75 text-info">{% trans "Erwerbsminderungsrente (€/mtl. netto)" %}</label>
+                                    <label class="form-label small fw-bold opacity-75 text-info">{% trans "Disability Pension (€/mo. net)" %}</label>
                                     <input type="number" step="0.01" name="disability_pension_net" x-model="form.disability_pension_net" class="form-control font-monospace" placeholder="z. B. 1450.00">
                                 </div>
                                 <div class="col-md-6">
@@ -500,7 +500,7 @@
                             <div class="col-md-6">
                                 <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Target Monthly Payout (€)" %}</label>
                                 <input type="number" step="0.01" name="target_pension_payout" x-model="form.target_pension_payout" class="form-control font-monospace" placeholder="0.00">
-                                <span class="form-text small opacity-75">{% trans "Ziel-Nettorente für diesen einzelnen Vertrag" %}</span>
+                                <span class="form-text small opacity-75">{% trans "Target net pension for this individual contract" %}</span>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Retirement Age (Years)" %}</label>
@@ -550,14 +550,14 @@
                         <!-- Integrated Historical Snapshots Table with Direct Inline Editing -->
                         <div x-show="editId" class="mt-4 pt-3 border-top border-secondary border-opacity-25">
                             <h6 class="fw-bold mb-2 text-primary d-flex align-items-center justify-content-between" style="font-size: 0.85rem;">
-                                <span><i class="bi bi-clock-history me-1"></i>{% trans "Bisherige Stichtage dieses Vertrags" %}</span>
+                                <span><i class="bi bi-clock-history me-1"></i>{% trans "Previous Record Dates for this Contract" %}</span>
                                 <span class="badge rounded-pill bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2.5 py-1" x-text="getSnapshotsForEditId().length + ' Stichtage'"></span>
                             </h6>
                             <div class="table-responsive rounded-3 border border-secondary border-opacity-20 shadow-sm" style="max-height: 250px; overflow-y: auto;">
                                 <table class="table table-sm table-hover align-middle mb-0" style="font-size: 0.8rem;">
                                     <thead class="bg-body-tertiary">
                                         <tr>
-                                            <th class="py-2 px-3 border-0">{% trans "Stichtag" %}</th>
+                                            <th class="py-2 px-3 border-0">{% trans "Record Date" %}</th>
                                             <template x-if="form.pension_type === 'statutory'">
                                                 <th class="py-2 px-2 border-0 text-center">EP</th>
                                             </template>
@@ -568,10 +568,10 @@
                                                 <th class="py-2 px-3 border-0 text-end">{% trans "Netto (€)" %}</th>
                                             </template>
                                             <template x-if="form.pension_type === 'statutory'">
-                                                <th class="py-2 px-2 border-0 text-end">{% trans "EM-Rente (€)" %}</th>
+                                                <th class="py-2 px-2 border-0 text-end">{% trans "Disability Pension (€)" %}</th>
                                             </template>
                                             <template x-if="form.pension_type !== 'statutory'">
-                                                <th class="py-2 px-3 border-0 text-end">{% trans "Kapital (€)" %}</th>
+                                                <th class="py-2 px-3 border-0 text-end">{% trans "Capital (€)" %}</th>
                                             </template>
                                             <th class="py-2 px-3 border-0">{% trans "Notiz" %}</th>
                                             <th class="py-2 px-3 border-0 text-center" style="width: 80px;">Aktion</th>
@@ -608,7 +608,7 @@
                                                              <button type="button" @click="startInlineEditSnapshot(s)" class="btn btn-sm btn-link p-0 text-primary" title="{% trans 'Direkt in Tabelle bearbeiten' %}">
                                                                  <i class="bi bi-pencil" style="font-size: 0.95rem;"></i>
                                                              </button>
-                                                             <a :href="'/finance/pensions/snapshot/delete/' + s.id + '/?edit_pension_id=' + editId" onclick="return confirm('{% trans 'Diesen Stichtag wirklich löschen?' %}')" class="btn btn-sm btn-link p-0 text-danger" title="{% trans 'Löschen' %}">
+                                                             <a :href="'/finance/pensions/snapshot/delete/' + s.id + '/?edit_pension_id=' + editId" onclick="return confirm('{% trans "Really delete this record date?" %}')" class="btn btn-sm btn-link p-0 text-danger" title="{% trans "Delete" %}">
                                                                  <i class="bi bi-trash" style="font-size: 0.95rem;"></i>
                                                              </a>
                                                          </div>
@@ -667,7 +667,7 @@
                                         </template>
                                         <tr x-show="getSnapshotsForEditId().length === 0">
                                             <td colspan="7" class="text-center py-3 opacity-75 text-muted">
-                                                {% trans "Noch keine historischen Stichtage erfasst." %}
+                                                {% trans "No historical record dates captured yet." %}
                                             </td>
                                         </tr>
                                     </tbody>
@@ -690,19 +690,19 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg rounded-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
                 <div class="modal-header border-0 pb-0">
-                    <h5 class="modal-title fw-bold"><i class="bi bi-info-circle text-primary me-2"></i>{% trans "Prognose-Zeitleiste (Monatliche Netto-Auszahlungen)" %}</h5>
+                    <h5 class="modal-title fw-bold"><i class="bi bi-info-circle text-primary me-2"></i>{% trans "Forecast Timeline (Monthly Net Payouts)" %}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4" style="font-size: 0.9rem; line-height: 1.6;">
-                    <h6 class="fw-bold text-primary">{% trans "Woher kommen die Daten?" %}</h6>
-                    <p>{% trans "Die Auszahlungswerte basieren auf deinen eingetragenen Vorsorgebausteinen in der" %} <a href="javascript:void(0)" onclick="scrollToPensionsTable('infoTimelineModal')" class="fw-bold text-decoration-underline text-primary">{% trans "Tabelle Aktive Vorsorgeverträge" %}</a>.</p>
+                    <h6 class="fw-bold text-primary">{% trans "Where does the data come from?" %}</h6>
+                    <p>{% trans "Payout figures are based on your recorded pension contracts in the" %} <a href="javascript:void(0)" onclick="scrollToPensionsTable('infoTimelineModal')" class="fw-bold text-decoration-underline text-primary">{% trans "Active Pension Contracts Table" %}</a>.</p>
                     
-                    <h6 class="fw-bold text-primary mt-3">{% trans "Wie wird gerechnet?" %}</h6>
+                    <h6 class="fw-bold text-primary mt-3">{% trans "How is it calculated?" %}</h6>
                     <ul class="ps-3 mb-3">
-                        <li><strong>{% trans "Prognostizierte Netto-Rente" %}:</strong> {% trans "Summiert alle monatlichen Nettoauszahlungen der Verträge, deren Renteneintrittsalter oder Auszahlungsbeginn im jeweiligen Jahr erreicht ist." %}</li>
-                        <li><strong>{% trans "Dynamik / Rentenanpassung" %}:</strong> {% trans "Ist 'Indexiert (Inflationsanpassung)' aktiviert, steigen die Auszahlungen ab Renteneintritt jährlich um die eingestellte Rentenanpassungsrate." %}</li>
-                        <li><strong>{% trans "Ziel-Nettorente (Heutige Kaufkraft)" %}:</strong> {% trans "Stellt deinen Wunschbetrag dar (aus den Verträgen oder deinen Profileinstellungen)." %}</li>
-                        <li><strong>{% trans "Ziel-Nettorente (Inflationsangepasst)" %}:</strong> {% trans "Rechnet deinen Wunschbetrag mit der im Profil hinterlegten jährlichen Inflationsrate (z. B. 2,0 %) in die Zukunft hoch, um die echte Kaufkraftlücke aufzuzeigen." %}</li>
+                        <li><strong>{% trans "Projected Net Pension" %}:</strong> {% trans "Sums up all monthly net payouts of contracts whose retirement age or payout start date is reached in the respective year." %}</li>
+                        <li><strong>{% trans "Adjustment Rate / Dynamics" %}:</strong> {% trans "If 'Indexed (Inflation Adjustment)' is activated, payouts increase annually by the configured pension adjustment rate upon retirement." %}</li>
+                        <li><strong>{% trans "Target Net Pension (Today's Purchasing Power)" %}:</strong> {% trans "Represents your desired amount (from individual contracts or your profile settings)." %}</li>
+                        <li><strong>{% trans "Target Net Pension (Inflation-adjusted)" %}:</strong> {% trans "Projects your desired amount into the future using the annual inflation rate stored in your profile (e.g. 2.0%) to show the real purchasing power gap." %}</li>
                     </ul>
                 </div>
             </div>
@@ -714,17 +714,17 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg rounded-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
                 <div class="modal-header border-0 pb-0">
-                    <h5 class="modal-title fw-bold"><i class="bi bi-info-circle text-info me-2"></i>{% trans "Kapital- & Rentenpunkte-Entwicklung" %}</h5>
+                    <h5 class="modal-title fw-bold"><i class="bi bi-info-circle text-info me-2"></i>{% trans "Capital & Pension Points Progression" %}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4" style="font-size: 0.9rem; line-height: 1.6;">
-                    <h6 class="fw-bold text-info">{% trans "Woher kommen die Daten?" %}</h6>
-                    <p>{% trans "Die Kurven kombinieren historische Stichtags-Snapshots (erfasst über 'Historischen Stichtag erfassen') mit der Zukunfts-Projektion aus deinen" %} <a href="javascript:void(0)" onclick="scrollToPensionsTable('infoCapitalModal')" class="fw-bold text-decoration-underline text-info">{% trans "aktiven Verträgen" %}</a>.</p>
+                    <h6 class="fw-bold text-info">{% trans "Where does the data come from?" %}</h6>
+                    <p>{% trans "The curves combine historical snapshots (recorded via 'Record Historical Date') with future projections from your" %} <a href="javascript:void(0)" onclick="scrollToPensionsTable('infoCapitalModal')" class="fw-bold text-decoration-underline text-info">{% trans "active contracts" %}</a>.</p>
 
-                    <h6 class="fw-bold text-info mt-3">{% trans "Berechnung & Logik" %}</h6>
+                    <h6 class="fw-bold text-info mt-3">{% trans "Calculation & Logic" %}</h6>
                     <ul class="ps-3 mb-0">
-                        <li><strong>{% trans "Privates Vorsorgekapital" %}:</strong> {% trans "Akkumuliert monatliche Sparbeiträge bis zum Beitragsende. Einmalige Auszahlungen verbleiben im Gesamtvermögen." %}</li>
-                        <li><strong>{% trans "Gesetzliche Rentenpunkte" %}:</strong> {% trans "Jeder gesetzliche Rentenvertrag (z. B. Bernd, Birgit) wird einzeln mit seinen Entgeltpunkten und Steigerungen abgebildet." %}</li>
+                        <li><strong>{% trans "Private Pension Capital" %}:</strong> {% trans "Accumulates monthly savings contributions until contributions end. Lump-sum payouts remain in total wealth." %}</li>
+                        <li><strong>{% trans "Statutory Pension Points" %}:</strong> {% trans "Each statutory pension contract is mapped individually with its earnings points and annual increases." %}</li>
                     </ul>
                 </div>
             </div>
@@ -736,13 +736,13 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg rounded-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
                 <div class="modal-header border-0 pb-0">
-                    <h5 class="modal-title fw-bold"><i class="bi bi-info-circle text-purple me-2"></i>{% trans "Aufteilung der Vorsorgebausteine" %}</h5>
+                    <h5 class="modal-title fw-bold"><i class="bi bi-info-circle text-purple me-2"></i>{% trans "Pension Components Breakdown" %}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4" style="font-size: 0.9rem; line-height: 1.6;">
                     <h6 class="fw-bold text-purple">{% trans "Woher kommen die Daten?" %}</h6>
-                    <p>{% trans "Zeigt den prozentualen Anteil jedes einzelnen Vertrages an deinen gesammelten monatlichen Netto-Rentenansprüchen am Tag des Renteneintritts." %}</p>
-                    <p class="mb-0">{% trans "Direkt verknüpft mit deinen" %} <a href="javascript:void(0)" onclick="scrollToPensionsTable('infoBreakdownModal')" class="fw-bold text-decoration-underline text-purple">{% trans "Vorsorgeverträgen" %}</a>.</p>
+                    <p>{% trans "Shows the percentage share of each individual contract in your accumulated monthly net pension entitlements on the retirement date." %}</p>
+                    <p class="mb-0">{% trans "Directly linked to your" %} <a href="javascript:void(0)" onclick="scrollToPensionsTable('infoBreakdownModal')" class="fw-bold text-decoration-underline text-purple">{% trans "pension contracts" %}</a>.</p>
                 </div>
             </div>
         </div>
@@ -753,15 +753,15 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg rounded-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
                 <div class="modal-header border-0 pb-0">
-                    <h5 class="modal-title fw-bold"><i class="bi bi-info-circle text-warning me-2"></i>{% trans "Aktive Vorsorgeverträge & Ansprüche" %}</h5>
+                    <h5 class="modal-title fw-bold"><i class="bi bi-info-circle text-warning me-2"></i>{% trans "Active Pension Contracts & Entitlements" %}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4" style="font-size: 0.9rem; line-height: 1.6;">
-                    <h6 class="fw-bold text-warning">{% trans "Verwaltung der Vorsorgebausteine" %}</h6>
-                    <p>{% trans "Hier werden alle deine gesetzlichen und privaten Vorsorgeverträge verwaltet. Jeder Eintrag bildet das Fundament für die Berechnungen in allen Diagrammen oben." %}</p>
+                    <h6 class="fw-bold text-warning">{% trans "Pension Components Management" %}</h6>
+                    <p>{% trans "All your statutory and private pension contracts are managed here. Each entry forms the foundation for calculations across all charts above." %}</p>
                     <ul class="ps-3 mb-0">
-                        <li><strong>{% trans "Gesetzliche Rente" %}:</strong> {% trans "Wird aus Entgeltpunkten × Aktuellem Rentenwert abzüglich Kranken- & Pflegeversicherungsbeiträgen (~11,5 %) berechnet." %}</li>
-                        <li><strong>{% trans "Private Vorsorge" %}:</strong> {% trans "Enthält Kapitalwert, monatliche Sparrate und erwartete Auszahlungen." %}</li>
+                        <li><strong>{% trans "Statutory Pension" %}:</strong> {% trans "Calculated from earnings points × current pension value minus health & long-term care insurance contributions (~11.5%)." %}</li>
+                        <li><strong>{% trans "Private Pension" %}:</strong> {% trans "Contains capital value, monthly savings rate, and expected payouts." %}</li>
                     </ul>
                 </div>
             </div>

@@ -494,3 +494,201 @@ msgstr "Development & AI Assistance"
 
 msgid "Created via Vibe Coding using Google Antigravity. Simulations and calculations serve informational purposes only and do not constitute financial advice."
 msgstr "Created via Vibe Coding using Google Antigravity. Simulations and calculations serve informational purposes only and do not constitute financial advice."
+
+msgid "Life Stage: Retirement"
+msgstr "Life Stage: Retirement"
+
+msgid "Life Stage: Transition"
+msgstr "Life Stage: Transition"
+
+msgid "Life Stage: Accumulation & Growth"
+msgstr "Life Stage: Accumulation & Growth"
+
+msgid "years"
+msgstr "years"
+
+msgid "New Pension Plan"
+msgstr "New Pension Plan"
+
+msgid "Statutory Pension (Current)"
+msgstr "Statutory Pension (Current)"
+
+msgid "Statutory Pension (Net)"
+msgstr "Statutory Pension (Net)"
+
+msgid "Statutory Contracts"
+msgstr "Statutory Contracts"
+
+msgid "Private Contracts (Net Payout)"
+msgstr "Private Contracts (Net Payout)"
+
+msgid "Actual currently flowing pension payout"
+msgstr "Actual currently flowing pension payout"
+
+msgid "All Contracts (Net Pension & Start)"
+msgstr "All Contracts (Net Pension & Start)"
+
+msgid "Retirement Coverage (Current)"
+msgstr "Retirement Coverage (Current)"
+
+msgid "Retirement Gap (Current)"
+msgstr "Retirement Gap (Current)"
+
+msgid "Pension Surplus"
+msgstr "Pension Surplus"
+
+msgid "Pension Gap in Retirement"
+msgstr "Pension Gap in Retirement"
+
+msgid "Current shortfall compared to target pension"
+msgstr "Current shortfall compared to target pension"
+
+msgid "Target payout reached in retirement!"
+msgstr "Target payout reached in retirement!"
+
+msgid "Gap to target pension in retirement"
+msgstr "Gap to target pension in retirement"
+
+msgid "Pension flowing today"
+msgstr "Pension flowing today"
+
+msgid "Free surplus today"
+msgstr "Free surplus today"
+
+msgid "Target Pension (Today's purchasing power)"
+msgstr "Target Pension (Today's purchasing power)"
+
+msgid "Projected Target Pension ("
+msgstr "Projected Target Pension ("
+
+msgid "Projected Net Pension"
+msgstr "Projected Net Pension"
+
+msgid "Update Pension Plan & Annual Statement"
+msgstr "Update Pension Plan & Annual Statement"
+
+msgid "Enter new figures from your annual statements (record date) or contract amendments here."
+msgstr "Enter new figures from your annual statements (record date) or contract amendments here."
+
+msgid "Information from the official statutory pension statement (DRV)"
+msgstr "Information from the official statutory pension statement (DRV)"
+
+msgid "Disability Pension (€/mo. net)"
+msgstr "Disability Pension (€/mo. net)"
+
+msgid "Target net pension for this individual contract"
+msgstr "Target net pension for this individual contract"
+
+msgid "Previous Record Dates for this Contract"
+msgstr "Previous Record Dates for this Contract"
+
+msgid "Record Date"
+msgstr "Record Date"
+
+msgid "Disability Pension (€)"
+msgstr "Disability Pension (€)"
+
+msgid "Capital (€)"
+msgstr "Capital (€)"
+
+msgid "Really delete this record date?"
+msgstr "Really delete this record date?"
+
+msgid "Delete"
+msgstr "Delete"
+
+msgid "No historical record dates captured yet."
+msgstr "No historical record dates captured yet."
+
+msgid "Forecast Timeline (Monthly Net Payouts)"
+msgstr "Forecast Timeline (Monthly Net Payouts)"
+
+msgid "Where does the data come from?"
+msgstr "Where does the data come from?"
+
+msgid "Payout figures are based on your recorded pension contracts in the"
+msgstr "Payout figures are based on your recorded pension contracts in the"
+
+msgid "Active Pension Contracts Table"
+msgstr "Active Pension Contracts Table"
+
+msgid "How is it calculated?"
+msgstr "How is it calculated?"
+
+msgid "Sums up all monthly net payouts of contracts whose retirement age or payout start date is reached in the respective year."
+msgstr "Sums up all monthly net payouts of contracts whose retirement age or payout start date is reached in the respective year."
+
+msgid "Adjustment Rate / Dynamics"
+msgstr "Adjustment Rate / Dynamics"
+
+msgid "If 'Indexed (Inflation Adjustment)' is activated, payouts increase annually by the configured pension adjustment rate upon retirement."
+msgstr "If 'Indexed (Inflation Adjustment)' is activated, payouts increase annually by the configured pension adjustment rate upon retirement."
+
+msgid "Target Net Pension (Today's Purchasing Power)"
+msgstr "Target Net Pension (Today's Purchasing Power)"
+
+msgid "Represents your desired amount (from individual contracts or your profile settings)."
+msgstr "Represents your desired amount (from individual contracts or your profile settings)."
+
+msgid "Target Net Pension (Inflation-adjusted)"
+msgstr "Target Net Pension (Inflation-adjusted)"
+
+msgid "Projects your desired amount into the future using the annual inflation rate stored in your profile (e.g. 2.0%) to show the real purchasing power gap."
+msgstr "Projects your desired amount into the future using the annual inflation rate stored in your profile (e.g. 2.0%) to show the real purchasing power gap."
+
+msgid "Capital & Pension Points Progression"
+msgstr "Capital & Pension Points Progression"
+
+msgid "The curves combine historical snapshots (recorded via 'Record Historical Date') with future projections from your"
+msgstr "The curves combine historical snapshots (recorded via 'Record Historical Date') with future projections from your"
+
+msgid "active contracts"
+msgstr "active contracts"
+
+msgid "Calculation & Logic"
+msgstr "Calculation & Logic"
+
+msgid "Private Pension Capital"
+msgstr "Private Pension Capital"
+
+msgid "Accumulates monthly savings contributions until contributions end. Lump-sum payouts remain in total wealth."
+msgstr "Accumulates monthly savings contributions until contributions end. Lump-sum payouts remain in total wealth."
+
+msgid "Statutory Pension Points"
+msgstr "Statutory Pension Points"
+
+msgid "Each statutory pension contract is mapped individually with its earnings points and annual increases."
+msgstr "Each statutory pension contract is mapped individually with its earnings points and annual increases."
+
+msgid "Pension Components Breakdown"
+msgstr "Pension Components Breakdown"
+
+msgid "Shows the percentage share of each individual contract in your accumulated monthly net pension entitlements on the retirement date."
+msgstr "Shows the percentage share of each individual contract in your accumulated monthly net pension entitlements on the retirement date."
+
+msgid "Directly linked to your"
+msgstr "Directly linked to your"
+
+msgid "pension contracts"
+msgstr "pension contracts"
+
+msgid "Active Pension Contracts & Entitlements"
+msgstr "Active Pension Contracts & Entitlements"
+
+msgid "Pension Components Management"
+msgstr "Pension Components Management"
+
+msgid "All your statutory and private pension contracts are managed here. Each entry forms the foundation for calculations across all charts above."
+msgstr "All your statutory and private pension contracts are managed here. Each entry forms the foundation for calculations across all charts above."
+
+msgid "Statutory Pension"
+msgstr "Statutory Pension"
+
+msgid "Calculated from earnings points × current pension value minus health & long-term care insurance contributions (~11.5%)."
+msgstr "Calculated from earnings points × current pension value minus health & long-term care insurance contributions (~11.5%)."
+
+msgid "Private Pension"
+msgstr "Private Pension"
+
+msgid "Contains capital value, monthly savings rate, and expected payouts."
+msgstr "Contains capital value, monthly savings rate, and expected payouts."

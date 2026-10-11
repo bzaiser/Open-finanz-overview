@@ -2106,3 +2106,195 @@ msgstr "Développement & assistance par IA"
 
 msgid "Created via Vibe Coding using Google Antigravity. Simulations and calculations serve informational purposes only and do not constitute financial advice."
 msgstr "Créé via Vibe Coding avec Google Antigravity. Les simulations et calculs sont fournis à titre purement informatif et ne constituent pas des conseils financiers."
+
+msgid "Life Stage: Retirement"
+msgstr "Étape de vie : Retraite"
+
+msgid "Life Stage: Transition"
+msgstr "Étape de vie : Transition"
+
+msgid "Life Stage: Accumulation & Growth"
+msgstr "Étape de vie : Épargne & croissance"
+
+msgid "years"
+msgstr "ans"
+
+msgid "New Pension Plan"
+msgstr "Nouveau plan de retraite"
+
+msgid "Statutory Pension (Current)"
+msgstr "Retraite légale (Actuelle)"
+
+msgid "Statutory Pension (Net)"
+msgstr "Retraite légale (Nette)"
+
+msgid "Statutory Contracts"
+msgstr "Contrats légaux"
+
+msgid "Private Contracts (Net Payout)"
+msgstr "Contrats privés (Versement net)"
+
+msgid "Actual currently flowing pension payout"
+msgstr "Versement de pension actuellement versé aujourd'hui"
+
+msgid "All Contracts (Net Pension & Start)"
+msgstr "Tous les contrats (Pension nette & début)"
+
+msgid "Retirement Coverage (Current)"
+msgstr "Couverture de retraite (Actuelle)"
+
+msgid "Retirement Gap (Current)"
+msgstr "Déficit de retraite (Actuel)"
+
+msgid "Pension Surplus"
+msgstr "Excédent de retraite"
+
+msgid "Pension Gap in Retirement"
+msgstr "Déficit de retraite"
+
+msgid "Current shortfall compared to target pension"
+msgstr "Déficit actuel par rapport à la pension cible"
+
+msgid "Target payout reached in retirement!"
+msgstr "Versement cible atteint à la retraite !"
+
+msgid "Gap to target pension in retirement"
+msgstr "Écart par rapport à la retraite cible"
+
+msgid "Pension flowing today"
+msgstr "Pension versée aujourd'hui"
+
+msgid "Free surplus today"
+msgstr "Surplus disponible aujourd'hui"
+
+msgid "Target Pension (Today's purchasing power)"
+msgstr "Pension cible (Pouvoir d'achat actuel)"
+
+msgid "Projected Target Pension ("
+msgstr "Pension cible projetée ("
+
+msgid "Projected Net Pension"
+msgstr "Pension nette projetée"
+
+msgid "Update Pension Plan & Annual Statement"
+msgstr "Mettre à jour le plan de retraite & le relevé annuel"
+
+msgid "Enter new figures from your annual statements (record date) or contract amendments here."
+msgstr "Saisissez ici les nouveaux chiffres de vos relevés annuels ou modifications de contrat."
+
+msgid "Information from the official statutory pension statement (DRV)"
+msgstr "Informations du relevé officiel de retraite légale"
+
+msgid "Disability Pension (€/mo. net)"
+msgstr "Pension d'invalidité (€/mois net)"
+
+msgid "Target net pension for this individual contract"
+msgstr "Pension nette cible pour ce contrat individuel"
+
+msgid "Previous Record Dates for this Contract"
+msgstr "Dates de référence précédentes pour ce contrat"
+
+msgid "Record Date"
+msgstr "Date de référence"
+
+msgid "Disability Pension (€)"
+msgstr "Pension d'invalidité (€)"
+
+msgid "Capital (€)"
+msgstr "Capital (€)"
+
+msgid "Really delete this record date?"
+msgstr "Voulez-vous vraiment supprimer cette date de référence ?"
+
+msgid "No historical record dates captured yet."
+msgstr "Aucune date historique enregistrée pour le moment."
+
+msgid "Forecast Timeline (Monthly Net Payouts)"
+msgstr "Chronologie prévisionnelle (Versements nets mensuels)"
+
+msgid "Where does the data come from?"
+msgstr "D'où viennent les données ?"
+
+msgid "Payout figures are based on your recorded pension contracts in the"
+msgstr "Les montants de versement sont basés sur vos contrats de retraite enregistrés dans le"
+
+msgid "Active Pension Contracts Table"
+msgstr "Tableau des contrats de retraite actifs"
+
+msgid "How is it calculated?"
+msgstr "Comment est-ce calculé ?"
+
+msgid "Sums up all monthly net payouts of contracts whose retirement age or payout start date is reached in the respective year."
+msgstr "Additionne tous les versements nets mensuels des contrats dont l'âge de départ à la retraite ou la date de début de versement est atteint dans l'année concernée."
+
+msgid "Adjustment Rate / Dynamics"
+msgstr "Taux d'ajustement / Dynamique"
+
+msgid "If 'Indexed (Inflation Adjustment)' is activated, payouts increase annually by the configured pension adjustment rate upon retirement."
+msgstr "Si 'Indexé (Ajustement à l'inflation)' est activé, les versements augmentent chaque année du taux d'ajustement configuré dès le départ à la retraite."
+
+msgid "Target Net Pension (Today's Purchasing Power)"
+msgstr "Pension nette cible (Pouvoir d'achat actuel)"
+
+msgid "Represents your desired amount (from individual contracts or your profile settings)."
+msgstr "Représente le montant souhaité (issu des contrats individuels ou des paramètres de profil)."
+
+msgid "Target Net Pension (Inflation-adjusted)"
+msgstr "Pension nette cible (Ajustée à l'inflation)"
+
+msgid "Projects your desired amount into the future using the annual inflation rate stored in your profile (e.g. 2.0%) to show the real purchasing power gap."
+msgstr "Projette votre montant souhaité dans le futur à l'aide du taux d'inflation annuel enregistré dans votre profil (ex. 2,0 %) afin de montrer le déficit réel de pouvoir d'achat."
+
+msgid "Capital & Pension Points Progression"
+msgstr "Évolution du capital & des points de retraite"
+
+msgid "The curves combine historical snapshots (recorded via 'Record Historical Date') with future projections from your"
+msgstr "Les courbes combinent des instantanés historiques avec des projections futures de vos"
+
+msgid "active contracts"
+msgstr "contrats actifs"
+
+msgid "Calculation & Logic"
+msgstr "Calcul & logique"
+
+msgid "Private Pension Capital"
+msgstr "Capital de retraite privée"
+
+msgid "Accumulates monthly savings contributions until contributions end. Lump-sum payouts remain in total wealth."
+msgstr "Accumule les versements d'épargne mensuels jusqu'à la fin des cotisations. Les versements uniques restent dans le patrimoine total."
+
+msgid "Statutory Pension Points"
+msgstr "Points de retraite légale"
+
+msgid "Each statutory pension contract is mapped individually with its earnings points and annual increases."
+msgstr "Chaque contrat de retraite légale est représenté individuellement avec ses points de pension et ses revalorisations annuelles."
+
+msgid "Pension Components Breakdown"
+msgstr "Répartition des composantes de retraite"
+
+msgid "Shows the percentage share of each individual contract in your accumulated monthly net pension entitlements on the retirement date."
+msgstr "Affiche la part en pourcentage de chaque contrat individuel dans vos droits mensuels nets à la retraite à la date de départ."
+
+msgid "Directly linked to your"
+msgstr "Directement lié à vos"
+
+msgid "pension contracts"
+msgstr "contrats de retraite"
+
+msgid "Active Pension Contracts & Entitlements"
+msgstr "Contrats de retraite actifs & droits"
+
+msgid "Pension Components Management"
+msgstr "Gestion des composantes de retraite"
+
+msgid "All your statutory and private pension contracts are managed here. Each entry forms the foundation for calculations across all charts above."
+msgstr "Tous vos contrats de retraite légale et privée sont gérés ici. Chaque entrée constitue la base des calculs présentés dans tous les graphiques ci-dessus."
+
+msgid "Statutory Pension"
+msgstr "Retraite légale"
+
+msgid "Calculated from earnings points × current pension value minus health & long-term care insurance contributions (~11.5%)."
+msgstr "Calculé à partir des points de pension × valeur actuelle de la pension moins les cotisations d'assurance maladie et dépendance (~11,5 %)."
+
+msgid "Contains capital value, monthly savings rate, and expected payouts."
+msgstr "Contient la valeur du capital, le taux d'épargne mensuel et les versements prévus."
