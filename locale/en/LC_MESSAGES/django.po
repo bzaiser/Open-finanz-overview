@@ -800,3 +800,39 @@ msgstr "Purchasing Power Loss"
 
 msgid "month net"
 msgstr "month net"
+
+msgid "Current Net Income"
+msgstr "Current Net Income"
+
+msgid "Current income covers your goal!"
+msgstr "Current income covers your goal!"
+
+msgid "Monthly expenses today"
+msgstr "Monthly expenses today"
+
+msgid "Expenses today"
+msgstr "Expenses today"
+
+msgid "Projected expenses ("
+msgstr "Projected expenses ("
+
+msgid "% inflation)"
+msgstr "% inflation)"
+
+msgid "Record Dates"
+msgstr "Record Dates"
+
+msgid "Point Value (€)"
+msgstr "Point Value (€)"
+
+msgid "Net (€)"
+msgstr "Net (€)"
+
+msgid "Note"
+msgstr "Note"
+
+msgid "Action"
+msgstr "Action"
+
+msgid "Edit directly in table"
+msgstr "Edit directly in table"

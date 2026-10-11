@@ -1621,13 +1621,13 @@ msgid "Net Savings"
 msgstr "Risparmio netto"
 
 msgid "Nominal Value"
-msgstr "Nominalwert"
+msgstr "Valore nominale"
 
 msgid "Real Value (Purchasing Power)"
-msgstr "Realwert (Kaufkraft)"
+msgstr "Valore reale (Potere d'acquisto)"
 
 msgid "Purchasing Power Loss"
-msgstr "Kaufkraftverlust"
+msgstr "Perdita di potere d'acquisto"
 
 msgid "Uncategorized"
 msgstr "Senza categoria"
@@ -1644,25 +1644,25 @@ msgstr ""
 "finanziaria."
 
 msgid "Quick Start"
-msgstr "Schnellstart"
+msgstr "Avvio rapido"
 
 msgid "Personal Dashboard"
-msgstr "Persönliches Dashboard"
+msgstr "Dashboard personale"
 
 msgid "Calculations"
-msgstr "Simulation"
+msgstr "Simulazione"
 
 msgid "Frequently Asked Questions"
-msgstr "Häufig gestellte Fragen"
+msgstr "Domande frequenti"
 
 msgid "How do I add a new recurring expense?"
-msgstr "Wie füge ich eine neue wiederkehrende Ausgabe hinzu?"
+msgstr "Come posso aggiungere una nuova spesa ricorrente?"
 
 msgid "What is the \"Inflation Monitor\"?"
-msgstr "Monitor dell'inflazione"
+msgstr "Cos'è il \"Monitor dell'inflazione\"?"
 
 msgid "Quick Start Guide"
-msgstr "Schnellstart-Anleitung"
+msgstr "Guida introduttiva"
 
 msgid "Go to your Profile and set your default currency and inflation rate."
 msgstr ""
@@ -2395,3 +2395,39 @@ msgstr "Nome del partner"
 
 msgid "month net"
 msgstr "mese netto"
+
+msgid "Current Net Income"
+msgstr "Entrate nette attuali"
+
+msgid "Current income covers your goal!"
+msgstr "Il reddito attuale copre il tuo obiettivo!"
+
+msgid "Monthly expenses today"
+msgstr "Spese mensili oggi"
+
+msgid "Expenses today"
+msgstr "Spese oggi"
+
+msgid "Projected expenses ("
+msgstr "Spese proiettate ("
+
+msgid "% inflation)"
+msgstr "% infl.)"
+
+msgid "Record Dates"
+msgstr "Date di riferimento"
+
+msgid "Point Value (€)"
+msgstr "Valore del punto (€)"
+
+msgid "Net (€)"
+msgstr "Netto (€)"
+
+msgid "Note"
+msgstr "Nota"
+
+msgid "Action"
+msgstr "Azione"
+
+msgid "Edit directly in table"
+msgstr "Modifica direttamente nella tabella"

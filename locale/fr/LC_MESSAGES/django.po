@@ -2409,3 +2409,39 @@ msgstr "Nom du conjoint"
 
 msgid "month net"
 msgstr "mois net"
+
+msgid "Current Net Income"
+msgstr "Revenus nets actuels"
+
+msgid "Current income covers your goal!"
+msgstr "Les revenus actuels couvrent votre objectif !"
+
+msgid "Monthly expenses today"
+msgstr "Dépenses mensuelles aujourd'hui"
+
+msgid "Expenses today"
+msgstr "Dépenses aujourd'hui"
+
+msgid "Projected expenses ("
+msgstr "Dépenses projetées ("
+
+msgid "% inflation)"
+msgstr "% infl.)"
+
+msgid "Record Dates"
+msgstr "Dates de référence"
+
+msgid "Point Value (€)"
+msgstr "Valeur du point (€)"
+
+msgid "Net (€)"
+msgstr "Net (€)"
+
+msgid "Note"
+msgstr "Remarque"
+
+msgid "Action"
+msgstr "Action"
+
+msgid "Edit directly in table"
+msgstr "Modifier directement dans le tableau"

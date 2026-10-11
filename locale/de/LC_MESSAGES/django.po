@@ -3108,3 +3108,39 @@ msgstr "Partner-Name"
 
 msgid "month net"
 msgstr "Monat netto"
+
+msgid "Current Net Income"
+msgstr "Aktuelle Netto-Einnahmen"
+
+msgid "Current income covers your goal!"
+msgstr "Aktuelle Einnahmen decken dein Ziel!"
+
+msgid "Monthly expenses today"
+msgstr "Monatliche Ausgaben heute"
+
+msgid "Expenses today"
+msgstr "Ausgaben heute"
+
+msgid "Projected expenses ("
+msgstr "Hochgerechnete Ausgaben ("
+
+msgid "% inflation)"
+msgstr "% Infl.)"
+
+msgid "Record Dates"
+msgstr "Stichtage"
+
+msgid "Point Value (€)"
+msgstr "Punktwert (€)"
+
+msgid "Net (€)"
+msgstr "Netto (€)"
+
+msgid "Note"
+msgstr "Notiz"
+
+msgid "Action"
+msgstr "Aktion"
+
+msgid "Edit directly in table"
+msgstr "Direkt in Tabelle bearbeiten"

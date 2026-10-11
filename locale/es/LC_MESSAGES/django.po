@@ -1622,13 +1622,13 @@ msgid "Net Savings"
 msgstr "Ahorro neto"
 
 msgid "Nominal Value"
-msgstr "Nominalwert"
+msgstr "Valor nominal"
 
 msgid "Real Value (Purchasing Power)"
-msgstr "Realwert (Kaufkraft)"
+msgstr "Valor real (Poder adquisitivo)"
 
 msgid "Purchasing Power Loss"
-msgstr "Kaufkraftverlust"
+msgstr "Pérdida de poder adquisitivo"
 
 msgid "Uncategorized"
 msgstr "Sin categoría"
@@ -1734,10 +1734,10 @@ msgid "Currently"
 msgstr "Actualmente"
 
 msgid "Yes"
-msgstr "Ja"
+msgstr "Sí"
 
 msgid "No"
-msgstr "Nein"
+msgstr "No"
 
 msgid "Mon"
 msgstr "Mens."
@@ -1806,49 +1806,49 @@ msgid "Expert Knowledge Base"
 msgstr "Base de conocimientos experta"
 
 msgid "Net Worth (Nominal)"
-msgstr "Gesamtvermögen (Nominal)"
+msgstr "Patrimonio neto (Nominal)"
 
 msgid "Net Worth (Real)"
-msgstr "Gesamtvermögen (Real)"
+msgstr "Patrimonio neto (Real)"
 
 msgid "Real Estate (Nominal)"
-msgstr "Immobilien (Nominal)"
+msgstr "Inmuebles (Nominal)"
 
 msgid "Real Estate (Real)"
-msgstr "Immobilien (Real)"
+msgstr "Inmuebles (Real)"
 
 msgid "Pension Capital (Nominal)"
-msgstr "Rentenkapital (Nominal)"
+msgstr "Capital de pensión (Nominal)"
 
 msgid "Pension Capital (Real)"
-msgstr "Rentenkapital (Real)"
+msgstr "Capital de pensión (Real)"
 
 msgid "Liquid Assets (Nominal)"
-msgstr "Konten/Liquidität (Nominal)"
+msgstr "Activos líquidos (Nominal)"
 
 msgid "Liquid Assets (Real)"
-msgstr "Konten/Liquidität (Real)"
+msgstr "Activos líquidos (Real)"
 
 msgid "Physical Assets (Nominal)"
-msgstr "Sachwerte (Nominal)"
+msgstr "Activos físicos (Nominal)"
 
 msgid "Historical Data"
 msgstr "Datos históricos"
 
 msgid "Asset/Object"
-msgstr "Asset / Objekt"
+msgstr "Activo / Objeto"
 
 msgid "Konto/Anlage"
-msgstr "Konto/Anlage"
+msgstr "Cuenta / Inversión"
 
 msgid "Real Estate Trend"
-msgstr "Immobilien-Trend"
+msgstr "Tendencia inmobiliaria"
 
 msgid "Physical Assets Trend"
-msgstr "Sachwerte-Trend"
+msgstr "Tendencia de activos físicos"
 
 msgid "Liquidity & Pension"
-msgstr "Liquidität & Vorsorge"
+msgstr "Liquidez y pensión"
 
 msgid "Sim. Start Date"
 msgstr "Fecha de inicio sim."
@@ -2389,3 +2389,39 @@ msgstr "Nombre de la pareja"
 
 msgid "month net"
 msgstr "mes neto"
+
+msgid "Current Net Income"
+msgstr "Ingresos netos actuales"
+
+msgid "Current income covers your goal!"
+msgstr "¡Los ingresos actuales cubren tu objetivo!"
+
+msgid "Monthly expenses today"
+msgstr "Gastos mensuales hoy"
+
+msgid "Expenses today"
+msgstr "Gastos hoy"
+
+msgid "Projected expenses ("
+msgstr "Gastos proyectados ("
+
+msgid "% inflation)"
+msgstr "% infl.)"
+
+msgid "Record Dates"
+msgstr "Fechas de corte"
+
+msgid "Point Value (€)"
+msgstr "Valor del punto (€)"
+
+msgid "Net (€)"
+msgstr "Neto (€)"
+
+msgid "Note"
+msgstr "Nota"
+
+msgid "Action"
+msgstr "Acción"
+
+msgid "Edit directly in table"
+msgstr "Editar directamente en la tabla"

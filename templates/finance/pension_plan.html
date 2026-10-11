@@ -191,7 +191,7 @@
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
                         <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">
-                            {% if life_stage == 'retirement' %}{% trans "Aktuelle Netto-Einnahmen" %}{% else %}{% trans "Total Monthly Net Payout" %}{% endif %}
+                            {% if life_stage == 'retirement' %}{% trans "Current Net Income" %}{% else %}{% trans "Total Monthly Net Payout" %}{% endif %}
                         </span>
                         <h3 class="fw-bold mb-0 mt-1 font-monospace">
                             {% if life_stage == 'retirement' %}{{ current_total_monthly_payout|floatformat:2|intcomma }}{% else %}{{ total_monthly_net|floatformat:2|intcomma }}{% endif %} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span>
@@ -242,7 +242,7 @@
                         </h3>
                         <span class="small opacity-75" style="font-size: 0.75rem;">
                             {% if life_stage == 'retirement' %}
-                                {% if pension_gap <= 0 %}{% trans "Aktuelle Einnahmen decken dein Ziel!" %}{% else %}{% trans "Current shortfall compared to target pension" %}{% endif %}
+                                {% if pension_gap <= 0 %}{% trans "Current income covers your goal!" %}{% else %}{% trans "Current shortfall compared to target pension" %}{% endif %}
                             {% else %}
                                 {% if pension_gap <= 0 %}{% trans "Target payout reached in retirement!" %}{% else %}{% trans "Gap to target pension in retirement" %}{% endif %}
                             {% endif %}
@@ -260,7 +260,7 @@
                         <span class="font-monospace fw-bold">{{ current_total_monthly_payout|floatformat:2|intcomma }} €</span>
                     </div>
                     <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
-                        <span>{% trans "Monatliche Ausgaben heute" %}:</span>
+                        <span>{% trans "Monthly expenses today" %}:</span>
                         <span class="font-monospace fw-bold">{{ monthly_expenses_today|floatformat:2|intcomma }} €</span>
                     </div>
                     <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
@@ -273,11 +273,11 @@
                     </div>
                     {% else %}
                     <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
-                        <span>{% trans "Ausgaben heute" %}:</span>
+                        <span>{% trans "Expenses today" %}:</span>
                         <span class="font-monospace fw-bold">{{ monthly_expenses_today|floatformat:2|intcomma }} €</span>
                     </div>
                     <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
-                        <span>{% trans "Hochgerechnete Ausgaben (" %}{{ retirement_year }}{% trans " inkl. " %}{{ user.profile.inflation_rate }}{% trans "% Infl.)" %}:</span>
+                        <span>{% trans "Projected expenses (" %}{{ retirement_year }}{% trans " incl. " %}{{ user.profile.inflation_rate }}{% trans "% inflation)" %}:</span>
                         <span class="font-monospace fw-bold text-warning">{{ monthly_expenses_at_retirement|floatformat:2|intcomma }} €</span>
                     </div>
                     <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
@@ -551,7 +551,7 @@
                         <div x-show="editId" class="mt-4 pt-3 border-top border-secondary border-opacity-25">
                             <h6 class="fw-bold mb-2 text-primary d-flex align-items-center justify-content-between" style="font-size: 0.85rem;">
                                 <span><i class="bi bi-clock-history me-1"></i>{% trans "Previous Record Dates for this Contract" %}</span>
-                                <span class="badge rounded-pill bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2.5 py-1" x-text="getSnapshotsForEditId().length + ' Stichtage'"></span>
+                                <span class="badge rounded-pill bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2.5 py-1" x-text="getSnapshotsForEditId().length + ' {% trans "Record Dates" %}'"></span>
                             </h6>
                             <div class="table-responsive rounded-3 border border-secondary border-opacity-20 shadow-sm" style="max-height: 250px; overflow-y: auto;">
                                 <table class="table table-sm table-hover align-middle mb-0" style="font-size: 0.8rem;">
@@ -562,10 +562,10 @@
                                                 <th class="py-2 px-2 border-0 text-center">EP</th>
                                             </template>
                                             <template x-if="form.pension_type === 'statutory'">
-                                                <th class="py-2 px-2 border-0 text-center">{% trans "Punktwert (€)" %}</th>
+                                                <th class="py-2 px-2 border-0 text-center">{% trans "Point Value (€)" %}</th>
                                             </template>
                                             <template x-if="form.pension_type === 'statutory'">
-                                                <th class="py-2 px-3 border-0 text-end">{% trans "Netto (€)" %}</th>
+                                                <th class="py-2 px-3 border-0 text-end">{% trans "Net (€)" %}</th>
                                             </template>
                                             <template x-if="form.pension_type === 'statutory'">
                                                 <th class="py-2 px-2 border-0 text-end">{% trans "Disability Pension (€)" %}</th>
@@ -573,8 +573,8 @@
                                             <template x-if="form.pension_type !== 'statutory'">
                                                 <th class="py-2 px-3 border-0 text-end">{% trans "Capital (€)" %}</th>
                                             </template>
-                                            <th class="py-2 px-3 border-0">{% trans "Notiz" %}</th>
-                                            <th class="py-2 px-3 border-0 text-center" style="width: 80px;">Aktion</th>
+                                            <th class="py-2 px-3 border-0">{% trans "Note" %}</th>
+                                            <th class="py-2 px-3 border-0 text-center" style="width: 80px;">{% trans "Action" %}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -605,7 +605,7 @@
                                                 <template x-if="editingSnapshotId !== s.id">
                                                     <td class="py-2 px-3 text-center">
                                                          <div class="d-flex gap-2 justify-content-center">
-                                                             <button type="button" @click="startInlineEditSnapshot(s)" class="btn btn-sm btn-link p-0 text-primary" title="{% trans 'Direkt in Tabelle bearbeiten' %}">
+                                                             <button type="button" @click="startInlineEditSnapshot(s)" class="btn btn-sm btn-link p-0 text-primary" title="{% trans 'Edit directly in table' %}">
                                                                  <i class="bi bi-pencil" style="font-size: 0.95rem;"></i>
                                                              </button>
                                                              <a :href="'/finance/pensions/snapshot/delete/' + s.id + '/?edit_pension_id=' + editId" onclick="return confirm('{% trans "Really delete this record date?" %}')" class="btn btn-sm btn-link p-0 text-danger" title="{% trans "Delete" %}">
@@ -740,7 +740,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4" style="font-size: 0.9rem; line-height: 1.6;">
-                    <h6 class="fw-bold text-purple">{% trans "Woher kommen die Daten?" %}</h6>
+                    <h6 class="fw-bold text-purple">{% trans "Where does the data come from?" %}</h6>
                     <p>{% trans "Shows the percentage share of each individual contract in your accumulated monthly net pension entitlements on the retirement date." %}</p>
                     <p class="mb-0">{% trans "Directly linked to your" %} <a href="javascript:void(0)" onclick="scrollToPensionsTable('infoBreakdownModal')" class="fw-bold text-decoration-underline text-purple">{% trans "pension contracts" %}</a>.</p>
                 </div>
