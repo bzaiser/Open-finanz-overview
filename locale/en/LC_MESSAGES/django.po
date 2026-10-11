@@ -836,3 +836,33 @@ msgstr "Action"
 
 msgid "Edit directly in table"
 msgstr "Edit directly in table"
+
+msgid "Monthly Payout Projection Timeline"
+msgstr "Monthly Payout Projection Timeline"
+
+msgid "Capital & Pension Points Development"
+msgstr "Capital & Pension Points Development"
+
+msgid "Pension Portfolio Breakdown (Individual Contracts)"
+msgstr "Pension Portfolio Breakdown (Individual Contracts)"
+
+msgid "Projected Monthly Net Payout"
+msgstr "Projected Monthly Net Payout"
+
+msgid "Target Payout (Today's Purchasing Power)"
+msgstr "Target Payout (Today's Purchasing Power)"
+
+msgid "Target Payout (Inflation Adjusted)"
+msgstr "Target Payout (Inflation Adjusted)"
+
+msgid "Monthly Expenses (Inflation Adjusted)"
+msgstr "Monthly Expenses (Inflation Adjusted)"
+
+msgid "Retirement"
+msgstr "Retirement"
+
+msgid "Private Capital Value"
+msgstr "Private Capital Value"
+
+msgid "Breakdown by Contract"
+msgstr "Breakdown by Contract"

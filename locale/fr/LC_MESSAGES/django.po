@@ -2442,3 +2442,33 @@ msgstr "Remarque"
 
 msgid "Edit directly in table"
 msgstr "Modifier directement dans le tableau"
+
+msgid "Monthly Payout Projection Timeline"
+msgstr "Chronologie de projection des versements mensuels"
+
+msgid "Capital & Pension Points Development"
+msgstr "Évolution du capital et des points de retraite"
+
+msgid "Pension Portfolio Breakdown (Individual Contracts)"
+msgstr "Répartition du portefeuille de retraite (Contrats individuels)"
+
+msgid "Projected Monthly Net Payout"
+msgstr "Versement net mensuel projeté"
+
+msgid "Target Payout (Today's Purchasing Power)"
+msgstr "Versement cible (Pouvoir d'achat d'aujourd'hui)"
+
+msgid "Target Payout (Inflation Adjusted)"
+msgstr "Versement cible (Ajusté à l'inflation)"
+
+msgid "Monthly Expenses (Inflation Adjusted)"
+msgstr "Dépenses mensuelles (Ajustées à l'inflation)"
+
+msgid "Retirement"
+msgstr "Retraite"
+
+msgid "Private Capital Value"
+msgstr "Valeur du capital privé"
+
+msgid "Breakdown by Contract"
+msgstr "Répartition par contrat"

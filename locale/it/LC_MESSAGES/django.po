@@ -2428,3 +2428,33 @@ msgstr "Nota"
 
 msgid "Edit directly in table"
 msgstr "Modifica direttamente nella tabella"
+
+msgid "Monthly Payout Projection Timeline"
+msgstr "Cronologia di proiezione delle erogazioni mensili"
+
+msgid "Capital & Pension Points Development"
+msgstr "Evoluzione del capitale e dei punti pensione"
+
+msgid "Pension Portfolio Breakdown (Individual Contracts)"
+msgstr "Ripartizione del portafoglio pensionistico (Singoli contratti)"
+
+msgid "Projected Monthly Net Payout"
+msgstr "Erogazione netta mensile prevista"
+
+msgid "Target Payout (Today's Purchasing Power)"
+msgstr "Erogazione target (Potere d'acquisto odierno)"
+
+msgid "Target Payout (Inflation Adjusted)"
+msgstr "Erogazione target (Adeguata all'inflazione)"
+
+msgid "Monthly Expenses (Inflation Adjusted)"
+msgstr "Spese mensili (Adeguate all'inflazione)"
+
+msgid "Retirement"
+msgstr "Pensione"
+
+msgid "Private Capital Value"
+msgstr "Valore del capitale privato"
+
+msgid "Breakdown by Contract"
+msgstr "Ripartizione per contratto"
