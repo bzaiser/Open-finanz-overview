@@ -766,10 +766,10 @@ def dashboard_view(request):
         le_labels, le_datasets, le_stichtag = trim_chart_data(labels_yearly, loan_evo_datasets, stichtag_year_index)
 
         im_labels, im_datasets, im_stichtag = trim_chart_data(labels_yearly, [
-            {'label': _('Nominal Value'), 'data': net_worth_nominal, 'borderColor': '#0d6efd', 'fill': False},
-            {'label': _('Real Value (Purchasing Power)'), 'data': net_worth_real, 'borderColor': '#198754', 'fill': False},
+            {'label': str(_('Nominal Value')), 'data': net_worth_nominal, 'borderColor': '#0d6efd', 'fill': False},
+            {'label': str(_('Real Value (Purchasing Power)')), 'data': net_worth_real, 'borderColor': '#198754', 'fill': False},
             {
-                'label': _('Purchasing Power Loss'), 
+                'label': str(_('Purchasing Power Loss')), 
                 'data': inflation_loss, 
                 'backgroundColor': 'rgba(220, 53, 69, 0.5)', 
                 'type': 'bar',
