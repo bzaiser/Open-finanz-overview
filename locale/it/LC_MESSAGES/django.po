@@ -2393,14 +2393,5 @@ msgstr "Tutti gli anni"
 msgid "Partner Name"
 msgstr "Nome del partner"
 
-msgid "Nominal Value"
-msgstr "Valore nominale"
-
-msgid "Real Value (Purchasing Power)"
-msgstr "Valore reale (Potere d'acquisto)"
-
-msgid "Purchasing Power Loss"
-msgstr "Perdita di potere d'acquisto"
-
 msgid "month net"
 msgstr "mese netto"
