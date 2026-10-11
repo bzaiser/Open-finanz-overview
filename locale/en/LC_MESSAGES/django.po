@@ -785,3 +785,6 @@ msgstr "Goals & Simulation"
 
 msgid "Total Target Net Pension in Retirement (€/mo.)"
 msgstr "Total Target Net Pension in Retirement (€/mo.)"
+
+msgid "Partner Name"
+msgstr "Partner Name"

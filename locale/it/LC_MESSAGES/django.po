@@ -2389,3 +2389,6 @@ msgstr "Attuale"
 
 msgid "All Years"
 msgstr "Tutti gli anni"
+
+msgid "Partner Name"
+msgstr "Nome del partner"

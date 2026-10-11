@@ -2403,3 +2403,6 @@ msgstr "Actuel"
 
 msgid "All Years"
 msgstr "Toutes les années"
+
+msgid "Partner Name"
+msgstr "Nom du conjoint"
