@@ -2278,3 +2278,6 @@ msgstr "Calculado a partir de puntos de pensión × valor actual de la pensión 
 
 msgid "Contains capital value, monthly savings rate, and expected payouts."
 msgstr "Contiene valor de capital, tasa mensual de ahorro y pagos esperados."
+
+msgid "Retirement Planning"
+msgstr "Planificación de la jubilación"

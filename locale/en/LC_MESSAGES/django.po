@@ -692,3 +692,6 @@ msgstr "Private Pension"
 
 msgid "Contains capital value, monthly savings rate, and expected payouts."
 msgstr "Contains capital value, monthly savings rate, and expected payouts."
+
+msgid "Retirement Planning"
+msgstr "Retirement Planning"
