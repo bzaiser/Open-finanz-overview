@@ -2480,8 +2480,5 @@ msgstr "Versamento lordo"
 msgid "Net Payout"
 msgstr "Versamento netto"
 
-msgid "Contribution"
-msgstr "Contributo"
-
 msgid "Actions"
 msgstr "Azioni"

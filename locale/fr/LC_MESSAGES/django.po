@@ -2494,8 +2494,5 @@ msgstr "Versement brut"
 msgid "Net Payout"
 msgstr "Versement net"
 
-msgid "Contribution"
-msgstr "Cotisation"
-
 msgid "Actions"
 msgstr "Actions"

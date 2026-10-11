@@ -2474,8 +2474,5 @@ msgstr "Pago bruto"
 msgid "Net Payout"
 msgstr "Pago neto"
 
-msgid "Contribution"
-msgstr "Contribución"
-
 msgid "Actions"
 msgstr "Acciones"
