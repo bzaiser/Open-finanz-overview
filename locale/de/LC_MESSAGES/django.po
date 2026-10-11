@@ -3101,3 +3101,18 @@ msgstr "ab"
 
 msgid "until"
 msgstr "bis"
+
+msgid "Partner Data (Person 2)"
+msgstr "Partner-Daten (Person 2)"
+
+msgid "Partner Birth Date"
+msgstr "Partner Geburtsdatum"
+
+msgid "Partner Retirement Age"
+msgstr "Partner Renteneintrittsalter"
+
+msgid "Goals & Simulation"
+msgstr "Ziele & Simulation"
+
+msgid "Total Target Net Pension in Retirement (€/mo.)"
+msgstr "Gesamt-Ziel-Nettorente im Ruhestand (€/mtl.)"

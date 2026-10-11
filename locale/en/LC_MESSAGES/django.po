@@ -770,3 +770,18 @@ msgstr "from"
 
 msgid "until"
 msgstr "until"
+
+msgid "Partner Data (Person 2)"
+msgstr "Partner Data (Person 2)"
+
+msgid "Partner Birth Date"
+msgstr "Partner Birth Date"
+
+msgid "Partner Retirement Age"
+msgstr "Partner Retirement Age"
+
+msgid "Goals & Simulation"
+msgstr "Goals & Simulation"
+
+msgid "Total Target Net Pension in Retirement (€/mo.)"
+msgstr "Total Target Net Pension in Retirement (€/mo.)"

@@ -2370,3 +2370,18 @@ msgstr "dès"
 
 msgid "until"
 msgstr "jusqu'à"
+
+msgid "Partner Data (Person 2)"
+msgstr "Données du conjoint (Personne 2)"
+
+msgid "Partner Birth Date"
+msgstr "Date de naissance du conjoint"
+
+msgid "Partner Retirement Age"
+msgstr "Âge de départ à la retraite du conjoint"
+
+msgid "Goals & Simulation"
+msgstr "Objectifs & simulation"
+
+msgid "Total Target Net Pension in Retirement (€/mo.)"
+msgstr "Pension nette cible totale à la retraite (€/mois)"

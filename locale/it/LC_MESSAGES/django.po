@@ -2356,3 +2356,18 @@ msgstr "da"
 
 msgid "until"
 msgstr "fino a"
+
+msgid "Partner Data (Person 2)"
+msgstr "Dati del partner (Persona 2)"
+
+msgid "Partner Birth Date"
+msgstr "Data di nascita del partner"
+
+msgid "Partner Retirement Age"
+msgstr "Età pensionabile del partner"
+
+msgid "Goals & Simulation"
+msgstr "Obiettivi e simulazione"
+
+msgid "Total Target Net Pension in Retirement (€/mo.)"
+msgstr "Pensione netta target complessiva in pensione (€/mese)"
