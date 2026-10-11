@@ -3130,17 +3130,11 @@ msgstr "% Infl.)"
 msgid "Record Dates"
 msgstr "Stichtage"
 
-msgid "Point Value (€)"
-msgstr "Punktwert (€)"
-
 msgid "Net (€)"
 msgstr "Netto (€)"
 
 msgid "Note"
 msgstr "Notiz"
-
-msgid "Action"
-msgstr "Aktion"
 
 msgid "Edit directly in table"
 msgstr "Direkt in Tabelle bearbeiten"

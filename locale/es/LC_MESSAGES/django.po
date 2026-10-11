@@ -1914,7 +1914,7 @@ msgid "File"
 msgstr "Archivo"
 
 msgid "Action"
-msgstr "Action"
+msgstr "Acción"
 
 msgid "Amount (€)"
 msgstr "Cantidad (€)"
@@ -2419,9 +2419,6 @@ msgstr "Neto (€)"
 
 msgid "Note"
 msgstr "Nota"
-
-msgid "Action"
-msgstr "Acción"
 
 msgid "Edit directly in table"
 msgstr "Editar directamente en la tabla"

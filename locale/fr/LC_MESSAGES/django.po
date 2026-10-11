@@ -2440,8 +2440,5 @@ msgstr "Net (€)"
 msgid "Note"
 msgstr "Remarque"
 
-msgid "Action"
-msgstr "Action"
-
 msgid "Edit directly in table"
 msgstr "Modifier directement dans le tableau"
