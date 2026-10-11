@@ -2371,3 +2371,21 @@ msgstr "Obiettivi e simulazione"
 
 msgid "Total Target Net Pension in Retirement (€/mo.)"
 msgstr "Pensione netta target complessiva in pensione (€/mese)"
+
+msgid "year"
+msgstr "anno"
+
+msgid "Net Monthly Surplus"
+msgstr "Surplus netto mensile"
+
+msgid "Search by name, category, note..."
+msgstr "Cerca per nome, categoria, nota..."
+
+msgid "All Categories"
+msgstr "Tutte le categorie"
+
+msgid "Current"
+msgstr "Attuale"
+
+msgid "All Years"
+msgstr "Tutti gli anni"
