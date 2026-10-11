@@ -2354,20 +2354,6 @@ msgstr "Tabellen-Informationen & Berechnung"
 msgid "Monthly Expenses (Inflation Adjusted)"
 msgstr "Monatliche Ausgaben (Inflationsangepasst)"
 
-msgid "Lebensphase: Ruhestand"
-msgstr "Lebensphase: Ruhestand"
-
-msgid "Lebensphase: Übergang (0-5 Jahre)"
-msgstr "Lebensphase: Übergang (0-5 Jahre)"
-
-msgid "Lebensphase: Übergang"
-msgstr "Lebensphase: Übergang"
-
-msgid "Lebensphase: Ansparen & Aufbau"
-msgstr "Lebensphase: Ansparen & Aufbau"
-
-msgid "Jahre"
-msgstr "Jahre"
 
 msgid "Bisherige Stichtage dieses Vertrags"
 msgstr "Bisherige Stichtage dieses Vertrags"
@@ -3119,3 +3105,15 @@ msgstr "Gesamt-Ziel-Nettorente im Ruhestand (€/mtl.)"
 
 msgid "Partner Name"
 msgstr "Partner-Name"
+
+msgid "Nominal Value"
+msgstr "Nominalwert"
+
+msgid "Real Value (Purchasing Power)"
+msgstr "Realer Wert (Kaufkraft)"
+
+msgid "Purchasing Power Loss"
+msgstr "Kaufkraftverlust"
+
+msgid "month net"
+msgstr "Monat netto"

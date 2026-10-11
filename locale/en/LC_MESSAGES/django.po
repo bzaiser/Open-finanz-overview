@@ -788,3 +788,15 @@ msgstr "Total Target Net Pension in Retirement (€/mo.)"
 
 msgid "Partner Name"
 msgstr "Partner Name"
+
+msgid "Nominal Value"
+msgstr "Nominal Value"
+
+msgid "Real Value (Purchasing Power)"
+msgstr "Real Value (Purchasing Power)"
+
+msgid "Purchasing Power Loss"
+msgstr "Purchasing Power Loss"
+
+msgid "month net"
+msgstr "month net"
