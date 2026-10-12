@@ -142,7 +142,9 @@ class Pension(models.Model):
     def save(self, *args, **kwargs):
         if self.pension_type == 'statutory' and self.pension_points is not None and self.point_value is not None:
             self.gross_payout_amount = (self.pension_points * self.point_value).quantize(Decimal('0.01'))
-            
+
+        gross = self.gross_payout_amount or (self.gross_payout if self.gross_payout else None)
+
         # Priority 1: If social_deduction_rate and gross are provided, calculate expected_payout_at_retirement
         if gross and self.social_deduction_rate is not None:
             rate = (self.social_deduction_rate or Decimal('0.00')) / Decimal('100.00')
