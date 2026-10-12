@@ -2482,3 +2482,9 @@ msgstr "Versamento netto"
 
 msgid "Actions"
 msgstr "Azioni"
+
+msgid "Disability Pension Net (€/month)"
+msgstr "Pensione di inabilità netta (€/mese)"
+
+msgid "Full disability monthly net payout from statutory pension statement"
+msgstr "Erogazione netta mensile per inabilità totale dall'estratto conto previdenziale"

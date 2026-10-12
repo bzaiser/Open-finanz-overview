@@ -140,20 +140,18 @@ class Pension(models.Model):
         return self.expected_payout_at_retirement
 
     def save(self, *args, **kwargs):
-        if self.pension_type == 'statutory' and self.pension_points is not None and self.point_value is not None:
-            self.gross_payout_amount = (self.pension_points * self.point_value).quantize(Decimal('0.01'))
+        # Fallback 1: Calculate gross only if empty and points & point_value are given
+        if self.gross_payout_amount is None:
+            if self.pension_type == 'statutory' and self.pension_points is not None and self.point_value is not None:
+                self.gross_payout_amount = (self.pension_points * self.point_value).quantize(Decimal('0.01'))
 
-        gross = self.gross_payout_amount or (self.gross_payout if self.gross_payout else None)
-
-        # Priority 1: If social_deduction_rate and gross are provided, calculate expected_payout_at_retirement
-        if gross and self.social_deduction_rate is not None:
-            rate = (self.social_deduction_rate or Decimal('0.00')) / Decimal('100.00')
-            net = gross * (Decimal('1.00') - rate)
-            self.expected_payout_at_retirement = net.quantize(Decimal('0.01'))
-        # Priority 2: If no social_deduction_rate is set, but user entered Brutto and Netto, calculate the deduction rate
-        elif gross and self.expected_payout_at_retirement and gross > 0:
-            calculated_rate = ((gross - self.expected_payout_at_retirement) / gross) * Decimal('100.00')
-            self.social_deduction_rate = calculated_rate.quantize(Decimal('0.01'))
+        # Fallback 2: Calculate net only if empty and gross is available
+        if self.expected_payout_at_retirement is None:
+            gross = self.gross_payout_amount or (self.gross_payout if self.gross_payout else None)
+            if gross and self.social_deduction_rate is not None:
+                rate = (self.social_deduction_rate or Decimal('0.00')) / Decimal('100.00')
+                net = gross * (Decimal('1.00') - rate)
+                self.expected_payout_at_retirement = net.quantize(Decimal('0.01'))
 
         super().save(*args, **kwargs)
 

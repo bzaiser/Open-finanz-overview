@@ -121,13 +121,16 @@ class AssetSnapshotInline(GenericTabularInline):
 
 @admin.register(Pension)
 class PensionAdmin(BaseOwnedModelAdmin):
-    list_display = ('provider', 'pension_type', 'user', 'pension_points', 'point_value', 'gross_payout_amount', 'social_deduction_rate', 'expected_payout_at_retirement', 'is_indexed', 'notes')
+    list_display = ('provider', 'pension_type', 'user', 'pension_points', 'point_value', 'gross_payout_amount', 'social_deduction_rate', 'expected_payout_at_retirement', 'disability_pension_net', 'is_indexed', 'notes')
     list_editable = ('is_indexed',)
     search_fields = ('provider', 'user__username')
     list_filter = ('pension_type', 'user')
     list_select_related = ('user',)
     inlines = [AssetSnapshotInline]
     snapshot_value_field = 'current_value'
+
+    class Media:
+        js = ('js/admin_pension_calc.js',)
 
 from django import forms
 

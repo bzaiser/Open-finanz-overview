@@ -2496,3 +2496,9 @@ msgstr "Versement net"
 
 msgid "Actions"
 msgstr "Actions"
+
+msgid "Disability Pension Net (€/month)"
+msgstr "Pension d'invalidité nette (€/mois)"
+
+msgid "Full disability monthly net payout from statutory pension statement"
+msgstr "Versement mensuel net pour invalidité totale selon le relevé de pension légale"

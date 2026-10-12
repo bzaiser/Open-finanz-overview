@@ -3138,3 +3138,9 @@ msgstr "Notiz"
 
 msgid "Edit directly in table"
 msgstr "Direkt in Tabelle bearbeiten"
+
+msgid "Disability Pension Net (€/month)"
+msgstr "Erwerbsminderungsrente Netto (€/Monat)"
+
+msgid "Full disability monthly net payout from statutory pension statement"
+msgstr "Monatliche Netto-Auszahlung bei voller Erwerbsminderung laut Rentenauskunft"

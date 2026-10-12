@@ -2476,3 +2476,9 @@ msgstr "Pago neto"
 
 msgid "Actions"
 msgstr "Acciones"
+
+msgid "Disability Pension Net (€/month)"
+msgstr "Pensión de incapacidad neta (€/mes)"
+
+msgid "Full disability monthly net payout from statutory pension statement"
+msgstr "Pago mensual neto por incapacidad permanente total según extracto de pensión legal"
