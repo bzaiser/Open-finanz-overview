@@ -227,18 +227,18 @@
         </template>
     </div>
 
-    <!-- Step 3: Private & Betriebliche Vorsorge (bAV, Allianz, Riester etc.) -->
+    <!-- Step 3: Private & Betriebliche Vorsorge (bAV, Kapital-Police, Riester etc.) -->
     <div x-show="currentStep === 3" class="card border-0 shadow-sm rounded-4 p-4 mb-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h4 class="fw-bold mb-0 d-flex align-items-center gap-2 text-primary">
-                <i class="bi bi-piggy-bank"></i> {% trans "3. Private & Betriebliche Vorsorge (bAV, Allianz, Riester)" %}
+                <i class="bi bi-piggy-bank"></i> {% trans "3. Private & Betriebliche Vorsorge (bAV, Kapital-Police, Riester)" %}
             </h4>
             <button type="button" @click="addPrivateStatement()" class="btn btn-sm btn-outline-primary rounded-pill px-3">
                 <i class="bi bi-plus-lg me-1"></i>{% trans "Weitere Mitteilung / Vertrag hinzufügen" %}
             </button>
         </div>
         <p class="text-muted small mb-4">
-            {% trans "Erfassung von Standmitteilungen aus bAV, Direktversicherungen, Riester, Rürup oder privaten Lebensversicherungen." %}
+            {% trans "Erfassung von Standmitteilungen aus bAV, Direktversicherungen, Riester, Rürup oder privaten Kapital- und Rentenpolicen." %}
         </p>
 
         <template x-for="(priv, index) in form.private_statements" :key="index">
@@ -249,7 +249,7 @@
                 <div class="row g-3 mb-3">
                     <div class="col-md-5">
                         <label class="form-label small opacity-75">{% trans "Anbieter / Gesellschaft / Vertrag" %}</label>
-                        <input type="text" x-model="priv.provider" class="form-control" placeholder="z. B. Allianz Direktversicherung Perspektive">
+                        <input type="text" x-model="priv.provider" class="form-control" placeholder="{% trans "z. B. Direktversicherung / Renten-Police" %}">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small opacity-75">{% trans "Versicherungsnummer / Police-Nr." %}</label>

@@ -294,7 +294,7 @@ def wizard_save_api(request):
                     cap_val = _to_decimal(priv.get('current_capital'))
                     payout_val = _to_decimal(priv.get('expected_monthly_payout'))
                     if provider and (cap_val is not None or payout_val is not None):
-                        ptype = priv.get('pension_type', 'private')
+                        ptype = priv.get('pension_type') or 'capital'
                         pension_id = priv.get('existing_pension_id')
                         pension = None
                         if pension_id:
