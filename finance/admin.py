@@ -124,8 +124,26 @@ class AssetSnapshotInline(GenericTabularInline):
                 formset.form.base_fields['user'].initial = user
         return formset
 
+class PensionAdminForm(forms.ModelForm):
+    class Meta:
+        model = Pension
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        instance = kwargs.get('instance')
+        is_statutory = instance and instance.pension_type == 'statutory'
+        
+        if is_statutory:
+            self.fields['expected_payout_at_retirement'].label = _("Projected Net Monthly Pension (€)")
+            self.fields['expected_payout_at_retirement'].help_text = _("Projected regular old-age pension ('Sollten bis zum Rentenbeginn Beiträge wie in den letzten 5 Jahren gezahlt werden...')")
+        else:
+            self.fields['expected_payout_at_retirement'].label = _("Expected Monthly Payout (€)")
+            self.fields['expected_payout_at_retirement'].help_text = _("Expected monthly net payout at retirement from this private/capital pension.")
+
 @admin.register(Pension)
 class PensionAdmin(BaseOwnedModelAdmin):
+    form = PensionAdminForm
     list_display = ('provider', 'pension_type', 'user', 'pension_points', 'point_value', 'gross_payout_amount', 'social_deduction_rate', 'expected_payout_at_retirement', 'disability_pension_net', 'is_indexed', 'notes')
     list_editable = ('is_indexed',)
     search_fields = ('provider', 'user__username')

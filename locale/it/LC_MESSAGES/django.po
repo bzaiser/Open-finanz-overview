@@ -2506,3 +2506,12 @@ msgstr "Pensione pubblica (Punti & Detrazioni)"
 
 msgid "Retirement Payout & Dates"
 msgstr "Erogazione & Date di pensionamento"
+
+msgid "Projected Net Monthly Pension (€)"
+msgstr "Pensione di vecchiaia netta prevista (€/mese)"
+
+msgid "Expected Monthly Payout (€)"
+msgstr "Erogazione mensile netta prevista (€)"
+
+msgid "Expected monthly net payout at retirement from this private/capital pension."
+msgstr "Erogazione mensile netta prevista al pensionamento da questa previdenza privata."

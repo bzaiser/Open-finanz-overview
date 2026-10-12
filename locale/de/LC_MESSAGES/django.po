@@ -3163,3 +3163,12 @@ msgstr "Gesetzliche Rente (Punkte & Abzüge)"
 msgid "Retirement Payout & Dates"
 msgstr "Auszahlung & Rentenbeginn"
 
+msgid "Projected Net Monthly Pension (€)"
+msgstr "Künftige Regelaltersrente Netto (€/mtl.)"
+
+msgid "Expected Monthly Payout (€)"
+msgstr "Geplante monatliche Auszahlung Netto (€)"
+
+msgid "Expected monthly net payout at retirement from this private/capital pension."
+msgstr "Geplante monatliche Netto-Auszahlung aus dieser privaten / kapitalbildenden Altersvorsorge."
+

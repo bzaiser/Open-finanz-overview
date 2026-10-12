@@ -2520,3 +2520,12 @@ msgstr "Pension légale (Points & Déductions)"
 
 msgid "Retirement Payout & Dates"
 msgstr "Versement & Dates de retraite"
+
+msgid "Projected Net Monthly Pension (€)"
+msgstr "Pension légale nette prévue (€/mois)"
+
+msgid "Expected Monthly Payout (€)"
+msgstr "Versement mensuel net prévu (€)"
+
+msgid "Expected monthly net payout at retirement from this private/capital pension."
+msgstr "Versement mensuel net prévu à la retraite de cette pension privée/capital."
