@@ -120,7 +120,7 @@ class AssetSnapshotInline(GenericTabularInline):
             user = getattr(obj, 'user', None)
             if not user and isinstance(obj, CustomUser):
                 user = obj
-            if user:
+            if user and 'user' in formset.form.base_fields:
                 formset.form.base_fields['user'].initial = user
         return formset
 
