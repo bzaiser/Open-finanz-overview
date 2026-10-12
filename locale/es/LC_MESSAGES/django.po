@@ -2482,3 +2482,12 @@ msgstr "Pensión de incapacidad neta (€/mes)"
 
 msgid "Full disability monthly net payout from statutory pension statement"
 msgstr "Pago mensual neto por incapacidad permanente total según extracto de pensión legal"
+
+msgid "Deduction percentage for health & nursing care insurance (~11.5%)"
+msgstr "Porcentaje de deducción para seguro de enfermedad y dependencia (~11,5%)"
+
+msgid "Pension in case of full reduction in earning capacity ('Wären Sie heute voll erwerbsgemindert...')"
+msgstr "Pensión en caso de incapacidad laboral total"
+
+msgid "Projected regular old-age pension ('Sollten bis zum Rentenbeginn Beiträge gezahlt werden...')"
+msgstr "Pensión de jubilación reglamentaria proyectada"

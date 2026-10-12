@@ -182,28 +182,45 @@
                 </div>
 
                 <div class="row g-3 mb-3">
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <label class="form-label small opacity-75">{% trans "Entgeltpunkte (EP)" %}</label>
                         <input type="number" step="0.0001" x-model="drv.pension_points" @blur="suggestDrvStand(drv)" class="form-control font-monospace" placeholder="z. B. 60.4610">
+                        <div class="form-text small opacity-75">{% trans "Aktueller Stand der erworbenen Entgeltpunkte laut Versicherungsverlauf" %}</div>
                     </div>
-                    <div class="col-md-4">
-                        <label class="form-label small opacity-75">{% trans "Punktwert (€)" %}</label>
+                    <div class="col-md-6">
+                        <label class="form-label small opacity-75">{% trans "Aktueller Rentenwert (€)" %}</label>
                         <input type="number" step="0.01" x-model="drv.point_value" @blur="suggestDrvStand(drv)" class="form-control font-monospace" placeholder="39.32">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label small opacity-75">{% trans "Rente Erwerbsminderung (€/mtl.)" %}</label>
-                        <input type="number" step="0.01" x-model="drv.erwerbsminderung_net" class="form-control font-monospace" placeholder="z. B. 1913.68">
+                        <div class="form-text small opacity-75">{% trans "Wert eines Entgeltpunktes in EUR (bundeseinheitlich 39,32 €)" %}</div>
                     </div>
                 </div>
 
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label class="form-label small opacity-75 fw-bold text-success">{% trans "Bislang erreichte Anwartschaft (Stand heute €/mtl.)" %}</label>
-                        <input type="number" step="0.01" x-model="drv.stand_today_net" class="form-control font-monospace fw-bold text-success" placeholder="z. B. 1876.10">
+                <div class="p-3 bg-body rounded-3 border mb-3">
+                    <h6 class="fw-bold mb-3 text-secondary d-flex align-items-center gap-2">
+                        <i class="bi bi-file-text"></i> {% trans "Rentenbeträge laut Renteninformation" %}
+                    </h6>
+
+                    <div class="mb-3">
+                        <label class="form-label small opacity-75 fw-bold text-info">{% trans "Rente wegen voller Erwerbsminderung (€/mtl.)" %}</label>
+                        <input type="number" step="0.01" x-model="drv.erwerbsminderung_net" class="form-control font-monospace text-info fw-bold" placeholder="z. B. 2972.71">
+                        <div class="form-text small opacity-75">
+                            {% trans "Wären Sie heute wegen gesundheitlicher Einschränkungen voll erwerbsgemindert, bekämen Sie monatlich diesen Betrag." %}
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <label class="form-label small opacity-75 fw-bold text-primary">{% trans "Hochrechnung Regelaltersrente (€/mtl. ohne Anpassung)" %}</label>
-                        <input type="number" step="0.01" x-model="drv.forecast_net" class="form-control font-monospace fw-bold text-primary" placeholder="z. B. 2526.60">
+
+                    <div class="mb-3">
+                        <label class="form-label small opacity-75 fw-bold text-success">{% trans "Bislang erreichte Rentenanwartschaft (Stand heute €/mtl.)" %}</label>
+                        <input type="number" step="0.01" x-model="drv.stand_today_net" class="form-control font-monospace fw-bold text-success" placeholder="z. B. 2817.95">
+                        <div class="form-text small opacity-75">
+                            {% trans "Ihre bislang erreichte Rentenanwartschaft entspräche nach heutigem Stand (ohne künftige Beiträge) einer monatlichen Rente von diesem Betrag." %}
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="form-label small opacity-75 fw-bold text-primary">{% trans "Künftige Regelaltersrente (€/mtl. Hochrechnung)" %}</label>
+                        <input type="number" step="0.01" x-model="drv.forecast_net" class="form-control font-monospace fw-bold text-primary" placeholder="z. B. 3035.92">
+                        <div class="form-text small opacity-75">
+                            {% trans "Sollten bis zum Rentenbeginn Beiträge wie im 5-Jahres-Schnitt gezahlt werden, bekämen Sie ohne Anpassung diesen Betrag (Grundlage Ihrer Ruhestandsplanung)." %}
+                        </div>
                     </div>
                 </div>
             </div>

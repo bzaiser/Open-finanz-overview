@@ -3144,3 +3144,12 @@ msgstr "Erwerbsminderungsrente Netto (€/Monat)"
 
 msgid "Full disability monthly net payout from statutory pension statement"
 msgstr "Monatliche Netto-Auszahlung bei voller Erwerbsminderung laut Rentenauskunft"
+
+msgid "Deduction percentage for health & nursing care insurance (~11.5%)"
+msgstr "Prozentsatz für Abzüge von Kranken- und Pflegeversicherung (~11,5 %)"
+
+msgid "Pension in case of full reduction in earning capacity ('Wären Sie heute voll erwerbsgemindert...')"
+msgstr "Rente wegen voller Erwerbsminderung ('Wären Sie heute wegen gesundheitlicher Einschränkungen voll erwerbsgemindert...')"
+
+msgid "Projected regular old-age pension ('Sollten bis zum Rentenbeginn Beiträge gezahlt werden...')"
+msgstr "Künftige Regelaltersrente ('Sollten bis zum Rentenbeginn Beiträge wie in den letzten 5 Jahren gezahlt werden...')"

@@ -2502,3 +2502,12 @@ msgstr "Pension d'invalidité nette (€/mois)"
 
 msgid "Full disability monthly net payout from statutory pension statement"
 msgstr "Versement mensuel net pour invalidité totale selon le relevé de pension légale"
+
+msgid "Deduction percentage for health & nursing care insurance (~11.5%)"
+msgstr "Taux de déduction pour l'assurance maladie et soins (~11,5%)"
+
+msgid "Pension in case of full reduction in earning capacity ('Wären Sie heute voll erwerbsgemindert...')"
+msgstr "Pension en cas d'incapacité totale de travail"
+
+msgid "Projected regular old-age pension ('Sollten bis zum Rentenbeginn Beiträge gezahlt werden...')"
+msgstr "Pension de vieillesse légale future projetée"

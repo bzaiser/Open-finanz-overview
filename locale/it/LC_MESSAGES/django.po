@@ -2488,3 +2488,12 @@ msgstr "Pensione di inabilità netta (€/mese)"
 
 msgid "Full disability monthly net payout from statutory pension statement"
 msgstr "Erogazione netta mensile per inabilità totale dall'estratto conto previdenziale"
+
+msgid "Deduction percentage for health & nursing care insurance (~11.5%)"
+msgstr "Percentuale di detrazione per assicurazione sanitaria e assistenza (~11,5%)"
+
+msgid "Pension in case of full reduction in earning capacity ('Wären Sie heute voll erwerbsgemindert...')"
+msgstr "Pensione in caso di totale inabilità lavorativa"
+
+msgid "Projected regular old-age pension ('Sollten bis zum Rentenbeginn Beiträge gezahlt werden...')"
+msgstr "Pensione di vecchiaia ordinaria prevista"
