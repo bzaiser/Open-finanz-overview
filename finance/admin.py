@@ -221,7 +221,6 @@ class PensionAdmin(BaseOwnedModelAdmin):
                 (_('Retirement Payout & Dates'), {
                     'fields': (
                         'expected_payout_at_retirement',
-                        ('retirement_age', 'target_pension_payout'),
                         ('contribution_end_date', 'start_payout_date'),
                         'is_indexed',
                         'notes'
