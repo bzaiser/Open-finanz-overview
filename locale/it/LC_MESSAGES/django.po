@@ -684,7 +684,7 @@ msgid "WIDGET_DESC_ASSET_TABLE"
 msgstr "Inventario dei tuoi conti e depositi che mostra il saldo simulato, incluso l'effetto degli interessi composti. <br><br>Modifica qui: <a href=\"/admin/finance/asset/\" target=\"_blank\" class=\"alert-link\">Asset</a>."
 
 msgid "WIDGET_DESC_PENSION_TABLE"
-msgstr "Panoramica dei tuoi vari contratti pensionistici e dei relativi pagamenti proiettati. <br><br>Modifica qui: <a href=\"/admin/finance/pension/\" target=\"_blank\" class=\"alert-link\">Pensioni</a>."
+msgstr "Panoramica dei tuoi contratti pensionistici e delle relative erogazioni mensili previste a partire dal pensionamento. <br><br>Modifica qui: <a href=\"/admin/finance/pension/\" target=\"_blank\" class=\"alert-link\">Pensioni</a>."
 
 msgid "WIDGET_DESC_ONETIME_TABLE"
 msgstr "Prossimi eventi finanziari una tantum."

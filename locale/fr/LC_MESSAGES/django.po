@@ -686,7 +686,7 @@ msgid "WIDGET_DESC_ASSET_TABLE"
 msgstr "Inventaire de vos comptes et dépôts affichant le solde simulé, y compris l'effet des intérêts composés. <br><br>Modifier ici : <a href=\"/admin/finance/asset/\" target=\"_blank\" class=\"alert-link\">Actifs</a>."
 
 msgid "WIDGET_DESC_PENSION_TABLE"
-msgstr "Aperçu de vos différents contrats de retraite et de leurs versements projetés. <br><br>Modifier ici : <a href=\"/admin/finance/pension/\" target=\"_blank\" class=\"alert-link\">Retraites</a>."
+msgstr "Aperçu de vos contrats de retraite et de leurs versements mensuels projetés à partir du départ en retraite. <br><br>Modifier ici : <a href=\"/admin/finance/pension/\" target=\"_blank\" class=\"alert-link\">Retraites</a>."
 
 msgid "WIDGET_DESC_ONETIME_TABLE"
 msgstr "Prochains événements financiers ponctuels."

@@ -236,7 +236,7 @@ msgid "WIDGET_DESC_ASSET_TABLE"
 msgstr "Inventory of your accounts and portfolios showing the simulated balance including compound interest. <br><br>Edit here: <a href=\"/admin/finance/asset/\" target=\"_blank\" class=\"alert-link\">Assets</a>."
 
 msgid "WIDGET_DESC_PENSION_TABLE"
-msgstr "Overview of your various pension contracts and their projected payouts. <br><br>Edit here: <a href=\"/admin/finance/pension/\" target=\"_blank\" class=\"alert-link\">Pensions</a>."
+msgstr "Overview of your pension contracts and their projected monthly payouts from retirement. <br><br>Edit here: <a href=\"/admin/finance/pension/\" target=\"_blank\" class=\"alert-link\">Pensions</a>."
 
 msgid "WIDGET_DESC_EVENT_TABLE"
 msgstr "Chronological list of configured one-time financial events. <br><br>Edit here: <a href=\"/admin/finance/onetimeevent/\" target=\"_blank\" class=\"alert-link\">One-Time Events</a>."

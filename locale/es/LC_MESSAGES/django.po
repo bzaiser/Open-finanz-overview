@@ -683,7 +683,7 @@ msgid "WIDGET_DESC_ASSET_TABLE"
 msgstr "Inventario de sus cuentas y depósitos que muestra el saldo simulado, incluyendo el efecto del interés compuesto. <br><br>Editar aquí: <a href=\"/admin/finance/asset/\" target=\"_blank\" class=\"alert-link\">Activos</a>."
 
 msgid "WIDGET_DESC_PENSION_TABLE"
-msgstr "Resumen de sus diversos contratos de pensiones y sus pagos proyectados. <br><br>Editar aquí: <a href=\"/admin/finance/pension/\" target=\"_blank\" class=\"alert-link\">Pensiones</a>."
+msgstr "Resumen de sus contratos de pensiones y sus pagos mensuales proyectados a partir de la jubilación. <br><br>Editar aquí: <a href=\"/admin/finance/pension/\" target=\"_blank\" class=\"alert-link\">Pensiones</a>."
 
 msgid "WIDGET_DESC_ONETIME_TABLE"
 msgstr "Próximos eventos financieros únicos."

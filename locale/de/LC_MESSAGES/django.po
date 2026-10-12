@@ -1857,7 +1857,7 @@ msgid "WIDGET_DESC_ASSET_TABLE"
 msgstr "Inventur deiner Konten und Depots. Zeigt den simulierten Stand inklusive Zinseszinseffekt. <br><br>Hier anpassen: <a href=\"/admin/finance/asset/\" target=\"_blank\" class=\"alert-link\">Vermögenswerte</a>."
 
 msgid "WIDGET_DESC_PENSION_TABLE"
-msgstr "Übersicht deiner Altersvorsorge. Zeigt garantierte Beträge und aktuelle Kapitalwerte. <br><br>Hier anpassen: <a href=\"/admin/finance/pension/\" target=\"_blank\" class=\"alert-link\">Rentenverträge</a>."
+msgstr "Übersicht deiner Altersvorsorge. Zeigt die erwarteten monatlichen Auszahlungen ab Rentenbeginn. <br><br>Hier anpassen: <a href=\"/admin/finance/pension/\" target=\"_blank\" class=\"alert-link\">Rentenverträge</a>."
 
 msgid "WIDGET_DESC_EVENT_TABLE"
 msgstr "Chronologische Liste deiner konfigurierten finanziellen Einmalereignisse. <br><br>Hier anpassen: <a href=\"/admin/finance/onetimeevent/\" target=\"_blank\" class=\"alert-link\">Einmalereignisse</a>."
