@@ -1,10 +1,41 @@
 document.addEventListener('DOMContentLoaded', function () {
+    const typeField = document.getElementById('id_pension_type');
     const pointsField = document.getElementById('id_pension_points');
     const pointValueField = document.getElementById('id_point_value');
     const grossField = document.getElementById('id_gross_payout_amount');
     const deductionField = document.getElementById('id_social_deduction_rate');
     const netField = document.getElementById('id_expected_payout_at_retirement');
-    const typeField = document.getElementById('id_pension_type');
+
+    function togglePensionTypeFields() {
+        if (!typeField) return;
+        const currentType = typeField.value;
+
+        // Toggle fieldset field containers
+        const capitalGroup = document.querySelector('.pension-capital-group');
+        const statutoryGroup = document.querySelector('.pension-statutory-group');
+
+        if (currentType === 'statutory') {
+            if (capitalGroup) {
+                // Hide current_value and monthly_contribution rows for statutory, but keep growth_rate
+                const valRow = document.querySelector('.form-row.field-current_value');
+                const contribRow = document.querySelector('.form-row.field-monthly_contribution');
+                if (valRow) valRow.style.display = 'none';
+                if (contribRow) contribRow.style.display = 'none';
+                capitalGroup.style.display = '';
+            }
+            if (statutoryGroup) statutoryGroup.style.display = '';
+        } else {
+            // Capital / Private
+            if (capitalGroup) {
+                const valRow = document.querySelector('.form-row.field-current_value');
+                const contribRow = document.querySelector('.form-row.field-monthly_contribution');
+                if (valRow) valRow.style.display = '';
+                if (contribRow) contribRow.style.display = '';
+                capitalGroup.style.display = '';
+            }
+            if (statutoryGroup) statutoryGroup.style.display = 'none';
+        }
+    }
 
     function calculateGross() {
         if (!typeField || typeField.value === 'statutory') {
@@ -30,16 +61,13 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    if (pointsField) {
-        pointsField.addEventListener('blur', calculateGross);
+    if (typeField) {
+        typeField.addEventListener('change', togglePensionTypeFields);
+        togglePensionTypeFields();
     }
-    if (pointValueField) {
-        pointValueField.addEventListener('blur', calculateGross);
-    }
-    if (grossField) {
-        grossField.addEventListener('blur', calculateNet);
-    }
-    if (deductionField) {
-        deductionField.addEventListener('blur', calculateNet);
-    }
+
+    if (pointsField) pointsField.addEventListener('blur', calculateGross);
+    if (pointValueField) pointValueField.addEventListener('blur', calculateGross);
+    if (grossField) grossField.addEventListener('blur', calculateNet);
+    if (deductionField) deductionField.addEventListener('blur', calculateNet);
 });

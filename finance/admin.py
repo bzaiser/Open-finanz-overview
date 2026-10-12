@@ -104,17 +104,21 @@ class AssetSnapshotInline(GenericTabularInline):
     model = AssetSnapshot
     form = AssetSnapshotInlineForm
     extra = 0
-    fields = ('user', 'date', 'value', 'expected_payout_net', 'pension_points', 'point_value', 'notes')
+    fields = ('date', 'value', 'expected_payout_net', 'disability_pension_net', 'pension_points', 'point_value', 'notes')
     classes = ['collapse']
+
+    def get_fields(self, request, obj=None):
+        fields = list(self.fields)
+        if request.user.is_superuser:
+            fields.insert(0, 'user')
+        return fields
 
     def get_formset(self, request, obj=None, **kwargs):
         formset = super().get_formset(request, obj, **kwargs)
         if obj:
-            # Determine user from parent object
             user = getattr(obj, 'user', None)
             if not user and isinstance(obj, CustomUser):
                 user = obj
-            
             if user:
                 formset.form.base_fields['user'].initial = user
         return formset
@@ -127,10 +131,79 @@ class PensionAdmin(BaseOwnedModelAdmin):
     list_filter = ('pension_type', 'user')
     list_select_related = ('user',)
     inlines = [AssetSnapshotInline]
-    snapshot_value_field = 'current_value'
+
+    fieldsets = (
+        (None, {
+            'fields': ('user', 'provider', 'pension_type')
+        }),
+        (_('Capital & Contributions'), {
+            'classes': ('pension-capital-group',),
+            'fields': ('current_value', 'monthly_contribution', 'growth_rate')
+        }),
+        (_('Statutory Pension (Points & Deductions)'), {
+            'classes': ('pension-statutory-group',),
+            'fields': (
+                ('pension_points', 'point_value'),
+                ('gross_payout_amount', 'social_deduction_rate'),
+                'disability_pension_net',
+            )
+        }),
+        (_('Retirement Payout & Dates'), {
+            'fields': (
+                'expected_payout_at_retirement',
+                ('retirement_age', 'target_pension_payout'),
+                ('contribution_end_date', 'start_payout_date'),
+                'is_indexed',
+                'notes'
+            )
+        }),
+    )
+
+    def get_fieldsets(self, request, obj=None):
+        fieldsets = super().get_fieldsets(request, obj)
+        if not request.user.is_superuser:
+            # Remove 'user' from the first fieldset if not superuser
+            new_fieldsets = []
+            for name, opts in fieldsets:
+                opts_copy = dict(opts)
+                if 'fields' in opts_copy:
+                    opts_copy['fields'] = tuple(f for f in opts_copy['fields'] if f != 'user')
+                new_fieldsets.append((name, opts_copy))
+            return new_fieldsets
+        return fieldsets
 
     class Media:
         js = ('js/admin_pension_calc.js',)
+
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        # For statutory pensions, if user saved with points, record a rich snapshot
+        if obj.pension_type == 'statutory' and (obj.pension_points or obj.expected_payout_at_retirement):
+            snap_val = obj.expected_payout_at_retirement or Decimal('0.00')
+            AssetSnapshot.objects.update_or_create(
+                user=obj.user,
+                content_type=ContentType.objects.get_for_model(obj),
+                object_id=obj.pk,
+                date=timezone.now().date(),
+                defaults={
+                    'value': snap_val,
+                    'pension_points': obj.pension_points,
+                    'point_value': obj.point_value,
+                    'expected_payout_net': obj.expected_payout_at_retirement,
+                    'disability_pension_net': obj.disability_pension_net,
+                }
+            )
+        elif obj.pension_type == 'capital' and obj.current_value:
+            AssetSnapshot.objects.update_or_create(
+                user=obj.user,
+                content_type=ContentType.objects.get_for_model(obj),
+                object_id=obj.pk,
+                date=timezone.now().date(),
+                defaults={
+                    'value': obj.current_value,
+                    'expected_payout_net': obj.expected_payout_at_retirement,
+                }
+            )
 
 from django import forms
 
