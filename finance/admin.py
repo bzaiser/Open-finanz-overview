@@ -161,17 +161,55 @@ class PensionAdmin(BaseOwnedModelAdmin):
     )
 
     def get_fieldsets(self, request, obj=None):
-        fieldsets = super().get_fieldsets(request, obj)
-        if not request.user.is_superuser:
-            # Remove 'user' from the first fieldset if not superuser
-            new_fieldsets = []
-            for name, opts in fieldsets:
-                opts_copy = dict(opts)
-                if 'fields' in opts_copy:
-                    opts_copy['fields'] = tuple(f for f in opts_copy['fields'] if f != 'user')
-                new_fieldsets.append((name, opts_copy))
-            return new_fieldsets
-        return fieldsets
+        pension_type = getattr(obj, 'pension_type', 'capital') if obj else 'capital'
+        
+        base_fields = ('user', 'provider', 'pension_type') if request.user.is_superuser else ('provider', 'pension_type')
+        
+        if pension_type == 'statutory':
+            return (
+                (None, {
+                    'fields': base_fields
+                }),
+                (_('Statutory Pension (Points & Deductions)'), {
+                    'fields': (
+                        ('pension_points', 'point_value'),
+                        ('gross_payout_amount', 'social_deduction_rate'),
+                        'disability_pension_net',
+                    )
+                }),
+                (_('Retirement Payout & Dates'), {
+                    'fields': (
+                        'expected_payout_at_retirement',
+                        'growth_rate',
+                        ('retirement_age', 'target_pension_payout'),
+                        ('contribution_end_date', 'start_payout_date'),
+                        'is_indexed',
+                        'notes'
+                    )
+                }),
+            )
+        else:
+            return (
+                (None, {
+                    'fields': base_fields
+                }),
+                (_('Capital & Contributions'), {
+                    'fields': (
+                        'current_value',
+                        'monthly_contribution',
+                        'growth_rate',
+                    )
+                }),
+                (_('Retirement Payout & Dates'), {
+                    'fields': (
+                        'expected_payout_at_retirement',
+                        ('retirement_age', 'target_pension_payout'),
+                        ('contribution_end_date', 'start_payout_date'),
+                        'is_indexed',
+                        'notes'
+                    )
+                }),
+            )
 
     class Media:
         js = ('js/admin_pension_calc.js',)

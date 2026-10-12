@@ -2491,3 +2491,12 @@ msgstr "Pensión en caso de incapacidad laboral total"
 
 msgid "Projected regular old-age pension ('Sollten bis zum Rentenbeginn Beiträge gezahlt werden...')"
 msgstr "Pensión de jubilación reglamentaria proyectada"
+
+msgid "Capital & Contributions"
+msgstr "Capital & Contribuciones"
+
+msgid "Statutory Pension (Points & Deductions)"
+msgstr "Pensión legal (Puntos & Deducciones)"
+
+msgid "Retirement Payout & Dates"
+msgstr "Pago & Fechas de jubilación"

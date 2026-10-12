@@ -2497,3 +2497,12 @@ msgstr "Pensione in caso di totale inabilità lavorativa"
 
 msgid "Projected regular old-age pension ('Sollten bis zum Rentenbeginn Beiträge gezahlt werden...')"
 msgstr "Pensione di vecchiaia ordinaria prevista"
+
+msgid "Capital & Contributions"
+msgstr "Capitale & Contributi"
+
+msgid "Statutory Pension (Points & Deductions)"
+msgstr "Pensione pubblica (Punti & Detrazioni)"
+
+msgid "Retirement Payout & Dates"
+msgstr "Erogazione & Date di pensionamento"

@@ -2511,3 +2511,12 @@ msgstr "Pension en cas d'incapacité totale de travail"
 
 msgid "Projected regular old-age pension ('Sollten bis zum Rentenbeginn Beiträge gezahlt werden...')"
 msgstr "Pension de vieillesse légale future projetée"
+
+msgid "Capital & Contributions"
+msgstr "Capital & Cotisations"
+
+msgid "Statutory Pension (Points & Deductions)"
+msgstr "Pension légale (Points & Déductions)"
+
+msgid "Retirement Payout & Dates"
+msgstr "Versement & Dates de retraite"

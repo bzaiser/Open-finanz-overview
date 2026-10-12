@@ -3153,3 +3153,13 @@ msgstr "Rente wegen voller Erwerbsminderung ('Wären Sie heute wegen gesundheitl
 
 msgid "Projected regular old-age pension ('Sollten bis zum Rentenbeginn Beiträge gezahlt werden...')"
 msgstr "Künftige Regelaltersrente ('Sollten bis zum Rentenbeginn Beiträge wie in den letzten 5 Jahren gezahlt werden...')"
+
+msgid "Capital & Contributions"
+msgstr "Kapital & Sparbeiträge"
+
+msgid "Statutory Pension (Points & Deductions)"
+msgstr "Gesetzliche Rente (Punkte & Abzüge)"
+
+msgid "Retirement Payout & Dates"
+msgstr "Auszahlung & Rentenbeginn"
+
