@@ -184,11 +184,11 @@
                 <div class="row g-3 mb-3">
                     <div class="col-md-4">
                         <label class="form-label small opacity-75">{% trans "Entgeltpunkte (EP)" %}</label>
-                        <input type="number" step="0.0001" x-model="drv.pension_points" class="form-control font-monospace" placeholder="z. B. 60.4610">
+                        <input type="number" step="0.0001" x-model="drv.pension_points" @blur="suggestDrvStand(drv)" class="form-control font-monospace" placeholder="z. B. 60.4610">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small opacity-75">{% trans "Punktwert (€)" %}</label>
-                        <input type="number" step="0.01" x-model="drv.point_value" class="form-control font-monospace" placeholder="39.32">
+                        <input type="number" step="0.01" x-model="drv.point_value" @blur="suggestDrvStand(drv)" class="form-control font-monospace" placeholder="39.32">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small opacity-75">{% trans "Rente Erwerbsminderung (€/mtl.)" %}</label>
@@ -477,6 +477,19 @@
                 loans: initialData.loans && initialData.loans.length ? initialData.loans : [
                     { name: 'Immobiliendarlehen', nominal_amount: '', monthly_installment: '', interest_rate: '2.25', start_date: '' }
                 ]
+            },
+
+            suggestDrvStand(drv) {
+                if (drv.pension_points && drv.point_value && (!drv.stand_today_net || drv.stand_today_net === '')) {
+                    const pts = parseFloat(String(drv.pension_points).replace(',', '.'));
+                    const val = parseFloat(String(drv.point_value).replace(',', '.'));
+                    if (!isNaN(pts) && !isNaN(val)) {
+                        // Standard social deduction approx 11.5%
+                        const gross = pts * val;
+                        const netApprox = gross * (1.0 - 0.115);
+                        drv.stand_today_net = netApprox.toFixed(2);
+                    }
+                }
             },
 
             addDrvStatement() {

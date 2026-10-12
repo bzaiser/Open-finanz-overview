@@ -58,10 +58,13 @@ def wizard_page_view(request):
         stmt_date_str = latest_snap.date.strftime('%Y-%m-%d') if (latest_snap and latest_snap.date) else date.today().strftime('%Y-%m-%d')
 
         stand_today = None
-        if p.pension_type == 'statutory' and p.pension_points is not None and p.point_value is not None:
-            stand_today = float(p.pension_points * p.point_value)
+        if latest_snap and latest_snap.expected_payout_net is not None:
+            stand_today = float(latest_snap.expected_payout_net)
         elif p.expected_payout_at_retirement is not None:
             stand_today = float(p.expected_payout_at_retirement)
+        elif p.pension_type == 'statutory' and p.pension_points is not None and p.point_value is not None:
+            ded = float(p.social_deduction_rate or 11.5) / 100.0
+            stand_today = round(float(p.pension_points * p.point_value) * (1.0 - ded), 2)
 
         em_val = p.disability_pension_net
         if em_val is None and latest_snap and latest_snap.disability_pension_net is not None:
