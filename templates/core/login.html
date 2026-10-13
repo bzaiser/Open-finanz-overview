@@ -4,21 +4,23 @@
 {% block title %}{% trans "Login" %} - Finanzplan{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center mt-5">
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-header bg-primary text-white">
-                <h4 class="mb-0">{% trans "Login" %}</h4>
+<div class="row justify-content-center my-3 my-md-4">
+    <div class="col-11 col-sm-8 col-md-6 col-lg-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-primary text-white py-3">
+                <h4 class="mb-0 text-center"><i class="bi bi-box-arrow-in-right me-2"></i>{% trans "Login" %}</h4>
             </div>
-            <div class="card-body">
+            <div class="card-body p-4">
                 <form method="post">
                     {% csrf_token %}
                     {{ form|crispy }}
-                    <button type="submit" class="btn btn-primary w-100">{% trans "Login" %}</button>
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg">{% trans "Login" %}</button>
+                    </div>
                 </form>
             </div>
-            <div class="card-footer text-center">
-                <a href="{% url 'signup' %}">{% trans "No account yet? Sign up" %}</a>
+            <div class="card-footer text-center py-3 bg-transparent border-top">
+                <a href="{% url 'signup' %}" class="text-decoration-none">{% trans "No account yet? Sign up" %}</a>
             </div>
         </div>
     </div>

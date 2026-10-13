@@ -713,11 +713,6 @@ def dashboard_view(request):
             for key, value in ds.items():
                 if isinstance(value, (list, tuple)) and len(value) == len(labels):
                     new_ds[key] = value[first_idx:]
-                    # Write to a file since terminal logs are hard to see
-                    with open('/tmp/debug_log.txt', 'a') as f:
-                        f.write(f"DEBUG: Trimmed key '{key}' for dataset '{ds.get('label')}'. Length: {len(new_ds[key])}\n")
-                        if key == 'debugData' and len(new_ds[key]) > 0:
-                            f.write(f"  First item: {str(new_ds[key][0])[:100]}\n")
             trimmed_datasets.append(new_ds)
             
         # Adjust stichtag_index

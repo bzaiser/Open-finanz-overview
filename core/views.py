@@ -14,6 +14,9 @@ def signup(request):
         if form.is_valid():
             user = form.save(commit=False)
             user.is_staff = True
+            from .models import CustomUser
+            if not CustomUser.objects.filter(is_superuser=True).exists():
+                user.is_superuser = True
             user.save()
             # Create profile
             UserProfile.objects.get_or_create(user=user)

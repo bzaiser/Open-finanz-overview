@@ -296,31 +296,47 @@
 
     <!-- Step 4: Einkommen & Haushaltsausgaben -->
     <div x-show="currentStep === 4" class="card border-0 shadow-sm rounded-4 p-4 mb-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
-        <h4 class="fw-bold mb-3 d-flex align-items-center gap-2 text-primary">
-            <i class="bi bi-wallet2"></i> {% trans "4. Monatliches Einkommen & Ausgaben" %}
-        </h4>
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+            <h4 class="fw-bold mb-0 d-flex align-items-center gap-2 text-primary">
+                <i class="bi bi-wallet2"></i> {% trans "4. Monatliches Einkommen & Ausgaben" %}
+            </h4>
+            <button type="button" @click="showTemplateModal = true" class="btn btn-outline-primary rounded-pill px-3 btn-sm shadow-sm">
+                <i class="bi bi-plus-circle me-1"></i>{% trans "Aus Vorlagen-Katalog auswählen" %}
+            </button>
+        </div>
         
-        <h6 class="fw-bold text-secondary mb-2">{% trans "Monatliche Einnahmen" %}</h6>
-        <template x-for="(inc, index) in form.incomes" :key="index">
+        <p class="text-muted small mb-3">
+            {% trans "Erfasse hier deine regelmäßigen Einnahmen und Ausgaben oder wähle typische Posten bequem aus dem Vorlagen-Katalog aus." %}
+        </p>
+
+        <h6 class="fw-bold text-secondary mb-2 d-flex align-items-center gap-2">
+            <i class="bi bi-arrow-down-left-circle text-success"></i> {% trans "Monatliche Einnahmen" %}
+        </h6>
+        <template x-for="(inc, index) in form.incomes" :key="'inc-' + index">
             <div class="row g-2 mb-2 align-items-center">
-                <div class="col-md-6">
+                <div class="col-md-5">
                     <input type="text" x-model="inc.name" class="form-control" placeholder="z. B. Gehalt Vollzeit / Teilzeit">
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <input type="number" step="0.01" x-model="inc.amount" class="form-control font-monospace" placeholder="Betrag in €">
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-3">
+                    <span class="badge bg-body-secondary text-secondary border px-2 py-1 small text-truncate d-inline-block w-100 text-center" x-text="inc.category_name || 'Gehalt'"></span>
+                </div>
+                <div class="col-md-1">
                     <button type="button" @click="removeIncome(index)" class="btn btn-outline-danger btn-sm w-100" x-show="form.incomes.length > 1"><i class="bi bi-trash"></i></button>
                 </div>
             </div>
         </template>
         <button type="button" @click="addIncome()" class="btn btn-sm btn-link text-decoration-none p-0 mb-4">+ {% trans "Weitere Einnahme hinzufügen" %}</button>
 
-        <h6 class="fw-bold text-secondary mb-2">{% trans "Regelmäßige Ausgaben & Steuern" %}</h6>
-        <template x-for="(exp, index) in form.expenses" :key="index">
+        <h6 class="fw-bold text-secondary mb-2 d-flex align-items-center gap-2">
+            <i class="bi bi-arrow-up-right-circle text-danger"></i> {% trans "Regelmäßige Ausgaben & Lebenshaltung" %}
+        </h6>
+        <template x-for="(exp, index) in form.expenses" :key="'exp-' + index">
             <div class="row g-2 mb-2 align-items-center">
-                <div class="col-md-5">
-                    <input type="text" x-model="exp.name" class="form-control" placeholder="z. B. Lebensmittel, Nebenkosten, Steuern">
+                <div class="col-md-4">
+                    <input type="text" x-model="exp.name" class="form-control" placeholder="z. B. Lebensmittel, Nebenkosten">
                 </div>
                 <div class="col-md-3">
                     <input type="number" step="0.01" x-model="exp.amount" class="form-control font-monospace" placeholder="Betrag in €">
@@ -332,11 +348,80 @@
                     </select>
                 </div>
                 <div class="col-md-2">
+                    <span class="badge bg-body-secondary text-secondary border px-2 py-1 small text-truncate d-inline-block w-100 text-center" x-text="exp.category_name || 'Ausgabe'"></span>
+                </div>
+                <div class="col-md-1">
                     <button type="button" @click="removeExpense(index)" class="btn btn-outline-danger btn-sm w-100" x-show="form.expenses.length > 1"><i class="bi bi-trash"></i></button>
                 </div>
             </div>
         </template>
         <button type="button" @click="addExpense()" class="btn btn-sm btn-link text-decoration-none p-0">+ {% trans "Weitere Ausgabe hinzufügen" %}</button>
+
+        <!-- Template Selection Modal / Overlay -->
+        <div class="modal fade show" x-show="showTemplateModal" style="display: block; background: rgba(0,0,0,0.5);" tabindex="-1" aria-modal="true" role="dialog" x-cloak>
+            <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
+                <div class="modal-content rounded-4 shadow-lg border-0" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+                    <div class="modal-header border-bottom py-3">
+                        <h5 class="modal-title fw-bold text-primary d-flex align-items-center gap-2">
+                            <i class="bi bi-collection-fill"></i> {% trans "Vorlagen für Einnahmen & Ausgaben wählen" %}
+                        </h5>
+                        <button type="button" class="btn-close" @click="showTemplateModal = false" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <p class="text-muted small mb-3">
+                            {% trans "Wähle die für deinen Haushalt passenden Positionen an. Diese werden mit 1,00 € und der passenden Kategorie in deine Liste eingefügt, sodass du danach nur noch deine Beträge eintragen musst." %}
+                        </p>
+
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="badge bg-primary-subtle text-primary fw-medium px-3 py-2 rounded-pill" x-text="selectedTemplateCount + ' ausgewählt'"></span>
+                            <div class="btn-group btn-group-sm">
+                                <button type="button" @click="selectAllTemplates(true)" class="btn btn-outline-secondary">{% trans "Alle markieren" %}</button>
+                                <button type="button" @click="selectAllTemplates(false)" class="btn btn-outline-secondary">{% trans "Keine" %}</button>
+                            </div>
+                        </div>
+
+                        <div class="accordion accordion-flush" id="templatesAccordion">
+                            <template x-for="(group, gIdx) in templateGroups" :key="gIdx">
+                                <div class="accordion-item bg-transparent border-bottom mb-2">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button bg-body-tertiary rounded-3 py-2 px-3 fw-bold shadow-none" type="button" data-bs-toggle="collapse" :data-bs-target="'#groupCollapse-' + gIdx">
+                                            <span x-text="group.group"></span>
+                                            <span class="badge rounded-pill bg-secondary ms-2" x-text="group.items.length"></span>
+                                        </button>
+                                    </h2>
+                                    <div :id="'groupCollapse-' + gIdx" class="accordion-collapse collapse show">
+                                        <div class="accordion-body px-2 py-3">
+                                            <div class="row g-2">
+                                                <template x-for="(item, iIdx) in group.items" :key="iIdx">
+                                                    <div class="col-md-6">
+                                                        <div class="form-check p-2 rounded-3 border h-100 bg-body-tertiary d-flex align-items-center gap-2">
+                                                            <input class="form-check-input ms-0 me-2 mt-0" type="checkbox" :id="'tpl-' + gIdx + '-' + iIdx" x-model="item.selected">
+                                                            <label class="form-check-label w-100 small cursor-pointer" :for="'tpl-' + gIdx + '-' + iIdx">
+                                                                <div class="fw-semibold" x-text="item.name"></div>
+                                                                <div class="d-flex justify-content-between align-items-center opacity-75 mt-1" style="font-size: 0.75rem;">
+                                                                    <span class="badge bg-light text-dark border" x-text="item.category_name"></span>
+                                                                    <span class="text-muted" x-text="item.frequency === 'monthly' ? 'Monatlich' : 'Jährlich'"></span>
+                                                                </div>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-top py-3">
+                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" @click="showTemplateModal = false">{% trans "Abbrechen" %}</button>
+                        <button type="button" class="btn btn-primary rounded-pill px-4" @click="applySelectedTemplates()">
+                            <i class="bi bi-check-lg me-1"></i>{% trans "Ausgewählte übernehmen" %}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Step 5: Konten, Depots, Immobilien & Kredite -->
@@ -426,7 +511,18 @@
 <script>
     function wizardApp() {
         const initialData = {{ wizard_initial_json|safe }};
+        const rawTemplates = {{ wizard_templates_json|default:'[]'|safe }};
         const prof = initialData.profile || {};
+
+        // Prepare templates with selected state
+        const templateGroups = rawTemplates.map(g => ({
+            group: g.group,
+            is_income: g.is_income,
+            items: (g.items || []).map(item => ({
+                ...item,
+                selected: false
+            }))
+        }));
 
         return {
             currentStep: 1,
@@ -436,6 +532,71 @@
             copyButtonText: 'Fehlermeldung kopieren',
             savedSummary: [],
             redirectUrlAfterSuccess: '/finance/pensions/',
+            showTemplateModal: false,
+            templateGroups: templateGroups,
+
+            get selectedTemplateCount() {
+                let count = 0;
+                this.templateGroups.forEach(g => {
+                    g.items.forEach(i => { if (i.selected) count++; });
+                });
+                return count;
+            },
+
+            selectAllTemplates(val) {
+                this.templateGroups.forEach(g => {
+                    g.items.forEach(i => { i.selected = val; });
+                });
+            },
+
+            applySelectedTemplates() {
+                let addedInc = 0;
+                let addedExp = 0;
+
+                // Remove initial dummy entries if empty
+                if (this.form.incomes.length === 1 && !this.form.incomes[0].name) {
+                    this.form.incomes = [];
+                }
+                if (this.form.expenses.length === 1 && !this.form.expenses[0].name) {
+                    this.form.expenses = [];
+                }
+
+                this.templateGroups.forEach(group => {
+                    group.items.forEach(item => {
+                        if (item.selected) {
+                            if (group.is_income) {
+                                // check if already in list
+                                const exists = this.form.incomes.some(inc => inc.name === item.name);
+                                if (!exists) {
+                                    this.form.incomes.push({
+                                        name: item.name,
+                                        amount: item.amount || '1.00',
+                                        category_slug: item.category_slug,
+                                        category_name: item.category_name,
+                                        frequency: item.frequency || 'monthly'
+                                    });
+                                    addedInc++;
+                                }
+                            } else {
+                                const exists = this.form.expenses.some(exp => exp.name === item.name);
+                                if (!exists) {
+                                    this.form.expenses.push({
+                                        name: item.name,
+                                        amount: item.amount || '1.00',
+                                        category_slug: item.category_slug,
+                                        category_name: item.category_name,
+                                        frequency: item.frequency || 'yearly'
+                                    });
+                                    addedExp++;
+                                }
+                            }
+                        }
+                    });
+                });
+
+                this.showTemplateModal = false;
+            },
+
             stepTitles: [
                 "Haushalt & Personen",
                 "Gesetzliche Rentenmitteilungen",

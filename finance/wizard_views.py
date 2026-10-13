@@ -112,10 +112,21 @@ def wizard_page_view(request):
         'loans': loans,
     }
 
+    import os
+    templates_path = os.path.join(os.path.dirname(__file__), 'wizard_templates.json')
+    cashflow_templates = []
+    if os.path.exists(templates_path):
+        try:
+            with open(templates_path, 'r', encoding='utf-8') as f:
+                cashflow_templates = json.load(f)
+        except Exception:
+            pass
+
     context = {
         'profile': profile,
         'categories': categories,
         'wizard_initial_json': json.dumps(wizard_initial_json),
+        'wizard_templates_json': json.dumps(cashflow_templates),
     }
     return render(request, 'finance/setup_wizard.html', context)
 
@@ -360,6 +371,14 @@ def wizard_save_api(request):
                         continue
                     amt = _to_decimal(inc.get('amount'))
                     name = str(inc.get('name', 'Gehalt')).strip()
+                    cat_obj = None
+                    if inc.get('category_slug'):
+                        cat_obj = _get_category_by_slug_or_name(inc.get('category_slug'), inc.get('category_name', 'Einnahmen'))
+                    elif inc.get('category_id'):
+                        cat_obj = Category.objects.filter(id=inc.get('category_id')).first()
+                    if not cat_obj:
+                        cat_obj = cat_salary
+
                     if amt and amt > 0 and name:
                         dummy_obj, created = CashFlowSource.objects.update_or_create(
                             user=user,
@@ -367,7 +386,7 @@ def wizard_save_api(request):
                             is_income=True,
                             defaults={
                                 'value': amt,
-                                'category': cat_salary,
+                                'category': cat_obj,
                                 'frequency': inc.get('frequency', 'monthly')
                             }
                         )
@@ -384,6 +403,14 @@ def wizard_save_api(request):
                         continue
                     amt = _to_decimal(exp.get('amount'))
                     name = str(exp.get('name', 'Ausgabe')).strip()
+                    cat_obj = None
+                    if exp.get('category_slug'):
+                        cat_obj = _get_category_by_slug_or_name(exp.get('category_slug'), exp.get('category_name', 'Ausgaben'))
+                    elif exp.get('category_id'):
+                        cat_obj = Category.objects.filter(id=exp.get('category_id')).first()
+                    if not cat_obj:
+                        cat_obj = cat_living
+
                     if amt and amt > 0 and name:
                         dummy_obj, created = CashFlowSource.objects.update_or_create(
                             user=user,
@@ -391,7 +418,7 @@ def wizard_save_api(request):
                             is_income=False,
                             defaults={
                                 'value': amt,
-                                'category': cat_living,
+                                'category': cat_obj,
                                 'frequency': exp.get('frequency', 'monthly')
                             }
                         )
