@@ -93,8 +93,15 @@ def wizard_page_view(request):
 
     # Pre-populate cash flows
     cash_flows = CashFlowSource.objects.filter(user=request.user)
-    incomes = [{'name': c.name, 'amount': float(c.value), 'frequency': c.frequency} for c in cash_flows if c.is_income]
-    expenses = [{'name': c.name, 'amount': float(c.value), 'frequency': c.frequency} for c in cash_flows if not c.is_income]
+    def _extract_template_id(c):
+        notes_str = c.notes or ''
+        for line in notes_str.splitlines():
+            if line.startswith('tpl_id:'):
+                return line.split(':', 1)[1].strip()
+        return ''
+
+    incomes = [{'id': c.id, 'name': c.name, 'amount': float(c.value), 'frequency': c.frequency, 'template_id': _extract_template_id(c)} for c in cash_flows if c.is_income]
+    expenses = [{'id': c.id, 'name': c.name, 'amount': float(c.value), 'frequency': c.frequency, 'template_id': _extract_template_id(c)} for c in cash_flows if not c.is_income]
 
     # Pre-populate assets, real estate & loans
     assets = [{'name': a.name, 'value': float(a.value), 'growth_rate': float(a.growth_rate)} for a in Asset.objects.filter(user=request.user)]
@@ -379,17 +386,30 @@ def wizard_save_api(request):
                     if not cat_obj:
                         cat_obj = cat_salary
 
+                    t_id = str(inc.get('template_id') or '').strip()
+                    existing_id = inc.get('id')
+
                     if amt and amt > 0 and name:
-                        dummy_obj, created = CashFlowSource.objects.update_or_create(
-                            user=user,
-                            name=name,
-                            is_income=True,
-                            defaults={
-                                'value': amt,
-                                'category': cat_obj,
-                                'frequency': inc.get('frequency', 'monthly')
-                            }
-                        )
+                        cf_obj = None
+                        if existing_id:
+                            cf_obj = CashFlowSource.objects.filter(user=user, id=existing_id, is_income=True).first()
+                        if not cf_obj and t_id:
+                            cf_obj = CashFlowSource.objects.filter(user=user, notes__contains=f"tpl_id:{t_id}", is_income=True).first()
+                        if not cf_obj:
+                            cf_obj = CashFlowSource.objects.filter(user=user, name=name, is_income=True).first()
+
+                        created = False
+                        if not cf_obj:
+                            cf_obj = CashFlowSource(user=user, is_income=True)
+                            created = True
+
+                        cf_obj.name = name
+                        cf_obj.value = amt
+                        cf_obj.category = cat_obj
+                        cf_obj.frequency = inc.get('frequency', 'monthly')
+                        if t_id and f"tpl_id:{t_id}" not in (cf_obj.notes or ''):
+                            cf_obj.notes = f"tpl_id:{t_id}\n{cf_obj.notes or ''}".strip()
+                        cf_obj.save()
                         if created:
                             inc_count += 1
             if inc_count > 0:
@@ -411,17 +431,30 @@ def wizard_save_api(request):
                     if not cat_obj:
                         cat_obj = cat_living
 
+                    t_id = str(exp.get('template_id') or '').strip()
+                    existing_id = exp.get('id')
+
                     if amt and amt > 0 and name:
-                        dummy_obj, created = CashFlowSource.objects.update_or_create(
-                            user=user,
-                            name=name,
-                            is_income=False,
-                            defaults={
-                                'value': amt,
-                                'category': cat_obj,
-                                'frequency': exp.get('frequency', 'monthly')
-                            }
-                        )
+                        cf_obj = None
+                        if existing_id:
+                            cf_obj = CashFlowSource.objects.filter(user=user, id=existing_id, is_income=False).first()
+                        if not cf_obj and t_id:
+                            cf_obj = CashFlowSource.objects.filter(user=user, notes__contains=f"tpl_id:{t_id}", is_income=False).first()
+                        if not cf_obj:
+                            cf_obj = CashFlowSource.objects.filter(user=user, name=name, is_income=False).first()
+
+                        created = False
+                        if not cf_obj:
+                            cf_obj = CashFlowSource(user=user, is_income=False)
+                            created = True
+
+                        cf_obj.name = name
+                        cf_obj.value = amt
+                        cf_obj.category = cat_obj
+                        cf_obj.frequency = exp.get('frequency', 'yearly')
+                        if t_id and f"tpl_id:{t_id}" not in (cf_obj.notes or ''):
+                            cf_obj.notes = f"tpl_id:{t_id}\n{cf_obj.notes or ''}".strip()
+                        cf_obj.save()
                         if created:
                             exp_count += 1
             if exp_count > 0:

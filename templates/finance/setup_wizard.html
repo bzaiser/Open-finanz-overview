@@ -89,9 +89,12 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4">
-                    <p class="text-muted small mb-3">
-                        {% trans "Wähle die für deinen Haushalt passenden Positionen an. Diese werden mit 1,00 € und der passenden Kategorie in deine Liste eingefügt, sodass du danach nur noch deine Beträge eintragen musst." %}
-                    </p>
+                    <div class="alert alert-warning border-0 d-flex align-items-center gap-3 p-3 rounded-3 mb-3" style="background-color: rgba(255, 193, 7, 0.15); color: #856404;">
+                        <i class="bi bi-info-circle-fill fs-4 flex-shrink-0 text-warning"></i>
+                        <div class="small">
+                            <strong>{% trans "Hinweis:" %}</strong> {% trans "Ausgewählte Vorlagen werden zunächst mit einem Platzhalter-Betrag von <strong>1,00 €</strong> angelegt. Trage anschließend einfach deine tatsächlichen Beträge ein." %}
+                        </div>
+                    </div>
 
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <span class="badge bg-primary-subtle text-primary fw-medium px-3 py-2 rounded-pill" x-text="selectedTemplateCount + ' ausgewählt'"></span>
@@ -115,10 +118,18 @@
                                         <div class="row g-2">
                                             <template x-for="(item, iIdx) in group.items" :key="iIdx">
                                                 <div class="col-md-6">
-                                                    <div class="form-check p-2 rounded-3 border h-100 bg-body-tertiary d-flex align-items-center gap-2">
-                                                        <input class="form-check-input ms-0 me-2 mt-0" type="checkbox" :id="'tpl-' + gIdx + '-' + iIdx" x-model="item.selected">
+                                                    <div class="form-check p-2 rounded-3 border h-100 bg-body-tertiary d-flex align-items-center gap-2"
+                                                         :class="isTemplateAlreadyPresent(item) ? 'opacity-50' : ''">
+                                                        <input class="form-check-input ms-0 me-2 mt-0" type="checkbox" :id="'tpl-' + gIdx + '-' + iIdx" 
+                                                               x-model="item.selected"
+                                                               :disabled="isTemplateAlreadyPresent(item)">
                                                         <label class="form-check-label w-100 small cursor-pointer" :for="'tpl-' + gIdx + '-' + iIdx">
-                                                            <div class="fw-semibold" x-text="item.name"></div>
+                                                            <div class="d-flex justify-content-between align-items-center">
+                                                                <span class="fw-semibold" x-text="item.name"></span>
+                                                                <template x-if="isTemplateAlreadyPresent(item)">
+                                                                    <span class="badge bg-secondary-subtle text-secondary" style="font-size: 0.65rem;">{% trans "Vorhanden" %}</span>
+                                                                </template>
+                                                            </div>
                                                             <div class="d-flex justify-content-between align-items-center opacity-75 mt-1" style="font-size: 0.75rem;">
                                                                 <span class="badge bg-light text-dark border" x-text="item.category_name"></span>
                                                                 <span class="text-muted" x-text="item.frequency === 'monthly' ? 'Monatlich' : 'Jährlich'"></span>
@@ -521,6 +532,7 @@
             is_income: g.is_income,
             items: (g.items || []).map(item => ({
                 ...item,
+                is_income: g.is_income,
                 selected: false
             }))
         }));
@@ -544,9 +556,34 @@
                 return count;
             },
 
+            isTemplateAlreadyPresent(item) {
+                if (!item) return false;
+                const itemId = String(item.id || '').trim();
+                const itemName = String(item.name || '').trim().toLowerCase();
+
+                const list = item.is_income ? this.form.incomes : this.form.expenses;
+                if (!Array.isArray(list)) return false;
+
+                return list.some(entry => {
+                    const entryTplId = String(entry.template_id || '').trim();
+                    if (itemId && entryTplId && itemId === entryTplId) {
+                        return true;
+                    }
+                    const entryName = String(entry.name || '').trim().toLowerCase();
+                    if (entryName && entryName === itemName) {
+                        return true;
+                    }
+                    return false;
+                });
+            },
+
             selectAllTemplates(val) {
                 this.templateGroups.forEach(g => {
-                    g.items.forEach(i => { i.selected = val; });
+                    g.items.forEach(i => {
+                        if (!this.isTemplateAlreadyPresent(i)) {
+                            i.selected = val;
+                        }
+                    });
                 });
             },
 
@@ -572,33 +609,29 @@
 
                 this.templateGroups.forEach(group => {
                     group.items.forEach(item => {
-                        if (item.selected) {
+                        if (item.selected && !this.isTemplateAlreadyPresent(item)) {
                             if (group.is_income) {
-                                // check if already in list
-                                const exists = this.form.incomes.some(inc => inc.name === item.name);
-                                if (!exists) {
-                                    this.form.incomes.push({
-                                        name: item.name,
-                                        amount: item.amount || '1.00',
-                                        category_slug: item.category_slug,
-                                        category_name: item.category_name,
-                                        frequency: item.frequency || 'monthly'
-                                    });
-                                    addedInc++;
-                                }
+                                this.form.incomes.push({
+                                    name: item.name,
+                                    amount: item.amount || '1.00',
+                                    category_slug: item.category_slug,
+                                    category_name: item.category_name,
+                                    frequency: item.frequency || 'monthly',
+                                    template_id: item.id || ''
+                                });
+                                addedInc++;
                             } else {
-                                const exists = this.form.expenses.some(exp => exp.name === item.name);
-                                if (!exists) {
-                                    this.form.expenses.push({
-                                        name: item.name,
-                                        amount: item.amount || '1.00',
-                                        category_slug: item.category_slug,
-                                        category_name: item.category_name,
-                                        frequency: item.frequency || 'yearly'
-                                    });
-                                    addedExp++;
-                                }
+                                this.form.expenses.push({
+                                    name: item.name,
+                                    amount: item.amount || '1.00',
+                                    category_slug: item.category_slug,
+                                    category_name: item.category_name,
+                                    frequency: item.frequency || 'yearly',
+                                    template_id: item.id || ''
+                                });
+                                addedExp++;
                             }
+                            item.selected = false;
                         }
                     });
                 });
