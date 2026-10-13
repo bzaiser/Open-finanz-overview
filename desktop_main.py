@@ -3,10 +3,12 @@ import sys
 import time
 import socket
 import threading
+import urllib.request
 import webbrowser
 from waitress import serve
 from config.wsgi import application
 from django.conf import settings
+from django.core.management import call_command
 
 def find_free_port():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -34,6 +36,11 @@ if __name__ == '__main__':
     
     # Force settings load to read .env
     _ = settings.BASE_DIR
+    
+    try:
+        call_command('migrate', interactive=False)
+    except Exception as e:
+        print(f"Migration error: {e}")
     
     ui_mode = os.getenv('DESKTOP_UI_MODE', 'window').strip().lower()
     port = find_free_port()

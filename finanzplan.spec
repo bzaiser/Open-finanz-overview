@@ -7,8 +7,11 @@ datas = [
     ('templates', 'templates'),
     ('static', 'static'),
     ('locale', 'locale'),
-    ('.env', '.'),
 ]
+
+import os
+if os.path.exists('.env'):
+    datas.append(('.env', '.'))
 
 datas += collect_data_files('core')
 datas += collect_data_files('finance')

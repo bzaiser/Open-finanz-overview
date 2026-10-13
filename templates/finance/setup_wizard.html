@@ -300,7 +300,7 @@
             <h4 class="fw-bold mb-0 d-flex align-items-center gap-2 text-primary">
                 <i class="bi bi-wallet2"></i> {% trans "4. Monatliches Einkommen & Ausgaben" %}
             </h4>
-            <button type="button" @click="showTemplateModal = true" class="btn btn-outline-primary rounded-pill px-3 btn-sm shadow-sm">
+            <button type="button" @click="openTemplateModal()" class="btn btn-outline-primary rounded-pill px-3 btn-sm shadow-sm">
                 <i class="bi bi-plus-circle me-1"></i>{% trans "Aus Vorlagen-Katalog auswählen" %}
             </button>
         </div>
@@ -358,14 +358,14 @@
         <button type="button" @click="addExpense()" class="btn btn-sm btn-link text-decoration-none p-0">+ {% trans "Weitere Ausgabe hinzufügen" %}</button>
 
         <!-- Template Selection Modal / Overlay -->
-        <div class="modal fade show" x-show="showTemplateModal" style="display: block; background: rgba(0,0,0,0.5);" tabindex="-1" aria-modal="true" role="dialog" x-cloak>
+        <div class="modal fade" id="wizardTemplateModal" tabindex="-1" aria-labelledby="wizardTemplateModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
                 <div class="modal-content rounded-4 shadow-lg border-0" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
                     <div class="modal-header border-bottom py-3">
-                        <h5 class="modal-title fw-bold text-primary d-flex align-items-center gap-2">
+                        <h5 class="modal-title fw-bold text-primary d-flex align-items-center gap-2" id="wizardTemplateModalLabel">
                             <i class="bi bi-collection-fill"></i> {% trans "Vorlagen für Einnahmen & Ausgaben wählen" %}
                         </h5>
-                        <button type="button" class="btn-close" @click="showTemplateModal = false" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body p-4">
                         <p class="text-muted small mb-3">
@@ -414,7 +414,7 @@
                         </div>
                     </div>
                     <div class="modal-footer border-top py-3">
-                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" @click="showTemplateModal = false">{% trans "Abbrechen" %}</button>
+                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">{% trans "Abbrechen" %}</button>
                         <button type="button" class="btn btn-primary rounded-pill px-4" @click="applySelectedTemplates()">
                             <i class="bi bi-check-lg me-1"></i>{% trans "Ausgewählte übernehmen" %}
                         </button>
@@ -549,6 +549,14 @@
                 });
             },
 
+            openTemplateModal() {
+                const el = document.getElementById('wizardTemplateModal');
+                if (el) {
+                    const modal = bootstrap.Modal.getOrCreateInstance(el);
+                    modal.show();
+                }
+            },
+
             applySelectedTemplates() {
                 let addedInc = 0;
                 let addedExp = 0;
@@ -594,7 +602,11 @@
                     });
                 });
 
-                this.showTemplateModal = false;
+                const el = document.getElementById('wizardTemplateModal');
+                if (el) {
+                    const modal = bootstrap.Modal.getInstance(el);
+                    if (modal) modal.hide();
+                }
             },
 
             stepTitles: [

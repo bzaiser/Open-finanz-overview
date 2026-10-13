@@ -30,11 +30,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
 
 [Files]
-; Erst DB und .env kopieren, aber bei Updates nicht überschreiben:
-Source: "dist\FinanzplanDesktop\.env"; DestDir: "{app}"; Flags: onlyifdoesntexist
-Source: "dist\FinanzplanDesktop\data\db.sqlite3"; DestDir: "{app}\data"; Flags: onlyifdoesntexist
-
-; Alle übrigen Programmdateien überschreiben:
+; Alle Programmdateien installieren / überschreiben:
 Source: "dist\FinanzplanDesktop\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: ".env,data\db.sqlite3,data\ollama\*,data\ollama"
 
 [Icons]
