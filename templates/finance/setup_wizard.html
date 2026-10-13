@@ -78,6 +78,44 @@
         </div>
     </div>
 
+    <!-- Deletion Confirmation Modal -->
+    <div class="modal fade" id="wizardDeleteConfirmModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4 shadow-lg border-warning">
+                <div class="modal-header bg-warning text-dark rounded-top-4">
+                    <h5 class="modal-header-title fw-bold m-0 d-flex align-items-center gap-2">
+                        <i class="bi bi-exclamation-triangle-fill"></i> {% trans "Löschung bestätigen" %}
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <p class="mb-2">
+                        {% trans "Folgende bisher vorhandene Einträge wurden im Assistenten entfernt und werden beim Speichern unwiderruflich aus der Datenbank gelöscht:" %}
+                    </p>
+                    <div class="alert alert-warning border-0 rounded-3 p-3 my-3">
+                        <div class="fw-bold fs-5 text-danger mb-1" x-text="deletionCount + ' Eintrag / Einträge'"></div>
+                        <ul class="mb-0 ps-3 small" style="max-height: 180px; overflow-y: auto;">
+                            <template x-for="(delName, idx) in deletedItemNames" :key="idx">
+                                <li x-text="delName"></li>
+                            </template>
+                        </ul>
+                    </div>
+                    <p class="fw-semibold mb-0 text-secondary small">
+                        {% trans "Möchtest du diese Einträge wirklich löschen und fortfahren?" %}
+                    </p>
+                </div>
+                <div class="modal-footer bg-body-tertiary rounded-bottom-4">
+                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">
+                        {% trans "Abbrechen" %}
+                    </button>
+                    <button type="button" @click="confirmAndExecuteSubmit()" class="btn btn-danger rounded-pill px-4 shadow">
+                        <i class="bi bi-trash3-fill me-1"></i>{% trans "Ja, endgültig löschen & speichern" %}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Template Selection Modal / Overlay -->
     <div class="modal fade" id="wizardTemplateModal" tabindex="-1" aria-labelledby="wizardTemplateModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
@@ -547,6 +585,10 @@
             redirectUrlAfterSuccess: '/finance/pensions/',
             showTemplateModal: false,
             templateGroups: templateGroups,
+            initialIncomes: (initialData.incomes || []).slice(),
+            initialExpenses: (initialData.expenses || []).slice(),
+            deletedItemNames: [],
+            deletionCount: 0,
 
             get selectedTemplateCount() {
                 let count = 0;
@@ -790,6 +832,41 @@
             },
 
             async submitWizard() {
+                // Check if any existing items from database were removed
+                const currentIncomeIds = new Set(this.form.incomes.filter(i => i.id).map(i => i.id));
+                const currentExpenseIds = new Set(this.form.expenses.filter(e => e.id).map(e => e.id));
+
+                const deletedIncomes = this.initialIncomes.filter(i => i.id && !currentIncomeIds.has(i.id));
+                const deletedExpenses = this.initialExpenses.filter(e => e.id && !currentExpenseIds.has(e.id));
+
+                const totalDeleted = deletedIncomes.length + deletedExpenses.length;
+                if (totalDeleted > 0) {
+                    this.deletionCount = totalDeleted;
+                    this.deletedItemNames = [
+                        ...deletedIncomes.map(i => `Einnahme: ${i.name || 'Ohne Name'} (${parseFloat(i.amount || 0).toFixed(2)} €)`),
+                        ...deletedExpenses.map(e => `Ausgabe: ${e.name || 'Ohne Name'} (${parseFloat(e.amount || 0).toFixed(2)} €)`)
+                    ];
+                    const delModalEl = document.getElementById('wizardDeleteConfirmModal');
+                    if (delModalEl) {
+                        const modal = bootstrap.Modal.getOrCreateInstance(delModalEl);
+                        modal.show();
+                        return;
+                    }
+                }
+
+                await this.executeSubmit();
+            },
+
+            async confirmAndExecuteSubmit() {
+                const delModalEl = document.getElementById('wizardDeleteConfirmModal');
+                if (delModalEl) {
+                    const modal = bootstrap.Modal.getInstance(delModalEl);
+                    if (modal) modal.hide();
+                }
+                await this.executeSubmit();
+            },
+
+            async executeSubmit() {
                 this.isSubmitting = true;
                 try {
                     const response = await fetch('/finance/wizard/save/', {
