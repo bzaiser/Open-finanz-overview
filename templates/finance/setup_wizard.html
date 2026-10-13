@@ -78,6 +78,72 @@
         </div>
     </div>
 
+    <!-- Template Selection Modal / Overlay -->
+    <div class="modal fade" id="wizardTemplateModal" tabindex="-1" aria-labelledby="wizardTemplateModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
+            <div class="modal-content rounded-4 shadow-lg border-0" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+                <div class="modal-header border-bottom py-3">
+                    <h5 class="modal-title fw-bold text-primary d-flex align-items-center gap-2" id="wizardTemplateModalLabel">
+                        <i class="bi bi-collection-fill"></i> {% trans "Vorlagen für Einnahmen & Ausgaben wählen" %}
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <p class="text-muted small mb-3">
+                        {% trans "Wähle die für deinen Haushalt passenden Positionen an. Diese werden mit 1,00 € und der passenden Kategorie in deine Liste eingefügt, sodass du danach nur noch deine Beträge eintragen musst." %}
+                    </p>
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="badge bg-primary-subtle text-primary fw-medium px-3 py-2 rounded-pill" x-text="selectedTemplateCount + ' ausgewählt'"></span>
+                        <div class="btn-group btn-group-sm">
+                            <button type="button" @click="selectAllTemplates(true)" class="btn btn-outline-secondary">{% trans "Alle markieren" %}</button>
+                            <button type="button" @click="selectAllTemplates(false)" class="btn btn-outline-secondary">{% trans "Keine" %}</button>
+                        </div>
+                    </div>
+
+                    <div class="accordion accordion-flush" id="templatesAccordion">
+                        <template x-for="(group, gIdx) in templateGroups" :key="gIdx">
+                            <div class="accordion-item bg-transparent border-bottom mb-2">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button bg-body-tertiary rounded-3 py-2 px-3 fw-bold shadow-none" type="button" data-bs-toggle="collapse" :data-bs-target="'#groupCollapse-' + gIdx">
+                                        <span x-text="group.group"></span>
+                                        <span class="badge rounded-pill bg-secondary ms-2" x-text="group.items.length"></span>
+                                    </button>
+                                </h2>
+                                <div :id="'groupCollapse-' + gIdx" class="accordion-collapse collapse show">
+                                    <div class="accordion-body px-2 py-3">
+                                        <div class="row g-2">
+                                            <template x-for="(item, iIdx) in group.items" :key="iIdx">
+                                                <div class="col-md-6">
+                                                    <div class="form-check p-2 rounded-3 border h-100 bg-body-tertiary d-flex align-items-center gap-2">
+                                                        <input class="form-check-input ms-0 me-2 mt-0" type="checkbox" :id="'tpl-' + gIdx + '-' + iIdx" x-model="item.selected">
+                                                        <label class="form-check-label w-100 small cursor-pointer" :for="'tpl-' + gIdx + '-' + iIdx">
+                                                            <div class="fw-semibold" x-text="item.name"></div>
+                                                            <div class="d-flex justify-content-between align-items-center opacity-75 mt-1" style="font-size: 0.75rem;">
+                                                                <span class="badge bg-light text-dark border" x-text="item.category_name"></span>
+                                                                <span class="text-muted" x-text="item.frequency === 'monthly' ? 'Monatlich' : 'Jährlich'"></span>
+                                                            </div>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+                <div class="modal-footer border-top py-3">
+                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">{% trans "Abbrechen" %}</button>
+                    <button type="button" class="btn btn-primary rounded-pill px-4" @click="applySelectedTemplates()">
+                        <i class="bi bi-check-lg me-1"></i>{% trans "Ausgewählte übernehmen" %}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Step Progress Bar -->
     <div class="card border-0 shadow-sm rounded-4 mb-4 p-3" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
         <div class="d-flex justify-content-between align-items-center mb-2">
@@ -357,71 +423,6 @@
         </template>
         <button type="button" @click="addExpense()" class="btn btn-sm btn-link text-decoration-none p-0">+ {% trans "Weitere Ausgabe hinzufügen" %}</button>
 
-        <!-- Template Selection Modal / Overlay -->
-        <div class="modal fade" id="wizardTemplateModal" tabindex="-1" aria-labelledby="wizardTemplateModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
-                <div class="modal-content rounded-4 shadow-lg border-0" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
-                    <div class="modal-header border-bottom py-3">
-                        <h5 class="modal-title fw-bold text-primary d-flex align-items-center gap-2" id="wizardTemplateModalLabel">
-                            <i class="bi bi-collection-fill"></i> {% trans "Vorlagen für Einnahmen & Ausgaben wählen" %}
-                        </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body p-4">
-                        <p class="text-muted small mb-3">
-                            {% trans "Wähle die für deinen Haushalt passenden Positionen an. Diese werden mit 1,00 € und der passenden Kategorie in deine Liste eingefügt, sodass du danach nur noch deine Beträge eintragen musst." %}
-                        </p>
-
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <span class="badge bg-primary-subtle text-primary fw-medium px-3 py-2 rounded-pill" x-text="selectedTemplateCount + ' ausgewählt'"></span>
-                            <div class="btn-group btn-group-sm">
-                                <button type="button" @click="selectAllTemplates(true)" class="btn btn-outline-secondary">{% trans "Alle markieren" %}</button>
-                                <button type="button" @click="selectAllTemplates(false)" class="btn btn-outline-secondary">{% trans "Keine" %}</button>
-                            </div>
-                        </div>
-
-                        <div class="accordion accordion-flush" id="templatesAccordion">
-                            <template x-for="(group, gIdx) in templateGroups" :key="gIdx">
-                                <div class="accordion-item bg-transparent border-bottom mb-2">
-                                    <h2 class="accordion-header">
-                                        <button class="accordion-button bg-body-tertiary rounded-3 py-2 px-3 fw-bold shadow-none" type="button" data-bs-toggle="collapse" :data-bs-target="'#groupCollapse-' + gIdx">
-                                            <span x-text="group.group"></span>
-                                            <span class="badge rounded-pill bg-secondary ms-2" x-text="group.items.length"></span>
-                                        </button>
-                                    </h2>
-                                    <div :id="'groupCollapse-' + gIdx" class="accordion-collapse collapse show">
-                                        <div class="accordion-body px-2 py-3">
-                                            <div class="row g-2">
-                                                <template x-for="(item, iIdx) in group.items" :key="iIdx">
-                                                    <div class="col-md-6">
-                                                        <div class="form-check p-2 rounded-3 border h-100 bg-body-tertiary d-flex align-items-center gap-2">
-                                                            <input class="form-check-input ms-0 me-2 mt-0" type="checkbox" :id="'tpl-' + gIdx + '-' + iIdx" x-model="item.selected">
-                                                            <label class="form-check-label w-100 small cursor-pointer" :for="'tpl-' + gIdx + '-' + iIdx">
-                                                                <div class="fw-semibold" x-text="item.name"></div>
-                                                                <div class="d-flex justify-content-between align-items-center opacity-75 mt-1" style="font-size: 0.75rem;">
-                                                                    <span class="badge bg-light text-dark border" x-text="item.category_name"></span>
-                                                                    <span class="text-muted" x-text="item.frequency === 'monthly' ? 'Monatlich' : 'Jährlich'"></span>
-                                                                </div>
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                </template>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </template>
-                        </div>
-                    </div>
-                    <div class="modal-footer border-top py-3">
-                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">{% trans "Abbrechen" %}</button>
-                        <button type="button" class="btn btn-primary rounded-pill px-4" @click="applySelectedTemplates()">
-                            <i class="bi bi-check-lg me-1"></i>{% trans "Ausgewählte übernehmen" %}
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 
     <!-- Step 5: Konten, Depots, Immobilien & Kredite -->
