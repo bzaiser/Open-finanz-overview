@@ -371,6 +371,7 @@ def wizard_save_api(request):
             cat_living = _get_category_by_slug_or_name('lebenshaltung', 'Lebenshaltung & Sonstiges', '#dc3545')
             
             inc_count = 0
+            saved_income_ids = []
             incomes = data.get('incomes', [])
             if isinstance(incomes, list):
                 for inc in incomes:
@@ -410,12 +411,20 @@ def wizard_save_api(request):
                         if t_id and f"tpl_id:{t_id}" not in (cf_obj.notes or ''):
                             cf_obj.notes = f"tpl_id:{t_id}\n{cf_obj.notes or ''}".strip()
                         cf_obj.save()
+                        saved_income_ids.append(cf_obj.id)
                         if created:
                             inc_count += 1
+
+                # Delete incomes that were removed in the wizard
+                deleted_incomes_count, _ = CashFlowSource.objects.filter(user=user, is_income=True).exclude(id__in=saved_income_ids).delete()
+                if deleted_incomes_count > 0:
+                    saved_summary.append(f"{deleted_incomes_count} Einnahmen-Position(en) gelöscht")
+
             if inc_count > 0:
                 saved_summary.append(f"{inc_count} neue Einnahmen-Position(en) angelegt")
 
             exp_count = 0
+            saved_expense_ids = []
             expenses = data.get('expenses', [])
             if isinstance(expenses, list):
                 for exp in expenses:
@@ -455,8 +464,15 @@ def wizard_save_api(request):
                         if t_id and f"tpl_id:{t_id}" not in (cf_obj.notes or ''):
                             cf_obj.notes = f"tpl_id:{t_id}\n{cf_obj.notes or ''}".strip()
                         cf_obj.save()
+                        saved_expense_ids.append(cf_obj.id)
                         if created:
                             exp_count += 1
+
+                # Delete expenses that were removed in the wizard
+                deleted_expenses_count, _ = CashFlowSource.objects.filter(user=user, is_income=False).exclude(id__in=saved_expense_ids).delete()
+                if deleted_expenses_count > 0:
+                    saved_summary.append(f"{deleted_expenses_count} Ausgaben-Position(en) gelöscht")
+
             if exp_count > 0:
                 saved_summary.append(f"{exp_count} neue Ausgaben-Position(en) angelegt")
 
