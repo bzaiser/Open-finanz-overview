@@ -339,7 +339,7 @@ class YearListFilter(admin.SimpleListFilter):
 class CashFlowSourceInline(admin.TabularInline):
     model = CashFlowSource
     extra = 3  # Zeige 3 leere Zeilen für neue Einträge an
-    fields = ('name', 'value', 'category', 'is_income', 'frequency', 'is_inflation_adjusted', 'start_date', 'end_date')
+    fields = ('name', 'value', 'category', 'is_income', 'frequency', 'template_id', 'is_inflation_adjusted', 'start_date', 'end_date')
     classes = ['collapse']
 
 class AssetInline(admin.TabularInline):
@@ -403,11 +403,11 @@ class FinancialStatusAdmin(admin.ModelAdmin):
 
 @admin.register(CashFlowSource)
 class CashFlowSourceAdmin(BaseOwnedModelAdmin):
-    list_display = ('name', 'user', 'value', 'category', 'is_income', 'frequency', 'start_date', 'end_date')
+    list_display = ('name', 'user', 'value', 'category', 'is_income', 'frequency', 'template_id', 'start_date', 'end_date')
     list_editable = ('value', 'category', 'is_income', 'frequency', 'start_date', 'end_date')
     list_filter = (YearListFilter, 'is_income', 'frequency', 'user', 'category')
     list_select_related = ('category', 'user')
-    search_fields = ('name',)
+    search_fields = ('name', 'template_id')
     actions = [duplicate_and_increment_cashflow]
 
 @admin.register(Asset)
