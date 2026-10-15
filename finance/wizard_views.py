@@ -416,7 +416,7 @@ def wizard_save_api(request):
                             inc_count += 1
 
                 # Delete incomes that were removed in the wizard
-                deleted_incomes_count, _ = CashFlowSource.objects.filter(user=user, is_income=True).exclude(id__in=saved_income_ids).delete()
+                deleted_incomes_count, _del_dict = CashFlowSource.objects.filter(user=user, is_income=True).exclude(id__in=saved_income_ids).delete()
                 if deleted_incomes_count > 0:
                     saved_summary.append(f"{deleted_incomes_count} Einnahmen-Position(en) gelöscht")
 
@@ -469,7 +469,7 @@ def wizard_save_api(request):
                             exp_count += 1
 
                 # Delete expenses that were removed in the wizard
-                deleted_expenses_count, _ = CashFlowSource.objects.filter(user=user, is_income=False).exclude(id__in=saved_expense_ids).delete()
+                deleted_expenses_count, _del_dict2 = CashFlowSource.objects.filter(user=user, is_income=False).exclude(id__in=saved_expense_ids).delete()
                 if deleted_expenses_count > 0:
                     saved_summary.append(f"{deleted_expenses_count} Ausgaben-Position(en) gelöscht")
 
