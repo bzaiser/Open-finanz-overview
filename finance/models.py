@@ -51,6 +51,7 @@ class CashFlowSource(models.Model):
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, verbose_name=_("Category"))
     frequency = models.CharField(_("Frequency"), max_length=20, default='monthly', choices=FREQUENCY_CHOICES)
     notes = models.TextField(_("Notes"), blank=True, null=True)
+    template_id = models.CharField(_("Template ID"), max_length=100, blank=True, null=True, db_index=True)
     
     class Meta:
         verbose_name = _("Cash Flow Source")

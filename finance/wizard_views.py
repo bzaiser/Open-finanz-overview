@@ -94,6 +94,8 @@ def wizard_page_view(request):
     # Pre-populate cash flows
     cash_flows = CashFlowSource.objects.filter(user=request.user)
     def _extract_template_id(c):
+        if getattr(c, 'template_id', None):
+            return c.template_id
         notes_str = c.notes or ''
         for line in notes_str.splitlines():
             if line.startswith('tpl_id:'):
@@ -395,7 +397,9 @@ def wizard_save_api(request):
                         if existing_id:
                             cf_obj = CashFlowSource.objects.filter(user=user, id=existing_id, is_income=True).first()
                         if not cf_obj and t_id:
-                            cf_obj = CashFlowSource.objects.filter(user=user, notes__contains=f"tpl_id:{t_id}", is_income=True).first()
+                            cf_obj = CashFlowSource.objects.filter(user=user, template_id=t_id, is_income=True).first()
+                            if not cf_obj:
+                                cf_obj = CashFlowSource.objects.filter(user=user, notes__contains=f"tpl_id:{t_id}", is_income=True).first()
                         if not cf_obj:
                             cf_obj = CashFlowSource.objects.filter(user=user, name=name, is_income=True).first()
 
@@ -408,8 +412,11 @@ def wizard_save_api(request):
                         cf_obj.value = amt
                         cf_obj.category = cat_obj
                         cf_obj.frequency = inc.get('frequency', 'monthly')
-                        if t_id and f"tpl_id:{t_id}" not in (cf_obj.notes or ''):
-                            cf_obj.notes = f"tpl_id:{t_id}\n{cf_obj.notes or ''}".strip()
+                        if t_id:
+                            cf_obj.template_id = t_id
+                        # Clean legacy tpl_id from notes if present
+                        if cf_obj.notes and 'tpl_id:' in cf_obj.notes:
+                            cf_obj.notes = '\n'.join([l for l in cf_obj.notes.splitlines() if not l.startswith('tpl_id:')]).strip()
                         cf_obj.save()
                         saved_income_ids.append(cf_obj.id)
                         if created:
@@ -448,7 +455,9 @@ def wizard_save_api(request):
                         if existing_id:
                             cf_obj = CashFlowSource.objects.filter(user=user, id=existing_id, is_income=False).first()
                         if not cf_obj and t_id:
-                            cf_obj = CashFlowSource.objects.filter(user=user, notes__contains=f"tpl_id:{t_id}", is_income=False).first()
+                            cf_obj = CashFlowSource.objects.filter(user=user, template_id=t_id, is_income=False).first()
+                            if not cf_obj:
+                                cf_obj = CashFlowSource.objects.filter(user=user, notes__contains=f"tpl_id:{t_id}", is_income=False).first()
                         if not cf_obj:
                             cf_obj = CashFlowSource.objects.filter(user=user, name=name, is_income=False).first()
 
@@ -461,8 +470,11 @@ def wizard_save_api(request):
                         cf_obj.value = amt
                         cf_obj.category = cat_obj
                         cf_obj.frequency = exp.get('frequency', 'yearly')
-                        if t_id and f"tpl_id:{t_id}" not in (cf_obj.notes or ''):
-                            cf_obj.notes = f"tpl_id:{t_id}\n{cf_obj.notes or ''}".strip()
+                        if t_id:
+                            cf_obj.template_id = t_id
+                        # Clean legacy tpl_id from notes if present
+                        if cf_obj.notes and 'tpl_id:' in cf_obj.notes:
+                            cf_obj.notes = '\n'.join([l for l in cf_obj.notes.splitlines() if not l.startswith('tpl_id:')]).strip()
                         cf_obj.save()
                         saved_expense_ids.append(cf_obj.id)
                         if created:
