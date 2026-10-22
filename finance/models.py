@@ -106,9 +106,15 @@ class Pension(models.Model):
         ('statutory', _('Statutory Pension (Gesetzliche Rente)')),
     ]
 
+    PAYOUT_TYPE_CHOICES = [
+        ('monthly', _('Monthly Pension (Laufende Rente)')),
+        ('one_time', _('Lump-Sum Payout (Einmalige Kapitalabfindung)')),
+    ]
+
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='pensions')
     provider = models.CharField(_("Provider/Name"), max_length=100)
     pension_type = models.CharField(_("Pension Type"), max_length=20, choices=PENSION_TYPE_CHOICES, default='capital')
+    payout_type = models.CharField(_("Payout Type"), max_length=20, choices=PAYOUT_TYPE_CHOICES, default='monthly', help_text=_("Monthly pension or one-time capital settlement"))
     current_value = models.DecimalField(_("Current Value"), max_digits=12, decimal_places=2, default=0.00)
     monthly_contribution = models.DecimalField(_("Monthly Contribution"), max_digits=10, decimal_places=2, default=0.00)
     growth_rate = models.DecimalField(_("Annual Growth Rate (%)"), max_digits=5, decimal_places=2, default=0.00)

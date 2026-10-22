@@ -43,7 +43,7 @@ class PensionForm(forms.ModelForm):
     class Meta:
         model = Pension
         fields = [
-            'provider', 'pension_type', 'current_value', 'monthly_contribution', 'growth_rate',
+            'provider', 'pension_type', 'payout_type', 'current_value', 'monthly_contribution', 'growth_rate',
             'pension_points', 'point_value', 'gross_payout_amount', 'social_deduction_rate', 'disability_pension_net',
             'expected_payout_at_retirement', 'retirement_age', 'target_pension_payout',
             'contribution_end_date', 'start_payout_date', 'is_indexed', 'notes'
@@ -51,6 +51,7 @@ class PensionForm(forms.ModelForm):
         widgets = {
             'provider': forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('e.g. Statutory Pension, Allianz Riester')}),
             'pension_type': forms.Select(attrs={'class': 'form-select'}),
+            'payout_type': forms.Select(attrs={'class': 'form-select'}),
             'current_value': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
             'monthly_contribution': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
             'growth_rate': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),

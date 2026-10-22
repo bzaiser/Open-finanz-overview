@@ -3139,6 +3139,8 @@ def pension_plan_view(request):
             'provider': p.provider,
             'pension_type': p.pension_type,
             'pension_type_display': str(p.get_pension_type_display()),
+            'payout_type': getattr(p, 'payout_type', 'monthly'),
+            'payout_type_display': str(p.get_payout_type_display()),
             'pension_points': float(p.pension_points) if p.pension_points is not None else None,
             'point_value': float(p.point_value) if p.point_value is not None else None,
             'gross_payout_amount': float(p.gross_payout_amount) if p.gross_payout_amount is not None else None,

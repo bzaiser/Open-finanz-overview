@@ -271,9 +271,17 @@ class SimulationEngine:
                     # Switch to current value once we hit "Today"
                     if is_today:
                         item['balance'] = pension.current_value
+                        # If lump-sum already paid out in the past or today
+                        if getattr(pension, 'payout_type', 'monthly') == 'one_time' and pension.start_payout_date and current_date > pension.start_payout_date.replace(day=1):
+                            item['balance'] = Decimal('0.00')
                         continue
 
                     if is_future:
+                        # Check if one-time payout occurred prior to this month
+                        if getattr(pension, 'payout_type', 'monthly') == 'one_time' and pension.start_payout_date and current_date > pension.start_payout_date.replace(day=1):
+                            item['balance'] = Decimal('0.00')
+                            continue
+
                         # Growth applies to current balance
                         rate = (pension.growth_rate or Decimal('0.00')) / 100
                         item['balance'] *= ((1 + (rate / 12)) ** step_months)
@@ -391,6 +399,7 @@ class SimulationEngine:
             month_cf_values = {}
             month_pension_payouts = {}
             month_pension_payout_categories = {}
+            pension_lump_sum_impact = Decimal('0.00')
 
             for p_item in pensions_state:
                 p = p_item['pension']
@@ -414,7 +423,23 @@ class SimulationEngine:
                 
                 # Payout: only if after/at start payout date
                 if p.start_payout_date and current_date >= p.start_payout_date.replace(day=1):
-                        if p.expected_payout_at_retirement:
+                    # Check if one-time lump-sum payout
+                    if getattr(p, 'payout_type', 'monthly') == 'one_time':
+                        is_payout_month = (current_date.year == p.start_payout_date.year and current_date.month == p.start_payout_date.month)
+                        if is_payout_month:
+                            # Transfer final accumulated balance to liquid cash in future
+                            lump_sum_val = p_item['balance']
+                            if is_future and lump_sum_val > 0:
+                                pension_lump_sum_impact += lump_sum_val
+                                events_this_month.append({
+                                    'name': f"{p.provider} ({_('Kapitalauszahlung')})",
+                                    'description': _('Einmalige bAV-Kapitalabfindung'),
+                                    'date': p.start_payout_date.isoformat(),
+                                    'value': float(round(lump_sum_val, 2)),
+                                })
+                        # After or upon payout month, remaining pension capital balance is 0
+                        p_item['balance'] = Decimal('0.00')
+                    elif p.expected_payout_at_retirement:
                             # Use the contract value but apply growth from start of payout until now
                             payout_val = Decimal(str(p.expected_payout_at_retirement))
                             
@@ -603,7 +628,7 @@ class SimulationEngine:
             # Monthly Savings only for future months
             monthly_savings = monthly_income - monthly_expenses
             if is_future:
-                accumulated_cash += (monthly_savings + event_impact)
+                accumulated_cash += (monthly_savings + event_impact + pension_lump_sum_impact)
             else:
                 # In the past, we only respect explicit event impacts if they represent data
                 # but usually, we want accumulated_cash to stay at 0 unless snapshots exist
