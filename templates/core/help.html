@@ -211,6 +211,51 @@
                             </div>
                         </div>
 
+                        <!-- Item: bAV Einmalkapitalauszahlung -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed px-4 py-4 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faqBavEinmalkapital">
+                                    <i class="bi bi-cash-coin me-2 text-primary"></i> {% trans "Wie erfasse ich eine bAV-Einmalkapitalauszahlung (inkl. 10 Jahre Krankenkasse & Steuern)?" %}
+                                </button>
+                            </h2>
+                            <div id="faqBavEinmalkapital" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
+                                <div class="accordion-body px-4 pb-4 text-muted">
+                                    <p>{% trans "Wenn du eine betriebliche Altersvorsorge (bAV / Direktversicherung) nicht als monatliche Rente, sondern als Einmalkapital ausgezahlt bekommst, lässt sich das über das Zusammenspiel von Vorsorgevertrag, Einmalzahlung und Ausgaben exakt und realistisch abbilden:" %}</p>
+                                    
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-md-6">
+                                            <div class="p-3 rounded-3 bg-body border h-100">
+                                                <div class="fw-bold text-primary mb-1"><i class="bi bi-1-circle me-1"></i> {% trans "Vorsorgevertrag anlegen (Rentenkapital)" %}</div>
+                                                <p class="small mb-0">{% trans "Erfasse die bAV unter 'Vorsorge' mit aktuellem Kapitalwert / garantierter Summe und setze das Auszahlungsdatum. <strong>Wichtig:</strong> Lasse das Feld für die monatliche Rente leer bzw. auf 0,00 €, damit keine doppelte laufende Rente berechnet wird." %}</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="p-3 rounded-3 bg-body border h-100">
+                                                <div class="fw-bold text-success mb-1"><i class="bi bi-2-circle me-1"></i> {% trans "Brutto-Zufluss erfassen" %}</div>
+                                                <p class="small mb-0">{% trans "Trage unter 'Einmalige Zahlungen' zum Auszahlungsstichtag die Gesamtsumme der Auszahlung als <strong>positiven Betrag</strong> ein. Dadurch fließt das Geld genau an diesem Tag in dein liquides Barvermögen." %}</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="p-3 rounded-3 bg-body border h-100">
+                                                <div class="fw-bold text-danger mb-1"><i class="bi bi-3-circle me-1"></i> {% trans "10 Jahre Krankenkasse & Pflege (120 Monate)" %}</div>
+                                                <p class="small mb-0">{% trans "Nach § 229 SGB V gilt für bAV-Kapitalauszahlungen bei gesetzlich Versicherten die 120-Monate-Regel (1/120tel des Kapitals monatlich beitragspflichtig). Lege unter 'Ausgaben' einen monatlichen Posten an: <strong>Startdatum</strong> = Auszahlungsdatum, <strong>Enddatum</strong> = exakt 10 Jahre später." %}</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="p-3 rounded-3 bg-body border h-100">
+                                                <div class="fw-bold text-warning mb-1"><i class="bi bi-4-circle me-1"></i> {% trans "Steuernachzahlung im Folgejahr" %}</div>
+                                                <p class="small mb-0">{% trans "Die Auszahlung ist voll einkommensteuerpflichtig (häufig begünstigt nach der Fünftelregelung). Trage unter 'Einmalige Zahlungen' zum geschätzten Fälligkeitsdatum im Folgejahr die Steuerlast als <strong>negativen Betrag</strong> ein." %}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="alert alert-info border-0 rounded-3 p-3 mb-0 small">
+                                        <i class="bi bi-lightbulb-fill text-warning me-1"></i> <strong>{% trans "Praxis-Tipp:" %}</strong> {% trans "Für die gesetzliche Krankenkasse gilt ein monatlicher Freibetrag (GKV-Betriebsrentenfreibetrag). Nur der darüber liegende Teil von 1/120tel der Auszahlungssumme unterliegt den Krankenkassenbeiträgen; die Pflegeversicherung ist voll beitragspflichtig." %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Item 5: Profil, Design Studio & Farben -->
                         <div class="accordion-item">
                             <h2 class="accordion-header">
