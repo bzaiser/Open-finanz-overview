@@ -539,15 +539,15 @@
                         <!-- Private Pension Specific Fields -->
                         <div x-show="form.pension_type !== 'statutory'" class="row g-3 mb-3">
                             <div class="col-md-4">
-                                <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Current Capital Value (€)" %}</label>
+                                <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Aktueller Kapitalwert / Rückkaufswert (€)" %}</label>
                                 <input type="number" step="0.01" name="current_value" x-model="form.current_value" class="form-control font-monospace" placeholder="0.00">
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Monthly Contribution (€)" %}</label>
+                                <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Monatliche Sparrate / Beitrag (€)" %}</label>
                                 <input type="number" step="0.01" name="monthly_contribution" x-model="form.monthly_contribution" class="form-control font-monospace" placeholder="0.00">
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Annual Growth Rate (%)" %}</label>
+                                <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Verzinsung / Wachstumsrate (%/Jahr)" %}</label>
                                 <input type="number" step="0.01" name="growth_rate" x-model="form.growth_rate" class="form-control font-monospace" placeholder="0.00">
                             </div>
                         </div>
