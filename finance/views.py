@@ -1157,10 +1157,12 @@ def dashboard_view(request):
     for p in user.pensions.all():
         year = str(p.start_payout_date.year) if p.start_payout_date else continuous_label
         payout_val = float(p.expected_payout_at_retirement if p.expected_payout_at_retirement is not None else (p.gross_payout or 0))
+        p_cap = float(pension_balances_stichtag.get(str(p.id), p.current_value or 0))
         table_data_pension.append({
             'id': p.id,
             'name': p.provider, 
             'amount': payout_val, 
+            'capital_balance': p_cap,
             'pension_type': p.pension_type,
             'pension_points': float(p.pension_points) if p.pension_points else 0,
             'gross_payout': float(p.gross_payout) if p.gross_payout else 0,

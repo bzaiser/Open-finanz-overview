@@ -106,7 +106,24 @@
                         {% endfor %}
 
                     {% elif item.id == 'total_pensions' or item.id == 'expected_payout' %}
+                        {% if item.id == 'total_pensions' %}
+                        <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Angespartes Kapital (am Stichtag)" %}:</span>
+                        {% for p in table_datasets.pension_table_widget %}
+                            {% if p.pension_type != 'statutory' and p.capital_balance > 0 %}
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                                <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ p.name }}">{{ p.name }}</span>
+                                <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">
+                                    {{ p.capital_balance|intcomma }} <span class="small font-normal opacity-75">{{ profile.currency }}</span>
+                                </span>
+                            </div>
+                            {% endif %}
+                        {% empty %}
+                        <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No entries." %}</div>
+                        {% endfor %}
+                        <span class="d-block text-uppercase fw-bold opacity-75 mb-1 mt-2" style="font-size: 0.65rem;">{% trans "Pension Contracts" %}:</span>
+                        {% else %}
                         <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Pension Contracts" %}:</span>
+                        {% endif %}
                         {% for p in table_datasets.pension_table_widget %}
                             {% if p.pension_type == 'statutory' %}
                                 <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
