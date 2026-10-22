@@ -167,18 +167,34 @@
                         <i class="bi bi-wallet2 fs-5"></i>
                     </div>
                 </div>
-                <!-- Hover Expand Details: Private Contracts with Payout -->
+                <!-- Hover Expand Details: Private Contracts (Capital & Payout) -->
                 <div class="widget-hover-details border-top border-white border-opacity-25 pt-2">
-                    <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Private Contracts (Net Payout)" %}:</span>
+                    <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Angespartes Kapital (Verträge)" %}:</span>
                     {% for p in pensions %}
-                        {% if p.pension_type != 'statutory' %}
-                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10" style="font-size: 0.75rem;">
-                            <span>{{ p.provider }}</span>
-                            <span class="font-monospace fw-bold">
-                                {% if p.expected_payout_at_retirement %}+{{ p.expected_payout_at_retirement|floatformat:2|intcomma }} €/mtl.{% else %}-{% endif %}
+                        {% if p.pension_type != 'statutory' and p.current_value > 0 %}
+                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                            <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ p.provider }}">{{ p.provider }}</span>
+                            <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">
+                                {{ p.current_value|floatformat:2|intcomma }} <span class="small font-normal opacity-75">{{ user.profile.currency }}</span>
                             </span>
                         </div>
                         {% endif %}
+                    {% empty %}
+                        <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No entries." %}</div>
+                    {% endfor %}
+
+                    <span class="d-block text-uppercase fw-bold opacity-75 mb-1 mt-2" style="font-size: 0.65rem;">{% trans "Vorsorgeverträge (Monatsrente)" %}:</span>
+                    {% for p in pensions %}
+                        {% if p.pension_type != 'statutory' %}
+                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                            <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ p.provider }}">{{ p.provider }}</span>
+                            <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">
+                                {% if p.expected_payout_at_retirement %}+{{ p.expected_payout_at_retirement|floatformat:2|intcomma }} {{ user.profile.currency }}/mtl.{% else %}-{% endif %}
+                            </span>
+                        </div>
+                        {% endif %}
+                    {% empty %}
+                        <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No entries." %}</div>
                     {% endfor %}
                 </div>
             </div>
