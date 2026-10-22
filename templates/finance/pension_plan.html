@@ -185,11 +185,11 @@
 
                     <span class="d-block text-uppercase fw-bold opacity-75 mb-1 mt-2" style="font-size: 0.65rem;">{% trans "Vorsorgeverträge (Monatsrente)" %}:</span>
                     {% for p in pensions %}
-                        {% if p.pension_type != 'statutory' %}
+                        {% if p.pension_type != 'statutory' and p.payout_type != 'one_time' and p.expected_payout_at_retirement and p.expected_payout_at_retirement > 0 %}
                         <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
                             <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ p.provider }}">{{ p.provider }}</span>
                             <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">
-                                {% if p.expected_payout_at_retirement %}+{{ p.expected_payout_at_retirement|floatformat:2|intcomma }} {{ user.profile.currency }}/mtl.{% else %}-{% endif %}
+                                +{{ p.expected_payout_at_retirement|floatformat:2|intcomma }} {{ user.profile.currency }}/mtl.
                             </span>
                         </div>
                         {% endif %}
