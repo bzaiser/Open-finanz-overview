@@ -362,36 +362,48 @@
                 <h6 class="fw-bold text-info mb-3" x-text="'Vertrag #' + (index + 1) + ': ' + (priv.provider || 'Private Vorsorge')"></h6>
 
                 <div class="row g-3 mb-3">
-                    <div class="col-md-5">
+                    <div class="col-md-4">
                         <label class="form-label small opacity-75">{% trans "Anbieter / Gesellschaft / Vertrag" %}</label>
-                        <input type="text" x-model="priv.provider" class="form-control" placeholder="{% trans "z. B. Direktversicherung / Renten-Police" %}">
+                        <input type="text" x-model="priv.provider" class="form-control" placeholder="{% trans "z. B. Vermögenspolice / bAV Direktversicherung" %}">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small opacity-75">{% trans "Versicherungsnummer / Police-Nr." %}</label>
                         <input type="text" x-model="priv.policy_number" class="form-control font-monospace" placeholder="z. B. 5/455262/799">
                     </div>
-                    <div class="col-md-3">
-                        <label class="form-label small opacity-75">{% trans "Stand vom (Datum)" %}</label>
+                    <div class="col-md-4">
+                        <label class="form-label small opacity-75">{% trans "Stand vom (Stichtag)" %}</label>
                         <input type="date" x-model="priv.statement_date" class="form-control">
+                    </div>
+                </div>
+
+                <!-- Payout Mode Selection -->
+                <div class="row g-3 mb-3">
+                    <div class="col-md-12">
+                        <label class="form-label small opacity-75 fw-semibold text-primary">
+                            <i class="bi bi-cash-coin me-1"></i>{% trans "Auszahlungsart des Vertrags" %}
+                        </label>
+                        <select x-model="priv.payout_type" class="form-select border-primary border-opacity-50">
+                            <option value="capital_drawdown">{% trans "Monatlicher Auszahlungsplan (Kapitalverzehr, z. B. Vermögenspolice)" %}</option>
+                            <option value="lifelong_annuity">{% trans "Laufende monatliche Rente (lebenslang garantiert)" %}</option>
+                            <option value="one_time">{% trans "Einmalige Kapitalabfindung (z. B. bAV / Direktversicherung)" %}</option>
+                        </select>
+                        <div class="form-text small opacity-75 mt-1" x-show="priv.payout_type === 'capital_drawdown'">
+                            <i class="bi bi-info-circle text-info me-1"></i>{% trans "Das Vertragsguthaben fließt monatlich als Auszahlung ab. Bei jeder Auszahlung verringert sich das verbleibende Kapital entsprechend." %}
+                        </div>
+                        <div class="form-text small opacity-75 mt-1" x-show="priv.payout_type === 'lifelong_annuity'">
+                            <i class="bi bi-info-circle text-info me-1"></i>{% trans "Klassische Rente: Monatliche Rentenzahlung bis ans Lebensende, unabhängig vom anfänglichen Vertragskapital." %}
+                        </div>
+                        <div class="form-text small opacity-75 mt-1" x-show="priv.payout_type === 'one_time'">
+                            <i class="bi bi-check-circle text-success me-1"></i>{% trans "Das angesparte Kapital wächst bis zum Auszahlungsdatum und wird dann vollautomatisch in dein liquides Barvermögen transferiert. Das Rentenkapital wird auf 0 € gesetzt." %}
+                        </div>
                     </div>
                 </div>
 
                 <div class="row g-3 mb-3">
                     <div class="col-md-4">
-                        <label class="form-label small opacity-75">{% trans "Garantierte Mindestrente (€/mtl.)" %}</label>
-                        <input type="number" step="0.01" x-model="priv.garantierente" class="form-control font-monospace" placeholder="z. B. 104.49">
+                        <label class="form-label small opacity-75">{% trans "Rückkaufswert / Aktuelles Kapital (€)" %}</label>
+                        <input type="number" step="0.01" x-model="priv.current_capital" class="form-control font-monospace" placeholder="z. B. 200000.00">
                     </div>
-                    <div class="col-md-4">
-                        <label class="form-label small opacity-75">{% trans "Garantiekapital zum Rentenbeginn (€)" %}</label>
-                        <input type="number" step="0.01" x-model="priv.garantiekapital" class="form-control font-monospace" placeholder="z. B. 31947.12">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label small opacity-75">{% trans "Rückkaufswert / Aktueller Wert (€)" %}</label>
-                        <input type="number" step="0.01" x-model="priv.current_capital" class="form-control font-monospace" placeholder="z. B. 144320.45">
-                    </div>
-                </div>
-
-                <div class="row g-3">
                     <div class="col-md-4">
                         <label class="form-label small opacity-75">{% trans "Monatliche Sparrate / Beitrag (€)" %}</label>
                         <input type="number" step="0.01" x-model="priv.monthly_contribution" class="form-control font-monospace" placeholder="z. B. 150.00">
@@ -400,9 +412,20 @@
                         <label class="form-label small opacity-75">{% trans "Verzinsung / Wachstumsrate (%/Jahr)" %}</label>
                         <input type="number" step="0.01" x-model="priv.growth_rate" class="form-control font-monospace" placeholder="z. B. 3.80">
                     </div>
-                    <div class="col-md-4">
-                        <label class="form-label small opacity-75">{% trans "Erwartete Netto-Rente (€/mtl.)" %}</label>
-                        <input type="number" step="0.01" x-model="priv.expected_monthly_payout" class="form-control font-monospace fw-bold text-success" placeholder="z. B. 350.00">
+                </div>
+
+                <div class="row g-3">
+                    <div :class="priv.payout_type === 'one_time' ? 'col-md-6' : 'col-md-4'">
+                        <label class="form-label small opacity-75">{% trans "Rentenbeginn / Auszahlungsdatum" %}</label>
+                        <input type="date" x-model="priv.start_payout_date" class="form-control">
+                    </div>
+                    <div :class="priv.payout_type === 'one_time' ? 'col-md-6' : 'col-md-4'">
+                        <label class="form-label small opacity-75">{% trans "Beitragszahlungsende (Datum)" %}</label>
+                        <input type="date" x-model="priv.contribution_end_date" class="form-control">
+                    </div>
+                    <div class="col-md-4" x-show="priv.payout_type !== 'one_time'">
+                        <label class="form-label small opacity-75">{% trans "Monatliche Auszahlung / Rente (€/mtl.)" %}</label>
+                        <input type="number" step="0.01" x-model="priv.expected_monthly_payout" class="form-control font-monospace fw-bold text-success" placeholder="z. B. 500.00">
                     </div>
                 </div>
             </div>
@@ -720,11 +743,12 @@
                         provider: '',
                         policy_number: '',
                         statement_date: '',
-                        garantierente: '',
-                        garantiekapital: '',
+                        payout_type: 'capital_drawdown',
                         current_capital: '',
                         monthly_contribution: '',
                         growth_rate: '',
+                        start_payout_date: '',
+                        contribution_end_date: '',
                         expected_monthly_payout: ''
                     }
                 ],
@@ -780,11 +804,12 @@
                     provider: '',
                     policy_number: '',
                     statement_date: '',
-                    garantierente: '',
-                    garantiekapital: '',
+                    payout_type: 'capital_drawdown',
                     current_capital: '',
                     monthly_contribution: '',
                     growth_rate: '',
+                    start_payout_date: '',
+                    contribution_end_date: '',
                     expected_monthly_payout: ''
                 });
             },

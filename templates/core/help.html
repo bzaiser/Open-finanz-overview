@@ -211,6 +211,41 @@
                             </div>
                         </div>
 
+                        <!-- Item: Auszahlungsarten bei privater Vorsorge, Vermögenspolicen & bAV -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed px-4 py-4 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faqPayoutTypes">
+                                    <i class="bi bi-wallet-fill me-2 text-primary"></i> {% trans "Welche Auszahlungsarten gibt es für private Policen & bAV (Auszahlungsplan vs. lebenslange Rente vs. Einmalkapital)?" %}
+                                </button>
+                            </h2>
+                            <div id="faqPayoutTypes" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
+                                <div class="accordion-body px-4 pb-4 text-muted">
+                                    <p>{% trans "Bei privaten Rentenversicherungen, vermögensbildenden Policen und betrieblicher Altersvorsorge (bAV) stehen dir 3 Auszahlungsmodelle zur Verfügung:" %}</p>
+                                    
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-md-4">
+                                            <div class="p-3 rounded-3 bg-body border h-100">
+                                                <div class="fw-bold text-primary mb-1"><i class="bi bi-graph-down-arrow me-1"></i> {% trans "1. Monatlicher Auszahlungsplan (Kapitalverzehr)" %}</div>
+                                                <p class="small mb-0">{% trans "Typisch für Vermögenspolicen (z. B. 200.000 € Kapital mit 500 € monatlicher Auszahlung). Der Monatsbetrag fließt in dein laufendes Einkommen / Cashflow ein, während das Restkapital im Vertrag mit jeder Entnahme sinkt und weiter verzinst wird." %}</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="p-3 rounded-3 bg-body border h-100">
+                                                <div class="fw-bold text-success mb-1"><i class="bi bi-infinity me-1"></i> {% trans "2. Laufende Rente (Lebenslang garantiert)" %}</div>
+                                                <p class="small mb-0">{% trans "Klassische Verrentung: Die Monatsrente wird bis an dein Lebensende ausgezahlt. Das anfängliche Vertragskapital wird rechnerisch nicht verzehrt, da die Versicherung das Langlebigkeitsrisiko trägt." %}</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="p-3 rounded-3 bg-body border h-100">
+                                                <div class="fw-bold text-warning mb-1"><i class="bi bi-cash-stack me-1"></i> {% trans "3. Einmalige Kapitalabfindung (z. B. bAV)" %}</div>
+                                                <p class="small mb-0">{% trans "Gesamtauszahlung auf einen Schlag: Das Kapital wächst bis zum Stichtag und wird am Auszahlungstag <strong>vollautomatisch in dein Barvermögen</strong> überführt. Der Vorsorgevertrag steht ab diesem Tag auf 0 €." %}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Item: bAV Einmalkapitalauszahlung -->
                         <div class="accordion-item">
                             <h2 class="accordion-header">

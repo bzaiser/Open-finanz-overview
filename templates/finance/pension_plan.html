@@ -461,16 +461,23 @@
                             </div>
                         </div>
 
-                        <!-- Payout Mode (Monthly vs One-Time Lump Sum) for Private/bAV -->
+                        <!-- Payout Mode for Private/bAV -->
                         <div x-show="form.pension_type !== 'statutory'" class="row g-3 mb-3">
                             <div class="col-md-12">
                                 <label class="form-label small fw-bold text-uppercase opacity-75">
                                     <i class="bi bi-cash-coin me-1 text-primary"></i>{% trans "Auszahlungsart" %}
                                 </label>
                                 <select name="payout_type" x-model="form.payout_type" class="form-select border-primary border-opacity-25">
-                                    <option value="monthly">{% trans "Laufende monatliche Rente" %}</option>
-                                    <option value="one_time">{% trans "Einmalige Kapitalauszahlung (z. B. bAV / Direktversicherung)" %}</option>
+                                    <option value="capital_drawdown">{% trans "Monatlicher Auszahlungsplan (Kapitalverzehr, z. B. Vermögenspolice)" %}</option>
+                                    <option value="lifelong_annuity">{% trans "Laufende Rente (Lebenslang)" %}</option>
+                                    <option value="one_time">{% trans "Einmalige Kapitalabfindung (z. B. bAV / Direktversicherung)" %}</option>
                                 </select>
+                                <span class="form-text small opacity-75" x-show="form.payout_type === 'capital_drawdown'">
+                                    {% trans "Das Guthaben verringert sich monatlich um den Auszahlungsbetrag, fließt als monatliches Einkommen in den Cashflow und wächst parallel mit der hinterlegten Verzinsung weiter." %}
+                                </span>
+                                <span class="form-text small opacity-75" x-show="form.payout_type === 'lifelong_annuity'">
+                                    {% trans "Lebenslange monatliche Rente: Fließt dauerhaft in deine Einkünfte, ohne das anfängliche Kapital rechnerisch zu verzehren." %}
+                                </span>
                                 <span class="form-text small opacity-75" x-show="form.payout_type === 'one_time'">
                                     {% trans "Das angesparte Kapital wächst bis zum Auszahlungsdatum, fließt dann vollautomatisch in dein Barvermögen und das Rentenkapital wird auf 0 € gesetzt." %}
                                 </span>
@@ -838,7 +845,7 @@
             form: {
                 provider: '',
                 pension_type: 'capital',
-                payout_type: 'monthly',
+                payout_type: 'capital_drawdown',
                 statement_date: new Date().toISOString().split('T')[0],
                 pension_points: '',
                 point_value: '',
@@ -935,7 +942,7 @@
                 // Copy current contract provider and pension_type to satisfy form validation
                 formData.append('provider', this.form.provider);
                 formData.append('pension_type', this.form.pension_type);
-                formData.append('payout_type', this.form.payout_type || 'monthly');
+                formData.append('payout_type', this.form.payout_type || 'capital_drawdown');
 
                 fetch('/finance/pensions/save/' + this.editId + '/', {
                     method: 'POST',
@@ -1059,7 +1066,7 @@
                     edit_snapshot_id: '',
                     provider: '',
                     pension_type: 'capital',
-                    payout_type: 'monthly',
+                    payout_type: 'capital_drawdown',
                     statement_date: new Date().toISOString().split('T')[0],
                     pension_points: '',
                     point_value: '',
@@ -1086,7 +1093,7 @@
                     edit_snapshot_id: '',
                     provider: p.provider,
                     pension_type: p.pension_type,
-                    payout_type: p.payout_type || 'monthly',
+                    payout_type: p.payout_type || 'capital_drawdown',
                     statement_date: new Date().toISOString().split('T')[0],
                     pension_points: p.pension_points,
                     point_value: p.point_value,

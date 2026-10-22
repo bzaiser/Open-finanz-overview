@@ -85,6 +85,9 @@ def wizard_page_view(request):
             'monthly_contribution': float(p.monthly_contribution) if p.monthly_contribution is not None else '',
             'statement_date': stmt_date_str,
             'retirement_date': p.start_payout_date.strftime('%Y-%m-%d') if p.start_payout_date else '',
+            'start_payout_date': p.start_payout_date.strftime('%Y-%m-%d') if p.start_payout_date else '',
+            'contribution_end_date': p.contribution_end_date.strftime('%Y-%m-%d') if p.contribution_end_date else '',
+            'payout_type': getattr(p, 'payout_type', 'capital_drawdown' if (p.current_value and p.current_value > 0) else 'lifelong_annuity'),
         }
         if p.pension_type == 'statutory':
             pensions_stat.append(p_dict)
@@ -342,6 +345,18 @@ def wizard_save_api(request):
                         growth = _to_decimal(priv.get('growth_rate'))
                         if growth is not None and pension.growth_rate != growth:
                             pension.growth_rate = growth
+                            changed = True
+                        p_mode = priv.get('payout_type')
+                        if p_mode and pension.payout_type != p_mode:
+                            pension.payout_type = p_mode
+                            changed = True
+                        s_payout_d = _parse_date(priv.get('start_payout_date') or priv.get('retirement_date'))
+                        if s_payout_d and pension.start_payout_date != s_payout_d:
+                            pension.start_payout_date = s_payout_d
+                            changed = True
+                        c_end_d = _parse_date(priv.get('contribution_end_date'))
+                        if c_end_d and pension.contribution_end_date != c_end_d:
+                            pension.contribution_end_date = c_end_d
                             changed = True
 
                         if changed:

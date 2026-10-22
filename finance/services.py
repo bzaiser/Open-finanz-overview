@@ -453,8 +453,9 @@ class SimulationEngine:
                             current_monthly_pension_payout += payout_val * step_months
                             month_pension_payouts[str(p.id)] = payout_val
                             
-                            # Split by capital base and deduct payout from remaining balance
-                            if p.current_value > 0:
+                            # Split by payout_type and deduct payout from remaining balance only for capital_drawdown
+                            payout_mode = getattr(p, 'payout_type', 'capital_drawdown' if p.current_value > 0 else 'lifelong_annuity')
+                            if payout_mode == 'capital_drawdown' or (payout_mode == 'monthly' and p.current_value > 0):
                                 current_monthly_pension_payout_capital += payout_val * step_months
                                 p_item['balance'] = max(Decimal('0.00'), p_item['balance'] - (payout_val * step_months))
                             else:

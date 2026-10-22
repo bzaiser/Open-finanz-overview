@@ -107,14 +107,15 @@ class Pension(models.Model):
     ]
 
     PAYOUT_TYPE_CHOICES = [
-        ('monthly', _('Monthly Pension (Laufende Rente)')),
-        ('one_time', _('Lump-Sum Payout (Einmalige Kapitalabfindung)')),
+        ('capital_drawdown', _('Monatlicher Auszahlungsplan (Kapitalverzehr)')),
+        ('lifelong_annuity', _('Laufende Rente (Lebenslang)')),
+        ('one_time', _('Einmalige Kapitalabfindung (z. B. bAV)')),
     ]
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='pensions')
     provider = models.CharField(_("Provider/Name"), max_length=100)
     pension_type = models.CharField(_("Pension Type"), max_length=20, choices=PENSION_TYPE_CHOICES, default='capital')
-    payout_type = models.CharField(_("Payout Type"), max_length=20, choices=PAYOUT_TYPE_CHOICES, default='monthly', help_text=_("Monthly pension or one-time capital settlement"))
+    payout_type = models.CharField(_("Payout Type"), max_length=20, choices=PAYOUT_TYPE_CHOICES, default='capital_drawdown', help_text=_("Auszahlungsart: Kapitalverzehr, lebenslange Rente oder Einmalabfindung"))
     current_value = models.DecimalField(_("Current Value"), max_digits=12, decimal_places=2, default=0.00)
     monthly_contribution = models.DecimalField(_("Monthly Contribution"), max_digits=10, decimal_places=2, default=0.00)
     growth_rate = models.DecimalField(_("Annual Growth Rate (%)"), max_digits=5, decimal_places=2, default=0.00)
