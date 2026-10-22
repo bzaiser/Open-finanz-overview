@@ -3,76 +3,372 @@
     "group": "Einnahmen",
     "is_income": true,
     "items": [
-      { "id": "inc_gehalt", "name": "Gehalt / Lohn", "category_slug": "gehalt", "category_name": "Gehalt", "frequency": "monthly", "amount": 1.00 },
-      { "id": "inc_minijob", "name": "Nebenjob / Minijob", "category_slug": "gehalt", "category_name": "Gehalt", "frequency": "monthly", "amount": 1.00 },
-      { "id": "inc_kindergeld", "name": "Kindergeld / Elterngeld", "category_slug": "gehalt", "category_name": "Gehalt", "frequency": "monthly", "amount": 1.00 },
-      { "id": "inc_dividenden", "name": "Dividenden & Zinserträge", "category_slug": "investment", "category_name": "Investment", "frequency": "yearly", "amount": 1.00 }
+      {
+        "id": "inc_gehalt",
+        "name": "Gehalt / Lohn",
+        "category_slug": "gehalt",
+        "category_name": "Gehalt",
+        "frequency": "monthly",
+        "amount": 1.0
+      },
+      {
+        "id": "inc_minijob",
+        "name": "Nebenjob / Minijob",
+        "category_slug": "gehalt",
+        "category_name": "Gehalt",
+        "frequency": "monthly",
+        "amount": 1.0
+      },
+      {
+        "id": "inc_kindergeld",
+        "name": "Kindergeld / Elterngeld",
+        "category_slug": "gehalt",
+        "category_name": "Gehalt",
+        "frequency": "monthly",
+        "amount": 1.0
+      },
+      {
+        "id": "inc_dividenden",
+        "name": "Dividenden & Zinserträge",
+        "category_slug": "investment",
+        "category_name": "Investment",
+        "frequency": "yearly",
+        "amount": 1.0
+      },
+      {
+        "id": "inc_witwenrente",
+        "name": "Witwen- / Waisenrente",
+        "category_slug": "gehalt",
+        "category_name": "Gehalt",
+        "frequency": "monthly",
+        "amount": 1.0
+      }
     ]
   },
   {
     "group": "Wohnen & Haushalt",
     "is_income": false,
     "items": [
-      { "id": "exp_kaltmiete", "name": "Kaltmiete / Wohnungsmiete", "category_slug": "wohnen", "category_name": "Wohnen", "frequency": "monthly", "amount": 1.00 },
-      { "id": "exp_nebenkosten", "name": "Nebenkosten / Hausgeld", "category_slug": "wohnen", "category_name": "Wohnen", "frequency": "monthly", "amount": 1.00 },
-      { "id": "exp_heizung", "name": "Gas / Fernwärme / Heizöl", "category_slug": "wohnen", "category_name": "Wohnen", "frequency": "yearly", "amount": 1.00 },
-      { "id": "exp_strom", "name": "Strom", "category_slug": "wohnen", "category_name": "Wohnen", "frequency": "yearly", "amount": 1.00 },
-      { "id": "exp_wasser", "name": "Wasser & Abwasser", "category_slug": "wohnen", "category_name": "Wohnen", "frequency": "yearly", "amount": 1.00 },
-      { "id": "exp_muell", "name": "Müllgebühren", "category_slug": "wohnen", "category_name": "Wohnen", "frequency": "yearly", "amount": 1.00 },
-      { "id": "exp_grundsteuer", "name": "Grundsteuer", "category_slug": "wohnen", "category_name": "Wohnen", "frequency": "yearly", "amount": 1.00 },
-      { "id": "exp_schornsteinfeger", "name": "Schornsteinfeger & Wartung", "category_slug": "wohnen", "category_name": "Wohnen", "frequency": "yearly", "amount": 1.00 },
-      { "id": "exp_instandhaltung", "name": "Instandhaltung & Reparaturen", "category_slug": "wohnen", "category_name": "Wohnen", "frequency": "yearly", "amount": 1.00 },
-      { "id": "exp_gez", "name": "GEZ / Rundfunkbeitrag", "category_slug": "wohnen", "category_name": "Wohnen", "frequency": "yearly", "amount": 1.00 }
+      {
+        "id": "exp_kaltmiete",
+        "name": "Kaltmiete / Wohnungsmiete",
+        "category_slug": "wohnen",
+        "category_name": "Wohnen",
+        "frequency": "monthly",
+        "amount": 1.0
+      },
+      {
+        "id": "exp_nebenkosten",
+        "name": "Nebenkosten / Hausgeld",
+        "category_slug": "wohnen",
+        "category_name": "Wohnen",
+        "frequency": "monthly",
+        "amount": 1.0
+      },
+      {
+        "id": "exp_heizung",
+        "name": "Gas / Fernwärme / Heizöl",
+        "category_slug": "wohnen",
+        "category_name": "Wohnen",
+        "frequency": "yearly",
+        "amount": 1.0
+      },
+      {
+        "id": "exp_strom",
+        "name": "Strom",
+        "category_slug": "wohnen",
+        "category_name": "Wohnen",
+        "frequency": "yearly",
+        "amount": 1.0
+      },
+      {
+        "id": "exp_wasser",
+        "name": "Wasser & Abwasser",
+        "category_slug": "wohnen",
+        "category_name": "Wohnen",
+        "frequency": "yearly",
+        "amount": 1.0
+      },
+      {
+        "id": "exp_muell",
+        "name": "Müllgebühren",
+        "category_slug": "wohnen",
+        "category_name": "Wohnen",
+        "frequency": "yearly",
+        "amount": 1.0
+      },
+      {
+        "id": "exp_grundsteuer",
+        "name": "Grundsteuer",
+        "category_slug": "wohnen",
+        "category_name": "Wohnen",
+        "frequency": "yearly",
+        "amount": 1.0
+      },
+      {
+        "id": "exp_schornsteinfeger",
+        "name": "Schornsteinfeger & Wartung",
+        "category_slug": "wohnen",
+        "category_name": "Wohnen",
+        "frequency": "yearly",
+        "amount": 1.0
+      },
+      {
+        "id": "exp_instandhaltung",
+        "name": "Instandhaltung & Reparaturen",
+        "category_slug": "wohnen",
+        "category_name": "Wohnen",
+        "frequency": "yearly",
+        "amount": 1.0
+      },
+      {
+        "id": "exp_gez",
+        "name": "GEZ / Rundfunkbeitrag",
+        "category_slug": "wohnen",
+        "category_name": "Wohnen",
+        "frequency": "yearly",
+        "amount": 1.0
+      }
     ]
   },
   {
     "group": "Versicherungen & Finanzen",
     "is_income": false,
     "items": [
-      { "id": "exp_haftpflicht", "name": "Privathaftpflichtversicherung", "category_slug": "versicherungen", "category_name": "Versicherungen und Bank", "frequency": "yearly", "amount": 1.00 },
-      { "id": "exp_hausrat", "name": "Hausratversicherung", "category_slug": "versicherungen", "category_name": "Versicherungen und Bank", "frequency": "yearly", "amount": 1.00 },
-      { "id": "exp_wohngebaeude", "name": "Wohngebäudeversicherung", "category_slug": "wohnen", "category_name": "Wohnen", "frequency": "yearly", "amount": 1.00 },
-      { "id": "exp_rechtsschutz", "name": "Rechtsschutzversicherung", "category_slug": "versicherungen", "category_name": "Versicherungen und Bank", "frequency": "yearly", "amount": 1.00 },
-      { "id": "exp_bu", "name": "Berufsunfähigkeitsversicherung (BU)", "category_slug": "versicherungen", "category_name": "Versicherungen und Bank", "frequency": "monthly", "amount": 1.00 },
-      { "id": "exp_krankenzusatz", "name": "Krankenzusatz / Auslandskranken", "category_slug": "versicherungen", "category_name": "Versicherungen und Bank", "frequency": "yearly", "amount": 1.00 },
-      { "id": "exp_kontofuehrung", "name": "Kontoführung & Bankkarten", "category_slug": "versicherungen", "category_name": "Versicherungen und Bank", "frequency": "yearly", "amount": 1.00 },
-      { "id": "exp_etf_sparplan", "name": "ETF- / Sparplan", "category_slug": "investment", "category_name": "Investment", "frequency": "monthly", "amount": 1.00 },
-      { "id": "exp_notgroschen", "name": "Notgroschen / Sparkonto", "category_slug": "sparen", "category_name": "Sparen", "frequency": "monthly", "amount": 1.00 }
+      {
+        "id": "exp_haftpflicht",
+        "name": "Privathaftpflichtversicherung",
+        "category_slug": "versicherungen",
+        "category_name": "Versicherungen und Bank",
+        "frequency": "yearly",
+        "amount": 1.0
+      },
+      {
+        "id": "exp_hausrat",
+        "name": "Hausratversicherung",
+        "category_slug": "versicherungen",
+        "category_name": "Versicherungen und Bank",
+        "frequency": "yearly",
+        "amount": 1.0
+      },
+      {
+        "id": "exp_wohngebaeude",
+        "name": "Wohngebäudeversicherung",
+        "category_slug": "wohnen",
+        "category_name": "Wohnen",
+        "frequency": "yearly",
+        "amount": 1.0
+      },
+      {
+        "id": "exp_rechtsschutz",
+        "name": "Rechtsschutzversicherung",
+        "category_slug": "versicherungen",
+        "category_name": "Versicherungen und Bank",
+        "frequency": "yearly",
+        "amount": 1.0
+      },
+      {
+        "id": "exp_bu",
+        "name": "Berufsunfähigkeitsversicherung (BU)",
+        "category_slug": "versicherungen",
+        "category_name": "Versicherungen und Bank",
+        "frequency": "monthly",
+        "amount": 1.0
+      },
+      {
+        "id": "exp_krankenzusatz",
+        "name": "Krankenzusatz / Auslandskranken",
+        "category_slug": "versicherungen",
+        "category_name": "Versicherungen und Bank",
+        "frequency": "yearly",
+        "amount": 1.0
+      },
+      {
+        "id": "exp_kontofuehrung",
+        "name": "Kontoführung & Bankkarten",
+        "category_slug": "versicherungen",
+        "category_name": "Versicherungen und Bank",
+        "frequency": "yearly",
+        "amount": 1.0
+      },
+      {
+        "id": "exp_etf_sparplan",
+        "name": "ETF- / Sparplan",
+        "category_slug": "investment",
+        "category_name": "Investment",
+        "frequency": "monthly",
+        "amount": 1.0
+      },
+      {
+        "id": "exp_notgroschen",
+        "name": "Notgroschen / Sparkonto",
+        "category_slug": "sparen",
+        "category_name": "Sparen",
+        "frequency": "monthly",
+        "amount": 1.0
+      },
+      {
+        "id": "exp_pkv_beamte",
+        "name": "PKV Ruhestand (Beamte / Beihilfe)",
+        "category_slug": "versicherungen",
+        "category_name": "Versicherungen und Bank",
+        "frequency": "monthly",
+        "amount": 1.0
+      }
     ]
   },
   {
     "group": "KFZ & Mobilität",
     "is_income": false,
     "items": [
-      { "id": "exp_kfz_versicherung", "name": "KFZ-Versicherung", "category_slug": "kfz", "category_name": "KFZ", "frequency": "yearly", "amount": 1.00 },
-      { "id": "exp_kfz_steuer", "name": "KFZ-Steuer", "category_slug": "kfz", "category_name": "KFZ", "frequency": "yearly", "amount": 1.00 },
-      { "id": "exp_kraftstoff", "name": "Kraftstoff / Laden", "category_slug": "kfz", "category_name": "KFZ", "frequency": "yearly", "amount": 1.00 },
-      { "id": "exp_kfz_wartung", "name": "KFZ Wartung, TÜV & Reparatur", "category_slug": "kfz", "category_name": "KFZ", "frequency": "yearly", "amount": 1.00 },
-      { "id": "exp_opnv", "name": "Öffentlicher Nahverkehr (ÖPNV)", "category_slug": "kfz", "category_name": "KFZ", "frequency": "monthly", "amount": 1.00 }
+      {
+        "id": "exp_kfz_versicherung",
+        "name": "KFZ-Versicherung",
+        "category_slug": "kfz",
+        "category_name": "KFZ",
+        "frequency": "yearly",
+        "amount": 1.0
+      },
+      {
+        "id": "exp_kfz_steuer",
+        "name": "KFZ-Steuer",
+        "category_slug": "kfz",
+        "category_name": "KFZ",
+        "frequency": "yearly",
+        "amount": 1.0
+      },
+      {
+        "id": "exp_kraftstoff",
+        "name": "Kraftstoff / Laden",
+        "category_slug": "kfz",
+        "category_name": "KFZ",
+        "frequency": "yearly",
+        "amount": 1.0
+      },
+      {
+        "id": "exp_kfz_wartung",
+        "name": "KFZ Wartung, TÜV & Reparatur",
+        "category_slug": "kfz",
+        "category_name": "KFZ",
+        "frequency": "yearly",
+        "amount": 1.0
+      },
+      {
+        "id": "exp_opnv",
+        "name": "Öffentlicher Nahverkehr (ÖPNV)",
+        "category_slug": "kfz",
+        "category_name": "KFZ",
+        "frequency": "monthly",
+        "amount": 1.0
+      }
     ]
   },
   {
     "group": "Essen, Gesundheit & Alltag",
     "is_income": false,
     "items": [
-      { "id": "exp_lebensmittel", "name": "Lebensmittel & Drogerie", "category_slug": "essen", "category_name": "Essen", "frequency": "monthly", "amount": 1.00 },
-      { "id": "exp_gastro", "name": "Gastronomie & Kantine", "category_slug": "essen", "category_name": "Essen", "frequency": "yearly", "amount": 1.00 },
-      { "id": "exp_kleidung", "name": "Kleidung & Schuhe", "category_slug": "kleidung", "category_name": "Kleidung", "frequency": "yearly", "amount": 1.00 },
-      { "id": "exp_friseur", "name": "Friseur & Körperpflege", "category_slug": "health", "category_name": "Gesundheit", "frequency": "yearly", "amount": 1.00 },
-      { "id": "exp_arzt", "name": "Arzt, Medikamente & Zuzahlungen", "category_slug": "health", "category_name": "Gesundheit", "frequency": "yearly", "amount": 1.00 },
-      { "id": "exp_zahnarzt", "name": "Zahnarzt & Prophylaxe", "category_slug": "health", "category_name": "Gesundheit", "frequency": "yearly", "amount": 1.00 },
-      { "id": "exp_brille", "name": "Brillen & Sehhilfen", "category_slug": "health", "category_name": "Gesundheit", "frequency": "yearly", "amount": 1.00 }
+      {
+        "id": "exp_lebensmittel",
+        "name": "Lebensmittel & Drogerie",
+        "category_slug": "essen",
+        "category_name": "Essen",
+        "frequency": "monthly",
+        "amount": 1.0
+      },
+      {
+        "id": "exp_gastro",
+        "name": "Gastronomie & Kantine",
+        "category_slug": "essen",
+        "category_name": "Essen",
+        "frequency": "yearly",
+        "amount": 1.0
+      },
+      {
+        "id": "exp_kleidung",
+        "name": "Kleidung & Schuhe",
+        "category_slug": "kleidung",
+        "category_name": "Kleidung",
+        "frequency": "yearly",
+        "amount": 1.0
+      },
+      {
+        "id": "exp_friseur",
+        "name": "Friseur & Körperpflege",
+        "category_slug": "health",
+        "category_name": "Gesundheit",
+        "frequency": "yearly",
+        "amount": 1.0
+      },
+      {
+        "id": "exp_arzt",
+        "name": "Arzt, Medikamente & Zuzahlungen",
+        "category_slug": "health",
+        "category_name": "Gesundheit",
+        "frequency": "yearly",
+        "amount": 1.0
+      },
+      {
+        "id": "exp_zahnarzt",
+        "name": "Zahnarzt & Prophylaxe",
+        "category_slug": "health",
+        "category_name": "Gesundheit",
+        "frequency": "yearly",
+        "amount": 1.0
+      },
+      {
+        "id": "exp_brille",
+        "name": "Brillen & Sehhilfen",
+        "category_slug": "health",
+        "category_name": "Gesundheit",
+        "frequency": "yearly",
+        "amount": 1.0
+      }
     ]
   },
   {
     "group": "Freizeit, Medien & Urlaub",
     "is_income": false,
     "items": [
-      { "id": "exp_internet", "name": "Internet & Mobilfunk", "category_slug": "leisure", "category_name": "Freizeit und Medien", "frequency": "monthly", "amount": 1.00 },
-      { "id": "exp_streaming", "name": "Streaming & Abonnements", "category_slug": "leisure", "category_name": "Freizeit und Medien", "frequency": "yearly", "amount": 1.00 },
-      { "id": "exp_fitness", "name": "Sport & Fitnessstudio", "category_slug": "leisure", "category_name": "Freizeit und Medien", "frequency": "monthly", "amount": 1.00 },
-      { "id": "exp_kultur", "name": "Freizeit, Kultur & Hobbys", "category_slug": "leisure", "category_name": "Freizeit und Medien", "frequency": "yearly", "amount": 1.00 },
-      { "id": "exp_urlaub", "name": "Urlaub & Reisen", "category_slug": "urlaub", "category_name": "Urlaub", "frequency": "monthly", "amount": 1.00 }
+      {
+        "id": "exp_internet",
+        "name": "Internet & Mobilfunk",
+        "category_slug": "leisure",
+        "category_name": "Freizeit und Medien",
+        "frequency": "monthly",
+        "amount": 1.0
+      },
+      {
+        "id": "exp_streaming",
+        "name": "Streaming & Abonnements",
+        "category_slug": "leisure",
+        "category_name": "Freizeit und Medien",
+        "frequency": "yearly",
+        "amount": 1.0
+      },
+      {
+        "id": "exp_fitness",
+        "name": "Sport & Fitnessstudio",
+        "category_slug": "leisure",
+        "category_name": "Freizeit und Medien",
+        "frequency": "monthly",
+        "amount": 1.0
+      },
+      {
+        "id": "exp_kultur",
+        "name": "Freizeit, Kultur & Hobbys",
+        "category_slug": "leisure",
+        "category_name": "Freizeit und Medien",
+        "frequency": "yearly",
+        "amount": 1.0
+      },
+      {
+        "id": "exp_urlaub",
+        "name": "Urlaub & Reisen",
+        "category_slug": "urlaub",
+        "category_name": "Urlaub",
+        "frequency": "monthly",
+        "amount": 1.0
+      }
     ]
   }
 ]

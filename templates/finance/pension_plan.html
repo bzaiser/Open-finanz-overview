@@ -379,7 +379,7 @@
                             <tr>
                                 <td class="py-3 px-3 fw-semibold">
                                     <div class="d-flex align-items-center gap-2">
-                                        <i class="bi opacity-75" :class="p.pension_type === 'statutory' ? 'bi-bank' : 'bi-piggy-bank'"></i>
+                                        <i class="bi opacity-75" :class="p.pension_type === 'statutory' ? 'bi-bank' : (p.pension_type === 'civil_service' ? 'bi-award' : (p.pension_type === 'occupational_fund' ? 'bi-briefcase' : 'bi-piggy-bank'))"></i>
                                         <div>
                                             <span class="d-block" x-text="p.provider"></span>
                                             <span class="badge rounded-pill bg-body-tertiary text-body border border-secondary border-opacity-20 opacity-90 d-md-none me-1" style="font-size: 0.65rem;" x-text="p.pension_type_display"></span>
@@ -449,8 +449,10 @@
                             <div class="col-md-4">
                                 <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Pension Type" %}</label>
                                 <select name="pension_type" x-model="form.pension_type" class="form-select">
-                                    <option value="capital">{% trans "Capital / Private Pension" %}</option>
-                                    <option value="statutory">{% trans "Statutory Pension" %}</option>
+                                    <option value="capital">{% trans "Kapital- / Private Rentenversicherung" %}</option>
+                                    <option value="statutory">{% trans "Gesetzliche Rente (DRV)" %}</option>
+                                    <option value="civil_service">{% trans "Beamtenpension / Ruhegehalt" %}</option>
+                                    <option value="occupational_fund">{% trans "Berufsständisches Versorgungswerk / VBL" %}</option>
                                 </select>
                             </div>
                             <div class="col-md-3">

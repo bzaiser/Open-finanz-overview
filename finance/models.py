@@ -102,8 +102,10 @@ class OneTimeEvent(models.Model):
 
 class Pension(models.Model):
     PENSION_TYPE_CHOICES = [
-        ('capital', _('Capital / Private Pension')),
-        ('statutory', _('Statutory Pension (Gesetzliche Rente)')),
+        ('capital', _('Kapital- / Private Rentenversicherung')),
+        ('statutory', _('Gesetzliche Rente (DRV)')),
+        ('civil_service', _('Beamtenpension / Ruhegehalt')),
+        ('occupational_fund', _('Berufsständisches Versorgungswerk / VBL')),
     ]
 
     PAYOUT_TYPE_CHOICES = [
