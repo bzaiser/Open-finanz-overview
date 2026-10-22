@@ -3,6 +3,7 @@
 [![Language: Multi-5](https://img.shields.io/badge/Language-Multi--5-blue)](#-internationalization)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Built with: Django](https://img.shields.io/badge/Backend-Django--6-green)](https://www.djangoproject.com/)
+[![Built with: Google Antigravity](https://img.shields.io/badge/AI--Assisted-Google%20Antigravity-orange?logo=google)](https://deepmind.google/technologies/)
 
 > [!TIP]
 > **Deutschsprachige Dokumentation**: Du findest die deutsche Version der Dokumentation hier: [README.de.md](README.de.md) 🇩🇪
@@ -88,6 +89,11 @@ Our system uses a **Key-based i18n strategy** for maximum stability, especially 
 ## 🔒 Security & Privacy
 
 Your financial data is sensitive. That's why Finanzplan is designed to be **completely self-hosted**. No data ever leaves your control unless you explicitly choose a cloud-based AI provider. Even then, only anonymized transaction descriptions are processed.
+
+---
+
+## 🤖 Built with Google Antigravity
+This project was architected, built, and continuously evolved with **Google Antigravity** (Advanced Agentic Pair-Programming).
 
 ---
 
