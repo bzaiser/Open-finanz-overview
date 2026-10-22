@@ -128,14 +128,6 @@
                                         {{ p.amount|intcomma }} <span class="small font-normal opacity-75">{{ profile.currency }}</span>
                                     </span>
                                 </div>
-                                {% if p.expected_payout %}
-                                <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
-                                    <span class="text-truncate flex-grow-1 opacity-90" style="min-width: 0;" title="{{ p.name }} (Rente)">{{ p.name }} (Rente)</span>
-                                    <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">
-                                        {{ p.expected_payout|intcomma }} <span class="small font-normal opacity-75">{{ profile.currency }}</span>
-                                    </span>
-                                </div>
-                                {% endif %}
                             {% endif %}
                         {% empty %}
                         <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No entries." %}</div>
