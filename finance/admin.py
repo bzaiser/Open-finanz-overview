@@ -7,17 +7,62 @@ from django.contrib.contenttypes.admin import GenericTabularInline
 from django.contrib.contenttypes.models import ContentType
 from django.utils import timezone
 
+class CurrentUserDefaultFilter(admin.SimpleListFilter):
+    title = _('Benutzer')
+    parameter_name = 'user'
+
+    def lookups(self, request, model_admin):
+        from core.models import CustomUser
+        users = CustomUser.objects.filter(is_active=True).order_by('username')
+        items = [('all', _('--- Alle Benutzer anzeigen ---'))]
+        for u in users:
+            label = f"{u.username} (Du)" if u.pk == request.user.pk else u.username
+            items.append((str(u.pk), label))
+        return items
+
+    def choices(self, changelist):
+        # Override choices to hide the default Django 'All' which has value None,
+        # so that our explicit 'all' option behaves cleanly.
+        for lookup, title in self.lookup_choices:
+            yield {
+                'selected': self.value() == str(lookup) or (self.value() is None and lookup == str(changelist.request.user.pk)),
+                'query_string': changelist.get_query_string({self.parameter_name: lookup}, []),
+                'display': title,
+            }
+
+    def queryset(self, request, queryset):
+        val = self.value()
+        if val == 'all':
+            return queryset
+        if val:
+            return queryset.filter(user_id=val)
+        # Default when opening the changelist without explicit ?user= query param
+        if request.user.is_authenticated:
+            return queryset.filter(user=request.user)
+        return queryset
+
+
 class BaseOwnedModelAdmin(admin.ModelAdmin):
     """
-    Base Admin class that enforces tenant isolation:
+    Base Admin class that enforces user-scoped management:
     - Non-superusers only see their own objects.
+    - Superusers default to seeing their own objects, with a filter to switch to other users or view all.
     - Non-superusers have the 'user' field hidden and autofilled to request.user.
     """
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        if request.user.is_superuser:
-            return qs
-        return qs.filter(user=request.user)
+        if not request.user.is_superuser:
+            return qs.filter(user=request.user)
+        return qs
+
+    def changelist_view(self, request, extra_context=None):
+        if request.user.is_superuser and 'user' not in request.GET:
+            # Pre-filter query params by default to current user if not already set
+            q = request.GET.copy()
+            q['user'] = str(request.user.pk)
+            request.GET = q
+            request.META['QUERY_STRING'] = q.urlencode()
+        return super().changelist_view(request, extra_context=extra_context)
 
     def get_exclude(self, request, obj=None):
         exclude = super().get_exclude(request, obj) or []
@@ -87,11 +132,22 @@ class BaseOwnedModelAdmin(admin.ModelAdmin):
         formset.save_m2m()
 
     def get_list_filter(self, request):
-        """Remove 'user' from filters for standard users."""
-        filters = super().get_list_filter(request)
-        if not request.user.is_superuser and filters:
-            return tuple(f for f in filters if f != 'user')
-        return filters
+        """Apply CurrentUserDefaultFilter for superusers, hide user filter for standard users."""
+        filters = super().get_list_filter(request) or ()
+        if not request.user.is_superuser:
+            return tuple(f for f in filters if f != 'user' and f != CurrentUserDefaultFilter)
+        # Replace raw 'user' with CurrentUserDefaultFilter, or add it if not present
+        new_filters = []
+        has_user_filter = False
+        for f in filters:
+            if f == 'user' or f == CurrentUserDefaultFilter:
+                new_filters.append(CurrentUserDefaultFilter)
+                has_user_filter = True
+            else:
+                new_filters.append(f)
+        if not has_user_filter:
+            new_filters.append(CurrentUserDefaultFilter)
+        return tuple(new_filters)
 
 class AssetSnapshotInlineForm(forms.ModelForm):
     class Meta:
