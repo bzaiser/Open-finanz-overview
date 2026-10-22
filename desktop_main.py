@@ -34,9 +34,11 @@ def wait_for_server(port, timeout=10.0):
 if __name__ == '__main__':
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
     
-    # Force settings load to read .env
-    _ = settings.BASE_DIR
+    # Initialize Django app registry and configuration
+    import django
+    django.setup()
     
+    # Ensure all database migrations are applied before starting the web server
     try:
         call_command('migrate', interactive=False)
     except Exception as e:
