@@ -61,3 +61,6 @@ wheels/
 finanzplan_deploy/
 
 scratch/
+
+# Private AI / Dev Workflow documentation
+AI_WORKFLOW.md
