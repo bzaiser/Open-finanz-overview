@@ -1,6 +1,6 @@
 ; Inno Setup Script für Finanzplan Desktop
 #define MyAppName "Finanzplan Desktop"
-#define MyAppVersion "0.9.0"
+#define MyAppVersion "0.9.1"
 #define MyAppPublisher "Finanzplan"
 #define MyAppExeName "FinanzplanDesktop.exe"
 

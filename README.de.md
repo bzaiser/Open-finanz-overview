@@ -54,11 +54,13 @@ Ein Premium-Erlebnis für Premium-Daten.
 
 Wir bieten zwei Wege an, dein Finanz-Cockpit zu betreiben, je nach deiner Umgebung.
 
-### Option A: Einfacher Desktop (Windows Native)
-**Ideal für**: "Normale" Nutzer unter Windows, die eine Ein-Klick-Lösung ohne Docker/WSL2 suchen.
-1. **Download/Klonen**: Lade das Repository herunter.
-2. **Setup**: Gehe in den Ordner `native-dist/` und starte `setup-native.bat` (nur beim ersten Mal).
-3. **Start**: Klicke doppelt auf `start-dashboard.bat`.
+### Option A: Windows Installer / Desktop App (.exe)
+**Ideal für**: Nutzer unter Windows, die eine native App mit vollwertigem Installer wünschen (ohne Docker, WSL2 oder Python-Installation).
+1. **Installer herunterladen**: Lade `FinanzplanDesktop_Setup.exe` aus dem Ordner `dist_installer/` oder den GitHub Releases herunter.
+2. **Installation**: Starte den Installer (`FinanzplanDesktop_Setup.exe`), wähle auf Wunsch ein Desktop-Icon aus und folge dem Assistenten.
+3. **Starten**: Die Anwendung startet direkt als native Desktop-App im eigenen Fenster mit integriertem Server und automatischer Datenbank-Verwaltung.
+
+*(Alternativ: Für portable Nutzung ohne Installer kann `native-dist/setup-native.bat` und `start-dashboard.bat` verwendet werden.)*
 
 ### Option B: Server/NAS (Docker & Podman)
 **Ideal für**: Fortgeschrittene Nutzer, NAS-Systeme (Synology/QNAP) oder Linux-Server.
