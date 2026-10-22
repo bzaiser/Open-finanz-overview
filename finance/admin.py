@@ -144,16 +144,16 @@ class PensionAdminForm(forms.ModelForm):
 @admin.register(Pension)
 class PensionAdmin(BaseOwnedModelAdmin):
     form = PensionAdminForm
-    list_display = ('provider', 'pension_type', 'user', 'pension_points', 'point_value', 'gross_payout_amount', 'social_deduction_rate', 'expected_payout_at_retirement', 'disability_pension_net', 'is_indexed', 'notes')
+    list_display = ('provider', 'pension_type', 'payout_type', 'user', 'pension_points', 'point_value', 'gross_payout_amount', 'social_deduction_rate', 'expected_payout_at_retirement', 'disability_pension_net', 'is_indexed', 'notes')
     list_editable = ('is_indexed',)
     search_fields = ('provider', 'user__username')
-    list_filter = ('pension_type', 'user')
+    list_filter = ('pension_type', 'payout_type', 'user')
     list_select_related = ('user',)
     inlines = [AssetSnapshotInline]
 
     fieldsets = (
         (None, {
-            'fields': ('user', 'provider', 'pension_type')
+            'fields': ('user', 'provider', 'pension_type', 'payout_type')
         }),
         (_('Capital & Contributions'), {
             'classes': ('pension-capital-group',),
@@ -181,7 +181,7 @@ class PensionAdmin(BaseOwnedModelAdmin):
     def get_fieldsets(self, request, obj=None):
         pension_type = getattr(obj, 'pension_type', 'capital') if obj else 'capital'
         
-        base_fields = ('user', 'provider', 'pension_type') if request.user.is_superuser else ('provider', 'pension_type')
+        base_fields = ('user', 'provider', 'pension_type', 'payout_type') if request.user.is_superuser else ('provider', 'pension_type', 'payout_type')
         
         if pension_type == 'statutory':
             return (
@@ -359,7 +359,7 @@ class OneTimeEventInline(admin.TabularInline):
 class PensionInline(admin.TabularInline):
     model = Pension
     extra = 1
-    fields = ('provider', 'current_value', 'monthly_contribution', 'contribution_end_date', 'expected_payout_at_retirement', 'is_indexed', 'growth_rate', 'start_payout_date')
+    fields = ('provider', 'payout_type', 'current_value', 'monthly_contribution', 'contribution_end_date', 'expected_payout_at_retirement', 'is_indexed', 'growth_rate', 'start_payout_date')
     classes = ['collapse']
 
 class PhysicalAssetInline(admin.TabularInline):
