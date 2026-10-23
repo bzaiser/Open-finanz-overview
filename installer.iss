@@ -30,6 +30,9 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
 
 [Files]
+; Fertig migrierte SQLite-Datenbank nur installieren, falls noch keine existiert (Benutzerdaten bleiben bei Updates erhalten):
+Source: "clean_template.sqlite3"; DestDir: "{app}"; DestName: "db.sqlite3"; Flags: onlyifdoesntexist
+
 ; Alle Programmdateien installieren / überschreiben:
 Source: "dist\FinanzplanDesktop\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: ".env,db.sqlite3,*.sqlite3,data\db.sqlite3,data\ollama\*,data\ollama"
 

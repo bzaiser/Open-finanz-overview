@@ -17,7 +17,8 @@ class AppLoginView(LoginView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['user_count'] = CustomUser.objects.count()
+        # Check if demo family exists
+        context['has_demo_family'] = CustomUser.objects.filter(username='demo_familie').exists()
         return context
 
 @require_POST
@@ -26,10 +27,12 @@ def load_demo_family_view(request):
         call_command('seed_demo_family')
         user = CustomUser.objects.filter(username='demo_familie').first()
         if user:
-            login(request, user)
-            messages.success(request, _("Demo-Familie erfolgreich geladen und eingeloggt!"))
-            return redirect('finance:dashboard')
-        messages.error(request, _("Demo-Benutzer konnte nicht erstellt werden."))
+            messages.success(
+                request,
+                _('Benutzer erfolgreich importiert! Benutzername: demo_familie | Passwort: DemoUser2026!')
+            )
+        else:
+            messages.error(request, _("Demo-Benutzer konnte nicht erstellt werden."))
     except Exception as e:
         messages.error(request, f"{_('Fehler beim Laden der Demodaten')}: {e}")
     return redirect('login')
