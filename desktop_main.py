@@ -43,6 +43,12 @@ if __name__ == '__main__':
         call_command('migrate', interactive=False)
     except Exception as e:
         print(f"Migration error: {e}")
+
+    # Ensure database cache table exists
+    try:
+        call_command('createcachetable')
+    except Exception as e:
+        print(f"Cache table error: {e}")
     
     ui_mode = os.getenv('DESKTOP_UI_MODE', 'window').strip().lower()
     port = find_free_port()
