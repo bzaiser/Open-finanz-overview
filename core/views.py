@@ -2,11 +2,37 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.conf import settings
 from django.contrib.auth import login
+from django.contrib.auth.views import LoginView
 from django.contrib.auth.decorators import login_required
+from django.core.management import call_command
+from django.views.decorators.http import require_POST
 from django.utils.translation import gettext as _
 from django.utils import translation
 from .forms import CustomUserCreationForm, UserProfileForm
-from .models import UserProfile
+from .models import UserProfile, CustomUser
+
+class AppLoginView(LoginView):
+    template_name = 'core/login.html'
+    redirect_authenticated_user = True
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['user_count'] = CustomUser.objects.count()
+        return context
+
+@require_POST
+def load_demo_family_view(request):
+    try:
+        call_command('seed_demo_family')
+        user = CustomUser.objects.filter(username='demo_familie').first()
+        if user:
+            login(request, user)
+            messages.success(request, _("Demo-Familie erfolgreich geladen und eingeloggt!"))
+            return redirect('finance:dashboard')
+        messages.error(request, _("Demo-Benutzer konnte nicht erstellt werden."))
+    except Exception as e:
+        messages.error(request, f"{_('Fehler beim Laden der Demodaten')}: {e}")
+    return redirect('login')
 
 def signup(request):
     if request.method == 'POST':
@@ -14,7 +40,6 @@ def signup(request):
         if form.is_valid():
             user = form.save(commit=False)
             user.is_staff = True
-            from .models import CustomUser
             if not CustomUser.objects.filter(is_superuser=True).exists():
                 user.is_superuser = True
             user.save()

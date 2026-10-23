@@ -49,6 +49,22 @@ if __name__ == '__main__':
         call_command('createcachetable')
     except Exception as e:
         print(f"Cache table error: {e}")
+
+    # CLI Support: Allow executing Django management commands via the desktop executable
+    # e.g.: FinanzplanDesktop.exe --seed  or  FinanzplanDesktop.exe --manage seed_demo_family
+    if len(sys.argv) > 1:
+        arg = sys.argv[1].strip()
+        if arg in ('--seed', '--seed-demo'):
+            call_command('seed_demo_data')
+            sys.exit(0)
+        elif arg in ('--seed-family', '--seed-demo-family'):
+            call_command('seed_demo_family')
+            sys.exit(0)
+        elif arg == '--manage' and len(sys.argv) > 2:
+            cmd_name = sys.argv[2]
+            cmd_args = sys.argv[3:]
+            call_command(cmd_name, *cmd_args)
+            sys.exit(0)
     
     ui_mode = os.getenv('DESKTOP_UI_MODE', 'window').strip().lower()
     port = find_free_port()

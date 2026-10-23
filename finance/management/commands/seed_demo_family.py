@@ -53,7 +53,7 @@ class Command(BaseCommand):
         cat_vorsorge, _ = Category.objects.get_or_create(slug="vorsorge-sparen", defaults={'name': "Vorsorge & Sparen", 'color': '#6f42c1'})
         cat_steuern, _ = Category.objects.get_or_create(slug="steuern-abgaben", defaults={'name': "Steuern & Abgaben", 'color': '#dc3545'})
 
-        # 1. Einnahmen (Familie)
+        # 1. Einnahmen (Familie) mit Vorlagen-IDs verknüpft
         # Mann (50 Jahre, Besserverdiener): 5.200 € Netto / Monat
         CashFlowSource.objects.create(
             user=user,
@@ -62,6 +62,7 @@ class Command(BaseCommand):
             is_income=True,
             frequency="monthly",
             category=cat_gehalt,
+            template_id="inc_gehalt",
             notes="Besserverdiener Vollzeit"
         )
 
@@ -73,6 +74,7 @@ class Command(BaseCommand):
             is_income=True,
             frequency="monthly",
             category=cat_gehalt,
+            template_id="inc_minijob",
             notes="Teilzeit 25h/Woche"
         )
 
@@ -84,18 +86,20 @@ class Command(BaseCommand):
             is_income=True,
             frequency="monthly",
             category=cat_kinder,
+            template_id="inc_kindergeld",
             notes="Gültig bis Beendigung Studium/Ausbildung"
         )
 
-        # 2. Regelmäßige Ausgaben
+        # 2. Regelmäßige Ausgaben mit Vorlagen-IDs verknüpft
         # Nebenkosten & Instandhaltung Haus
         CashFlowSource.objects.create(
             user=user,
-            name="Haus Nebenkosten & Grundsteuer",
+            name="Haus Nebenkosten & Instandhaltung",
             value=Decimal("550.00"),
             is_income=False,
             frequency="monthly",
-            category=cat_wohnen
+            category=cat_wohnen,
+            template_id="exp_nebenkosten"
         )
 
         # Lebenshaltung, Einkäufe, Familie (4 Personen)
@@ -105,17 +109,19 @@ class Command(BaseCommand):
             value=Decimal("1400.00"),
             is_income=False,
             frequency="monthly",
-            category=cat_leben
+            category=cat_leben,
+            template_id="exp_lebensmittel"
         )
 
-        # Auto, Versicherungen & Freizeit
+        # Auto, Versicherungen & Mobilität
         CashFlowSource.objects.create(
             user=user,
             name="Versicherungen & Mobilität",
             value=Decimal("650.00"),
             is_income=False,
             frequency="monthly",
-            category=cat_leben
+            category=cat_leben,
+            template_id="exp_kfz_versicherung"
         )
 
         # Jährliche Einkommensteuer-Nachzahlung Rente / Nebenwerte
@@ -245,6 +251,6 @@ class Command(BaseCommand):
             start_payout_date=date(2045, 10, 1)
         )
 
-        self.stdout.write(self.style.SUCCESS("✅ Demo-Familien-Datensatz erfolgreich angelegt!"))
+        self.stdout.write(self.style.SUCCESS("[OK] Demo-Familien-Datensatz erfolgreich angelegt!"))
         self.stdout.write(f"Benutzername: {username}")
         self.stdout.write(f"Passwort:    {password}")

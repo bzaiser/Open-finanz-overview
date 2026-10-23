@@ -18,9 +18,29 @@
                         <button type="submit" class="btn btn-primary btn-lg">{% trans "Login" %}</button>
                     </div>
                 </form>
+
+                {% if user_count == 0 %}
+                <div class="mt-4 pt-3 border-top">
+                    <p class="text-muted small text-center mb-2">{% trans "Noch kein Benutzer vorhanden? Starte direkt mit einer Musterfamilie:" %}</p>
+                    <form method="post" action="{% url 'load_demo_family' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-success w-100 py-2 fw-semibold">
+                            <i class="bi bi-people-fill me-1"></i> {% trans "Musterfamilie (Demo) laden & starten" %}
+                        </button>
+                    </form>
+                </div>
+                {% endif %}
             </div>
-            <div class="card-footer text-center py-3 bg-transparent border-top">
+            <div class="card-footer text-center py-3 bg-transparent border-top d-flex justify-content-around">
                 <a href="{% url 'signup' %}" class="text-decoration-none">{% trans "No account yet? Sign up" %}</a>
+                {% if user_count > 0 %}
+                <form method="post" action="{% url 'load_demo_family' %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-link btn-sm text-decoration-none p-0 text-muted" title="{% trans 'Musterfamilie einspielen' %}">
+                        <i class="bi bi-magic me-1"></i>{% trans "Demo-Familie laden" %}
+                    </button>
+                </form>
+                {% endif %}
             </div>
         </div>
     </div>
