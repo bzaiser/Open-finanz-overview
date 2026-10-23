@@ -7,6 +7,7 @@ datas = [
     ('templates', 'templates'),
     ('static', 'static'),
     ('locale', 'locale'),
+    ('finance/wizard_templates.json', 'finance'),
 ]
 
 import os
