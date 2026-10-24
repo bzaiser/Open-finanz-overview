@@ -2448,6 +2448,29 @@ def cash_flow_list(request):
                 'can_edit': False,
                 'can_wizard': False,
             })
+        if re.ancillary_costs_monthly and re.ancillary_costs_monthly > 0:
+            unified_items.append({
+                'id': f"re_ancillary_{re.id}",
+                'raw_id': re.id,
+                'name': f"{_('Ancillary Costs')}: {re.name}",
+                'value': Decimal(str(re.ancillary_costs_monthly)),
+                'monthly_amount': Decimal(str(re.ancillary_costs_monthly)),
+                'is_income': False,
+                'frequency': 'monthly',
+                'frequency_display': str(_('Monthly')),
+                'category_id': None,
+                'category_name': 'Immobilien',
+                'category_translated': str(_('Real Estate')),
+                'start_date': re.acquisition_date,
+                'end_date': re.sale_date,
+                'is_inflation_adjusted': False,
+                'notes': f"{_('Real estate model')}: {re.name}",
+                'source_type': 'real_estate',
+                'source_label': str(_('Real Estate (Costs)')),
+                'edit_url': f"/admin/finance/realestate/{re.id}/change/",
+                'can_edit': False,
+                'can_wizard': False,
+            })
 
     # 2d. Assets (Withdrawals)
     for a in user.assets.all():
