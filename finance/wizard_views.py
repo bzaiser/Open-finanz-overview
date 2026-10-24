@@ -75,7 +75,7 @@ def wizard_page_view(request):
             'provider': p.provider,
             'pension_type': p.pension_type,
             'pension_points': float(p.pension_points) if p.pension_points is not None else '',
-            'point_value': float(p.point_value) if p.point_value is not None else 39.32,
+            'point_value': float(p.point_value) if p.point_value is not None else 40.79,
             'erwerbsminderung_net': float(em_val) if em_val is not None else '',
             'stand_today_net': stand_today if stand_today is not None else '',
             'expected_monthly_payout': float(p.expected_payout_at_retirement) if p.expected_payout_at_retirement is not None else '',
@@ -228,7 +228,7 @@ def wizard_save_api(request):
                         continue
                     provider_name = drv.get('provider') or f"Deutsche Rentenversicherung ({drv.get('person_name', p1_name)})"
                     pts_str = drv.get('pension_points')
-                    pt_val_str = drv.get('point_value') or '39.32'
+                    pt_val_str = drv.get('point_value') or '40.79'
                     stand_today_str = drv.get('stand_today_net')
                     forecast_net_str = drv.get('forecast_net')
                     erwerbsminderung_str = drv.get('erwerbsminderung_net')
@@ -237,7 +237,7 @@ def wizard_save_api(request):
                     statement_date_str = drv.get('statement_date')
 
                     pts = _to_decimal(pts_str)
-                    pt_val = _to_decimal(pt_val_str) or Decimal('39.32')
+                    pt_val = _to_decimal(pt_val_str) or Decimal('40.79')
                     expected_net = _to_decimal(forecast_net_str) or _to_decimal(stand_today_str)
                     em_net = _to_decimal(erwerbsminderung_str)
 

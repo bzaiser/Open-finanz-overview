@@ -514,7 +514,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label small fw-bold opacity-75">{% trans "Punktwert (€)" %}</label>
-                                    <input type="number" step="0.01" name="point_value" x-model="form.point_value" @input="calculateStatutoryAmounts()" class="form-control font-monospace" placeholder="39.32">
+                                    <input type="number" step="0.01" name="point_value" x-model="form.point_value" @input="calculateStatutoryAmounts()" class="form-control font-monospace" placeholder="40.79">
                                 </div>
                             </div>
                             <div class="row g-3">
@@ -903,7 +903,7 @@
                 this.inlineSnapshotForm = {
                     date: formattedDate,
                     pension_points: s.pension_points !== null ? s.pension_points : '',
-                    point_value: s.point_value !== null ? s.point_value : '39.32',
+                    point_value: s.point_value !== null ? s.point_value : '40.79',
                     expected_payout_net: s.expected_payout_net !== null ? s.expected_payout_net : '',
                     disability_pension_net: s.disability_pension_net !== null ? s.disability_pension_net : '',
                     value: s.value !== null ? s.value : '',
@@ -1036,7 +1036,7 @@
                 if (p) {
                     if (p.pension_type === 'statutory') {
                         this.snapshot.pension_points = p.pension_points !== null ? p.pension_points : '';
-                        this.snapshot.point_value = p.point_value !== null ? p.point_value : '39.32';
+                        this.snapshot.point_value = p.point_value !== null ? p.point_value : '40.79';
                         this.snapshot.expected_payout_net = p.expected_payout_at_retirement !== null ? p.expected_payout_at_retirement : '';
                     } else {
                         this.snapshot.value = p.current_value !== null ? p.current_value : '';
@@ -1049,7 +1049,7 @@
                     pension_id: s.pension_id,
                     date: s.date,
                     pension_points: s.pension_points !== null ? s.pension_points : '',
-                    point_value: s.point_value !== null ? s.point_value : '39.32',
+                    point_value: s.point_value !== null ? s.point_value : '40.79',
                     expected_payout_net: s.expected_payout_net !== null ? s.expected_payout_net : '',
                     value: s.value !== null ? s.value : '',
                     notes: s.notes || ''

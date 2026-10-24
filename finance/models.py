@@ -124,7 +124,7 @@ class Pension(models.Model):
     
     # Statutory pension fields
     pension_points = models.DecimalField(_("Pension Points (Entgeltpunkte)"), max_digits=8, decimal_places=4, null=True, blank=True, help_text=_("Number of statutory pension points accumulated"))
-    point_value = models.DecimalField(_("Point Value (€)"), max_digits=6, decimal_places=2, null=True, blank=True, help_text=_("Value of 1 pension point in EUR (e.g. 39.32)"))
+    point_value = models.DecimalField(_("Point Value (€)"), max_digits=6, decimal_places=2, null=True, blank=True, help_text=_("Value of 1 pension point in EUR (e.g. 40.79)"))
     gross_payout_amount = models.DecimalField(_("Gross Monthly Payout (€)"), max_digits=10, decimal_places=2, null=True, blank=True, help_text=_("Calculated automatically from points * point_value, or enter manually"))
     social_deduction_rate = models.DecimalField(_("Social Security Deduction (%)"), max_digits=5, decimal_places=2, default=11.50, help_text=_("Deduction percentage for health & nursing care insurance (~11.5%)"))
     disability_pension_net = models.DecimalField(_("Disability Pension Net (€/month)"), max_digits=10, decimal_places=2, blank=True, null=True, help_text=_("Pension in case of full reduction in earning capacity ('Wären Sie heute voll erwerbsgemindert...')"))
