@@ -2,7 +2,63 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.conf import settings
 from django.apps import apps
+from django.contrib.auth.models import Group, Permission
 from .models import UserProfile
+
+
+def ensure_default_user_group():
+    group, _ = Group.objects.get_or_create(name='Benutzer')
+    
+    crud_models = [
+        ('core', 'userprofile'),
+        ('finance', 'asset'),
+        ('finance', 'cashflowsource'),
+        ('finance', 'realestate'),
+        ('finance', 'loan'),
+        ('finance', 'pension'),
+        ('finance', 'onetimeevent'),
+        ('finance', 'physicalasset'),
+        ('finance', 'assetsnapshot'),
+        ('finance', 'importbatch'),
+        ('finance', 'pendingtransaction'),
+    ]
+    view_models = [
+        ('finance', 'category'),
+        ('admin_interface', 'theme'),
+    ]
+    
+    perms = []
+    for app_label, model_name in crud_models:
+        perms.extend(list(Permission.objects.filter(
+            content_type__app_label=app_label,
+            content_type__model=model_name
+        )))
+    for app_label, model_name in view_models:
+        perms.extend(list(Permission.objects.filter(
+            content_type__app_label=app_label,
+            content_type__model=model_name,
+            codename__startswith='view_'
+        )))
+    
+    group.permissions.set(perms)
+    return group
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def setup_new_user_access(sender, instance, created, **kwargs):
+    if created:
+        # Every new user gets staff access for the admin UI scoped to their own data
+        if not instance.is_staff:
+            instance.is_staff = True
+            instance.save(update_fields=['is_staff'])
+        
+        # Superuser keeps all permissions; standard users get assigned to 'Benutzer' group
+        if not instance.is_superuser:
+            try:
+                group = ensure_default_user_group()
+                instance.groups.add(group)
+            except Exception:
+                pass
+
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_user_profile(sender, instance, created, **kwargs):
