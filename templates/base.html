@@ -148,6 +148,12 @@
     </script>
 
     <style>
+        /* Prevent accidental horizontal overflow/scrollbar */
+        html, body {
+            overflow-x: hidden;
+            max-width: 100vw;
+        }
+
         /* Dashboard Widget Utility Classes */
         .h-widget-small { height: 250px; }
         .h-widget-medium { height: 400px; }
