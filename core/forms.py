@@ -1,7 +1,15 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
-from .models import CustomUser, UserProfile
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.utils.translation import gettext_lazy as _
+from .models import CustomUser, UserProfile
+
+class AppAuthenticationForm(AuthenticationForm):
+    remember_me = forms.BooleanField(
+        label=_('Angemeldet bleiben'),
+        required=False,
+        initial=True,
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+    )
 
 class CustomUserCreationForm(UserCreationForm):
     class Meta:

@@ -8,12 +8,23 @@ from django.core.management import call_command
 from django.views.decorators.http import require_POST
 from django.utils.translation import gettext as _
 from django.utils import translation
-from .forms import CustomUserCreationForm, UserProfileForm
+from .forms import CustomUserCreationForm, UserProfileForm, AppAuthenticationForm
 from .models import UserProfile, CustomUser
 
 class AppLoginView(LoginView):
     template_name = 'core/login.html'
+    form_class = AppAuthenticationForm
     redirect_authenticated_user = True
+
+    def form_valid(self, form):
+        remember_me = form.cleaned_data.get('remember_me', True)
+        if remember_me:
+            # Keep session active for standard duration (14 days)
+            self.request.session.set_expiry(getattr(settings, 'SESSION_COOKIE_AGE', 1209600))
+        else:
+            # Session expires as soon as the app / browser window is closed
+            self.request.session.set_expiry(0)
+        return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
