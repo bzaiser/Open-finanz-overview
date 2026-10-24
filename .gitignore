@@ -64,3 +64,7 @@ scratch/
 
 # Private AI / Dev Workflow documentation
 AI_WORKFLOW.md
+
+# Dynamically generated version files
+VERSION
+VERSION_DATE
