@@ -68,3 +68,7 @@ AI_WORKFLOW.md
 # Dynamically generated version files
 VERSION
 VERSION_DATE
+
+# Dist installer binary
+dist_installer/
+*.exe
