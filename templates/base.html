@@ -552,6 +552,133 @@
         <span>{% trans "Erstellt mit" %} <strong class="text-primary"><i class="bi bi-stars text-warning me-1"></i>Google Antigravity</strong></span>
     </footer>
 
+    
+    <!-- Custom Desktop Context Menu -->
+    <div id="appContextMenu" class="dropdown-menu shadow-lg border rounded-3 py-1" style="display: none; position: fixed; z-index: 99999; min-width: 170px;">
+        <a class="dropdown-item d-flex align-items-center gap-2 py-1" href="#" id="ctxBack">
+            <i class="bi bi-arrow-left text-primary"></i> <span>{% trans "Zurück" %}</span>
+            <span class="ms-auto text-muted small ps-2">Alt+←</span>
+        </a>
+        <a class="dropdown-item d-flex align-items-center gap-2 py-1" href="#" id="ctxForward">
+            <i class="bi bi-arrow-right text-primary"></i> <span>{% trans "Vor" %}</span>
+            <span class="ms-auto text-muted small ps-2">Alt+→</span>
+        </a>
+        <a class="dropdown-item d-flex align-items-center gap-2 py-1" href="#" id="ctxReload">
+            <i class="bi bi-arrow-clockwise text-success"></i> <span>{% trans "Neu laden" %}</span>
+            <span class="ms-auto text-muted small ps-2">F5</span>
+        </a>
+        <div class="dropdown-divider my-1"></div>
+        <a class="dropdown-item d-flex align-items-center gap-2 py-1" href="#" id="ctxCopy">
+            <i class="bi bi-clipboard text-secondary"></i> <span>{% trans "Kopieren" %}</span>
+            <span class="ms-auto text-muted small ps-2">Ctrl+C</span>
+        </a>
+        <a class="dropdown-item d-flex align-items-center gap-2 py-1" href="#" id="ctxPaste">
+            <i class="bi bi-clipboard-plus text-secondary"></i> <span>{% trans "Einfügen" %}</span>
+            <span class="ms-auto text-muted small ps-2">Ctrl+V</span>
+        </a>
+        <div class="dropdown-divider my-1"></div>
+        <a class="dropdown-item d-flex align-items-center gap-2 py-1" href="#" id="ctxSelectAll">
+            <i class="bi bi-check2-all text-secondary"></i> <span>{% trans "Alles auswählen" %}</span>
+            <span class="ms-auto text-muted small ps-2">Ctrl+A</span>
+        </a>
+    </div>
+
+    <script>
+    (function() {
+        const menu = document.getElementById('appContextMenu');
+        let lastInputTarget = null;
+
+        window.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            lastInputTarget = (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable) ? e.target : null;
+
+            const hasSelection = window.getSelection().toString().length > 0;
+            const copyBtn = document.getElementById('ctxCopy');
+            const pasteBtn = document.getElementById('ctxPaste');
+            if (copyBtn) copyBtn.classList.toggle('disabled', !hasSelection);
+            if (pasteBtn) pasteBtn.classList.toggle('disabled', !lastInputTarget);
+
+            let x = e.clientX;
+            let y = e.clientY;
+            const menuWidth = 180;
+            const menuHeight = 220;
+
+            if (x + menuWidth > window.innerWidth) x = window.innerWidth - menuWidth - 8;
+            if (y + menuHeight > window.innerHeight) y = window.innerHeight - menuHeight - 8;
+
+            menu.style.left = Math.max(8, x) + 'px';
+            menu.style.top = Math.max(8, y) + 'px';
+            menu.style.display = 'block';
+        });
+
+        window.addEventListener('click', function(e) {
+            if (!menu.contains(e.target)) menu.style.display = 'none';
+        });
+
+        window.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                menu.style.display = 'none';
+            } else if (e.altKey && e.key === 'ArrowLeft') {
+                e.preventDefault();
+                window.history.back();
+            } else if (e.altKey && e.key === 'ArrowRight') {
+                e.preventDefault();
+                window.history.forward();
+            } else if (e.key === 'F5' || (e.ctrlKey && e.key === 'r')) {
+                e.preventDefault();
+                window.location.reload();
+            }
+        });
+
+        document.getElementById('ctxBack')?.addEventListener('click', function(e) {
+            e.preventDefault();
+            menu.style.display = 'none';
+            window.history.back();
+        });
+        document.getElementById('ctxForward')?.addEventListener('click', function(e) {
+            e.preventDefault();
+            menu.style.display = 'none';
+            window.history.forward();
+        });
+        document.getElementById('ctxReload')?.addEventListener('click', function(e) {
+            e.preventDefault();
+            menu.style.display = 'none';
+            window.location.reload();
+        });
+        document.getElementById('ctxCopy')?.addEventListener('click', function(e) {
+            e.preventDefault();
+            menu.style.display = 'none';
+            document.execCommand('copy');
+        });
+        document.getElementById('ctxPaste')?.addEventListener('click', async function(e) {
+            e.preventDefault();
+            menu.style.display = 'none';
+            if (lastInputTarget && navigator.clipboard && navigator.clipboard.readText) {
+                try {
+                    const text = await navigator.clipboard.readText();
+                    const start = lastInputTarget.selectionStart || 0;
+                    const end = lastInputTarget.selectionEnd || 0;
+                    lastInputTarget.setRangeText(text, start, end, 'end');
+                    lastInputTarget.dispatchEvent(new Event('input', { bubbles: true }));
+                } catch(err) {
+                    document.execCommand('paste');
+                }
+            } else {
+                document.execCommand('paste');
+            }
+        });
+        document.getElementById('ctxSelectAll')?.addEventListener('click', function(e) {
+            e.preventDefault();
+            menu.style.display = 'none';
+            if (lastInputTarget) {
+                lastInputTarget.select();
+            } else {
+                document.execCommand('selectAll');
+            }
+        });
+    })();
+    </script>
+
     <script>document.body.addEventListener('htmx:configRequest', (e) => { e.detail.headers['X-CSRFToken'] = '{{csrf_token}}'; });</script>
     {% block extra_js %}{% endblock %}
 </body>

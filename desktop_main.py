@@ -5,6 +5,7 @@ import socket
 import threading
 import urllib.request
 import webbrowser
+from pathlib import Path
 from waitress import serve
 from config.wsgi import application
 from django.conf import settings
@@ -69,6 +70,12 @@ if __name__ == '__main__':
     ui_mode = os.getenv('DESKTOP_UI_MODE', 'window').strip().lower()
     port = find_free_port()
     url = f"http://127.0.0.1:{port}"
+
+    # Register dynamic local ports in trusted CSRF origins to prevent sporadic login CSRF errors
+    for host in ('127.0.0.1', 'localhost'):
+        origin = f"http://{host}:{port}"
+        if origin not in settings.CSRF_TRUSTED_ORIGINS:
+            settings.CSRF_TRUSTED_ORIGINS.append(origin)
     
     if ui_mode == 'browser':
         server_thread = threading.Thread(target=start_server, args=(port,), daemon=True)
@@ -84,6 +91,23 @@ if __name__ == '__main__':
         import webview
         server_thread = threading.Thread(target=start_server, args=(port,), daemon=True)
         server_thread.start()
-        webview.create_window("Finanzplan Desktop", url, width=1280, height=850, min_size=(900, 600))
-        webview.start()
+        wait_for_server(port)
+
+        # Allow text selection for copying figures, account numbers and notes
+        window = webview.create_window(
+            "Finanzplan Desktop",
+            url,
+            width=1280,
+            height=850,
+            min_size=(900, 600),
+            text_select=True
+        )
+
+        # Persist WebView cookies and session data in LocalAppData to avoid CSRF & session dropouts
+        storage_dir = Path(os.getenv('LOCALAPPDATA', str(Path.home()))) / 'Finanzplan Desktop' / 'webview_data'
+        try:
+            storage_dir.mkdir(parents=True, exist_ok=True)
+            webview.start(private_mode=False, storage_path=str(storage_dir))
+        except Exception:
+            webview.start()
         sys.exit(0)
