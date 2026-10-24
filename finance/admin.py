@@ -71,6 +71,27 @@ class BaseOwnedModelAdmin(admin.ModelAdmin):
                 exclude = list(exclude) + ['user']
         return exclude
 
+    def get_fieldsets(self, request, obj=None):
+        fieldsets = super().get_fieldsets(request, obj)
+        if not request.user.is_superuser:
+            clean_fieldsets = []
+            for name, opts in fieldsets:
+                flds = opts.get('fields', ())
+                new_flds = []
+                for f in flds:
+                    if isinstance(f, (list, tuple)):
+                        sub = [item for item in f if item != 'user']
+                        if sub:
+                            new_flds.append(tuple(sub) if isinstance(f, tuple) else sub)
+                    elif f != 'user':
+                        new_flds.append(f)
+                if new_flds:
+                    opts_copy = dict(opts)
+                    opts_copy['fields'] = tuple(new_flds)
+                    clean_fieldsets.append((name, opts_copy))
+            return tuple(clean_fieldsets)
+        return fieldsets
+
     def save_model(self, request, obj, form, change):
         # Auto-assign user only for regular users (who don't see the field)
         if not request.user.is_superuser and getattr(obj, 'user', None) is None:
