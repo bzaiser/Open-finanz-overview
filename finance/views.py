@@ -185,13 +185,13 @@ DEFAULT_LAYOUT = [
     {'id': 'real_estate_forecast_chart', 'width': 6, 'height': 'medium', 'visible': True, 'order': 9, 'bg_color': '#ffffff', 'text_color': '#212529'},
     {'id': 'physical_asset_forecast_chart', 'width': 6, 'height': 'medium', 'visible': True, 'order': 10, 'bg_color': '#ffffff', 'text_color': '#212529'},
     {'id': 'liquid_pension_forecast_chart', 'width': 6, 'height': 'medium', 'visible': True, 'order': 11, 'bg_color': '#ffffff', 'text_color': '#212529'},
-    {'id': 'upcoming_dates_widget', 'width': 12, 'height': 'small', 'visible': False, 'order': 12, 'bg_color': '#ffffff', 'text_color': '#212529'},
-    {'id': 'income_table_widget', 'width': 6, 'height': 'small', 'visible': False, 'order': 13, 'bg_color': '#ffffff', 'text_color': '#212529'},
-    {'id': 'expense_table_widget', 'width': 6, 'height': 'small', 'visible': False, 'order': 14, 'bg_color': '#ffffff', 'text_color': '#212529'},
-    {'id': 'asset_table_widget', 'width': 6, 'height': 'small', 'visible': False, 'order': 15, 'bg_color': '#ffffff', 'text_color': '#212529'},
-    {'id': 'pension_table_widget', 'width': 6, 'height': 'small', 'visible': False, 'order': 16, 'bg_color': '#ffffff', 'text_color': '#212529'},
-    {'id': 'event_table_widget', 'width': 6, 'height': 'small', 'visible': False, 'order': 17, 'bg_color': '#ffffff', 'text_color': '#212529'},
-    {'id': 'loan_table_widget', 'width': 6, 'height': 'small', 'visible': False, 'order': 18, 'bg_color': '#ffffff', 'text_color': '#212529'},
+    {'id': 'upcoming_dates_widget', 'width': 12, 'height': 'small', 'visible': True, 'order': 12, 'bg_color': '#ffffff', 'text_color': '#212529'},
+    {'id': 'income_table_widget', 'width': 6, 'height': 'small', 'visible': True, 'order': 13, 'bg_color': '#ffffff', 'text_color': '#212529'},
+    {'id': 'expense_table_widget', 'width': 6, 'height': 'small', 'visible': True, 'order': 14, 'bg_color': '#ffffff', 'text_color': '#212529'},
+    {'id': 'asset_table_widget', 'width': 6, 'height': 'small', 'visible': True, 'order': 15, 'bg_color': '#ffffff', 'text_color': '#212529'},
+    {'id': 'pension_table_widget', 'width': 6, 'height': 'small', 'visible': True, 'order': 16, 'bg_color': '#ffffff', 'text_color': '#212529'},
+    {'id': 'event_table_widget', 'width': 6, 'height': 'small', 'visible': True, 'order': 17, 'bg_color': '#ffffff', 'text_color': '#212529'},
+    {'id': 'loan_table_widget', 'width': 6, 'height': 'small', 'visible': True, 'order': 18, 'bg_color': '#ffffff', 'text_color': '#212529'},
 ]
 
 @login_required
