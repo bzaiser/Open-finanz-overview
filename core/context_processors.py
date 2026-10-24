@@ -1,10 +1,11 @@
 import functools
 import os
+import sys
 import subprocess
 
 from django.conf import settings
 
-DEFAULT_APP_VERSION = 'v0.9-beta'
+DEFAULT_APP_VERSION = 'v0.9.1'
 
 @functools.lru_cache(maxsize=1)
 def get_git_version_info():
@@ -30,12 +31,22 @@ def get_git_version_info():
         except Exception:
             pass
 
+    # In packaged desktop executable (sys.frozen), avoid invoking external processes
+    if getattr(sys, 'frozen', False):
+        return {
+            'version': version or DEFAULT_APP_VERSION,
+            'date': date or ''
+        }
+
+    creationflags = getattr(subprocess, 'CREATE_NO_WINDOW', 0) if sys.platform == 'win32' else 0
+
     if not version:
         try:
             version = subprocess.check_output(
                 ['git', 'describe', '--tags', '--always'],
                 cwd=repo_dir,
                 stderr=subprocess.DEVNULL,
+                creationflags=creationflags,
                 text=True
             ).strip()
         except Exception:
@@ -47,6 +58,7 @@ def get_git_version_info():
                 ['git', 'log', '-1', '--format=%cs'],
                 cwd=repo_dir,
                 stderr=subprocess.DEVNULL,
+                creationflags=creationflags,
                 text=True
             ).strip()
         except Exception:
@@ -68,4 +80,3 @@ def app_instance_info(request):
         'APP_VERSION_DATE': version_info['date'],
         'debug': settings.DEBUG
     }
-
