@@ -894,13 +894,22 @@
             async executeSubmit() {
                 this.isSubmitting = true;
                 try {
+                    // Send explicit IDs of items the user deliberately removed in the UI
+                    const currentIncomeIds = new Set(this.form.incomes.filter(i => i.id).map(i => i.id));
+                    const currentExpenseIds = new Set(this.form.expenses.filter(e => e.id).map(e => e.id));
+                    const payload = {
+                        ...this.form,
+                        deleted_income_ids: this.initialIncomes.filter(i => i.id && !currentIncomeIds.has(i.id)).map(i => i.id),
+                        deleted_expense_ids: this.initialExpenses.filter(e => e.id && !currentExpenseIds.has(e.id)).map(e => e.id)
+                    };
+
                     const response = await fetch('/finance/wizard/save/', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                             'X-CSRFToken': '{{ csrf_token }}'
                         },
-                        body: JSON.stringify(this.form)
+                        body: JSON.stringify(payload)
                     });
                     const res = await response.json();
                     if (res.status === 'success') {

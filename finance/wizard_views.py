@@ -389,8 +389,8 @@ def wizard_save_api(request):
             
             inc_count = 0
             saved_income_ids = []
-            incomes = data.get('incomes', [])
-            if isinstance(incomes, list):
+            incomes = data.get('incomes', None)
+            if incomes is not None and isinstance(incomes, list):
                 for inc in incomes:
                     if not isinstance(inc, dict):
                         continue
@@ -437,8 +437,12 @@ def wizard_save_api(request):
                         if created:
                             inc_count += 1
 
-                # Delete incomes that were removed in the wizard
-                deleted_incomes_count, _del_dict = CashFlowSource.objects.filter(user=user, is_income=True).exclude(id__in=saved_income_ids).delete()
+                # Delete incomes only if explicit list of deleted IDs was provided
+                explicit_del_ids = data.get('deleted_income_ids', [])
+                if explicit_del_ids and isinstance(explicit_del_ids, list):
+                    deleted_incomes_count, _del_dict = CashFlowSource.objects.filter(user=user, is_income=True, id__in=explicit_del_ids).delete()
+                else:
+                    deleted_incomes_count = 0
                 if deleted_incomes_count > 0:
                     saved_summary.append(f"{deleted_incomes_count} Einnahmen-Position(en) gelöscht")
 
@@ -447,8 +451,8 @@ def wizard_save_api(request):
 
             exp_count = 0
             saved_expense_ids = []
-            expenses = data.get('expenses', [])
-            if isinstance(expenses, list):
+            expenses = data.get('expenses', None)
+            if expenses is not None and isinstance(expenses, list):
                 for exp in expenses:
                     if not isinstance(exp, dict):
                         continue
@@ -495,8 +499,12 @@ def wizard_save_api(request):
                         if created:
                             exp_count += 1
 
-                # Delete expenses that were removed in the wizard
-                deleted_expenses_count, _del_dict2 = CashFlowSource.objects.filter(user=user, is_income=False).exclude(id__in=saved_expense_ids).delete()
+                # Delete expenses only if explicit list of deleted IDs was provided
+                explicit_del_exp_ids = data.get('deleted_expense_ids', [])
+                if explicit_del_exp_ids and isinstance(explicit_del_exp_ids, list):
+                    deleted_expenses_count, _del_dict2 = CashFlowSource.objects.filter(user=user, is_income=False, id__in=explicit_del_exp_ids).delete()
+                else:
+                    deleted_expenses_count = 0
                 if deleted_expenses_count > 0:
                     saved_summary.append(f"{deleted_expenses_count} Ausgaben-Position(en) gelöscht")
 
