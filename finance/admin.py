@@ -333,6 +333,19 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'slug', 'color', 'is_system')
     prepopulated_fields = {'slug': ('name',)}
 
+    def get_readonly_fields(self, request, obj=None):
+        readonly = list(super().get_readonly_fields(request, obj))
+        if not request.user.is_superuser:
+            readonly.append('is_system')
+            if obj and obj.is_system:
+                readonly.extend(['name', 'slug'])
+        return readonly
+
+    def has_change_permission(self, request, obj=None):
+        if obj and obj.is_system and not request.user.is_superuser:
+            return True
+        return super().has_change_permission(request, obj)
+
     def has_delete_permission(self, request, obj=None):
         if obj and obj.is_system:
             return False

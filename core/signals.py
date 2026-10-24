@@ -21,9 +21,9 @@ def ensure_default_user_group():
         ('finance', 'assetsnapshot'),
         ('finance', 'importbatch'),
         ('finance', 'pendingtransaction'),
+        ('finance', 'category'),
     ]
     view_models = [
-        ('finance', 'category'),
         ('admin_interface', 'theme'),
     ]
     
