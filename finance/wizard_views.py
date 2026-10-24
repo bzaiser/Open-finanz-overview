@@ -179,6 +179,7 @@ def wizard_save_api(request):
             profile, created = UserProfile.objects.get_or_create(user=user)
 
             # 1. Profile & Persons
+            profile_changed = False
             household_type = data.get('household_type', 'single')
             p1_name = str(data.get('p1_name', '') or '').strip() or user.first_name or "Person 1"
             p1_birth = _parse_date(data.get('p1_birth_date'))
@@ -188,34 +189,54 @@ def wizard_save_api(request):
             p2_birth = _parse_date(data.get('p2_birth_date'))
             p2_ret_age = data.get('p2_retirement_age')
 
-            if p1_birth:
+            if p1_birth and profile.birth_date != p1_birth:
                 profile.birth_date = p1_birth
+                profile_changed = True
             if p1_ret_age:
                 try:
-                    profile.retirement_age = int(p1_ret_age)
+                    val = int(p1_ret_age)
+                    if profile.retirement_age != val:
+                        profile.retirement_age = val
+                        profile_changed = True
                 except (ValueError, TypeError):
                     pass
 
             if household_type == 'couple':
-                profile.partner_name = p2_name or "Partner/in"
-                if p2_birth:
+                new_partner_name = p2_name or "Partner/in"
+                if profile.partner_name != new_partner_name:
+                    profile.partner_name = new_partner_name
+                    profile_changed = True
+                if p2_birth and profile.partner_birth_date != p2_birth:
                     profile.partner_birth_date = p2_birth
+                    profile_changed = True
                 if p2_ret_age:
                     try:
-                        profile.partner_retirement_age = int(p2_ret_age)
+                        val = int(p2_ret_age)
+                        if profile.partner_retirement_age != val:
+                            profile.partner_retirement_age = val
+                            profile_changed = True
                     except (ValueError, TypeError):
                         pass
             
             target_pension = _to_decimal(data.get('target_monthly_payout'))
-            if target_pension is not None:
+            if target_pension is not None and profile.target_pension_payout != target_pension:
                 profile.target_pension_payout = target_pension
+                profile_changed = True
                 
             if 'hide_wizard_on_start' in data:
-                profile.hide_wizard_on_start = bool(data.get('hide_wizard_on_start'))
+                new_hide = bool(data.get('hide_wizard_on_start'))
+                if profile.hide_wizard_on_start != new_hide:
+                    profile.hide_wizard_on_start = new_hide
+                    profile_changed = True
 
-            profile.display_name = p1_name if household_type == 'single' else f"{p1_name} & {p2_name or 'Partner'}"
-            profile.save()
-            saved_summary.append("Haushalts- & Personenstammdaten aktualisiert")
+            new_display_name = p1_name if household_type == 'single' else f"{p1_name} & {p2_name or 'Partner'}"
+            if profile.display_name != new_display_name:
+                profile.display_name = new_display_name
+                profile_changed = True
+
+            if created or profile_changed:
+                profile.save()
+                saved_summary.append("Haushalts- & Personenstammdaten aktualisiert")
 
             ct_pension = ContentType.objects.get_for_model(Pension)
 
