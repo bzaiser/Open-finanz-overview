@@ -25,7 +25,7 @@ class CurrentUserDefaultFilter(admin.SimpleListFilter):
         # so that our explicit 'all' option behaves cleanly.
         for lookup, title in self.lookup_choices:
             yield {
-                'selected': self.value() == str(lookup) or (self.value() is None and lookup == str(changelist.request.user.pk)),
+                'selected': self.value() == str(lookup) or (self.value() is None and lookup == 'all'),
                 'query_string': changelist.get_query_string({self.parameter_name: lookup}, []),
                 'display': title,
             }
@@ -57,9 +57,9 @@ class BaseOwnedModelAdmin(admin.ModelAdmin):
 
     def changelist_view(self, request, extra_context=None):
         if request.user.is_superuser and 'user' not in request.GET:
-            # Pre-filter query params by default to current user if not already set
+            # Superusers default to seeing all records, with a filter sidebar to select users
             q = request.GET.copy()
-            q['user'] = str(request.user.pk)
+            q['user'] = 'all'
             request.GET = q
             request.META['QUERY_STRING'] = q.urlencode()
         return super().changelist_view(request, extra_context=extra_context)
