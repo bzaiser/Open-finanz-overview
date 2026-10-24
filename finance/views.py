@@ -60,29 +60,45 @@ AVAILABLE_CHARTS = {
         'title': _('Net Worth Forecast'), 'type': 'line', 'default_width': 12, 'default_height': 'medium',
         'description': _('CHART_DESC_NET_WORTH')
     },
-    'cashflow_chart': {
-        'title': _('Cash Flow Analysis'), 'type': 'bar', 'default_width': 6, 'default_height': 'small',
-        'description': _('CHART_DESC_CASH_FLOW')
-    },
     'income_evolution_chart': {
         'title': _('Income & One-Time Effects'), 'type': 'bar', 'default_width': 12, 'default_height': 'medium',
         'description': _('CHART_DESC_INCOME_EVOLUTION')
     },
+    'cashflow_chart': {
+        'title': _('Cash Flow Analysis'), 'type': 'bar', 'default_width': 6, 'default_height': 'medium',
+        'description': _('CHART_DESC_CASH_FLOW')
+    },
     'expense_evolution_chart': {
-        'title': _('Expense Evolution'), 'type': 'line', 'default_width': 6, 'default_height': 'small',
+        'title': _('Expense Evolution'), 'type': 'line', 'default_width': 6, 'default_height': 'medium',
         'description': _('CHART_DESC_EXPENSE_EVOLUTION')
     },
     'inflation_monitor_chart': {
-        'title': _('Inflation Monitor'), 'type': 'line', 'default_width': 6, 'default_height': 'small',
+        'title': _('Inflation Monitor'), 'type': 'line', 'default_width': 6, 'default_height': 'medium',
         'description': _('CHART_DESC_INFLATION_MONITOR')
     },
     'budget_pie_chart': {
-        'title': _('Monthly Budget'), 'type': 'pie', 'default_width': 6, 'default_height': 'small',
+        'title': _('Monthly Budget'), 'type': 'pie', 'default_width': 6, 'default_height': 'medium',
         'description': _('CHART_DESC_BUDGET_PIE')
     },
     'asset_allocation_chart': {
-        'title': _('Asset Allocation'), 'type': 'doughnut', 'default_width': 6, 'default_height': 'small',
+        'title': _('Asset Allocation'), 'type': 'doughnut', 'default_width': 6, 'default_height': 'medium',
         'description': _('CHART_DESC_ASSET_ALLOCATION')
+    },
+    'loan_evolution_chart': {
+        'title': _('Loan Balance Trend'), 'type': 'line', 'default_width': 6, 'default_height': 'medium',
+        'description': _('CHART_DESC_LOAN_EVOLUTION')
+    },
+    'real_estate_forecast_chart': {
+        'title': _('Real Estate Trend'), 'type': 'line', 'default_width': 6, 'default_height': 'medium',
+        'description': _('CHART_DESC_REAL_ESTATE')
+    },
+    'physical_asset_forecast_chart': {
+        'title': _('Physical Assets Trend'), 'type': 'line', 'default_width': 6, 'default_height': 'medium',
+        'description': _('CHART_DESC_PHYSICAL_ASSETS')
+    },
+    'liquid_pension_forecast_chart': {
+        'title': _('Liquidity & Pension'), 'type': 'line', 'default_width': 6, 'default_height': 'medium',
+        'description': _('CHART_DESC_LIQUID_PENSION')
     },
     'upcoming_dates_widget': {
         'title': _('Important Dates & Deadlines'), 'type': 'table', 'default_width': 12, 'default_height': 'small',
@@ -92,7 +108,6 @@ AVAILABLE_CHARTS = {
         'title': _('Income Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small',
         'description': _('WIDGET_DESC_INCOME_TABLE')
     },
-
     'expense_table_widget': {
         'title': _('Expense Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small',
         'description': _('WIDGET_DESC_EXPENSE_TABLE')
@@ -112,22 +127,6 @@ AVAILABLE_CHARTS = {
     'loan_table_widget': {
         'title': _('Loan Table'), 'type': 'table', 'default_width': 6, 'default_height': 'small',
         'description': _('WIDGET_DESC_LOAN_TABLE')
-    },
-    'loan_evolution_chart': {
-        'title': _('Loan Balance Trend'), 'type': 'line', 'default_width': 12, 'default_height': 'medium',
-        'description': _('CHART_DESC_LOAN_EVOLUTION')
-    },
-    'real_estate_forecast_chart': {
-        'title': _('Real Estate Trend'), 'type': 'line', 'default_width': 6, 'default_height': 'small',
-        'description': _('CHART_DESC_REAL_ESTATE')
-    },
-    'physical_asset_forecast_chart': {
-        'title': _('Physical Assets Trend'), 'type': 'line', 'default_width': 6, 'default_height': 'small',
-        'description': _('CHART_DESC_PHYSICAL_ASSETS')
-    },
-    'liquid_pension_forecast_chart': {
-        'title': _('Liquidity & Pension'), 'type': 'line', 'default_width': 6, 'default_height': 'small',
-        'description': _('CHART_DESC_LIQUID_PENSION')
     },
 }
 
@@ -176,9 +175,23 @@ SUMMARY_WIDGETS = {
 
 DEFAULT_LAYOUT = [
     {'id': 'net_worth_chart', 'width': 12, 'height': 'medium', 'visible': True, 'order': 1, 'bg_color': '#ffffff', 'text_color': '#212529'},
-    {'id': 'cashflow_chart', 'width': 6, 'height': 'small', 'visible': True, 'order': 2, 'bg_color': '#ffffff', 'text_color': '#212529'},
-    {'id': 'income_evolution_chart', 'width': 12, 'height': 'medium', 'visible': True, 'order': 3, 'bg_color': '#ffffff', 'text_color': '#212529'},
-    {'id': 'expense_evolution_chart', 'width': 6, 'height': 'small', 'visible': True, 'order': 4, 'bg_color': '#ffffff', 'text_color': '#212529'},
+    {'id': 'income_evolution_chart', 'width': 12, 'height': 'medium', 'visible': True, 'order': 2, 'bg_color': '#ffffff', 'text_color': '#212529'},
+    {'id': 'cashflow_chart', 'width': 6, 'height': 'medium', 'visible': True, 'order': 3, 'bg_color': '#ffffff', 'text_color': '#212529'},
+    {'id': 'expense_evolution_chart', 'width': 6, 'height': 'medium', 'visible': True, 'order': 4, 'bg_color': '#ffffff', 'text_color': '#212529'},
+    {'id': 'inflation_monitor_chart', 'width': 6, 'height': 'medium', 'visible': True, 'order': 5, 'bg_color': '#ffffff', 'text_color': '#212529'},
+    {'id': 'budget_pie_chart', 'width': 6, 'height': 'medium', 'visible': True, 'order': 6, 'bg_color': '#ffffff', 'text_color': '#212529'},
+    {'id': 'asset_allocation_chart', 'width': 6, 'height': 'medium', 'visible': True, 'order': 7, 'bg_color': '#ffffff', 'text_color': '#212529'},
+    {'id': 'loan_evolution_chart', 'width': 6, 'height': 'medium', 'visible': True, 'order': 8, 'bg_color': '#ffffff', 'text_color': '#212529'},
+    {'id': 'real_estate_forecast_chart', 'width': 6, 'height': 'medium', 'visible': True, 'order': 9, 'bg_color': '#ffffff', 'text_color': '#212529'},
+    {'id': 'physical_asset_forecast_chart', 'width': 6, 'height': 'medium', 'visible': True, 'order': 10, 'bg_color': '#ffffff', 'text_color': '#212529'},
+    {'id': 'liquid_pension_forecast_chart', 'width': 6, 'height': 'medium', 'visible': True, 'order': 11, 'bg_color': '#ffffff', 'text_color': '#212529'},
+    {'id': 'upcoming_dates_widget', 'width': 12, 'height': 'small', 'visible': False, 'order': 12, 'bg_color': '#ffffff', 'text_color': '#212529'},
+    {'id': 'income_table_widget', 'width': 6, 'height': 'small', 'visible': False, 'order': 13, 'bg_color': '#ffffff', 'text_color': '#212529'},
+    {'id': 'expense_table_widget', 'width': 6, 'height': 'small', 'visible': False, 'order': 14, 'bg_color': '#ffffff', 'text_color': '#212529'},
+    {'id': 'asset_table_widget', 'width': 6, 'height': 'small', 'visible': False, 'order': 15, 'bg_color': '#ffffff', 'text_color': '#212529'},
+    {'id': 'pension_table_widget', 'width': 6, 'height': 'small', 'visible': False, 'order': 16, 'bg_color': '#ffffff', 'text_color': '#212529'},
+    {'id': 'event_table_widget', 'width': 6, 'height': 'small', 'visible': False, 'order': 17, 'bg_color': '#ffffff', 'text_color': '#212529'},
+    {'id': 'loan_table_widget', 'width': 6, 'height': 'small', 'visible': False, 'order': 18, 'bg_color': '#ffffff', 'text_color': '#212529'},
 ]
 
 @login_required
