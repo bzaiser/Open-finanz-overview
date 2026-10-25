@@ -87,9 +87,57 @@ def profile_view(request):
         'form': form
     })
 
+import json
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from .models import EditablePageContent
+
+def get_page_content_map(page_name, lang='de'):
+    qs = EditablePageContent.objects.filter(page=page_name, language=lang)
+    return {item.section_key: item.content for item in qs}
+
 @login_required
 def help_view(request):
-    return render(request, 'core/help.html')
+    lang = getattr(request, 'LANGUAGE_CODE', 'de')
+    content_map = get_page_content_map('help', lang)
+    if not content_map and lang != 'de':
+        content_map = get_page_content_map('help', 'de')
+    return render(request, 'core/help.html', {
+        'content_map': content_map,
+        'can_edit': request.user.is_superuser
+    })
 
 def about_view(request):
-    return render(request, 'core/about.html')
+    lang = getattr(request, 'LANGUAGE_CODE', 'de')
+    content_map = get_page_content_map('about', lang)
+    if not content_map and lang != 'de':
+        content_map = get_page_content_map('about', 'de')
+    return render(request, 'core/about.html', {
+        'content_map': content_map,
+        'can_edit': request.user.is_authenticated and request.user.is_superuser
+    })
+
+@login_required
+@require_POST
+def save_page_content(request):
+    if not request.user.is_superuser:
+        return JsonResponse({'status': 'error', 'message': 'Forbidden'}, status=403)
+    try:
+        data = json.loads(request.body)
+        page = data.get('page')
+        sections = data.get('sections', {})
+        lang = data.get('language') or getattr(request, 'LANGUAGE_CODE', 'de')
+        
+        if page not in ('help', 'about'):
+            return JsonResponse({'status': 'error', 'message': 'Invalid page'}, status=400)
+            
+        for key, val in sections.items():
+            EditablePageContent.objects.update_or_create(
+                page=page,
+                section_key=key,
+                language=lang,
+                defaults={'content': val.strip()}
+            )
+        return JsonResponse({'status': 'ok', 'saved_keys': list(sections.keys())})
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)

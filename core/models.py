@@ -97,3 +97,23 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return f"{self.user.username}'s Profile"
+
+
+class EditablePageContent(models.Model):
+    PAGE_CHOICES = [
+        ('help', _('Help')),
+        ('about', _('About')),
+    ]
+    page = models.CharField(_("Page"), max_length=20, choices=PAGE_CHOICES)
+    section_key = models.CharField(_("Section Key"), max_length=100)
+    language = models.CharField(_("Language"), max_length=10, default="de")
+    content = models.TextField(_("Content"), blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = _("Editable Page Content")
+        verbose_name_plural = _("Editable Page Contents")
+        unique_together = ('page', 'section_key', 'language')
+
+    def __str__(self):
+        return f"[{self.language}] {self.page} - {self.section_key}"

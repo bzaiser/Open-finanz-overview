@@ -44,3 +44,12 @@ class UserProfileAdmin(BaseOwnedModelAdmin):
         (_('Planning & Simulation'), {'fields': ('target_pension_payout', 'simulation_max_age', 'simulation_start_date', 'inflation_rate', 'salary_increase', 'pension_increase')}),
         (_('System'), {'fields': ('language', 'currency')}),
     )
+
+
+from .models import EditablePageContent
+
+@admin.register(EditablePageContent)
+class EditablePageContentAdmin(admin.ModelAdmin):
+    list_display = ('page', 'section_key', 'language', 'updated_at')
+    list_filter = ('page', 'language')
+    search_fields = ('section_key', 'content')

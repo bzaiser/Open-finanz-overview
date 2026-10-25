@@ -12,4 +12,5 @@ urlpatterns = [
     path('profile/toggle-night/', views.toggle_night_mode, name='toggle_night_mode'),
     path('help/', views.help_view, name='help'),
     path('about/', views.about_view, name='about'),
+    path('page-content/save/', views.save_page_content, name='save_page_content'),
 ]

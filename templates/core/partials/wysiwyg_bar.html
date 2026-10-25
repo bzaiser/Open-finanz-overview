@@ -1,0 +1,119 @@
+{% load i18n %}
+{% if can_edit %}
+<!-- Superuser WYSIWYG Editor Bar -->
+<div id="wysiwyg-top-bar" class="d-flex justify-content-end mb-3">
+    <button type="button" id="btn-toggle-edit" class="btn btn-outline-primary btn-sm rounded-pill shadow-sm px-3" onclick="toggleWysiwygEdit()">
+        <i class="bi bi-pencil-square me-1"></i> {% trans "Texte bearbeiten" %}
+    </button>
+</div>
+
+<div id="wysiwyg-floating-bar" class="position-fixed bottom-0 start-50 translate-middle-x mb-4 p-3 bg-dark text-white rounded-4 shadow-lg d-none align-items-center gap-3" style="z-index: 9999; border: 1px solid rgba(255,255,255,0.2); backdrop-filter: blur(10px);">
+    <span class="small fw-semibold"><i class="bi bi-pencil-fill text-warning me-1"></i> {% trans "Bearbeitungsmodus aktiv" %}</span>
+    <button type="button" class="btn btn-success btn-sm rounded-pill px-3 fw-bold" onclick="saveWysiwygChanges()">
+        <i class="bi bi-check-lg me-1"></i> {% trans "Speichern" %}
+    </button>
+    <button type="button" class="btn btn-outline-light btn-sm rounded-pill px-3" onclick="cancelWysiwygEdit()">
+        <i class="bi bi-x-lg me-1"></i> {% trans "Abbrechen" %}
+    </button>
+</div>
+
+<style>
+    .wysiwyg-editing {
+        outline: 2px dashed #0d6efd !important;
+        outline-offset: 4px;
+        background-color: rgba(13, 110, 253, 0.05);
+        border-radius: 6px;
+        cursor: text;
+    }
+</style>
+
+<script>
+    let isEditingActive = false;
+    const originalContents = {};
+
+    function toggleWysiwygEdit() {
+        isEditingActive = !isEditingActive;
+        const editables = document.querySelectorAll('[data-editable-key]');
+        const floatingBar = document.getElementById('wysiwyg-floating-bar');
+        const toggleBtn = document.getElementById('btn-toggle-edit');
+
+        if (isEditingActive) {
+            editables.forEach(el => {
+                const key = el.getAttribute('data-editable-key');
+                originalContents[key] = el.innerHTML;
+                el.contentEditable = "true";
+                el.classList.add('wysiwyg-editing');
+            });
+            floatingBar.classList.remove('d-none');
+            floatingBar.classList.add('d-flex');
+            toggleBtn.classList.add('d-none');
+        } else {
+            cancelWysiwygEdit();
+        }
+    }
+
+    function cancelWysiwygEdit() {
+        isEditingActive = false;
+        const editables = document.querySelectorAll('[data-editable-key]');
+        const floatingBar = document.getElementById('wysiwyg-floating-bar');
+        const toggleBtn = document.getElementById('btn-toggle-edit');
+
+        editables.forEach(el => {
+            const key = el.getAttribute('data-editable-key');
+            if (originalContents[key] !== undefined) {
+                el.innerHTML = originalContents[key];
+            }
+            el.contentEditable = "false";
+            el.classList.remove('wysiwyg-editing');
+        });
+
+        floatingBar.classList.remove('d-flex');
+        floatingBar.classList.add('d-none');
+        toggleBtn.classList.remove('d-none');
+    }
+
+    async function saveWysiwygChanges() {
+        const editables = document.querySelectorAll('[data-editable-key]');
+        const pageName = '{{ page_name }}';
+        const sections = {};
+
+        editables.forEach(el => {
+            const key = el.getAttribute('data-editable-key');
+            sections[key] = el.innerHTML.trim();
+        });
+
+        try {
+            const res = await fetch("{% url 'save_page_content' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: JSON.stringify({
+                    page: pageName,
+                    sections: sections,
+                    language: "{{ request.LANGUAGE_CODE|default:'de' }}"
+                })
+            });
+
+            if (res.ok) {
+                editables.forEach(el => {
+                    const key = el.getAttribute('data-editable-key');
+                    originalContents[key] = el.innerHTML;
+                    el.contentEditable = "false";
+                    el.classList.remove('wysiwyg-editing');
+                });
+                document.getElementById('wysiwyg-floating-bar').classList.remove('d-flex');
+                document.getElementById('wysiwyg-floating-bar').classList.add('d-none');
+                document.getElementById('btn-toggle-edit').classList.remove('d-none');
+                isEditingActive = false;
+                alert("{% trans 'Texte erfolgreich gespeichert! Sage mir im Chat bescheid, um sie in alle Sprachen zu übersetzen.' %}");
+            } else {
+                alert("{% trans 'Fehler beim Speichern der Texte.' %}");
+            }
+        } catch (e) {
+            alert("{% trans 'Netzwerkfehler beim Speichern.' %}");
+        }
+    }
+</script>
+{% endif %}

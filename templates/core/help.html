@@ -5,13 +5,12 @@
 
 {% block content %}
 <div class="container py-4">
+    {% include 'core/partials/wysiwyg_bar.html' with page_name='help' %}
     <!-- Header -->
     <div class="row mb-5">
         <div class="col-12 text-center">
-            <h1 class="display-4 fw-bold mb-3">{% trans "Hilfe, Anleitungen & Finanz-Mathematik" %}</h1>
-            <p class="lead text-muted mx-auto" style="max-width: 800px;">
-                {% trans "Hier findest du verständliche Erklärungen zu allen Funktionen, den mathematischen Berechnungen im Hintergrund, dem Einrichtungs-Wizard sowie zur Verwaltung deiner historischen Stichtage." %}
-            </p>
+            <h1 class="display-4 fw-bold mb-3" data-editable-key="help_text_1">{{ content_map.help_text_1|default:_('Hilfe, Anleitungen & Finanz-Mathematik')|safe }}</h1>
+            <p class="lead text-muted mx-auto" style="max-width: 800px;" data-editable-key="help_text_2">{{ content_map.help_text_2|default:_('Hier findest du verständliche Erklärungen zu allen Funktionen, den mathematischen Berechnungen im Hintergrund, dem Einrichtungs-Wizard sowie zur Verwaltung deiner historischen Stichtage.')|safe }}</p>
     <!-- Quickstart / How to start Section -->
     <div class="row mb-5">
         <div class="col-12">
@@ -22,8 +21,8 @@
                             <i class="bi bi-rocket-takeoff"></i>
                         </div>
                         <div>
-                            <h2 class="h3 fw-bold mb-0">{% trans "Schnelleinstieg – In 4 Schritten zum Finanzplan" %}</h2>
-                            <p class="text-muted small mb-0">{% trans "Der schnellste Weg zu deiner persönlichen Vorsorge-Übersicht" %}</p>
+                            <h2 class="h3 fw-bold mb-0" data-editable-key="help_text_3">{{ content_map.help_text_3|default:_('Schnelleinstieg – In 4 Schritten zum Finanzplan')|safe }}</h2>
+                            <p class="text-muted small mb-0" data-editable-key="help_text_4">{{ content_map.help_text_4|default:_('Der schnellste Weg zu deiner persönlichen Vorsorge-Übersicht')|safe }}</p>
                         </div>
                     </div>
 
@@ -32,7 +31,7 @@
                         <div class="col-md-6 col-lg-3">
                             <div class="p-3 rounded-4 bg-body border h-100 shadow-sm">
                                 <div class="badge bg-primary rounded-pill mb-2 px-3 py-1">{% trans "Schritt 1" %}</div>
-                                <h5 class="fw-bold fs-6">{% trans "Profil & Haushalt anlegen" %}</h5>
+                                <h5 class="fw-bold fs-6" data-editable-key="help_text_5">{{ content_map.help_text_5|default:_('Profil & Haushalt anlegen')|safe }}</h5>
                                 <p class="small text-muted mb-0">{% trans "Gehe im Menü auf 'Einstellungen'. Lege fest, ob du Einzelperson oder ein Paar bist, und trage Geburtsdaten sowie Ziel-Renteneintrittsalter ein." %}</p>
                             </div>
                         </div>
@@ -40,7 +39,7 @@
                         <div class="col-md-6 col-lg-3">
                             <div class="p-3 rounded-4 bg-body border h-100 shadow-sm">
                                 <div class="badge bg-info text-white rounded-pill mb-2 px-3 py-1">{% trans "Schritt 2" %}</div>
-                                <h5 class="fw-bold fs-6">{% trans "Wizard starten" %}</h5>
+                                <h5 class="fw-bold fs-6" data-editable-key="help_text_6">{{ content_map.help_text_6|default:_('Wizard starten')|safe }}</h5>
                                 <p class="small text-muted mb-0">{% trans "Klicke im Bereich Vorsorge auf '🪄 Standmitteilung / Wizard'. Trage deine DRV-Rentenpunkte, Betriebsrenten und Sparverträge einfach ein." %}</p>
                             </div>
                         </div>
@@ -48,7 +47,7 @@
                         <div class="col-md-6 col-lg-3">
                             <div class="p-3 rounded-4 bg-body border h-100 shadow-sm">
                                 <div class="badge bg-warning text-dark rounded-pill mb-2 px-3 py-1">{% trans "Schritt 3" %}</div>
-                                <h5 class="fw-bold fs-6">{% trans "Einnahmen & Ausgaben" %}</h5>
+                                <h5 class="fw-bold fs-6" data-editable-key="help_text_7">{{ content_map.help_text_7|default:_('Einnahmen & Ausgaben')|safe }}</h5>
                                 <p class="small text-muted mb-0">{% trans "Erfasse im Wizard oder im Menü 'Einnahmen / Ausgaben' deine regelmäßigen Monatsströme (Gehalt, Miete, Lebenshaltung)." %}</p>
                             </div>
                         </div>
@@ -56,7 +55,7 @@
                         <div class="col-md-6 col-lg-3">
                             <div class="p-3 rounded-4 bg-body border h-100 shadow-sm">
                                 <div class="badge bg-success rounded-pill mb-2 px-3 py-1">{% trans "Schritt 4" %}</div>
-                                <h5 class="fw-bold fs-6">{% trans "Dashboard & Stichtag" %}</h5>
+                                <h5 class="fw-bold fs-6" data-editable-key="help_text_8">{{ content_map.help_text_8|default:_('Dashboard & Stichtag')|safe }}</h5>
                                 <p class="small text-muted mb-0">{% trans "Betrachte deine 30-Jahre-Finanzkurve im Dashboard. Verschiebe den 'Stichtag' in die Zukunft, um deine Kaufkraft im Ruhestand zu prüfen." %}</p>
                             </div>
                         </div>
@@ -76,11 +75,9 @@
                         <div class="bg-primary bg-opacity-10 text-primary rounded-3 p-3 me-3">
                             <i class="bi bi-magic fs-3"></i>
                         </div>
-                        <h3 class="h5 mb-0 fw-bold">{% trans "Standmitteilungs-Wizard" %}</h3>
+                        <h3 class="h5 mb-0 fw-bold" data-editable-key="help_text_9">{{ content_map.help_text_9|default:_('Standmitteilungs-Wizard')|safe }}</h3>
                     </div>
-                    <p class="text-muted small mb-4 flex-grow-1">
-                        {% trans "Schritt-für-Schritt Anleitung zur Eingabe von DRV-Renteninformationen (Entgeltpunkte, Rentenwert) und privaten Vorsorge-Dokumenten ohne Datenverlust." %}
-                    </p>
+                    <p class="text-muted small mb-4 flex-grow-1" data-editable-key="help_text_10">{{ content_map.help_text_10|default:_('Schritt-für-Schritt Anleitung zur Eingabe von DRV-Renteninformationen (Entgeltpunkte, Rentenwert) und privaten Vorsorge-Dokumenten ohne Datenverlust.')|safe }}</p>
                     <button class="btn btn-primary w-100 rounded-pill" data-bs-toggle="modal" data-bs-target="#wizardHelpModal">{% trans "Anleitung lesen" %}</button>
                 </div>
             </div>
@@ -94,11 +91,9 @@
                         <div class="bg-info bg-opacity-10 text-info rounded-3 p-3 me-3">
                             <i class="bi bi-clock-history fs-3"></i>
                         </div>
-                        <h3 class="h5 mb-0 fw-bold">{% trans "Historische Stichtage" %}</h3>
+                        <h3 class="h5 mb-0 fw-bold" data-editable-key="help_text_11">{{ content_map.help_text_11|default:_('Historische Stichtage')|safe }}</h3>
                     </div>
-                    <p class="text-muted small mb-4 flex-grow-1">
-                        {% trans "Erfahre, wie der Verlauf deines Vermögens und deiner Entgeltpunkte über Jahre hinweg aufgezeichnet, geschützt und in Diagrammen dargestellt wird." %}
-                    </p>
+                    <p class="text-muted small mb-4 flex-grow-1" data-editable-key="help_text_12">{{ content_map.help_text_12|default:_('Erfahre, wie der Verlauf deines Vermögens und deiner Entgeltpunkte über Jahre hinweg aufgezeichnet, geschützt und in Diagrammen dargestellt wird.')|safe }}</p>
                     <button class="btn btn-info text-white w-100 rounded-pill" data-bs-toggle="modal" data-bs-target="#snapshotHelpModal">{% trans "Stichtage verstehen" %}</button>
                 </div>
             </div>
@@ -112,11 +107,9 @@
                         <div class="bg-warning bg-opacity-10 text-warning rounded-3 p-3 me-3">
                             <i class="bi bi-calculator fs-3"></i>
                         </div>
-                        <h3 class="h5 mb-0 fw-bold">{% trans "Berechnungen & Inflation" %}</h3>
+                        <h3 class="h5 mb-0 fw-bold" data-editable-key="help_text_13">{{ content_map.help_text_13|default:_('Berechnungen & Inflation')|safe }}</h3>
                     </div>
-                    <p class="text-muted small mb-4 flex-grow-1">
-                        {% trans "Wie funktioniert die Kaufkraft-Berechnung? Unterschied zwischen nominalem und realem Vermögen, Abzüge für KV/PV und Rentenanpassung." %}
-                    </p>
+                    <p class="text-muted small mb-4 flex-grow-1" data-editable-key="help_text_14">{{ content_map.help_text_14|default:_('Wie funktioniert die Kaufkraft-Berechnung? Unterschied zwischen nominalem und realem Vermögen, Abzüge für KV/PV und Rentenanpassung.')|safe }}</p>
                     <button class="btn btn-warning w-100 rounded-pill" data-bs-toggle="modal" data-bs-target="#calcHelpModal">{% trans "Formeln & Beispiele" %}</button>
                 </div>
             </div>
@@ -142,7 +135,7 @@
                             </h2>
                             <div id="faqRente" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
                                 <div class="accordion-body px-4 pb-4 text-muted">
-                                    <p>{% trans "Die monatliche Brutto-Rente berechnet sich aus der Formel:" %}</p>
+                                    <p data-editable-key="help_text_15">{{ content_map.help_text_15|default:_('Die monatliche Brutto-Rente berechnet sich aus der Formel:')|safe }}</p>
                                     <div class="alert alert-primary bg-opacity-10 border-primary text-dark font-monospace mb-3">
                                         <strong>{% trans "Bruttorente (€)" %} = {% trans "Entgeltpunkte (EP)" %} × {% trans "Aktueller Rentenwert (€)" %}</strong>
                                     </div>
@@ -150,7 +143,7 @@
                                     <p class="font-monospace text-dark ms-3">65,20 EP × 39,32 € = 2.563,66 € {% trans "Bruttorente pro Monat" %}</p>
                                     <hr>
                                     <p><strong>{% trans "Abzug für Kranken- und Pflegeversicherung (KV/PV):" %}</strong></p>
-                                    <p>{% trans "Von der Bruttorente werden ca. 11,5 % für Kranken- und Pflegeversicherung abgezogen (ca. 7,3 % KV + 4,0 % PV abzüglich Bundeszuschuss). Die verbleibende Nettorente vor Steuern beträgt im Beispiel ca. 2.268,84 €." %}</p>
+                                    <p data-editable-key="help_text_16">{{ content_map.help_text_16|default:_('Von der Bruttorente werden ca. 11,5 % für Kranken- und Pflegeversicherung abgezogen (ca. 7,3 % KV + 4,0 % PV abzüglich Bundeszuschuss). Die verbleibende Nettorente vor Steuern beträgt im Beispiel ca. 2.268,84 €.')|safe }}</p>
                                 </div>
                             </div>
                         </div>
@@ -170,7 +163,7 @@
                                         <strong>{% trans "Realer Wert (€)" %} = {% trans "Nominaler Wert" %} / (1 + {% trans "Inflationsrate" %})^{% trans "Jahre" %}</strong>
                                     </div>
                                     <p><strong>{% trans "Rechenbeispiel bei 2,0 % Inflation:" %}</strong></p>
-                                    <p>{% trans "Wenn du in 20 Jahren 4.000 € monatliche Rente erhältst, entspricht deren Kaufkraft bei 2 % jährlicher Inflation heute ca. 2.691,92 €." %}</p>
+                                    <p data-editable-key="help_text_17">{{ content_map.help_text_17|default:_('Wenn du in 20 Jahren 4.000 € monatliche Rente erhältst, entspricht deren Kaufkraft bei 2 % jährlicher Inflation heute ca. 2.691,92 €.')|safe }}</p>
                                 </div>
                             </div>
                         </div>
@@ -184,7 +177,7 @@
                             </h2>
                             <div id="faqRentenverlauf" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
                                 <div class="accordion-body px-4 pb-4 text-muted">
-                                    <p>{% trans "Die gesetzliche Rente fällt im Diagramm vor deinem Renteneintritt nicht auf 0 € ab. Stattdessen bildet das System den kontinuierlichen Erwerbsverlauf ab:" %}</p>
+                                    <p data-editable-key="help_text_18">{{ content_map.help_text_18|default:_('Die gesetzliche Rente fällt im Diagramm vor deinem Renteneintritt nicht auf 0 € ab. Stattdessen bildet das System den kontinuierlichen Erwerbsverlauf ab:')|safe }}</p>
                                     <ul>
                                         <li><strong>{% trans "Bis zum Renteneintritt:" %}</strong> {% trans "Der angegebene Monatswert entwickelt sich durch jährliche Dynamisierung (z. B. +1,5 % Rentenanpassung) kontinuierlich weiter bis zum Starttermin." %}</li>
                                         <li><strong>{% trans "Ab dem Renteneintritt:" %}</strong> {% trans "Der gesetzliche Rentenanspruch schaltet von der Ansparphase nahtlos in die Auszahlungsphase um." %}</li>
@@ -202,7 +195,7 @@
                             </h2>
                             <div id="faqStichtagsSchutz" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
                                 <div class="accordion-body px-4 pb-4 text-muted">
-                                    <p>{% trans "Um deinen aktuellen Vertragsstand zu schützen, nutzt die Anwendung eine intelligente Datums-Logik:" %}</p>
+                                    <p data-editable-key="help_text_19">{{ content_map.help_text_19|default:_('Um deinen aktuellen Vertragsstand zu schützen, nutzt die Anwendung eine intelligente Datums-Logik:')|safe }}</p>
                                     <ul>
                                         <li><strong>{% trans "Neueres Datum als bisher:" %}</strong> {% trans "Wenn du eine Renteninformation mit einem neueren Datum eingibst (z. B. Stand 2026 statt 2024), wird dein Hauptvertrag auf die neuen Werte aktualisiert und der alte Stand als historischer Snapshot gesichert." %}</li>
                                         <li><strong>{% trans "Älteres Datum als bisher:" %}</strong> {% trans "Trägst du nachträglich ein altes Dokument von 2022 ein, bleibt dein Hauptvertrag von 2026 unberührt. Das System fügt den Wert von 2022 lediglich als historischen Stichtag in deine Chronik ein." %}</li>
@@ -220,25 +213,25 @@
                             </h2>
                             <div id="faqPayoutTypes" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
                                 <div class="accordion-body px-4 pb-4 text-muted">
-                                    <p>{% trans "Bei privaten Rentenversicherungen, vermögensbildenden Policen und betrieblicher Altersvorsorge (bAV) stehen dir 3 Auszahlungsmodelle zur Verfügung:" %}</p>
+                                    <p data-editable-key="help_text_20">{{ content_map.help_text_20|default:_('Bei privaten Rentenversicherungen, vermögensbildenden Policen und betrieblicher Altersvorsorge (bAV) stehen dir 3 Auszahlungsmodelle zur Verfügung:')|safe }}</p>
                                     
                                     <div class="row g-3 mb-3">
                                         <div class="col-md-4">
                                             <div class="p-3 rounded-3 bg-body border h-100">
                                                 <div class="fw-bold text-primary mb-1"><i class="bi bi-graph-down-arrow me-1"></i> {% trans "1. Monatlicher Auszahlungsplan (Kapitalverzehr)" %}</div>
-                                                <p class="small mb-0">{% trans "Typisch für Vermögenspolicen (z. B. 200.000 € Kapital mit 500 € monatlicher Auszahlung). Der Monatsbetrag fließt in dein laufendes Einkommen / Cashflow ein, während das Restkapital im Vertrag mit jeder Entnahme sinkt und weiter verzinst wird." %}</p>
+                                                <p class="small mb-0" data-editable-key="help_text_21">{{ content_map.help_text_21|default:_('Typisch für Vermögenspolicen (z. B. 200.000 € Kapital mit 500 € monatlicher Auszahlung). Der Monatsbetrag fließt in dein laufendes Einkommen / Cashflow ein, während das Restkapital im Vertrag mit jeder Entnahme sinkt und weiter verzinst wird.')|safe }}</p>
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="p-3 rounded-3 bg-body border h-100">
                                                 <div class="fw-bold text-success mb-1"><i class="bi bi-infinity me-1"></i> {% trans "2. Laufende Rente (Lebenslang garantiert)" %}</div>
-                                                <p class="small mb-0">{% trans "Klassische Verrentung: Die Monatsrente wird bis an dein Lebensende ausgezahlt. Das anfängliche Vertragskapital wird rechnerisch nicht verzehrt, da die Versicherung das Langlebigkeitsrisiko trägt." %}</p>
+                                                <p class="small mb-0" data-editable-key="help_text_22">{{ content_map.help_text_22|default:_('Klassische Verrentung: Die Monatsrente wird bis an dein Lebensende ausgezahlt. Das anfängliche Vertragskapital wird rechnerisch nicht verzehrt, da die Versicherung das Langlebigkeitsrisiko trägt.')|safe }}</p>
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="p-3 rounded-3 bg-body border h-100">
                                                 <div class="fw-bold text-warning mb-1"><i class="bi bi-cash-stack me-1"></i> {% trans "3. Einmalige Kapitalabfindung (z. B. bAV)" %}</div>
-                                                <p class="small mb-0">{% trans "Gesamtauszahlung auf einen Schlag: Das Kapital wächst bis zum Stichtag und wird am Auszahlungstag <strong>vollautomatisch in dein Barvermögen</strong> überführt. Der Vorsorgevertrag steht ab diesem Tag auf 0 €." %}</p>
+                                                <p class="small mb-0" data-editable-key="help_text_23">{{ content_map.help_text_23|default:_('Gesamtauszahlung auf einen Schlag: Das Kapital wächst bis zum Stichtag und wird am Auszahlungstag <strong>vollautomatisch in dein Barvermögen</strong> überführt. Der Vorsorgevertrag steht ab diesem Tag auf 0 €.')|safe }}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -255,7 +248,7 @@
                             </h2>
                             <div id="faqBavEinmalkapital" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
                                 <div class="accordion-body px-4 pb-4 text-muted">
-                                    <p>{% trans "Wenn du eine betriebliche Altersvorsorge (bAV / Direktversicherung) nicht als monatliche Rente, sondern als Einmalkapital ausgezahlt bekommst, lässt sich das über das Zusammenspiel von Vorsorgevertrag, Einmalzahlung und Ausgaben exakt und realistisch abbilden:" %}</p>
+                                    <p data-editable-key="help_text_24">{{ content_map.help_text_24|default:_('Wenn du eine betriebliche Altersvorsorge (bAV / Direktversicherung) nicht als monatliche Rente, sondern als Einmalkapital ausgezahlt bekommst, lässt sich das über das Zusammenspiel von Vorsorgevertrag, Einmalzahlung und Ausgaben exakt und realistisch abbilden:')|safe }}</p>
                                     
                                     <div class="row g-3 mb-3">
                                         <div class="col-md-6">
@@ -319,7 +312,7 @@
                             </h2>
                             <div id="faqCashflowProgression" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
                                 <div class="accordion-body px-4 pb-4 text-muted">
-                                    <p>{% trans "Alle Zahlungsströme werden über den gesamten Simulationszeitraum intelligent berechnet:" %}</p>
+                                    <p data-editable-key="help_text_25">{{ content_map.help_text_25|default:_('Alle Zahlungsströme werden über den gesamten Simulationszeitraum intelligent berechnet:')|safe }}</p>
                                     <ul>
                                         <li><strong>{% trans "Gehalt & Einkommen:" %}</strong> {% trans "Gehälter wachsen jährlich mit deiner individuellen Gehaltssteigerungsrate (z. B. +2,0 % p.a.) und enden automatisch mit Erreichen deines gesetzlichen Rentenalters." %}</li>
                                         <li><strong>{% trans "Lebenshaltungskosten & Ausgaben:" %}</strong> {% trans "Ausgaben passen sich kontinuierlich an die Inflationsrate an, um deinen tatsächlichen Lebensstandard im Alter realistisch abzubilden." %}</li>
@@ -338,7 +331,7 @@
                             </h2>
                             <div id="faqChartIcons" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
                                 <div class="accordion-body px-4 pb-4 text-muted">
-                                    <p>{% trans "Die interaktiven Diagramme bieten durch visuelle Icons direkt im Chart zusätzliche Transparenz:" %}</p>
+                                    <p data-editable-key="help_text_26">{{ content_map.help_text_26|default:_('Die interaktiven Diagramme bieten durch visuelle Icons direkt im Chart zusätzliche Transparenz:')|safe }}</p>
                                     <ul>
                                         <li><strong>{% trans "Info-Icons (ℹ️):" %}</strong> {% trans "Klicke auf die kleinen Info-Buttons in den Kurven, um genaue Details zu Formeln, Stichtagswerten und Berechnungsgrundlagen an diesem konkreten Punkt zu lesen." %}</li>
                                         <li><strong>{% trans "Simulations-Aktiv-Status:" %}</strong> {% trans "Zeigt dir an, ob dein Schieberegler auf dem heutigen Datum steht oder ob du gerade eine Reise in ein zukünftiges Simulationsjahr machst." %}</li>
@@ -357,9 +350,9 @@
                             </h2>
                             <div id="faqLanguages" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
                                 <div class="accordion-body px-4 pb-4 text-muted">
-                                    <p>{% trans "Die Anwendung unterstützt 5 Sprachen vollumfänglich:" %}</p>
+                                    <p data-editable-key="help_text_27">{{ content_map.help_text_27|default:_('Die Anwendung unterstützt 5 Sprachen vollumfänglich:')|safe }}</p>
                                     <p class="mb-2">🇩🇪 <strong>Deutsch</strong> | 🇬🇧 <strong>Englisch</strong> | 🇫🇷 <strong>Französisch</strong> | 🇪🇸 <strong>Spanisch</strong> | 🇮🇹 <strong>Italienisch</strong></p>
-                                    <p>{% trans "Du kannst deine bevorzugte Sprache im Benutzerprofil festlegen. Das gesamte Interface, Berichte und Hilfe-Texte passen sich augenblicklich an." %}</p>
+                                    <p data-editable-key="help_text_28">{{ content_map.help_text_28|default:_('Du kannst deine bevorzugte Sprache im Benutzerprofil festlegen. Das gesamte Interface, Berichte und Hilfe-Texte passen sich augenblicklich an.')|safe }}</p>
                                 </div>
                             </div>
                         </div>
@@ -399,7 +392,7 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body p-4">
-                <h6 class="fw-bold text-primary mb-3">{% trans "Schritt-für-Schritt Einrichtung" %}</h6>
+                <h6 class="fw-bold text-primary mb-3" data-editable-key="help_text_29">{{ content_map.help_text_29|default:_('Schritt-für-Schritt Einrichtung')|safe }}</h6>
                 <ol class="small text-muted mb-4">
                     <li class="mb-2"><strong>{% trans "Haushalt & Personen:" %}</strong> {% trans "Wähle zwischen Einzelperson oder Paar/Ehepaar und gib die Geburtsdaten sowie das geplante Renteneintrittsalter beider Personen ein." %}</li>
                     <li class="mb-2"><strong>{% trans "Gesetzliche Rentenmitteilungen (DRV):" %}</strong> {% trans "Trage die Entgeltpunkte (EP), den aktuellen Rentenwert (z. B. 39,32 €) und den Stichtag 'Stand vom' aus deinem Brief der Deutschen Rentenversicherung ein." %}</li>
@@ -423,18 +416,18 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body p-4">
-                <p class="small text-muted">{% trans "Jedes Mal, wenn du eine neue Standmitteilung oder ein Update zu deinen Verträgen erhältst, kannst du dafür einen historischen Stichtag anlegen." %}</p>
+                <p class="small text-muted" data-editable-key="help_text_30">{{ content_map.help_text_30|default:_('Jedes Mal, wenn du eine neue Standmitteilung oder ein Update zu deinen Verträgen erhältst, kannst du dafür einen historischen Stichtag anlegen.')|safe }}</p>
                 <div class="row g-3 my-2">
                     <div class="col-md-6">
                         <div class="p-3 rounded-3 bg-light border">
-                            <h6 class="fw-bold text-info mb-1">{% trans "Stichtag bearbeiten (✏️)" %}</h6>
-                            <p class="small text-muted mb-0">{% trans "Über den Stift-Button in der Stichtags-Tabelle kannst du falsche Eingaben jederzeit nachträglich korrigieren." %}</p>
+                            <h6 class="fw-bold text-info mb-1" data-editable-key="help_text_31">{{ content_map.help_text_31|default:_('Stichtag bearbeiten (✏️)')|safe }}</h6>
+                            <p class="small text-muted mb-0" data-editable-key="help_text_32">{{ content_map.help_text_32|default:_('Über den Stift-Button in der Stichtags-Tabelle kannst du falsche Eingaben jederzeit nachträglich korrigieren.')|safe }}</p>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="p-3 rounded-3 bg-light border">
-                            <h6 class="fw-bold text-danger mb-1">{% trans "Stichtag löschen (🗑️)" %}</h6>
-                            <p class="small text-muted mb-0">{% trans "Fehlerhafte oder doppelte Stichtage lassen sich mit einem Klick löschen." %}</p>
+                            <h6 class="fw-bold text-danger mb-1" data-editable-key="help_text_33">{{ content_map.help_text_33|default:_('Stichtag löschen (🗑️)')|safe }}</h6>
+                            <p class="small text-muted mb-0" data-editable-key="help_text_34">{{ content_map.help_text_34|default:_('Fehlerhafte oder doppelte Stichtage lassen sich mit einem Klick löschen.')|safe }}</p>
                         </div>
                     </div>
                 </div>
@@ -452,7 +445,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body p-4">
-                <h6 class="fw-bold mb-3">{% trans "Formeln der Finanz-Simulation:" %}</h6>
+                <h6 class="fw-bold mb-3" data-editable-key="help_text_35">{{ content_map.help_text_35|default:_('Formeln der Finanz-Simulation:')|safe }}</h6>
                 <ul class="small text-muted mb-4">
                     <li class="mb-2"><strong>{% trans "Zinseszins Vermögen:" %}</strong> <span class="font-monospace text-dark">{% trans "Vermögen" %} = {% trans "Startkapital" %} × (1 + {% trans "Rendite" %})^{% trans "Jahre" %}</span></li>
                     <li class="mb-2"><strong>{% trans "Nettorente gesetzlich:" %}</strong> <span class="font-monospace text-dark">{% trans "Netto" %} = ({% trans "EP" %} × {% trans "Rentenwert" %}) × (1 - 0.115)</span></li>

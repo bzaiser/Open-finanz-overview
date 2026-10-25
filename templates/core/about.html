@@ -4,15 +4,19 @@
 {% block title %}{% trans 'About' %} - Finanzplan{% endblock %}
 
 {% block content %}
-<div class="container py-5">
+<div class="container py-4">
+    {% include 'core/partials/wysiwyg_bar.html' with page_name='about' %}
+
     <div class="row align-items-center g-5">
         <div class="col-lg-6">
-            <h1 class="display-3 fw-bold text-primary mb-4">{% trans 'About the Project' %}</h1>
-            <p class="lead text-muted mb-4">
-                {% trans 'Welcome to your personal financial cockpit. This platform is designed to give you a clear and realistic look at your long-term financial future.' %}
+            <h1 class="display-3 fw-bold text-primary mb-4" data-editable-key="about_title">
+                {{ content_map.about_title|default:_('About the Project')|safe }}
+            </h1>
+            <p class="lead text-muted mb-4" data-editable-key="about_lead">
+                {{ content_map.about_lead|default:_('Welcome to your personal financial cockpit. This platform is designed to give you a clear and realistic look at your long-term financial future.')|safe }}
             </p>
-            <p class="text-secondary mb-5">
-                {% trans 'Our goal is to demystify complex financial planning by offering simple, visual, and highly customizable tools to help you reach your goals.' %}
+            <p class="text-secondary mb-5" data-editable-key="about_goal">
+                {{ content_map.about_goal|default:_('Our goal is to demystify complex financial planning by offering simple, visual, and highly customizable tools to help you reach your goals.')|safe }}
             </p>
             
             <div class="d-flex align-items-start gap-4 mb-4">
@@ -20,8 +24,12 @@
                     <i class="bi bi-shield-check fs-2 text-primary"></i>
                 </div>
                 <div>
-                    <h4 class="h5 mb-1">{% trans 'Personal Data Security' %}</h4>
-                    <p class="text-muted small mb-0">{% trans 'Your data is only stored in your personal database and is not shared with third parties.' %}</p>
+                    <h4 class="h5 mb-1" data-editable-key="about_sec_title">
+                        {{ content_map.about_sec_title|default:_('Personal Data Security')|safe }}
+                    </h4>
+                    <p class="text-muted small mb-0" data-editable-key="about_sec_text">
+                        {{ content_map.about_sec_text|default:_('Your data is only stored in your personal database and is not shared with third parties.')|safe }}
+                    </p>
                 </div>
             </div>
 
@@ -30,8 +38,12 @@
                     <i class="bi bi-cpu fs-2 text-info"></i>
                 </div>
                 <div>
-                    <h4 class="h5 mb-1">{% trans 'Advanced Simulation' %}</h4>
-                    <p class="text-muted small mb-0">{% trans 'We use high-precision calculations for inflation and compound interest over a 30-year period.' %}</p>
+                    <h4 class="h5 mb-1" data-editable-key="about_sim_title">
+                        {{ content_map.about_sim_title|default:_('Advanced Simulation')|safe }}
+                    </h4>
+                    <p class="text-muted small mb-0" data-editable-key="about_sim_text">
+                        {{ content_map.about_sim_text|default:_('We use high-precision calculations for inflation and compound interest over a 30-year period.')|safe }}
+                    </p>
                 </div>
             </div>
 
@@ -40,9 +52,11 @@
                     <i class="bi bi-magic fs-2 text-warning"></i>
                 </div>
                 <div>
-                    <h4 class="h5 mb-1">{% trans 'Development & AI-Assistance' %}</h4>
-                    <p class="text-muted small mb-0">
-                        {% trans 'Created via Vibe Coding using Google Antigravity. Simulations and calculations serve informational purposes only and do not constitute financial advice.' %}
+                    <h4 class="h5 mb-1" data-editable-key="about_dev_title">
+                        {{ content_map.about_dev_title|default:_('Development & AI-Assistance')|safe }}
+                    </h4>
+                    <p class="text-muted small mb-0" data-editable-key="about_dev_text">
+                        {{ content_map.about_dev_text|default:_('Created via Vibe Coding using Google Antigravity. Simulations and calculations serve informational purposes only and do not constitute financial advice.')|safe }}
                     </p>
                 </div>
             </div>
@@ -55,11 +69,15 @@
                         <div class="rounded-circle bg-primary mx-auto mb-3" style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem;">
                             B
                         </div>
-                        <h2 class="h4 fw-bold">Bernd Zaiser</h2>
-                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 rounded-pill">{% trans 'Lead Developer & Architect' %}</span>
+                        <h2 class="h4 fw-bold" data-editable-key="about_author_name">
+                            {{ content_map.about_author_name|default:'Bernd Zaiser'|safe }}
+                        </h2>
+                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 rounded-pill" data-editable-key="about_author_role">
+                            {{ content_map.about_author_role|default:_('Lead Developer & Architect')|safe }}
+                        </span>
                     </div>
-                    <p class="text-muted small mb-4 px-3">
-                        {% trans 'Financial Independence is a goal for many, but for most it remains just a dream. My passion is to create tools that turn those dreams into actionable plans.' %}
+                    <p class="text-muted small mb-4 px-3" data-editable-key="about_quote">
+                        {{ content_map.about_quote|default:_('Financial Independence is a goal for many, but for most it remains just a dream. My passion is to create tools that turn those dreams into actionable plans.')|safe }}
                     </p>
                     <div class="d-flex justify-content-center gap-3 mb-3">
                         <a href="https://github.com/bzaiser/Open-finanz-overview" target="_blank" class="btn btn-light btn-sm rounded-circle" title="GitHub"><i class="bi bi-github"></i></a>
