@@ -170,7 +170,7 @@ if __name__ == '__main__':
         window = webview.create_window(
             "Finanzplan Desktop",
             html=SPLASH_HTML,
-            width=1300,
+            width=1350,
             height=850,
             min_size=(900, 600),
             text_select=True
