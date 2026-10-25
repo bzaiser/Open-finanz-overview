@@ -85,7 +85,7 @@
                     </div>
                     <input type="range" class="form-range" min="0" max="10" step="0.1" 
                            id="range_inflation_rate" name="inflation_rate" 
-                           value="{{ simulation_params.inflation_rate|floatformat:2 }}"
+                           value="{{ simulation_params.inflation_rate|stringformat:'.2f' }}"
                            oninput="document.getElementById('val_inflation_rate').textContent = parseFloat(this.value).toFixed(2) + '%'">
                     <div class="d-flex justify-content-between text-muted" style="font-size: 0.65rem;">
                         <span>0%</span>
@@ -106,7 +106,7 @@
                     </div>
                     <input type="range" class="form-range" min="0" max="10" step="0.1" 
                            id="range_salary_increase" name="salary_increase" 
-                           value="{{ simulation_params.salary_increase|floatformat:2 }}"
+                           value="{{ simulation_params.salary_increase|stringformat:'.2f' }}"
                            oninput="document.getElementById('val_salary_increase').textContent = parseFloat(this.value).toFixed(2) + '%'">
                     <div class="d-flex justify-content-between text-muted" style="font-size: 0.65rem;">
                         <span>0%</span>
@@ -127,7 +127,7 @@
                     </div>
                     <input type="range" class="form-range" min="0" max="10" step="0.1" 
                            id="range_pension_increase" name="pension_increase" 
-                           value="{{ simulation_params.pension_increase|floatformat:2 }}"
+                           value="{{ simulation_params.pension_increase|stringformat:'.2f' }}"
                            oninput="document.getElementById('val_pension_increase').textContent = parseFloat(this.value).toFixed(2) + '%'">
                     <div class="d-flex justify-content-between text-muted" style="font-size: 0.65rem;">
                         <span>0%</span>
@@ -148,7 +148,7 @@
                     </div>
                     <input type="range" class="form-range" min="0" max="10" step="0.1" 
                            id="range_investment_return_offset" name="investment_return_offset" 
-                           value="{{ simulation_params.investment_return_offset|floatformat:2 }}"
+                           value="{{ simulation_params.investment_return_offset|stringformat:'.2f' }}"
                            oninput="document.getElementById('val_investment_return_offset').textContent = parseFloat(this.value).toFixed(2) + '%'">
                     <div class="d-flex justify-content-between text-muted" style="font-size: 0.65rem;">
                         <span>0%</span>
@@ -169,7 +169,7 @@
                     </div>
                     <input type="range" class="form-range" min="0" max="10" step="0.1" 
                            id="range_real_estate_growth_rate" name="real_estate_growth_rate" 
-                           value="{{ simulation_params.real_estate_growth_rate|floatformat:2 }}"
+                           value="{{ simulation_params.real_estate_growth_rate|stringformat:'.2f' }}"
                            oninput="document.getElementById('val_real_estate_growth_rate').textContent = parseFloat(this.value).toFixed(2) + '%'">
                     <div class="d-flex justify-content-between text-muted" style="font-size: 0.65rem;">
                         <span>0%</span>
