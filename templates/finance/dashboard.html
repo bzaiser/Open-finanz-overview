@@ -47,7 +47,7 @@
 
 <!-- Simulation Offcanvas -->
 <div class="offcanvas offcanvas-end" tabindex="-1" id="simulationOffcanvas" aria-labelledby="simulationOffcanvasLabel" 
-     style="width: 600px; background-color: var(--app-card-bg); color: var(--app-card-color); border-left: 1px solid rgba(0,0,0,.125); z-index: 1100;">
+     style="width: 420px; max-width: 90vw; background-color: var(--app-card-bg); color: var(--app-card-color); border-left: 1px solid rgba(0,0,0,.125); z-index: 1100;">
     <div class="offcanvas-header shadow-sm" style="background: var(--app-gradient); color: #ffffff;">
         <h5 class="offcanvas-title" id="simulationOffcanvasLabel">
             <i class="bi bi-magic"></i> {% trans "Simulation" %}
@@ -65,7 +65,7 @@
             <div class="row g-3 mb-4">
                 <!-- Stichtag -->
                 <div class="col-12">
-                    <label class="form-label fw-bold small text-uppercase d-flex align-items-center justify-content-between mb-1" style="font-size: 0.7rem;">
+                    <label class="form-label fw-bold small text-uppercase d-flex align-items-center mb-1" style="font-size: 0.7rem;">
                         <span><i class="bi bi-calendar-event me-1 text-primary"></i>{% trans "Target Date" %}</span>
                         <i class="bi bi-info-circle ms-1 text-primary cursor-pointer" 
                            onclick="showHelp('{% trans "Target Date"|escapejs %}', '{% trans "HELP_TARGET_DATE"|escapejs %}')"></i>
