@@ -32,7 +32,7 @@
                             <div class="p-3 rounded-4 bg-body border h-100 shadow-sm">
                                 <div class="badge bg-primary rounded-pill mb-2 px-3 py-1">{% trans "Schritt 1" %}</div>
                                 <h5 class="fw-bold fs-6" data-editable-key="help_text_5">{{ content_map.help_text_5|default:_('Profil & Haushalt anlegen')|safe }}</h5>
-                                <p class="small text-muted mb-0">{% trans "Gehe im Menü auf 'Einstellungen'. Lege fest, ob du Einzelperson oder ein Paar bist, und trage Geburtsdaten sowie Ziel-Renteneintrittsalter ein." %}</p>
+                                <p class="small text-muted mb-0" data-editable-key="help_text_36">{{ content_map.help_text_36|default:_('Gehe im Menü auf \'Einstellungen\'. Lege fest, ob du Einzelperson oder ein Paar bist, und trage Geburtsdaten sowie Ziel-Renteneintrittsalter ein.')|safe }}</p>
                             </div>
                         </div>
                         <!-- Step 2 -->
@@ -40,7 +40,7 @@
                             <div class="p-3 rounded-4 bg-body border h-100 shadow-sm">
                                 <div class="badge bg-info text-white rounded-pill mb-2 px-3 py-1">{% trans "Schritt 2" %}</div>
                                 <h5 class="fw-bold fs-6" data-editable-key="help_text_6">{{ content_map.help_text_6|default:_('Wizard starten')|safe }}</h5>
-                                <p class="small text-muted mb-0">{% trans "Klicke im Bereich Vorsorge auf '🪄 Standmitteilung / Wizard'. Trage deine DRV-Rentenpunkte, Betriebsrenten und Sparverträge einfach ein." %}</p>
+                                <p class="small text-muted mb-0" data-editable-key="help_text_37">{{ content_map.help_text_37|default:_('Klicke im Bereich Vorsorge auf \'🪄 Standmitteilung / Wizard\'. Trage deine DRV-Rentenpunkte, Betriebsrenten und Sparverträge einfach ein.')|safe }}</p>
                             </div>
                         </div>
                         <!-- Step 3 -->
@@ -48,7 +48,7 @@
                             <div class="p-3 rounded-4 bg-body border h-100 shadow-sm">
                                 <div class="badge bg-warning text-dark rounded-pill mb-2 px-3 py-1">{% trans "Schritt 3" %}</div>
                                 <h5 class="fw-bold fs-6" data-editable-key="help_text_7">{{ content_map.help_text_7|default:_('Einnahmen & Ausgaben')|safe }}</h5>
-                                <p class="small text-muted mb-0">{% trans "Erfasse im Wizard oder im Menü 'Einnahmen / Ausgaben' deine regelmäßigen Monatsströme (Gehalt, Miete, Lebenshaltung)." %}</p>
+                                <p class="small text-muted mb-0" data-editable-key="help_text_38">{{ content_map.help_text_38|default:_('Erfasse im Wizard oder im Menü \'Einnahmen / Ausgaben\' deine regelmäßigen Monatsströme (Gehalt, Miete, Lebenshaltung).')|safe }}</p>
                             </div>
                         </div>
                         <!-- Step 4 -->
@@ -56,7 +56,7 @@
                             <div class="p-3 rounded-4 bg-body border h-100 shadow-sm">
                                 <div class="badge bg-success rounded-pill mb-2 px-3 py-1">{% trans "Schritt 4" %}</div>
                                 <h5 class="fw-bold fs-6" data-editable-key="help_text_8">{{ content_map.help_text_8|default:_('Dashboard & Stichtag')|safe }}</h5>
-                                <p class="small text-muted mb-0">{% trans "Betrachte deine 30-Jahre-Finanzkurve im Dashboard. Verschiebe den 'Stichtag' in die Zukunft, um deine Kaufkraft im Ruhestand zu prüfen." %}</p>
+                                <p class="small text-muted mb-0" data-editable-key="help_text_39">{{ content_map.help_text_39|default:_('Betrachte deine 30-Jahre-Finanzkurve im Dashboard. Verschiebe den \'Stichtag\' in die Zukunft, um deine Kaufkraft im Ruhestand zu prüfen.')|safe }}</p>
                             </div>
                         </div>
                     </div>
@@ -254,25 +254,25 @@
                                         <div class="col-md-6">
                                             <div class="p-3 rounded-3 bg-body border h-100">
                                                 <div class="fw-bold text-primary mb-1"><i class="bi bi-1-circle me-1"></i> {% trans "Vorsorgevertrag auf 'Einmalkapital' stellen" %}</div>
-                                                <p class="small mb-0">{% trans "Erfasse die bAV unter 'Vorsorge' mit aktuellem Kapitalwert / garantierter Summe und Auszahlungsdatum. Wähle als Auszahlungsart <strong>'Einmalige Kapitalauszahlung'</strong>. Das Kapital wächst bis zum Stichtag und wird danach im Rentenkapital auf 0 € gesetzt." %}</p>
+                                                <p class="small mb-0" data-editable-key="help_text_40">{{ content_map.help_text_40|default:_('Erfasse die bAV unter \'Vorsorge\' mit aktuellem Kapitalwert / garantierter Summe und Auszahlungsdatum. Wähle als Auszahlungsart <strong>\'Einmalige Kapitalauszahlung\'</strong>. Das Kapital wächst bis zum Stichtag und wird danach im Rentenkapital auf 0 € gesetzt.')|safe }}</p>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="p-3 rounded-3 bg-body border h-100">
                                                 <div class="fw-bold text-success mb-1"><i class="bi bi-2-circle me-1"></i> {% trans "Automatischer Zufluss ins Barvermögen" %}</div>
-                                                <p class="small mb-0">{% trans "Durch die Auszahlungsart 'Einmalkapital' bucht die Simulation den hochgerechneten Endbetrag am Auszahlungstag <strong>vollautomatisch in dein Barvermögen</strong>. Du musst keine manuelle Einmalzahlung anlegen!" %}</p>
+                                                <p class="small mb-0" data-editable-key="help_text_41">{{ content_map.help_text_41|default:_('Durch die Auszahlungsart \'Einmalkapital\' bucht die Simulation den hochgerechneten Endbetrag am Auszahlungstag <strong>vollautomatisch in dein Barvermögen</strong>. Du musst keine manuelle Einmalzahlung anlegen!')|safe }}</p>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="p-3 rounded-3 bg-body border h-100">
                                                 <div class="fw-bold text-danger mb-1"><i class="bi bi-3-circle me-1"></i> {% trans "10 Jahre Krankenkasse & Pflege (120 Monate)" %}</div>
-                                                <p class="small mb-0">{% trans "Nach § 229 SGB V gilt für bAV-Kapitalauszahlungen bei gesetzlich Versicherten die 120-Monate-Regel (1/120tel des Kapitals monatlich beitragspflichtig). Lege unter 'Ausgaben' einen monatlichen Posten an: <strong>Startdatum</strong> = Auszahlungsdatum, <strong>Enddatum</strong> = exakt 10 Jahre später." %}</p>
+                                                <p class="small mb-0" data-editable-key="help_text_42">{{ content_map.help_text_42|default:_('Nach § 229 SGB V gilt für bAV-Kapitalauszahlungen bei gesetzlich Versicherten die 120-Monate-Regel (1/120tel des Kapitals monatlich beitragspflichtig). Lege unter \'Ausgaben\' einen monatlichen Posten an: <strong>Startdatum</strong> = Auszahlungsdatum, <strong>Enddatum</strong> = exakt 10 Jahre später.')|safe }}</p>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="p-3 rounded-3 bg-body border h-100">
                                                 <div class="fw-bold text-warning mb-1"><i class="bi bi-4-circle me-1"></i> {% trans "Steuernachzahlung im Folgejahr" %}</div>
-                                                <p class="small mb-0">{% trans "Die Auszahlung ist voll einkommensteuerpflichtig (häufig begünstigt nach der Fünftelregelung). Trage unter 'Einmalige Zahlungen' zum geschätzten Fälligkeitsdatum im Folgejahr die Steuerlast als <strong>negativen Betrag</strong> ein." %}</p>
+                                                <p class="small mb-0" data-editable-key="help_text_43">{{ content_map.help_text_43|default:_('Die Auszahlung ist voll einkommensteuerpflichtig (häufig begünstigt nach der Fünftelregelung). Trage unter \'Einmalige Zahlungen\' zum geschätzten Fälligkeitsdatum im Folgejahr die Steuerlast als <strong>negativen Betrag</strong> ein.')|safe }}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -293,7 +293,7 @@
                             </h2>
                             <div id="faqSettingsDesign" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
                                 <div class="accordion-body px-4 pb-4 text-muted">
-                                    <p>{% trans "Im Menü unter 'Profile & Design' kannst du deine Anwendung vollkommen individuell gestalten:" %}</p>
+                                    <p data-editable-key="help_text_44">{{ content_map.help_text_44|default:_('Im Menü unter \'Profile & Design\' kannst du deine Anwendung vollkommen individuell gestalten:')|safe }}</p>
                                     <ul>
                                         <li><strong>{% trans "Stammdaten & Partner:" %}</strong> {% trans "Lege Geburtsdaten, Rentenalter von Person 1 und Person 2 (Partner) sowie dein Haushalts-Sparziel fest." %}</li>
                                         <li><strong>{% trans "Farbharmonie-Engine:" %}</strong> {% trans "Wähle aus fertigen Farb-Presets (Deep Ocean, Emerald Trust, Sunset Gold, Midnight Purple) oder erstelle dein eigenes Verlaufsmuster." %}</li>
@@ -366,7 +366,7 @@
                             </h2>
                             <div id="faqAdminInterface" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
                                 <div class="accordion-body px-4 pb-4 text-muted">
-                                    <p>{% trans "Für Administratoren steht unter '/admin/' eine leistungsfähige Verwaltungszentrale bereit:" %}</p>
+                                    <p data-editable-key="help_text_45">{{ content_map.help_text_45|default:_('Für Administratoren steht unter \'/admin/\' eine leistungsfähige Verwaltungszentrale bereit:')|safe }}</p>
                                     <ul>
                                         <li><strong>{% trans "Nutzer & Profile:" %}</strong> {% trans "Detaillierte Verwaltung der Benutzerkonten, Partner-Stammdaten und Systemparameter." %}</li>
                                         <li><strong>{% trans "Vorsorgeverträge & Kategorien:" %}</strong> {% trans "Direkter Zugriff auf alle Verträge, Stichtags-Snapshots und benutzerdefinierte Kategorien mit Farbcodes." %}</li>
@@ -447,9 +447,8 @@
             <div class="modal-body p-4">
                 <h6 class="fw-bold mb-3" data-editable-key="help_text_35">{{ content_map.help_text_35|default:_('Formeln der Finanz-Simulation:')|safe }}</h6>
                 <ul class="small text-muted mb-4">
-                    <li class="mb-2"><strong>{% trans "Zinseszins Vermögen:" %}</strong> <span class="font-monospace text-dark">{% trans "Vermögen" %} = {% trans "Startkapital" %} × (1 + {% trans "Rendite" %})^{% trans "Jahre" %}</span></li>
-                    <li class="mb-2"><strong>{% trans "Nettorente gesetzlich:" %}</strong> <span class="font-monospace text-dark">{% trans "Netto" %} = ({% trans "EP" %} × {% trans "Rentenwert" %}) × (1 - 0.115)</span></li>
-                    <li class="mb-2"><strong>{% trans "Kaufkraft (Inflation):" %}</strong> <span class="font-monospace text-dark">{% trans "Realer Wert" %} = {% trans "Nominal" %} / (1 + {% trans "Inflation" %})^{% trans "Jahre" %}</span></li>
+                    <li class="mb-2"><strong>{% trans "Zinseszins Vermögen:" %}</strong> <span class="font-monospace text-dark" data-editable-key="help_text_46">{{ content_map.help_text_46|default:_('Vermögen')|safe }}</span></li>
+                    <li class="mb-2"><strong>{% trans "Nettorente gesetzlich:" %}</strong> <span class="font-monospace text-dark" data-editable-key="help_text_47">{{ content_map.help_text_47|default:_('Netto')|safe }}</span></li>
                 </ul>
             </div>
         </div>
