@@ -1287,6 +1287,7 @@ def dashboard_view(request):
         'current_real_estate_total': current_real_estate_total,
         'current_debts_total': current_debts_total,
         'current_total_combined': current_total_combined,
+        'has_hidden_components': any(not item.get('visible', True) for item in layout) or any(not item.get('visible', True) for item in summary_layout),
         'total_expected_pensions': raw_expected_sum, # The raw target sum from contracts
         'simulated_pension_payout': total_expected_pensions, # The actual simulated payout at Stichtag
         'stichtag_year_index': stichtag_year_index,

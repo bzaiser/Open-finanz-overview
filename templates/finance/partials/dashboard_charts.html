@@ -66,6 +66,18 @@
     {% endif %}
     {% endfor %}
 </div>
+{% if has_hidden_components %}
+<div class="row mt-2 mb-4">
+    <div class="col-12 text-center">
+        <button type="button" class="btn btn-outline-primary btn-sm rounded-pill px-4 py-2 shadow-sm d-inline-flex align-items-center gap-2"
+                data-bs-toggle="modal" data-bs-target="#configModal" style="border-style: dashed; border-width: 1.5px;">
+            <i class="bi bi-plus-circle-fill"></i>
+            <span>{% trans "Charts & Widgets hinzufügen" %}</span>
+        </button>
+    </div>
+</div>
+{% endif %}
+
 {{ chart_datasets|json_script:"chart-data" }}
 <script>
     (function () {
