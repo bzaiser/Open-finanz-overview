@@ -89,7 +89,10 @@
                            oninput="document.getElementById('val_inflation_rate').textContent = parseFloat(this.value).toFixed(2) + '%'">
                     <div class="d-flex justify-content-between text-muted" style="font-size: 0.65rem;">
                         <span>0%</span>
-                        <span class="text-primary fw-semibold">{% trans "Standard" %}: {{ profile_params.inflation_rate|floatformat:2 }}%</span>
+                        <span class="text-primary fw-semibold cursor-pointer" role="button" title="{% trans "Auf Standard zurücksetzen" %}"
+                              onclick="setSliderDefault('range_inflation_rate', 'val_inflation_rate', '{{ profile_params.inflation_rate|stringformat:'.2f' }}')">
+                            {% trans "Standard" %}: {{ profile_params.inflation_rate|floatformat:2 }}%
+                        </span>
                         <span>10%</span>
                     </div>
                 </div>
@@ -110,7 +113,10 @@
                            oninput="document.getElementById('val_salary_increase').textContent = parseFloat(this.value).toFixed(2) + '%'">
                     <div class="d-flex justify-content-between text-muted" style="font-size: 0.65rem;">
                         <span>0%</span>
-                        <span class="text-primary fw-semibold">{% trans "Standard" %}: {{ profile_params.salary_increase|floatformat:2 }}%</span>
+                        <span class="text-primary fw-semibold cursor-pointer" role="button" title="{% trans "Auf Standard zurücksetzen" %}"
+                              onclick="setSliderDefault('range_salary_increase', 'val_salary_increase', '{{ profile_params.salary_increase|stringformat:'.2f' }}')">
+                            {% trans "Standard" %}: {{ profile_params.salary_increase|floatformat:2 }}%
+                        </span>
                         <span>10%</span>
                     </div>
                 </div>
@@ -131,7 +137,10 @@
                            oninput="document.getElementById('val_pension_increase').textContent = parseFloat(this.value).toFixed(2) + '%'">
                     <div class="d-flex justify-content-between text-muted" style="font-size: 0.65rem;">
                         <span>0%</span>
-                        <span class="text-primary fw-semibold">{% trans "Standard" %}: {{ profile_params.pension_increase|floatformat:2 }}%</span>
+                        <span class="text-primary fw-semibold cursor-pointer" role="button" title="{% trans "Auf Standard zurücksetzen" %}"
+                              onclick="setSliderDefault('range_pension_increase', 'val_pension_increase', '{{ profile_params.pension_increase|stringformat:'.2f' }}')">
+                            {% trans "Standard" %}: {{ profile_params.pension_increase|floatformat:2 }}%
+                        </span>
                         <span>10%</span>
                     </div>
                 </div>
@@ -152,7 +161,10 @@
                            oninput="document.getElementById('val_investment_return_offset').textContent = parseFloat(this.value).toFixed(2) + '%'">
                     <div class="d-flex justify-content-between text-muted" style="font-size: 0.65rem;">
                         <span>0%</span>
-                        <span class="text-primary fw-semibold">{% trans "Standard" %}: {{ profile_params.investment_return_offset|floatformat:2 }}%</span>
+                        <span class="text-primary fw-semibold cursor-pointer" role="button" title="{% trans "Auf Standard zurücksetzen" %}"
+                              onclick="setSliderDefault('range_investment_return_offset', 'val_investment_return_offset', '{{ profile_params.investment_return_offset|stringformat:'.2f' }}')">
+                            {% trans "Standard" %}: {{ profile_params.investment_return_offset|floatformat:2 }}%
+                        </span>
                         <span>10%</span>
                     </div>
                 </div>
@@ -173,7 +185,10 @@
                            oninput="document.getElementById('val_real_estate_growth_rate').textContent = parseFloat(this.value).toFixed(2) + '%'">
                     <div class="d-flex justify-content-between text-muted" style="font-size: 0.65rem;">
                         <span>0%</span>
-                        <span class="text-primary fw-semibold">{% trans "Standard" %}: {{ profile_params.real_estate_growth_rate|floatformat:2 }}%</span>
+                        <span class="text-primary fw-semibold cursor-pointer" role="button" title="{% trans "Auf Standard zurücksetzen" %}"
+                              onclick="setSliderDefault('range_real_estate_growth_rate', 'val_real_estate_growth_rate', '{{ profile_params.real_estate_growth_rate|stringformat:'.2f' }}')">
+                            {% trans "Standard" %}: {{ profile_params.real_estate_growth_rate|floatformat:2 }}%
+                        </span>
                         <span>10%</span>
                     </div>
                 </div>
@@ -194,6 +209,17 @@
 </div>
 
 <script>
+    function setSliderDefault(sliderId, badgeId, defaultVal) {
+        var slider = document.getElementById(sliderId);
+        var badge = document.getElementById(badgeId);
+        if (slider) {
+            slider.value = defaultVal;
+            if (badge) {
+                badge.textContent = parseFloat(defaultVal).toFixed(2) + '%';
+            }
+        }
+    }
+
     function showHelp(title, text) {
         document.getElementById('helpModalTitle').innerText = title;
         document.getElementById('helpModalBody').innerHTML = text;
