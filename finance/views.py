@@ -1273,6 +1273,7 @@ def dashboard_view(request):
         'summary_widgets': translated_summary_widgets,
         'chart_datasets': chart_datasets,
         'simulation_params': simulation_params,
+        'profile_params': profile_params,
         'is_simulation_active': is_simulation_active,
         'affected_charts': affected_charts,
         'current_net_worth': current_net_worth,

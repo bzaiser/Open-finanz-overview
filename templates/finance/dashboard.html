@@ -63,63 +63,119 @@
             {% csrf_token %}
             
             <div class="row g-3 mb-4">
-                <!-- Section: Time & Basic Economy -->
-                <div class="col-md-6">
-                    <label class="form-label fw-bold small text-uppercase d-flex align-items-center justify-content-between" style="font-size: 0.7rem;">
-                        {% trans "Target Date" %}
+                <!-- Stichtag -->
+                <div class="col-12">
+                    <label class="form-label fw-bold small text-uppercase d-flex align-items-center justify-content-between mb-1" style="font-size: 0.7rem;">
+                        <span><i class="bi bi-calendar-event me-1 text-primary"></i>{% trans "Target Date" %}</span>
                         <i class="bi bi-info-circle ms-1 text-primary cursor-pointer" 
                            onclick="showHelp('{% trans "Target Date"|escapejs %}', '{% trans "HELP_TARGET_DATE"|escapejs %}')"></i>
                     </label>
                     <input type="date" name="stichtag" value="{{ simulation_params.stichtag|date:'Y-m-d' }}" class="form-control form-control-sm">
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label fw-bold small text-uppercase d-flex align-items-center justify-content-between" style="font-size: 0.7rem;">
-                        {% trans "Inflation Rate" %}
-                        <i class="bi bi-info-circle ms-1 text-primary cursor-pointer" 
-                           onclick="showHelp('{% trans "Inflation Rate"|escapejs %}', '{% trans "HELP_INFLATION_RATE"|escapejs %}')"></i>
-                    </label>
-                    <input type="number" step="0.1" name="inflation_rate" value="{{ simulation_params.inflation_rate|stringformat:'.2f' }}" class="form-control form-control-sm">
+
+                <!-- Inflationsrate (%) -->
+                <div class="col-12">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <label class="form-label fw-bold small text-uppercase mb-0 d-flex align-items-center" style="font-size: 0.7rem;">
+                            <span><i class="bi bi-graph-up-arrow me-1 text-danger"></i>{% trans "Inflationsrate" %} (%)</span>
+                            <i class="bi bi-info-circle ms-1 text-primary cursor-pointer" 
+                               onclick="showHelp('{% trans "Inflation Rate"|escapejs %}', '{% trans "HELP_INFLATION_RATE"|escapejs %}')"></i>
+                        </label>
+                        <span class="badge bg-light text-dark font-monospace border px-2 py-1" id="val_inflation_rate">{{ simulation_params.inflation_rate|floatformat:2 }}%</span>
+                    </div>
+                    <input type="range" class="form-range" min="0" max="10" step="0.1" 
+                           id="range_inflation_rate" name="inflation_rate" 
+                           value="{{ simulation_params.inflation_rate|floatformat:2 }}"
+                           oninput="document.getElementById('val_inflation_rate').textContent = parseFloat(this.value).toFixed(2) + '%'">
+                    <div class="d-flex justify-content-between text-muted" style="font-size: 0.65rem;">
+                        <span>0%</span>
+                        <span class="text-primary fw-semibold">{% trans "Standard" %}: {{ profile_params.inflation_rate|floatformat:2 }}%</span>
+                        <span>10%</span>
+                    </div>
                 </div>
 
-                <!-- Section: Income Metrics -->
-                <div class="col-md-6">
-                    <label class="form-label fw-bold small text-uppercase d-flex align-items-center justify-content-between" style="font-size: 0.7rem;">
-                        {% trans "Salary Increase" %}
-                        <i class="bi bi-info-circle ms-1 text-primary cursor-pointer" 
-                           onclick="showHelp('{% trans "Salary Increase"|escapejs %}', '{% trans "HELP_SALARY_INCREASE"|escapejs %}')"></i>
-                    </label>
-                    <input type="number" step="0.1" name="salary_increase" value="{{ simulation_params.salary_increase|stringformat:'.2f' }}" class="form-control form-control-sm">
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label fw-bold small text-uppercase d-flex align-items-center justify-content-between" style="font-size: 0.7rem;">
-                        {% trans "Pension Increase" %}
-                        <i class="bi bi-info-circle ms-1 text-primary cursor-pointer" 
-                           onclick="showHelp('{% trans "Pension Increase"|escapejs %}', '{% trans "HELP_PENSION_INCREASE"|escapejs %}')"></i>
-                    </label>
-                    <input type="number" step="0.1" name="pension_increase" value="{{ simulation_params.pension_increase|stringformat:'.2f' }}" class="form-control form-control-sm">
-                </div>
-
-                <!-- Section: Assets & Returns -->
-                <div class="col-md-12">
-                    <hr class="my-2 opacity-10">
-                </div>
-                
-                <div class="col-md-12">
-                    <label class="form-label fw-bold small text-uppercase d-flex align-items-center justify-content-between" style="font-size: 0.7rem;">
-                        {% trans "Interest Buffer" %} (%)
-                        <i class="bi bi-info-circle ms-1 text-primary cursor-pointer" 
-                           onclick="showHelp('{% trans "Interest Buffer"|escapejs %} (%)', '{% trans "HELP_INTEREST_BUFFER"|escapejs %}')"></i>
-                    </label>
-                    <input type="number" step="0.1" name="investment_return_offset" value="{{ simulation_params.investment_return_offset|stringformat:'.2f' }}" class="form-control form-control-sm">
+                <!-- Gehaltssteigerung (%) -->
+                <div class="col-12">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <label class="form-label fw-bold small text-uppercase mb-0 d-flex align-items-center" style="font-size: 0.7rem;">
+                            <span><i class="bi bi-cash-stack me-1 text-success"></i>{% trans "Gehaltssteigerung" %} (%)</span>
+                            <i class="bi bi-info-circle ms-1 text-primary cursor-pointer" 
+                               onclick="showHelp('{% trans "Salary Increase"|escapejs %}', '{% trans "HELP_SALARY_INCREASE"|escapejs %}')"></i>
+                        </label>
+                        <span class="badge bg-light text-dark font-monospace border px-2 py-1" id="val_salary_increase">{{ simulation_params.salary_increase|floatformat:2 }}%</span>
+                    </div>
+                    <input type="range" class="form-range" min="0" max="10" step="0.1" 
+                           id="range_salary_increase" name="salary_increase" 
+                           value="{{ simulation_params.salary_increase|floatformat:2 }}"
+                           oninput="document.getElementById('val_salary_increase').textContent = parseFloat(this.value).toFixed(2) + '%'">
+                    <div class="d-flex justify-content-between text-muted" style="font-size: 0.65rem;">
+                        <span>0%</span>
+                        <span class="text-primary fw-semibold">{% trans "Standard" %}: {{ profile_params.salary_increase|floatformat:2 }}%</span>
+                        <span>10%</span>
+                    </div>
                 </div>
 
-                <div class="col-md-6">
-                    <label class="form-label fw-bold small text-uppercase d-flex align-items-center justify-content-between" style="font-size: 0.7rem;">
-                        {% trans "Growth Real Estate" %}
-                        <i class="bi bi-info-circle ms-1 text-primary cursor-pointer" 
-                           onclick="showHelp('{% trans "Growth Real Estate"|escapejs %}', '{% trans "HELP_REAL_ESTATE_GROWTH"|escapejs %}')"></i>
-                    </label>
-                    <input type="number" step="0.1" name="real_estate_growth_rate" value="{{ simulation_params.real_estate_growth_rate|stringformat:'.2f' }}" class="form-control form-control-sm">
+                <!-- Rentenerhöhung (%) -->
+                <div class="col-12">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <label class="form-label fw-bold small text-uppercase mb-0 d-flex align-items-center" style="font-size: 0.7rem;">
+                            <span><i class="bi bi-bank me-1 text-warning"></i>{% trans "Rentenerhöhung" %} (%)</span>
+                            <i class="bi bi-info-circle ms-1 text-primary cursor-pointer" 
+                               onclick="showHelp('{% trans "Pension Increase"|escapejs %}', '{% trans "HELP_PENSION_INCREASE"|escapejs %}')"></i>
+                        </label>
+                        <span class="badge bg-light text-dark font-monospace border px-2 py-1" id="val_pension_increase">{{ simulation_params.pension_increase|floatformat:2 }}%</span>
+                    </div>
+                    <input type="range" class="form-range" min="0" max="10" step="0.1" 
+                           id="range_pension_increase" name="pension_increase" 
+                           value="{{ simulation_params.pension_increase|floatformat:2 }}"
+                           oninput="document.getElementById('val_pension_increase').textContent = parseFloat(this.value).toFixed(2) + '%'">
+                    <div class="d-flex justify-content-between text-muted" style="font-size: 0.65rem;">
+                        <span>0%</span>
+                        <span class="text-primary fw-semibold">{% trans "Standard" %}: {{ profile_params.pension_increase|floatformat:2 }}%</span>
+                        <span>10%</span>
+                    </div>
+                </div>
+
+                <!-- Zusatz-Rendite (%) -->
+                <div class="col-12">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <label class="form-label fw-bold small text-uppercase mb-0 d-flex align-items-center" style="font-size: 0.7rem;">
+                            <span><i class="bi bi-percent me-1 text-info"></i>{% trans "Zusatz-Rendite" %} (%)</span>
+                            <i class="bi bi-info-circle ms-1 text-primary cursor-pointer" 
+                               onclick="showHelp('{% trans "Zusatz-Rendite"|escapejs %} (%)', '{% trans "HELP_INTEREST_BUFFER"|escapejs %}')"></i>
+                        </label>
+                        <span class="badge bg-light text-dark font-monospace border px-2 py-1" id="val_investment_return_offset">{{ simulation_params.investment_return_offset|floatformat:2 }}%</span>
+                    </div>
+                    <input type="range" class="form-range" min="0" max="10" step="0.1" 
+                           id="range_investment_return_offset" name="investment_return_offset" 
+                           value="{{ simulation_params.investment_return_offset|floatformat:2 }}"
+                           oninput="document.getElementById('val_investment_return_offset').textContent = parseFloat(this.value).toFixed(2) + '%'">
+                    <div class="d-flex justify-content-between text-muted" style="font-size: 0.65rem;">
+                        <span>0%</span>
+                        <span class="text-primary fw-semibold">{% trans "Standard" %}: {{ profile_params.investment_return_offset|floatformat:2 }}%</span>
+                        <span>10%</span>
+                    </div>
+                </div>
+
+                <!-- Wertsteigerung Immobilien (%) -->
+                <div class="col-12">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <label class="form-label fw-bold small text-uppercase mb-0 d-flex align-items-center" style="font-size: 0.7rem;">
+                            <span><i class="bi bi-house-door me-1 text-primary"></i>{% trans "Wertsteigerung Immobilien" %} (%)</span>
+                            <i class="bi bi-info-circle ms-1 text-primary cursor-pointer" 
+                               onclick="showHelp('{% trans "Wertsteigerung Immobilien"|escapejs %} (%)', '{% trans "HELP_REAL_ESTATE_GROWTH"|escapejs %}')"></i>
+                        </label>
+                        <span class="badge bg-light text-dark font-monospace border px-2 py-1" id="val_real_estate_growth_rate">{{ simulation_params.real_estate_growth_rate|floatformat:2 }}%</span>
+                    </div>
+                    <input type="range" class="form-range" min="0" max="10" step="0.1" 
+                           id="range_real_estate_growth_rate" name="real_estate_growth_rate" 
+                           value="{{ simulation_params.real_estate_growth_rate|floatformat:2 }}"
+                           oninput="document.getElementById('val_real_estate_growth_rate').textContent = parseFloat(this.value).toFixed(2) + '%'">
+                    <div class="d-flex justify-content-between text-muted" style="font-size: 0.65rem;">
+                        <span>0%</span>
+                        <span class="text-primary fw-semibold">{% trans "Standard" %}: {{ profile_params.real_estate_growth_rate|floatformat:2 }}%</span>
+                        <span>10%</span>
+                    </div>
                 </div>
             </div>
 
