@@ -62,6 +62,8 @@ class Command(BaseCommand):
         cat_kleidung = get_cat("kleidung", "Kleidung", "#d63384")
         cat_investment = get_cat("investment", "Investment", "#6f42c1")
         cat_sparen = get_cat("sparen", "Sparen", "#198754")
+        cat_health = get_cat("health", "Gesundheit", "#e83e8c")
+
 
         # 5. Einnahmen (mit Enddaten zur Rente / Ausbildung Kinder)
         # Markus (50 J., Senior Manager): 4.850 € Netto, endet mit 67 am 31.05.2043
@@ -102,6 +104,18 @@ class Command(BaseCommand):
             end_date=date(2032, 12, 31),
             notes="Kindergeld bis voraussichtliches Ausbildungsende"
         )
+
+        CashFlowSource.objects.create(
+            user=user,
+            name="Dividenden & Zinserträge (Depot)",
+            value=Decimal("1800.00"),
+            is_income=True,
+            frequency="yearly",
+            category=cat_investment,
+            template_id="inc_dividenden",
+            notes="Ausschüttungen aus ETF-Depot & Tagesgeld"
+        )
+
 
         # 6. Regelmäßige Ausgaben aus Vorlagenkatalog (nach Hausrate 2.350 € fast vollständig gebunden)
         # Wohnen & Haus
@@ -160,6 +174,44 @@ class Command(BaseCommand):
             template_id="exp_instandhaltung"
         )
 
+        CashFlowSource.objects.create(
+            user=user,
+            name="Wasser & Abwasser",
+            value=Decimal("720.00"),
+            is_income=False,
+            frequency="yearly",
+            category=cat_wohnen,
+            template_id="exp_wasser"
+        )
+        CashFlowSource.objects.create(
+            user=user,
+            name="Müllgebühren",
+            value=Decimal("320.00"),
+            is_income=False,
+            frequency="yearly",
+            category=cat_wohnen,
+            template_id="exp_muell"
+        )
+        CashFlowSource.objects.create(
+            user=user,
+            name="Schornsteinfeger & Heizungswartung",
+            value=Decimal("220.00"),
+            is_income=False,
+            frequency="yearly",
+            category=cat_wohnen,
+            template_id="exp_schornsteinfeger"
+        )
+        CashFlowSource.objects.create(
+            user=user,
+            name="GEZ / Rundfunkbeitrag",
+            value=Decimal("220.32"),
+            is_income=False,
+            frequency="yearly",
+            category=cat_wohnen,
+            template_id="exp_gez"
+        )
+
+
         # Versicherungen & Finanzen
         CashFlowSource.objects.create(
             user=user,
@@ -179,6 +231,35 @@ class Command(BaseCommand):
             category=cat_versicherungen,
             template_id="exp_hausrat"
         )
+
+        CashFlowSource.objects.create(
+            user=user,
+            name="Rechtsschutzversicherung (Familie)",
+            value=Decimal("320.00"),
+            is_income=False,
+            frequency="yearly",
+            category=cat_versicherungen,
+            template_id="exp_rechtsschutz"
+        )
+        CashFlowSource.objects.create(
+            user=user,
+            name="Krankenzusatz & Auslandskranken",
+            value=Decimal("360.00"),
+            is_income=False,
+            frequency="yearly",
+            category=cat_versicherungen,
+            template_id="exp_krankenzusatz"
+        )
+        CashFlowSource.objects.create(
+            user=user,
+            name="Kontoführung & Kreditkarten",
+            value=Decimal("120.00"),
+            is_income=False,
+            frequency="yearly",
+            category=cat_versicherungen,
+            template_id="exp_kontofuehrung"
+        )
+
         CashFlowSource.objects.create(
             user=user,
             name="Berufsunfähigkeitsversicherung (BU Markus)",
@@ -248,6 +329,17 @@ class Command(BaseCommand):
             template_id="exp_kfz_wartung"
         )
 
+        CashFlowSource.objects.create(
+            user=user,
+            name="Öffentlicher Nahverkehr (ÖPNV / Schülertickets)",
+            value=Decimal("98.00"),
+            is_income=False,
+            frequency="monthly",
+            category=cat_kfz,
+            template_id="exp_opnv"
+        )
+
+
         # Essen, Gesundheit & Alltag (4 Personen)
         CashFlowSource.objects.create(
             user=user,
@@ -268,6 +360,53 @@ class Command(BaseCommand):
             template_id="exp_kleidung"
         )
 
+        CashFlowSource.objects.create(
+            user=user,
+            name="Gastronomie & Kantine",
+            value=Decimal("1800.00"),
+            is_income=False,
+            frequency="yearly",
+            category=cat_essen,
+            template_id="exp_gastro"
+        )
+        CashFlowSource.objects.create(
+            user=user,
+            name="Friseur & Körperpflege",
+            value=Decimal("960.00"),
+            is_income=False,
+            frequency="yearly",
+            category=cat_health,
+            template_id="exp_friseur"
+        )
+        CashFlowSource.objects.create(
+            user=user,
+            name="Arzt, Medikamente & Zuzahlungen",
+            value=Decimal("480.00"),
+            is_income=False,
+            frequency="yearly",
+            category=cat_health,
+            template_id="exp_arzt"
+        )
+        CashFlowSource.objects.create(
+            user=user,
+            name="Zahnarzt & Prophylaxe",
+            value=Decimal("360.00"),
+            is_income=False,
+            frequency="yearly",
+            category=cat_health,
+            template_id="exp_zahnarzt"
+        )
+        CashFlowSource.objects.create(
+            user=user,
+            name="Brillen & Sehhilfen",
+            value=Decimal("400.00"),
+            is_income=False,
+            frequency="yearly",
+            category=cat_health,
+            template_id="exp_brille"
+        )
+
+
         # Freizeit, Medien & Urlaub
         CashFlowSource.objects.create(
             user=user,
@@ -287,6 +426,26 @@ class Command(BaseCommand):
             category=cat_leisure,
             template_id="exp_streaming"
         )
+
+        CashFlowSource.objects.create(
+            user=user,
+            name="Sport, Fitness & Vereine",
+            value=Decimal("85.00"),
+            is_income=False,
+            frequency="monthly",
+            category=cat_leisure,
+            template_id="exp_fitness"
+        )
+        CashFlowSource.objects.create(
+            user=user,
+            name="Freizeit, Kultur & Hobbys",
+            value=Decimal("1200.00"),
+            is_income=False,
+            frequency="yearly",
+            category=cat_leisure,
+            template_id="exp_kultur"
+        )
+
         CashFlowSource.objects.create(
             user=user,
             name="Urlaub & Reisen",
