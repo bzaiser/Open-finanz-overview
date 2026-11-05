@@ -351,19 +351,35 @@ class CategoryForm(forms.ModelForm):
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     form = CategoryForm
-    list_display = ('name', 'slug', 'color', 'is_system')
+    list_display = ('name', 'slug', 'color_badge', 'is_system')
     prepopulated_fields = {'slug': ('name',)}
+
+    @admin.display(description=_('Farbe'))
+    def color_badge(self, obj):
+        if not obj.color:
+            return "-"
+        return mark_safe(
+            f'<div style="display:flex;align-items:center;gap:8px;">'
+            f'<span style="display:inline-block;width:24px;height:24px;border-radius:4px;'
+            f'background-color:{obj.color};border:1px solid rgba(0,0,0,0.2);"></span>'
+            f'<code>{obj.color}</code></div>'
+        )
+
+    def get_prepopulated_fields(self, request, obj=None):
+        if obj and obj.is_system:
+            return {}
+        return super().get_prepopulated_fields(request, obj)
 
     def get_readonly_fields(self, request, obj=None):
         readonly = list(super().get_readonly_fields(request, obj))
-        if not request.user.is_superuser:
+        if obj and obj.is_system:
+            readonly.extend(['name', 'slug', 'is_system'])
+        elif not request.user.is_superuser:
             readonly.append('is_system')
-            if obj and obj.is_system:
-                readonly.extend(['name', 'slug'])
         return readonly
 
     def has_change_permission(self, request, obj=None):
-        if obj and obj.is_system and not request.user.is_superuser:
+        if obj and obj.is_system:
             return True
         return super().has_change_permission(request, obj)
 
