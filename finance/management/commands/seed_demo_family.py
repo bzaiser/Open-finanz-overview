@@ -50,6 +50,9 @@ class Command(BaseCommand):
             cat = Category.objects.filter(slug=slug).first()
             if not cat:
                 cat, _ = Category.objects.get_or_create(name=name, defaults={'slug': slug, 'color': color})
+            elif cat.color == "#6c757d":
+                cat.color = color
+                cat.save()
             return cat
 
         cat_gehalt = get_cat("gehalt", "Gehalt", "#11ff00")
