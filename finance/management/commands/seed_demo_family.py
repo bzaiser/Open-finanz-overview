@@ -131,7 +131,7 @@ class Command(BaseCommand):
         CashFlowSource.objects.create(
             user=user,
             name="Gas / Fernwärme / Heizöl",
-            value=Decimal("2640.00"),
+            value=Decimal("1800.00"),
             is_income=False,
             frequency="yearly",
             category=cat_wohnen,
@@ -140,7 +140,7 @@ class Command(BaseCommand):
         CashFlowSource.objects.create(
             user=user,
             name="Strom",
-            value=Decimal("1680.00"),
+            value=Decimal("1320.00"),
             is_income=False,
             frequency="yearly",
             category=cat_wohnen,
@@ -167,7 +167,7 @@ class Command(BaseCommand):
         CashFlowSource.objects.create(
             user=user,
             name="Instandhaltung & Reparaturen",
-            value=Decimal("3000.00"),
+            value=Decimal("1500.00"),
             is_income=False,
             frequency="yearly",
             category=cat_wohnen,
@@ -186,7 +186,7 @@ class Command(BaseCommand):
         CashFlowSource.objects.create(
             user=user,
             name="Müllgebühren",
-            value=Decimal("320.00"),
+            value=Decimal("280.00"),
             is_income=False,
             frequency="yearly",
             category=cat_wohnen,
@@ -204,7 +204,7 @@ class Command(BaseCommand):
         CashFlowSource.objects.create(
             user=user,
             name="GEZ / Rundfunkbeitrag",
-            value=Decimal("220.32"),
+            value=Decimal("220.00"),
             is_income=False,
             frequency="yearly",
             category=cat_wohnen,
@@ -235,7 +235,7 @@ class Command(BaseCommand):
         CashFlowSource.objects.create(
             user=user,
             name="Rechtsschutzversicherung (Familie)",
-            value=Decimal("320.00"),
+            value=Decimal("280.00"),
             is_income=False,
             frequency="yearly",
             category=cat_versicherungen,
@@ -295,7 +295,7 @@ class Command(BaseCommand):
         CashFlowSource.objects.create(
             user=user,
             name="KFZ-Versicherung",
-            value=Decimal("1440.00"),
+            value=Decimal("1200.00"),
             is_income=False,
             frequency="yearly",
             category=cat_kfz,
@@ -304,7 +304,7 @@ class Command(BaseCommand):
         CashFlowSource.objects.create(
             user=user,
             name="KFZ-Steuer",
-            value=Decimal("260.00"),
+            value=Decimal("240.00"),
             is_income=False,
             frequency="yearly",
             category=cat_kfz,
@@ -313,7 +313,7 @@ class Command(BaseCommand):
         CashFlowSource.objects.create(
             user=user,
             name="Kraftstoff / Laden",
-            value=Decimal("3840.00"),
+            value=Decimal("2400.00"),
             is_income=False,
             frequency="yearly",
             category=cat_kfz,
@@ -322,7 +322,7 @@ class Command(BaseCommand):
         CashFlowSource.objects.create(
             user=user,
             name="KFZ Wartung, TÜV & Reparatur",
-            value=Decimal("1200.00"),
+            value=Decimal("960.00"),
             is_income=False,
             frequency="yearly",
             category=cat_kfz,
@@ -332,7 +332,7 @@ class Command(BaseCommand):
         CashFlowSource.objects.create(
             user=user,
             name="Öffentlicher Nahverkehr (ÖPNV / Schülertickets)",
-            value=Decimal("98.00"),
+            value=Decimal("90.00"),
             is_income=False,
             frequency="monthly",
             category=cat_kfz,
@@ -344,7 +344,7 @@ class Command(BaseCommand):
         CashFlowSource.objects.create(
             user=user,
             name="Lebensmittel & Drogerie",
-            value=Decimal("1350.00"),
+            value=Decimal("1100.00"),
             is_income=False,
             frequency="monthly",
             category=cat_essen,
@@ -353,7 +353,7 @@ class Command(BaseCommand):
         CashFlowSource.objects.create(
             user=user,
             name="Kleidung & Schuhe",
-            value=Decimal("3000.00"),
+            value=Decimal("2400.00"),
             is_income=False,
             frequency="yearly",
             category=cat_kleidung,
@@ -372,7 +372,7 @@ class Command(BaseCommand):
         CashFlowSource.objects.create(
             user=user,
             name="Friseur & Körperpflege",
-            value=Decimal("960.00"),
+            value=Decimal("720.00"),
             is_income=False,
             frequency="yearly",
             category=cat_health,
@@ -399,7 +399,7 @@ class Command(BaseCommand):
         CashFlowSource.objects.create(
             user=user,
             name="Brillen & Sehhilfen",
-            value=Decimal("400.00"),
+            value=Decimal("360.00"),
             is_income=False,
             frequency="yearly",
             category=cat_health,
@@ -411,7 +411,7 @@ class Command(BaseCommand):
         CashFlowSource.objects.create(
             user=user,
             name="Internet & Mobilfunk",
-            value=Decimal("140.00"),
+            value=Decimal("110.00"),
             is_income=False,
             frequency="monthly",
             category=cat_leisure,
@@ -420,7 +420,7 @@ class Command(BaseCommand):
         CashFlowSource.objects.create(
             user=user,
             name="Streaming & Abonnements",
-            value=Decimal("780.00"),
+            value=Decimal("600.00"),
             is_income=False,
             frequency="yearly",
             category=cat_leisure,
@@ -430,7 +430,7 @@ class Command(BaseCommand):
         CashFlowSource.objects.create(
             user=user,
             name="Sport, Fitness & Vereine",
-            value=Decimal("85.00"),
+            value=Decimal("65.00"),
             is_income=False,
             frequency="monthly",
             category=cat_leisure,
@@ -439,7 +439,7 @@ class Command(BaseCommand):
         CashFlowSource.objects.create(
             user=user,
             name="Freizeit, Kultur & Hobbys",
-            value=Decimal("1200.00"),
+            value=Decimal("2120.00"),
             is_income=False,
             frequency="yearly",
             category=cat_leisure,
@@ -449,7 +449,7 @@ class Command(BaseCommand):
         CashFlowSource.objects.create(
             user=user,
             name="Urlaub & Reisen",
-            value=Decimal("450.00"),
+            value=Decimal("350.00"),
             is_income=False,
             frequency="monthly",
             category=cat_urlaub,
@@ -464,8 +464,8 @@ class Command(BaseCommand):
             property_value=Decimal("820000.00"),
             appreciation_rate=Decimal("1.50"),
             location="München Umland",
-            maintenance_costs_monthly=Decimal("250.00"),
-            ancillary_costs_monthly=Decimal("350.00"),
+            maintenance_costs_monthly=Decimal("0.00"),
+            ancillary_costs_monthly=Decimal("0.00"),
             acquisition_date=date(2017, 3, 1)
         )
 
