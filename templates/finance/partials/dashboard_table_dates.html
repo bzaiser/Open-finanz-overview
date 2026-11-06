@@ -93,10 +93,10 @@
                     <!-- Group Header -->
                     <tr class="cursor-pointer" @click="collapsedGroups[group.name] = !collapsedGroups[group.name]"
                         :class="{
-                            'bg-danger bg-opacity-25': group.maxStatus === 'danger',
-                            'bg-warning bg-opacity-10': group.maxStatus === 'warning',
-                            'bg-light bg-opacity-10': group.maxStatus === 'info'
-                        }" style="border-bottom: 1px solid var(--app-table-border-color) !important;">
+                            'table-danger': group.maxStatus === 'danger',
+                            'table-warning': group.maxStatus === 'warning'
+                        }"
+                        :style="group.maxStatus === 'info' ? 'background-color: var(--app-table-filter-bg) !important; color: var(--app-table-body-text) !important; border-bottom: 1px solid var(--app-table-border-color) !important;' : 'border-bottom: 1px solid var(--app-table-border-color) !important;'">
                         <td colspan="2" class="py-2 px-3 fw-bold">
                             <i class="bi me-2" :class="collapsedGroups[group.name] ? 'bi-chevron-right' : 'bi-chevron-down'"></i>
                             <span x-text="group.name"></span>
