@@ -315,6 +315,10 @@
             background: rgba(255,255,255,0.4);
             z-index: 10;
         }
+        [data-bs-theme="dark"] .metric-card::before,
+        .widget-expand-card::before {
+            display: none !important;
+        }
         .card-glass-glow {
             position: absolute;
             top: -50%;
