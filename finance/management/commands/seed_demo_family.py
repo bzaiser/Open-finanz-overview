@@ -35,6 +35,8 @@ class Command(BaseCommand):
         profile.target_pension_payout = Decimal("4500.00")  # Wunsch-Nettoeinkommen im Ruhestand
         profile.inflation_rate = Decimal("2.00")
         profile.pension_increase = Decimal("1.50")
+        from core.models import get_default_dashboard_config
+        profile.dashboard_config = get_default_dashboard_config()
         profile.save()
 
         # 3. Clean existing demo data for clean rerun

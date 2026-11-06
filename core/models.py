@@ -2,6 +2,42 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+def get_default_dashboard_config():
+    return {
+        "layout": [
+            {"id": "upcoming_dates_widget", "visible": True, "width": 6, "height": "medium", "order": 0},
+            {"id": "income_table_widget", "visible": True, "width": 6, "height": "medium", "order": 1},
+            {"id": "cashflow_chart", "visible": True, "width": 12, "height": "medium", "order": 2},
+            {"id": "net_worth_chart", "visible": True, "width": 12, "height": "small", "order": 3},
+            {"id": "liquid_pension_forecast_chart", "visible": True, "width": 12, "height": "small", "order": 4},
+            {"id": "real_estate_forecast_chart", "visible": True, "width": 12, "height": "small", "order": 5},
+            {"id": "physical_asset_forecast_chart", "visible": True, "width": 12, "height": "small", "order": 6},
+            {"id": "inflation_monitor_chart", "visible": True, "width": 12, "height": "small", "order": 7},
+            {"id": "income_evolution_chart", "visible": True, "width": 12, "height": "medium", "order": 8},
+            {"id": "expense_evolution_chart", "visible": True, "width": 6, "height": "medium", "order": 9},
+            {"id": "budget_pie_chart", "visible": True, "width": 6, "height": "medium", "order": 10},
+            {"id": "asset_allocation_chart", "visible": True, "width": 6, "height": "medium", "order": 11},
+            {"id": "asset_table_widget", "visible": True, "width": 6, "height": "medium", "order": 12},
+            {"id": "pension_table_widget", "visible": True, "width": 6, "height": "medium", "order": 13},
+            {"id": "event_table_widget", "visible": True, "width": 6, "height": "medium", "order": 14},
+            {"id": "expense_table_widget", "visible": True, "width": 6, "height": "medium", "order": 15},
+            {"id": "loan_evolution_chart", "visible": True, "width": 6, "height": "medium", "order": 16},
+            {"id": "loan_table_widget", "visible": True, "width": 6, "height": "medium", "order": 17}
+        ],
+        "summary_layout": [
+            {"id": "monthly_income", "visible": True, "bg_color": "#198754", "text_color": "#ffffff", "order": 1},
+            {"id": "monthly_expenses", "visible": True, "bg_color": "#dc3545", "text_color": "#ffffff", "order": 2},
+            {"id": "current_pension_payout", "visible": True, "bg_color": "#fd7e14", "text_color": "#ffffff", "order": 3},
+            {"id": "total_pensions", "visible": True, "bg_color": "#0dcaf0", "text_color": "#ffffff", "order": 4},
+            {"id": "current_assets", "visible": True, "bg_color": "#36d956", "text_color": "#ffffff", "order": 5},
+            {"id": "expected_payout", "visible": True, "bg_color": "#6f42c1", "text_color": "#ffffff", "order": 6},
+            {"id": "total_physical_assets", "visible": True, "bg_color": "#2c93e2", "text_color": "#ffffff", "order": 7},
+            {"id": "total_real_estate", "visible": True, "bg_color": "#20c997", "text_color": "#ffffff", "order": 8},
+            {"id": "total_combined_assets", "visible": True, "bg_color": "#e8b017", "text_color": "#ffffff", "order": 9},
+            {"id": "total_debts", "visible": True, "bg_color": "#746d6d", "text_color": "#fbacac", "order": 10}
+        ]
+    }
+
 class CustomUser(AbstractUser):
     @property
     def best_name(self):
@@ -65,7 +101,7 @@ class UserProfile(models.Model):
     pension_increase = models.DecimalField(_("Default Pension Increase (%)"), max_digits=5, decimal_places=2, default=1.0)
     investment_return_offset = models.DecimalField(_("Investment Return Buffer (%)"), max_digits=5, decimal_places=2, default=0.0)
     real_estate_growth_rate = models.DecimalField(_("Default Real Estate Growth (%)"), max_digits=5, decimal_places=2, default=0.0)
-    dashboard_config = models.JSONField(_("Dashboard Configuration"), default=dict, blank=True)
+    dashboard_config = models.JSONField(_("Dashboard Configuration"), default=get_default_dashboard_config, blank=True)
     
     # Night Mode / System Sync
     auto_night_mode = models.BooleanField(_("Follow System Design"), default=False)

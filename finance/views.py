@@ -16,7 +16,7 @@ from .models import (
     ImportBatch, PendingTransaction, ImportFilter, ProcessedTransactionHash, AssetSnapshot
 )
 from .forms import BankImportForm
-from core.models import UserProfile
+from core.models import UserProfile, get_default_dashboard_config
 from .import_services import ExcelParserService
 from django.core.serializers.json import DjangoJSONEncoder
 from django.conf import settings
@@ -173,26 +173,9 @@ SUMMARY_WIDGETS = {
     },
 }
 
-DEFAULT_LAYOUT = [
-    {'id': 'net_worth_chart', 'width': 12, 'height': 'medium', 'visible': True, 'order': 1, 'bg_color': '#ffffff', 'text_color': '#212529'},
-    {'id': 'income_evolution_chart', 'width': 12, 'height': 'medium', 'visible': True, 'order': 2, 'bg_color': '#ffffff', 'text_color': '#212529'},
-    {'id': 'cashflow_chart', 'width': 6, 'height': 'medium', 'visible': True, 'order': 3, 'bg_color': '#ffffff', 'text_color': '#212529'},
-    {'id': 'expense_evolution_chart', 'width': 6, 'height': 'medium', 'visible': True, 'order': 4, 'bg_color': '#ffffff', 'text_color': '#212529'},
-    {'id': 'inflation_monitor_chart', 'width': 6, 'height': 'medium', 'visible': True, 'order': 5, 'bg_color': '#ffffff', 'text_color': '#212529'},
-    {'id': 'budget_pie_chart', 'width': 6, 'height': 'medium', 'visible': True, 'order': 6, 'bg_color': '#ffffff', 'text_color': '#212529'},
-    {'id': 'asset_allocation_chart', 'width': 6, 'height': 'medium', 'visible': True, 'order': 7, 'bg_color': '#ffffff', 'text_color': '#212529'},
-    {'id': 'loan_evolution_chart', 'width': 6, 'height': 'medium', 'visible': True, 'order': 8, 'bg_color': '#ffffff', 'text_color': '#212529'},
-    {'id': 'real_estate_forecast_chart', 'width': 6, 'height': 'medium', 'visible': True, 'order': 9, 'bg_color': '#ffffff', 'text_color': '#212529'},
-    {'id': 'physical_asset_forecast_chart', 'width': 6, 'height': 'medium', 'visible': True, 'order': 10, 'bg_color': '#ffffff', 'text_color': '#212529'},
-    {'id': 'liquid_pension_forecast_chart', 'width': 6, 'height': 'medium', 'visible': True, 'order': 11, 'bg_color': '#ffffff', 'text_color': '#212529'},
-    {'id': 'upcoming_dates_widget', 'width': 12, 'height': 'small', 'visible': True, 'order': 12, 'bg_color': '#ffffff', 'text_color': '#212529'},
-    {'id': 'income_table_widget', 'width': 6, 'height': 'small', 'visible': True, 'order': 13, 'bg_color': '#ffffff', 'text_color': '#212529'},
-    {'id': 'expense_table_widget', 'width': 6, 'height': 'small', 'visible': True, 'order': 14, 'bg_color': '#ffffff', 'text_color': '#212529'},
-    {'id': 'asset_table_widget', 'width': 6, 'height': 'small', 'visible': True, 'order': 15, 'bg_color': '#ffffff', 'text_color': '#212529'},
-    {'id': 'pension_table_widget', 'width': 6, 'height': 'small', 'visible': True, 'order': 16, 'bg_color': '#ffffff', 'text_color': '#212529'},
-    {'id': 'event_table_widget', 'width': 6, 'height': 'small', 'visible': True, 'order': 17, 'bg_color': '#ffffff', 'text_color': '#212529'},
-    {'id': 'loan_table_widget', 'width': 6, 'height': 'small', 'visible': True, 'order': 18, 'bg_color': '#ffffff', 'text_color': '#212529'},
-]
+_default_cfg = get_default_dashboard_config()
+DEFAULT_LAYOUT = _default_cfg['layout']
+DEFAULT_SUMMARY_LAYOUT = _default_cfg['summary_layout']
 
 @login_required
 def dashboard_view(request):
@@ -234,17 +217,7 @@ def dashboard_view(request):
     # 2. Extract configurations with safe defaults
     layout = dashboard_config.get('layout', DEFAULT_LAYOUT)
 
-    summary_layout = dashboard_config.get('summary_layout', [
-        {'id': 'current_assets', 'visible': True, 'bg_color': 'var(--app-primary)', 'text_color': '#ffffff', 'order': 1},
-        {'id': 'monthly_income', 'visible': True, 'bg_color': '#198754', 'text_color': '#ffffff', 'order': 2},
-        {'id': 'monthly_expenses', 'visible': True, 'bg_color': '#dc3545', 'text_color': '#ffffff', 'order': 3},
-        {'id': 'current_pension_payout', 'visible': True, 'bg_color': '#fd7e14', 'text_color': '#ffffff', 'order': 4},
-        {'id': 'total_pensions', 'visible': True, 'bg_color': '#0dcaf0', 'text_color': '#ffffff', 'order': 5},
-        {'id': 'expected_payout', 'visible': True, 'bg_color': '#6f42c1', 'text_color': '#ffffff', 'order': 6},
-        {'id': 'total_physical_assets', 'visible': True, 'bg_color': '#8a2be2', 'text_color': '#ffffff', 'order': 8},
-        {'id': 'total_real_estate', 'visible': True, 'bg_color': '#20c997', 'text_color': '#ffffff', 'order': 9},
-        {'id': 'total_combined_assets', 'visible': True, 'bg_color': 'var(--app-primary)', 'text_color': '#ffffff', 'order': 1},
-    ])
+    summary_layout = dashboard_config.get('summary_layout', DEFAULT_SUMMARY_LAYOUT)
 
     # Ensure all available summary widgets are in the layout (auto-add missing ones)
     existing_ids = [item['id'] for item in summary_layout]
