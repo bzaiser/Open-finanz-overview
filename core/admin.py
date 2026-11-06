@@ -41,8 +41,18 @@ class UserProfileAdmin(BaseOwnedModelAdmin):
         (_('User'), {'fields': ('user', 'display_name', 'avatar')}),
         (_('Person 1 (Main)'), {'fields': ('birth_date', 'retirement_age')}),
         (_('Person 2 (Partner)'), {'fields': ('partner_name', 'partner_birth_date', 'partner_retirement_age')}),
-        (_('Planning & Simulation'), {'fields': ('target_pension_payout', 'simulation_max_age', 'simulation_start_date', 'inflation_rate', 'salary_increase', 'pension_increase')}),
-        (_('System'), {'fields': ('language', 'currency')}),
+        (_('Planning & Simulation'), {'fields': ('target_pension_payout', 'simulation_max_age', 'simulation_start_date', 'inflation_rate', 'salary_increase', 'pension_increase', 'investment_return_offset', 'real_estate_growth_rate')}),
+        (_('Dashboard & Settings'), {'fields': ('dashboard_config', 'hide_wizard_on_start')}),
+        (_('System'), {'fields': ('language', 'currency', 'auto_night_mode', 'dark_mode_config')}),
+        (_('Theme & Styling'), {
+            'classes': ('collapse',),
+            'fields': (
+                'gradient_start', 'gradient_end',
+                'primary_color', 'secondary_color', 'background_color', 'text_color', 'sidebar_bg_color',
+                'table_header_bg_color', 'table_header_text_color', 'table_filter_bg_color',
+                'table_body_bg_color', 'table_body_text_color', 'table_border_color',
+            )
+        }),
     )
 
 
