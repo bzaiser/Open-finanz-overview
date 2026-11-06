@@ -93,10 +93,9 @@
                     <!-- Group Header -->
                     <tr class="cursor-pointer" @click="collapsedGroups[group.name] = !collapsedGroups[group.name]"
                         :class="{
-                            'table-danger': group.maxStatus === 'danger',
-                            'table-warning': group.maxStatus === 'warning'
+                            'table-danger': group.maxStatus === 'danger'
                         }"
-                        :style="group.maxStatus === 'info' ? 'background-color: var(--app-table-filter-bg) !important; color: var(--app-table-body-text) !important; border-bottom: 1px solid var(--app-table-border-color) !important;' : 'border-bottom: 1px solid var(--app-table-border-color) !important;'">
+                        :style="group.maxStatus !== 'danger' ? 'background-color: var(--app-table-filter-bg) !important; color: var(--app-table-body-text) !important; border-bottom: 1px solid var(--app-table-border-color) !important;' : 'border-bottom: 1px solid var(--app-table-border-color) !important;'">
                         <td colspan="2" class="py-2 px-3 fw-bold">
                             <i class="bi me-2" :class="collapsedGroups[group.name] ? 'bi-chevron-right' : 'bi-chevron-down'"></i>
                             <span x-text="group.name"></span>
@@ -112,8 +111,7 @@
                     <template x-if="!collapsedGroups[group.name]">
                         <template x-for="(item, iIdx) in group.items" :key="iIdx">
                             <tr :class="{
-                                'table-danger': item.status === 'danger' || item.status === 'urgent',
-                                'table-warning': item.status === 'warning'
+                                'table-danger': item.status === 'danger' || item.status === 'urgent'
                             }" style="border-bottom: 1px solid var(--app-table-border-color) !important;">
                                 <td class="py-2 px-3 border-0 font-monospace fw-bold ps-4" x-text="item.date"></td>
                                 <td class="py-2 px-3 border-0" colspan="2">
