@@ -3618,7 +3618,7 @@ msgid "Extra repayment deleted successfully."
 msgstr "Sondertilgung gelöscht."
 
 msgid "Renovation & Reserves"
-msgstr "Sanierung & Rücklagen"
+msgstr "Modernisierung & Rücklagen"
 
 msgid "Payment Calendar"
 msgstr "Zahlungskalender"
@@ -3651,25 +3651,25 @@ msgid "Reserve deficit expected"
 msgstr "Rücklagen-Unterdeckung erwartet"
 
 msgid "Renovation Roadmap & Components"
-msgstr "Sanierungsfahrplan & Bauteile"
+msgstr "Modernisierung & Ausstattung"
 
 msgid "Add Component"
-msgstr "Bauteil hinzufügen"
+msgstr "Ausstattung / Gewerk hinzufügen"
 
 msgid "No property components recorded yet"
-msgstr "Noch keine Bauteile erfasst"
+msgstr "Noch keine Ausstattungsmerkmale oder Gewerke erfasst"
 
 msgid "Track heating, roof, windows, electrical systems and their remaining life to anticipate renovation costs."
 msgstr "Erfassen Sie Heizung, Dach, Fenster, Elektrik und deren Restlebensdauer, um Sanierungskosten frühzeitig einzuplanen."
 
 msgid "Add First Component"
-msgstr "Erstes Bauteil erfassen"
+msgstr "Erstes Element erfassen"
 
 msgid "Component / Specification"
-msgstr "Bauteil / Bezeichnung"
+msgstr "Bereich / Ausstattung / Spezifikation"
 
 msgid "Component Type"
-msgstr "Bauteil-Typ"
+msgstr "Bereich / Gewerk"
 
 msgid "Installed"
 msgstr "Eingebaut"
@@ -3744,7 +3744,7 @@ msgid "Total Costs"
 msgstr "Gesamtausgaben"
 
 msgid "Edit Component"
-msgstr "Bauteil bearbeiten"
+msgstr "Bereich / Gewerk bearbeiten"
 
 msgid "Construction Year"
 msgstr "Baujahr"
@@ -3813,10 +3813,10 @@ msgid "Other / General Renovation"
 msgstr "Sonstiges / Generalsanierung"
 
 msgid "Property Component"
-msgstr "Immobilien-Bauteil"
+msgstr "Ausstattungsmerkmal / Gewerk"
 
 msgid "Property Components"
-msgstr "Immobilien-Bauteile"
+msgstr "Ausstattung & Gewerke"
 
 msgid "Year of Installation / Renovation"
 msgstr "Baujahr / Sanierungsjahr"
@@ -3834,13 +3834,13 @@ msgid "Monthly Reserve Allocation"
 msgstr "Monatliche Rücklagenzuführung"
 
 msgid "Property component saved successfully."
-msgstr "Bauteil erfolgreich gespeichert."
+msgstr "Modernisierungs-Eintrag erfolgreich gespeichert."
 
 msgid "Property component added successfully."
-msgstr "Bauteil erfolgreich hinzugefügt."
+msgstr "Modernisierungs-Eintrag erfolgreich hinzugefügt."
 
 msgid "Property component"
-msgstr "Bauteil"
+msgstr "Ausstattung / Gewerk"
 
 msgid "Jan"
 msgstr "Jan"
@@ -3885,7 +3885,7 @@ msgid "e.g. Gas Heating Buderus GB172"
 msgstr "z. B. Gas-Brennwerttherme Buderus GB172"
 
 msgid "Are you sure you want to delete this component?"
-msgstr "Möchten Sie dieses Bauteil wirklich löschen?"
+msgstr "Möchten Sie diesen Eintrag wirklich löschen?"
 
 msgid "Taxes & Documents"
 msgstr "Steuern & Dokumente"
