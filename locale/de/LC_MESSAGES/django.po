@@ -4144,3 +4144,42 @@ msgstr "Gesamtausgaben (Abfluss)"
 
 msgid "Total Year"
 msgstr "Jahressumme"
+
+msgid "items"
+msgstr "Positionen"
+
+msgid "Inflow Details"
+msgstr "Einnahmen-Details"
+
+msgid "Outflow Details"
+msgstr "Ausgaben-Details"
+
+msgid "No rental inflows in this month."
+msgstr "Keine Mieteinnahmen in diesem Monat."
+
+msgid "No outflows recorded."
+msgstr "Keine Ausgaben erfasst."
+
+msgid "Ongoing building charges / utilities (%(name)s)"
+msgstr "Laufendes Hausgeld / Bewirtschaftung (%(name)s)"
+
+msgid "Building insurance annual premium (%(name)s)"
+msgstr "Gebäudeversicherung Jahresbeitrag (%(name)s)"
+
+msgid "Building Insurance: %(name)s (%(amt)s €)"
+msgstr "Gebäudeversicherung: %(name)s (%(amt)s €)"
+
+msgid "Property tax Grundsteuer Q%(q)s (%(name)s)"
+msgstr "Grundsteuer Q%(q)s (%(name)s)"
+
+msgid "Grundsteuer Q%(q)s: %(name)s (%(amt)s €)"
+msgstr "Grundsteuer Q%(q)s: %(name)s (%(amt)s €)"
+
+msgid "Maintenance reserve allocation (%(name)s)"
+msgstr "Instandhaltungsrücklage Zuweisung (%(name)s)"
+
+msgid "Rental income %(tenant)s"
+msgstr "Mieteinnahmen %(tenant)s"
+
+msgid "Unassigned"
+msgstr "Nicht zugeordnet"

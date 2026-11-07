@@ -1113,13 +1113,14 @@
                 </div>
             </div>
 
-            <!-- Table with Events and Cumulative Cashflow -->
+            <!-- Table with Collapsible Monthly Line Items -->
             <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
                 <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0 text-center">
                         <thead class="table-light small text-uppercase">
                             <tr>
-                                <th class="text-start ps-4">{% trans "Month" %}</th>
+                                <th style="width: 40px;"></th>
+                                <th class="text-start">{% trans "Month" %}</th>
                                 <th class="text-start">{% trans "Scheduled Events / Due Dates" %}</th>
                                 <th>{% trans "Rental Income" %}</th>
                                 <th>{% trans "Debt Service" %}</th>
@@ -1132,8 +1133,17 @@
                         </thead>
                         <tbody>
                             {% for m in overview.cashflow_calendar.months %}
-                            <tr>
-                                <td class="text-start ps-4 fw-bold">{{ m.month_name }}</td>
+                            <!-- Summary Month Row -->
+                            <tr class="cursor-pointer" data-bs-toggle="collapse" data-bs-target="#cal-month-{{ m.month_num }}" aria-expanded="false" style="cursor: pointer;">
+                                <td class="text-center text-muted">
+                                    <i class="bi bi-chevron-down small transition-transform" id="icon-month-{{ m.month_num }}"></i>
+                                </td>
+                                <td class="text-start fw-bold">
+                                    {{ m.month_name }}
+                                    <span class="badge bg-secondary bg-opacity-25 text-body rounded-pill ms-1 small" style="font-size: 0.7rem;">
+                                        {{ m.total_items_count }} {% trans "items" %}
+                                    </span>
+                                </td>
                                 <td class="text-start">
                                     {% for ev in m.events %}
                                     <span class="badge {{ ev.badge_class }} rounded-pill px-2 py-1 me-1 mb-1 small text-nowrap">
@@ -1155,11 +1165,65 @@
                                     {% if m.cumulative_cashflow >= 0 %}+{% endif %}{{ m.cumulative_cashflow|floatformat:2|intcomma }} €
                                 </td>
                             </tr>
+                            <!-- Collapsible Detailed Breakdown Row -->
+                            <tr class="collapse p-0" id="cal-month-{{ m.month_num }}">
+                                <td colspan="10" class="p-0 border-0">
+                                    <div class="px-4 py-3 bg-light bg-opacity-50 border-top border-bottom">
+                                        <div class="row g-3">
+                                            <!-- Inflow Items -->
+                                            <div class="col-12 col-md-5">
+                                                <h6 class="fw-bold text-success mb-2 small text-uppercase d-flex align-items-center gap-1">
+                                                    <i class="bi bi-box-arrow-in-down-right"></i> {% trans "Inflow Details" %} ({{ m.rental_income|floatformat:2|intcomma }} €)
+                                                </h6>
+                                                {% if m.items_inflow %}
+                                                <div class="list-group list-group-flush rounded-3 shadow-sm border">
+                                                    {% for item in m.items_inflow %}
+                                                    <div class="list-group-item d-flex justify-content-between align-items-center py-2 px-3 small" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+                                                        <div>
+                                                            <div class="fw-semibold">{{ item.title }}</div>
+                                                            <span class="badge bg-secondary bg-opacity-25 text-body rounded-pill" style="font-size: 0.65rem;">{{ item.property_name }}</span>
+                                                        </div>
+                                                        <span class="font-monospace text-success fw-bold text-nowrap ms-2">+{{ item.amount|floatformat:2|intcomma }} €</span>
+                                                    </div>
+                                                    {% endfor %}
+                                                </div>
+                                                {% else %}
+                                                <div class="text-muted small py-2">{% trans "No rental inflows in this month." %}</div>
+                                                {% endif %}
+                                            </div>
+
+                                            <!-- Outflow Items -->
+                                            <div class="col-12 col-md-7">
+                                                <h6 class="fw-bold text-danger mb-2 small text-uppercase d-flex align-items-center gap-1">
+                                                    <i class="bi bi-box-arrow-up-right"></i> {% trans "Outflow Details" %} (-{{ m.total_expenses|floatformat:2|intcomma }} €)
+                                                </h6>
+                                                {% if m.items_outflow %}
+                                                <div class="list-group list-group-flush rounded-3 shadow-sm border">
+                                                    {% for item in m.items_outflow %}
+                                                    <div class="list-group-item d-flex justify-content-between align-items-center py-2 px-3 small" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+                                                        <div>
+                                                            <div class="fw-semibold">{{ item.title }}</div>
+                                                            <span class="badge bg-secondary bg-opacity-25 text-body rounded-pill me-1" style="font-size: 0.65rem;">{{ item.property_name }}</span>
+                                                            <span class="badge bg-info bg-opacity-10 text-info-emphasis rounded-pill" style="font-size: 0.65rem;">{{ item.category }}</span>
+                                                        </div>
+                                                        <span class="font-monospace text-danger fw-bold text-nowrap ms-2">-{{ item.amount|floatformat:2|intcomma }} €</span>
+                                                    </div>
+                                                    {% endfor %}
+                                                </div>
+                                                {% else %}
+                                                <div class="text-muted small py-2">{% trans "No outflows recorded." %}</div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
                             {% endfor %}
                         </tbody>
                         <tfoot class="table-light fw-bold">
                             <tr>
-                                <td class="text-start ps-4">{% trans "Total Year" %}</td>
+                                <td></td>
+                                <td class="text-start">{% trans "Total Year" %}</td>
                                 <td></td>
                                 <td class="font-monospace text-success">+{{ overview.cashflow_calendar.annual_totals.total_rent|floatformat:2|intcomma }} €</td>
                                 <td class="font-monospace text-danger">-{{ overview.cashflow_calendar.annual_totals.total_debt|floatformat:2|intcomma }} €</td>

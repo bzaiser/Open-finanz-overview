@@ -670,13 +670,16 @@ def calculate_components_roadmap(user):
 
 def calculate_property_cashflow_calendar(user_properties, all_loans):
     """
-    Generates a 12-month calendar projection for real estate cash flows with:
-    - Rental income
-    - Debt service
-    - Maintenance / Reserve
-    - Ancillary costs & real-world recurring calendar events (Grundsteuer, Versicherungen, etc.)
-    - Net monthly cashflow & cumulative annual cashflow progression
-    - Annual summary totals
+    Generates a 12-month calendar projection for real estate cash flows without artificial flattening:
+    - Real periodicity:
+      * Base monthly operating costs (Hausgeld / laufende Umlagen = 70% of ancillary)
+      * Quarterly Property Tax (Grundsteuer Q1-Q4 in Feb, May, Aug, Nov = 20% of annual ancillary / 4)
+      * Annual Building Insurance (Gebäudeversicherung in Jan = 10% of annual ancillary)
+      * Monthly rental income
+      * Monthly loan installments per loan
+      * Monthly maintenance allocation / reserve
+    - Itemized breakdown for every month (drilldown per property & loan)
+    - Monthly net cashflow & cumulative annual curve
     """
     month_names = [
         _('Jan'), _('Feb'), _('Mar'), _('Apr'), _('May'), _('Jun'),
@@ -684,70 +687,156 @@ def calculate_property_cashflow_calendar(user_properties, all_loans):
     ]
     
     calendar_months = []
-    
-    total_monthly_rent = sum((Decimal(str(p['rental_income'] or '0.00')) for p in user_properties), Decimal('0.00'))
-    total_monthly_maintenance = sum((Decimal(str(p['maintenance'] or '0.00')) for p in user_properties), Decimal('0.00'))
-    total_monthly_ancillary = sum((Decimal(str(p['ancillary'] or '0.00')) for p in user_properties), Decimal('0.00'))
-    total_monthly_debt = sum((Decimal(str(l['loan'].monthly_installment or '0.00')) for l in all_loans), Decimal('0.00'))
-
-    # Check for loan interest lock expiries in each month of the current year
     current_year = timezone.now().year
+
+    # Map loans by property
+    loans_by_prop = {}
+    for l_data in all_loans:
+        loan = l_data['loan']
+        re_id = loan.real_estate_id
+        loans_by_prop.setdefault(re_id, []).append(l_data)
+
+    # Expiries this year
     expiries_by_month = {}
     for l_data in all_loans:
         loan = l_data['loan']
         if loan.interest_lock_end and loan.interest_lock_end.year == current_year:
             m = loan.interest_lock_end.month
-            expiries_by_month.setdefault(m, []).append(loan.name)
+            expiries_by_month.setdefault(m, []).append(loan)
 
     cumulative_cashflow = Decimal('0.00')
 
-    # Realistic real estate calendar event hints
-    # Feb (month 2), May (5), Aug (8), Nov (11): German Property Tax (Grundsteuer Q1-Q4)
-    # Jan (month 1): Annual building insurance renewal (Gebäudeversicherung)
     for i, name in enumerate(month_names, 1):
-        rent = total_monthly_rent
-        debt = total_monthly_debt
-        maint = total_monthly_maintenance
-        anc = total_monthly_ancillary
+        month_rent = Decimal('0.00')
+        month_debt = Decimal('0.00')
+        month_maint = Decimal('0.00')
+        month_anc = Decimal('0.00')
 
+        items_inflow = []
+        items_outflow = []
         events = []
-        if i in (2, 5, 8, 11) and user_properties:
-            events.append({
-                'type': 'tax',
-                'badge_class': 'bg-primary bg-opacity-10 text-primary',
-                'icon': 'bi-receipt',
-                'title': _('Property Tax (Grundsteuer Q%(q)s)') % {'q': (i // 3) + 1}
-            })
-        if i == 1 and user_properties:
-            events.append({
-                'type': 'insurance',
-                'badge_class': 'bg-info bg-opacity-10 text-info',
-                'icon': 'bi-shield-check',
-                'title': _('Building Insurance Main Due Date')
-            })
+
+        # 1. Properties: Rental income, maintenance, and realistic unflattened ancillary
+        for p in user_properties:
+            re = p['real_estate']
+            rent = Decimal(str(p['rental_income'] or '0.00'))
+            maint = Decimal(str(p['maintenance'] or '0.00'))
+            anc_monthly_budget = Decimal(str(p['ancillary'] or '0.00'))
+
+            if rent > 0:
+                month_rent += rent
+                items_inflow.append({
+                    'title': _('Rental income %(tenant)s') % {'tenant': f'({re.name})'},
+                    'property_name': re.name,
+                    'category': _('Rent'),
+                    'amount': rent,
+                    'is_income': True
+                })
+
+            if maint > 0:
+                month_maint += maint
+                items_outflow.append({
+                    'title': _('Maintenance reserve allocation (%(name)s)') % {'name': re.name},
+                    'property_name': re.name,
+                    'category': _('Maintenance'),
+                    'amount': maint,
+                    'is_income': False
+                })
+
+            # Unflattened ancillary structure:
+            # 70% continuous monthly (Hausgeld / upkeep)
+            # 10% annual building insurance in January (Month 1)
+            # 20% quarterly property tax in Feb(2), May(5), Aug(8), Nov(11) -> 5% each quarter
+            if anc_monthly_budget > 0:
+                base_monthly = (anc_monthly_budget * Decimal('0.70')).quantize(Decimal('0.01'))
+                month_anc += base_monthly
+                items_outflow.append({
+                    'title': _('Ongoing building charges / utilities (%(name)s)') % {'name': re.name},
+                    'property_name': re.name,
+                    'category': _('Ancillary'),
+                    'amount': base_monthly,
+                    'is_income': False
+                })
+
+                if i == 1:
+                    insurance_amt = (anc_monthly_budget * Decimal('12.0') * Decimal('0.10')).quantize(Decimal('0.01'))
+                    if insurance_amt > 0:
+                        month_anc += insurance_amt
+                        items_outflow.append({
+                            'title': _('Building insurance annual premium (%(name)s)') % {'name': re.name},
+                            'property_name': re.name,
+                            'category': _('Insurance'),
+                            'amount': insurance_amt,
+                            'is_income': False
+                        })
+                        events.append({
+                            'type': 'insurance',
+                            'badge_class': 'bg-info bg-opacity-10 text-info',
+                            'icon': 'bi-shield-check',
+                            'title': _('Building Insurance: %(name)s (%(amt)s €)') % {'name': re.name, 'amt': insurance_amt}
+                        })
+
+                if i in (2, 5, 8, 11):
+                    q_num = (i // 3) + 1
+                    quarterly_tax = (anc_monthly_budget * Decimal('12.0') * Decimal('0.05')).quantize(Decimal('0.01'))
+                    if quarterly_tax > 0:
+                        month_anc += quarterly_tax
+                        items_outflow.append({
+                            'title': _('Property tax Grundsteuer Q%(q)s (%(name)s)') % {'q': q_num, 'name': re.name},
+                            'property_name': re.name,
+                            'category': _('Tax'),
+                            'amount': quarterly_tax,
+                            'is_income': False
+                        })
+                        events.append({
+                            'type': 'tax',
+                            'badge_class': 'bg-primary bg-opacity-10 text-primary',
+                            'icon': 'bi-receipt',
+                            'title': _('Grundsteuer Q%(q)s: %(name)s (%(amt)s €)') % {'q': q_num, 'name': re.name, 'amt': quarterly_tax}
+                        })
+
+        # 2. Loans: Monthly installment per loan
+        for l_data in all_loans:
+            loan = l_data['loan']
+            inst = Decimal(str(loan.monthly_installment or '0.00'))
+            if inst > 0:
+                month_debt += inst
+                re_name = loan.real_estate.name if loan.real_estate else _('Unassigned')
+                items_outflow.append({
+                    'title': f'{loan.name} ({loan.provider})',
+                    'property_name': re_name,
+                    'category': _('Debt Service'),
+                    'amount': inst,
+                    'is_income': False
+                })
+
+        # Interest lock expiries
         if i in expiries_by_month:
-            for l_name in expiries_by_month[i]:
+            for l_obj in expiries_by_month[i]:
                 events.append({
                     'type': 'loan',
                     'badge_class': 'bg-warning bg-opacity-25 text-warning-emphasis',
                     'icon': 'bi-alarm-fill',
-                    'title': _('Interest Lock Ends: %(name)s') % {'name': l_name}
+                    'title': _('Interest Lock Ends: %(name)s') % {'name': l_obj.name}
                 })
 
-        total_exp = debt + maint + anc
-        net = rent - total_exp
+        total_exp = month_debt + month_maint + month_anc
+        net = month_rent - total_exp
         cumulative_cashflow += net
 
         calendar_months.append({
             'month_num': i,
             'month_name': name,
-            'rental_income': rent,
-            'debt_service': debt,
-            'maintenance': maint,
-            'ancillary': anc,
+            'rental_income': month_rent,
+            'debt_service': month_debt,
+            'maintenance': month_maint,
+            'ancillary': month_anc,
             'total_expenses': total_exp,
             'net_cashflow': net,
             'cumulative_cashflow': cumulative_cashflow,
+            'items_inflow': items_inflow,
+            'items_outflow': items_outflow,
+            'total_items_count': len(items_inflow) + len(items_outflow),
             'events': events,
         })
 
