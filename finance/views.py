@@ -3445,8 +3445,17 @@ def real_estate_loans_view(request):
     component_form = PropertyComponentForm(user=user)
     document_form = PropertyDocumentForm(user=user)
     
+    import json
+    calendar_chart_json = json.dumps({
+        'labels': overview['cashflow_calendar']['chart_labels'],
+        'rent': overview['cashflow_calendar']['chart_rent'],
+        'expenses': overview['cashflow_calendar']['chart_expenses'],
+        'cumulative': overview['cashflow_calendar']['chart_cumulative'],
+    })
+
     context = {
         'overview': overview,
+        'calendar_chart_json': calendar_chart_json,
         'card_colors': card_colors,
         're_form': re_form,
         'loan_form': loan_form,
