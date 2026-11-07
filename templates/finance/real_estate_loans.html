@@ -14,7 +14,7 @@
                 {% trans "Immobilien & Kredite" %}
             </h3>
             <p class="text-muted small mb-0">
-                {% trans "Überwachung von Immobilienportfolio, Darlehensverträgen, Restschulden, LTV (Beleihungsauslauf) und Zinsbindungsfristen." %}
+                {% trans "Kredit-Monitoring, Tilgungsplan, Sondertilgungs-Simulator, LTV & Stresstests für Anschlussfinanzierung und Mietausfall." %}
             </p>
         </div>
         <div class="d-flex flex-wrap align-items-center gap-2">
@@ -142,7 +142,7 @@
         </div>
         <div class="text-nowrap">
             <span class="badge bg-warning-emphasis text-white px-3 py-2 rounded-pill small">
-                <i class="bi bi-info-circle me-1"></i>{% trans "Anschlussfinanzierung prüfen" %}
+                <i class="bi bi-info-circle me-1"></i>{% trans "Anschlussfinanzierung vorbereiten" %}
             </span>
         </div>
     </div>
@@ -285,6 +285,37 @@
                                 </div>
                             </div>
 
+                            <!-- Phase 2: Mietausfall- & Leerstands-Stresstest -->
+                            <div class="border rounded-3 p-3 bg-body-tertiary mb-3">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="small fw-bold text-uppercase d-flex align-items-center gap-1">
+                                        <i class="bi bi-shield-exclamation text-warning"></i>
+                                        {% trans "Stresstest: Mietausfall & Leerstand" %}
+                                    </span>
+                                    <span class="badge {% if p.vacancy_stress.months_covered >= 6 %}bg-success{% elif p.vacancy_stress.months_covered >= 3 %}bg-warning text-dark{% else %}bg-danger{% endif %} rounded-pill px-2 py-1">
+                                        {% trans "Puffer" %}: {{ p.vacancy_stress.months_covered }} {% trans "Monate" %}
+                                    </span>
+                                </div>
+                                <div class="small opacity-75 mb-2">
+                                    {% trans "Laufende Monatskosten bei 100% Leerstand" %}:
+                                    <strong class="font-monospace text-danger">{{ p.vacancy_stress.monthly_loss_burden|floatformat:2|intcomma }} € / M</strong>
+                                </div>
+                                <div class="row g-2 text-center" style="font-size: 0.75rem;">
+                                    <div class="col-4 p-1 border rounded bg-white bg-opacity-10">
+                                        <div class="opacity-75">3 {% trans "Monate" %}</div>
+                                        <div class="fw-bold font-monospace text-danger">{{ p.vacancy_stress.loss_3m|floatformat:0|intcomma }} €</div>
+                                    </div>
+                                    <div class="col-4 p-1 border rounded bg-white bg-opacity-10">
+                                        <div class="opacity-75">6 {% trans "Monate" %}</div>
+                                        <div class="fw-bold font-monospace text-danger">{{ p.vacancy_stress.loss_6m|floatformat:0|intcomma }} €</div>
+                                    </div>
+                                    <div class="col-4 p-1 border rounded bg-white bg-opacity-10">
+                                        <div class="opacity-75">12 {% trans "Monate" %}</div>
+                                        <div class="fw-bold font-monospace text-danger">{{ p.vacancy_stress.loss_12m|floatformat:0|intcomma }} €</div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Linked Loans Section -->
                             <div>
                                 <h6 class="small fw-bold text-uppercase opacity-75 mb-2 d-flex align-items-center gap-1">
@@ -345,12 +376,12 @@
                         <thead class="table-light">
                             <tr class="text-uppercase small">
                                 <th>{% trans "Darlehen / Bank" %}</th>
-                                <th>{% trans "Zugeordnete Immobilie" %}</th>
+                                <th>{% trans "Typ & Zuordnung" %}</th>
                                 <th>{% trans "Zinssatz & Tilgung" %}</th>
                                 <th>{% trans "Monatliche Rate" %}</th>
                                 <th class="text-end">{% trans "Aktuelle Restschuld" %}</th>
                                 <th>{% trans "Zinsbindung" %}</th>
-                                <th class="text-end">{% trans "Aktionen" %}</th>
+                                <th class="text-end">{% trans "Analysen & Aktionen" %}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -366,15 +397,22 @@
                                     </div>
                                 </td>
                                 <td>
-                                    {% if item.loan.real_estate %}
-                                    <span class="badge bg-primary bg-opacity-10 text-primary">
-                                        <i class="bi bi-house me-1"></i>{{ item.loan.real_estate.name }}
-                                    </span>
-                                    {% else %}
-                                    <span class="badge bg-secondary opacity-50">
-                                        {% trans "Freies Darlehen" %}
-                                    </span>
-                                    {% endif %}
+                                    <div>
+                                        <span class="badge bg-secondary bg-opacity-25 text-secondary-emphasis" style="font-size: 0.7rem;">
+                                            {{ item.loan.get_loan_type_display }}
+                                        </span>
+                                    </div>
+                                    <div class="mt-1">
+                                        {% if item.loan.real_estate %}
+                                        <span class="badge bg-primary bg-opacity-10 text-primary">
+                                            <i class="bi bi-house me-1"></i>{{ item.loan.real_estate.name }}
+                                        </span>
+                                        {% else %}
+                                        <span class="badge bg-secondary opacity-50">
+                                            {% trans "Freies Darlehen" %}
+                                        </span>
+                                        {% endif %}
+                                    </div>
                                 </td>
                                 <td>
                                     <div><strong>{{ item.loan.interest_rate }} %</strong> <span class="small opacity-75">Sollzins</span></div>
@@ -413,12 +451,29 @@
                                 </td>
                                 <td class="text-end">
                                     <div class="btn-group btn-group-sm">
-                                        <button type="button" class="btn btn-outline-secondary" title="{% trans 'Sondertilgung erfassen' %}" @click="openExtraRepaymentForLoanModal({{ item.loan.id }})">
+                                        <!-- Phase 2: Tilgungsplan Modal Trigger -->
+                                        <button type="button" class="btn btn-outline-primary" title="{% trans 'Vollständiger Tilgungsplan' %}" @click="openScheduleModal({{ item.loan.id }}, '{{ item.loan.name|escapejs }}')">
+                                            <i class="bi bi-calendar2-range"></i>
+                                        </button>
+                                        <!-- Phase 2: What-If Sondertilgungs-Simulator -->
+                                        <button type="button" class="btn btn-outline-success" title="{% trans 'What-If Sondertilgung simulieren' %}" @click="openWhatIfModal({{ item.loan.id }}, '{{ item.loan.name|escapejs }}', {{ item.details.total_interest_projected }}, '{{ item.details.payoff_date|date:'m.Y'|default:'' }}')">
+                                            <i class="bi bi-calculator"></i>
+                                        </button>
+                                        <!-- Phase 2: Zins-Stresstest Modal Trigger -->
+                                        {% if item.loan.interest_lock_end %}
+                                        <button type="button" class="btn btn-outline-warning text-dark" title="{% trans 'Anschlussfinanzierungs-Stresstest' %}" @click="openStressTestModal({{ item.loan.id }}, '{{ item.loan.name|escapejs }}', {{ item.details.balance_at_lock_end }}, '{{ item.loan.interest_lock_end|date:'d.m.Y' }}', {{ item.loan.interest_rate }}, {{ item.loan.monthly_installment }})">
+                                            <i class="bi bi-graph-up-arrow"></i>
+                                        </button>
+                                        {% endif %}
+                                        <!-- Extra Repayment Add -->
+                                        <button type="button" class="btn btn-outline-secondary" title="{% trans 'Sondertilgung buchen' %}" @click="openExtraRepaymentForLoanModal({{ item.loan.id }})">
                                             <i class="bi bi-cash-stack"></i>
                                         </button>
-                                        <button type="button" class="btn btn-outline-secondary" title="{% trans 'Bearbeiten' %}" @click="openEditLoanModal({{ item.loan.id }}, '{{ item.loan.name|escapejs }}', '{{ item.loan.provider|escapejs }}', '{{ item.loan.account_number|escapejs }}', '{{ item.loan.nominal_amount }}', '{{ item.loan.interest_rate }}', '{{ item.loan.effective_interest_rate|default:'' }}', '{{ item.loan.initial_repayment_rate|default:'' }}', '{{ item.loan.special_repayment_rate|default:'0' }}', '{{ item.loan.monthly_installment }}', '{{ item.loan.start_date|date:'Y-m-d' }}', '{{ item.loan.end_date|date:'Y-m-d'|default:'' }}', '{{ item.loan.interest_lock_end|date:'Y-m-d'|default:'' }}', '{{ item.loan.real_estate_id|default:'' }}', {{ item.loan.allows_extra_repayment|yesno:'true,false' }}, '{{ item.loan.notes|escapejs }}')">
+                                        <!-- Edit -->
+                                        <button type="button" class="btn btn-outline-secondary" title="{% trans 'Bearbeiten' %}" @click="openEditLoanModal({{ item.loan.id }}, '{{ item.loan.name|escapejs }}', '{{ item.loan.provider|escapejs }}', '{{ item.loan.account_number|escapejs }}', '{{ item.loan.nominal_amount }}', '{{ item.loan.interest_rate }}', '{{ item.loan.effective_interest_rate|default:'' }}', '{{ item.loan.initial_repayment_rate|default:'' }}', '{{ item.loan.special_repayment_rate|default:'0' }}', '{{ item.loan.monthly_installment }}', '{{ item.loan.start_date|date:'Y-m-d' }}', '{{ item.loan.end_date|date:'Y-m-d'|default:'' }}', '{{ item.loan.interest_lock_end|date:'Y-m-d'|default:'' }}', '{{ item.loan.real_estate_id|default:'' }}', {{ item.loan.allows_extra_repayment|yesno:'true,false' }}, '{{ item.loan.notes|escapejs }}', '{{ item.loan.loan_type }}')">
                                             <i class="bi bi-pencil"></i>
                                         </button>
+                                        <!-- Delete -->
                                         <a href="{% url 'finance:loan_delete' item.loan.id %}" class="btn btn-outline-danger" title="{% trans 'Löschen' %}" onclick="return confirm('{% trans "Möchten Sie dieses Darlehen wirklich löschen?" %}');">
                                             <i class="bi bi-trash"></i>
                                         </a>
@@ -524,13 +579,21 @@
                     {% csrf_token %}
                     <div class="modal-body pt-3">
                         <div class="row g-3 mb-3">
-                            <div class="col-md-6">
+                            <div class="col-md-5">
                                 <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Darlehens-Bezeichnung" %}</label>
                                 <input type="text" name="name" x-model="loanForm.name" class="form-control" placeholder="{% trans 'z. B. Baufinanzierung Annuität' %}" required>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Bank / Darlehensgeber" %}</label>
                                 <input type="text" name="provider" x-model="loanForm.provider" class="form-control" placeholder="{% trans 'z. B. Sparkasse, ING, DKB' %}">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Tilgungsverfahren" %}</label>
+                                <select name="loan_type" x-model="loanForm.loan_type" class="form-select">
+                                    <option value="annuity">{% trans "Annuitätendarlehen" %}</option>
+                                    <option value="fixed_amortization">{% trans "Tilgungsdarlehen" %}</option>
+                                    <option value="bullet">{% trans "Endfälliges Darlehen" %}</option>
+                                </select>
                             </div>
                         </div>
 
@@ -656,6 +719,246 @@
             </div>
         </div>
     </div>
+
+    <!-- ========================================================= -->
+    <!-- MODAL 4: TILGUNGSPLAN (Amortization Schedule Modal)       -->
+    <!-- ========================================================= -->
+    <div class="modal fade" id="scheduleModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content border-0 shadow-lg rounded-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+                <div class="modal-header border-0 pb-0 d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="modal-title fw-bold">
+                            <i class="bi bi-calendar2-range text-primary me-2"></i>
+                            {% trans "Tilgungsplan" %}: <span x-text="scheduleState.loanName"></span>
+                        </h5>
+                        <p class="text-muted small mb-0">
+                            {% trans "Vollständige Jahresübersicht über Zins, Tilgung und Restschuldverlauf bis zur vollständigen Tilgung." %}
+                        </p>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3" @click="downloadScheduleCSV()">
+                            <i class="bi bi-download me-1"></i>{% trans "CSV Export" %}
+                        </button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                </div>
+                <div class="modal-body pt-3">
+                    <div class="row g-3 text-center mb-3 p-2 rounded-3 bg-body-tertiary">
+                        <div class="col-4 border-end">
+                            <span class="small opacity-75 text-uppercase">{% trans "Darlehensursprung" %}</span>
+                            <div class="fw-bold font-monospace fs-6" x-text="formatEuro(scheduleState.nominalAmount) + ' €'"></div>
+                        </div>
+                        <div class="col-4 border-end">
+                            <span class="small opacity-75 text-uppercase">{% trans "Gesamtzinsen prognostiziert" %}</span>
+                            <div class="fw-bold font-monospace fs-6 text-danger" x-text="formatEuro(scheduleState.totalInterest) + ' €'"></div>
+                        </div>
+                        <div class="col-4">
+                            <span class="small opacity-75 text-uppercase">{% trans "Schuldenfrei am" %}</span>
+                            <div class="fw-bold font-monospace fs-6 text-success" x-text="scheduleState.payoffDate || '-'"></div>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive rounded-3 border" style="max-height: 450px;">
+                        <table class="table table-sm table-hover align-middle mb-0 font-monospace" style="font-size: 0.8rem;">
+                            <thead class="table-light sticky-top">
+                                <tr class="text-uppercase small">
+                                    <th>{% trans "Jahr" %}</th>
+                                    <th class="text-end">{% trans "Anfangsrestschuld" %}</th>
+                                    <th class="text-end">{% trans "Rate Gesamt" %}</th>
+                                    <th class="text-end text-danger">{% trans "Zinsanteil" %}</th>
+                                    <th class="text-end text-success">{% trans "Tilgungsanteil" %}</th>
+                                    <th class="text-end text-primary">{% trans "Sondertilgung" %}</th>
+                                    <th class="text-end">{% trans "Endrestschuld" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template x-for="row in scheduleState.rows" :key="row.year">
+                                    <tr :class="{'opacity-75': !row.is_future}">
+                                        <td>
+                                            <span class="fw-bold" x-text="row.year"></span>
+                                            <span x-show="!row.is_future" class="badge bg-secondary opacity-50 ms-1" style="font-size: 0.6rem;">{% trans "Vergangenheit" %}</span>
+                                        </td>
+                                        <td class="text-end" x-text="formatEuro(row.balance_start) + ' €'"></td>
+                                        <td class="text-end" x-text="formatEuro(row.total_installment) + ' €'"></td>
+                                        <td class="text-end text-danger" x-text="formatEuro(row.total_interest) + ' €'"></td>
+                                        <td class="text-end text-success" x-text="formatEuro(row.total_principal) + ' €'"></td>
+                                        <td class="text-end text-primary" x-text="formatEuro(row.total_extra) + ' €'"></td>
+                                        <td class="text-end fw-bold" x-text="formatEuro(row.balance_end) + ' €'"></td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- MODAL 5: WHAT-IF SONDERTILGUNGS-SIMULATOR                 -->
+    <!-- ========================================================= -->
+    <div class="modal fade" id="whatIfModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg rounded-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+                <div class="modal-header border-0 pb-0">
+                    <div>
+                        <h5 class="modal-title fw-bold">
+                            <i class="bi bi-calculator text-success me-2"></i>
+                            {% trans "What-If Sondertilgungs-Simulator" %}
+                        </h5>
+                        <p class="text-muted small mb-0">
+                            {% trans "Berechnen Sie in Echtzeit, wie viele Zinsen und Laufzeitjahre Sie durch zusätzliche Tilgungen einsparen." %}
+                        </p>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body pt-3">
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Einmalige Sondertilgung (€)" %}</label>
+                            <div class="input-group">
+                                <input type="number" step="500" x-model="whatIfState.oneTime" @input="recalculateWhatIf()" class="form-control font-monospace" placeholder="z. B. 5000">
+                                <span class="input-group-text">€</span>
+                            </div>
+                            <span class="small opacity-50">{% trans "Sofortige Sonderzahlung im laufenden Monat" %}</span>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Jährliche Sondertilgung (€ p.a.)" %}</label>
+                            <div class="input-group">
+                                <input type="number" step="500" x-model="whatIfState.annual" @input="recalculateWhatIf()" class="form-control font-monospace" placeholder="z. B. 2500">
+                                <span class="input-group-text">€ / J</span>
+                            </div>
+                            <span class="small opacity-50">{% trans "Wiederkehrende jährliche Sonderzahlung (z. B. aus Bonus)" %}</span>
+                        </div>
+                    </div>
+
+                    <!-- Simulator Results Cards -->
+                    <div class="row g-3 text-center mb-3">
+                        <div class="col-md-4">
+                            <div class="p-3 rounded-4 border bg-body-tertiary h-100">
+                                <div class="small opacity-75 text-uppercase">{% trans "Zinsersparnis" %}</div>
+                                <div class="h3 fw-bold font-monospace text-success my-1" x-text="formatEuro(whatIfState.interestSaved) + ' €'"></div>
+                                <div class="small text-muted" x-text="'Gesamtzins sinkt von ' + formatEuro(whatIfState.baselineInterest) + ' € auf ' + formatEuro(whatIfState.simulatedInterest) + ' €'"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 rounded-4 border bg-body-tertiary h-100">
+                                <div class="small opacity-75 text-uppercase">{% trans "Laufzeitverkürzung" %}</div>
+                                <div class="h3 fw-bold font-monospace text-primary my-1" x-text="whatIfState.monthsSaved + ' Monate'"></div>
+                                <div class="small text-muted" x-text="'entspricht ca. ' + whatIfState.yearsSaved + ' Jahren früher schuldenfrei'"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 rounded-4 border bg-body-tertiary h-100">
+                                <div class="small opacity-75 text-uppercase">{% trans "Neues Tilgungsende" %}</div>
+                                <div class="h3 fw-bold font-monospace text-success my-1" x-text="whatIfState.simulatedPayoff || '-'"></div>
+                                <div class="small text-muted" x-text="'vorher regulär: ' + (whatIfState.baselinePayoff || '-')"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">{% trans "Schließen" %}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- MODAL 6: ANSCHLUSSFINANZIERUNGS-STRESTEST                -->
+    <!-- ========================================================= -->
+    <div class="modal fade" id="stressTestModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg rounded-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+                <div class="modal-header border-0 pb-0">
+                    <div>
+                        <h5 class="modal-title fw-bold">
+                            <i class="bi bi-graph-up-arrow text-warning me-2"></i>
+                            {% trans "Anschlussfinanzierungs-Stresstest" %}: <span x-text="stressState.loanName"></span>
+                        </h5>
+                        <p class="text-muted small mb-0">
+                            {% trans "Zinssprung-Simulation: Wie verändert sich Ihre monatliche Rate nach Ende der Zinsbindung bei steigenden Zinsen?" %}
+                        </p>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body pt-3">
+                    <div class="row g-3 p-3 rounded-3 bg-body-tertiary mb-3 text-center">
+                        <div class="col-4 border-end">
+                            <span class="small opacity-75 text-uppercase">{% trans "Zinsbindungsende" %}</span>
+                            <div class="fw-bold fs-6 text-warning" x-text="stressState.lockEndDate"></div>
+                        </div>
+                        <div class="col-4 border-end">
+                            <span class="small opacity-75 text-uppercase">{% trans "Restschuld bei Ablauf" %}</span>
+                            <div class="fw-bold font-monospace fs-6 text-danger" x-text="formatEuro(stressState.balanceAtLock) + ' €'"></div>
+                        </div>
+                        <div class="col-4">
+                            <span class="small opacity-75 text-uppercase">{% trans "Aktuelle Rate" %}</span>
+                            <div class="fw-bold font-monospace fs-6" x-text="formatEuro(stressState.currentInstallment) + ' € / M'"></div>
+                        </div>
+                    </div>
+
+                    <h6 class="small fw-bold text-uppercase opacity-75 mb-2">{% trans "Szenarien bei Zinsänderung" %}</h6>
+                    <div class="table-responsive rounded-3 border mb-3">
+                        <table class="table table-sm table-hover align-middle mb-0 font-monospace" style="font-size: 0.85rem;">
+                            <thead class="table-light">
+                                <tr class="text-uppercase small">
+                                    <th>{% trans "Zinssatz (Szenario)" %}</th>
+                                    <th class="text-end">{% trans "Neue Monatsrate" %}</th>
+                                    <th class="text-end">{% trans "Mehrbelastung / M" %}</th>
+                                    <th class="text-end">{% trans "Mehrbelastung / Jahr" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template x-for="sc in getStressScenarios()" :key="sc.code">
+                                    <tr>
+                                        <td>
+                                            <span class="fw-bold" x-text="sc.label"></span>
+                                        </td>
+                                        <td class="text-end fw-bold" x-text="formatEuro(sc.rate_installment) + ' €'"></td>
+                                        <td class="text-end" :class="sc.diff_monthly > 0 ? 'text-danger fw-bold' : 'text-success'">
+                                            <span x-text="(sc.diff_monthly > 0 ? '+' : '') + formatEuro(sc.diff_monthly) + ' €'"></span>
+                                        </td>
+                                        <td class="text-end" :class="sc.diff_annual > 0 ? 'text-danger' : 'text-success'">
+                                            <span x-text="(sc.diff_annual > 0 ? '+' : '') + formatEuro(sc.diff_annual) + ' €'"></span>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Custom Interest Rate Slider/Input -->
+                    <div class="p-3 rounded-3 border bg-body-tertiary">
+                        <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Eigenen Test-Zinssatz prüfen" %}</label>
+                        <div class="row g-3 align-items-center">
+                            <div class="col-md-5">
+                                <div class="input-group">
+                                    <input type="number" step="0.1" min="0.5" max="15.0" x-model="stressState.customRate" class="form-control font-monospace">
+                                    <span class="input-group-text">% p.a.</span>
+                                </div>
+                            </div>
+                            <div class="col-md-7">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="small opacity-75">{% trans "Ergibt Monatsrate" %}:</span>
+                                    <strong class="font-monospace fs-6" x-text="formatEuro(calculateCustomScenario().monthly) + ' € / M'"></strong>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center small">
+                                    <span class="opacity-75">{% trans "Differenz zur aktuellen Rate" %}:</span>
+                                    <span class="font-monospace fw-bold" :class="calculateCustomScenario().diff > 0 ? 'text-danger' : 'text-success'" x-text="(calculateCustomScenario().diff > 0 ? '+' : '') + formatEuro(calculateCustomScenario().diff) + ' € / M'"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">{% trans "Schließen" %}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <script>
@@ -678,6 +981,7 @@ function realEstateLoansApp() {
             id: null,
             name: '',
             provider: '',
+            loan_type: 'annuity',
             account_number: '',
             nominal_amount: '',
             interest_rate: '',
@@ -685,7 +989,7 @@ function realEstateLoansApp() {
             initial_repayment_rate: '',
             special_repayment_rate: '5.0',
             monthly_installment: '',
-            start_date: '',
+            start_date: new Date().toISOString().split('T')[0],
             end_date: '',
             interest_lock_end: '',
             real_estate: '',
@@ -696,6 +1000,48 @@ function realEstateLoansApp() {
             loan: '',
             date: new Date().toISOString().split('T')[0],
             amount: ''
+        },
+
+        // Phase 2 Schedule State
+        scheduleState: {
+            loanId: null,
+            loanName: '',
+            nominalAmount: 0,
+            interestRate: 0,
+            payoffDate: '',
+            totalInterest: 0,
+            rows: []
+        },
+
+        // Phase 2 What-If State
+        whatIfState: {
+            loanId: null,
+            loanName: '',
+            oneTime: '',
+            annual: '',
+            interestSaved: 0,
+            monthsSaved: 0,
+            yearsSaved: 0,
+            baselineInterest: 0,
+            simulatedInterest: 0,
+            baselinePayoff: '',
+            simulatedPayoff: ''
+        },
+
+        // Phase 2 Stress State
+        stressState: {
+            loanId: null,
+            loanName: '',
+            balanceAtLock: 0,
+            lockEndDate: '',
+            currentRate: 3.5,
+            currentInstallment: 0,
+            customRate: 4.5
+        },
+
+        formatEuro(val) {
+            if (val === null || val === undefined) return '0,00';
+            return Number(val).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         },
 
         openAddPropertyModal() {
@@ -737,6 +1083,7 @@ function realEstateLoansApp() {
                 id: null,
                 name: '',
                 provider: '',
+                loan_type: 'annuity',
                 account_number: '',
                 nominal_amount: '',
                 interest_rate: '',
@@ -760,11 +1107,12 @@ function realEstateLoansApp() {
             this.loanForm.name = 'Darlehen ' + reName;
         },
 
-        openEditLoanModal(id, name, prov, acc, nom, rate, eff, initRep, specRep, inst, start, end, lock, reId, allows, notes) {
+        openEditLoanModal(id, name, prov, acc, nom, rate, eff, initRep, specRep, inst, start, end, lock, reId, allows, notes, lType) {
             this.loanForm = {
                 id: id,
                 name: name,
                 provider: prov,
+                loan_type: lType || 'annuity',
                 account_number: acc,
                 nominal_amount: nom,
                 interest_rate: rate,
@@ -794,6 +1142,142 @@ function realEstateLoansApp() {
         openExtraRepaymentForLoanModal(loanId) {
             this.openExtraRepaymentModal();
             this.repaymentForm.loan = loanId;
+        },
+
+        // ==========================================
+        // Phase 2: Amortization Schedule
+        // ==========================================
+        async openScheduleModal(loanId, loanName) {
+            this.scheduleState.loanId = loanId;
+            this.scheduleState.loanName = loanName;
+            this.scheduleState.rows = [];
+            
+            new bootstrap.Modal(document.getElementById('scheduleModal')).show();
+            
+            try {
+                const res = await fetch(`/finance/loans/${loanId}/schedule-api/`);
+                if (res.ok) {
+                    const data = await res.json();
+                    this.scheduleState.nominalAmount = data.nominal_amount;
+                    this.scheduleState.interestRate = data.interest_rate;
+                    this.scheduleState.payoffDate = data.payoff_date;
+                    this.scheduleState.totalInterest = data.total_interest_projected;
+                    this.scheduleState.rows = data.annual_schedule;
+                }
+            } catch (e) {
+                console.error("Error loading schedule:", e);
+            }
+        },
+
+        downloadScheduleCSV() {
+            if (!this.scheduleState.rows || this.scheduleState.rows.length === 0) return;
+            let csv = "Jahr;Anfangsrestschuld;Gesamtrate;Zinsen;Tilgung;Sondertilgung;Endrestschuld\r\n";
+            this.scheduleState.rows.forEach(r => {
+                csv += `${r.year};${r.balance_start.toFixed(2)};${r.total_installment.toFixed(2)};${r.total_interest.toFixed(2)};${r.total_principal.toFixed(2)};${r.total_extra.toFixed(2)};${r.balance_end.toFixed(2)}\r\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = `Tilgungsplan_${this.scheduleState.loanName.replace(/\s+/g, '_')}.csv`;
+            link.click();
+        },
+
+        // ==========================================
+        // Phase 2: What-If Simulator
+        // ==========================================
+        openWhatIfModal(loanId, loanName, baseInterest, basePayoff) {
+            this.whatIfState.loanId = loanId;
+            this.whatIfState.loanName = loanName;
+            this.whatIfState.oneTime = '5000';
+            this.whatIfState.annual = '1200';
+            this.whatIfState.baselineInterest = baseInterest;
+            this.whatIfState.baselinePayoff = basePayoff;
+            this.whatIfState.interestSaved = 0;
+            this.whatIfState.monthsSaved = 0;
+            this.whatIfState.yearsSaved = 0;
+            
+            new bootstrap.Modal(document.getElementById('whatIfModal')).show();
+            this.recalculateWhatIf();
+        },
+
+        async recalculateWhatIf() {
+            if (!this.whatIfState.loanId) return;
+            const oneTime = parseFloat(this.whatIfState.oneTime) || 0;
+            const annual = parseFloat(this.whatIfState.annual) || 0;
+            
+            try {
+                const res = await fetch(`/finance/loans/${this.whatIfState.loanId}/simulate-api/?one_time=${oneTime}&annual=${annual}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    this.whatIfState.interestSaved = data.interest_saved;
+                    this.whatIfState.monthsSaved = data.months_saved;
+                    this.whatIfState.yearsSaved = data.years_saved;
+                    this.whatIfState.baselineInterest = data.baseline_interest;
+                    this.whatIfState.simulatedInterest = data.simulated_interest;
+                    this.whatIfState.baselinePayoff = data.baseline_payoff;
+                    this.whatIfState.simulatedPayoff = data.simulated_payoff;
+                }
+            } catch (e) {
+                console.error("Simulation error:", e);
+            }
+        },
+
+        // ==========================================
+        // Phase 2: Refinancing Stress Test
+        // ==========================================
+        openStressTestModal(loanId, loanName, balanceAtLock, lockDate, currRate, currInst) {
+            this.stressState.loanId = loanId;
+            this.stressState.loanName = loanName;
+            this.stressState.balanceAtLock = balanceAtLock;
+            this.stressState.lockEndDate = lockDate;
+            this.stressState.currentRate = parseFloat(currRate) || 3.5;
+            this.stressState.currentInstallment = parseFloat(currInst) || 0;
+            this.stressState.customRate = (this.stressState.currentRate + 2.0).toFixed(1);
+            
+            new bootstrap.Modal(document.getElementById('stressTestModal')).show();
+        },
+
+        getStressScenarios() {
+            const bal = parseFloat(this.stressState.balanceAtLock) || 0;
+            const currInst = parseFloat(this.stressState.currentInstallment) || 0;
+            const currRate = parseFloat(this.stressState.currentRate) || 3.5;
+            const assumedRepay = 2.0; // 2% repayment standard
+
+            const list = [
+                { code: 'curr', rate: currRate, label: `${currRate.toFixed(2)} % (Aktueller Zinssatz)` },
+                { code: 'p1', rate: currRate + 1.0, label: `+1,0 % (${(currRate + 1.0).toFixed(2)} %)` },
+                { code: 'p2', rate: currRate + 2.0, label: `+2,0 % (${(currRate + 2.0).toFixed(2)} %)` },
+                { code: 'p3', rate: currRate + 3.0, label: `+3,0 % (${(currRate + 3.0).toFixed(2)} %)` },
+                { code: 'f45', rate: 4.5, label: `4,50 % (Marktdurchschnitt)` },
+                { code: 'f60', rate: 6.0, label: `6,00 % (Hochzins-Szenario)` },
+            ];
+
+            return list.map(item => {
+                const annuity = (item.rate + assumedRepay) / 100.0;
+                const monthly = (bal * annuity) / 12.0;
+                const diffM = monthly - currInst;
+                const diffY = diffM * 12.0;
+                return {
+                    code: item.code,
+                    label: item.label,
+                    rate_installment: monthly,
+                    diff_monthly: diffM,
+                    diff_annual: diffY
+                };
+            });
+        },
+
+        calculateCustomScenario() {
+            const bal = parseFloat(this.stressState.balanceAtLock) || 0;
+            const currInst = parseFloat(this.stressState.currentInstallment) || 0;
+            const customR = parseFloat(this.stressState.customRate) || 4.5;
+            const assumedRepay = 2.0;
+            const annuity = (customR + assumedRepay) / 100.0;
+            const monthly = (bal * annuity) / 12.0;
+            return {
+                monthly: monthly,
+                diff: monthly - currInst
+            };
         }
     };
 }

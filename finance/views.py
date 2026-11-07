@@ -3502,3 +3502,58 @@ def loan_extra_repayment_delete(request, pk):
     repayment.delete()
     messages.success(request, _('Sondertilgung gelöscht.'))
     return redirect('finance:real_estate_loans')
+
+
+from django.http import JsonResponse
+from .services_realestate import simulate_extra_repayment_savings
+
+@login_required
+def loan_amortization_schedule_api(request, pk):
+    loan = get_object_or_404(Loan, pk=pk, user=request.user)
+    details = calculate_loan_schedule(loan)
+    
+    annual_data = []
+    for r in details['annual_schedule']:
+        annual_data.append({
+            'year': r['year'],
+            'balance_start': float(r['balance_start']),
+            'total_installment': float(r['total_installment']),
+            'total_interest': float(r['total_interest']),
+            'total_principal': float(r['total_principal']),
+            'total_extra': float(r['total_extra']),
+            'balance_end': float(r['balance_end']),
+            'is_future': r['is_future'],
+        })
+        
+    return JsonResponse({
+        'loan_id': loan.id,
+        'loan_name': loan.name,
+        'nominal_amount': float(loan.nominal_amount),
+        'interest_rate': float(loan.interest_rate),
+        'payoff_date': details['payoff_date'].strftime('%d.%m.%Y') if details['payoff_date'] else None,
+        'total_interest_projected': float(details['total_interest_projected']),
+        'annual_schedule': annual_data,
+    })
+
+
+@login_required
+def loan_simulate_extra_api(request, pk):
+    loan = get_object_or_404(Loan, pk=pk, user=request.user)
+    try:
+        one_time = Decimal(str(request.GET.get('one_time') or request.POST.get('one_time') or '0'))
+        annual = Decimal(str(request.GET.get('annual') or request.POST.get('annual') or '0'))
+    except Exception:
+        one_time = Decimal('0.00')
+        annual = Decimal('0.00')
+        
+    res = simulate_extra_repayment_savings(loan, extra_one_time=one_time, extra_annual=annual)
+    return JsonResponse({
+        'loan_id': loan.id,
+        'interest_saved': float(res['interest_saved']),
+        'months_saved': res['months_saved'],
+        'years_saved': res['years_saved'],
+        'baseline_interest': float(res['baseline_interest']),
+        'simulated_interest': float(res['simulated_interest']),
+        'baseline_payoff': res['baseline_payoff'].strftime('%m.%Y') if res['baseline_payoff'] else None,
+        'simulated_payoff': res['simulated_payoff'].strftime('%m.%Y') if res['simulated_payoff'] else None,
+    })

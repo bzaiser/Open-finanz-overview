@@ -291,7 +291,14 @@ class FinancialStatusProxy(CustomUser):
 
 
 class Loan(models.Model):
+    LOAN_TYPE_CHOICES = [
+        ('annuity', _('Annuitätendarlehen (Konstante Rate)')),
+        ('fixed_amortization', _('Tilgungsdarlehen (Feste Tilgung + sinkende Zinsen)')),
+        ('bullet', _('Endfälliges Darlehen (Nur Zinsen, Tilgung am Ende)')),
+    ]
+
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='loans')
+    loan_type = models.CharField(_("Loan Type"), max_length=20, choices=LOAN_TYPE_CHOICES, default='annuity')
     name = models.CharField(_("Display Name"), max_length=100)
     provider = models.CharField(_("Provider / Bank"), max_length=100, blank=True)
     nominal_amount = models.DecimalField(_("Initial Loan Amount"), max_digits=12, decimal_places=2)

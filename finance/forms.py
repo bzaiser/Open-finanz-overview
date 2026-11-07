@@ -101,7 +101,7 @@ class LoanForm(forms.ModelForm):
     class Meta:
         model = Loan
         fields = [
-            'name', 'provider', 'account_number', 'nominal_amount',
+            'name', 'provider', 'loan_type', 'account_number', 'nominal_amount',
             'interest_rate', 'effective_interest_rate', 'initial_repayment_rate',
             'special_repayment_rate', 'monthly_installment', 'start_date', 'end_date',
             'interest_lock_end', 'real_estate', 'allows_extra_repayment', 'notes'
@@ -109,6 +109,7 @@ class LoanForm(forms.ModelForm):
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('e.g. Annuitätendarlehen Sparkasse')}),
             'provider': forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('e.g. Sparkasse, ING, DKB')}),
+            'loan_type': forms.Select(attrs={'class': 'form-select'}),
             'account_number': forms.TextInput(attrs={'class': 'form-control font-monospace', 'placeholder': _('e.g. Darlehens-Nr. 12345678')}),
             'nominal_amount': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
             'interest_rate': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
