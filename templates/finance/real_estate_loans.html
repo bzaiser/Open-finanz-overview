@@ -1006,44 +1006,174 @@
         <!-- TAB 4: PAYMENT CALENDAR                    -->
         <!-- ========================================== -->
         <div class="tab-pane fade" id="calendar-pane" role="tabpanel">
-            <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2 mb-3">
                 <div>
                     <h5 class="fw-bold mb-1">
                         <i class="bi bi-calendar3 text-primary me-2"></i>{% trans "12-Month Real Estate Payment Calendar" %}
                     </h5>
                     <p class="text-muted small mb-0">{% trans "Projected monthly debt service, ancillary expenses, maintenance allocations and resulting net cashflow." %}</p>
                 </div>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-3 py-2 rounded-pill small">
+                        <i class="bi bi-graph-up me-1"></i>{% trans "Annual Net" %}: {% if overview.cashflow_calendar.annual_totals.total_net >= 0 %}+{% endif %}{{ overview.cashflow_calendar.annual_totals.total_net|floatformat:2|intcomma }} {{ user.profile.currency|default:"€" }}
+                    </span>
+                </div>
             </div>
 
+            <!-- Annual Summary KPI Bar -->
+            <div class="row g-3 mb-4">
+                <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
+                    <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card_colors.property_bg }}; color: {{ card_colors.property_text }}; border: none;">
+                        <div class="card-glass-glow"></div>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
+                                    {% trans "Total Annual Rent" %}
+                                </span>
+                                <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
+                                    {{ overview.cashflow_calendar.annual_totals.total_rent|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}</span>
+                                </h3>
+                                <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                                    {% trans "12 months expected gross rent" %}
+                                </span>
+                            </div>
+                            <div class="ms-2"><i class="bi bi-wallet2 fs-5"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
+                    <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card_colors.debt_bg }}; color: {{ card_colors.debt_text }}; border: none;">
+                        <div class="card-glass-glow"></div>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
+                                    {% trans "Total Debt Service" %}
+                                </span>
+                                <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
+                                    -{{ overview.cashflow_calendar.annual_totals.total_debt|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}</span>
+                                </h3>
+                                <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                                    {% trans "12 months loan installments" %}
+                                </span>
+                            </div>
+                            <div class="ms-2"><i class="bi bi-bank fs-5"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
+                    <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card_colors.equity_bg }}; color: {{ card_colors.equity_text }}; border: none;">
+                        <div class="card-glass-glow"></div>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
+                                    {% trans "Operating & Reserves" %}
+                                </span>
+                                <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
+                                    -{{ overview.cashflow_calendar.annual_totals.total_maintenance|add:overview.cashflow_calendar.annual_totals.total_ancillary|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}</span>
+                                </h3>
+                                <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                                    {% trans "Reserves and ancillary costs" %}
+                                </span>
+                            </div>
+                            <div class="ms-2"><i class="bi bi-tools fs-5"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
+                    <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card_colors.cashflow_bg }}; color: {{ card_colors.cashflow_text }}; border: none;">
+                        <div class="card-glass-glow"></div>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
+                                    {% trans "Annual Net Cashflow" %}
+                                </span>
+                                <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
+                                    {% if overview.cashflow_calendar.annual_totals.total_net >= 0 %}+{% endif %}{{ overview.cashflow_calendar.annual_totals.total_net|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}</span>
+                                </h3>
+                                <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                                    {% trans "Full year projected net yield" %}
+                                </span>
+                            </div>
+                            <div class="ms-2"><i class="bi bi-piggy-bank fs-5"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visual Cashflow Progression Chart -->
+            <div class="card border-0 shadow-sm rounded-4 p-3 mb-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="fw-bold mb-0">
+                        <i class="bi bi-bar-chart-line text-primary me-2"></i>{% trans "Monthly Inflow, Outflow & Cumulative Trend" %}
+                    </h6>
+                    <span class="small opacity-75">{% trans "12-Month Projection" %}</span>
+                </div>
+                <div style="position: relative; height: 260px; width: 100%;">
+                    <canvas id="realEstateCashflowChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Table with Events and Cumulative Cashflow -->
             <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
                 <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0 text-center">
                         <thead class="table-light small text-uppercase">
                             <tr>
                                 <th class="text-start ps-4">{% trans "Month" %}</th>
+                                <th class="text-start">{% trans "Scheduled Events / Due Dates" %}</th>
                                 <th>{% trans "Rental Income" %}</th>
                                 <th>{% trans "Debt Service" %}</th>
                                 <th>{% trans "Maintenance / Reserve" %}</th>
                                 <th>{% trans "Ancillary Operating" %}</th>
                                 <th>{% trans "Total Costs" %}</th>
-                                <th class="text-end pe-4">{% trans "Net Cashflow" %}</th>
+                                <th>{% trans "Monthly Net" %}</th>
+                                <th class="text-end pe-4">{% trans "Cumulative Net" %}</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for m in overview.cashflow_calendar %}
+                            {% for m in overview.cashflow_calendar.months %}
                             <tr>
                                 <td class="text-start ps-4 fw-bold">{{ m.month_name }}</td>
+                                <td class="text-start">
+                                    {% for ev in m.events %}
+                                    <span class="badge {{ ev.badge_class }} rounded-pill px-2 py-1 me-1 mb-1 small text-nowrap">
+                                        <i class="bi {{ ev.icon }} me-1"></i>{{ ev.title }}
+                                    </span>
+                                    {% empty %}
+                                    <span class="small opacity-50">{% trans "Regular flow" %}</span>
+                                    {% endfor %}
+                                </td>
                                 <td class="font-monospace text-success">+{{ m.rental_income|floatformat:2|intcomma }} €</td>
                                 <td class="font-monospace text-danger">-{{ m.debt_service|floatformat:2|intcomma }} €</td>
                                 <td class="font-monospace text-warning">-{{ m.maintenance|floatformat:2|intcomma }} €</td>
                                 <td class="font-monospace text-secondary">-{{ m.ancillary|floatformat:2|intcomma }} €</td>
                                 <td class="font-monospace text-danger fw-semibold">-{{ m.total_expenses|floatformat:2|intcomma }} €</td>
-                                <td class="text-end pe-4 font-monospace fw-bold {% if m.net_cashflow >= 0 %}text-success{% else %}text-danger{% endif %}">
+                                <td class="font-monospace fw-bold {% if m.net_cashflow >= 0 %}text-success{% else %}text-danger{% endif %}">
                                     {% if m.net_cashflow >= 0 %}+{% endif %}{{ m.net_cashflow|floatformat:2|intcomma }} €
+                                </td>
+                                <td class="text-end pe-4 font-monospace fw-bold {% if m.cumulative_cashflow >= 0 %}text-success{% else %}text-danger{% endif %}">
+                                    {% if m.cumulative_cashflow >= 0 %}+{% endif %}{{ m.cumulative_cashflow|floatformat:2|intcomma }} €
                                 </td>
                             </tr>
                             {% endfor %}
                         </tbody>
+                        <tfoot class="table-light fw-bold">
+                            <tr>
+                                <td class="text-start ps-4">{% trans "Total Year" %}</td>
+                                <td></td>
+                                <td class="font-monospace text-success">+{{ overview.cashflow_calendar.annual_totals.total_rent|floatformat:2|intcomma }} €</td>
+                                <td class="font-monospace text-danger">-{{ overview.cashflow_calendar.annual_totals.total_debt|floatformat:2|intcomma }} €</td>
+                                <td class="font-monospace text-warning">-{{ overview.cashflow_calendar.annual_totals.total_maintenance|floatformat:2|intcomma }} €</td>
+                                <td class="font-monospace text-secondary">-{{ overview.cashflow_calendar.annual_totals.total_ancillary|floatformat:2|intcomma }} €</td>
+                                <td class="font-monospace text-danger fw-bold">-{{ overview.cashflow_calendar.annual_totals.total_expenses|floatformat:2|intcomma }} €</td>
+                                <td class="font-monospace fw-bold {% if overview.cashflow_calendar.annual_totals.total_net >= 0 %}text-success{% else %}text-danger{% endif %}">
+                                    {% if overview.cashflow_calendar.annual_totals.total_net >= 0 %}+{% endif %}{{ overview.cashflow_calendar.annual_totals.total_net|floatformat:2|intcomma }} €
+                                </td>
+                                <td class="text-end pe-4 font-monospace fw-bold {% if overview.cashflow_calendar.annual_totals.total_net >= 0 %}text-success{% else %}text-danger{% endif %}">
+                                    {% if overview.cashflow_calendar.annual_totals.total_net >= 0 %}+{% endif %}{{ overview.cashflow_calendar.annual_totals.total_net|floatformat:2|intcomma }} €
+                                </td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
             </div>
@@ -2399,3 +2529,98 @@ function realEstateLoansApp() {
 }
 </script>
 {% endblock %}
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var calendarTab = document.getElementById('calendar-tab');
+    var chartRendered = false;
+
+    function renderCashflowChart() {
+        if (chartRendered) return;
+        var canvas = document.getElementById('realEstateCashflowChart');
+        if (!canvas) return;
+
+        var labels = {{ overview.cashflow_calendar.chart_labels|safe|default:"[]" }};
+        var rentData = {{ overview.cashflow_calendar.chart_rent|safe|default:"[]" }};
+        var expData = {{ overview.cashflow_calendar.chart_expenses|safe|default:"[]" }};
+        var cumData = {{ overview.cashflow_calendar.chart_cumulative|safe|default:"[]" }};
+
+        new Chart(canvas, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        type: 'line',
+                        label: '{% trans "Cumulative Net Cashflow" %}',
+                        data: cumData,
+                        borderColor: '#0d6efd',
+                        backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        yAxisID: 'y1',
+                        fill: false
+                    },
+                    {
+                        type: 'bar',
+                        label: '{% trans "Rental Inflow" %}',
+                        data: rentData,
+                        backgroundColor: 'rgba(25, 135, 84, 0.75)',
+                        borderRadius: 4,
+                        yAxisID: 'y'
+                    },
+                    {
+                        type: 'bar',
+                        label: '{% trans "Total Outflow" %}',
+                        data: expData,
+                        backgroundColor: 'rgba(220, 53, 69, 0.75)',
+                        borderRadius: 4,
+                        yAxisID: 'y'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        position: 'left',
+                        ticks: {
+                            callback: function(v) { return v.toLocaleString() + ' €'; }
+                        }
+                    },
+                    y1: {
+                        position: 'right',
+                        grid: { drawOnChartArea: false },
+                        ticks: {
+                            callback: function(v) { return v.toLocaleString() + ' €'; }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: { position: 'top' },
+                    tooltip: {
+                        callbacks: {
+                            label: function(ctx) {
+                                return ctx.dataset.label + ': ' + ctx.parsed.y.toLocaleString('de-DE', {minimumFractionDigits: 2}) + ' €';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        chartRendered = true;
+    }
+
+    if (calendarTab) {
+        calendarTab.addEventListener('shown.bs.tab', renderCashflowChart);
+    }
+    // Also try immediately in case tab is opened directly
+    if (document.getElementById('calendar-pane') && document.getElementById('calendar-pane').classList.contains('active')) {
+        renderCashflowChart();
+    }
+});
+</script>

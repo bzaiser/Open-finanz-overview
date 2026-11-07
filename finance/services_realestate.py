@@ -670,12 +670,13 @@ def calculate_components_roadmap(user):
 
 def calculate_property_cashflow_calendar(user_properties, all_loans):
     """
-    Generates a 12-month calendar projection for real estate cash flows:
+    Generates a 12-month calendar projection for real estate cash flows with:
     - Rental income
     - Debt service
     - Maintenance / Reserve
-    - Ancillary costs
-    - Net monthly cashflow
+    - Ancillary costs & real-world recurring calendar events (Grundsteuer, Versicherungen, etc.)
+    - Net monthly cashflow & cumulative annual cashflow progression
+    - Annual summary totals
     """
     month_names = [
         _('Jan'), _('Feb'), _('Mar'), _('Apr'), _('May'), _('Jun'),
@@ -688,15 +689,55 @@ def calculate_property_cashflow_calendar(user_properties, all_loans):
     total_monthly_maintenance = sum((Decimal(str(p['maintenance'] or '0.00')) for p in user_properties), Decimal('0.00'))
     total_monthly_ancillary = sum((Decimal(str(p['ancillary'] or '0.00')) for p in user_properties), Decimal('0.00'))
     total_monthly_debt = sum((Decimal(str(l['loan'].monthly_installment or '0.00')) for l in all_loans), Decimal('0.00'))
-    
+
+    # Check for loan interest lock expiries in each month of the current year
+    current_year = timezone.now().year
+    expiries_by_month = {}
+    for l_data in all_loans:
+        loan = l_data['loan']
+        if loan.interest_lock_end and loan.interest_lock_end.year == current_year:
+            m = loan.interest_lock_end.month
+            expiries_by_month.setdefault(m, []).append(loan.name)
+
+    cumulative_cashflow = Decimal('0.00')
+
+    # Realistic real estate calendar event hints
+    # Feb (month 2), May (5), Aug (8), Nov (11): German Property Tax (Grundsteuer Q1-Q4)
+    # Jan (month 1): Annual building insurance renewal (Gebäudeversicherung)
     for i, name in enumerate(month_names, 1):
-        # We can account for annual or quarterly spikes if needed, standard is monthly
         rent = total_monthly_rent
         debt = total_monthly_debt
         maint = total_monthly_maintenance
         anc = total_monthly_ancillary
-        net = rent - (debt + maint + anc)
-        
+
+        events = []
+        if i in (2, 5, 8, 11) and user_properties:
+            events.append({
+                'type': 'tax',
+                'badge_class': 'bg-primary bg-opacity-10 text-primary',
+                'icon': 'bi-receipt',
+                'title': _('Property Tax (Grundsteuer Q%(q)s)') % {'q': (i // 3) + 1}
+            })
+        if i == 1 and user_properties:
+            events.append({
+                'type': 'insurance',
+                'badge_class': 'bg-info bg-opacity-10 text-info',
+                'icon': 'bi-shield-check',
+                'title': _('Building Insurance Main Due Date')
+            })
+        if i in expiries_by_month:
+            for l_name in expiries_by_month[i]:
+                events.append({
+                    'type': 'loan',
+                    'badge_class': 'bg-warning bg-opacity-25 text-warning-emphasis',
+                    'icon': 'bi-alarm-fill',
+                    'title': _('Interest Lock Ends: %(name)s') % {'name': l_name}
+                })
+
+        total_exp = debt + maint + anc
+        net = rent - total_exp
+        cumulative_cashflow += net
+
         calendar_months.append({
             'month_num': i,
             'month_name': name,
@@ -704,11 +745,31 @@ def calculate_property_cashflow_calendar(user_properties, all_loans):
             'debt_service': debt,
             'maintenance': maint,
             'ancillary': anc,
-            'total_expenses': debt + maint + anc,
+            'total_expenses': total_exp,
             'net_cashflow': net,
+            'cumulative_cashflow': cumulative_cashflow,
+            'events': events,
         })
-        
-    return calendar_months
+
+    annual_totals = {
+        'total_rent': sum(m['rental_income'] for m in calendar_months),
+        'total_debt': sum(m['debt_service'] for m in calendar_months),
+        'total_maintenance': sum(m['maintenance'] for m in calendar_months),
+        'total_ancillary': sum(m['ancillary'] for m in calendar_months),
+        'total_expenses': sum(m['total_expenses'] for m in calendar_months),
+        'total_net': sum(m['net_cashflow'] for m in calendar_months),
+    }
+
+    return {
+        'months': calendar_months,
+        'annual_totals': annual_totals,
+        'chart_labels': [m['month_name'] for m in calendar_months],
+        'chart_rent': [float(m['rental_income']) for m in calendar_months],
+        'chart_debt': [float(m['debt_service']) for m in calendar_months],
+        'chart_expenses': [float(m['total_expenses']) for m in calendar_months],
+        'chart_net': [float(m['net_cashflow']) for m in calendar_months],
+        'chart_cumulative': [float(m['cumulative_cashflow']) for m in calendar_months],
+    }
 
 
 def calculate_property_tax_metrics(re, linked_loans, year=None):
