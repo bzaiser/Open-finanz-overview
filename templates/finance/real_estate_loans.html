@@ -1066,43 +1066,152 @@
 
             <!-- Tax KPI Bar -->
             <div class="row g-3 mb-4">
-                <div class="col-12 col-sm-6 col-xl-3">
-                    <div class="card border-0 shadow-sm rounded-4 h-100 p-3" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
-                        <div class="small opacity-75 text-uppercase fw-bold mb-1">{% trans "Gross Rental Income" %}</div>
-                        <div class="h3 fw-bold mb-1 font-monospace text-success">
-                            {{ overview.portfolio_tax.total_gross_rent_annual|floatformat:2|intcomma }} €
+                <!-- 1. Gross Rental Income -->
+                <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
+                    <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card_colors.property_bg }}; color: {{ card_colors.property_text }}; border: none;">
+                        <div class="card-glass-glow"></div>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
+                                    {% trans "Gross Rental Income" %}
+                                </span>
+                                <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
+                                    {{ overview.portfolio_tax.total_gross_rent_annual|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}</span>
+                                </h3>
+                                <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                                    {% trans "Per year (taxable receipts)" %}
+                                </span>
+                            </div>
+                            <div class="ms-2">
+                                <i class="bi bi-wallet2 fs-5"></i>
+                            </div>
                         </div>
-                        <div class="small opacity-75">{% trans "Per year (taxable receipts)" %}</div>
+
+                        <!-- Hover Expand Details: Gross Rent by Property -->
+                        <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card_colors.property_bg }}; color: {{ card_colors.property_text }};">
+                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Gross Rent by Property" %}:</span>
+                            {% for p in overview.properties %}
+                            {% if p.tax_metrics.is_rental %}
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                                <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ p.real_estate.name }}">{{ p.real_estate.name }}</span>
+                                <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">{{ p.tax_metrics.annual_rental_income|floatformat:2|intcomma }} <span class="small font-normal opacity-75">{{ user.profile.currency|default:"€" }}</span></span>
+                            </div>
+                            {% endif %}
+                            {% empty %}
+                            <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No rented properties." %}</div>
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
-                <div class="col-12 col-sm-6 col-xl-3">
-                    <div class="card border-0 shadow-sm rounded-4 h-100 p-3" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
-                        <div class="small opacity-75 text-uppercase fw-bold mb-1">{% trans "Total Deductions (Werbungskosten)" %}</div>
-                        <div class="h3 fw-bold mb-1 font-monospace text-danger">
-                            -{{ overview.portfolio_tax.total_werbungskosten_annual|floatformat:2|intcomma }} €
+
+                <!-- 2. Total Deductions (Werbungskosten) -->
+                <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
+                    <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card_colors.debt_bg }}; color: {{ card_colors.debt_text }}; border: none;">
+                        <div class="card-glass-glow"></div>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
+                                    {% trans "Total Deductions (Werbungskosten)" %}
+                                </span>
+                                <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
+                                    -{{ overview.portfolio_tax.total_werbungskosten_annual|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}</span>
+                                </h3>
+                                <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                                    {% trans "AfA, loan interest & operating costs" %}
+                                </span>
+                            </div>
+                            <div class="ms-2">
+                                <i class="bi bi-file-earmark-minus fs-5"></i>
+                            </div>
                         </div>
-                        <div class="small opacity-75">{% trans "AfA, loan interest & operating costs" %}</div>
+
+                        <!-- Hover Expand Details: Deductions by Property -->
+                        <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card_colors.debt_bg }}; color: {{ card_colors.debt_text }};">
+                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Deductions by Property" %}:</span>
+                            {% for p in overview.properties %}
+                            {% if p.tax_metrics.is_rental %}
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                                <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ p.real_estate.name }}">{{ p.real_estate.name }}</span>
+                                <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">-{{ p.tax_metrics.total_werbungskosten|floatformat:2|intcomma }} <span class="small font-normal opacity-75">{{ user.profile.currency|default:"€" }}</span></span>
+                            </div>
+                            {% endif %}
+                            {% empty %}
+                            <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No entries." %}</div>
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
-                <div class="col-12 col-sm-6 col-xl-3">
-                    <div class="card border-0 shadow-sm rounded-4 h-100 p-3" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
-                        <div class="small opacity-75 text-uppercase fw-bold mb-1">{% trans "Taxable Result (V+V)" %}</div>
-                        <div class="h3 fw-bold mb-1 font-monospace {% if overview.portfolio_tax.total_taxable_result_vv >= 0 %}text-danger{% else %}text-success{% endif %}">
-                            {% if overview.portfolio_tax.total_taxable_result_vv >= 0 %}+{% endif %}{{ overview.portfolio_tax.total_taxable_result_vv|floatformat:2|intcomma }} €
+
+                <!-- 3. Taxable Result (V+V) -->
+                <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
+                    <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card_colors.equity_bg }}; color: {{ card_colors.equity_text }}; border: none;">
+                        <div class="card-glass-glow"></div>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
+                                    {% trans "Taxable Result (V+V)" %}
+                                </span>
+                                <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
+                                    {% if overview.portfolio_tax.total_taxable_result_vv >= 0 %}+{% endif %}{{ overview.portfolio_tax.total_taxable_result_vv|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}</span>
+                                </h3>
+                                <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                                    {% if overview.portfolio_tax.total_taxable_result_vv < 0 %}{% trans "Tax loss (offsets income)" %}{% else %}{% trans "Taxable surplus" %}{% endif %}
+                                </span>
+                            </div>
+                            <div class="ms-2">
+                                <i class="bi bi-graph-up-arrow fs-5"></i>
+                            </div>
                         </div>
-                        <div class="small opacity-75">
-                            {% if overview.portfolio_tax.total_taxable_result_vv < 0 %}{% trans "Tax loss (offsets income)" %}{% else %}{% trans "Taxable surplus" %}{% endif %}
+
+                        <!-- Hover Expand Details: Result by Property -->
+                        <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card_colors.equity_bg }}; color: {{ card_colors.equity_text }};">
+                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Tax Result by Property" %}:</span>
+                            {% for p in overview.properties %}
+                            {% if p.tax_metrics.is_rental %}
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                                <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ p.real_estate.name }}">{{ p.real_estate.name }}</span>
+                                <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">{% if p.tax_metrics.taxable_result >= 0 %}+{% endif %}{{ p.tax_metrics.taxable_result|floatformat:2|intcomma }} <span class="small font-normal opacity-75">{{ user.profile.currency|default:"€" }}</span></span>
+                            </div>
+                            {% endif %}
+                            {% empty %}
+                            <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No entries." %}</div>
+                            {% endfor %}
                         </div>
                     </div>
                 </div>
-                <div class="col-12 col-sm-6 col-xl-3">
-                    <div class="card border-0 shadow-sm rounded-4 h-100 p-3" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
-                        <div class="small opacity-75 text-uppercase fw-bold mb-1">{% trans "Est. Tax Impact (~35%)" %}</div>
-                        <div class="h3 fw-bold mb-1 font-monospace {% if overview.portfolio_tax.is_tax_saving %}text-success{% else %}text-danger{% endif %}">
-                            {% if overview.portfolio_tax.is_tax_saving %}+{% else %}-{% endif %}{{ overview.portfolio_tax.estimated_tax_impact|floatformat:2|intcomma }} €
+
+                <!-- 4. Est. Tax Impact (~35%) -->
+                <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
+                    <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card_colors.cashflow_bg }}; color: {{ card_colors.cashflow_text }}; border: none;">
+                        <div class="card-glass-glow"></div>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
+                                    {% trans "Est. Tax Impact (~35%)" %}
+                                </span>
+                                <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
+                                    {% if overview.portfolio_tax.is_tax_saving %}+{% else %}-{% endif %}{{ overview.portfolio_tax.estimated_tax_impact|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}</span>
+                                </h3>
+                                <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                                    {% if overview.portfolio_tax.is_tax_saving %}{% trans "Estimated tax refund / savings" %}{% else %}{% trans "Estimated tax burden" %}{% endif %}
+                                </span>
+                            </div>
+                            <div class="ms-2">
+                                <i class="bi bi-shield-shaded fs-5"></i>
+                            </div>
                         </div>
-                        <div class="small opacity-75">
-                            {% if overview.portfolio_tax.is_tax_saving %}{% trans "Estimated tax refund / savings" %}{% else %}{% trans "Estimated tax burden" %}{% endif %}
+
+                        <!-- Hover Expand Details: Rate Note -->
+                        <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card_colors.cashflow_bg }}; color: {{ card_colors.cashflow_text }};">
+                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Tax Estimation Basis" %}:</span>
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                                <span>{% trans "Assumed Tax Rate" %}</span>
+                                <span class="font-monospace fw-bold">~35 %</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                                <span>{% trans "Basis V+V Result" %}</span>
+                                <span class="font-monospace fw-bold">{{ overview.portfolio_tax.total_taxable_result_vv|floatformat:2|intcomma }} {{ user.profile.currency|default:"€" }}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
