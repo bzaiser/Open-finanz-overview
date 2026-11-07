@@ -3886,3 +3886,174 @@ msgstr "z. B. Gas-Brennwerttherme Buderus GB172"
 
 msgid "Are you sure you want to delete this component?"
 msgstr "Möchten Sie dieses Bauteil wirklich löschen?"
+
+msgid "Taxes & Documents"
+msgstr "Steuern & Dokumente"
+
+msgid "Tax Summary & Anlage V Preparation"
+msgstr "Steuer-Übersicht & Anlage V Vorbereitung"
+
+msgid "Tax depreciation (AfA), mortgage interest, operating deductions and taxable rental results."
+msgstr "Gebäude-AfA, Schuldzinsen, Werbungskosten und steuerliche Ergebnisse aus Vermietung & Verpachtung."
+
+msgid "Gross Rental Income"
+msgstr "Mieteinnahmen brutto"
+
+msgid "Per year (taxable receipts)"
+msgstr "Jährlich (steuerpflichtige Einnahmen)"
+
+msgid "Total Deductions (Werbungskosten)"
+msgstr "Werbungskosten gesamt"
+
+msgid "AfA, loan interest & operating costs"
+msgstr "AfA, Schuldzinsen & Bewirtschaftungskosten"
+
+msgid "Taxable Result (V+V)"
+msgstr "Steuerliches Ergebnis (V+V)"
+
+msgid "Tax loss (offsets income)"
+msgstr "Steuerlicher Verlust (senkt Steuerlast)"
+
+msgid "Taxable surplus"
+msgstr "Steuerpflichtiger Überschuss"
+
+msgid "Est. Tax Impact (~35%)"
+msgstr "Geschätzter Steuereffekt (~35 %)"
+
+msgid "Estimated tax refund / savings"
+msgstr "Geschätzte Steuererstattung / Ersparnis"
+
+msgid "Estimated tax burden"
+msgstr "Geschätzte zusätzliche Steuerlast"
+
+msgid "Gross Rent / Yr"
+msgstr "Mieteinnahmen / Jahr"
+
+msgid "Building AfA"
+msgstr "Gebäude-AfA"
+
+msgid "Mortgage Interest"
+msgstr "Schuldzinsen"
+
+msgid "Operating & Invoices"
+msgstr "Betrieb & Handwerker"
+
+msgid "Total Deductions"
+msgstr "Werbungskosten gesamt"
+
+msgid "Rented (V+V)"
+msgstr "Vermietet (V+V)"
+
+msgid "Digital Document Safe"
+msgstr "Digitaler Dokumenten-Safe"
+
+msgid "Securely store contracts, land register excerpts, energy certificates and invoices."
+msgstr "Verträge, Grundbuchauszüge, Energieausweise und Rechnungen sicher ablegen."
+
+msgid "Upload Document"
+msgstr "Dokument hochladen"
+
+msgid "No documents stored yet"
+msgstr "Noch keine Dokumente abgelegt"
+
+msgid "Upload your purchase contracts, loan agreements, energy certificates or craftsman invoices."
+msgstr "Laden Sie Kaufverträge, Darlehensverträge, Energieausweise oder Handwerkerrechnungen hoch."
+
+msgid "Upload First Document"
+msgstr "Erstes Dokument hochladen"
+
+msgid "File Size"
+msgstr "Dateigröße"
+
+msgid "Open"
+msgstr "Öffnen"
+
+msgid "Are you sure you want to delete this document?"
+msgstr "Möchten Sie dieses Dokument wirklich löschen?"
+
+msgid "Building Share (% AfA)"
+msgstr "Gebäudeanteil (% AfA)"
+
+msgid "Depreciation Rate (% AfA p.a.)"
+msgstr "Abschreibungssatz (% AfA p.a.)"
+
+msgid "Rented Property (Subject to Tax / Anlage V)"
+msgstr "Vermietungsobjekt (steuerpflichtig / Anlage V)"
+
+msgid "Upload Property Document"
+msgstr "Immobilien-Dokument hochladen"
+
+msgid "Document Title"
+msgstr "Dokumenten-Titel"
+
+msgid "Purchase / Notary Contract"
+msgstr "Kaufvertrag / Notarvertrag"
+
+msgid "Loan / Financing Agreement"
+msgstr "Darlehens- / Finanzierungsvertrag"
+
+msgid "Land Register Excerpt"
+msgstr "Grundbuchauszug"
+
+msgid "Energy Performance Certificate"
+msgstr "Energieausweis"
+
+msgid "Tenancy / Lease Agreement"
+msgstr "Mietvertrag"
+
+msgid "Renovation / Craftsman Invoice"
+msgstr "Sanierungs- / Handwerkerrechnung"
+
+msgid "Property Tax / Tax Assessment"
+msgstr "Grundsteuerbescheid / Steuerbescheid"
+
+msgid "Building Insurance Policy"
+msgstr "Gebäudeversicherungsschein"
+
+msgid "Other Document"
+msgstr "Sonstiges Dokument"
+
+msgid "File (PDF, Image, Doc)"
+msgstr "Datei (PDF, Bild, Dokument)"
+
+msgid "Invoice Amount (€, Optional)"
+msgstr "Rechnungsbetrag (€, optional)"
+
+msgid "Document uploaded successfully."
+msgstr "Dokument erfolgreich hochgeladen."
+
+msgid "Document"
+msgstr "Dokument"
+
+msgid "Error uploading document"
+msgstr "Fehler beim Hochladen des Dokuments"
+
+msgid "Property Document"
+msgstr "Immobilien-Dokument"
+
+msgid "Property Documents"
+msgstr "Immobilien-Dokumente"
+
+msgid "Document / Invoice Date"
+msgstr "Dokumenten- / Rechnungsdatum"
+
+msgid "Invoice Amount (€)"
+msgstr "Rechnungsbetrag (€)"
+
+msgid "Building Share (% of Value)"
+msgstr "Gebäudeanteil (% am Wert)"
+
+msgid "Optional: Invoice amount for tax deduction"
+msgstr "Optional: Rechnungsbetrag für Werbungskosten-Abzug"
+
+msgid "Percentage of property value attributable to the building for tax depreciation"
+msgstr "Prozentualer Anteil des Immobilienwertes auf das Gebäude zur steuerlichen Abschreibung"
+
+msgid "Annual linear tax depreciation rate (e.g. 2.0%, 2.5%, 3.0%)"
+msgstr "Jährlicher linearer Abschreibungssatz (z. B. 2,0 %, 2,5 %, 3,0 %)"
+
+msgid "e.g. Purchase Contract, Heating Bill 2024"
+msgstr "z. B. Kaufvertrag, Heizungsrechnung 2024"
+
+msgid "Optional notes on this document..."
+msgstr "Optionale Notizen zu diesem Dokument..."

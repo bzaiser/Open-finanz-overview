@@ -3407,8 +3407,8 @@ def pension_snapshot_delete(request, pk):
 # ==============================================================================
 # REAL ESTATE & LOANS (IMMOBILIEN & KREDITE) MODULE
 # ==============================================================================
-from .models import RealEstate, Loan, LoanExtraRepayment, PropertyComponent
-from .forms import RealEstateForm, LoanForm, LoanExtraRepayment, PropertyComponentForm, PropertyComponentForm
+from .models import RealEstate, Loan, LoanExtraRepayment, PropertyComponent, PropertyDocument
+from .forms import RealEstateForm, LoanForm, LoanExtraRepaymentForm, PropertyComponentForm, PropertyDocumentForm
 from .services_realestate import get_real_estate_overview, calculate_loan_schedule
 
 @login_required
@@ -3418,13 +3418,17 @@ def real_estate_loans_view(request):
     
     re_form = RealEstateForm()
     loan_form = LoanForm(user=user)
-    extra_repayment_form = LoanExtraRepayment, PropertyComponentForm, PropertyComponentForm(user=user)
+    extra_repayment_form = LoanExtraRepaymentForm(user=user)
+    component_form = PropertyComponentForm(user=user)
+    document_form = PropertyDocumentForm(user=user)
     
     context = {
         'overview': overview,
         're_form': re_form,
         'loan_form': loan_form,
         'extra_repayment_form': extra_repayment_form,
+        'component_form': component_form,
+        'document_form': document_form,
     }
     return render(request, 'finance/real_estate_loans.html', context)
 
@@ -3581,4 +3585,30 @@ def property_component_delete(request, pk):
     name = comp.name
     comp.delete()
     messages.success(request, f"{_('Property component')} '{name}' {_('was deleted.')}")
+    return redirect('finance:real_estate_loans')
+
+
+@login_required
+def property_document_upload(request):
+    user = request.user
+    if request.method == 'POST':
+        form = PropertyDocumentForm(request.POST, request.FILES, user=user)
+        if form.is_valid():
+            doc = form.save()
+            messages.success(request, _('Document uploaded successfully.'))
+        else:
+            messages.error(request, f"{_('Error uploading document')}: {form.errors.as_text()}")
+            
+    return redirect('finance:real_estate_loans')
+
+
+@login_required
+def property_document_delete(request, pk):
+    doc = get_object_or_404(PropertyDocument, pk=pk, real_estate__user=request.user)
+    title = doc.title
+    # Delete physical file from storage as well
+    if doc.file:
+        doc.file.delete(save=False)
+    doc.delete()
+    messages.success(request, f"{_('Document')} '{title}' {_('was deleted.')}")
     return redirect('finance:real_estate_loans')

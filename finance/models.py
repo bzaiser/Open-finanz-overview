@@ -1,4 +1,5 @@
 ﻿from django.db import models
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _, gettext
 from django.conf import settings
 from core.models import CustomUser
@@ -275,6 +276,9 @@ class RealEstate(models.Model):
     living_space_sqm = models.DecimalField(_("Living Space (sqm)"), max_digits=8, decimal_places=2, null=True, blank=True)
     current_maintenance_reserve = models.DecimalField(_("Current Maintenance Reserve"), max_digits=12, decimal_places=2, default=0.0, help_text=_("Current accumulated reserve for this property"))
     monthly_maintenance_allocation = models.DecimalField(_("Monthly Reserve Allocation"), max_digits=10, decimal_places=2, default=0.0, help_text=_("Monthly allocation to the maintenance reserve"))
+    building_share_percent = models.DecimalField(_("Building Share (% of Value)"), max_digits=5, decimal_places=2, default=70.0, help_text=_("Percentage of property value attributable to the building for tax depreciation"))
+    depreciation_rate_percent = models.DecimalField(_("Depreciation Rate (% AfA p.a.)"), max_digits=5, decimal_places=2, default=2.0, help_text=_("Annual linear tax depreciation rate (e.g. 2.0%, 2.5%, 3.0%)"))
+    is_rental_property = models.BooleanField(_("Rented Property (Subject to Tax / Anlage V)"), default=True)
     is_sold = models.BooleanField(_("Is Sold"), default=False)
     sale_date = models.DateField(_("Sale Date"), null=True, blank=True)
     acquisition_date = models.DateField(_("Acquisition Date"), null=True, blank=True)
@@ -332,6 +336,47 @@ class PropertyComponent(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.get_component_type_display()}) - {self.real_estate.name}"
+
+
+class PropertyDocument(models.Model):
+    CATEGORY_CHOICES = [
+        ('contract', _('Purchase / Notary Contract')),
+        ('loan_agreement', _('Loan / Financing Agreement')),
+        ('land_register', _('Land Register Excerpt')),
+        ('energy_cert', _('Energy Performance Certificate')),
+        ('lease', _('Tenancy / Lease Agreement')),
+        ('maintenance_invoice', _('Renovation / Craftsman Invoice')),
+        ('tax_statement', _('Property Tax / Tax Assessment')),
+        ('insurance', _('Building Insurance Policy')),
+        ('other', _('Other Document')),
+    ]
+
+    real_estate = models.ForeignKey(RealEstate, on_delete=models.CASCADE, related_name='documents', verbose_name=_("Real Estate"))
+    title = models.CharField(_("Document Title"), max_length=200)
+    category = models.CharField(_("Category"), max_length=30, choices=CATEGORY_CHOICES, default='other')
+    file = models.FileField(_("File"), upload_to='property_documents/')
+    date = models.DateField(_("Document / Invoice Date"), default=timezone.now)
+    amount = models.DecimalField(_("Invoice Amount (€)"), max_digits=12, decimal_places=2, null=True, blank=True, help_text=_("Optional: Invoice amount for tax deduction"))
+    notes = models.TextField(_("Notes"), blank=True)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = _("Property Document")
+        verbose_name_plural = _("Property Documents")
+        ordering = ['-date', '-uploaded_at']
+
+    @property
+    def file_size_display(self):
+        try:
+            size = self.file.size
+            if size < 1024 * 1024:
+                return f"{size / 1024:.1f} KB"
+            return f"{size / (1024 * 1024):.1f} MB"
+        except Exception:
+            return "N/A"
+
+    def __str__(self):
+        return f"{self.title} ({self.get_category_display()}) - {self.real_estate.name}"
 
 
 class FinancialStatusProxy(CustomUser):

@@ -3,7 +3,7 @@ from decimal import Decimal
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 from django.utils.translation import gettext as _
-from .models import PropertyComponent
+from .models import PropertyComponent, PropertyDocument
 
 def calculate_loan_schedule(loan, as_of_date=None, extra_one_time=Decimal('0.00'), extra_one_time_date=None, extra_annual=Decimal('0.00')):
     """
@@ -477,6 +477,45 @@ def get_real_estate_overview(user):
     all_loans_data = [{'loan': l, 'details': loan_details_map[l.id], 'stress_test': loan_stress_map[l.id]} for l in user_loans]
     cashflow_calendar = calculate_property_cashflow_calendar(properties_data, all_loans_data)
 
+    # Phase 4: Tax metrics & documents
+    total_gross_rent_annual = Decimal('0.00')
+    total_loan_interest_annual = Decimal('0.00')
+    total_afa_annual = Decimal('0.00')
+    total_regular_costs_annual = Decimal('0.00')
+    total_invoices_annual = Decimal('0.00')
+    total_werbungskosten_annual = Decimal('0.00')
+    total_taxable_result_vv = Decimal('0.00')
+
+    for p in properties_data:
+        re_obj = p['real_estate']
+        linked_l = [item['loan'] for item in p['linked_loans']]
+        tax_met = calculate_property_tax_metrics(re_obj, linked_l)
+        p['tax_metrics'] = tax_met
+        p['documents'] = PropertyDocument.objects.filter(real_estate=re_obj).order_by('-date')
+
+        if tax_met['is_rental']:
+            total_gross_rent_annual += tax_met['annual_rental_income']
+            total_loan_interest_annual += tax_met['annual_interest']
+            total_afa_annual += tax_met['annual_afa']
+            total_regular_costs_annual += tax_met['annual_regular_costs']
+            total_invoices_annual += tax_met['annual_invoice_costs']
+            total_werbungskosten_annual += tax_met['total_werbungskosten']
+            total_taxable_result_vv += tax_met['taxable_result']
+
+    portfolio_tax = {
+        'total_gross_rent_annual': total_gross_rent_annual,
+        'total_loan_interest_annual': total_loan_interest_annual,
+        'total_afa_annual': total_afa_annual,
+        'total_regular_costs_annual': total_regular_costs_annual,
+        'total_invoices_annual': total_invoices_annual,
+        'total_werbungskosten_annual': total_werbungskosten_annual,
+        'total_taxable_result_vv': total_taxable_result_vv,
+        'estimated_tax_impact': (abs(total_taxable_result_vv) * Decimal('0.35')).quantize(Decimal('0.01')),
+        'is_tax_saving': total_taxable_result_vv < Decimal('0.00'),
+    }
+
+    documents_data = get_property_documents_data(user)
+
     portfolio_reserves = {
         'total_current_reserve': total_current_reserve,
         'total_target_monthly': total_target_reserve_monthly,
@@ -501,6 +540,8 @@ def get_real_estate_overview(user):
         'components_roadmap': components_roadmap,
         'portfolio_reserves': portfolio_reserves,
         'cashflow_calendar': cashflow_calendar,
+        'portfolio_tax': portfolio_tax,
+        'documents_data': documents_data,
     }
 
 
@@ -668,3 +709,91 @@ def calculate_property_cashflow_calendar(user_properties, all_loans):
         })
         
     return calendar_months
+
+
+def calculate_property_tax_metrics(re, linked_loans, year=None):
+    """
+    Computes tax metrics (Anlage V preparation):
+    - Annual gross rental income
+    - Deductions (Werbungskosten):
+      1. Mortgage interest (Schuldzinsen)
+      2. Building depreciation (AfA: linear % of building value)
+      3. Operating & regular maintenance expenses
+      4. Craftsman / renovation invoices uploaded for this property
+    - Net taxable result from rental & leasing (Einkünfte aus V+V)
+    - Estimated tax impact (at assumed 35% personal tax rate)
+    """
+    if year is None:
+        year = timezone.now().year
+
+    prop_val = Decimal(str(re.property_value or '0.00'))
+    bld_share = Decimal(str(re.building_share_percent or '70.0')) / Decimal('100.0')
+    depr_rate = Decimal(str(re.depreciation_rate_percent or '2.0')) / Decimal('100.0')
+    is_rental = getattr(re, 'is_rental_property', True)
+
+    # 1. Rental income
+    rental_monthly = Decimal(str(re.rental_income_monthly or '0.00'))
+    annual_rental_income = (rental_monthly * Decimal('12.0')).quantize(Decimal('0.01'))
+
+    # 2. Mortgage interest for the current year
+    annual_interest = Decimal('0.00')
+    for l in linked_loans:
+        sched = calculate_loan_schedule(l)
+        for row in sched['annual_schedule']:
+            if row['year'] == year:
+                annual_interest += row['total_interest']
+                break
+
+    # 3. Building AfA
+    building_value = (prop_val * bld_share).quantize(Decimal('0.01'))
+    annual_afa = (building_value * depr_rate).quantize(Decimal('0.01'))
+
+    # 4. Operating and maintenance costs
+    maint_monthly = Decimal(str(re.maintenance_costs_monthly or '0.00'))
+    anc_monthly = Decimal(str(re.ancillary_costs_monthly or '0.00'))
+    annual_regular_costs = ((maint_monthly + anc_monthly) * Decimal('12.0')).quantize(Decimal('0.01'))
+
+    # 5. Direct maintenance invoices uploaded for this property
+    doc_invoices = PropertyDocument.objects.filter(
+        real_estate=re,
+        category='maintenance_invoice',
+        date__year=year
+    )
+    annual_invoice_costs = sum((Decimal(str(d.amount or '0.00')) for d in doc_invoices), Decimal('0.00'))
+
+    total_werbungskosten = annual_interest + annual_afa + annual_regular_costs + annual_invoice_costs
+    taxable_result = (annual_rental_income - total_werbungskosten).quantize(Decimal('0.01'))
+
+    assumed_tax_rate = Decimal('0.35')
+    tax_impact = (abs(taxable_result) * assumed_tax_rate).quantize(Decimal('0.01'))
+    # If result is negative (tax loss), it generates tax savings
+    is_tax_saving = taxable_result < Decimal('0.00')
+
+    return {
+        'year': year,
+        'is_rental': is_rental,
+        'building_value': building_value,
+        'annual_rental_income': annual_rental_income,
+        'annual_interest': annual_interest,
+        'annual_afa': annual_afa,
+        'annual_regular_costs': annual_regular_costs,
+        'annual_invoice_costs': annual_invoice_costs,
+        'total_werbungskosten': total_werbungskosten,
+        'taxable_result': taxable_result,
+        'tax_impact': tax_impact,
+        'is_tax_saving': is_tax_saving,
+    }
+
+
+def get_property_documents_data(user):
+    """
+    Retrieves all property documents for the user, grouped by property.
+    """
+    docs = PropertyDocument.objects.filter(real_estate__user=user).select_related('real_estate').order_by('-date')
+    total_invoices_amount = sum((Decimal(str(d.amount or '0.00')) for d in docs if d.amount), Decimal('0.00'))
+    
+    return {
+        'documents': docs,
+        'total_count': docs.count(),
+        'total_invoices_amount': total_invoices_amount,
+    }

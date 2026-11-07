@@ -72,7 +72,7 @@ class PensionForm(forms.ModelForm):
 
 
 
-from .models import RealEstate, Loan, LoanExtraRepayment, PropertyComponent
+from .models import RealEstate, Loan, LoanExtraRepayment, PropertyComponent, PropertyDocument
 
 class RealEstateForm(forms.ModelForm):
     class Meta:
@@ -82,6 +82,7 @@ class RealEstateForm(forms.ModelForm):
             'current_tenant', 'rental_income_monthly', 'maintenance_costs_monthly',
             'ancillary_costs_monthly', 'construction_year', 'living_space_sqm',
             'current_maintenance_reserve', 'monthly_maintenance_allocation',
+            'building_share_percent', 'depreciation_rate_percent', 'is_rental_property',
             'acquisition_date', 'is_sold', 'sale_date'
         ]
         widgets = {
@@ -97,6 +98,9 @@ class RealEstateForm(forms.ModelForm):
             'living_space_sqm': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01', 'placeholder': '85.00'}),
             'current_maintenance_reserve': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01', 'placeholder': '5000.00'}),
             'monthly_maintenance_allocation': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01', 'placeholder': '150.00'}),
+            'building_share_percent': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.1', 'placeholder': '70.0'}),
+            'depreciation_rate_percent': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01', 'placeholder': '2.00'}),
+            'is_rental_property': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'acquisition_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'sale_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'is_sold': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
@@ -172,6 +176,30 @@ class PropertyComponentForm(forms.ModelForm):
             'estimated_cost': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01', 'placeholder': '15000.00'}),
             'condition': forms.Select(attrs={'class': 'form-select'}),
             'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': _('Optional notes on condition or manufacturer...')}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        if user:
+            self.fields['real_estate'].queryset = RealEstate.objects.filter(user=user).order_by('name')
+        self.fields['real_estate'].empty_label = _('-- Select Real Estate --')
+
+
+class PropertyDocumentForm(forms.ModelForm):
+    class Meta:
+        model = PropertyDocument
+        fields = [
+            'real_estate', 'title', 'category', 'file', 'date', 'amount', 'notes'
+        ]
+        widgets = {
+            'real_estate': forms.Select(attrs={'class': 'form-select'}),
+            'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('e.g. Purchase Contract, Heating Invoice 2024')}),
+            'category': forms.Select(attrs={'class': 'form-select'}),
+            'file': forms.FileInput(attrs={'class': 'form-control'}),
+            'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'amount': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01', 'placeholder': '0.00'}),
+            'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': _('Optional notes on this document...')}),
         }
 
     def __init__(self, *args, **kwargs):
