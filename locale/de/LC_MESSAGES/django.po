@@ -4078,3 +4078,69 @@ msgstr "Mieteinnahmen"
 
 msgid "Debt Service"
 msgstr "Kapitaldienst / Darlehensraten"
+
+msgid "12 months expected gross rent"
+msgstr "12 Monate erwartete Bruttomiete"
+
+msgid "12 months loan installments"
+msgstr "12 Monate Darlehensraten"
+
+msgid "12-Month Projection"
+msgstr "12-Monats-Projektion"
+
+msgid "Annual Net"
+msgstr "Jahres-Netto"
+
+msgid "Annual Net Cashflow"
+msgstr "Jahres-Netto-Cashflow"
+
+msgid "Building Insurance Main Due Date"
+msgstr "Gebäudeversicherung Hauptfälligkeit"
+
+msgid "Cumulative Net"
+msgstr "Kumulierter Netto-Cashflow"
+
+msgid "Cumulative Net Cashflow"
+msgstr "Kumulierter Netto-Cashflow"
+
+msgid "Full year projected net yield"
+msgstr "Hochgerechnetes Jahresergebnis nach Kosten"
+
+msgid "Interest Lock Ends: %(name)s"
+msgstr "Zinsbindung endet: %(name)s"
+
+msgid "Monthly Inflow, Outflow & Cumulative Trend"
+msgstr "Monatliche Einnahmen, Ausgaben & Verlauf"
+
+msgid "Monthly Net"
+msgstr "Monats-Netto"
+
+msgid "Operating & Reserves"
+msgstr "Bewirtschaftung & Rücklage"
+
+msgid "Property Tax (Grundsteuer Q%(q)s)"
+msgstr "Grundsteuer Q%(q)s"
+
+msgid "Regular flow"
+msgstr "Regulärer Verlauf"
+
+msgid "Rental Inflow"
+msgstr "Mieteinnahmen (Zufluss)"
+
+msgid "Reserves and ancillary costs"
+msgstr "Rücklagen und Nebenkosten"
+
+msgid "Scheduled Events / Due Dates"
+msgstr "Fälligkeiten & Termine"
+
+msgid "Total Annual Rent"
+msgstr "Jahres-Mieteinnahmen"
+
+msgid "Total Debt Service"
+msgstr "Jahres-Kapitaldienst"
+
+msgid "Total Outflow"
+msgstr "Gesamtausgaben (Abfluss)"
+
+msgid "Total Year"
+msgstr "Jahressumme"
