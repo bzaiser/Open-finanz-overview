@@ -2,7 +2,7 @@ from django.contrib import admin
 from django import forms
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
-from .models import Category, CashFlowSource, Asset, OneTimeEvent, Pension, FinancialStatusProxy, PhysicalAsset, RealEstate, Loan, LoanExtraRepayment, AssetSnapshot
+from .models import Category, CashFlowSource, Asset, OneTimeEvent, Pension, FinancialStatusProxy, PhysicalAsset, RealEstate, Loan, LoanExtraRepayment, AssetSnapshot, PropertyComponent, PropertyDocument
 from django.contrib.contenttypes.admin import GenericTabularInline
 from django.contrib.contenttypes.models import ContentType
 from django.utils import timezone
@@ -545,15 +545,37 @@ class PhysicalAssetAdmin(BaseOwnedModelAdmin):
     inlines = [AssetSnapshotInline]
     snapshot_value_field = 'value'
 
+class PropertyComponentInline(admin.TabularInline):
+    model = PropertyComponent
+    extra = 1
+    fields = ('component_type', 'name', 'installation_year', 'expected_lifespan', 'estimated_cost', 'condition')
+
+class PropertyDocumentInline(admin.TabularInline):
+    model = PropertyDocument
+    extra = 1
+    fields = ('title', 'category', 'date', 'amount', 'file')
+
 @admin.register(RealEstate)
 class RealEstateAdmin(BaseOwnedModelAdmin):
     list_display = ('name', 'user', 'property_value', 'appreciation_rate', 'rental_income_monthly', 'acquisition_date', 'sale_date', 'is_sold')
-    list_filter = ('user', 'is_sold')
+    list_filter = ('user', 'is_sold', 'is_rental_property')
     list_select_related = ('user',)
-    search_fields = ('name',)
+    search_fields = ('name', 'location')
     list_editable = ('property_value', 'appreciation_rate', 'rental_income_monthly', 'acquisition_date', 'sale_date', 'is_sold')
-    inlines = [AssetSnapshotInline]
+    inlines = [AssetSnapshotInline, PropertyComponentInline, PropertyDocumentInline]
     snapshot_value_field = 'property_value'
+
+@admin.register(PropertyComponent)
+class PropertyComponentAdmin(admin.ModelAdmin):
+    list_display = ('name', 'real_estate', 'component_type', 'installation_year', 'expected_lifespan', 'estimated_cost', 'condition')
+    list_filter = ('component_type', 'condition', 'real_estate__user')
+    search_fields = ('name', 'real_estate__name')
+
+@admin.register(PropertyDocument)
+class PropertyDocumentAdmin(admin.ModelAdmin):
+    list_display = ('title', 'real_estate', 'category', 'date', 'amount', 'uploaded_at')
+    list_filter = ('category', 'real_estate__user')
+    search_fields = ('title', 'real_estate__name')
 
 class LoanExtraRepaymentInline(admin.TabularInline):
     model = LoanExtraRepayment

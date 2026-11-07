@@ -3,7 +3,8 @@ from decimal import Decimal
 from datetime import date
 from core.models import CustomUser, UserProfile
 from finance.models import (
-    Category, CashFlowSource, Asset, RealEstate, Loan, Pension, AssetSnapshot
+    Category, CashFlowSource, Asset, RealEstate, Loan, Pension, AssetSnapshot,
+    PropertyComponent
 )
 from django.contrib.contenttypes.models import ContentType
 
@@ -42,6 +43,7 @@ class Command(BaseCommand):
         # 3. Clean existing demo data for clean rerun
         CashFlowSource.objects.filter(user=user).delete()
         Asset.objects.filter(user=user).delete()
+        PropertyComponent.objects.filter(real_estate__user=user).delete()
         RealEstate.objects.filter(user=user).delete()
         Loan.objects.filter(user=user).delete()
         Pension.objects.filter(user=user).delete()
@@ -461,30 +463,125 @@ class Command(BaseCommand):
             template_id="exp_urlaub"
         )
 
-        # 7. Immobilien & Darlehen
-        # Eigenheim Wert 820.000 €
-        RealEstate.objects.create(
+        # 7. Real Estate & Linked Loans (Eigenheim + Vermietetes Objekt)
+        # Objekt 1: Einfamilienhaus (Eigenheim)
+        efh = RealEstate.objects.create(
             user=user,
             name="Einfamilienhaus (Eigenheim)",
             property_value=Decimal("820000.00"),
             appreciation_rate=Decimal("1.50"),
             location="München Umland",
-            maintenance_costs_monthly=Decimal("0.00"),
-            ancillary_costs_monthly=Decimal("0.00"),
-            acquisition_date=date(2017, 3, 1)
+            acquisition_date=date(2017, 3, 1),
+            maintenance_costs_monthly=Decimal("150.00"),
+            ancillary_costs_monthly=Decimal("320.00"),
+            construction_year=2008,
+            living_space_sqm=Decimal("165.00"),
+            current_maintenance_reserve=Decimal("18500.00"),
+            monthly_maintenance_allocation=Decimal("250.00"),
+            building_share_percent=Decimal("75.00"),
+            depreciation_rate_percent=Decimal("2.00"),
+            is_rental_property=False,
         )
 
-        # Darlehen 420.000 € mit monatlicher Rate 2.350 € (Restlaufzeit endet vor Rente)
         Loan.objects.create(
             user=user,
-            name="Immobiliendarlehen Haus",
-            provider="Sparkasse",
+            real_estate=efh,
+            name="Immobiliendarlehen Einfamilienhaus",
+            provider="Sparkasse München",
+            loan_type="annuity",
             nominal_amount=Decimal("420000.00"),
             interest_rate=Decimal("2.25"),
             monthly_installment=Decimal("2350.00"),
             start_date=date(2017, 3, 1),
             end_date=date(2039, 3, 1),
             interest_lock_end=date(2032, 3, 1)
+        )
+
+        PropertyComponent.objects.create(
+            real_estate=efh,
+            component_type="heating",
+            name="Wärmepumpe & Fußbodenheizung",
+            installation_year=2021,
+            expected_lifespan=20,
+            estimated_cost=Decimal("28000.00"),
+            condition="good",
+            notes="2021 modernisiert (Umstellung von Gas auf Wärmepumpe)"
+        )
+        PropertyComponent.objects.create(
+            real_estate=efh,
+            component_type="roof",
+            name="Satteldach mit Ziegeleindeckung",
+            installation_year=2008,
+            expected_lifespan=35,
+            estimated_cost=Decimal("35000.00"),
+            condition="good",
+            notes="Baujahr 2008, regelmäßig gewartet"
+        )
+        PropertyComponent.objects.create(
+            real_estate=efh,
+            component_type="facade",
+            name="WDVS Fassadenanstrich",
+            installation_year=2008,
+            expected_lifespan=20,
+            estimated_cost=Decimal("14000.00"),
+            condition="moderate",
+            notes="Anstrich und Ausbesserung bis ca. 2028 einplanen"
+        )
+
+        # Objekt 2: Renditeobjekt / Vermietete 2-Zimmer-Wohnung
+        etw = RealEstate.objects.create(
+            user=user,
+            name="2-Zimmer-Wohnung (Kapitalanlage)",
+            property_value=Decimal("340000.00"),
+            appreciation_rate=Decimal("2.20"),
+            location="Augsburg Zentrum",
+            acquisition_date=date(2019, 6, 1),
+            rental_income_monthly=Decimal("980.00"),
+            maintenance_costs_monthly=Decimal("110.00"),
+            ancillary_costs_monthly=Decimal("75.00"),
+            current_tenant="Familie Weber",
+            construction_year=1995,
+            living_space_sqm=Decimal("62.00"),
+            current_maintenance_reserve=Decimal("6200.00"),
+            monthly_maintenance_allocation=Decimal("150.00"),
+            building_share_percent=Decimal("70.00"),
+            depreciation_rate_percent=Decimal("2.00"),
+            is_rental_property=True,
+        )
+
+        Loan.objects.create(
+            user=user,
+            real_estate=etw,
+            name="Kapitalanlage-Darlehen Augsburg",
+            provider="ING Diba",
+            loan_type="annuity",
+            nominal_amount=Decimal("210000.00"),
+            interest_rate=Decimal("1.65"),
+            monthly_installment=Decimal("780.00"),
+            start_date=date(2019, 6, 1),
+            end_date=date(2044, 6, 1),
+            interest_lock_end=date(2029, 6, 1)
+        )
+
+        PropertyComponent.objects.create(
+            real_estate=etw,
+            component_type="bathroom",
+            name="Bad- und Sanitärobjekte",
+            installation_year=2019,
+            expected_lifespan=20,
+            estimated_cost=Decimal("11000.00"),
+            condition="good",
+            notes="Vor Vermietung 2019 saniert"
+        )
+        PropertyComponent.objects.create(
+            real_estate=etw,
+            component_type="windows",
+            name="Isolierverglasung Fenster",
+            installation_year=1995,
+            expected_lifespan=30,
+            estimated_cost=Decimal("8500.00"),
+            condition="moderate",
+            notes="Eigentümergemeinschaft plant Fensteraustausch in 2-3 Jahren"
         )
 
         # 8. Bankkonten & Vermögen

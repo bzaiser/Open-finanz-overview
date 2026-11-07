@@ -3414,8 +3414,31 @@ from .services_realestate import get_real_estate_overview, calculate_loan_schedu
 @login_required
 def real_estate_loans_view(request):
     user = request.user
+    profile = user.profile
     overview = get_real_estate_overview(user)
     
+    # Extract configurable card colors from user profile dashboard config
+    dashboard_config = profile.dashboard_config or {}
+    summary_layout = dashboard_config.get('summary_layout', [])
+    summary_colors = {}
+    for item in summary_layout:
+        if isinstance(item, dict) and 'id' in item:
+            summary_colors[item['id']] = {
+                'bg_color': item.get('bg_color', ''),
+                'text_color': item.get('text_color', '')
+            }
+
+    card_colors = {
+        'real_estate_bg': summary_colors.get('total_real_estate', {}).get('bg_color') or '#20c997',
+        'real_estate_text': summary_colors.get('total_real_estate', {}).get('text_color') or '#ffffff',
+        'debt_bg': summary_colors.get('total_debts', {}).get('bg_color') or '#746d6d',
+        'debt_text': summary_colors.get('total_debts', {}).get('text_color') or '#ffffff',
+        'equity_bg': summary_colors.get('total_combined_assets', {}).get('bg_color') or '#0d6efd',
+        'equity_text': summary_colors.get('total_combined_assets', {}).get('text_color') or '#ffffff',
+        'cashflow_bg': summary_colors.get('monthly_income', {}).get('bg_color') or '#198754',
+        'cashflow_text': summary_colors.get('monthly_income', {}).get('text_color') or '#ffffff',
+    }
+
     re_form = RealEstateForm()
     loan_form = LoanForm(user=user)
     extra_repayment_form = LoanExtraRepaymentForm(user=user)
@@ -3424,6 +3447,7 @@ def real_estate_loans_view(request):
     
     context = {
         'overview': overview,
+        'card_colors': card_colors,
         're_form': re_form,
         'loan_form': loan_form,
         'extra_repayment_form': extra_repayment_form,

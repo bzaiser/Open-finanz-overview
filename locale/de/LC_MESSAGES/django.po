@@ -4057,3 +4057,18 @@ msgstr "z. B. Kaufvertrag, Heizungsrechnung 2024"
 
 msgid "Optional notes on this document..."
 msgstr "Optionale Notizen zu diesem Dokument..."
+
+msgid "Real Estate Breakdown"
+msgstr "Aufschlüsselung Immobilien"
+
+msgid "Loan Portfolio"
+msgstr "Kredit-Portfolio"
+
+msgid "Equity by Property"
+msgstr "Eigenkapital nach Immobilie"
+
+msgid "Cashflow by Property"
+msgstr "Cashflow nach Immobilie"
+
+msgid "Properties recorded"
+msgstr "Immobilien erfasst"
