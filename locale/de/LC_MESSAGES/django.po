@@ -3297,7 +3297,7 @@ msgid "Buffer"
 msgstr "Puffer"
 
 msgid "Ongoing monthly burden at 100% vacancy"
-msgstr "Laufende Monatskosten bei 100% Leerstand"
+msgstr "Laufende Monatsbelastung bei 100% Leerstand"
 
 msgid "Associated Loans"
 msgstr "Verknüpfte Darlehen"
@@ -3399,7 +3399,7 @@ msgid "Ancillary Operating Costs (€)"
 msgstr "Monatliche Nebenkosten / Hausgeld (€)"
 
 msgid "e.g. John Doe (or Owner-Occupied)"
-msgstr "z. B. Max Mustermann (oder Selbstgenutzt)"
+msgstr "z.B. Max Mustermann (oder Eigengenutzt)"
 
 msgid "Property has been sold"
 msgstr "Immobilie ist verkauft"
@@ -4195,3 +4195,6 @@ msgstr "Versicherung"
 
 msgid "Rent"
 msgstr "Miete"
+
+msgid "Owner-Occupied"
+msgstr "Eigengenutzt"
