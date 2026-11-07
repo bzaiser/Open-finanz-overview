@@ -3282,7 +3282,7 @@ msgid "Rental Income (Net)"
 msgstr "Mieteinnahmen (Netto)"
 
 msgid "Maintenance & Ancillary"
-msgstr "Bewirtschaftung & Rücklage"
+msgstr "Instandhaltung & Nebenkosten"
 
 msgid "Loan Installments (Debt Service)"
 msgstr "Darlehensraten (Kapitaldienst)"
@@ -3396,7 +3396,7 @@ msgid "Maintenance / HOA Fee (€)"
 msgstr "Instandhaltung / Hausgeld (€)"
 
 msgid "Ancillary Operating Costs (€)"
-msgstr "Nebenkosten (€)"
+msgstr "Monatliche Nebenkosten / Hausgeld (€)"
 
 msgid "e.g. John Doe (or Owner-Occupied)"
 msgstr "z. B. Max Mustermann (oder Selbstgenutzt)"
@@ -3738,7 +3738,7 @@ msgid "Maintenance / Reserve"
 msgstr "Instandhaltung / Rücklage"
 
 msgid "Ancillary Operating"
-msgstr "Betriebskosten / Nebenkosten"
+msgstr "Nebenkosten & Bewirtschaftung"
 
 msgid "Total Costs"
 msgstr "Gesamtausgaben"
@@ -4183,3 +4183,15 @@ msgstr "Mieteinnahmen %(tenant)s"
 
 msgid "Unassigned"
 msgstr "Nicht zugeordnet"
+
+msgid "Ancillary"
+msgstr "Nebenkosten & Bewirtschaftung"
+
+msgid "Tax"
+msgstr "Steuern"
+
+msgid "Insurance"
+msgstr "Versicherung"
+
+msgid "Rent"
+msgstr "Miete"
