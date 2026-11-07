@@ -1,4 +1,4 @@
-from django.db import models
+﻿from django.db import models
 from django.utils.translation import gettext_lazy as _, gettext
 from django.conf import settings
 from core.models import CustomUser
@@ -105,7 +105,7 @@ class Pension(models.Model):
         ('capital', _('Kapital- / Private Rentenversicherung')),
         ('statutory', _('Gesetzliche Rente (DRV)')),
         ('civil_service', _('Beamtenpension / Ruhegehalt')),
-        ('occupational_fund', _('Berufsständisches Versorgungswerk / VBL')),
+        ('occupational_fund', _('BerufsstÃ¤ndisches Versorgungswerk / VBL')),
     ]
 
     PAYOUT_TYPE_CHOICES = [
@@ -124,14 +124,14 @@ class Pension(models.Model):
     
     # Statutory pension fields
     pension_points = models.DecimalField(_("Pension Points (Entgeltpunkte)"), max_digits=8, decimal_places=4, null=True, blank=True, help_text=_("Number of statutory pension points accumulated"))
-    point_value = models.DecimalField(_("Point Value (€)"), max_digits=6, decimal_places=2, null=True, blank=True, help_text=_("Value of 1 pension point in EUR (e.g. 40.79)"))
-    gross_payout_amount = models.DecimalField(_("Gross Monthly Payout (€)"), max_digits=10, decimal_places=2, null=True, blank=True, help_text=_("Calculated automatically from points * point_value, or enter manually"))
+    point_value = models.DecimalField(_("Point Value (â‚¬)"), max_digits=6, decimal_places=2, null=True, blank=True, help_text=_("Value of 1 pension point in EUR (e.g. 40.79)"))
+    gross_payout_amount = models.DecimalField(_("Gross Monthly Payout (â‚¬)"), max_digits=10, decimal_places=2, null=True, blank=True, help_text=_("Calculated automatically from points * point_value, or enter manually"))
     social_deduction_rate = models.DecimalField(_("Social Security Deduction (%)"), max_digits=5, decimal_places=2, default=11.50, help_text=_("Deduction percentage for health & nursing care insurance (~11.5%)"))
-    disability_pension_net = models.DecimalField(_("Disability Pension Net (€/month)"), max_digits=10, decimal_places=2, blank=True, null=True, help_text=_("Pension in case of full reduction in earning capacity ('Wären Sie heute voll erwerbsgemindert...')"))
+    disability_pension_net = models.DecimalField(_("Disability Pension Net (â‚¬/month)"), max_digits=10, decimal_places=2, blank=True, null=True, help_text=_("Pension in case of full reduction in earning capacity ('WÃ¤ren Sie heute voll erwerbsgemindert...')"))
 
-    expected_payout_at_retirement = models.DecimalField(_("Expected Monthly Net Payout"), max_digits=10, decimal_places=2, blank=True, null=True, help_text=_("Projected regular old-age pension ('Sollten bis zum Rentenbeginn Beiträge gezahlt werden...')"))
+    expected_payout_at_retirement = models.DecimalField(_("Expected Monthly Net Payout"), max_digits=10, decimal_places=2, blank=True, null=True, help_text=_("Projected regular old-age pension ('Sollten bis zum Rentenbeginn BeitrÃ¤ge gezahlt werden...')"))
     retirement_age = models.PositiveIntegerField(_("Retirement Age"), blank=True, null=True, help_text=_("Target retirement age for this specific pension contract (e.g. 67)"))
-    target_pension_payout = models.DecimalField(_("Target Monthly Payout (€)"), max_digits=12, decimal_places=2, blank=True, null=True, help_text=_("Target net monthly payout desired for this specific contract"))
+    target_pension_payout = models.DecimalField(_("Target Monthly Payout (â‚¬)"), max_digits=12, decimal_places=2, blank=True, null=True, help_text=_("Target net monthly payout desired for this specific contract"))
     is_indexed = models.BooleanField(_("Indexed (Inflation Adjustment)"), default=True, help_text=_("If checked, the payout will increase annually based on the global pension increase rate."))
     contribution_end_date = models.DateField(verbose_name=_("Contribution End Date"), blank=True, null=True, help_text=_("Date when you stop paying into this pension"))
     start_payout_date = models.DateField(_("Payout Start Date"), blank=True, null=True, help_text=_("Approximate date when pension payout starts"))
@@ -302,6 +302,14 @@ class Loan(models.Model):
     end_date = models.DateField(_("End Date"), null=True, blank=True)
     notes = models.TextField(_("Notes"), blank=True)
     allows_extra_repayment = models.BooleanField(_("Extra Repayment Possible"), default=False)
+    real_estate = models.ForeignKey(
+        'RealEstate', on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='loans', verbose_name=_("Associated Real Estate")
+    )
+    account_number = models.CharField(_("Account / Loan Number"), max_length=50, blank=True)
+    effective_interest_rate = models.DecimalField(_("Effective Interest Rate (%)"), max_digits=5, decimal_places=2, null=True, blank=True)
+    initial_repayment_rate = models.DecimalField(_("Initial Repayment Rate (%)"), max_digits=5, decimal_places=2, null=True, blank=True)
+    special_repayment_rate = models.DecimalField(_("Annual Special Repayment Limit (%)"), max_digits=5, decimal_places=2, null=True, blank=True, default=0.0)
 
     class Meta:
         verbose_name = _("Loan / Debt")
@@ -381,9 +389,9 @@ class AssetSnapshot(models.Model):
     
     # Optional statutory pension & private net payout historical tracking
     pension_points = models.DecimalField(_("Pension Points (Entgeltpunkte)"), max_digits=8, decimal_places=4, null=True, blank=True)
-    point_value = models.DecimalField(_("Point Value (€)"), max_digits=6, decimal_places=2, null=True, blank=True)
-    expected_payout_net = models.DecimalField(_("Monthly Net Payout (€)"), max_digits=10, decimal_places=2, null=True, blank=True)
-    disability_pension_net = models.DecimalField(_("Disability Pension Net (€)"), max_digits=10, decimal_places=2, null=True, blank=True)
+    point_value = models.DecimalField(_("Point Value (â‚¬)"), max_digits=6, decimal_places=2, null=True, blank=True)
+    expected_payout_net = models.DecimalField(_("Monthly Net Payout (â‚¬)"), max_digits=10, decimal_places=2, null=True, blank=True)
+    disability_pension_net = models.DecimalField(_("Disability Pension Net (â‚¬)"), max_digits=10, decimal_places=2, null=True, blank=True)
 
     notes = models.TextField(_("Notes"), blank=True)
 

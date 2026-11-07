@@ -1,4 +1,4 @@
-{% load i18n static %}
+﻿{% load i18n static %}
 <html lang="{{ request.LANGUAGE_CODE }}" data-bs-theme="{% if request.user.is_authenticated and profile and profile.background_color == '#212529' or profile.background_color == '#1a1a2e' or profile.background_color == '#0d1117' or profile.background_color == '#1e1e2e' %}dark{% else %}light{% endif %}">
 
 <head>
@@ -245,7 +245,7 @@
             }
         }
 
-        /* Dropdown Fix: Lesbarkeit über Gradient */
+        /* Dropdown Fix: Lesbarkeit Ã¼ber Gradient */
         .dropdown-menu {
             background-color: var(--app-card-bg, #ffffff) !important;
             border: 1px solid rgba(0,0,0,0.1) !important;
@@ -479,9 +479,15 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'finance:pension_plan' %}">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'pension_plan' %}active{% endif %}" href="{% url 'finance:pension_plan' %}">
                            <i class="bi bi-bank me-1"></i>
                            {% trans 'Retirement Planning' %}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'real_estate_loans' %}active{% endif %}" href="{% url 'finance:real_estate_loans' %}">
+                           <i class="bi bi-houses me-1"></i>
+                           {% trans 'Immobilien & Kredite' %}
                         </a>
                     </li>
                     <li class="nav-item">
@@ -566,12 +572,12 @@
     <!-- Custom Desktop Context Menu -->
     <div id="appContextMenu" class="dropdown-menu shadow-lg border rounded-3 py-1" style="display: none; position: fixed; z-index: 99999; min-width: 170px;">
         <a class="dropdown-item d-flex align-items-center gap-2 py-1" href="#" id="ctxBack">
-            <i class="bi bi-arrow-left text-primary"></i> <span>{% trans "Zurück" %}</span>
-            <span class="ms-auto text-muted small ps-2">Alt+←</span>
+            <i class="bi bi-arrow-left text-primary"></i> <span>{% trans "ZurÃ¼ck" %}</span>
+            <span class="ms-auto text-muted small ps-2">Alt+â†</span>
         </a>
         <a class="dropdown-item d-flex align-items-center gap-2 py-1" href="#" id="ctxForward">
             <i class="bi bi-arrow-right text-primary"></i> <span>{% trans "Vor" %}</span>
-            <span class="ms-auto text-muted small ps-2">Alt+→</span>
+            <span class="ms-auto text-muted small ps-2">Alt+â†’</span>
         </a>
         <a class="dropdown-item d-flex align-items-center gap-2 py-1" href="#" id="ctxReload">
             <i class="bi bi-arrow-clockwise text-success"></i> <span>{% trans "Neu laden" %}</span>
@@ -583,12 +589,12 @@
             <span class="ms-auto text-muted small ps-2">Ctrl+C</span>
         </a>
         <a class="dropdown-item d-flex align-items-center gap-2 py-1" href="#" id="ctxPaste">
-            <i class="bi bi-clipboard-plus text-secondary"></i> <span>{% trans "Einfügen" %}</span>
+            <i class="bi bi-clipboard-plus text-secondary"></i> <span>{% trans "EinfÃ¼gen" %}</span>
             <span class="ms-auto text-muted small ps-2">Ctrl+V</span>
         </a>
         <div class="dropdown-divider my-1"></div>
         <a class="dropdown-item d-flex align-items-center gap-2 py-1" href="#" id="ctxSelectAll">
-            <i class="bi bi-check2-all text-secondary"></i> <span>{% trans "Alles auswählen" %}</span>
+            <i class="bi bi-check2-all text-secondary"></i> <span>{% trans "Alles auswÃ¤hlen" %}</span>
             <span class="ms-auto text-muted small ps-2">Ctrl+A</span>
         </a>
     </div>

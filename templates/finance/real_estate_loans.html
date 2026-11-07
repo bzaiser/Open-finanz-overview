@@ -1,0 +1,801 @@
+{% extends "base.html" %}
+{% load i18n humanize %}
+
+{% block title %}{% trans "Immobilien & Kredite" %} - Finanzplan{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-3 px-lg-4 py-3" x-data="realEstateLoansApp()">
+    
+    <!-- Header Title & Quick Action Buttons -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
+        <div>
+            <h3 class="fw-bold mb-1 d-flex align-items-center gap-2">
+                <i class="bi bi-houses text-primary"></i>
+                {% trans "Immobilien & Kredite" %}
+            </h3>
+            <p class="text-muted small mb-0">
+                {% trans "Überwachung von Immobilienportfolio, Darlehensverträgen, Restschulden, LTV (Beleihungsauslauf) und Zinsbindungsfristen." %}
+            </p>
+        </div>
+        <div class="d-flex flex-wrap align-items-center gap-2">
+            <button type="button" class="btn btn-outline-primary rounded-pill px-3 py-2 btn-sm fw-semibold shadow-sm" @click="openAddLoanModal()">
+                <i class="bi bi-plus-circle me-1"></i>
+                {% trans "Neues Darlehen" %}
+            </button>
+            <button type="button" class="btn btn-primary rounded-pill px-3 py-2 btn-sm fw-semibold shadow-sm" style="background: var(--app-gradient); border: none;" @click="openAddPropertyModal()">
+                <i class="bi bi-plus-lg me-1"></i>
+                {% trans "Neue Immobilie" %}
+            </button>
+            <button type="button" class="btn btn-outline-secondary rounded-pill px-3 py-2 btn-sm fw-semibold shadow-sm" @click="openExtraRepaymentModal()">
+                <i class="bi bi-cash-stack me-1"></i>
+                {% trans "Sondertilgung buchen" %}
+            </button>
+        </div>
+    </div>
+
+    <!-- Top KPI Summary Cards -->
+    <div class="row g-3 mb-4">
+        <!-- 1. Total Property Value -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100 p-3" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <span class="text-uppercase small fw-bold opacity-75">{% trans "Immobilienvermögen" %}</span>
+                    <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-2 py-1">
+                        {{ overview.properties|length }} {% trans "Objekte" %}
+                    </span>
+                </div>
+                <div class="h3 fw-bold mb-1 font-monospace text-primary">
+                    {{ overview.total_property_value|floatformat:2|intcomma }} €
+                </div>
+                <div class="small opacity-75 text-truncate">
+                    {% trans "Aktueller Gesamtwert aller Immobilien" %}
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Total Remaining Debt & LTV -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100 p-3" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <span class="text-uppercase small fw-bold opacity-75">{% trans "Gesamte Restschuld" %}</span>
+                    <span class="badge {% if overview.overall_ltv <= 60 %}bg-success{% elif overview.overall_ltv <= 80 %}bg-info text-dark{% else %}bg-warning text-dark{% endif %} rounded-pill px-2 py-1">
+                        LTV: {{ overview.overall_ltv }} %
+                    </span>
+                </div>
+                <div class="h3 fw-bold mb-1 font-monospace text-danger">
+                    {{ overview.total_debt_all|floatformat:2|intcomma }} €
+                </div>
+                <div class="small opacity-75 d-flex justify-content-between">
+                    <span>{% trans "Besichert" %}: {{ overview.total_linked_debt|floatformat:0|intcomma }} €</span>
+                    {% if overview.total_unlinked_debt > 0 %}
+                    <span>{% trans "Frei" %}: {{ overview.total_unlinked_debt|floatformat:0|intcomma }} €</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Net Equity -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100 p-3" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <span class="text-uppercase small fw-bold opacity-75">{% trans "Netto-Eigenkapital" %}</span>
+                    <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-2 py-1">
+                        {% trans "Equity" %}
+                    </span>
+                </div>
+                <div class="h3 fw-bold mb-1 font-monospace text-success">
+                    {{ overview.total_equity_all|floatformat:2|intcomma }} €
+                </div>
+                <div class="small opacity-75 text-truncate">
+                    {% trans "Immobilienwert abzgl. Darlehensschulden" %}
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Monthly Net Cashflow -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100 p-3" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <span class="text-uppercase small fw-bold opacity-75">{% trans "Monatlicher Cashflow" %}</span>
+                    <span class="badge {% if overview.total_property_cashflow >= 0 %}bg-success{% else %}bg-danger{% endif %} rounded-pill px-2 py-1">
+                        {% if overview.total_property_cashflow >= 0 %}+{% endif %}{{ overview.total_property_cashflow|floatformat:0|intcomma }} € / M
+                    </span>
+                </div>
+                <div class="h3 fw-bold mb-1 font-monospace {% if overview.total_property_cashflow >= 0 %}text-success{% else %}text-danger{% endif %}">
+                    {{ overview.total_property_cashflow|floatformat:2|intcomma }} €
+                </div>
+                <div class="small opacity-75 text-truncate">
+                    {% trans "Miete abzgl. Kosten & Darlehensraten" %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interest Lock Alert Banner (Zinsbindungs-Wecker) -->
+    {% if overview.critical_alerts %}
+    <div class="alert alert-warning border-0 shadow-sm rounded-4 p-3 mb-4 d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3">
+        <div class="d-flex align-items-center gap-3">
+            <div class="rounded-circle bg-warning bg-opacity-25 p-3 text-warning-emphasis d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                <i class="bi bi-alarm fs-4"></i>
+            </div>
+            <div>
+                <h6 class="fw-bold mb-1 text-warning-emphasis">
+                    {% trans "Zinsbindungs-Wecker: Handlungsbedarf bei anstehenden Ablaufdaten!" %}
+                </h6>
+                <div class="small text-warning-emphasis opacity-75">
+                    {% for alert in overview.critical_alerts %}
+                    <span class="me-3 d-inline-block">
+                        <strong>{{ alert.loan.name }}</strong> ({{ alert.loan.provider }}): 
+                        Ablauf am {{ alert.end_date|date:"d.m.Y" }} 
+                        {% if alert.months_left < 0 %}
+                        <span class="badge bg-danger">{% trans "Bereits abgelaufen" %}</span>
+                        {% elif alert.months_left <= 12 %}
+                        <span class="badge bg-danger">{% trans "Noch" %} {{ alert.months_left }} {% trans "Monate (Dringend!)" %}</span>
+                        {% else %}
+                        <span class="badge bg-warning text-dark">{% trans "Noch" %} {{ alert.months_left }} {% trans "Monate" %}</span>
+                        {% endif %}
+                        | {% trans "Restschuld" %}: ~{{ alert.balance|floatformat:0|intcomma }} €
+                    </span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="text-nowrap">
+            <span class="badge bg-warning-emphasis text-white px-3 py-2 rounded-pill small">
+                <i class="bi bi-info-circle me-1"></i>{% trans "Anschlussfinanzierung prüfen" %}
+            </span>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Tabs Navigation -->
+    <ul class="nav nav-pills mb-4 gap-2" id="immoTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link rounded-pill px-4 fw-semibold active" id="properties-tab" data-bs-toggle="pill" data-bs-target="#properties-pane" type="button" role="tab">
+                <i class="bi bi-building me-1"></i>
+                {% trans "Immobilien-Portfolio" %} ({{ overview.properties|length }})
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link rounded-pill px-4 fw-semibold" id="loans-tab" data-bs-toggle="pill" data-bs-target="#loans-pane" type="button" role="tab">
+                <i class="bi bi-bank me-1"></i>
+                {% trans "Darlehen & Kredite" %} ({{ overview.all_loans|length }})
+            </button>
+        </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content" id="immoTabContent">
+        
+        <!-- ========================================== -->
+        <!-- TAB 1: IMMOBILIEN-PORTFOLIO                -->
+        <!-- ========================================== -->
+        <div class="tab-pane fade show active" id="properties-pane" role="tabpanel">
+            {% if not overview.properties %}
+            <div class="text-center py-5 rounded-4 shadow-sm p-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+                <i class="bi bi-house-door display-4 opacity-50 mb-3 d-block"></i>
+                <h5 class="fw-bold">{% trans "Noch keine Immobilien erfasst" %}</h5>
+                <p class="text-muted small mb-3">{% trans "Fügen Sie Ihre Eigentumswohnungen, Häuser oder Mehrfamilienhäuser hinzu, um Vermögen, LTV und Cashflow zu verfolgen." %}</p>
+                <button type="button" class="btn btn-primary rounded-pill px-4" @click="openAddPropertyModal()">
+                    <i class="bi bi-plus-lg me-1"></i>{% trans "Erste Immobilie anlegen" %}
+                </button>
+            </div>
+            {% else %}
+            <div class="row g-4">
+                {% for p in overview.properties %}
+                <div class="col-12 col-xl-6">
+                    <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+                        <!-- Card Header -->
+                        <div class="p-3 border-bottom d-flex justify-content-between align-items-center" style="border-color: rgba(255,255,255,0.08) !important;">
+                            <div>
+                                <h5 class="fw-bold mb-1">{{ p.real_estate.name }}</h5>
+                                <div class="small opacity-75">
+                                    <i class="bi bi-geo-alt me-1"></i>{{ p.real_estate.location|default:_("Kein Standort angegeben") }}
+                                    {% if p.real_estate.current_tenant %}
+                                    <span class="ms-2">| <i class="bi bi-person me-1"></i>{{ p.real_estate.current_tenant }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="badge {% if p.ltv <= 60 %}bg-success{% elif p.ltv <= 80 %}bg-info text-dark{% else %}bg-warning text-dark{% endif %} rounded-pill px-3 py-1">
+                                    LTV: {{ p.ltv }} %
+                                </span>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-link text-muted p-0" type="button" data-bs-toggle="dropdown">
+                                        <i class="bi bi-three-dots-vertical fs-5"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
+                                        <li>
+                                            <a class="dropdown-item small" href="#" @click.prevent="openEditPropertyModal({{ p.real_estate.id }}, '{{ p.real_estate.name|escapejs }}', '{{ p.real_estate.property_value }}', '{{ p.real_estate.appreciation_rate }}', '{{ p.real_estate.location|escapejs }}', '{{ p.real_estate.current_tenant|escapejs }}', '{{ p.real_estate.rental_income_monthly }}', '{{ p.real_estate.maintenance_costs_monthly }}', '{{ p.real_estate.ancillary_costs_monthly }}', '{{ p.real_estate.acquisition_date|date:'Y-m-d'|default:'' }}', {{ p.real_estate.is_sold|yesno:'true,false' }})">
+                                                <i class="bi bi-pencil me-2"></i>{% trans "Bearbeiten" %}
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item small" href="#" @click.prevent="openAddLoanForPropertyModal({{ p.real_estate.id }}, '{{ p.real_estate.name|escapejs }}')">
+                                                <i class="bi bi-plus-circle me-2"></i>{% trans "Darlehen zuordnen" %}
+                                            </a>
+                                        </li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li>
+                                            <a class="dropdown-item small text-danger" href="{% url 'finance:real_estate_delete' p.real_estate.id %}" onclick="return confirm('{% trans "Möchten Sie diese Immobilie wirklich löschen?" %}');">
+                                                <i class="bi bi-trash me-2"></i>{% trans "Löschen" %}
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card Body: Value, Debt, Equity & Cashflow -->
+                        <div class="card-body p-3">
+                            <div class="row g-2 text-center mb-3">
+                                <div class="col-4 border-end">
+                                    <div class="small opacity-75 text-uppercase">{% trans "Marktwert" %}</div>
+                                    <div class="fw-bold font-monospace text-primary fs-6">{{ p.property_value|floatformat:2|intcomma }} €</div>
+                                </div>
+                                <div class="col-4 border-end">
+                                    <div class="small opacity-75 text-uppercase">{% trans "Restschuld" %}</div>
+                                    <div class="fw-bold font-monospace text-danger fs-6">{{ p.debt|floatformat:2|intcomma }} €</div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="small opacity-75 text-uppercase">{% trans "Netto-Equity" %}</div>
+                                    <div class="fw-bold font-monospace text-success fs-6">{{ p.equity|floatformat:2|intcomma }} €</div>
+                                </div>
+                            </div>
+
+                            <!-- LTV Progress Bar -->
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between small opacity-75 mb-1">
+                                    <span>{% trans "Beleihungsauslauf (LTV)" %}</span>
+                                    <span>
+                                        {% if p.ltv <= 60 %}
+                                        <span class="text-success"><i class="bi bi-check-circle me-1"></i>{% trans "Top-Konditionen (<60%)" %}</span>
+                                        {% elif p.ltv <= 80 %}
+                                        <span class="text-info"><i class="bi bi-check-circle me-1"></i>{% trans "Standard (60-80%)" %}</span>
+                                        {% else %}
+                                        <span class="text-warning"><i class="bi bi-exclamation-triangle me-1"></i>{% trans "Erhöht (>80%)" %}</span>
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                <div class="progress rounded-pill" style="height: 8px;">
+                                    <div class="progress-bar {% if p.ltv <= 60 %}bg-success{% elif p.ltv <= 80 %}bg-info{% else %}bg-warning{% endif %}" role="progressbar" style="width: {{ p.ltv|floatformat:0 }}%;"></div>
+                                </div>
+                            </div>
+
+                            <!-- Monthly Cashflow Breakdown -->
+                            <div class="p-2 rounded-3 bg-body-tertiary mb-3 small">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span><i class="bi bi-box-arrow-in-down-right text-success me-1"></i>{% trans "Mieteinnahmen (Netto)" %}:</span>
+                                    <span class="fw-bold font-monospace text-success">+{{ p.rental_income|floatformat:2|intcomma }} €</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-1 opacity-75">
+                                    <span><i class="bi bi-tools text-secondary me-1"></i>{% trans "Bewirtschaftung & Rücklage" %}:</span>
+                                    <span class="font-monospace text-danger">-{{ p.maintenance|add:p.ancillary|floatformat:2|intcomma }} €</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-1 opacity-75">
+                                    <span><i class="bi bi-bank text-danger me-1"></i>{% trans "Darlehensraten (Kapitaldienst)" %}:</span>
+                                    <span class="font-monospace text-danger">-{{ p.monthly_debt_service|floatformat:2|intcomma }} €</span>
+                                </div>
+                                <hr class="my-1">
+                                <div class="d-flex justify-content-between fw-bold">
+                                    <span>{% trans "Monatlicher Netto-Cashflow" %}:</span>
+                                    <span class="font-monospace {% if p.net_cashflow >= 0 %}text-success{% else %}text-danger{% endif %}">
+                                        {% if p.net_cashflow >= 0 %}+{% endif %}{{ p.net_cashflow|floatformat:2|intcomma }} €
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Linked Loans Section -->
+                            <div>
+                                <h6 class="small fw-bold text-uppercase opacity-75 mb-2 d-flex align-items-center gap-1">
+                                    <i class="bi bi-link-45deg"></i>
+                                    {% trans "Verknüpfte Darlehen" %} ({{ p.linked_loans|length }})
+                                </h6>
+                                {% if not p.linked_loans %}
+                                <div class="small opacity-50 text-center py-2">
+                                    {% trans "Kein Darlehen verknüpft (Objekt ist lastenfrei oder Kredite noch nicht zugeordnet)." %}
+                                </div>
+                                {% else %}
+                                <div class="list-group list-group-flush rounded-3 border">
+                                    {% for item in p.linked_loans %}
+                                    <div class="list-group-item d-flex justify-content-between align-items-center p-2 small bg-transparent">
+                                        <div>
+                                            <span class="fw-bold">{{ item.loan.name }}</span>
+                                            <span class="opacity-75 ms-1">({{ item.loan.provider|default:_("Bank") }})</span>
+                                            {% if item.details.lock_months_left is not None %}
+                                            <span class="badge {% if item.details.lock_status == 'critical' %}bg-danger{% elif item.details.lock_status == 'warning' %}bg-warning text-dark{% else %}bg-success bg-opacity-25 text-success{% endif %} ms-1" style="font-size: 0.65rem;">
+                                                {% trans "Zinsbindung" %}: {{ item.details.lock_months_left }}M ({{ item.loan.interest_lock_end|date:"d.m.Y" }})
+                                            </span>
+                                            {% endif %}
+                                        </div>
+                                        <div class="text-end font-monospace">
+                                            <span class="fw-bold text-danger">{{ item.details.current_balance|floatformat:2|intcomma }} €</span>
+                                            <div class="opacity-75" style="font-size: 0.7rem;">Rate: {{ item.loan.monthly_installment|floatformat:2|intcomma }} €</div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 2: DARLEHEN & KREDITE                  -->
+        <!-- ========================================== -->
+        <div class="tab-pane fade" id="loans-pane" role="tabpanel">
+            {% if not overview.all_loans %}
+            <div class="text-center py-5 rounded-4 shadow-sm p-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+                <i class="bi bi-bank display-4 opacity-50 mb-3 d-block"></i>
+                <h5 class="fw-bold">{% trans "Noch keine Darlehen erfasst" %}</h5>
+                <p class="text-muted small mb-3">{% trans "Erfassen Sie Ihre Darlehen mit Konditionen, Raten und Zinsbindungsfristen für eine automatische Restschuldberechnung." %}</p>
+                <button type="button" class="btn btn-primary rounded-pill px-4" @click="openAddLoanModal()">
+                    <i class="bi bi-plus-lg me-1"></i>{% trans "Erstes Darlehen erfassen" %}
+                </button>
+            </div>
+            {% else %}
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0" style="font-size: 0.85rem;">
+                        <thead class="table-light">
+                            <tr class="text-uppercase small">
+                                <th>{% trans "Darlehen / Bank" %}</th>
+                                <th>{% trans "Zugeordnete Immobilie" %}</th>
+                                <th>{% trans "Zinssatz & Tilgung" %}</th>
+                                <th>{% trans "Monatliche Rate" %}</th>
+                                <th class="text-end">{% trans "Aktuelle Restschuld" %}</th>
+                                <th>{% trans "Zinsbindung" %}</th>
+                                <th class="text-end">{% trans "Aktionen" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in overview.all_loans %}
+                            <tr>
+                                <td>
+                                    <div class="fw-bold">{{ item.loan.name }}</div>
+                                    <div class="small opacity-75">
+                                        {{ item.loan.provider }}
+                                        {% if item.loan.account_number %}
+                                        | <span class="font-monospace">Kto: {{ item.loan.account_number }}</span>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                <td>
+                                    {% if item.loan.real_estate %}
+                                    <span class="badge bg-primary bg-opacity-10 text-primary">
+                                        <i class="bi bi-house me-1"></i>{{ item.loan.real_estate.name }}
+                                    </span>
+                                    {% else %}
+                                    <span class="badge bg-secondary opacity-50">
+                                        {% trans "Freies Darlehen" %}
+                                    </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div><strong>{{ item.loan.interest_rate }} %</strong> <span class="small opacity-75">Sollzins</span></div>
+                                    <div class="small opacity-75">
+                                        {% if item.loan.effective_interest_rate %}Eff: {{ item.loan.effective_interest_rate }} % | {% endif %}
+                                        Tilg.: {{ item.details.calculated_initial_repayment }} %
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="fw-bold font-monospace">{{ item.loan.monthly_installment|floatformat:2|intcomma }} €</div>
+                                    <div class="small opacity-75 font-monospace" style="font-size: 0.72rem;">
+                                        Zins: {{ item.details.current_interest_portion|floatformat:0 }} € | Tilg: {{ item.details.current_principal_portion|floatformat:0 }} €
+                                    </div>
+                                </td>
+                                <td class="text-end">
+                                    <div class="fw-bold font-monospace text-danger fs-6">{{ item.details.current_balance|floatformat:2|intcomma }} €</div>
+                                    <div class="small opacity-75 font-monospace" style="font-size: 0.7rem;">
+                                        Start: {{ item.loan.nominal_amount|floatformat:0|intcomma }} €
+                                    </div>
+                                </td>
+                                <td>
+                                    {% if item.loan.interest_lock_end %}
+                                    <div>{{ item.loan.interest_lock_end|date:"d.m.Y" }}</div>
+                                    {% if item.details.lock_status == 'expired' %}
+                                    <span class="badge bg-danger">{% trans "Abgelaufen" %}</span>
+                                    {% elif item.details.lock_status == 'critical' %}
+                                    <span class="badge bg-danger">{% trans "Noch" %} {{ item.details.lock_months_left }}M</span>
+                                    {% elif item.details.lock_status == 'warning' %}
+                                    <span class="badge bg-warning text-dark">{% trans "Noch" %} {{ item.details.lock_months_left }}M</span>
+                                    {% else %}
+                                    <span class="badge bg-success bg-opacity-25 text-success">{% trans "Noch" %} {{ item.details.lock_months_left }}M</span>
+                                    {% endif %}
+                                    {% else %}
+                                    <span class="opacity-50">-</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-end">
+                                    <div class="btn-group btn-group-sm">
+                                        <button type="button" class="btn btn-outline-secondary" title="{% trans 'Sondertilgung erfassen' %}" @click="openExtraRepaymentForLoanModal({{ item.loan.id }})">
+                                            <i class="bi bi-cash-stack"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-outline-secondary" title="{% trans 'Bearbeiten' %}" @click="openEditLoanModal({{ item.loan.id }}, '{{ item.loan.name|escapejs }}', '{{ item.loan.provider|escapejs }}', '{{ item.loan.account_number|escapejs }}', '{{ item.loan.nominal_amount }}', '{{ item.loan.interest_rate }}', '{{ item.loan.effective_interest_rate|default:'' }}', '{{ item.loan.initial_repayment_rate|default:'' }}', '{{ item.loan.special_repayment_rate|default:'0' }}', '{{ item.loan.monthly_installment }}', '{{ item.loan.start_date|date:'Y-m-d' }}', '{{ item.loan.end_date|date:'Y-m-d'|default:'' }}', '{{ item.loan.interest_lock_end|date:'Y-m-d'|default:'' }}', '{{ item.loan.real_estate_id|default:'' }}', {{ item.loan.allows_extra_repayment|yesno:'true,false' }}, '{{ item.loan.notes|escapejs }}')">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <a href="{% url 'finance:loan_delete' item.loan.id %}" class="btn btn-outline-danger" title="{% trans 'Löschen' %}" onclick="return confirm('{% trans "Möchten Sie dieses Darlehen wirklich löschen?" %}');">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MODAL 1: IMMOBILIE ANLEGEN / BEARBEITEN   -->
+    <!-- ========================================== -->
+    <div class="modal fade" id="propertyModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg rounded-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold" x-text="propertyForm.id ? '{% trans "Immobilie bearbeiten" %}' : '{% trans "Neue Immobilie anlegen" %}'"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form method="post" :action="propertyForm.id ? '/finance/real-estate/save/' + propertyForm.id + '/' : '{% url "finance:real_estate_add" %}'">
+                    {% csrf_token %}
+                    <div class="modal-body pt-3">
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-7">
+                                <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Objektname / Bezeichnung" %}</label>
+                                <input type="text" name="name" x-model="propertyForm.name" class="form-control" placeholder="{% trans 'z. B. Eigentumswohnung Mitte' %}" required>
+                            </div>
+                            <div class="col-md-5">
+                                <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Aktueller Marktwert (€)" %}</label>
+                                <input type="number" step="0.01" name="property_value" x-model="propertyForm.property_value" class="form-control font-monospace" placeholder="0.00" required>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Standort / Adresse" %}</label>
+                                <input type="text" name="location" x-model="propertyForm.location" class="form-control" placeholder="{% trans 'Musterstraße 12, 10115 Berlin' %}">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Wertsteigerung (% p.a.)" %}</label>
+                                <input type="number" step="0.1" name="appreciation_rate" x-model="propertyForm.appreciation_rate" class="form-control font-monospace" placeholder="1.5">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Kaufdatum" %}</label>
+                                <input type="date" name="acquisition_date" x-model="propertyForm.acquisition_date" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="border rounded-3 p-3 bg-body-tertiary mb-3">
+                            <h6 class="small fw-bold text-uppercase opacity-75 mb-3">{% trans "Bewirtschaftung & Miete (Monatlich)" %}</h6>
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label small opacity-75">{% trans "Mieteinnahmen Netto (€)" %}</label>
+                                    <input type="number" step="0.01" name="rental_income_monthly" x-model="propertyForm.rental_income_monthly" class="form-control font-monospace" placeholder="0.00">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small opacity-75">{% trans "Instandhaltung / Hausgeld (€)" %}</label>
+                                    <input type="number" step="0.01" name="maintenance_costs_monthly" x-model="propertyForm.maintenance_costs_monthly" class="form-control font-monospace" placeholder="0.00">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small opacity-75">{% trans "Nebenkosten (€)" %}</label>
+                                    <input type="number" step="0.01" name="ancillary_costs_monthly" x-model="propertyForm.ancillary_costs_monthly" class="form-control font-monospace" placeholder="0.00">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small opacity-75">{% trans "Aktueller Mieter" %}</label>
+                                    <input type="text" name="current_tenant" x-model="propertyForm.current_tenant" class="form-control" placeholder="{% trans 'z. B. Max Mustermann (oder Selbstgenutzt)' %}">
+                                </div>
+                                <div class="col-md-6 d-flex align-items-center mt-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="is_sold" id="propIsSold" x-model="propertyForm.is_sold">
+                                        <label class="form-check-label small" for="propIsSold">{% trans "Immobilie ist verkauft" %}</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">{% trans "Abbrechen" %}</button>
+                        <button type="submit" class="btn btn-primary rounded-pill px-4">{% trans "Speichern" %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MODAL 2: DARLEHEN ANLEGEN / BEARBEITEN    -->
+    <!-- ========================================== -->
+    <div class="modal fade" id="loanModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg rounded-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold" x-text="loanForm.id ? '{% trans "Darlehen bearbeiten" %}' : '{% trans "Neues Darlehen erfassen" %}'"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form method="post" :action="loanForm.id ? '/finance/loans/save/' + loanForm.id + '/' : '{% url "finance:loan_add" %}'">
+                    {% csrf_token %}
+                    <div class="modal-body pt-3">
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Darlehens-Bezeichnung" %}</label>
+                                <input type="text" name="name" x-model="loanForm.name" class="form-control" placeholder="{% trans 'z. B. Baufinanzierung Annuität' %}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Bank / Darlehensgeber" %}</label>
+                                <input type="text" name="provider" x-model="loanForm.provider" class="form-control" placeholder="{% trans 'z. B. Sparkasse, ING, DKB' %}">
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Zugeordnete Immobilie" %}</label>
+                                <select name="real_estate" x-model="loanForm.real_estate" class="form-select">
+                                    <option value="">{% trans "-- Keine Immobilie (Freies Darlehen) --" %}</option>
+                                    {% for p in overview.properties %}
+                                    <option value="{{ p.real_estate.id }}">{{ p.real_estate.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Kontonummer / Darlehens-Nr." %}</label>
+                                <input type="text" name="account_number" x-model="loanForm.account_number" class="form-control font-monospace" placeholder="{% trans 'z. B. 123456789' %}">
+                            </div>
+                        </div>
+
+                        <div class="border rounded-3 p-3 bg-body-tertiary mb-3">
+                            <h6 class="small fw-bold text-uppercase opacity-75 mb-3">{% trans "Konditionen & Beträge" %}</h6>
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label small opacity-75">{% trans "Ursprüngliche Summe (€)" %}</label>
+                                    <input type="number" step="0.01" name="nominal_amount" x-model="loanForm.nominal_amount" class="form-control font-monospace" placeholder="0.00" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small opacity-75">{% trans "Sollzins (% p.a.)" %}</label>
+                                    <input type="number" step="0.01" name="interest_rate" x-model="loanForm.interest_rate" class="form-control font-monospace" placeholder="3.50" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small opacity-75">{% trans "Monatliche Rate (€)" %}</label>
+                                    <input type="number" step="0.01" name="monthly_installment" x-model="loanForm.monthly_installment" class="form-control font-monospace" placeholder="0.00" required>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label small opacity-75">{% trans "Effektivzins (% p.a.)" %}</label>
+                                    <input type="number" step="0.01" name="effective_interest_rate" x-model="loanForm.effective_interest_rate" class="form-control font-monospace" placeholder="3.65">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small opacity-75">{% trans "Anfängl. Tilgung (%)" %}</label>
+                                    <input type="number" step="0.01" name="initial_repayment_rate" x-model="loanForm.initial_repayment_rate" class="form-control font-monospace" placeholder="2.00">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small opacity-75">{% trans "Sondertilgungs-Limit (% p.a.)" %}</label>
+                                    <input type="number" step="0.1" name="special_repayment_rate" x-model="loanForm.special_repayment_rate" class="form-control font-monospace" placeholder="5.0">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-4">
+                                <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Vertragsbeginn" %}</label>
+                                <input type="date" name="start_date" x-model="loanForm.start_date" class="form-control" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-bold text-uppercase opacity-75 text-warning-emphasis">
+                                    <i class="bi bi-alarm me-1"></i>{% trans "Zinsbindungsende" %}
+                                </label>
+                                <input type="date" name="interest_lock_end" x-model="loanForm.interest_lock_end" class="form-control border-warning">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Geplantes Laufzeitende" %}</label>
+                                <input type="date" name="end_date" x-model="loanForm.end_date" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Notizen / Vertragsdetails" %}</label>
+                            <textarea name="notes" x-model="loanForm.notes" class="form-control" rows="2" placeholder="{% trans 'z. B. Sondertilgung jederzeit möglich, KfW-Förderdarlehen' %}"></textarea>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="allows_extra_repayment" id="loanExtraRepay" x-model="loanForm.allows_extra_repayment">
+                            <label class="form-check-label small" for="loanExtraRepay">{% trans "Sondertilgung vertraglich vereinbart" %}</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">{% trans "Abbrechen" %}</button>
+                        <button type="submit" class="btn btn-primary rounded-pill px-4">{% trans "Speichern" %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MODAL 3: SONDERTILGUNG ERFASSEN            -->
+    <!-- ========================================== -->
+    <div class="modal fade" id="extraRepaymentModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold">{% trans "Sondertilgung buchen" %}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form method="post" action="{% url 'finance:loan_extra_repayment_save' %}">
+                    {% csrf_token %}
+                    <div class="modal-body pt-3">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Darlehen auswählen" %}</label>
+                            <select name="loan" x-model="repaymentForm.loan" class="form-select" required>
+                                <option value="">{% trans "-- Bitte Darlehen wählen --" %}</option>
+                                {% for item in overview.all_loans %}
+                                <option value="{{ item.loan.id }}">{{ item.loan.name }} ({{ item.loan.provider }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Datum der Sondertilgung" %}</label>
+                            <input type="date" name="date" x-model="repaymentForm.date" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Betrag (€)" %}</label>
+                            <input type="number" step="0.01" name="amount" x-model="repaymentForm.amount" class="form-control font-monospace" placeholder="5000.00" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">{% trans "Abbrechen" %}</button>
+                        <button type="submit" class="btn btn-primary rounded-pill px-4">{% trans "Buchen" %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function realEstateLoansApp() {
+    return {
+        propertyForm: {
+            id: null,
+            name: '',
+            property_value: '',
+            appreciation_rate: '1.5',
+            location: '',
+            current_tenant: '',
+            rental_income_monthly: '',
+            maintenance_costs_monthly: '',
+            ancillary_costs_monthly: '',
+            acquisition_date: '',
+            is_sold: false
+        },
+        loanForm: {
+            id: null,
+            name: '',
+            provider: '',
+            account_number: '',
+            nominal_amount: '',
+            interest_rate: '',
+            effective_interest_rate: '',
+            initial_repayment_rate: '',
+            special_repayment_rate: '5.0',
+            monthly_installment: '',
+            start_date: '',
+            end_date: '',
+            interest_lock_end: '',
+            real_estate: '',
+            allows_extra_repayment: true,
+            notes: ''
+        },
+        repaymentForm: {
+            loan: '',
+            date: new Date().toISOString().split('T')[0],
+            amount: ''
+        },
+
+        openAddPropertyModal() {
+            this.propertyForm = {
+                id: null,
+                name: '',
+                property_value: '',
+                appreciation_rate: '1.5',
+                location: '',
+                current_tenant: '',
+                rental_income_monthly: '',
+                maintenance_costs_monthly: '',
+                ancillary_costs_monthly: '',
+                acquisition_date: '',
+                is_sold: false
+            };
+            new bootstrap.Modal(document.getElementById('propertyModal')).show();
+        },
+
+        openEditPropertyModal(id, name, val, app, loc, tenant, rent, maint, anc, acq, sold) {
+            this.propertyForm = {
+                id: id,
+                name: name,
+                property_value: val,
+                appreciation_rate: app,
+                location: loc,
+                current_tenant: tenant,
+                rental_income_monthly: rent,
+                maintenance_costs_monthly: maint,
+                ancillary_costs_monthly: anc,
+                acquisition_date: acq,
+                is_sold: sold
+            };
+            new bootstrap.Modal(document.getElementById('propertyModal')).show();
+        },
+
+        openAddLoanModal() {
+            this.loanForm = {
+                id: null,
+                name: '',
+                provider: '',
+                account_number: '',
+                nominal_amount: '',
+                interest_rate: '',
+                effective_interest_rate: '',
+                initial_repayment_rate: '',
+                special_repayment_rate: '5.0',
+                monthly_installment: '',
+                start_date: new Date().toISOString().split('T')[0],
+                end_date: '',
+                interest_lock_end: '',
+                real_estate: '',
+                allows_extra_repayment: true,
+                notes: ''
+            };
+            new bootstrap.Modal(document.getElementById('loanModal')).show();
+        },
+
+        openAddLoanForPropertyModal(reId, reName) {
+            this.openAddLoanModal();
+            this.loanForm.real_estate = reId;
+            this.loanForm.name = 'Darlehen ' + reName;
+        },
+
+        openEditLoanModal(id, name, prov, acc, nom, rate, eff, initRep, specRep, inst, start, end, lock, reId, allows, notes) {
+            this.loanForm = {
+                id: id,
+                name: name,
+                provider: prov,
+                account_number: acc,
+                nominal_amount: nom,
+                interest_rate: rate,
+                effective_interest_rate: eff,
+                initial_repayment_rate: initRep,
+                special_repayment_rate: specRep,
+                monthly_installment: inst,
+                start_date: start,
+                end_date: end,
+                interest_lock_end: lock,
+                real_estate: reId || '',
+                allows_extra_repayment: allows,
+                notes: notes
+            };
+            new bootstrap.Modal(document.getElementById('loanModal')).show();
+        },
+
+        openExtraRepaymentModal() {
+            this.repaymentForm = {
+                loan: '',
+                date: new Date().toISOString().split('T')[0],
+                amount: ''
+            };
+            new bootstrap.Modal(document.getElementById('extraRepaymentModal')).show();
+        },
+
+        openExtraRepaymentForLoanModal(loanId) {
+            this.openExtraRepaymentModal();
+            this.repaymentForm.loan = loanId;
+        }
+    };
+}
+</script>
+{% endblock %}

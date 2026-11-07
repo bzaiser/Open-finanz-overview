@@ -1,4 +1,4 @@
-from django.urls import path
+﻿from django.urls import path
 from . import views, wizard_views
 
 app_name = 'finance'
@@ -33,6 +33,15 @@ urlpatterns = [
     path('pensions/delete/<int:pk>/', views.pension_delete, name='pension_delete'),
     path('pensions/snapshot/save/', views.pension_snapshot_save, name='pension_snapshot_save'),
     path('pensions/snapshot/delete/<int:pk>/', views.pension_snapshot_delete, name='pension_snapshot_delete'),
+    path('real-estate/', views.real_estate_loans_view, name='real_estate_loans'),
+    path('real-estate/save/', views.real_estate_save, name='real_estate_add'),
+    path('real-estate/save/<int:pk>/', views.real_estate_save, name='real_estate_edit'),
+    path('real-estate/delete/<int:pk>/', views.real_estate_delete, name='real_estate_delete'),
+    path('loans/save/', views.loan_save, name='loan_add'),
+    path('loans/save/<int:pk>/', views.loan_save, name='loan_edit'),
+    path('loans/delete/<int:pk>/', views.loan_delete, name='loan_delete'),
+    path('loans/extra-repayment/save/', views.loan_extra_repayment_save, name='loan_extra_repayment_save'),
+    path('loans/extra-repayment/delete/<int:pk>/', views.loan_extra_repayment_delete, name='loan_extra_repayment_delete'),
     path('wizard/', wizard_views.wizard_page_view, name='setup_wizard'),
     path('wizard/save/', wizard_views.wizard_save_api, name='setup_wizard_save'),
     path('dynamic-theme.css', views.dynamic_theme_css, name='dynamic_theme_css'),

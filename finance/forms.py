@@ -1,4 +1,4 @@
-from django import forms
+﻿from django import forms
 from django.utils.translation import gettext_lazy as _
 
 class BankImportForm(forms.Form):
@@ -69,3 +69,81 @@ class PensionForm(forms.ModelForm):
             'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         }
 
+
+
+
+from .models import RealEstate, Loan, LoanExtraRepayment
+
+class RealEstateForm(forms.ModelForm):
+    class Meta:
+        model = RealEstate
+        fields = [
+            'name', 'property_value', 'appreciation_rate', 'location',
+            'current_tenant', 'rental_income_monthly', 'maintenance_costs_monthly',
+            'ancillary_costs_monthly', 'acquisition_date', 'is_sold', 'sale_date'
+        ]
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('e.g. Eigentumswohnung Mitte, MFH Nord')}),
+            'property_value': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
+            'appreciation_rate': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
+            'location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('e.g. Musterstraße 12, Berlin')}),
+            'current_tenant': forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('e.g. Familie Schmidt')}),
+            'rental_income_monthly': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
+            'maintenance_costs_monthly': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
+            'ancillary_costs_monthly': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
+            'acquisition_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'sale_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'is_sold': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
+
+
+class LoanForm(forms.ModelForm):
+    class Meta:
+        model = Loan
+        fields = [
+            'name', 'provider', 'account_number', 'nominal_amount',
+            'interest_rate', 'effective_interest_rate', 'initial_repayment_rate',
+            'special_repayment_rate', 'monthly_installment', 'start_date', 'end_date',
+            'interest_lock_end', 'real_estate', 'allows_extra_repayment', 'notes'
+        ]
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('e.g. Annuitätendarlehen Sparkasse')}),
+            'provider': forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('e.g. Sparkasse, ING, DKB')}),
+            'account_number': forms.TextInput(attrs={'class': 'form-control font-monospace', 'placeholder': _('e.g. Darlehens-Nr. 12345678')}),
+            'nominal_amount': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
+            'interest_rate': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
+            'effective_interest_rate': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
+            'initial_repayment_rate': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
+            'special_repayment_rate': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
+            'monthly_installment': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
+            'start_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'end_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'interest_lock_end': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'real_estate': forms.Select(attrs={'class': 'form-select'}),
+            'allows_extra_repayment': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        if user:
+            self.fields['real_estate'].queryset = RealEstate.objects.filter(user=user).order_by('name')
+        self.fields['real_estate'].empty_label = _('-- Keine Immobilie (Freies Darlehen) --')
+
+
+class LoanExtraRepaymentForm(forms.ModelForm):
+    class Meta:
+        model = LoanExtraRepayment
+        fields = ['loan', 'date', 'amount']
+        widgets = {
+            'loan': forms.Select(attrs={'class': 'form-select'}),
+            'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'amount': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        if user:
+            self.fields['loan'].queryset = Loan.objects.filter(user=user).order_by('name')

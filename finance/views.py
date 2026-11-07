@@ -3400,3 +3400,105 @@ def pension_snapshot_delete(request, pk):
     if edit_pension_id:
         return redirect(f"{reverse('finance:pension_plan')}?edit_pension_id={edit_pension_id}")
     return redirect('finance:pension_plan')
+
+
+
+# ==============================================================================
+# REAL ESTATE & LOANS (IMMOBILIEN & KREDITE) MODULE
+# ==============================================================================
+from .models import RealEstate, Loan, LoanExtraRepayment
+from .forms import RealEstateForm, LoanForm, LoanExtraRepaymentForm
+from .services_realestate import get_real_estate_overview, calculate_loan_schedule
+
+@login_required
+def real_estate_loans_view(request):
+    user = request.user
+    overview = get_real_estate_overview(user)
+    
+    re_form = RealEstateForm()
+    loan_form = LoanForm(user=user)
+    extra_repayment_form = LoanExtraRepaymentForm(user=user)
+    
+    context = {
+        'overview': overview,
+        're_form': re_form,
+        'loan_form': loan_form,
+        'extra_repayment_form': extra_repayment_form,
+    }
+    return render(request, 'finance/real_estate_loans.html', context)
+
+
+@login_required
+def real_estate_save(request, pk=None):
+    user = request.user
+    instance = get_object_or_404(RealEstate, pk=pk, user=user) if pk else None
+    
+    if request.method == 'POST':
+        form = RealEstateForm(request.POST, instance=instance)
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.user = user
+            obj.save()
+            messages.success(request, _('Immobilie erfolgreich gespeichert.') if pk else _('Immobilie erfolgreich hinzugefügt.'))
+        else:
+            messages.error(request, f"{_('Fehler beim Speichern')}: {form.errors.as_text()}")
+            
+    return redirect('finance:real_estate_loans')
+
+
+@login_required
+def real_estate_delete(request, pk):
+    obj = get_object_or_404(RealEstate, pk=pk, user=request.user)
+    name = obj.name
+    obj.delete()
+    messages.success(request, f"{_('Immobilie')} '{name}' {_('wurde gelöscht.')}")
+    return redirect('finance:real_estate_loans')
+
+
+@login_required
+def loan_save(request, pk=None):
+    user = request.user
+    instance = get_object_or_404(Loan, pk=pk, user=user) if pk else None
+    
+    if request.method == 'POST':
+        form = LoanForm(request.POST, instance=instance, user=user)
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.user = user
+            obj.save()
+            messages.success(request, _('Darlehen erfolgreich gespeichert.') if pk else _('Darlehen erfolgreich hinzugefügt.'))
+        else:
+            messages.error(request, f"{_('Fehler beim Speichern')}: {form.errors.as_text()}")
+            
+    return redirect('finance:real_estate_loans')
+
+
+@login_required
+def loan_delete(request, pk):
+    obj = get_object_or_404(Loan, pk=pk, user=request.user)
+    name = obj.name
+    obj.delete()
+    messages.success(request, f"{_('Darlehen')} '{name}' {_('wurde gelöscht.')}")
+    return redirect('finance:real_estate_loans')
+
+
+@login_required
+def loan_extra_repayment_save(request):
+    user = request.user
+    if request.method == 'POST':
+        form = LoanExtraRepaymentForm(request.POST, user=user)
+        if form.is_valid():
+            repayment = form.save()
+            messages.success(request, _('Sondertilgung erfolgreich eingetragen.'))
+        else:
+            messages.error(request, f"{_('Fehler beim Speichern')}: {form.errors.as_text()}")
+            
+    return redirect('finance:real_estate_loans')
+
+
+@login_required
+def loan_extra_repayment_delete(request, pk):
+    repayment = get_object_or_404(LoanExtraRepayment, pk=pk, loan__user=request.user)
+    repayment.delete()
+    messages.success(request, _('Sondertilgung gelöscht.'))
+    return redirect('finance:real_estate_loans')
