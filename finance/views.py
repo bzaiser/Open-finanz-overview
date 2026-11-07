@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, get_object_or_404
+﻿from django.shortcuts import render, redirect, get_object_or_404
 from django.db import models
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse
@@ -1847,7 +1847,7 @@ def import_search_as_group(request, batch_id):
     make_recurring = request.POST.get('make_recurring') == 'on'  # Checkbox value
     
     if not (q and target_name and category_id):
-        return HttpResponse('<div class="alert alert-danger small">Bitte alle Felder ausfüllen.</div>', status=400)
+        return HttpResponse('<div class="alert alert-danger small">Bitte alle Felder ausfÃ¼llen.</div>', status=400)
     
     category = get_object_or_404(Category, id=category_id)
     
@@ -2125,7 +2125,7 @@ def quick_create_cash_flow(request):
         )
         
         # Build OOB response for ALL CashFlow dropdowns
-        new_option = f'<option value="{cf.id}" selected>{cf.name} ({cf.value} €)</option>'
+        new_option = f'<option value="{cf.id}" selected>{cf.name} ({cf.value} â‚¬)</option>'
         
         html = f'''
             {new_option}
@@ -2160,7 +2160,7 @@ def delete_all_import_history(request):
     cache_key = f"import_progress_{request.user.id}"
     cache.delete(cache_key)
     
-    messages.success(request, _(f"Gesamte Import-Historie ({count} Batches) wurde gelöscht."))
+    messages.success(request, _(f"Gesamte Import-Historie ({count} Batches) wurde gelÃ¶scht."))
     return redirect('finance:import_transactions')
 def dynamic_theme_css(request):
     """
@@ -2473,7 +2473,7 @@ def cash_flow_list(request):
                 'frequency': 'monthly',
                 'frequency_display': str(_('Monthly')),
                 'category_id': None,
-                'category_name': 'Vermögen',
+                'category_name': 'VermÃ¶gen',
                 'category_translated': str(_('Asset withdrawal')),
                 'start_date': a.withdrawal_start_date,
                 'end_date': None,
@@ -2741,13 +2741,25 @@ def cash_flow_annual_adjustment(request):
         
         with transaction.atomic():
             for cf in sources:
+                # Skip entries whose start_date is already >= new_start_date
+                # to prevent end_date being set before start_date (e.g. start=01.01.2027, end=31.12.2026)
+                if cf.start_date and cf.start_date >= new_start_date:
+                    continue
+
                 cf.end_date = prev_end_date
                 cf.save()
-                
-                new_value = (cf.value * multiplier).quantize(Decimal('0.01'))
+
+                # Keep original amount when no percentage adjustment is entered
+                if adj_percent == Decimal('0'):
+                    new_value = cf.value
+                else:
+                    new_value = (cf.value * multiplier).quantize(Decimal('0.01'))
                 note_suffix = f" [Anpassung ab {new_start_date.strftime('%d.%m.%Y')}]"
                 new_notes = ((cf.notes or '') + note_suffix).strip()
-                
+
+                # end_date of new entry = 31.12. of the new start year
+                new_end_date = datetime.date(new_start_date.year, 12, 31)
+
                 CashFlowSource.objects.create(
                     user=user,
                     name=cf.name,
@@ -2756,7 +2768,7 @@ def cash_flow_annual_adjustment(request):
                     frequency=cf.frequency,
                     category=cf.category,
                     start_date=new_start_date,
-                    end_date=None,
+                    end_date=new_end_date,
                     is_inflation_adjusted=cf.is_inflation_adjusted,
                     notes=new_notes
                 )
@@ -2980,7 +2992,7 @@ def pension_plan_view(request):
             sp_series.append(val)
 
         statutory_datasets.append({
-            'label': sp.provider + ' (€/' + str(_("month net")) + ')',
+            'label': sp.provider + ' (â‚¬/' + str(_("month net")) + ')',
             'data': sp_series,
             'borderColor': color,
             'backgroundColor': 'transparent',
