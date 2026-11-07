@@ -4072,3 +4072,9 @@ msgstr "Cashflow nach Immobilie"
 
 msgid "Properties recorded"
 msgstr "Immobilien erfasst"
+
+msgid "Rental Income"
+msgstr "Mieteinnahmen"
+
+msgid "Debt Service"
+msgstr "Kapitaldienst / Darlehensraten"
