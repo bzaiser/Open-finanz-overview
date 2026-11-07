@@ -1,107 +1,7 @@
 {% extends "base.html" %}
 {% load i18n humanize %}
 
-{% block title %}{% trans "Real Estate & Loans" %} - Finanzplan
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    var calendarTab = document.getElementById('calendar-tab');
-    var chartInstance = null;
-
-    function renderCashflowChart() {
-        var canvas = document.getElementById('realEstateCashflowChart');
-        if (!canvas) return;
-
-        if (chartInstance) {
-            chartInstance.resize();
-            return;
-        }
-
-        var chartData = {{ calendar_chart_json|safe|default:"{}" }};
-        var labels = chartData.labels || [];
-        var rentData = chartData.rent || [];
-        var expData = chartData.expenses || [];
-        var cumData = chartData.cumulative || [];
-
-        chartInstance = new Chart(canvas, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [
-                    {
-                        type: 'line',
-                        label: '{% trans "Cumulative Net Cashflow" %}',
-                        data: cumData,
-                        borderColor: '#0d6efd',
-                        backgroundColor: 'rgba(13, 110, 253, 0.1)',
-                        borderWidth: 2.5,
-                        tension: 0.3,
-                        yAxisID: 'y1',
-                        fill: false
-                    },
-                    {
-                        type: 'bar',
-                        label: '{% trans "Rental Inflow" %}',
-                        data: rentData,
-                        backgroundColor: 'rgba(25, 135, 84, 0.8)',
-                        borderRadius: 4,
-                        yAxisID: 'y'
-                    },
-                    {
-                        type: 'bar',
-                        label: '{% trans "Total Outflow" %}',
-                        data: expData,
-                        backgroundColor: 'rgba(220, 53, 69, 0.8)',
-                        borderRadius: 4,
-                        yAxisID: 'y'
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                interaction: { mode: 'index', intersect: false },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        position: 'left',
-                        ticks: {
-                            callback: function(v) { return Number(v).toLocaleString('de-DE') + ' €'; }
-                        }
-                    },
-                    y1: {
-                        position: 'right',
-                        grid: { drawOnChartArea: false },
-                        ticks: {
-                            callback: function(v) { return Number(v).toLocaleString('de-DE') + ' €'; }
-                        }
-                    }
-                },
-                plugins: {
-                    legend: { position: 'top' },
-                    tooltip: {
-                        callbacks: {
-                            label: function(ctx) {
-                                return ctx.dataset.label + ': ' + ctx.parsed.y.toLocaleString('de-DE', {minimumFractionDigits: 2}) + ' €';
-                            }
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    if (calendarTab) {
-        calendarTab.addEventListener('shown.bs.tab', function() {
-            setTimeout(renderCashflowChart, 50);
-        });
-    }
-    if (document.getElementById('calendar-pane') && document.getElementById('calendar-pane').classList.contains('active')) {
-        renderCashflowChart();
-    }
-});
-</script>
-
-{% endblock %}
+{% block title %}{% trans "Real Estate & Loans" %} - Finanzplan{% endblock %}
 
 {% block content %}
 <style>
@@ -2630,5 +2530,103 @@ function realEstateLoansApp() {
 </script>
 {% endblock %}
 
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var calendarTab = document.getElementById('calendar-tab');
+    var chartInstance = null;
 
+    function renderCashflowChart() {
+        var canvas = document.getElementById('realEstateCashflowChart');
+        if (!canvas) return;
 
+        if (chartInstance) {
+            chartInstance.resize();
+            return;
+        }
+
+        var chartData = {{ calendar_chart_json|safe|default:"{}" }};
+        var labels = chartData.labels || [];
+        var rentData = chartData.rent || [];
+        var expData = chartData.expenses || [];
+        var cumData = chartData.cumulative || [];
+
+        chartInstance = new Chart(canvas, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        type: 'line',
+                        label: '{% trans "Cumulative Net Cashflow" %}',
+                        data: cumData,
+                        borderColor: '#0d6efd',
+                        backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                        borderWidth: 2.5,
+                        tension: 0.3,
+                        yAxisID: 'y1',
+                        fill: false
+                    },
+                    {
+                        type: 'bar',
+                        label: '{% trans "Rental Inflow" %}',
+                        data: rentData,
+                        backgroundColor: 'rgba(25, 135, 84, 0.8)',
+                        borderRadius: 4,
+                        yAxisID: 'y'
+                    },
+                    {
+                        type: 'bar',
+                        label: '{% trans "Total Outflow" %}',
+                        data: expData,
+                        backgroundColor: 'rgba(220, 53, 69, 0.8)',
+                        borderRadius: 4,
+                        yAxisID: 'y'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        position: 'left',
+                        ticks: {
+                            callback: function(v) { return Number(v).toLocaleString('de-DE') + ' €'; }
+                        }
+                    },
+                    y1: {
+                        position: 'right',
+                        grid: { drawOnChartArea: false },
+                        ticks: {
+                            callback: function(v) { return Number(v).toLocaleString('de-DE') + ' €'; }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: { position: 'top' },
+                    tooltip: {
+                        callbacks: {
+                            label: function(ctx) {
+                                return ctx.dataset.label + ': ' + ctx.parsed.y.toLocaleString('de-DE', {minimumFractionDigits: 2}) + ' €';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    if (calendarTab) {
+        calendarTab.addEventListener('shown.bs.tab', function() {
+            setTimeout(renderCashflowChart, 50);
+        });
+    }
+    if (document.getElementById('calendar-pane') && document.getElementById('calendar-pane').classList.contains('active')) {
+        renderCashflowChart();
+    }
+});
+</script>
+{% endblock %}
