@@ -3491,9 +3491,6 @@ msgstr "-- Bitte Darlehen wählen --"
 msgid "Prepayment Date"
 msgstr "Datum der Sondertilgung"
 
-msgid "Amount (€)"
-msgstr "Betrag (€)"
-
 msgid "Record"
 msgstr "Buchen"
 
@@ -3619,30 +3616,3 @@ msgstr "Sondertilgung erfolgreich eingetragen."
 
 msgid "Extra repayment deleted successfully."
 msgstr "Sondertilgung gelöscht."
-
-msgid "Current Market Value (€)"
-msgstr "Aktueller Marktwert (€)"
-
-msgid "Rental Income Net (€)"
-msgstr "Mieteinnahmen Netto (€)"
-
-msgid "Maintenance / HOA Fee (€)"
-msgstr "Instandhaltung / Hausgeld (€)"
-
-msgid "Ancillary Operating Costs (€)"
-msgstr "Nebenkosten (€)"
-
-msgid "Initial Amount (€)"
-msgstr "Ursprüngliche Summe (€)"
-
-msgid "Monthly Installment (€)"
-msgstr "Monatliche Rate (€)"
-
-msgid "Amount (€)"
-msgstr "Betrag (€)"
-
-msgid "One-time Prepayment (€)"
-msgstr "Einmalige Sondertilgung (€)"
-
-msgid "Annual Prepayment (€ p.a.)"
-msgstr "Jährliche Sondertilgung (€ p.a.)"
