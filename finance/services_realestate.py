@@ -1,4 +1,4 @@
-import datetime
+﻿import datetime
 from decimal import Decimal
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
@@ -94,7 +94,7 @@ def calculate_loan_schedule(loan, as_of_date=None, extra_one_time=Decimal('0.00'
 
         # Installment and principal depending on loan type
         if loan_type == 'bullet':
-            # Endfälliges Darlehen: only pay interest, principal paid at end
+            # EndfÃ¤lliges Darlehen: only pay interest, principal paid at end
             principal_month = Decimal('0.00')
             installment = interest_month
             if loan.end_date and curr_date.year == loan.end_date.year and curr_date.month == loan.end_date.month:
@@ -242,7 +242,7 @@ def calculate_refinancing_stress_test(loan):
         repay_rate = Decimal('2.00')
         
     test_rates = [
-        ('current', curr_rate, f"{curr_rate:.2f} % ({_('Aktuell')})"),
+        ('current', curr_rate, f"{curr_rate:.2f} % ({_('Current')})"),
         ('plus1', curr_rate + Decimal('1.00'), f"+1,0 % ({curr_rate + 1:.2f} %)"),
         ('plus2', curr_rate + Decimal('2.00'), f"+2,0 % ({curr_rate + 2:.2f} %)"),
         ('plus3', curr_rate + Decimal('3.00'), f"+3,0 % ({curr_rate + 3:.2f} %)"),

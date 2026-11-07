@@ -83,11 +83,11 @@ class RealEstateForm(forms.ModelForm):
             'ancillary_costs_monthly', 'acquisition_date', 'is_sold', 'sale_date'
         ]
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('e.g. Eigentumswohnung Mitte, MFH Nord')}),
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('e.g. Downtown Apartment, Multi-Family Home')}),
             'property_value': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
             'appreciation_rate': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
-            'location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('e.g. Musterstraße 12, Berlin')}),
-            'current_tenant': forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('e.g. Familie Schmidt')}),
+            'location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('e.g. Main Street 12, Berlin')}),
+            'current_tenant': forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('e.g. John Doe')}),
             'rental_income_monthly': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
             'maintenance_costs_monthly': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
             'ancillary_costs_monthly': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
@@ -107,10 +107,10 @@ class LoanForm(forms.ModelForm):
             'interest_lock_end', 'real_estate', 'allows_extra_repayment', 'notes'
         ]
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('e.g. Annuitätendarlehen Sparkasse')}),
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('e.g. Bank Mortgage, Annuity Loan')}),
             'provider': forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('e.g. Sparkasse, ING, DKB')}),
             'loan_type': forms.Select(attrs={'class': 'form-select'}),
-            'account_number': forms.TextInput(attrs={'class': 'form-control font-monospace', 'placeholder': _('e.g. Darlehens-Nr. 12345678')}),
+            'account_number': forms.TextInput(attrs={'class': 'form-control font-monospace', 'placeholder': _('e.g. Loan No. 12345678')}),
             'nominal_amount': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
             'interest_rate': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
             'effective_interest_rate': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
@@ -130,7 +130,7 @@ class LoanForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if user:
             self.fields['real_estate'].queryset = RealEstate.objects.filter(user=user).order_by('name')
-        self.fields['real_estate'].empty_label = _('-- Keine Immobilie (Freies Darlehen) --')
+        self.fields['real_estate'].empty_label = _('-- No Real Estate (Unsecured Loan) --')
 
 
 class LoanExtraRepaymentForm(forms.ModelForm):
@@ -148,3 +148,4 @@ class LoanExtraRepaymentForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if user:
             self.fields['loan'].queryset = Loan.objects.filter(user=user).order_by('name')
+        self.fields['loan'].empty_label = _('-- Select Loan --')

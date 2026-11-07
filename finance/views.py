@@ -3439,9 +3439,9 @@ def real_estate_save(request, pk=None):
             obj = form.save(commit=False)
             obj.user = user
             obj.save()
-            messages.success(request, _('Immobilie erfolgreich gespeichert.') if pk else _('Immobilie erfolgreich hinzugefügt.'))
+            messages.success(request, _('Real estate saved successfully.') if pk else _('Real estate added successfully.'))
         else:
-            messages.error(request, f"{_('Fehler beim Speichern')}: {form.errors.as_text()}")
+            messages.error(request, f"{_('Error saving')}: {form.errors.as_text()}")
             
     return redirect('finance:real_estate_loans')
 
@@ -3451,7 +3451,7 @@ def real_estate_delete(request, pk):
     obj = get_object_or_404(RealEstate, pk=pk, user=request.user)
     name = obj.name
     obj.delete()
-    messages.success(request, f"{_('Immobilie')} '{name}' {_('wurde gelöscht.')}")
+    messages.success(request, f"{_('Real estate')} '{name}' {_('was deleted.')}")
     return redirect('finance:real_estate_loans')
 
 
@@ -3466,9 +3466,9 @@ def loan_save(request, pk=None):
             obj = form.save(commit=False)
             obj.user = user
             obj.save()
-            messages.success(request, _('Darlehen erfolgreich gespeichert.') if pk else _('Darlehen erfolgreich hinzugefügt.'))
+            messages.success(request, _('Loan saved successfully.') if pk else _('Loan added successfully.'))
         else:
-            messages.error(request, f"{_('Fehler beim Speichern')}: {form.errors.as_text()}")
+            messages.error(request, f"{_('Error saving')}: {form.errors.as_text()}")
             
     return redirect('finance:real_estate_loans')
 
@@ -3478,7 +3478,7 @@ def loan_delete(request, pk):
     obj = get_object_or_404(Loan, pk=pk, user=request.user)
     name = obj.name
     obj.delete()
-    messages.success(request, f"{_('Darlehen')} '{name}' {_('wurde gelöscht.')}")
+    messages.success(request, f"{_('Loan')} '{name}' {_('was deleted.')}")
     return redirect('finance:real_estate_loans')
 
 
@@ -3489,9 +3489,9 @@ def loan_extra_repayment_save(request):
         form = LoanExtraRepaymentForm(request.POST, user=user)
         if form.is_valid():
             repayment = form.save()
-            messages.success(request, _('Sondertilgung erfolgreich eingetragen.'))
+            messages.success(request, _('Extra repayment recorded successfully.'))
         else:
-            messages.error(request, f"{_('Fehler beim Speichern')}: {form.errors.as_text()}")
+            messages.error(request, f"{_('Error saving')}: {form.errors.as_text()}")
             
     return redirect('finance:real_estate_loans')
 
@@ -3500,7 +3500,7 @@ def loan_extra_repayment_save(request):
 def loan_extra_repayment_delete(request, pk):
     repayment = get_object_or_404(LoanExtraRepayment, pk=pk, loan__user=request.user)
     repayment.delete()
-    messages.success(request, _('Sondertilgung gelöscht.'))
+    messages.success(request, _('Extra repayment deleted successfully.'))
     return redirect('finance:real_estate_loans')
 
 

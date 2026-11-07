@@ -3172,3 +3172,477 @@ msgstr "Geplante monatliche Auszahlung Netto (€)"
 msgid "Expected monthly net payout at retirement from this private/capital pension."
 msgstr "Geplante monatliche Netto-Auszahlung aus dieser privaten / kapitalbildenden Altersvorsorge."
 
+
+msgid "Real Estate & Loans"
+msgstr "Immobilien & Kredite"
+
+msgid "Loan monitoring, amortization schedule, prepayment simulator, LTV and stress tests for refinancing and vacancy."
+msgstr "Kredit-Monitoring, Tilgungsplan, Sondertilgungs-Simulator, LTV & Stresstests für Anschlussfinanzierung und Mietausfall."
+
+msgid "New Loan"
+msgstr "Neues Darlehen"
+
+msgid "New Property"
+msgstr "Neue Immobilie"
+
+msgid "Record Prepayment"
+msgstr "Sondertilgung buchen"
+
+msgid "Total Property Value"
+msgstr "Immobilienvermögen"
+
+msgid "Properties"
+msgstr "Objekte"
+
+msgid "Current market value of all properties"
+msgstr "Aktueller Gesamtwert aller Immobilien"
+
+msgid "Total Remaining Debt"
+msgstr "Gesamte Restschuld"
+
+msgid "Secured"
+msgstr "Besichert"
+
+msgid "Unsecured"
+msgstr "Frei"
+
+msgid "Net Equity"
+msgstr "Netto-Eigenkapital"
+
+msgid "Property value minus total debt"
+msgstr "Immobilienwert abzgl. Darlehensschulden"
+
+msgid "Monthly Cashflow"
+msgstr "Monatlicher Cashflow"
+
+msgid "Rent minus operating costs and loan installments"
+msgstr "Miete abzgl. Kosten & Darlehensraten"
+
+msgid "Interest Lock Alert: Action required for upcoming expirations!"
+msgstr "Zinsbindungs-Wecker: Handlungsbedarf bei anstehenden Ablaufdaten!"
+
+msgid "Expires on"
+msgstr "Ablauf am"
+
+msgid "Already expired"
+msgstr "Bereits abgelaufen"
+
+msgid "In"
+msgstr "Noch"
+
+msgid "Months (Urgent!)"
+msgstr "Monate (Dringend!)"
+
+msgid "Months"
+msgstr "Monate"
+
+msgid "Remaining Debt"
+msgstr "Restschuld"
+
+msgid "Prepare Refinancing"
+msgstr "Anschlussfinanzierung vorbereiten"
+
+msgid "Real Estate Portfolio"
+msgstr "Immobilien-Portfolio"
+
+msgid "No properties recorded yet"
+msgstr "Noch keine Immobilien erfasst"
+
+msgid "Add your apartments, houses or multi-family properties to track equity, LTV and cash flows."
+msgstr "Fügen Sie Ihre Eigentumswohnungen, Häuser oder Mehrfamilienhäuser hinzu, um Vermögen, LTV und Cashflow zu verfolgen."
+
+msgid "Add First Property"
+msgstr "Erste Immobilie anlegen"
+
+msgid "No location specified"
+msgstr "Kein Standort angegeben"
+
+msgid "Assign Loan"
+msgstr "Darlehen zuordnen"
+
+msgid "Are you sure you want to delete this property?"
+msgstr "Möchten Sie diese Immobilie wirklich löschen?"
+
+msgid "Market Value"
+msgstr "Marktwert"
+
+msgid "Loan-to-Value (LTV)"
+msgstr "Beleihungsauslauf (LTV)"
+
+msgid "Top Conditions (<60%)"
+msgstr "Top-Konditionen (<60%)"
+
+msgid "Standard (60-80%)"
+msgstr "Standard (60-80%)"
+
+msgid "Elevated (>80%)"
+msgstr "Erhöht (>80%)"
+
+msgid "Rental Income (Net)"
+msgstr "Mieteinnahmen (Netto)"
+
+msgid "Maintenance & Ancillary"
+msgstr "Bewirtschaftung & Rücklage"
+
+msgid "Loan Installments (Debt Service)"
+msgstr "Darlehensraten (Kapitaldienst)"
+
+msgid "Net Monthly Cashflow"
+msgstr "Monatlicher Netto-Cashflow"
+
+msgid "Stress Test: Vacancy & Rental Loss"
+msgstr "Stresstest: Mietausfall & Leerstand"
+
+msgid "Buffer"
+msgstr "Puffer"
+
+msgid "Ongoing monthly burden at 100% vacancy"
+msgstr "Laufende Monatskosten bei 100% Leerstand"
+
+msgid "Associated Loans"
+msgstr "Verknüpfte Darlehen"
+
+msgid "No associated loans (property is debt-free or loans not yet assigned)."
+msgstr "Kein Darlehen verknüpft (Objekt ist lastenfrei oder Kredite noch nicht zugeordnet)."
+
+msgid "Lock"
+msgstr "Zinsbindung"
+
+msgid "No loans recorded yet"
+msgstr "Noch keine Darlehen erfasst"
+
+msgid "Record your loans with interest rates, installments, and lock periods for automatic balance calculations."
+msgstr "Erfassen Sie Ihre Darlehen mit Konditionen, Raten und Zinsbindungsfristen für eine automatische Restschuldberechnung."
+
+msgid "Add First Loan"
+msgstr "Erstes Darlehen erfassen"
+
+msgid "Loan / Bank"
+msgstr "Darlehen / Bank"
+
+msgid "Type & Assignment"
+msgstr "Typ & Zuordnung"
+
+msgid "Interest & Repayment"
+msgstr "Zinssatz & Tilgung"
+
+msgid "Current Balance"
+msgstr "Aktuelle Restschuld"
+
+msgid "Interest Lock"
+msgstr "Zinsbindung"
+
+msgid "Analyses & Actions"
+msgstr "Analysen & Aktionen"
+
+msgid "Acc"
+msgstr "Kto"
+
+msgid "Unsecured Loan"
+msgstr "Freies Darlehen"
+
+msgid "Debit Interest"
+msgstr "Sollzins"
+
+msgid "Repay."
+msgstr "Tilg."
+
+msgid "Principal"
+msgstr "Tilg."
+
+msgid "Expired"
+msgstr "Abgelaufen"
+
+msgid "Full Amortization Schedule"
+msgstr "Vollständiger Tilgungsplan"
+
+msgid "Simulate What-If Prepayment"
+msgstr "What-If Sondertilgung simulieren"
+
+msgid "Refinancing Stress Test"
+msgstr "Anschlussfinanzierungs-Stresstest"
+
+msgid "Are you sure you want to delete this loan?"
+msgstr "Möchten Sie dieses Darlehen wirklich löschen?"
+
+msgid "Edit Property"
+msgstr "Immobilie bearbeiten"
+
+msgid "Property Name / Designation"
+msgstr "Objektname / Bezeichnung"
+
+msgid "e.g. Downtown Apartment"
+msgstr "z. B. Eigentumswohnung Mitte"
+
+msgid "Current Market Value (€)"
+msgstr "Aktueller Marktwert (€)"
+
+msgid "Location / Address"
+msgstr "Standort / Adresse"
+
+msgid "e.g. Main Street 12, 10115 Berlin"
+msgstr "z. B. Musterstraße 12, 10115 Berlin"
+
+msgid "Appreciation (% p.a.)"
+msgstr "Wertsteigerung (% p.a.)"
+
+msgid "Operating & Rental (Monthly)"
+msgstr "Bewirtschaftung & Miete (Monatlich)"
+
+msgid "Rental Income Net (€)"
+msgstr "Mieteinnahmen Netto (€)"
+
+msgid "Maintenance / HOA Fee (€)"
+msgstr "Instandhaltung / Hausgeld (€)"
+
+msgid "Ancillary Operating Costs (€)"
+msgstr "Nebenkosten (€)"
+
+msgid "e.g. John Doe (or Owner-Occupied)"
+msgstr "z. B. Max Mustermann (oder Selbstgenutzt)"
+
+msgid "Property has been sold"
+msgstr "Immobilie ist verkauft"
+
+msgid "Edit Loan"
+msgstr "Darlehen bearbeiten"
+
+msgid "Record New Loan"
+msgstr "Neues Darlehen erfassen"
+
+msgid "Loan Designation"
+msgstr "Darlehens-Bezeichnung"
+
+msgid "e.g. Bank Mortgage"
+msgstr "z. B. Baufinanzierung Annuität"
+
+msgid "e.g. Sparkasse, ING, DKB"
+msgstr "z. B. Sparkasse, ING, DKB"
+
+msgid "Loan Type"
+msgstr "Tilgungsverfahren"
+
+msgid "Annuity Loan"
+msgstr "Annuitätendarlehen"
+
+msgid "Amortization Loan"
+msgstr "Tilgungsdarlehen"
+
+msgid "Bullet Loan"
+msgstr "Endfälliges Darlehen"
+
+msgid "Annuity Loan (Constant Installment)"
+msgstr "Annuitätendarlehen (Konstante Rate)"
+
+msgid "Amortization Loan (Fixed Principal + Falling Interest)"
+msgstr "Tilgungsdarlehen (Feste Tilgung + sinkende Zinsen)"
+
+msgid "Bullet Loan (Interest-Only, Lump-Sum at End)"
+msgstr "Endfälliges Darlehen (Nur Zinsen, Tilgung am Ende)"
+
+msgid "Associated Property"
+msgstr "Zugeordnete Immobilie"
+
+msgid "-- No Real Estate (Unsecured Loan) --"
+msgstr "-- Keine Immobilie (Freies Darlehen) --"
+
+msgid "Account / Loan Number"
+msgstr "Kontonummer / Darlehens-Nr."
+
+msgid "Terms & Amounts"
+msgstr "Konditionen & Beträge"
+
+msgid "Initial Amount (€)"
+msgstr "Ursprüngliche Summe (€)"
+
+msgid "Interest Rate (% p.a.)"
+msgstr "Sollzins (% p.a.)"
+
+msgid "Monthly Installment (€)"
+msgstr "Monatliche Rate (€)"
+
+msgid "Effective Interest Rate (% p.a.)"
+msgstr "Effektivzins (% p.a.)"
+
+msgid "Initial Repayment Rate (%)"
+msgstr "Anfängl. Tilgung (%)"
+
+msgid "Annual Prepayment Limit (% p.a.)"
+msgstr "Sondertilgungs-Limit (% p.a.)"
+
+msgid "Scheduled End Date"
+msgstr "Geplantes Laufzeitende"
+
+msgid "Notes / Contract Details"
+msgstr "Notizen / Vertragsdetails"
+
+msgid "e.g. Prepayment possible anytime, promotional loan"
+msgstr "z. B. Sondertilgung jederzeit möglich, Förderdarlehen"
+
+msgid "Prepayment contractually agreed"
+msgstr "Sondertilgung vertraglich vereinbart"
+
+msgid "Select Loan"
+msgstr "Darlehen auswählen"
+
+msgid "-- Select Loan --"
+msgstr "-- Bitte Darlehen wählen --"
+
+msgid "Prepayment Date"
+msgstr "Datum der Sondertilgung"
+
+msgid "Amount (€)"
+msgstr "Betrag (€)"
+
+msgid "Record"
+msgstr "Buchen"
+
+msgid "Amortization Schedule"
+msgstr "Tilgungsplan"
+
+msgid "Complete annual overview of interest, principal and remaining debt progression until payoff."
+msgstr "Vollständige Jahresübersicht über Zins, Tilgung und Restschuldverlauf bis zur vollständigen Tilgung."
+
+msgid "Total Projected Interest"
+msgstr "Gesamtzinsen prognostiziert"
+
+msgid "Debt-free on"
+msgstr "Schuldenfrei am"
+
+msgid "Starting Balance"
+msgstr "Anfangsrestschuld"
+
+msgid "Total Installment"
+msgstr "Rate Gesamt"
+
+msgid "Interest Portion"
+msgstr "Zinsanteil"
+
+msgid "Principal Portion"
+msgstr "Tilgungsanteil"
+
+msgid "Extra Prepayment"
+msgstr "Sondertilgung"
+
+msgid "Ending Balance"
+msgstr "Endrestschuld"
+
+msgid "Past"
+msgstr "Vergangenheit"
+
+msgid "What-If Prepayment Simulator"
+msgstr "What-If Sondertilgungs-Simulator"
+
+msgid "Calculate in real time how much interest and how many years of loan term you save with extra prepayments."
+msgstr "Berechnen Sie in Echtzeit, wie viele Zinsen und Laufzeitjahre Sie durch zusätzliche Tilgungen einsparen."
+
+msgid "One-time Prepayment (€)"
+msgstr "Einmalige Sondertilgung (€)"
+
+msgid "Annual Prepayment (€ p.a.)"
+msgstr "Jährliche Sondertilgung (€ p.a.)"
+
+msgid "Immediate lump-sum payment in current month"
+msgstr "Sofortige Sonderzahlung im laufenden Monat"
+
+msgid "Recurring yearly prepayment (e.g. from annual bonus)"
+msgstr "Wiederkehrende jährliche Sonderzahlung (z. B. aus Bonus)"
+
+msgid "Interest Savings"
+msgstr "Zinsersparnis"
+
+msgid "Term Reduction"
+msgstr "Laufzeitverkürzung"
+
+msgid "years earlier debt-free"
+msgstr "Jahren früher schuldenfrei"
+
+msgid "New Payoff Date"
+msgstr "Neues Tilgungsende"
+
+msgid "Interest rate jump simulation: How does your monthly payment change after the fixed-interest period if rates rise?"
+msgstr "Zinssprung-Simulation: Wie verändert sich Ihre monatliche Rate nach Ende der Zinsbindung bei steigenden Zinsen?"
+
+msgid "Interest Lock Expiry"
+msgstr "Zinsbindungsende"
+
+msgid "Remaining Debt at Expiry"
+msgstr "Restschuld bei Ablauf"
+
+msgid "Current Installment"
+msgstr "Aktuelle Rate"
+
+msgid "Scenarios on Interest Rate Shift"
+msgstr "Szenarien bei Zinsänderung"
+
+msgid "Interest Rate (Scenario)"
+msgstr "Zinssatz (Szenario)"
+
+msgid "New Monthly Rate"
+msgstr "Neue Monatsrate"
+
+msgid "Extra Burden / Month"
+msgstr "Mehrbelastung / M"
+
+msgid "Extra Burden / Year"
+msgstr "Mehrbelastung / Jahr"
+
+msgid "Test Custom Interest Rate"
+msgstr "Eigenen Test-Zinssatz prüfen"
+
+msgid "Results in monthly payment"
+msgstr "Ergibt Monatsrate"
+
+msgid "Difference to current payment"
+msgstr "Differenz zur aktuellen Rate"
+
+msgid "Real estate saved successfully."
+msgstr "Immobilie erfolgreich gespeichert."
+
+msgid "Real estate added successfully."
+msgstr "Immobilie erfolgreich hinzugefügt."
+
+msgid "Real estate"
+msgstr "Immobilie"
+
+msgid "was deleted."
+msgstr "wurde gelöscht."
+
+msgid "Loan saved successfully."
+msgstr "Darlehen erfolgreich gespeichert."
+
+msgid "Loan added successfully."
+msgstr "Darlehen erfolgreich hinzugefügt."
+
+msgid "Extra repayment recorded successfully."
+msgstr "Sondertilgung erfolgreich eingetragen."
+
+msgid "Extra repayment deleted successfully."
+msgstr "Sondertilgung gelöscht."
+
+msgid "Current Market Value (€)"
+msgstr "Aktueller Marktwert (€)"
+
+msgid "Rental Income Net (€)"
+msgstr "Mieteinnahmen Netto (€)"
+
+msgid "Maintenance / HOA Fee (€)"
+msgstr "Instandhaltung / Hausgeld (€)"
+
+msgid "Ancillary Operating Costs (€)"
+msgstr "Nebenkosten (€)"
+
+msgid "Initial Amount (€)"
+msgstr "Ursprüngliche Summe (€)"
+
+msgid "Monthly Installment (€)"
+msgstr "Monatliche Rate (€)"
+
+msgid "Amount (€)"
+msgstr "Betrag (€)"
+
+msgid "One-time Prepayment (€)"
+msgstr "Einmalige Sondertilgung (€)"
+
+msgid "Annual Prepayment (€ p.a.)"
+msgstr "Jährliche Sondertilgung (€ p.a.)"

@@ -2515,3 +2515,42 @@ msgstr "Erogazione mensile netta prevista (€)"
 
 msgid "Expected monthly net payout at retirement from this private/capital pension."
 msgstr "Erogazione mensile netta prevista al pensionamento da questa previdenza privata."
+
+msgid "Real Estate & Loans"
+msgstr "Immobili e Prestiti"
+
+msgid "New Loan"
+msgstr "Nuovo Prestito"
+
+msgid "New Property"
+msgstr "Nuova Proprietà"
+
+msgid "Record Prepayment"
+msgstr "Registra Rimborso Anticipato"
+
+msgid "Total Property Value"
+msgstr "Valore Totale degli Immobili"
+
+msgid "Total Remaining Debt"
+msgstr "Debito Residuo Totale"
+
+msgid "Net Equity"
+msgstr "Patrimonio Netto"
+
+msgid "Monthly Cashflow"
+msgstr "Flusso di Cassa Mensile"
+
+msgid "Real Estate Portfolio"
+msgstr "Portafoglio Immobiliare"
+
+msgid "Loans & Debts"
+msgstr "Prestiti e Debiti"
+
+msgid "Market Value"
+msgstr "Valore di Mercato"
+
+msgid "Amortization Schedule"
+msgstr "Piano di Ammortamento"
+
+msgid "Refinancing Stress Test"
+msgstr "Stress Test Rifinanziamento"
