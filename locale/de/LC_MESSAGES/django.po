@@ -3616,3 +3616,273 @@ msgstr "Sondertilgung erfolgreich eingetragen."
 
 msgid "Extra repayment deleted successfully."
 msgstr "Sondertilgung gelöscht."
+
+msgid "Renovation & Reserves"
+msgstr "Sanierung & Rücklagen"
+
+msgid "Payment Calendar"
+msgstr "Zahlungskalender"
+
+msgid "Accumulated Reserves"
+msgstr "Gebildete Rücklagen"
+
+msgid "Total maintenance reserves saved"
+msgstr "Gesamte angesparte Instandhaltungsrücklagen"
+
+msgid "Target Reserve (Peters)"
+msgstr "Soll-Rücklage (Peters)"
+
+msgid "Recommended monthly saving rate"
+msgstr "Empfohlene monatliche Sparrate"
+
+msgid "Demand Next 5 Years"
+msgstr "Bedarf nächste 5 Jahre"
+
+msgid "Estimated cost for upcoming renewals"
+msgstr "Geschätzte Kosten für anstehende Erneuerungen"
+
+msgid "5-Year Reserve Coverage"
+msgstr "5-Jahres-Rücklagendeckung"
+
+msgid "Fully covered by reserves"
+msgstr "Vollständig durch Rücklagen gedeckt"
+
+msgid "Reserve deficit expected"
+msgstr "Rücklagen-Unterdeckung erwartet"
+
+msgid "Renovation Roadmap & Components"
+msgstr "Sanierungsfahrplan & Bauteile"
+
+msgid "Add Component"
+msgstr "Bauteil hinzufügen"
+
+msgid "No property components recorded yet"
+msgstr "Noch keine Bauteile erfasst"
+
+msgid "Track heating, roof, windows, electrical systems and their remaining life to anticipate renovation costs."
+msgstr "Erfassen Sie Heizung, Dach, Fenster, Elektrik und deren Restlebensdauer, um Sanierungskosten frühzeitig einzuplanen."
+
+msgid "Add First Component"
+msgstr "Erstes Bauteil erfassen"
+
+msgid "Component / Specification"
+msgstr "Bauteil / Bezeichnung"
+
+msgid "Component Type"
+msgstr "Bauteil-Typ"
+
+msgid "Installed"
+msgstr "Eingebaut"
+
+msgid "Lifespan"
+msgstr "Lebensdauer"
+
+msgid "Remaining"
+msgstr "Verbleibend"
+
+msgid "Est. Cost"
+msgstr "Geschätzte Kosten"
+
+msgid "Overdue"
+msgstr "Überfällig"
+
+msgid "Good"
+msgstr "Gut"
+
+msgid "Moderate"
+msgstr "Mäßig"
+
+msgid "Critical"
+msgstr "Kritisch"
+
+msgid "Reserve Target vs. Actual Comparison (Peters Formula & § 28 II. BV)"
+msgstr "Rücklagen-Soll-Ist-Vergleich (Peterssche Formel & § 28 II. BV)"
+
+msgid "Built"
+msgstr "Baujahr"
+
+msgid "Reserve Sufficient"
+msgstr "Rücklage ausreichend"
+
+msgid "Reserve Gap"
+msgstr "Rücklagenlücke"
+
+msgid "Current Reserve"
+msgstr "Aktuelle Rücklage"
+
+msgid "Monthly Saved"
+msgstr "Monatlich angespart"
+
+msgid "Target (Peters)"
+msgstr "Soll (Peters)"
+
+msgid "Peterssche Formel (Target Annual)"
+msgstr "Peterssche Formel (Soll jährlich)"
+
+msgid "§ 28 Abs. 2 II. BV Target"
+msgstr "§ 28 Abs. 2 II. BV Soll"
+
+msgid "Monthly Variance (Ist vs. Peters)"
+msgstr "Monatliche Abweichung (Ist vs. Peters)"
+
+msgid "12-Month Real Estate Payment Calendar"
+msgstr "12-Monats-Zahlungskalender Immobilien"
+
+msgid "Projected monthly debt service, ancillary expenses, maintenance allocations and resulting net cashflow."
+msgstr "Prognostizierter monatlicher Kapitaldienst, Nebenkosten, Rücklagen und resultierender Netto-Cashflow."
+
+msgid "Month"
+msgstr "Monat"
+
+msgid "Maintenance / Reserve"
+msgstr "Instandhaltung / Rücklage"
+
+msgid "Ancillary Operating"
+msgstr "Betriebskosten / Nebenkosten"
+
+msgid "Total Costs"
+msgstr "Gesamtausgaben"
+
+msgid "Edit Component"
+msgstr "Bauteil bearbeiten"
+
+msgid "Construction Year"
+msgstr "Baujahr"
+
+msgid "Living Space (sqm)"
+msgstr "Wohnfläche (m²)"
+
+msgid "Current Reserve (€)"
+msgstr "Aktuelle Rücklage (€)"
+
+msgid "Monthly Reserve Allocation (€)"
+msgstr "Monatliche Rücklagenzuführung (€)"
+
+msgid "Designation / Specification"
+msgstr "Bezeichnung / Spezifikation"
+
+msgid "Installation Year"
+msgstr "Baujahr / Einbaujahr"
+
+msgid "Lifespan (Years)"
+msgstr "Lebensdauer (Jahre)"
+
+msgid "Est. Cost (€)"
+msgstr "Geschätzte Kosten (€)"
+
+msgid "Good (No immediate action)"
+msgstr "Gut (Kein unmittelbarer Handlungsbedarf)"
+
+msgid "Moderate (Action in medium term)"
+msgstr "Mäßig (Mittelfristig Handlungsbedarf)"
+
+msgid "Critical (Renovation required soon)"
+msgstr "Kritisch (Sanierung / Austausch zeitnah erforderlich)"
+
+msgid "Critical (Renovation / Replacement required soon)"
+msgstr "Kritisch (Sanierung / Austausch zeitnah erforderlich)"
+
+msgid "Roof"
+msgstr "Dach"
+
+msgid "Heating System"
+msgstr "Heizungsanlage"
+
+msgid "Windows & Doors"
+msgstr "Fenster & Türen"
+
+msgid "Facade & Insulation"
+msgstr "Fassade & Dämmung"
+
+msgid "Bathrooms & Sanitary"
+msgstr "Bäder & Sanitär"
+
+msgid "Electrical Installations"
+msgstr "Elektroinstallation"
+
+msgid "Plumbing & Pipes"
+msgstr "Wasserleitungen / Rohre"
+
+msgid "Elevator"
+msgstr "Aufzugsanlage"
+
+msgid "Balconies / Terraces"
+msgstr "Balkone / Terrassen"
+
+msgid "Other / General Renovation"
+msgstr "Sonstiges / Generalsanierung"
+
+msgid "Property Component"
+msgstr "Immobilien-Bauteil"
+
+msgid "Property Components"
+msgstr "Immobilien-Bauteile"
+
+msgid "Year of Installation / Renovation"
+msgstr "Baujahr / Sanierungsjahr"
+
+msgid "Expected Lifespan (Years)"
+msgstr "Erwartete Lebensdauer (Jahre)"
+
+msgid "Estimated Replacement Cost"
+msgstr "Geschätzte Wiederbeschaffungskosten"
+
+msgid "Current Maintenance Reserve"
+msgstr "Aktuelle Instandhaltungsrücklage"
+
+msgid "Monthly Reserve Allocation"
+msgstr "Monatliche Rücklagenzuführung"
+
+msgid "Property component saved successfully."
+msgstr "Bauteil erfolgreich gespeichert."
+
+msgid "Property component added successfully."
+msgstr "Bauteil erfolgreich hinzugefügt."
+
+msgid "Property component"
+msgstr "Bauteil"
+
+msgid "Jan"
+msgstr "Jan"
+
+msgid "Feb"
+msgstr "Feb"
+
+msgid "Mar"
+msgstr "Mär"
+
+msgid "Apr"
+msgstr "Apr"
+
+msgid "May"
+msgstr "Mai"
+
+msgid "Jun"
+msgstr "Jun"
+
+msgid "Jul"
+msgstr "Jul"
+
+msgid "Aug"
+msgstr "Aug"
+
+msgid "Sep"
+msgstr "Sep"
+
+msgid "Oct"
+msgstr "Okt"
+
+msgid "Nov"
+msgstr "Nov"
+
+msgid "Dec"
+msgstr "Dez"
+
+msgid "Optional notes on warranty or maintenance contractor..."
+msgstr "Optionale Hinweise zu Garantie oder Wartungsbetrieb..."
+
+msgid "e.g. Gas Heating Buderus GB172"
+msgstr "z. B. Gas-Brennwerttherme Buderus GB172"
+
+msgid "Are you sure you want to delete this component?"
+msgstr "Möchten Sie dieses Bauteil wirklich löschen?"

@@ -271,6 +271,10 @@ class RealEstate(models.Model):
     rental_income_monthly = models.DecimalField(_("Monthly Rental Income (Net)"), max_digits=10, decimal_places=2, default=0.0)
     maintenance_costs_monthly = models.DecimalField(_("Monthly Maintenance/Mgmt Costs"), max_digits=10, decimal_places=2, default=0.0)
     ancillary_costs_monthly = models.DecimalField(_("Monthly Ancillary Costs (Nebenkosten)"), max_digits=10, decimal_places=2, default=0.0)
+    construction_year = models.PositiveIntegerField(_("Construction Year"), null=True, blank=True)
+    living_space_sqm = models.DecimalField(_("Living Space (sqm)"), max_digits=8, decimal_places=2, null=True, blank=True)
+    current_maintenance_reserve = models.DecimalField(_("Current Maintenance Reserve"), max_digits=12, decimal_places=2, default=0.0, help_text=_("Current accumulated reserve for this property"))
+    monthly_maintenance_allocation = models.DecimalField(_("Monthly Reserve Allocation"), max_digits=10, decimal_places=2, default=0.0, help_text=_("Monthly allocation to the maintenance reserve"))
     is_sold = models.BooleanField(_("Is Sold"), default=False)
     sale_date = models.DateField(_("Sale Date"), null=True, blank=True)
     acquisition_date = models.DateField(_("Acquisition Date"), null=True, blank=True)
@@ -281,6 +285,53 @@ class RealEstate(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.property_value})"
+
+
+class PropertyComponent(models.Model):
+    COMPONENT_TYPE_CHOICES = [
+        ('roof', _('Roof')),
+        ('heating', _('Heating System')),
+        ('windows', _('Windows & Doors')),
+        ('facade', _('Facade & Insulation')),
+        ('bathroom', _('Bathrooms & Sanitary')),
+        ('electrical', _('Electrical Installations')),
+        ('plumbing', _('Plumbing & Pipes')),
+        ('elevator', _('Elevator')),
+        ('balcony', _('Balconies / Terraces')),
+        ('other', _('Other / General Renovation')),
+    ]
+
+    CONDITION_CHOICES = [
+        ('good', _('Good (No immediate action)')),
+        ('moderate', _('Moderate (Action in medium term)')),
+        ('critical', _('Critical (Renovation / Replacement required soon)')),
+    ]
+
+    real_estate = models.ForeignKey(RealEstate, on_delete=models.CASCADE, related_name='components', verbose_name=_("Real Estate"))
+    component_type = models.CharField(_("Component Type"), max_length=30, choices=COMPONENT_TYPE_CHOICES, default='roof')
+    name = models.CharField(_("Component Name / Specification"), max_length=150)
+    installation_year = models.PositiveIntegerField(_("Year of Installation / Renovation"))
+    expected_lifespan = models.PositiveIntegerField(_("Expected Lifespan (Years)"), default=25)
+    estimated_cost = models.DecimalField(_("Estimated Replacement Cost"), max_digits=12, decimal_places=2, default=0.0)
+    condition = models.CharField(_("Condition"), max_length=20, choices=CONDITION_CHOICES, default='good')
+    notes = models.TextField(_("Notes"), blank=True)
+
+    class Meta:
+        verbose_name = _("Property Component")
+        verbose_name_plural = _("Property Components")
+        ordering = ['real_estate', 'installation_year']
+
+    @property
+    def replacement_year(self):
+        return self.installation_year + self.expected_lifespan
+
+    @property
+    def remaining_years(self):
+        current_year = timezone.now().year
+        return self.replacement_year - current_year
+
+    def __str__(self):
+        return f"{self.name} ({self.get_component_type_display()}) - {self.real_estate.name}"
 
 
 class FinancialStatusProxy(CustomUser):

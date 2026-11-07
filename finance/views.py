@@ -12,6 +12,7 @@ from django.utils.translation import gettext_lazy as _, gettext as _eager
 from django.contrib import messages
 from .services import SimulationEngine
 from .models import (
+    PropertyComponent,
     Asset, CashFlowSource, OneTimeEvent, Pension, Category, 
     ImportBatch, PendingTransaction, ImportFilter, ProcessedTransactionHash, AssetSnapshot
 )
@@ -3406,8 +3407,8 @@ def pension_snapshot_delete(request, pk):
 # ==============================================================================
 # REAL ESTATE & LOANS (IMMOBILIEN & KREDITE) MODULE
 # ==============================================================================
-from .models import RealEstate, Loan, LoanExtraRepayment
-from .forms import RealEstateForm, LoanForm, LoanExtraRepaymentForm
+from .models import RealEstate, Loan, LoanExtraRepayment, PropertyComponent
+from .forms import RealEstateForm, LoanForm, LoanExtraRepayment, PropertyComponentForm, PropertyComponentForm
 from .services_realestate import get_real_estate_overview, calculate_loan_schedule
 
 @login_required
@@ -3417,7 +3418,7 @@ def real_estate_loans_view(request):
     
     re_form = RealEstateForm()
     loan_form = LoanForm(user=user)
-    extra_repayment_form = LoanExtraRepaymentForm(user=user)
+    extra_repayment_form = LoanExtraRepayment, PropertyComponentForm, PropertyComponentForm(user=user)
     
     context = {
         'overview': overview,
@@ -3486,7 +3487,7 @@ def loan_delete(request, pk):
 def loan_extra_repayment_save(request):
     user = request.user
     if request.method == 'POST':
-        form = LoanExtraRepaymentForm(request.POST, user=user)
+        form = LoanExtraRepayment, PropertyComponentForm, PropertyComponentForm(request.POST, user=user)
         if form.is_valid():
             repayment = form.save()
             messages.success(request, _('Extra repayment recorded successfully.'))
@@ -3557,3 +3558,27 @@ def loan_simulate_extra_api(request, pk):
         'baseline_payoff': res['baseline_payoff'].strftime('%m.%Y') if res['baseline_payoff'] else None,
         'simulated_payoff': res['simulated_payoff'].strftime('%m.%Y') if res['simulated_payoff'] else None,
     })
+
+@login_required
+def property_component_save(request, pk=None):
+    user = request.user
+    instance = get_object_or_404(PropertyComponent, pk=pk, real_estate__user=user) if pk else None
+    
+    if request.method == 'POST':
+        form = PropertyComponentForm(request.POST, instance=instance, user=user)
+        if form.is_valid():
+            comp = form.save()
+            messages.success(request, _('Property component saved successfully.') if pk else _('Property component added successfully.'))
+        else:
+            messages.error(request, f"{_('Error saving')}: {form.errors.as_text()}")
+            
+    return redirect('finance:real_estate_loans')
+
+
+@login_required
+def property_component_delete(request, pk):
+    comp = get_object_or_404(PropertyComponent, pk=pk, real_estate__user=request.user)
+    name = comp.name
+    comp.delete()
+    messages.success(request, f"{_('Property component')} '{name}' {_('was deleted.')}")
+    return redirect('finance:real_estate_loans')

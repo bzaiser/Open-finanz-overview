@@ -1,4 +1,4 @@
-﻿from django.urls import path
+from django.urls import path
 from . import views, wizard_views
 
 app_name = 'finance'
@@ -37,6 +37,9 @@ urlpatterns = [
     path('real-estate/save/', views.real_estate_save, name='real_estate_add'),
     path('real-estate/save/<int:pk>/', views.real_estate_save, name='real_estate_edit'),
     path('real-estate/delete/<int:pk>/', views.real_estate_delete, name='real_estate_delete'),
+    path('real-estate/components/save/', views.property_component_save, name='property_component_add'),
+    path('real-estate/components/save/<int:pk>/', views.property_component_save, name='property_component_edit'),
+    path('real-estate/components/delete/<int:pk>/', views.property_component_delete, name='property_component_delete'),
     path('loans/save/', views.loan_save, name='loan_add'),
     path('loans/save/<int:pk>/', views.loan_save, name='loan_edit'),
     path('loans/delete/<int:pk>/', views.loan_delete, name='loan_delete'),

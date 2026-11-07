@@ -3,6 +3,7 @@ from decimal import Decimal
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 from django.utils.translation import gettext as _
+from .models import PropertyComponent
 
 def calculate_loan_schedule(loan, as_of_date=None, extra_one_time=Decimal('0.00'), extra_one_time_date=None, extra_annual=Decimal('0.00')):
     """
@@ -461,10 +462,32 @@ def get_real_estate_overview(user):
 
     critical_alerts.sort(key=lambda x: (x['months_left'] if x['months_left'] is not None else 999))
 
+    # Calculate reserve metrics for each property
+    total_current_reserve = Decimal('0.00')
+    total_target_reserve_monthly = Decimal('0.00')
+    for p in properties_data:
+        re_obj = p['real_estate']
+        res_met = calculate_reserve_metrics_for_property(re_obj)
+        p['reserve_metrics'] = res_met
+        p['components'] = PropertyComponent.objects.filter(real_estate=re_obj).order_by('installation_year')
+        total_current_reserve += res_met['current_reserve']
+        total_target_reserve_monthly += res_met['peters_monthly']
+
+    components_roadmap = calculate_components_roadmap(user)
+    all_loans_data = [{'loan': l, 'details': loan_details_map[l.id], 'stress_test': loan_stress_map[l.id]} for l in user_loans]
+    cashflow_calendar = calculate_property_cashflow_calendar(properties_data, all_loans_data)
+
+    portfolio_reserves = {
+        'total_current_reserve': total_current_reserve,
+        'total_target_monthly': total_target_reserve_monthly,
+        'reserve_vs_5yr_demand': total_current_reserve - components_roadmap['capital_5_years'],
+        'reserve_vs_10yr_demand': total_current_reserve - components_roadmap['capital_10_years'],
+    }
+
     return {
         'properties': properties_data,
         'unlinked_loans': unlinked_loans,
-        'all_loans': [{'loan': l, 'details': loan_details_map[l.id], 'stress_test': loan_stress_map[l.id]} for l in user_loans],
+        'all_loans': all_loans_data,
         'total_property_value': total_property_value,
         'total_linked_debt': total_linked_debt,
         'total_unlinked_debt': total_unlinked_debt,
@@ -475,4 +498,173 @@ def get_real_estate_overview(user):
         'total_property_cashflow': total_property_cashflow,
         'critical_alerts': critical_alerts,
         'user_cash_reserve': user_cash_reserve,
+        'components_roadmap': components_roadmap,
+        'portfolio_reserves': portfolio_reserves,
+        'cashflow_calendar': cashflow_calendar,
     }
+
+
+def calculate_reserve_metrics_for_property(re):
+    """
+    Computes maintenance reserve recommendations:
+    - Peterssche Formel: (Property value * 70% * 1.5) / 80 / 12
+    - § 28 Abs. 2 II. BV: depending on building age and living space
+    """
+    current_year = timezone.now().year
+    prop_val = Decimal(str(re.property_value or '0.00'))
+    living_sqm = Decimal(str(re.living_space_sqm or '0.00')) if re.living_space_sqm else Decimal('0.00')
+    const_year = re.construction_year or (current_year - 30)
+    building_age = max(0, current_year - const_year)
+
+    # Peterssche Formel
+    # Building share approx 70% of total property value
+    building_value = prop_val * Decimal('0.70')
+    peters_annual = (building_value * Decimal('1.5')) / Decimal('80.0')
+    peters_monthly = (peters_annual / Decimal('12.0')).quantize(Decimal('0.01'))
+
+    # II. BV: Rate per m² / year based on age
+    if building_age < 22:
+        iibv_rate_sqm = Decimal('8.50')
+    elif building_age <= 32:
+        iibv_rate_sqm = Decimal('10.50')
+    else:
+        iibv_rate_sqm = Decimal('13.00')
+
+    if living_sqm > 0:
+        iibv_annual = (living_sqm * iibv_rate_sqm).quantize(Decimal('0.01'))
+    else:
+        # Fallback if sqm not specified: derive from peters formula
+        iibv_annual = peters_annual
+
+    iibv_monthly = (iibv_annual / Decimal('12.0')).quantize(Decimal('0.01'))
+
+    current_reserve = Decimal(str(re.current_maintenance_reserve or '0.00'))
+    actual_monthly = Decimal(str(re.monthly_maintenance_allocation or re.maintenance_costs_monthly or '0.00'))
+
+    # Gap compared to Peterssche Formel
+    monthly_gap_peters = actual_monthly - peters_monthly
+    is_sufficient = monthly_gap_peters >= Decimal('0.00')
+
+    return {
+        'building_age': building_age,
+        'living_space_sqm': living_sqm,
+        'current_reserve': current_reserve,
+        'actual_monthly_allocation': actual_monthly,
+        'peters_annual': peters_annual.quantize(Decimal('0.01')),
+        'peters_monthly': peters_monthly,
+        'iibv_rate_sqm': iibv_rate_sqm,
+        'iibv_annual': iibv_annual,
+        'iibv_monthly': iibv_monthly,
+        'monthly_gap_peters': monthly_gap_peters,
+        'is_sufficient': is_sufficient,
+    }
+
+
+def calculate_components_roadmap(user):
+    """
+    Groups all property components for a user into time horizons:
+    - Overdue / Critical (<= 0 years or condition == critical)
+    - 1-5 Years
+    - 6-10 Years
+    - Long-term (> 10 years)
+    Calculates total capital demand per period.
+    """
+    components = PropertyComponent.objects.filter(real_estate__user=user).select_related('real_estate').order_by('installation_year')
+    current_year = timezone.now().year
+
+    overdue = []
+    due_1_5 = []
+    due_6_10 = []
+    long_term = []
+
+    capital_overdue = Decimal('0.00')
+    capital_5_years = Decimal('0.00')
+    capital_10_years = Decimal('0.00')
+    capital_total = Decimal('0.00')
+
+    all_components = []
+
+    for comp in components:
+        rem_years = comp.remaining_years
+        cost = Decimal(str(comp.estimated_cost or '0.00'))
+        capital_total += cost
+
+        comp_data = {
+            'obj': comp,
+            'remaining_years': rem_years,
+            'replacement_year': comp.replacement_year,
+            'cost': cost,
+        }
+        all_components.append(comp_data)
+
+        if rem_years <= 0 or comp.condition == 'critical':
+            overdue.append(comp_data)
+            capital_overdue += cost
+            capital_5_years += cost
+            capital_10_years += cost
+        elif rem_years <= 5:
+            due_1_5.append(comp_data)
+            capital_5_years += cost
+            capital_10_years += cost
+        elif rem_years <= 10:
+            due_6_10.append(comp_data)
+            capital_10_years += cost
+        else:
+            long_term.append(comp_data)
+
+    return {
+        'all_components': all_components,
+        'overdue': overdue,
+        'due_1_5': due_1_5,
+        'due_6_10': due_6_10,
+        'long_term': long_term,
+        'capital_overdue': capital_overdue,
+        'capital_5_years': capital_5_years,
+        'capital_10_years': capital_10_years,
+        'capital_total': capital_total,
+        'count_overdue': len(overdue),
+        'count_total': len(all_components),
+    }
+
+
+def calculate_property_cashflow_calendar(user_properties, all_loans):
+    """
+    Generates a 12-month calendar projection for real estate cash flows:
+    - Rental income
+    - Debt service
+    - Maintenance / Reserve
+    - Ancillary costs
+    - Net monthly cashflow
+    """
+    month_names = [
+        _('Jan'), _('Feb'), _('Mar'), _('Apr'), _('May'), _('Jun'),
+        _('Jul'), _('Aug'), _('Sep'), _('Oct'), _('Nov'), _('Dec')
+    ]
+    
+    calendar_months = []
+    
+    total_monthly_rent = sum((Decimal(str(p['rental_income'] or '0.00')) for p in user_properties), Decimal('0.00'))
+    total_monthly_maintenance = sum((Decimal(str(p['maintenance'] or '0.00')) for p in user_properties), Decimal('0.00'))
+    total_monthly_ancillary = sum((Decimal(str(p['ancillary'] or '0.00')) for p in user_properties), Decimal('0.00'))
+    total_monthly_debt = sum((Decimal(str(l['loan'].monthly_installment or '0.00')) for l in all_loans), Decimal('0.00'))
+    
+    for i, name in enumerate(month_names, 1):
+        # We can account for annual or quarterly spikes if needed, standard is monthly
+        rent = total_monthly_rent
+        debt = total_monthly_debt
+        maint = total_monthly_maintenance
+        anc = total_monthly_ancillary
+        net = rent - (debt + maint + anc)
+        
+        calendar_months.append({
+            'month_num': i,
+            'month_name': name,
+            'rental_income': rent,
+            'debt_service': debt,
+            'maintenance': maint,
+            'ancillary': anc,
+            'total_expenses': debt + maint + anc,
+            'net_cashflow': net,
+        })
+        
+    return calendar_months
