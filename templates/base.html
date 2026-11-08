@@ -1,4 +1,4 @@
-﻿{% load i18n static %}
+{% load i18n static %}
 <html lang="{{ request.LANGUAGE_CODE }}" data-bs-theme="{% if request.user.is_authenticated and profile and profile.background_color == '#212529' or profile.background_color == '#1a1a2e' or profile.background_color == '#0d1117' or profile.background_color == '#1e1e2e' %}dark{% else %}light{% endif %}">
 
 <head>
@@ -205,6 +205,7 @@
         .navbar-dark .navbar-nav .nav-link {
             color: rgba(255,255,255,0.95) !important;
             font-weight: 500;
+            white-space: nowrap;
             transition: all 0.2s ease;
         }
         .navbar-dark .navbar-nav .nav-link:hover {
@@ -459,19 +460,15 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark mb-4" style="background: var(--app-gradient);">
         <div class="container-fluid">
-            <a class="navbar-brand" href="{% url 'finance:dashboard' %}">
-                Finanzplan{% if APP_INSTANCE_NAME %} ({{ APP_INSTANCE_NAME }}){% endif %}
+            <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'finance:dashboard' %}">
+                <i class="bi bi-speedometer2"></i>
+                <span>Finanzplan{% if APP_INSTANCE_NAME %} ({{ APP_INSTANCE_NAME }}){% endif %}</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'finance:dashboard' %}">
-                           <i class="bi bi-speedometer2 me-1"></i>
-                           {% trans 'Dashboard' %}
-                        </a>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'finance:cash_flow_list' %}">
                            <i class="bi bi-arrow-down-up me-1"></i>
@@ -491,9 +488,8 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'profile' %}">
-                            <i class="bi bi-person-gear me-1"></i>
-                            {% trans 'Settings' %}
+                        <a class="nav-link" href="{% url 'profile' %}" title="{% trans 'Settings' %}" aria-label="{% trans 'Settings' %}">
+                            <i class="bi bi-gear"></i>
                         </a>
                     </li>
                     {# Bank Import disabled for now #}
@@ -505,9 +501,8 @@
                     {# </li> #}
                     {% if user.is_staff %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'admin:index' %}">
-                            <i class="bi bi-shield-lock me-1"></i>
-                            {% trans 'Administration' %}
+                        <a class="nav-link" href="{% url 'admin:index' %}" title="{% trans 'Administration' %}" aria-label="{% trans 'Administration' %}">
+                            <i class="bi bi-shield-lock"></i>
                         </a>
                     </li>
                     {% endif %}
