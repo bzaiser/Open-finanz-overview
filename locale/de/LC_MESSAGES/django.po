@@ -4198,3 +4198,39 @@ msgstr "Miete"
 
 msgid "Owner-Occupied"
 msgstr "Eigengenutzt"
+
+msgid "Annual Prepayment Limit (%% p.a.)"
+msgstr "Jährliches Sondertilgungslimit (%% p.a.)"
+
+msgid "Appreciation (%% p.a.)"
+msgstr "Wertsteigerung (%% p.a.)"
+
+msgid "Building Share (%% AfA)"
+msgstr "Gebäudeanteil (%% AfA)"
+
+msgid "Depreciation Rate (%% AfA p.a.)"
+msgstr "Abschreibungssatz (%% AfA p.a.)"
+
+msgid "Effective Interest Rate (%% p.a.)"
+msgstr "Effektiver Jahreszins (%% p.a.)"
+
+msgid "Elevated (>80%%)"
+msgstr "Erhöht (>80%%)"
+
+msgid "Est. Tax Impact (~35%%)"
+msgstr "Geschätzte Steuerwirkung (~35%%)"
+
+msgid "Initial Repayment Rate (%%)"
+msgstr "Anfängliche Tilgung (%%)"
+
+msgid "Interest Rate (%% p.a.)"
+msgstr "Sollzins (%% p.a.)"
+
+msgid "Ongoing monthly burden at 100%% vacancy"
+msgstr "Laufende Monatsbelastung bei 100%% Leerstand"
+
+msgid "Standard (60-80%%)"
+msgstr "Standard (60-80%%)"
+
+msgid "Top Conditions (<60%%)"
+msgstr "Top-Konditionen (<60%%)"

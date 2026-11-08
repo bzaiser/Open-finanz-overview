@@ -2218,21 +2218,28 @@ def dynamic_theme_css(request):
         .admin-interface #header #branding svg {{
             display: none !important;
         }}
-        /* Ensure the branding text is white */
+        /* Ensure the branding text is white and layout flexes */
         #site-name a {{ color: white !important; }}
+        .admin-interface #branding {{
+            display: flex !important;
+            align-items: center !important;
+            flex-wrap: wrap !important;
+            gap: 15px !important;
+        }}
 
         /* Dashboard Link in Admin Header */
         .dashboard-link-admin {{
             color: rgba(255, 255, 255, 0.95) !important;
             text-transform: none !important;
-            font-size: 16px !important;
+            font-size: 15px !important;
             font-weight: 500 !important;
             font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
             text-decoration: none !important;
             border: none !important;
             display: inline-flex !important;
             align-items: center !important;
-            margin-right: 15px !important;
+            margin-left: 5px !important;
+            white-space: nowrap !important;
             transition: all 0.2s ease !important;
             vertical-align: middle !important;
         }}

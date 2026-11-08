@@ -48,14 +48,19 @@ class DynamicAdminThemeMiddleware(MiddlewareMixin):
                     elif b'</body>' in response.content:
                         response.content = response.content.replace(b'</body>', link_tag + b'</body>')
                     
-                    # 2. Inject the Dashboard link into the user tools area
+                    # 2. Inject the Dashboard link right after the logo / branding on the left
                     dashboard_url = reverse('finance:dashboard')
                     # Use standard Bootstrap Icon class (CSS imported via dynamic_theme_css)
                     dashboard_icon = '<i class="bi bi-speedometer2" style="margin-right: 6px; font-size: 16px; vertical-align: middle;"></i>'
-                    dashboard_link = f'<a href="{dashboard_url}" class="dashboard-link-admin">{dashboard_icon} Dashboard</a>'.encode('utf-8')
+                    dashboard_link = f'<a href="{dashboard_url}" class="dashboard-link-admin">{dashboard_icon} zurück zum Dashboard</a>'.encode('utf-8')
                     
-                    # Target both standard and django-admin-interface user tools containers
-                    if b'id="user-tools"' in response.content:
+                    if b'id="branding"' in response.content:
+                        branding_pos = response.content.find(b'id="branding"')
+                        h1_end = response.content.find(b'</h1>', branding_pos)
+                        if h1_end != -1:
+                            insert_pos = h1_end + len(b'</h1>')
+                            response.content = response.content[:insert_pos] + b'\n' + dashboard_link + response.content[insert_pos:]
+                    elif b'id="user-tools"' in response.content:
                         response.content = response.content.replace(b'id="user-tools">', b'id="user-tools">' + dashboard_link)
                     
                     if response.get('Content-Length'):
