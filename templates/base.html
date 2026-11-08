@@ -487,11 +487,6 @@
                            {% trans 'Real Estate & Loans' %}
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'profile' %}" title="{% trans 'Settings' %}" aria-label="{% trans 'Settings' %}">
-                            <i class="bi bi-gear"></i>
-                        </a>
-                    </li>
                     {# Bank Import disabled for now #}
                     {# <li class="nav-item"> #}
                     {#     <a class="nav-link" href="{% url 'finance:import_transactions' %}"> #}
@@ -499,23 +494,28 @@
                     {#         {% trans 'Bank Import' %} #}
                     {#     </a> #}
                     {# </li> #}
-                    {% if user.is_staff %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'admin:index' %}" title="{% trans 'Administration' %}" aria-label="{% trans 'Administration' %}">
-                            <i class="bi bi-shield-lock"></i>
-                        </a>
-                    </li>
-                    {% endif %}
                 </ul>
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center flex-row gap-3">
                     {% if user.is_authenticated %}
                     <!-- Global Night Toggle -->
-                    <li class="nav-item d-flex align-items-center me-3">
+                    <li class="nav-item d-flex align-items-center">
                         <a href="{% url 'toggle_night_mode' %}" class="nav-link d-flex align-items-center gap-2 p-0" title="{% trans 'Toggle Night Mode' %}">
                             <i class="bi bi-moon-stars{% if user.profile.auto_night_mode %}-fill text-warning{% endif %}"></i>
                             <div class="form-check form-switch m-0">
                                 <input class="form-check-input" type="checkbox" role="switch" {% if user.profile.auto_night_mode %}checked{% endif %} style="cursor: pointer; pointer-events: none;">
                             </div>
+                        </a>
+                    </li>
+                    {% if user.is_staff %}
+                    <li class="nav-item d-flex align-items-center">
+                        <a class="nav-link d-flex align-items-center p-0" href="{% url 'admin:index' %}" title="{% trans 'Administration' %}" aria-label="{% trans 'Administration' %}">
+                            <i class="bi bi-shield-lock fs-5"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                    <li class="nav-item d-flex align-items-center">
+                        <a class="nav-link d-flex align-items-center p-0" href="{% url 'profile' %}" title="{% trans 'Settings' %}" aria-label="{% trans 'Settings' %}">
+                            <i class="bi bi-gear fs-5"></i>
                         </a>
                     </li>
                     <li class="nav-item dropdown">
