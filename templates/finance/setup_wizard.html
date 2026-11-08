@@ -16,9 +16,41 @@
                 {% trans "Schritt-für-Schritt-Erfassung deiner Stammdaten (Personen, Einnahmen, Ausgaben, Konten und Vorsorgeverträge)." %}
             </p>
         </div>
-        <a href="{% url 'finance:dashboard' %}?skip_wizard=1" class="btn btn-outline-secondary rounded-pill px-3">
+        <button type="button" @click="handleCancel()" class="btn btn-outline-secondary rounded-pill px-3">
             <i class="bi bi-x-lg me-1"></i>{% trans "Abbrechen" %}
-        </a>
+        </button>
+    </div>
+
+    <!-- Cancel Confirmation Modal -->
+    <div class="modal fade" id="wizardCancelModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4 shadow-lg border-0" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold d-flex align-items-center gap-2">
+                        <i class="bi bi-question-circle text-primary"></i> {% trans "Einrichtungs-Wizard beenden" %}
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body py-3">
+                    <p class="mb-0">
+                        {% trans "Möchtest du den Einrichtungs-Wizard beim nächsten Start automatisch ausblenden?" %}
+                    </p>
+                </div>
+                <div class="modal-footer border-0 pt-0 d-flex justify-content-between">
+                    <button type="button" class="btn btn-outline-secondary rounded-pill px-3" data-bs-dismiss="modal">
+                        {% trans "Zurück zum Wizard" %}
+                    </button>
+                    <div class="d-flex gap-2">
+                        <button type="button" @click="cancelWithSetting(false)" class="btn btn-outline-primary rounded-pill px-3">
+                            {% trans "Nein, wieder anzeigen" %}
+                        </button>
+                        <button type="button" @click="cancelWithSetting(true)" class="btn btn-primary rounded-pill px-3">
+                            {% trans "Ja, ausblenden" %}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Success Summary Modal -->
@@ -835,6 +867,41 @@
                     const el = document.getElementById('errorTracebackTextarea');
                     if (el) { el.select(); document.execCommand('copy'); }
                 });
+            },
+
+            handleCancel() {
+                if (this.form.hide_wizard_on_start) {
+                    window.location.href = "{% url 'finance:dashboard' %}?skip_wizard=1";
+                } else {
+                    const modalEl = document.getElementById('wizardCancelModal');
+                    if (modalEl) {
+                        const modal = new bootstrap.Modal(modalEl);
+                        modal.show();
+                    } else if (confirm('{% trans "Soll der Einrichtungs-Assistent beim nächsten Start ausgeblendet werden?" %}')) {
+                        this.cancelWithSetting(true);
+                    } else {
+                        this.cancelWithSetting(false);
+                    }
+                }
+            },
+
+            async cancelWithSetting(hideOnStart) {
+                if (hideOnStart) {
+                    this.form.hide_wizard_on_start = true;
+                    try {
+                        await fetch('/finance/wizard/save/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': '{{ csrf_token }}'
+                            },
+                            body: JSON.stringify({ hide_wizard_on_start: true })
+                        });
+                    } catch (e) {
+                        console.error('Error saving hide_wizard_on_start:', e);
+                    }
+                }
+                window.location.href = "{% url 'finance:dashboard' %}?skip_wizard=1" + (hideOnStart ? "&hide_wizard=1" : "");
             },
 
             async toggleHideWizardSetting() {

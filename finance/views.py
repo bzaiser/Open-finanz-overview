@@ -184,6 +184,10 @@ def dashboard_view(request):
     profile, created = UserProfile.objects.get_or_create(user=user)
     
     # Redirect to Erst-Einrichtungs-Wizard on first start unless hidden by user
+    if request.GET.get('hide_wizard') == '1' and not profile.hide_wizard_on_start:
+        profile.hide_wizard_on_start = True
+        profile.save(update_fields=['hide_wizard_on_start'])
+
     if not profile.hide_wizard_on_start and request.GET.get('skip_wizard') != '1':
         return redirect('finance:setup_wizard')
     
