@@ -3535,7 +3535,7 @@ def loan_delete(request, pk):
 def loan_extra_repayment_save(request):
     user = request.user
     if request.method == 'POST':
-        form = LoanExtraRepayment(request.POST, user=user)
+        form = LoanExtraRepayment(request.POST, user=request.user)
         if form.is_valid():
             repayment = form.save()
             messages.success(request, _('Extra repayment recorded successfully.'))
