@@ -1321,96 +1321,94 @@
                             </thead>
                         <tbody>
                             <template x-for="m in filteredCalendarMonths" :key="m.month_num">
-                                <tbody class="border-0">
-                                    <!-- Summary Month Row -->
-                                    <tr class="cursor-pointer" data-bs-toggle="collapse" :data-bs-target="'#cal-month-' + m.month_num" aria-expanded="false" style="cursor: pointer;">
-                                        <td class="text-center text-muted">
-                                            <i class="bi bi-chevron-down small transition-transform" :id="'icon-month-' + m.month_num"></i>
-                                        </td>
-                                        <td class="text-start fw-bold">
-                                            <span x-text="m.month_name"></span>
-                                            <span class="badge bg-secondary bg-opacity-25 text-body rounded-pill ms-1 small" style="font-size: 0.7rem;">
-                                                <span x-text="m.total_items_count"></span> {% trans "items" %}
+                                <!-- Summary Month Row -->
+                                <tr class="cursor-pointer" @click="toggleCalMonth(m.month_num)" style="cursor: pointer;">
+                                    <td class="text-center text-muted">
+                                        <i class="bi small transition-transform" :class="isCalMonthOpen(m.month_num) ? 'bi-chevron-up' : 'bi-chevron-down'" :id="'icon-month-' + m.month_num"></i>
+                                    </td>
+                                    <td class="text-start fw-bold">
+                                        <span x-text="m.month_name"></span>
+                                        <span class="badge bg-secondary bg-opacity-25 text-body rounded-pill ms-1 small" style="font-size: 0.7rem;">
+                                            <span x-text="m.total_items_count"></span> {% trans "items" %}
+                                        </span>
+                                    </td>
+                                    <td class="text-start">
+                                        <template x-for="ev in m.events" :key="ev.title">
+                                            <span class="badge rounded-pill px-2 py-1 me-1 mb-1 small text-nowrap" :class="ev.badge_class">
+                                                <i class="bi me-1" :class="ev.icon"></i><span x-text="ev.title"></span>
                                             </span>
-                                        </td>
-                                        <td class="text-start">
-                                            <template x-for="ev in m.events" :key="ev.title">
-                                                <span class="badge rounded-pill px-2 py-1 me-1 mb-1 small text-nowrap" :class="ev.badge_class">
-                                                    <i class="bi me-1" :class="ev.icon"></i><span x-text="ev.title"></span>
-                                                </span>
-                                            </template>
-                                            <template x-if="!m.events || m.events.length === 0">
-                                                <span class="small opacity-50">{% trans "Regular flow" %}</span>
-                                            </template>
-                                        </td>
-                                        <td class="font-monospace text-success">+<span x-text="formatEuro(m.rental_income)"></span> €</td>
-                                        <td class="font-monospace text-danger">-<span x-text="formatEuro(m.debt_service)"></span> €</td>
-                                        <td class="font-monospace text-warning">-<span x-text="formatEuro(m.maintenance)"></span> €</td>
-                                        <td class="font-monospace text-secondary">-<span x-text="formatEuro(m.ancillary)"></span> €</td>
-                                        <td class="font-monospace text-danger fw-semibold">-<span x-text="formatEuro(m.total_expenses)"></span> €</td>
-                                        <td class="font-monospace fw-bold" :class="m.net_cashflow >= 0 ? 'text-success' : 'text-danger'">
-                                            <span x-text="(m.net_cashflow >= 0 ? '+' : '') + formatEuro(m.net_cashflow) + ' €'"></span>
-                                        </td>
-                                        <td class="text-end pe-4 font-monospace fw-bold" :class="m.cumulative_cashflow >= 0 ? 'text-success' : 'text-danger'">
-                                            <span x-text="(m.cumulative_cashflow >= 0 ? '+' : '') + formatEuro(m.cumulative_cashflow) + ' €'"></span>
-                                        </td>
-                                    </tr>
-                                    <!-- Collapsible Detailed Breakdown Row -->
-                                    <tr class="collapse p-0" :id="'cal-month-' + m.month_num">
-                                        <td colspan="10" class="p-0 border-0">
-                                            <div class="px-4 py-3 bg-light bg-opacity-50 border-top border-bottom">
-                                                <div class="row g-3">
-                                                    <!-- Inflow Items -->
-                                                    <div class="col-12 col-md-5">
-                                                        <h6 class="fw-bold text-success mb-2 small text-uppercase d-flex align-items-center gap-1">
-                                                            <i class="bi bi-box-arrow-in-down-right"></i> {% trans "Inflow Details" %} (+<span x-text="formatEuro(m.rental_income)"></span> €)
-                                                        </h6>
-                                                        <template x-if="m.items_inflow && m.items_inflow.length > 0">
-                                                            <div class="list-group list-group-flush rounded-3 shadow-sm border">
-                                                                <template x-for="item in m.items_inflow" :key="item.title + item.property_name">
-                                                                    <div class="list-group-item d-flex justify-content-between align-items-center py-2 px-3 small" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
-                                                                        <div>
-                                                                            <div class="fw-semibold" x-text="item.title"></div>
-                                                                            <span class="badge bg-secondary bg-opacity-25 text-body rounded-pill" style="font-size: 0.65rem;" x-text="item.property_name"></span>
-                                                                        </div>
-                                                                        <span class="font-monospace text-success fw-bold text-nowrap ms-2">+<span x-text="formatEuro(item.amount)"></span> €</span>
+                                        </template>
+                                        <template x-if="!m.events || m.events.length === 0">
+                                            <span class="small opacity-50">{% trans "Regular flow" %}</span>
+                                        </template>
+                                    </td>
+                                    <td class="font-monospace text-success">+<span x-text="formatEuro(m.rental_income)"></span> €</td>
+                                    <td class="font-monospace text-danger">-<span x-text="formatEuro(m.debt_service)"></span> €</td>
+                                    <td class="font-monospace text-warning">-<span x-text="formatEuro(m.maintenance)"></span> €</td>
+                                    <td class="font-monospace text-secondary">-<span x-text="formatEuro(m.ancillary)"></span> €</td>
+                                    <td class="font-monospace text-danger fw-semibold">-<span x-text="formatEuro(m.total_expenses)"></span> €</td>
+                                    <td class="font-monospace fw-bold" :class="m.net_cashflow >= 0 ? 'text-success' : 'text-danger'">
+                                        <span x-text="(m.net_cashflow >= 0 ? '+' : '') + formatEuro(m.net_cashflow) + ' €'"></span>
+                                    </td>
+                                    <td class="text-end pe-4 font-monospace fw-bold" :class="m.cumulative_cashflow >= 0 ? 'text-success' : 'text-danger'">
+                                        <span x-text="(m.cumulative_cashflow >= 0 ? '+' : '') + formatEuro(m.cumulative_cashflow) + ' €'"></span>
+                                    </td>
+                                </tr>
+                                <!-- Collapsible Detailed Breakdown Row -->
+                                <tr x-show="isCalMonthOpen(m.month_num)" x-transition class="p-0" :id="'cal-month-' + m.month_num">
+                                    <td colspan="10" class="p-0 border-0">
+                                        <div class="px-4 py-3 bg-light bg-opacity-50 border-top border-bottom">
+                                            <div class="row g-3">
+                                                <!-- Inflow Items -->
+                                                <div class="col-12 col-md-5">
+                                                    <h6 class="fw-bold text-success mb-2 small text-uppercase d-flex align-items-center gap-1">
+                                                        <i class="bi bi-box-arrow-in-down-right"></i> {% trans "Inflow Details" %} (+<span x-text="formatEuro(m.rental_income)"></span> €)
+                                                    </h6>
+                                                    <template x-if="m.items_inflow && m.items_inflow.length > 0">
+                                                        <div class="list-group list-group-flush rounded-3 shadow-sm border">
+                                                            <template x-for="item in m.items_inflow" :key="item.title + item.property_name">
+                                                                <div class="list-group-item d-flex justify-content-between align-items-center py-2 px-3 small" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+                                                                    <div>
+                                                                        <div class="fw-semibold" x-text="item.title"></div>
+                                                                        <span class="badge bg-secondary bg-opacity-25 text-body rounded-pill" style="font-size: 0.65rem;" x-text="item.property_name"></span>
                                                                     </div>
-                                                                </template>
-                                                            </div>
-                                                        </template>
-                                                        <template x-if="!m.items_inflow || m.items_inflow.length === 0">
-                                                            <div class="text-muted small py-2">{% trans "No rental inflows in this month." %}</div>
-                                                        </template>
-                                                    </div>
+                                                                    <span class="font-monospace text-success fw-bold text-nowrap ms-2">+<span x-text="formatEuro(item.amount)"></span> €</span>
+                                                                </div>
+                                                            </template>
+                                                        </div>
+                                                    </template>
+                                                    <template x-if="!m.items_inflow || m.items_inflow.length === 0">
+                                                        <div class="text-muted small py-2">{% trans "No rental inflows in this month." %}</div>
+                                                    </template>
+                                                </div>
 
-                                                    <!-- Outflow Items -->
-                                                    <div class="col-12 col-md-7">
-                                                        <h6 class="fw-bold text-danger mb-2 small text-uppercase d-flex align-items-center gap-1">
-                                                            <i class="bi bi-box-arrow-up-right"></i> {% trans "Outflow Details" %} (-<span x-text="formatEuro(m.total_expenses)"></span> €)
-                                                        </h6>
-                                                        <template x-if="m.items_outflow && m.items_outflow.length > 0">
-                                                            <div class="list-group list-group-flush rounded-3 shadow-sm border">
-                                                                <template x-for="item in m.items_outflow" :key="item.title + item.property_name + item.category">
-                                                                    <div class="list-group-item d-flex justify-content-between align-items-center py-2 px-3 small" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
-                                                                        <div>
-                                                                            <div class="fw-semibold" x-text="item.title"></div>
-                                                                            <span class="badge bg-secondary bg-opacity-25 text-body rounded-pill me-1" style="font-size: 0.65rem;" x-text="item.property_name"></span>
-                                                                            <span class="badge bg-info bg-opacity-10 text-info-emphasis rounded-pill" style="font-size: 0.65rem;" x-text="item.category"></span>
-                                                                        </div>
-                                                                        <span class="font-monospace text-danger fw-bold text-nowrap ms-2">-<span x-text="formatEuro(item.amount)"></span> €</span>
+                                                <!-- Outflow Items -->
+                                                <div class="col-12 col-md-7">
+                                                    <h6 class="fw-bold text-danger mb-2 small text-uppercase d-flex align-items-center gap-1">
+                                                        <i class="bi bi-box-arrow-up-right"></i> {% trans "Outflow Details" %} (-<span x-text="formatEuro(m.total_expenses)"></span> €)
+                                                    </h6>
+                                                    <template x-if="m.items_outflow && m.items_outflow.length > 0">
+                                                        <div class="list-group list-group-flush rounded-3 shadow-sm border">
+                                                            <template x-for="item in m.items_outflow" :key="item.title + item.property_name + item.category">
+                                                                <div class="list-group-item d-flex justify-content-between align-items-center py-2 px-3 small" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+                                                                    <div>
+                                                                        <div class="fw-semibold" x-text="item.title"></div>
+                                                                        <span class="badge bg-secondary bg-opacity-25 text-body rounded-pill me-1" style="font-size: 0.65rem;" x-text="item.property_name"></span>
+                                                                        <span class="badge bg-info bg-opacity-10 text-info-emphasis rounded-pill" style="font-size: 0.65rem;" x-text="item.category"></span>
                                                                     </div>
-                                                                </template>
-                                                            </div>
-                                                        </template>
-                                                        <template x-if="!m.items_outflow || m.items_outflow.length === 0">
-                                                            <div class="text-muted small py-2">{% trans "No outflows recorded." %}</div>
-                                                        </template>
-                                                    </div>
+                                                                    <span class="font-monospace text-danger fw-bold text-nowrap ms-2">-<span x-text="formatEuro(item.amount)"></span> €</span>
+                                                                </div>
+                                                            </template>
+                                                        </div>
+                                                    </template>
+                                                    <template x-if="!m.items_outflow || m.items_outflow.length === 0">
+                                                        <div class="text-muted small py-2">{% trans "No outflows recorded." %}</div>
+                                                    </template>
                                                 </div>
                                             </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
+                                        </div>
+                                    </td>
+                                </tr>
                             </template>
                             <tr x-show="filteredCalendarMonths.length === 0">
                                 <td colspan="10" class="text-center py-4 opacity-75">
@@ -2658,6 +2656,7 @@ function realEstateLoansApp() {
         calFilters: { search: '' },
         calSortCol: 'month_num',
         calSortDir: 'asc',
+        openCalMonths: {},
 
         taxProperties: {{ tax_table_json|safe|default:"[]" }},
         taxFilters: { search: '' },
@@ -2779,6 +2778,12 @@ function realEstateLoansApp() {
                 this.calSortCol = col;
                 this.calSortDir = 'asc';
             }
+        },
+        toggleCalMonth(monthNum) {
+            this.openCalMonths[monthNum] = !this.openCalMonths[monthNum];
+        },
+        isCalMonthOpen(monthNum) {
+            return !!this.openCalMonths[monthNum];
         },
 
         // 4. Tax (Anlage V) Filter & Sort
