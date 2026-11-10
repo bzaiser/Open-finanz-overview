@@ -2882,16 +2882,64 @@ def pension_plan_view(request):
     if user_current_age >= retirement_age or current_total_monthly_payout > Decimal('0.00'):
         life_stage = 'retirement'
 
-    # Fetch active monthly cash flows (currently valid today: start_date <= today <= end_date)
-    cash_flows = list(user.cash_flows.all())
-    monthly_expenses_today = sum([
-        c.value if c.frequency == 'monthly' else (c.value / Decimal('12.0'))
-        for c in cash_flows
-        if not c.is_income and (not c.start_date or c.start_date <= today) and (not c.end_date or c.end_date >= today)
-    ])
+    from .models import CashFlowSource, RealEstate, PhysicalAsset, Loan
+
+    all_manual_cfs = list(user.cash_flows.filter(is_income=False))
+    all_real_estates = list(user.real_estates.all())
+    all_physical_assets = list(user.physical_assets.all())
+    all_loans = list(user.loans.all())
 
     inflation_rate = profile.inflation_rate / Decimal('100.0')
-    
+
+    def calculate_expenses_for_year(y):
+        check_date = datetime.date(y, 7, 1) if y != current_year else today
+        exp = Decimal('0.00')
+
+        # 1. Manual CashFlowSources
+        for cf in all_manual_cfs:
+            start_ok = not cf.start_date or cf.start_date <= check_date
+            end_ok = not cf.end_date or cf.end_date >= check_date
+            if start_ok and end_ok:
+                amt = cf.monthly_amount
+                if y > current_year and (cf.is_inflation_adjusted or not cf.end_date):
+                    years_inf = y - current_year
+                    amt = amt * ((Decimal('1.0') + inflation_rate) ** Decimal(str(years_inf)))
+                exp += amt
+
+        # 2. Real Estate Maintenance Costs
+        for re in all_real_estates:
+            acq_ok = not re.acquisition_date or re.acquisition_date <= check_date
+            sale_ok = not re.sale_date or re.sale_date >= check_date
+            if acq_ok and sale_ok and re.maintenance_costs_monthly and re.maintenance_costs_monthly > 0:
+                amt = Decimal(str(re.maintenance_costs_monthly))
+                if y > current_year:
+                    years_inf = y - current_year
+                    amt = amt * ((Decimal('1.0') + inflation_rate) ** Decimal(str(years_inf)))
+                exp += amt
+
+        # 3. Physical Asset Storage Costs
+        for pa in all_physical_assets:
+            acq_ok = not pa.acquisition_date or pa.acquisition_date <= check_date
+            sale_ok = not pa.sale_date or pa.sale_date >= check_date
+            if acq_ok and sale_ok and pa.storage_costs_monthly and pa.storage_costs_monthly > 0:
+                amt = Decimal(str(pa.storage_costs_monthly))
+                if y > current_year:
+                    years_inf = y - current_year
+                    amt = amt * ((Decimal('1.0') + inflation_rate) ** Decimal(str(years_inf)))
+                exp += amt
+
+        # 4. Loans Monthly Installment (no inflation compounding on fixed loan payments)
+        for loan in all_loans:
+            start_ok = not loan.start_date or loan.start_date <= check_date
+            end_ok = not loan.end_date or loan.end_date >= check_date
+            if start_ok and end_ok and loan.monthly_installment and loan.monthly_installment > 0:
+                exp += Decimal(str(loan.monthly_installment))
+
+        return exp
+
+    monthly_expenses_today = calculate_expenses_for_year(current_year).quantize(Decimal('0.01'))
+    monthly_expenses_at_retirement = calculate_expenses_for_year(retirement_year).quantize(Decimal('0.01'))
+
     # Target payout sum across contracts (or fallback to profile / total)
     contract_targets_sum = sum([p.target_pension_payout for p in pensions if p.target_pension_payout])
     if contract_targets_sum and contract_targets_sum > Decimal('0.00'):
@@ -2899,13 +2947,11 @@ def pension_plan_view(request):
     else:
         target_monthly_payout = profile.target_pension_payout if profile.target_pension_payout else total_monthly_net
 
-    # Inflate today's expenses and today's target payout to retirement year
+    # Inflate today's target payout to retirement year
     if years_to_retirement > 0:
         inflation_factor = (Decimal('1.0') + inflation_rate) ** Decimal(str(years_to_retirement))
     else:
         inflation_factor = Decimal('1.0')
-
-    monthly_expenses_at_retirement = (monthly_expenses_today * inflation_factor).quantize(Decimal('0.01'))
     target_monthly_payout_inflated = (target_monthly_payout * inflation_factor).quantize(Decimal('0.01')) if target_monthly_payout else Decimal('0.00')
 
     # Net surplus / gap calculation
@@ -3036,35 +3082,6 @@ def pension_plan_view(request):
         if s.value:
             snapshots_by_year[y]['val'] += s.value
 
-    # Calculate current base monthly expenses using exact Cashflow Analysis logic
-    from .models import CashFlowSource, RealEstate, PhysicalAsset, Loan
-    base_expenses = Decimal('0.00')
-    
-    # 1. Manual CashFlowSources (outflows currently active)
-    manual_cfs = user.cash_flows.filter(is_income=False)
-    for cf in manual_cfs:
-        is_currently_running = (not cf.start_date or cf.start_date <= today) and (not cf.end_date or cf.end_date >= today)
-        if is_currently_running:
-            base_expenses += cf.monthly_amount
-
-    # 2. Real Estate Maintenance Costs
-    for re in user.real_estates.all():
-        is_currently_running = (not re.acquisition_date or re.acquisition_date <= today) and (not re.sale_date or re.sale_date >= today)
-        if is_currently_running and re.maintenance_costs_monthly and re.maintenance_costs_monthly > 0:
-            base_expenses += Decimal(str(re.maintenance_costs_monthly))
-
-    # 3. Physical Asset Storage Costs
-    for pa in user.physical_assets.all():
-        is_currently_running = (not pa.acquisition_date or pa.acquisition_date <= today) and (not pa.sale_date or pa.sale_date >= today)
-        if is_currently_running and pa.storage_costs_monthly and pa.storage_costs_monthly > 0:
-            base_expenses += Decimal(str(pa.storage_costs_monthly))
-
-    # 4. Loans Monthly Installment
-    for loan in user.loans.all():
-        is_currently_running = (not loan.start_date or loan.start_date <= today) and (not loan.end_date or loan.end_date >= today)
-        if is_currently_running and loan.monthly_installment and loan.monthly_installment > 0:
-            base_expenses += Decimal(str(loan.monthly_installment))
-
     # Build chart data series
     chart_years = []
     capital_series = []
@@ -3078,14 +3095,15 @@ def pension_plan_view(request):
         chart_years.append(str(y))
         target_series.append(float(target_monthly_payout))
 
-        # Inflation adjusted target monthly payout & monthly expenses (compounded into future)
+        # Dynamic monthly expenses according to active contracts/loans/costs in year y
+        exp_val = calculate_expenses_for_year(y)
+
+        # Inflation adjusted target monthly payout
         if y <= current_year:
             inf_target = target_monthly_payout
-            exp_val = base_expenses
         else:
             years_inf = y - current_year
             inf_target = target_monthly_payout * ((Decimal('1.0') + inflation_rate) ** Decimal(str(years_inf)))
-            exp_val = base_expenses * ((Decimal('1.0') + inflation_rate) ** Decimal(str(years_inf)))
 
         inflation_target_series.append(float(inf_target.quantize(Decimal('0.01'))))
         expenses_series.append(float(exp_val.quantize(Decimal('0.01'))))
