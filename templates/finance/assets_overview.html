@@ -1,7 +1,7 @@
 {% extends "base.html" %}
-{% load i18n humanize static %}
+{% load i18n humanize static l10n %}
 
-{% block extra_head %}
+{% block content %}
 <style>
 .folder-tabs-bar {
     border-bottom: 2px solid var(--app-table-border-color, rgba(0,0,0,0.08));
@@ -102,9 +102,6 @@
     cursor: pointer;
 }
 </style>
-{% endblock %}
-
-{% block content %}
 <div x-data="assetsOverviewApp()" x-init="init()" class="container-fluid px-3 px-md-4 py-4">
 
     <!-- Page Title & Header Actions -->
@@ -849,9 +846,9 @@ function assetsOverviewApp() {
         assets: {{ assets_json|safe|default:"[]" }},
         physicalAssets: {{ physical_json|safe|default:"[]" }},
         historyChartData: {{ history_chart_json|safe|default:"{}" }},
-        emergencyMonthsCovered: {{ emergency_months_covered|default:0 }},
-        totalMonthlySavings: {{ total_monthly_savings|default:0 }},
-        totalWealthNumber: {{ total_wealth|default:0 }},
+        emergencyMonthsCovered: {{ emergency_months_covered|unlocalize|default:0 }},
+        totalMonthlySavings: {{ total_monthly_savings|unlocalize|default:0 }},
+        totalWealthNumber: {{ total_wealth|unlocalize|default:0 }},
 
         // Filters & Sorting for Assets
         assetFilters: { name: '', asset_type: '', institution: '' },
