@@ -2882,12 +2882,15 @@ def pension_plan_view(request):
     if user_current_age >= retirement_age or current_total_monthly_payout > Decimal('0.00'):
         life_stage = 'retirement'
 
-    from .models import CashFlowSource, RealEstate, PhysicalAsset, Loan
+    from .models import CashFlowSource, RealEstate, PhysicalAsset, Loan, Asset
 
-    all_manual_cfs = list(user.cash_flows.filter(is_income=False))
+    all_manual_cfs = list(user.cash_flows.all())
+    all_manual_outflows = [cf for cf in all_manual_cfs if not cf.is_income]
+    all_manual_inflows = [cf for cf in all_manual_cfs if cf.is_income]
     all_real_estates = list(user.real_estates.all())
     all_physical_assets = list(user.physical_assets.all())
     all_loans = list(user.loans.all())
+    all_assets = list(user.assets.all())
 
     inflation_rate = profile.inflation_rate / Decimal('100.0')
 
@@ -2895,8 +2898,8 @@ def pension_plan_view(request):
         check_date = datetime.date(y, 7, 1) if y != current_year else today
         exp = Decimal('0.00')
 
-        # 1. Manual CashFlowSources
-        for cf in all_manual_cfs:
+        # 1. Manual CashFlowSources (Outflows)
+        for cf in all_manual_outflows:
             start_ok = not cf.start_date or cf.start_date <= check_date
             end_ok = not cf.end_date or cf.end_date >= check_date
             if start_ok and end_ok:
@@ -2937,8 +2940,75 @@ def pension_plan_view(request):
 
         return exp
 
+    def calculate_income_for_year(y):
+        check_date = datetime.date(y, 7, 1) if y != current_year else today
+        total_inc = Decimal('0.00')
+        details = {
+            'pensions': Decimal('0.00'),
+            'salary': Decimal('0.00'),
+            'other_income': Decimal('0.00'),
+            'real_estate': Decimal('0.00'),
+            'assets': Decimal('0.00')
+        }
+
+        # 1. Pensions
+        for p in pensions:
+            if p.start_payout_date:
+                p_start_year = p.start_payout_date.year
+            elif p.retirement_age and birth_date:
+                p_start_year = current_year + max(0, p.retirement_age - user_current_age)
+            else:
+                p_start_year = retirement_year
+
+            if y >= p_start_year and p.expected_payout_at_retirement:
+                years_in_payout = y - p_start_year
+                rate = profile.pension_increase / Decimal('100.0') if p.is_indexed else Decimal('0.00')
+                p_val = p.expected_payout_at_retirement * ((Decimal('1.0') + rate) ** Decimal(str(years_in_payout)))
+                total_inc += p_val
+                details['pensions'] += p_val
+
+        # 2. Manual CashFlowSources (Inflows)
+        for cf in all_manual_inflows:
+            start_ok = not cf.start_date or cf.start_date <= check_date
+            end_ok = not cf.end_date or cf.end_date >= check_date
+            if start_ok and end_ok:
+                amt = cf.monthly_amount
+                if y > current_year and cf.is_inflation_adjusted:
+                    years_inf = y - current_year
+                    amt = amt * ((Decimal('1.0') + inflation_rate) ** Decimal(str(years_inf)))
+                total_inc += amt
+                cat_lower = (cf.category.name.lower() if cf.category else '')
+                if 'gehalt' in cat_lower or 'lohn' in cat_lower or 'salary' in cat_lower or 'gehalt' in cf.name.lower() or 'lohn' in cf.name.lower():
+                    details['salary'] += amt
+                else:
+                    details['other_income'] += amt
+
+        # 3. Real Estate Rental Income
+        for re in all_real_estates:
+            acq_ok = not re.acquisition_date or re.acquisition_date <= check_date
+            sale_ok = not re.sale_date or re.sale_date >= check_date
+            if acq_ok and sale_ok and re.rental_income_monthly and re.rental_income_monthly > 0:
+                amt = Decimal(str(re.rental_income_monthly))
+                total_inc += amt
+                details['real_estate'] += amt
+
+        # 4. Asset Withdrawals
+        for a in all_assets:
+            if a.withdrawal_amount and a.withdrawal_amount > 0:
+                if not a.withdrawal_start_date or a.withdrawal_start_date <= check_date:
+                    amt = Decimal(str(a.withdrawal_amount))
+                    total_inc += amt
+                    details['assets'] += amt
+
+        return total_inc, details
+
     monthly_expenses_today = calculate_expenses_for_year(current_year).quantize(Decimal('0.01'))
     monthly_expenses_at_retirement = calculate_expenses_for_year(retirement_year).quantize(Decimal('0.01'))
+
+    monthly_income_today, income_today_details = calculate_income_for_year(current_year)
+    monthly_income_at_retirement, income_retirement_details = calculate_income_for_year(retirement_year)
+    monthly_income_today = monthly_income_today.quantize(Decimal('0.01'))
+    monthly_income_at_retirement = monthly_income_at_retirement.quantize(Decimal('0.01'))
 
     # Target payout sum across contracts (or fallback to profile / total)
     contract_targets_sum = sum([p.target_pension_payout for p in pensions if p.target_pension_payout])
@@ -2954,18 +3024,22 @@ def pension_plan_view(request):
         inflation_factor = Decimal('1.0')
     target_monthly_payout_inflated = (target_monthly_payout * inflation_factor).quantize(Decimal('0.01')) if target_monthly_payout else Decimal('0.00')
 
+    # Total income at retirement (Pensions + Rental income + Continuing inflows + Asset withdrawals)
+    # This reflects the true total income available in retirement
+    total_retirement_income = monthly_income_at_retirement
+
     # Net surplus / gap calculation
-    current_pension_gap = (target_monthly_payout - current_total_monthly_payout).quantize(Decimal('0.01')) if target_monthly_payout else Decimal('0.00')
-    future_pension_gap = (target_monthly_payout_inflated - total_monthly_net).quantize(Decimal('0.01')) if target_monthly_payout_inflated else Decimal('0.00')
+    current_pension_gap = (target_monthly_payout - monthly_income_today).quantize(Decimal('0.01')) if target_monthly_payout else Decimal('0.00')
+    future_pension_gap = (target_monthly_payout_inflated - total_retirement_income).quantize(Decimal('0.01')) if target_monthly_payout_inflated else Decimal('0.00')
 
     if life_stage == 'retirement':
-        # In retirement: Compare current flowing pension income vs current expenses
-        current_net_surplus = (current_total_monthly_payout - monthly_expenses_today).quantize(Decimal('0.01'))
+        # In retirement: Compare current flowing total income vs current expenses & target
+        current_net_surplus = (monthly_income_today - monthly_expenses_today).quantize(Decimal('0.01'))
         pension_gap = current_pension_gap
     else:
-        # In accumulation: Compare projected total pension vs target/expenses at retirement
+        # In accumulation: Compare projected total retirement income vs target at retirement
         pension_gap = future_pension_gap
-        current_net_surplus = Decimal('0.00')
+        current_net_surplus = (monthly_income_today - monthly_expenses_today).quantize(Decimal('0.01'))
 
     # Build historical & forecast timeline up to simulation_max_year
     earliest_snap_year = min([s.date.year for s in snapshots]) if snapshots else current_year - 5
@@ -3086,6 +3160,7 @@ def pension_plan_view(request):
     chart_years = []
     capital_series = []
     net_payout_series = []
+    total_income_series = []
     target_series = []
     inflation_target_series = []
     expenses_series = []
@@ -3095,8 +3170,9 @@ def pension_plan_view(request):
         chart_years.append(str(y))
         target_series.append(float(target_monthly_payout))
 
-        # Dynamic monthly expenses according to active contracts/loans/costs in year y
+        # Dynamic monthly expenses and total income according to active contracts/loans/costs in year y
         exp_val = calculate_expenses_for_year(y)
+        inc_val, _ = calculate_income_for_year(y)
 
         # Inflation adjusted target monthly payout
         if y <= current_year:
@@ -3107,6 +3183,7 @@ def pension_plan_view(request):
 
         inflation_target_series.append(float(inf_target.quantize(Decimal('0.01'))))
         expenses_series.append(float(exp_val.quantize(Decimal('0.01'))))
+        total_income_series.append(float(inc_val.quantize(Decimal('0.01'))))
 
         # 1. Historical Snapshots (years < current_year)
         y_snap = snapshots_by_year.get(y)
@@ -3262,8 +3339,14 @@ def pension_plan_view(request):
         'target_series_json': json.dumps(target_series),
         'inflation_target_series_json': json.dumps(inflation_target_series),
         'expenses_series_json': json.dumps(expenses_series),
+        'total_income_series_json': json.dumps(total_income_series),
+        'monthly_income_today': monthly_income_today,
+        'monthly_income_at_retirement': monthly_income_at_retirement,
+        'income_today_details': income_today_details,
+        'income_retirement_details': income_retirement_details,
         'trans_labels_json': json.dumps({
             'projected_net': str(_("Projected Monthly Net Payout")),
+            'total_income': str(_("Projected Total Income")),
             'target_today': str(_("Target Payout (Today's Purchasing Power)")),
             'target_inflation': str(_("Target Payout (Inflation Adjusted)")),
             'monthly_expenses': str(_("Monthly Expenses (Inflation Adjusted)")),

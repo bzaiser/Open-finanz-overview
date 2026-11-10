@@ -351,7 +351,7 @@ class Command(BaseCommand):
         CashFlowSource.objects.create(
             user=user,
             name="Lebensmittel & Drogerie",
-            value=Decimal("1100.00"),
+            value=Decimal("500.00"),
             is_income=False,
             frequency="monthly",
             category=cat_essen,

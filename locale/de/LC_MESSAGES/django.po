@@ -4237,3 +4237,18 @@ msgstr "Top-Konditionen (<60%%)"
 
 msgid "Overview of assets, cash flow, retirement planning, and loans."
 msgstr "Übersicht über Vermögen, Cashflow, Altersvorsorge und Kredite."
+
+msgid "Projected Total Income"
+msgstr "Prognostizierte Gesamteinnahmen"
+
+msgid "Total Income today"
+msgstr "Gesamteinnahmen heute"
+
+msgid "Other income"
+msgstr "Sonstige Einnahmen"
+
+msgid "Continuing income"
+msgstr "Fortlaufende Einnahmen"
+
+msgid "Net Pension alone"
+msgstr "Reine Netto-Rente"

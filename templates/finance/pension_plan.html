@@ -271,9 +271,37 @@
                 <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem;">
                     {% if life_stage == 'retirement' %}
                     <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
-                        <span>{% trans "Pension flowing today" %}:</span>
-                        <span class="font-monospace fw-bold">{{ current_total_monthly_payout|floatformat:2|intcomma }} €</span>
+                        <span>{% trans "Total Income today" %}:</span>
+                        <span class="font-monospace fw-bold">{{ monthly_income_today|floatformat:2|intcomma }} €</span>
                     </div>
+                    <div class="d-flex justify-content-between py-0.5 ps-2 opacity-75 small">
+                        <span>• {% trans "Pensions" %}:</span>
+                        <span class="font-monospace">{{ income_today_details.pensions|floatformat:2|intcomma }} €</span>
+                    </div>
+                    {% if income_today_details.real_estate > 0 %}
+                    <div class="d-flex justify-content-between py-0.5 ps-2 opacity-75 small">
+                        <span>• {% trans "Rental income" %}:</span>
+                        <span class="font-monospace">{{ income_today_details.real_estate|floatformat:2|intcomma }} €</span>
+                    </div>
+                    {% endif %}
+                    {% if income_today_details.salary > 0 %}
+                    <div class="d-flex justify-content-between py-0.5 ps-2 opacity-75 small">
+                        <span>• {% trans "Salary" %}:</span>
+                        <span class="font-monospace">{{ income_today_details.salary|floatformat:2|intcomma }} €</span>
+                    </div>
+                    {% endif %}
+                    {% if income_today_details.other_income > 0 %}
+                    <div class="d-flex justify-content-between py-0.5 ps-2 opacity-75 small">
+                        <span>• {% trans "Other income" %}:</span>
+                        <span class="font-monospace">{{ income_today_details.other_income|floatformat:2|intcomma }} €</span>
+                    </div>
+                    {% endif %}
+                    {% if income_today_details.assets > 0 %}
+                    <div class="d-flex justify-content-between py-0.5 ps-2 opacity-75 small">
+                        <span>• {% trans "Asset withdrawal" %}:</span>
+                        <span class="font-monospace">{{ income_today_details.assets|floatformat:2|intcomma }} €</span>
+                    </div>
+                    {% endif %}
                     <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
                         <span>{% trans "Monthly expenses today" %}:</span>
                         <span class="font-monospace fw-bold">{{ monthly_expenses_today|floatformat:2|intcomma }} €</span>
@@ -288,19 +316,41 @@
                     </div>
                     {% else %}
                     <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
-                        <span>{% trans "Expenses today" %}:</span>
-                        <span class="font-monospace fw-bold">{{ monthly_expenses_today|floatformat:2|intcomma }} €</span>
-                    </div>
-                    <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
-                        <span>{% trans "Projected expenses (" %}{{ retirement_year }}{% trans " incl. " %}{{ user.profile.inflation_rate }}{% trans "% inflation)" %}:</span>
-                        <span class="font-monospace fw-bold text-warning">{{ monthly_expenses_at_retirement|floatformat:2|intcomma }} €</span>
-                    </div>
-                    <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
-                        <span>{% trans "Projected Target Pension (" %}{{ retirement_year }}{% trans ")" %}:</span>
+                        <span>{% trans "Target Pension (" %}{{ retirement_year }}{% trans ")" %}:</span>
                         <span class="font-monospace fw-bold">{{ target_monthly_payout_inflated|floatformat:2|intcomma }} €</span>
                     </div>
+                    <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
+                        <span class="fw-bold">{% trans "Projected Total Income (" %}{{ retirement_year }}{% trans ")" %}:</span>
+                        <span class="font-monospace fw-bold text-success">{{ monthly_income_at_retirement|floatformat:2|intcomma }} €</span>
+                    </div>
+                    <div class="d-flex justify-content-between py-0.5 ps-2 opacity-75 small">
+                        <span>• {% trans "Pensions" %}:</span>
+                        <span class="font-monospace">{{ income_retirement_details.pensions|floatformat:2|intcomma }} €</span>
+                    </div>
+                    {% if income_retirement_details.real_estate > 0 %}
+                    <div class="d-flex justify-content-between py-0.5 ps-2 opacity-75 small">
+                        <span>• {% trans "Rental income" %}:</span>
+                        <span class="font-monospace">{{ income_retirement_details.real_estate|floatformat:2|intcomma }} €</span>
+                    </div>
+                    {% endif %}
+                    {% if income_retirement_details.other_income > 0 %}
+                    <div class="d-flex justify-content-between py-0.5 ps-2 opacity-75 small">
+                        <span>• {% trans "Continuing income" %}:</span>
+                        <span class="font-monospace">{{ income_retirement_details.other_income|floatformat:2|intcomma }} €</span>
+                    </div>
+                    {% endif %}
+                    {% if income_retirement_details.assets > 0 %}
+                    <div class="d-flex justify-content-between py-0.5 ps-2 opacity-75 small">
+                        <span>• {% trans "Asset withdrawal" %}:</span>
+                        <span class="font-monospace">{{ income_retirement_details.assets|floatformat:2|intcomma }} €</span>
+                    </div>
+                    {% endif %}
+                    <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10 mt-1">
+                        <span>{% trans "Projected expenses (" %}{{ retirement_year }}{% trans ")" %}:</span>
+                        <span class="font-monospace fw-bold text-warning">{{ monthly_expenses_at_retirement|floatformat:2|intcomma }} €</span>
+                    </div>
                     <div class="d-flex justify-content-between py-1 mt-1">
-                        <span class="fw-bold">{% trans "Projected Net Pension" %}:</span>
+                        <span class="fw-bold">{% trans "Net Pension alone" %}:</span>
                         <span class="font-monospace fw-bold">{{ total_monthly_net|floatformat:2|intcomma }} €</span>
                     </div>
                     {% endif %}
@@ -1146,6 +1196,7 @@
         const monthlyBreakdown = {{ monthly_breakdown_json|safe }};
 
         const expensesSeries = {{ expenses_series_json|safe }};
+        const totalIncomeSeries = {{ total_income_series_json|safe }};
 
         const ctxTimeline = document.getElementById('pensionTimelineChart');
         if (ctxTimeline) {
@@ -1154,6 +1205,17 @@
                 data: {
                     labels: years,
                     datasets: [
+                        {
+                            label: transLabels.total_income + ' (€)',
+                            data: totalIncomeSeries,
+                            borderColor: '#2563eb',
+                            backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                            fill: false,
+                            tension: 0.3,
+                            borderWidth: 3,
+                            pointRadius: 3,
+                            pointHoverRadius: 6
+                        },
                         {
                             label: transLabels.projected_net + ' (€)',
                             data: netSeries,
