@@ -2296,6 +2296,16 @@ def dynamic_theme_css(request):
             font-size: 0.75rem !important;
             z-index: 1100 !important;
         }}
+
+        /* Inline Tabular table container - clean scrollbar on demand */
+        .inline-group .tabular .wrapper {{
+            overflow-x: auto !important;
+            scrollbar-width: thin;
+        }}
+        .inline-group .tabular fieldset.module table {{
+            width: 100% !important;
+            min-width: 0 !important;
+        }}
     """
     return HttpResponse(css_content, content_type="text/css")
 

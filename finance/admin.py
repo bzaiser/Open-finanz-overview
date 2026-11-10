@@ -175,7 +175,7 @@ class AssetSnapshotInlineForm(forms.ModelForm):
         model = AssetSnapshot
         fields = '__all__'
         widgets = {
-            'notes': forms.Textarea(attrs={'rows': 1, 'style': 'width: 400px;'}),
+            'notes': forms.Textarea(attrs={'rows': 1, 'style': 'width: 100%; min-width: 180px; max-width: 350px;'}),
         }
 
 class AssetSnapshotInline(GenericTabularInline):
