@@ -4234,3 +4234,6 @@ msgstr "Standard (60-80%%)"
 
 msgid "Top Conditions (<60%%)"
 msgstr "Top-Konditionen (<60%%)"
+
+msgid "Overview of assets, cash flow, retirement planning, and loans."
+msgstr "Übersicht über Vermögen, Cashflow, Altersvorsorge und Kredite."
