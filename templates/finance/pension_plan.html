@@ -316,11 +316,11 @@
                     </div>
                     {% else %}
                     <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
-                        <span>{% trans "Target Pension (" %}{{ retirement_year }}{% trans ")" %}:</span>
+                        <span>{% blocktrans with year=retirement_year %}Target Pension ({{ year }}):{% endblocktrans %}</span>
                         <span class="font-monospace fw-bold">{{ target_monthly_payout_inflated|floatformat:2|intcomma }} €</span>
                     </div>
                     <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
-                        <span class="fw-bold">{% trans "Projected Total Income (" %}{{ retirement_year }}{% trans ")" %}:</span>
+                        <span class="fw-bold">{% blocktrans with year=retirement_year %}Projected Total Income ({{ year }}):{% endblocktrans %}</span>
                         <span class="font-monospace fw-bold text-success">{{ monthly_income_at_retirement|floatformat:2|intcomma }} €</span>
                     </div>
                     <div class="d-flex justify-content-between py-0.5 ps-2 opacity-75 small">

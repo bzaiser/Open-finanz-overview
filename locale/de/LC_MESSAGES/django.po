@@ -4252,3 +4252,9 @@ msgstr "Fortlaufende Einnahmen"
 
 msgid "Net Pension alone"
 msgstr "Reine Netto-Rente"
+
+msgid "Target Pension (%(year)s):"
+msgstr "Ziel-Rente (%(year)s):"
+
+msgid "Projected Total Income (%(year)s):"
+msgstr "Prognostizierte Gesamteinnahmen (%(year)s):"
