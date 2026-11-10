@@ -1,5 +1,5 @@
 {% load i18n static %}
-<html lang="{{ request.LANGUAGE_CODE }}" data-bs-theme="{% if request.user.is_authenticated and profile and profile.background_color == '#212529' or profile.background_color == '#1a1a2e' or profile.background_color == '#0d1117' or profile.background_color == '#1e1e2e' %}dark{% else %}light{% endif %}">
+<html lang="{{ request.LANGUAGE_CODE }}" data-bs-theme="{% if user.is_authenticated and user.profile.auto_night_mode %}dark{% elif request.user.is_authenticated and profile and profile.background_color == '#212529' or profile.background_color == '#1a1a2e' or profile.background_color == '#0d1117' or profile.background_color == '#1e1e2e' %}dark{% else %}light{% endif %}">
 
 <head>
     <meta charset="UTF-8">
@@ -106,46 +106,29 @@
         }
     </style>
 
-    <script>
-        (function() {
-            function applyTheme() {
-                const autoNight = {% if user.is_authenticated and user.profile.auto_night_mode %}true{% else %}false{% endif %};
-                const html = document.documentElement;
-                
-                if (autoNight) {
-                    html.setAttribute('data-bs-theme', 'dark');
-                    const config = {
-                        'gradient': 'linear-gradient(135deg, color-mix(in srgb, var(--app-primary, #0d6efd), black 75%) 0%, #000000 100%)',
-                        'card-bg': 'color-mix(in srgb, var(--app-primary, #0d6efd), black 88%)',
-                        'card-color': '#f8fafc',
-                        'sidebar-bg': 'color-mix(in srgb, var(--app-primary, #0d6efd), black 92%)',
-                        'table-header-bg': 'color-mix(in srgb, var(--app-primary, #0d6efd), black 75%)',
-                        'table-header-text': '#ffffff',
-                        'table-filter-bg': 'color-mix(in srgb, var(--app-primary, #0d6efd), black 90%)',
-                        'table-body-bg': 'color-mix(in srgb, var(--app-primary, #0d6efd), black 88%)',
-                        'table-body-text': '#cbd5e1',
-                        'table-border-color': 'rgba(255,255,255,0.15)',
-                        'input-bg': '#000000',
-                        'input-color': '#cbd5e1',
-                        'input-border': '#1e293b'
-                    };
-                    for (const [key, value] of Object.entries(config)) {
-                        html.style.setProperty('--app-' + key, value);
-                    }
-                    // System overrides for Bootstrap
-                    html.style.setProperty('--bs-body-bg', 'color-mix(in srgb, var(--app-primary, #0d6efd), black 95%)');
-                    html.style.setProperty('--bs-body-color', config['card-color']);
-                    html.style.setProperty('--bs-tertiary-bg', config['card-bg']);
-                    html.style.setProperty('--bs-card-bg', config['card-bg']);
-                } else {
-                    html.removeAttribute('data-bs-theme');
-                    html.removeAttribute('style');
-                }
-            }
-            document.addEventListener('DOMContentLoaded', applyTheme);
-            applyTheme();
-        })();
-    </script>
+    {% if user.is_authenticated and user.profile.auto_night_mode %}
+    <style>
+        :root, [data-bs-theme="dark"] {
+            --app-gradient: linear-gradient(135deg, color-mix(in srgb, var(--app-primary, #0d6efd), black 75%) 0%, #000000 100%) !important;
+            --app-card-bg: color-mix(in srgb, var(--app-primary, #0d6efd), black 88%) !important;
+            --app-card-color: #f8fafc !important;
+            --app-sidebar-bg: color-mix(in srgb, var(--app-primary, #0d6efd), black 92%) !important;
+            --app-table-header-bg: color-mix(in srgb, var(--app-primary, #0d6efd), black 75%) !important;
+            --app-table-header-text: #ffffff !important;
+            --app-table-filter-bg: color-mix(in srgb, var(--app-primary, #0d6efd), black 90%) !important;
+            --app-table-body-bg: color-mix(in srgb, var(--app-primary, #0d6efd), black 88%) !important;
+            --app-table-body-text: #cbd5e1 !important;
+            --app-table-border-color: rgba(255,255,255,0.15) !important;
+            --app-input-bg: #000000 !important;
+            --app-input-color: #cbd5e1 !important;
+            --app-input-border: #1e293b !important;
+            --bs-body-bg: color-mix(in srgb, var(--app-primary, #0d6efd), black 95%) !important;
+            --bs-body-color: #f8fafc !important;
+            --bs-tertiary-bg: color-mix(in srgb, var(--app-primary, #0d6efd), black 88%) !important;
+            --bs-card-bg: color-mix(in srgb, var(--app-primary, #0d6efd), black 88%) !important;
+        }
+    </style>
+    {% endif %}
 
     <style>
         /* Prevent accidental horizontal overflow/scrollbar */
