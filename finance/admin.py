@@ -518,8 +518,8 @@ class CashFlowSourceAdmin(BaseOwnedModelAdmin):
 
 @admin.register(Asset)
 class AssetAdmin(BaseOwnedModelAdmin):
-    list_display = ('name', 'user', 'asset_type', 'value', 'growth_rate', 'monthly_savings_amount', 'is_emergency_fund', 'interest_teaser_rate', 'interest_teaser_until')
-    list_filter = ('asset_type', 'is_emergency_fund', 'user')
+    list_display = ('name', 'user', 'asset_type', 'institution', 'isin_ticker', 'value', 'growth_rate', 'monthly_savings_amount', 'is_emergency_fund', 'interest_teaser_rate', 'interest_teaser_until')
+    list_filter = ('asset_type', 'is_emergency_fund', 'institution', 'user')
     list_select_related = ('user',)
     search_fields = ('name', 'institution', 'isin_ticker')
     list_editable = ('asset_type', 'value', 'growth_rate', 'monthly_savings_amount', 'is_emergency_fund')
@@ -536,11 +536,11 @@ class OneTimeEventAdmin(BaseOwnedModelAdmin):
 
 @admin.register(PhysicalAsset)
 class PhysicalAssetAdmin(BaseOwnedModelAdmin):
-    list_display = ('name', 'user', 'value', 'appreciation_rate', 'storage_costs_monthly', 'is_sold', 'sale_date')
-    list_filter = ('user', 'is_sold')
+    list_display = ('name', 'user', 'location', 'value', 'appreciation_rate', 'storage_costs_monthly', 'acquisition_date', 'is_sold', 'sale_date')
+    list_filter = ('user', 'is_sold', 'location')
     list_select_related = ('user',)
-    search_fields = ('name',)
-    list_editable = ('value', 'appreciation_rate', 'storage_costs_monthly', 'is_sold', 'sale_date')
+    search_fields = ('name', 'location')
+    list_editable = ('value', 'appreciation_rate', 'storage_costs_monthly', 'is_sold')
     inlines = [AssetSnapshotInline]
     snapshot_value_field = 'value'
 
