@@ -866,3 +866,30 @@ msgstr "Private Capital Value"
 
 msgid "Breakdown by Contract"
 msgstr "Breakdown by Contract"
+
+msgid "Due Components (<= 5 Yrs)"
+msgstr "Due Components (<= 5 Yrs)"
+
+msgid "No urgent components due."
+msgstr "No urgent components due."
+
+msgid "Coverage Details"
+msgstr "Coverage Details"
+
+msgid "Saved Reserves"
+msgstr "Saved Reserves"
+
+msgid "Demand 5 Years"
+msgstr "Demand 5 Years"
+
+msgid "Deductions by Property"
+msgstr "Deductions by Property"
+
+msgid "Tax Result by Property"
+msgstr "Tax Result by Property"
+
+msgid "Tax Estimation Basis"
+msgstr "Tax Estimation Basis"
+
+msgid "Property"
+msgstr "Property"

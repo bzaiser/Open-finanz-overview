@@ -4258,3 +4258,48 @@ msgstr "Ziel-Rente (%(year)s):"
 
 msgid "Projected Total Income (%(year)s):"
 msgstr "Prognostizierte Gesamteinnahmen (%(year)s):"
+
+msgid "The timeline combines your recorded pension contracts, recurring income (salary, side jobs), rental income, asset withdrawal plans, and active living expenses and loan installments."
+msgstr "Die Zeitleiste kombiniert Ihre erfassten Rentenverträge, laufende Einnahmen (Gehalt, Nebeneinkünfte), Mieteinnahmen, Vermögensentnahmepläne sowie aktive Ausgaben und Darlehensraten."
+
+msgid "Projected Total Income (Blue Line)"
+msgstr "Prognostizierte Gesamteinnahmen (Blaue Linie)"
+
+msgid "Includes all active inflows in the given year: salary (until end date/retirement), net pension payouts once active, rental income from real estate, and asset withdrawal plans."
+msgstr "Beinhaltet alle im jeweiligen Jahr aktiven Zuflüsse: Gehälter (bis zu deren Enddatum/Rente), Netto-Rentenauszahlungen ab Auszahlungsbeginn, Mieteinnahmen aus Immobilien sowie Entnahmepläne."
+
+msgid "Projected Net Pension (Green Area)"
+msgstr "Prognostizierte Netto-Rente (Grüne Fläche)"
+
+msgid "Monthly Expenses (Orange Dashed)"
+msgstr "Monatliche Ausgaben (Orange gestrichelt)"
+
+msgid "Projects ongoing living expenses into the future considering inflation, while automatically removing expired contracts and paid-off loans."
+msgstr "Schreibt laufende Lebenshaltungskosten unter Berücksichtigung der Inflation in die Zukunft fort, wobei befristete Verträge und abbezahlte Kredite automatisch entfallen."
+
+msgid "Due Components (<= 5 Yrs)"
+msgstr "Fällige Komponenten (<= 5 Jahre)"
+
+msgid "No urgent components due."
+msgstr "Keine dringenden Komponenten fällig."
+
+msgid "Coverage Details"
+msgstr "Deckungsdetails"
+
+msgid "Saved Reserves"
+msgstr "Angesparte Rücklagen"
+
+msgid "Demand 5 Years"
+msgstr "Bedarf 5 Jahre"
+
+msgid "Deductions by Property"
+msgstr "Abzüge nach Objekt"
+
+msgid "Tax Result by Property"
+msgstr "Steuerergebnis nach Objekt"
+
+msgid "Tax Estimation Basis"
+msgstr "Steuerberechnungsgrundlage"
+
+msgid "Property"
+msgstr "Objekt"

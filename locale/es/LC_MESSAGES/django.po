@@ -2548,3 +2548,30 @@ msgstr "Plan de Amortización"
 
 msgid "Refinancing Stress Test"
 msgstr "Prueba de Estrés de Refinanciación"
+
+msgid "Due Components (<= 5 Yrs)"
+msgstr "Componentes Vencidos (<= 5 Años)"
+
+msgid "No urgent components due."
+msgstr "No hay componentes urgentes pendientes."
+
+msgid "Coverage Details"
+msgstr "Detalles de Cobertura"
+
+msgid "Saved Reserves"
+msgstr "Reservas Guardadas"
+
+msgid "Demand 5 Years"
+msgstr "Demanda 5 Años"
+
+msgid "Deductions by Property"
+msgstr "Deducciones por Propiedad"
+
+msgid "Tax Result by Property"
+msgstr "Resultado Fiscal por Propiedad"
+
+msgid "Tax Estimation Basis"
+msgstr "Base de Estimación Fiscal"
+
+msgid "Property"
+msgstr "Propiedad"

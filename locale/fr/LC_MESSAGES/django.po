@@ -2568,3 +2568,30 @@ msgstr "Tableau d'Amortissement"
 
 msgid "Refinancing Stress Test"
 msgstr "Test de Résistance au Refinancement"
+
+msgid "Due Components (<= 5 Yrs)"
+msgstr "Composants Échus (<= 5 Ans)"
+
+msgid "No urgent components due."
+msgstr "Aucun composant urgent à traiter."
+
+msgid "Coverage Details"
+msgstr "Détails de Couverture"
+
+msgid "Saved Reserves"
+msgstr "Réserves Constituées"
+
+msgid "Demand 5 Years"
+msgstr "Besoin 5 Ans"
+
+msgid "Deductions by Property"
+msgstr "Déductions par Bien"
+
+msgid "Tax Result by Property"
+msgstr "Résultat Fiscal par Bien"
+
+msgid "Tax Estimation Basis"
+msgstr "Base d'Estimation Fiscale"
+
+msgid "Property"
+msgstr "Bien Immobilier"

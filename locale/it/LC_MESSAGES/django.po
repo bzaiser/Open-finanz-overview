@@ -2554,3 +2554,30 @@ msgstr "Piano di Ammortamento"
 
 msgid "Refinancing Stress Test"
 msgstr "Stress Test Rifinanziamento"
+
+msgid "Due Components (<= 5 Yrs)"
+msgstr "Componenti in Scadenza (<= 5 Anni)"
+
+msgid "No urgent components due."
+msgstr "Nessun componente urgente in scadenza."
+
+msgid "Coverage Details"
+msgstr "Dettagli Copertura"
+
+msgid "Saved Reserves"
+msgstr "Riserve Accumulate"
+
+msgid "Demand 5 Years"
+msgstr "Fabbisogno 5 Anni"
+
+msgid "Deductions by Property"
+msgstr "Deduzioni per Immobile"
+
+msgid "Tax Result by Property"
+msgstr "Risultato Fiscale per Immobile"
+
+msgid "Tax Estimation Basis"
+msgstr "Base di Stima Fiscale"
+
+msgid "Property"
+msgstr "Immobile"
