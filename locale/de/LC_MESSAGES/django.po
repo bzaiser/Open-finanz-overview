@@ -4321,3 +4321,6 @@ msgstr "Steuerberechnungsgrundlage:"
 
 msgid "Property"
 msgstr "Objekt"
+
+msgid "Payment Calendar Breakdown"
+msgstr "Aufschlüsselung Zahlungskalender"
