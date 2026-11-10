@@ -3595,7 +3595,7 @@ def real_estate_save(request, pk=None):
         else:
             messages.error(request, f"{_('Error saving')}: {form.errors.as_text()}")
             
-    return redirect('finance:real_estate_loans')
+    return redirect(f"{reverse('finance:real_estate_loans')}?tab=properties")
 
 
 @login_required
@@ -3604,7 +3604,7 @@ def real_estate_delete(request, pk):
     name = obj.name
     obj.delete()
     messages.success(request, f"{_('Real estate')} '{name}' {_('was deleted.')}")
-    return redirect('finance:real_estate_loans')
+    return redirect(f"{reverse('finance:real_estate_loans')}?tab=properties")
 
 
 @login_required
@@ -3622,7 +3622,7 @@ def loan_save(request, pk=None):
         else:
             messages.error(request, f"{_('Error saving')}: {form.errors.as_text()}")
             
-    return redirect('finance:real_estate_loans')
+    return redirect(f"{reverse('finance:real_estate_loans')}?tab=loans")
 
 
 @login_required
@@ -3631,7 +3631,7 @@ def loan_delete(request, pk):
     name = obj.name
     obj.delete()
     messages.success(request, f"{_('Loan')} '{name}' {_('was deleted.')}")
-    return redirect('finance:real_estate_loans')
+    return redirect(f"{reverse('finance:real_estate_loans')}?tab=loans")
 
 
 @login_required
@@ -3645,7 +3645,7 @@ def loan_extra_repayment_save(request):
         else:
             messages.error(request, f"{_('Error saving')}: {form.errors.as_text()}")
             
-    return redirect('finance:real_estate_loans')
+    return redirect(f"{reverse('finance:real_estate_loans')}?tab=loans")
 
 
 @login_required
@@ -3723,7 +3723,7 @@ def property_component_save(request, pk=None):
         else:
             messages.error(request, f"{_('Error saving')}: {form.errors.as_text()}")
             
-    return redirect('finance:real_estate_loans')
+    return redirect(f"{reverse('finance:real_estate_loans')}?tab=renovation")
 
 
 @login_required
@@ -3732,7 +3732,7 @@ def property_component_delete(request, pk):
     name = comp.name
     comp.delete()
     messages.success(request, f"{_('Property component')} '{name}' {_('was deleted.')}")
-    return redirect('finance:real_estate_loans')
+    return redirect(f"{reverse('finance:real_estate_loans')}?tab=renovation")
 
 
 @login_required
@@ -3746,7 +3746,7 @@ def property_document_upload(request):
         else:
             messages.error(request, f"{_('Error uploading document')}: {form.errors.as_text()}")
             
-    return redirect('finance:real_estate_loans')
+    return redirect(f"{reverse('finance:real_estate_loans')}?tab=tax-docs")
 
 
 @login_required
@@ -3758,4 +3758,4 @@ def property_document_delete(request, pk):
         doc.file.delete(save=False)
     doc.delete()
     messages.success(request, f"{_('Document')} '{title}' {_('was deleted.')}")
-    return redirect('finance:real_estate_loans')
+    return redirect(f"{reverse('finance:real_estate_loans')}?tab=tax-docs")

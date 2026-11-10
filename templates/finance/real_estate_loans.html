@@ -2619,6 +2619,37 @@ function realEstateLoansApp() {
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Handle tab activation from URL param (?tab=tax-docs) or hash (#tax-docs-pane)
+    const urlParams = new URLSearchParams(window.location.search);
+    const tabParam = urlParams.get('tab');
+    const hash = window.location.hash;
+
+    let targetTabBtn = null;
+    if (tabParam) {
+        targetTabBtn = document.getElementById(tabParam + '-tab') || document.querySelector(`[data-bs-target="#${tabParam}-pane"]`);
+    } else if (hash) {
+        targetTabBtn = document.querySelector(`[data-bs-target="${hash}"]`);
+    }
+
+    if (targetTabBtn) {
+        const tabTrigger = new bootstrap.Tab(targetTabBtn);
+        tabTrigger.show();
+    }
+
+    // Keep active tab in URL query param when switching tabs
+    const tabButtons = document.querySelectorAll('#immoTab button[data-bs-toggle="pill"]');
+    tabButtons.forEach(btn => {
+        btn.addEventListener('shown.bs.tab', function(e) {
+            const targetId = e.target.getAttribute('data-bs-target');
+            if (targetId) {
+                const paneId = targetId.replace('#', '').replace('-pane', '');
+                const newUrl = new URL(window.location);
+                newUrl.searchParams.set('tab', paneId);
+                window.history.replaceState({}, '', newUrl);
+            }
+        });
+    });
+
     var calendarTab = document.getElementById('calendar-tab');
     var chartInstance = null;
 
