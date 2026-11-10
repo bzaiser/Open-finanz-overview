@@ -1,4 +1,4 @@
-﻿from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 from django.db import models
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse
@@ -3172,7 +3172,7 @@ def pension_plan_view(request):
 
         # Dynamic monthly expenses and total income according to active contracts/loans/costs in year y
         exp_val = calculate_expenses_for_year(y)
-        inc_val, _ = calculate_income_for_year(y)
+        inc_val, _details = calculate_income_for_year(y)
 
         # Inflation adjusted target monthly payout
         if y <= current_year:
