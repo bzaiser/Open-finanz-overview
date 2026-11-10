@@ -591,118 +591,175 @@
             <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden" id="loansTable" style="background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color);">
                 <div class="card-header border-0 d-flex justify-content-between align-items-center">
                     <span class="fw-bold"><i class="bi bi-bank me-2 opacity-75"></i>{% trans "Active Loans & Debts" %}</span>
+                    <span class="badge rounded-pill bg-white bg-opacity-25 text-white" x-text="filteredLoans.length + ' / ' + loans.length"></span>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0 real-estate-table">
                             <thead>
                                 <tr>
-                                    <th class="py-3 px-3">{% trans "Loan / Bank" %}</th>
-                                    <th class="py-3 px-3">{% trans "Type & Assignment" %}</th>
-                                    <th class="py-3 px-3">{% trans "Interest & Repayment" %}</th>
-                                    <th class="py-3 px-3">{% trans "Monthly Installment" %}</th>
-                                    <th class="py-3 px-3 text-end">{% trans "Current Balance" %}</th>
-                                    <th class="py-3 px-3">{% trans "Interest Lock" %}</th>
+                                    <th class="py-3 px-3 cursor-pointer user-select-none" @click="sortLoans('name')" style="cursor: pointer;">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <span>{% trans "Loan / Bank" %}</span>
+                                            <i class="bi" :class="loanSortCol === 'name' ? (loanSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                        </div>
+                                    </th>
+                                    <th class="py-3 px-3 cursor-pointer user-select-none" @click="sortLoans('real_estate_name')" style="cursor: pointer;">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <span>{% trans "Type & Assignment" %}</span>
+                                            <i class="bi" :class="loanSortCol === 'real_estate_name' ? (loanSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                        </div>
+                                    </th>
+                                    <th class="py-3 px-3 cursor-pointer user-select-none" @click="sortLoans('interest_rate')" style="cursor: pointer;">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <span>{% trans "Interest & Repayment" %}</span>
+                                            <i class="bi" :class="loanSortCol === 'interest_rate' ? (loanSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                        </div>
+                                    </th>
+                                    <th class="py-3 px-3 cursor-pointer user-select-none" @click="sortLoans('monthly_installment')" style="cursor: pointer;">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <span>{% trans "Monthly Installment" %}</span>
+                                            <i class="bi" :class="loanSortCol === 'monthly_installment' ? (loanSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                        </div>
+                                    </th>
+                                    <th class="py-3 px-3 text-end cursor-pointer user-select-none" @click="sortLoans('current_balance')" style="cursor: pointer;">
+                                        <div class="d-flex align-items-center justify-content-end">
+                                            <span class="me-2">{% trans "Current Balance" %}</span>
+                                            <i class="bi" :class="loanSortCol === 'current_balance' ? (loanSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                        </div>
+                                    </th>
+                                    <th class="py-3 px-3 cursor-pointer user-select-none" @click="sortLoans('interest_lock_end')" style="cursor: pointer;">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <span>{% trans "Interest Lock" %}</span>
+                                            <i class="bi" :class="loanSortCol === 'interest_lock_end' ? (loanSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                        </div>
+                                    </th>
                                     <th class="py-3 px-3 text-end" style="width: 1%;">{% trans "Actions" %}</th>
+                                </tr>
+                                <!-- Inline Filter Row (Dashboard Style) -->
+                                <tr style="background-color: var(--app-table-filter-bg) !important;">
+                                    <td class="p-1 px-3 border-0">
+                                        <input type="text" x-model="loanFilters.name" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body" style="font-size: 0.75rem;" placeholder="{% trans 'Filter Name/Bank...' %}">
+                                    </td>
+                                    <td class="p-1 px-3 border-0">
+                                        <input type="text" x-model="loanFilters.real_estate" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body" style="font-size: 0.75rem;" placeholder="{% trans 'Filter Objekt...' %}">
+                                    </td>
+                                    <td class="p-1 px-3 border-0" colspan="3"></td>
+                                    <td class="p-1 px-3 border-0">
+                                        <input type="text" x-model="loanFilters.lock_status" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body" style="font-size: 0.75rem;" placeholder="{% trans 'Status...' %}">
+                                    </td>
+                                    <td class="p-1 px-3 border-0"></td>
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for item in overview.all_loans %}
-                                <tr>
-                                    <td class="py-3 px-3">
-                                        <div class="fw-bold">{{ item.loan.name }}</div>
-                                        <div class="small opacity-75">
-                                            {{ item.loan.provider }}
-                                            {% if item.loan.account_number %}
-                                            | <span class="font-monospace">{% trans "Acc" %}: {{ item.loan.account_number }}</span>
-                                            {% endif %}
-                                        </div>
-                                    </td>
-                                    <td class="py-3 px-3">
-                                        <div>
-                                            <span class="badge rounded-pill bg-body-tertiary text-body border border-secondary border-opacity-20" style="font-size: 0.7rem;">
-                                                {{ item.loan.get_loan_type_display }}
-                                            </span>
-                                        </div>
-                                        <div class="mt-1">
-                                            {% if item.loan.real_estate %}
-                                            <span class="badge rounded-pill bg-primary-subtle text-primary border border-primary border-opacity-25" style="font-size: 0.7rem;">
-                                                <i class="bi bi-house me-1"></i>{{ item.loan.real_estate.name }}
-                                            </span>
-                                            {% else %}
-                                            <span class="badge rounded-pill bg-body-tertiary text-muted border border-secondary border-opacity-20 opacity-75" style="font-size: 0.7rem;">
-                                                {% trans "Unsecured Loan" %}
-                                            </span>
-                                            {% endif %}
-                                        </div>
-                                    </td>
-                                    <td class="py-3 px-3">
-                                        <div><strong>{{ item.loan.interest_rate }} %</strong> <span class="small opacity-75">{% trans "Debit Interest" %}</span></div>
-                                        <div class="small opacity-75 font-monospace">
-                                            {% if item.loan.effective_interest_rate %}Eff: {{ item.loan.effective_interest_rate }} % | {% endif %}
-                                            {% trans "Repay." %}: {{ item.details.calculated_initial_repayment }} %
-                                        </div>
-                                    </td>
-                                    <td class="py-3 px-3">
-                                        <div class="fw-bold font-monospace">{{ item.loan.monthly_installment|floatformat:2|intcomma }} €</div>
-                                        <div class="small opacity-75 font-monospace" style="font-size: 0.72rem;">
-                                            {% trans "Interest" %}: {{ item.details.current_interest_portion|floatformat:0 }} € | {% trans "Principal" %}: {{ item.details.current_principal_portion|floatformat:0 }} €
-                                        </div>
-                                    </td>
-                                    <td class="py-3 px-3 text-end">
-                                        <div class="fw-bold font-monospace text-danger fs-6">{{ item.details.current_balance|floatformat:2|intcomma }} €</div>
-                                        <div class="small opacity-75 font-monospace" style="font-size: 0.7rem;">
-                                            Start: {{ item.loan.nominal_amount|floatformat:0|intcomma }} €
-                                        </div>
-                                    </td>
-                                    <td class="py-3 px-3">
-                                        {% if item.loan.interest_lock_end %}
-                                        <div class="font-monospace small">{{ item.loan.interest_lock_end|date:"d.m.Y" }}</div>
-                                        {% if item.details.lock_status == 'expired' %}
-                                        <span class="badge rounded-pill bg-danger border border-danger border-opacity-25">{% trans "Expired" %}</span>
-                                        {% elif item.details.lock_status == 'critical' %}
-                                        <span class="badge rounded-pill bg-danger border border-danger border-opacity-25">{% trans "In" %} {{ item.details.lock_months_left }}M</span>
-                                        {% elif item.details.lock_status == 'warning' %}
-                                        <span class="badge rounded-pill bg-warning-subtle text-warning border border-warning border-opacity-25">{% trans "In" %} {{ item.details.lock_months_left }}M</span>
-                                        {% else %}
-                                        <span class="badge rounded-pill bg-success-subtle text-success border border-success border-opacity-25">{% trans "In" %} {{ item.details.lock_months_left }}M</span>
-                                        {% endif %}
-                                        {% else %}
-                                        <span class="opacity-50">-</span>
-                                        {% endif %}
-                                    </td>
-                                    <td class="py-3 px-3 text-end text-nowrap">
-                                        <div class="btn-group btn-group-sm">
-                                            <!-- Amortization Schedule Modal Trigger -->
-                                            <button type="button" class="btn btn-outline-secondary border-0 px-2 py-1" title="{% trans 'Full Amortization Schedule' %}" @click="openScheduleModal({{ item.loan.id }}, '{{ item.loan.name|escapejs }}')">
-                                                <i class="bi bi-calendar2-range"></i>
-                                            </button>
-                                            <!-- What-If Prepayment Simulator -->
-                                            <button type="button" class="btn btn-outline-secondary border-0 px-2 py-1" title="{% trans 'Simulate What-If Prepayment' %}" @click="openWhatIfModal({{ item.loan.id }}, '{{ item.loan.name|escapejs }}', {{ item.details.total_interest_projected }}, '{{ item.details.payoff_date|date:'m.Y'|default:'' }}')">
-                                                <i class="bi bi-calculator"></i>
-                                            </button>
-                                            <!-- Refinancing Stress Test Modal Trigger -->
-                                            {% if item.loan.interest_lock_end %}
-                                            <button type="button" class="btn btn-outline-warning border-0 px-2 py-1" title="{% trans 'Refinancing Stress Test' %}" @click="openStressTestModal({{ item.loan.id }}, '{{ item.loan.name|escapejs }}', {{ item.details.balance_at_lock_end }}, '{{ item.loan.interest_lock_end|date:'d.m.Y' }}', {{ item.loan.interest_rate }}, {{ item.loan.monthly_installment }})">
-                                                <i class="bi bi-graph-up-arrow"></i>
-                                            </button>
-                                            {% endif %}
-                                            <!-- Prepayment Add -->
-                                            <button type="button" class="btn btn-outline-secondary border-0 px-2 py-1" title="{% trans 'Record Prepayment' %}" @click="openExtraRepaymentForLoanModal({{ item.loan.id }})">
-                                                <i class="bi bi-cash-stack"></i>
-                                            </button>
-                                            <!-- Edit -->
-                                            <button type="button" class="btn btn-outline-secondary border-0 px-2 py-1" title="{% trans 'Edit' %}" @click="openEditLoanModal({{ item.loan.id }}, '{{ item.loan.name|escapejs }}', '{{ item.loan.provider|escapejs }}', '{{ item.loan.account_number|escapejs }}', '{{ item.loan.nominal_amount }}', '{{ item.loan.interest_rate }}', '{{ item.loan.effective_interest_rate|default:'' }}', '{{ item.loan.initial_repayment_rate|default:'' }}', '{{ item.loan.special_repayment_rate|default:'0' }}', '{{ item.loan.monthly_installment }}', '{{ item.loan.start_date|date:'Y-m-d' }}', '{{ item.loan.end_date|date:'Y-m-d'|default:'' }}', '{{ item.loan.interest_lock_end|date:'Y-m-d'|default:'' }}', '{{ item.loan.real_estate_id|default:'' }}', {{ item.loan.allows_extra_repayment|yesno:'true,false' }}, '{{ item.loan.notes|escapejs }}', '{{ item.loan.loan_type }}')">
-                                                <i class="bi bi-pencil"></i>
-                                            </button>
-                                            <!-- Delete -->
-                                            <a href="{% url 'finance:loan_delete' item.loan.id %}" class="btn btn-outline-danger border-0 px-2 py-1" title="{% trans 'Delete' %}" onclick="return confirm('{% trans "Are you sure you want to delete this loan?" %}');">
-                                                <i class="bi bi-trash"></i>
-                                            </a>
-                                        </div>
+                                <template x-for="item in filteredLoans" :key="item.id">
+                                    <tr>
+                                        <td class="py-3 px-3">
+                                            <div class="fw-bold" x-text="item.name"></div>
+                                            <div class="small opacity-75">
+                                                <span x-text="item.provider"></span>
+                                                <template x-if="item.account_number">
+                                                    <span> | <span class="font-monospace">{% trans "Acc" %}: <span x-text="item.account_number"></span></span></span>
+                                                </template>
+                                            </div>
+                                        </td>
+                                        <td class="py-3 px-3">
+                                            <div>
+                                                <span class="badge rounded-pill bg-body-tertiary text-body border border-secondary border-opacity-20" style="font-size: 0.7rem;" x-text="item.loan_type_display"></span>
+                                            </div>
+                                            <div class="mt-1">
+                                                <template x-if="item.real_estate_name">
+                                                    <span class="badge rounded-pill bg-primary-subtle text-primary border border-primary border-opacity-25" style="font-size: 0.7rem;">
+                                                        <i class="bi bi-house me-1"></i><span x-text="item.real_estate_name"></span>
+                                                    </span>
+                                                </template>
+                                                <template x-if="!item.real_estate_name">
+                                                    <span class="badge rounded-pill bg-body-tertiary text-muted border border-secondary border-opacity-20 opacity-75" style="font-size: 0.7rem;">
+                                                        {% trans "Unsecured Loan" %}
+                                                    </span>
+                                                </template>
+                                            </div>
+                                        </td>
+                                        <td class="py-3 px-3">
+                                            <div><strong><span x-text="item.interest_rate"></span> %</strong> <span class="small opacity-75">{% trans "Debit Interest" %}</span></div>
+                                            <div class="small opacity-75 font-monospace">
+                                                <template x-if="item.effective_interest_rate !== null">
+                                                    <span>Eff: <span x-text="item.effective_interest_rate"></span> % | </span>
+                                                </template>
+                                                {% trans "Repay." %}: <span x-text="item.calculated_initial_repayment"></span> %
+                                            </div>
+                                        </td>
+                                        <td class="py-3 px-3">
+                                            <div class="fw-bold font-monospace"><span x-text="formatEuro(item.monthly_installment)"></span> €</div>
+                                            <div class="small opacity-75 font-monospace" style="font-size: 0.72rem;">
+                                                {% trans "Interest" %}: <span x-text="formatEuro(item.current_interest_portion)"></span> € | {% trans "Principal" %}: <span x-text="formatEuro(item.current_principal_portion)"></span> €
+                                            </div>
+                                        </td>
+                                        <td class="py-3 px-3 text-end">
+                                            <div class="fw-bold font-monospace text-danger fs-6"><span x-text="formatEuro(item.current_balance)"></span> €</div>
+                                            <div class="small opacity-75 font-monospace" style="font-size: 0.7rem;">
+                                                Start: <span x-text="formatEuro(item.nominal_amount)"></span> €
+                                            </div>
+                                        </td>
+                                        <td class="py-3 px-3">
+                                            <template x-if="item.interest_lock_end">
+                                                <div>
+                                                    <div class="font-monospace small" x-text="item.interest_lock_end_display"></div>
+                                                    <template x-if="item.lock_status === 'expired'">
+                                                        <span class="badge rounded-pill bg-danger border border-danger border-opacity-25">{% trans "Expired" %}</span>
+                                                    </template>
+                                                    <template x-if="item.lock_status === 'critical'">
+                                                        <span class="badge rounded-pill bg-danger border border-danger border-opacity-25">{% trans "In" %} <span x-text="item.lock_months_left"></span>M</span>
+                                                    </template>
+                                                    <template x-if="item.lock_status === 'warning'">
+                                                        <span class="badge rounded-pill bg-warning-subtle text-warning border border-warning border-opacity-25">{% trans "In" %} <span x-text="item.lock_months_left"></span>M</span>
+                                                    </template>
+                                                    <template x-if="item.lock_status !== 'expired' && item.lock_status !== 'critical' && item.lock_status !== 'warning'">
+                                                        <span class="badge rounded-pill bg-success-subtle text-success border border-success border-opacity-25">{% trans "In" %} <span x-text="item.lock_months_left"></span>M</span>
+                                                    </template>
+                                                </div>
+                                            </template>
+                                            <template x-if="!item.interest_lock_end">
+                                                <span class="opacity-50">-</span>
+                                            </template>
+                                        </td>
+                                        <td class="py-3 px-3 text-end text-nowrap">
+                                            <div class="btn-group btn-group-sm">
+                                                <!-- Amortization Schedule Modal Trigger -->
+                                                <button type="button" class="btn btn-outline-secondary border-0 px-2 py-1" title="{% trans 'Full Amortization Schedule' %}" @click="openScheduleModal(item.id, item.name)">
+                                                    <i class="bi bi-calendar2-range"></i>
+                                                </button>
+                                                <!-- What-If Prepayment Simulator -->
+                                                <button type="button" class="btn btn-outline-secondary border-0 px-2 py-1" title="{% trans 'Simulate What-If Prepayment' %}" @click="openWhatIfModal(item.id, item.name, item.total_interest_projected, item.payoff_date)">
+                                                    <i class="bi bi-calculator"></i>
+                                                </button>
+                                                <!-- Refinancing Stress Test Modal Trigger -->
+                                                <template x-if="item.interest_lock_end">
+                                                    <button type="button" class="btn btn-outline-warning border-0 px-2 py-1" title="{% trans 'Refinancing Stress Test' %}" @click="openStressTestModal(item.id, item.name, item.balance_at_lock_end, item.interest_lock_end_display, item.interest_rate, item.monthly_installment)">
+                                                        <i class="bi bi-graph-up-arrow"></i>
+                                                    </button>
+                                                </template>
+                                                <!-- Prepayment Add -->
+                                                <button type="button" class="btn btn-outline-secondary border-0 px-2 py-1" title="{% trans 'Record Prepayment' %}" @click="openExtraRepaymentForLoanModal(item.id)">
+                                                    <i class="bi bi-cash-stack"></i>
+                                                </button>
+                                                <!-- Edit -->
+                                                <button type="button" class="btn btn-outline-secondary border-0 px-2 py-1" title="{% trans 'Edit' %}" @click="openEditLoanModal(item.id, item.name, item.provider, item.account_number, item.nominal_amount, item.interest_rate, item.effective_interest_rate || '', item.initial_repayment_rate || '', item.special_repayment_rate, item.monthly_installment, item.start_date, item.end_date, item.interest_lock_end, item.real_estate_id || '', item.allows_extra_repayment, item.notes, item.loan_type)">
+                                                    <i class="bi bi-pencil"></i>
+                                                </button>
+                                                <!-- Delete -->
+                                                <a :href="'/finance/loans/delete/' + item.id + '/'" class="btn btn-outline-danger border-0 px-2 py-1" title="{% trans 'Delete' %}" onclick="return confirm('{% trans "Are you sure you want to delete this loan?" %}');">
+                                                    <i class="bi bi-trash"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </template>
+                                <tr x-show="filteredLoans.length === 0">
+                                    <td colspan="7" class="text-center py-4 opacity-75">
+                                        <i class="bi bi-search me-1"></i>{% trans "No matching loans found." %}
                                     </td>
                                 </tr>
-                                {% endfor %}
                             </tbody>
                         </table>
                     </div>
@@ -867,9 +924,12 @@
             <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4" style="background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color);">
                 <div class="card-header border-0 d-flex justify-content-between align-items-center">
                     <span class="fw-bold"><i class="bi bi-clipboard-pulse me-2 opacity-75"></i>{% trans "Renovation Roadmap & Components" %}</span>
-                    <button type="button" class="btn btn-sm btn-link text-white text-decoration-none p-1" @click="openAddComponentModal()" title="{% trans 'Add Component' %}">
-                        <i class="bi bi-plus-lg fs-6"></i>
-                    </button>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge rounded-pill bg-white bg-opacity-25 text-white" x-text="filteredComponents.length + ' / ' + components.length"></span>
+                        <button type="button" class="btn btn-sm btn-link text-white text-decoration-none p-1" @click="openAddComponentModal()" title="{% trans 'Add Component' %}">
+                            <i class="bi bi-plus-lg fs-6"></i>
+                        </button>
+                    </div>
                 </div>
                 {% if not overview.components_roadmap.all_components %}
                 <div class="card-body text-center py-5 p-4">
@@ -886,71 +946,132 @@
                         <table class="table table-hover align-middle mb-0 real-estate-table">
                             <thead>
                                 <tr>
-                                    <th class="py-3 px-3">{% trans "Component / Specification" %}</th>
-                                    <th class="py-3 px-3">{% trans "Property" %}</th>
-                                    <th class="py-3 px-3">{% trans "Type" %}</th>
-                                    <th class="py-3 px-3">{% trans "Installed" %}</th>
-                                    <th class="py-3 px-3">{% trans "Lifespan" %}</th>
-                                    <th class="py-3 px-3">{% trans "Remaining" %}</th>
-                                    <th class="py-3 px-3 text-end">{% trans "Est. Cost" %}</th>
-                                    <th class="py-3 px-3">{% trans "Condition" %}</th>
+                                    <th class="py-3 px-3 cursor-pointer user-select-none" @click="sortComponents('name')" style="cursor: pointer;">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <span>{% trans "Component / Specification" %}</span>
+                                            <i class="bi" :class="compSortCol === 'name' ? (compSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                        </div>
+                                    </th>
+                                    <th class="py-3 px-3 cursor-pointer user-select-none" @click="sortComponents('real_estate_name')" style="cursor: pointer;">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <span>{% trans "Property" %}</span>
+                                            <i class="bi" :class="compSortCol === 'real_estate_name' ? (compSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                        </div>
+                                    </th>
+                                    <th class="py-3 px-3 cursor-pointer user-select-none" @click="sortComponents('component_type_display')" style="cursor: pointer;">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <span>{% trans "Type" %}</span>
+                                            <i class="bi" :class="compSortCol === 'component_type_display' ? (compSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                        </div>
+                                    </th>
+                                    <th class="py-3 px-3 cursor-pointer user-select-none" @click="sortComponents('installation_year')" style="cursor: pointer;">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <span>{% trans "Installed" %}</span>
+                                            <i class="bi" :class="compSortCol === 'installation_year' ? (compSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                        </div>
+                                    </th>
+                                    <th class="py-3 px-3 cursor-pointer user-select-none" @click="sortComponents('expected_lifespan')" style="cursor: pointer;">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <span>{% trans "Lifespan" %}</span>
+                                            <i class="bi" :class="compSortCol === 'expected_lifespan' ? (compSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                        </div>
+                                    </th>
+                                    <th class="py-3 px-3 cursor-pointer user-select-none" @click="sortComponents('remaining_years')" style="cursor: pointer;">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <span>{% trans "Remaining" %}</span>
+                                            <i class="bi" :class="compSortCol === 'remaining_years' ? (compSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                        </div>
+                                    </th>
+                                    <th class="py-3 px-3 text-end cursor-pointer user-select-none" @click="sortComponents('cost')" style="cursor: pointer;">
+                                        <div class="d-flex align-items-center justify-content-end">
+                                            <span class="me-2">{% trans "Est. Cost" %}</span>
+                                            <i class="bi" :class="compSortCol === 'cost' ? (compSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                        </div>
+                                    </th>
+                                    <th class="py-3 px-3 cursor-pointer user-select-none" @click="sortComponents('condition')" style="cursor: pointer;">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <span>{% trans "Condition" %}</span>
+                                            <i class="bi" :class="compSortCol === 'condition' ? (compSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                        </div>
+                                    </th>
                                     <th class="py-3 px-3 text-end" style="width: 1%;">{% trans "Actions" %}</th>
+                                </tr>
+                                <!-- Inline Filter Row (Dashboard Style) -->
+                                <tr style="background-color: var(--app-table-filter-bg) !important;">
+                                    <td class="p-1 px-3 border-0">
+                                        <input type="text" x-model="compFilters.name" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body" style="font-size: 0.75rem;" placeholder="{% trans 'Filter Name...' %}">
+                                    </td>
+                                    <td class="p-1 px-3 border-0">
+                                        <input type="text" x-model="compFilters.real_estate" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body" style="font-size: 0.75rem;" placeholder="{% trans 'Filter Objekt...' %}">
+                                    </td>
+                                    <td class="p-1 px-3 border-0" colspan="5"></td>
+                                    <td class="p-1 px-3 border-0">
+                                        <input type="text" x-model="compFilters.condition" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body" style="font-size: 0.75rem;" placeholder="{% trans 'Zustand...' %}">
+                                    </td>
+                                    <td class="p-1 px-3 border-0"></td>
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for c in overview.components_roadmap.all_components %}
-                                <tr>
-                                    <td class="py-3 px-3">
-                                        <div class="fw-bold">{{ c.obj.name }}</div>
-                                        {% if c.obj.notes %}
-                                        <div class="small opacity-75">{{ c.obj.notes }}</div>
-                                        {% endif %}
-                                    </td>
-                                    <td class="py-3 px-3">
-                                        <span class="badge rounded-pill bg-body-tertiary text-body border border-secondary border-opacity-20 px-2 py-1">
-                                            {{ c.obj.real_estate.name }}
-                                        </span>
-                                    </td>
-                                    <td class="py-3 px-3">{{ c.obj.get_component_type_display }}</td>
-                                    <td class="py-3 px-3 font-monospace">{{ c.obj.installation_year }}</td>
-                                    <td class="py-3 px-3 font-monospace">{{ c.obj.expected_lifespan }} {% trans "Years" %}</td>
-                                    <td class="py-3 px-3">
-                                        {% if c.remaining_years <= 0 %}
-                                        <span class="badge rounded-pill bg-danger border border-danger border-opacity-25 px-2 py-1">
-                                            <i class="bi bi-exclamation-triangle me-1"></i>{% trans "Overdue" %} ({{ c.replacement_year }})
-                                        </span>
-                                        {% elif c.remaining_years <= 5 %}
-                                        <span class="badge rounded-pill bg-warning-subtle text-warning border border-warning border-opacity-25 px-2 py-1">
-                                            {{ c.remaining_years }} {% trans "Years" %} ({{ c.replacement_year }})
-                                        </span>
-                                        {% else %}
-                                        <span class="badge rounded-pill bg-success-subtle text-success border border-success border-opacity-25 px-2 py-1">
-                                            {{ c.remaining_years }} {% trans "Years" %} ({{ c.replacement_year }})
-                                        </span>
-                                        {% endif %}
-                                    </td>
-                                    <td class="py-3 px-3 text-end font-monospace fw-bold">{{ c.cost|floatformat:2|intcomma }} €</td>
-                                    <td class="py-3 px-3">
-                                        {% if c.obj.condition == 'good' %}
-                                        <span class="badge rounded-pill bg-success-subtle text-success border border-success border-opacity-25 px-2 py-1">{% trans "Good" %}</span>
-                                        {% elif c.obj.condition == 'moderate' %}
-                                        <span class="badge rounded-pill bg-warning-subtle text-warning border border-warning border-opacity-25 px-2 py-1">{% trans "Moderate" %}</span>
-                                        {% else %}
-                                        <span class="badge rounded-pill bg-danger border border-danger border-opacity-25 px-2 py-1">{% trans "Critical" %}</span>
-                                        {% endif %}
-                                    </td>
-                                    <td class="py-3 px-3 text-end text-nowrap">
-                                        <div class="btn-group btn-group-sm">
-                                            <button type="button" class="btn btn-outline-secondary border-0 px-2 py-1" @click="openEditComponentModal({{ c.obj.id }}, {{ c.obj.real_estate.id }}, '{{ c.obj.component_type }}', '{{ c.obj.name|escapejs }}', {{ c.obj.installation_year }}, {{ c.obj.expected_lifespan }}, '{{ c.obj.estimated_cost }}', '{{ c.obj.condition }}', '{{ c.obj.notes|escapejs }}')" title="{% trans 'Edit' %}">
-                                                <i class="bi bi-pencil"></i>
-                                            </button>
-                                            <a href="{% url 'finance:property_component_delete' c.obj.id %}" class="btn btn-outline-danger border-0 px-2 py-1" onclick="return confirm('{% trans "Are you sure you want to delete this component?" %}');" title="{% trans 'Delete' %}">
-                                                <i class="bi bi-trash"></i>
-                                            </a>
-                                        </div>
+                                <template x-for="c in filteredComponents" :key="c.id">
+                                    <tr>
+                                        <td class="py-3 px-3">
+                                            <div class="fw-bold" x-text="c.name"></div>
+                                            <template x-if="c.notes">
+                                                <div class="small opacity-75" x-text="c.notes"></div>
+                                            </template>
+                                        </td>
+                                        <td class="py-3 px-3">
+                                            <span class="badge rounded-pill bg-body-tertiary text-body border border-secondary border-opacity-20 px-2 py-1" x-text="c.real_estate_name"></span>
+                                        </td>
+                                        <td class="py-3 px-3" x-text="c.component_type_display"></td>
+                                        <td class="py-3 px-3 font-monospace" x-text="c.installation_year"></td>
+                                        <td class="py-3 px-3 font-monospace"><span x-text="c.expected_lifespan"></span> {% trans "Years" %}</td>
+                                        <td class="py-3 px-3">
+                                            <template x-if="c.remaining_years <= 0">
+                                                <span class="badge rounded-pill bg-danger border border-danger border-opacity-25 px-2 py-1">
+                                                    <i class="bi bi-exclamation-triangle me-1"></i>{% trans "Overdue" %} (<span x-text="c.replacement_year"></span>)
+                                                </span>
+                                            </template>
+                                            <template x-if="c.remaining_years > 0 && c.remaining_years <= 5">
+                                                <span class="badge rounded-pill bg-warning-subtle text-warning border border-warning border-opacity-25 px-2 py-1">
+                                                    <span x-text="c.remaining_years"></span> {% trans "Years" %} (<span x-text="c.replacement_year"></span>)
+                                                </span>
+                                            </template>
+                                            <template x-if="c.remaining_years > 5">
+                                                <span class="badge rounded-pill bg-success-subtle text-success border border-success border-opacity-25 px-2 py-1">
+                                                    <span x-text="c.remaining_years"></span> {% trans "Years" %} (<span x-text="c.replacement_year"></span>)
+                                                </span>
+                                            </template>
+                                        </td>
+                                        <td class="py-3 px-3 text-end font-monospace fw-bold"><span x-text="formatEuro(c.cost)"></span> €</td>
+                                        <td class="py-3 px-3">
+                                            <template x-if="c.condition === 'good'">
+                                                <span class="badge rounded-pill bg-success-subtle text-success border border-success border-opacity-25 px-2 py-1">{% trans "Good" %}</span>
+                                            </template>
+                                            <template x-if="c.condition === 'moderate'">
+                                                <span class="badge rounded-pill bg-warning-subtle text-warning border border-warning border-opacity-25 px-2 py-1">{% trans "Moderate" %}</span>
+                                            </template>
+                                            <template x-if="c.condition !== 'good' && c.condition !== 'moderate'">
+                                                <span class="badge rounded-pill bg-danger border border-danger border-opacity-25 px-2 py-1">{% trans "Critical" %}</span>
+                                            </template>
+                                        </td>
+                                        <td class="py-3 px-3 text-end text-nowrap">
+                                            <div class="btn-group btn-group-sm">
+                                                <button type="button" class="btn btn-outline-secondary border-0 px-2 py-1" @click="openEditComponentModal(c.id, c.real_estate_id, c.component_type, c.name, c.installation_year, c.expected_lifespan, c.estimated_cost, c.condition, c.notes)" title="{% trans 'Edit' %}">
+                                                    <i class="bi bi-pencil"></i>
+                                                </button>
+                                                <a :href="'/finance/property-components/delete/' + c.id + '/'" class="btn btn-outline-danger border-0 px-2 py-1" onclick="return confirm('{% trans "Are you sure you want to delete this component?" %}');" title="{% trans 'Delete' %}">
+                                                    <i class="bi bi-trash"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </template>
+                                <tr x-show="filteredComponents.length === 0">
+                                    <td colspan="9" class="text-center py-4 opacity-75">
+                                        <i class="bi bi-search me-1"></i>{% trans "No matching components found." %}
                                     </td>
                                 </tr>
-                                {% endfor %}
                             </tbody>
                         </table>
                     </div>
@@ -1132,6 +1253,7 @@
             <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4" style="background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color);">
                 <div class="card-header border-0 d-flex justify-content-between align-items-center">
                     <span class="fw-bold"><i class="bi bi-calendar3 me-2 opacity-75"></i>{% trans "Payment Calendar Breakdown" %}</span>
+                    <span class="badge rounded-pill bg-white bg-opacity-25 text-white" x-text="filteredCalendarMonths.length + ' / ' + calendarMonths.length"></span>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -1139,105 +1261,162 @@
                             <thead>
                                 <tr>
                                     <th class="py-3 px-3" style="width: 40px;"></th>
-                                    <th class="py-3 px-3 text-start">{% trans "Month" %}</th>
+                                    <th class="py-3 px-3 text-start cursor-pointer user-select-none" @click="sortCalendar('month_num')" style="cursor: pointer;">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <span>{% trans "Month" %}</span>
+                                            <i class="bi" :class="calSortCol === 'month_num' ? (calSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                        </div>
+                                    </th>
                                     <th class="py-3 px-3 text-start">{% trans "Scheduled Events / Due Dates" %}</th>
-                                    <th class="py-3 px-3">{% trans "Rental Income" %}</th>
-                                    <th class="py-3 px-3">{% trans "Debt Service" %}</th>
-                                    <th class="py-3 px-3">{% trans "Maintenance / Reserve" %}</th>
-                                    <th class="py-3 px-3">{% trans "Ancillary Operating" %}</th>
-                                    <th class="py-3 px-3">{% trans "Total Costs" %}</th>
-                                    <th class="py-3 px-3">{% trans "Monthly Net" %}</th>
-                                    <th class="py-3 px-3 text-end pe-4">{% trans "Cumulative Net" %}</th>
+                                    <th class="py-3 px-3 cursor-pointer user-select-none" @click="sortCalendar('rental_income')" style="cursor: pointer;">
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <span class="me-1">{% trans "Rental Income" %}</span>
+                                            <i class="bi" :class="calSortCol === 'rental_income' ? (calSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                        </div>
+                                    </th>
+                                    <th class="py-3 px-3 cursor-pointer user-select-none" @click="sortCalendar('debt_service')" style="cursor: pointer;">
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <span class="me-1">{% trans "Debt Service" %}</span>
+                                            <i class="bi" :class="calSortCol === 'debt_service' ? (calSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                        </div>
+                                    </th>
+                                    <th class="py-3 px-3 cursor-pointer user-select-none" @click="sortCalendar('maintenance')" style="cursor: pointer;">
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <span class="me-1">{% trans "Maintenance / Reserve" %}</span>
+                                            <i class="bi" :class="calSortCol === 'maintenance' ? (calSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                        </div>
+                                    </th>
+                                    <th class="py-3 px-3 cursor-pointer user-select-none" @click="sortCalendar('ancillary')" style="cursor: pointer;">
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <span class="me-1">{% trans "Ancillary Operating" %}</span>
+                                            <i class="bi" :class="calSortCol === 'ancillary' ? (calSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                        </div>
+                                    </th>
+                                    <th class="py-3 px-3 cursor-pointer user-select-none" @click="sortCalendar('total_expenses')" style="cursor: pointer;">
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <span class="me-1">{% trans "Total Costs" %}</span>
+                                            <i class="bi" :class="calSortCol === 'total_expenses' ? (calSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                        </div>
+                                    </th>
+                                    <th class="py-3 px-3 cursor-pointer user-select-none" @click="sortCalendar('net_cashflow')" style="cursor: pointer;">
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <span class="me-1">{% trans "Monthly Net" %}</span>
+                                            <i class="bi" :class="calSortCol === 'net_cashflow' ? (calSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                        </div>
+                                    </th>
+                                    <th class="py-3 px-3 text-end pe-4 cursor-pointer user-select-none" @click="sortCalendar('cumulative_cashflow')" style="cursor: pointer;">
+                                        <div class="d-flex align-items-center justify-content-end">
+                                            <span class="me-1">{% trans "Cumulative Net" %}</span>
+                                            <i class="bi" :class="calSortCol === 'cumulative_cashflow' ? (calSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                        </div>
+                                    </th>
+                                </tr>
+                                <!-- Inline Filter Row (Dashboard Style) -->
+                                <tr style="background-color: var(--app-table-filter-bg) !important;">
+                                    <td class="p-1 px-3 border-0" colspan="3">
+                                        <input type="text" x-model="calFilters.search" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body" style="font-size: 0.75rem;" placeholder="{% trans 'Filter Monat oder Ereignis...' %}">
+                                    </td>
+                                    <td class="p-1 px-3 border-0" colspan="7"></td>
                                 </tr>
                             </thead>
                         <tbody>
-                            {% for m in overview.cashflow_calendar.months %}
-                            <!-- Summary Month Row -->
-                            <tr class="cursor-pointer" data-bs-toggle="collapse" data-bs-target="#cal-month-{{ m.month_num }}" aria-expanded="false" style="cursor: pointer;">
-                                <td class="text-center text-muted">
-                                    <i class="bi bi-chevron-down small transition-transform" id="icon-month-{{ m.month_num }}"></i>
-                                </td>
-                                <td class="text-start fw-bold">
-                                    {{ m.month_name }}
-                                    <span class="badge bg-secondary bg-opacity-25 text-body rounded-pill ms-1 small" style="font-size: 0.7rem;">
-                                        {{ m.total_items_count }} {% trans "items" %}
-                                    </span>
-                                </td>
-                                <td class="text-start">
-                                    {% for ev in m.events %}
-                                    <span class="badge {{ ev.badge_class }} rounded-pill px-2 py-1 me-1 mb-1 small text-nowrap">
-                                        <i class="bi {{ ev.icon }} me-1"></i>{{ ev.title }}
-                                    </span>
-                                    {% empty %}
-                                    <span class="small opacity-50">{% trans "Regular flow" %}</span>
-                                    {% endfor %}
-                                </td>
-                                <td class="font-monospace text-success">+{{ m.rental_income|floatformat:2|intcomma }} €</td>
-                                <td class="font-monospace text-danger">-{{ m.debt_service|floatformat:2|intcomma }} €</td>
-                                <td class="font-monospace text-warning">-{{ m.maintenance|floatformat:2|intcomma }} €</td>
-                                <td class="font-monospace text-secondary">-{{ m.ancillary|floatformat:2|intcomma }} €</td>
-                                <td class="font-monospace text-danger fw-semibold">-{{ m.total_expenses|floatformat:2|intcomma }} €</td>
-                                <td class="font-monospace fw-bold {% if m.net_cashflow >= 0 %}text-success{% else %}text-danger{% endif %}">
-                                    {% if m.net_cashflow >= 0 %}+{% endif %}{{ m.net_cashflow|floatformat:2|intcomma }} €
-                                </td>
-                                <td class="text-end pe-4 font-monospace fw-bold {% if m.cumulative_cashflow >= 0 %}text-success{% else %}text-danger{% endif %}">
-                                    {% if m.cumulative_cashflow >= 0 %}+{% endif %}{{ m.cumulative_cashflow|floatformat:2|intcomma }} €
-                                </td>
-                            </tr>
-                            <!-- Collapsible Detailed Breakdown Row -->
-                            <tr class="collapse p-0" id="cal-month-{{ m.month_num }}">
-                                <td colspan="10" class="p-0 border-0">
-                                    <div class="px-4 py-3 bg-light bg-opacity-50 border-top border-bottom">
-                                        <div class="row g-3">
-                                            <!-- Inflow Items -->
-                                            <div class="col-12 col-md-5">
-                                                <h6 class="fw-bold text-success mb-2 small text-uppercase d-flex align-items-center gap-1">
-                                                    <i class="bi bi-box-arrow-in-down-right"></i> {% trans "Inflow Details" %} ({{ m.rental_income|floatformat:2|intcomma }} €)
-                                                </h6>
-                                                {% if m.items_inflow %}
-                                                <div class="list-group list-group-flush rounded-3 shadow-sm border">
-                                                    {% for item in m.items_inflow %}
-                                                    <div class="list-group-item d-flex justify-content-between align-items-center py-2 px-3 small" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
-                                                        <div>
-                                                            <div class="fw-semibold">{{ item.title }}</div>
-                                                            <span class="badge bg-secondary bg-opacity-25 text-body rounded-pill" style="font-size: 0.65rem;">{{ item.property_name }}</span>
-                                                        </div>
-                                                        <span class="font-monospace text-success fw-bold text-nowrap ms-2">+{{ item.amount|floatformat:2|intcomma }} €</span>
+                            <template x-for="m in filteredCalendarMonths" :key="m.month_num">
+                                <tbody class="border-0">
+                                    <!-- Summary Month Row -->
+                                    <tr class="cursor-pointer" data-bs-toggle="collapse" :data-bs-target="'#cal-month-' + m.month_num" aria-expanded="false" style="cursor: pointer;">
+                                        <td class="text-center text-muted">
+                                            <i class="bi bi-chevron-down small transition-transform" :id="'icon-month-' + m.month_num"></i>
+                                        </td>
+                                        <td class="text-start fw-bold">
+                                            <span x-text="m.month_name"></span>
+                                            <span class="badge bg-secondary bg-opacity-25 text-body rounded-pill ms-1 small" style="font-size: 0.7rem;">
+                                                <span x-text="m.total_items_count"></span> {% trans "items" %}
+                                            </span>
+                                        </td>
+                                        <td class="text-start">
+                                            <template x-for="ev in m.events" :key="ev.title">
+                                                <span class="badge rounded-pill px-2 py-1 me-1 mb-1 small text-nowrap" :class="ev.badge_class">
+                                                    <i class="bi me-1" :class="ev.icon"></i><span x-text="ev.title"></span>
+                                                </span>
+                                            </template>
+                                            <template x-if="!m.events || m.events.length === 0">
+                                                <span class="small opacity-50">{% trans "Regular flow" %}</span>
+                                            </template>
+                                        </td>
+                                        <td class="font-monospace text-success">+<span x-text="formatEuro(m.rental_income)"></span> €</td>
+                                        <td class="font-monospace text-danger">-<span x-text="formatEuro(m.debt_service)"></span> €</td>
+                                        <td class="font-monospace text-warning">-<span x-text="formatEuro(m.maintenance)"></span> €</td>
+                                        <td class="font-monospace text-secondary">-<span x-text="formatEuro(m.ancillary)"></span> €</td>
+                                        <td class="font-monospace text-danger fw-semibold">-<span x-text="formatEuro(m.total_expenses)"></span> €</td>
+                                        <td class="font-monospace fw-bold" :class="m.net_cashflow >= 0 ? 'text-success' : 'text-danger'">
+                                            <span x-text="(m.net_cashflow >= 0 ? '+' : '') + formatEuro(m.net_cashflow) + ' €'"></span>
+                                        </td>
+                                        <td class="text-end pe-4 font-monospace fw-bold" :class="m.cumulative_cashflow >= 0 ? 'text-success' : 'text-danger'">
+                                            <span x-text="(m.cumulative_cashflow >= 0 ? '+' : '') + formatEuro(m.cumulative_cashflow) + ' €'"></span>
+                                        </td>
+                                    </tr>
+                                    <!-- Collapsible Detailed Breakdown Row -->
+                                    <tr class="collapse p-0" :id="'cal-month-' + m.month_num">
+                                        <td colspan="10" class="p-0 border-0">
+                                            <div class="px-4 py-3 bg-light bg-opacity-50 border-top border-bottom">
+                                                <div class="row g-3">
+                                                    <!-- Inflow Items -->
+                                                    <div class="col-12 col-md-5">
+                                                        <h6 class="fw-bold text-success mb-2 small text-uppercase d-flex align-items-center gap-1">
+                                                            <i class="bi bi-box-arrow-in-down-right"></i> {% trans "Inflow Details" %} (+<span x-text="formatEuro(m.rental_income)"></span> €)
+                                                        </h6>
+                                                        <template x-if="m.items_inflow && m.items_inflow.length > 0">
+                                                            <div class="list-group list-group-flush rounded-3 shadow-sm border">
+                                                                <template x-for="item in m.items_inflow" :key="item.title + item.property_name">
+                                                                    <div class="list-group-item d-flex justify-content-between align-items-center py-2 px-3 small" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+                                                                        <div>
+                                                                            <div class="fw-semibold" x-text="item.title"></div>
+                                                                            <span class="badge bg-secondary bg-opacity-25 text-body rounded-pill" style="font-size: 0.65rem;" x-text="item.property_name"></span>
+                                                                        </div>
+                                                                        <span class="font-monospace text-success fw-bold text-nowrap ms-2">+<span x-text="formatEuro(item.amount)"></span> €</span>
+                                                                    </div>
+                                                                </template>
+                                                            </div>
+                                                        </template>
+                                                        <template x-if="!m.items_inflow || m.items_inflow.length === 0">
+                                                            <div class="text-muted small py-2">{% trans "No rental inflows in this month." %}</div>
+                                                        </template>
                                                     </div>
-                                                    {% endfor %}
-                                                </div>
-                                                {% else %}
-                                                <div class="text-muted small py-2">{% trans "No rental inflows in this month." %}</div>
-                                                {% endif %}
-                                            </div>
 
-                                            <!-- Outflow Items -->
-                                            <div class="col-12 col-md-7">
-                                                <h6 class="fw-bold text-danger mb-2 small text-uppercase d-flex align-items-center gap-1">
-                                                    <i class="bi bi-box-arrow-up-right"></i> {% trans "Outflow Details" %} (-{{ m.total_expenses|floatformat:2|intcomma }} €)
-                                                </h6>
-                                                {% if m.items_outflow %}
-                                                <div class="list-group list-group-flush rounded-3 shadow-sm border">
-                                                    {% for item in m.items_outflow %}
-                                                    <div class="list-group-item d-flex justify-content-between align-items-center py-2 px-3 small" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
-                                                        <div>
-                                                            <div class="fw-semibold">{{ item.title }}</div>
-                                                            <span class="badge bg-secondary bg-opacity-25 text-body rounded-pill me-1" style="font-size: 0.65rem;">{{ item.property_name }}</span>
-                                                            <span class="badge bg-info bg-opacity-10 text-info-emphasis rounded-pill" style="font-size: 0.65rem;">{{ item.category }}</span>
-                                                        </div>
-                                                        <span class="font-monospace text-danger fw-bold text-nowrap ms-2">-{{ item.amount|floatformat:2|intcomma }} €</span>
+                                                    <!-- Outflow Items -->
+                                                    <div class="col-12 col-md-7">
+                                                        <h6 class="fw-bold text-danger mb-2 small text-uppercase d-flex align-items-center gap-1">
+                                                            <i class="bi bi-box-arrow-up-right"></i> {% trans "Outflow Details" %} (-<span x-text="formatEuro(m.total_expenses)"></span> €)
+                                                        </h6>
+                                                        <template x-if="m.items_outflow && m.items_outflow.length > 0">
+                                                            <div class="list-group list-group-flush rounded-3 shadow-sm border">
+                                                                <template x-for="item in m.items_outflow" :key="item.title + item.property_name + item.category">
+                                                                    <div class="list-group-item d-flex justify-content-between align-items-center py-2 px-3 small" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+                                                                        <div>
+                                                                            <div class="fw-semibold" x-text="item.title"></div>
+                                                                            <span class="badge bg-secondary bg-opacity-25 text-body rounded-pill me-1" style="font-size: 0.65rem;" x-text="item.property_name"></span>
+                                                                            <span class="badge bg-info bg-opacity-10 text-info-emphasis rounded-pill" style="font-size: 0.65rem;" x-text="item.category"></span>
+                                                                        </div>
+                                                                        <span class="font-monospace text-danger fw-bold text-nowrap ms-2">-<span x-text="formatEuro(item.amount)"></span> €</span>
+                                                                    </div>
+                                                                </template>
+                                                            </div>
+                                                        </template>
+                                                        <template x-if="!m.items_outflow || m.items_outflow.length === 0">
+                                                            <div class="text-muted small py-2">{% trans "No outflows recorded." %}</div>
+                                                        </template>
                                                     </div>
-                                                    {% endfor %}
                                                 </div>
-                                                {% else %}
-                                                <div class="text-muted small py-2">{% trans "No outflows recorded." %}</div>
-                                                {% endif %}
                                             </div>
-                                        </div>
-                                    </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </template>
+                            <tr x-show="filteredCalendarMonths.length === 0">
+                                <td colspan="10" class="text-center py-4 opacity-75">
+                                    <i class="bi bi-search me-1"></i>{% trans "No matching records found." %}
                                 </td>
                             </tr>
-                            {% endfor %}
                         </tbody>
                         <tfoot class="fw-bold" style="background-color: var(--app-table-header-bg) !important; color: var(--app-table-header-text) !important;">
                             <tr>
@@ -1435,43 +1614,92 @@
             <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-5" style="background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color);">
                 <div class="card-header border-0 d-flex justify-content-between align-items-center">
                     <span class="fw-bold"><i class="bi bi-receipt me-2 opacity-75"></i>{% trans "Tax Results & Deductions per Property (Anlage V)" %}</span>
+                    <span class="badge rounded-pill bg-white bg-opacity-25 text-white" x-text="filteredTaxProperties.length + ' / ' + taxProperties.length"></span>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0 text-center real-estate-table">
                             <thead>
                                 <tr>
-                                    <th class="py-3 px-3 text-start">{% trans "Property" %}</th>
+                                    <th class="py-3 px-3 text-start cursor-pointer user-select-none" @click="sortTax('name')" style="cursor: pointer;">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <span>{% trans "Property" %}</span>
+                                            <i class="bi" :class="taxSortCol === 'name' ? (taxSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                        </div>
+                                    </th>
                                     <th class="py-3 px-3">{% trans "Type" %}</th>
-                                    <th class="py-3 px-3">{% trans "Gross Rent / Yr" %}</th>
-                                    <th class="py-3 px-3">{% trans "Building AfA" %}</th>
-                                    <th class="py-3 px-3">{% trans "Mortgage Interest" %}</th>
-                                    <th class="py-3 px-3">{% trans "Operating & Invoices" %}</th>
-                                    <th class="py-3 px-3">{% trans "Total Deductions" %}</th>
-                                    <th class="py-3 px-3 text-end pe-4">{% trans "Taxable Result (V+V)" %}</th>
+                                    <th class="py-3 px-3 cursor-pointer user-select-none" @click="sortTax('annual_rental_income')" style="cursor: pointer;">
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <span class="me-1">{% trans "Gross Rent / Yr" %}</span>
+                                            <i class="bi" :class="taxSortCol === 'annual_rental_income' ? (taxSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                        </div>
+                                    </th>
+                                    <th class="py-3 px-3 cursor-pointer user-select-none" @click="sortTax('annual_afa')" style="cursor: pointer;">
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <span class="me-1">{% trans "Building AfA" %}</span>
+                                            <i class="bi" :class="taxSortCol === 'annual_afa' ? (taxSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                        </div>
+                                    </th>
+                                    <th class="py-3 px-3 cursor-pointer user-select-none" @click="sortTax('annual_interest')" style="cursor: pointer;">
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <span class="me-1">{% trans "Mortgage Interest" %}</span>
+                                            <i class="bi" :class="taxSortCol === 'annual_interest' ? (taxSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                        </div>
+                                    </th>
+                                    <th class="py-3 px-3 cursor-pointer user-select-none" @click="sortTax('operating_costs')" style="cursor: pointer;">
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <span class="me-1">{% trans "Operating & Invoices" %}</span>
+                                            <i class="bi" :class="taxSortCol === 'operating_costs' ? (taxSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                        </div>
+                                    </th>
+                                    <th class="py-3 px-3 cursor-pointer user-select-none" @click="sortTax('total_werbungskosten')" style="cursor: pointer;">
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <span class="me-1">{% trans "Total Deductions" %}</span>
+                                            <i class="bi" :class="taxSortCol === 'total_werbungskosten' ? (taxSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                        </div>
+                                    </th>
+                                    <th class="py-3 px-3 text-end pe-4 cursor-pointer user-select-none" @click="sortTax('taxable_result')" style="cursor: pointer;">
+                                        <div class="d-flex align-items-center justify-content-end">
+                                            <span class="me-1">{% trans "Taxable Result (V+V)" %}</span>
+                                            <i class="bi" :class="taxSortCol === 'taxable_result' ? (taxSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                        </div>
+                                    </th>
+                                </tr>
+                                <!-- Inline Filter Row (Dashboard Style) -->
+                                <tr style="background-color: var(--app-table-filter-bg) !important;">
+                                    <td class="p-1 px-3 border-0">
+                                        <input type="text" x-model="taxFilters.search" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body" style="font-size: 0.75rem;" placeholder="{% trans 'Filter Objekt...' %}">
+                                    </td>
+                                    <td class="p-1 px-3 border-0" colspan="7"></td>
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for p in overview.properties %}
-                                <tr>
-                                    <td class="py-3 px-3 text-start fw-bold">{{ p.real_estate.name }}</td>
-                                    <td class="py-3 px-3">
-                                        {% if p.tax_metrics.is_rental %}
-                                        <span class="badge rounded-pill bg-primary-subtle text-primary border border-primary border-opacity-25 px-2 py-1">{% trans "Rented (V+V)" %}</span>
-                                        {% else %}
-                                        <span class="badge rounded-pill bg-body-tertiary text-body border border-secondary border-opacity-20 px-2 py-1">{% trans "Owner-Occupied" %}</span>
-                                        {% endif %}
-                                    </td>
-                                    <td class="py-3 px-3 font-monospace text-success">+{{ p.tax_metrics.annual_rental_income|floatformat:2|intcomma }} €</td>
-                                    <td class="py-3 px-3 font-monospace text-danger">-{{ p.tax_metrics.annual_afa|floatformat:2|intcomma }} €</td>
-                                    <td class="py-3 px-3 font-monospace text-danger">-{{ p.tax_metrics.annual_interest|floatformat:2|intcomma }} €</td>
-                                    <td class="py-3 px-3 font-monospace text-warning">-{{ p.tax_metrics.annual_regular_costs|add:p.tax_metrics.annual_invoice_costs|floatformat:2|intcomma }} €</td>
-                                    <td class="py-3 px-3 font-monospace text-danger fw-semibold">-{{ p.tax_metrics.total_werbungskosten|floatformat:2|intcomma }} €</td>
-                                    <td class="py-3 px-3 text-end pe-4 font-monospace fw-bold {% if p.tax_metrics.taxable_result >= 0 %}text-danger{% else %}text-success{% endif %}">
-                                        {% if p.tax_metrics.taxable_result >= 0 %}+{% endif %}{{ p.tax_metrics.taxable_result|floatformat:2|intcomma }} €
+                                <template x-for="p in filteredTaxProperties" :key="p.id">
+                                    <tr>
+                                        <td class="py-3 px-3 text-start fw-bold" x-text="p.name"></td>
+                                        <td class="py-3 px-3">
+                                            <template x-if="p.is_rental">
+                                                <span class="badge rounded-pill bg-primary-subtle text-primary border border-primary border-opacity-25 px-2 py-1">{% trans "Rented (V+V)" %}</span>
+                                            </template>
+                                            <template x-if="!p.is_rental">
+                                                <span class="badge rounded-pill bg-body-tertiary text-body border border-secondary border-opacity-20 px-2 py-1">{% trans "Owner-Occupied" %}</span>
+                                            </template>
+                                        </td>
+                                        <td class="py-3 px-3 font-monospace text-success">+<span x-text="formatEuro(p.annual_rental_income)"></span> €</td>
+                                        <td class="py-3 px-3 font-monospace text-danger">-<span x-text="formatEuro(p.annual_afa)"></span> €</td>
+                                        <td class="py-3 px-3 font-monospace text-danger">-<span x-text="formatEuro(p.annual_interest)"></span> €</td>
+                                        <td class="py-3 px-3 font-monospace text-warning">-<span x-text="formatEuro(p.operating_costs)"></span> €</td>
+                                        <td class="py-3 px-3 font-monospace text-danger fw-semibold">-<span x-text="formatEuro(p.total_werbungskosten)"></span> €</td>
+                                        <td class="py-3 px-3 text-end pe-4 font-monospace fw-bold" :class="p.taxable_result >= 0 ? 'text-danger' : 'text-success'">
+                                            <span x-text="(p.taxable_result >= 0 ? '+' : '') + formatEuro(p.taxable_result) + ' €'"></span>
+                                        </td>
+                                    </tr>
+                                </template>
+                                <tr x-show="filteredTaxProperties.length === 0">
+                                    <td colspan="8" class="text-center py-4 opacity-75">
+                                        <i class="bi bi-search me-1"></i>{% trans "No matching records found." %}
                                     </td>
                                 </tr>
-                                {% endfor %}
                             </tbody>
                         </table>
                     </div>
@@ -1481,10 +1709,13 @@
             <!-- Documents Table -->
             <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4" style="background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color);">
                 <div class="card-header border-0 d-flex justify-content-between align-items-center">
-                    <span class="fw-bold"><i class="bi bi-folder-check me-2 opacity-75"></i>{% trans "Digital Document Safe" %}</span>
-                    <button type="button" class="btn btn-sm btn-link text-white text-decoration-none p-1" @click="openUploadDocumentModal()" title="{% trans 'Upload Document' %}">
-                        <i class="bi bi-upload fs-6"></i>
-                    </button>
+                    <span class="fw-bold"><i class="bi bi-folder-check me-2 opacity-75"></i>{% trans "Documents" %}</span>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge rounded-pill bg-white bg-opacity-25 text-white" x-text="filteredDocuments.length + ' / ' + documents.length"></span>
+                        <button type="button" class="btn btn-sm btn-link text-white text-decoration-none p-1" @click="openUploadDocumentModal()" title="{% trans 'Upload Document' %}">
+                            <i class="bi bi-upload fs-6"></i>
+                        </button>
+                    </div>
                 </div>
                 {% if not overview.documents_data.documents %}
                 <div class="card-body text-center py-5 p-4">
@@ -1501,57 +1732,97 @@
                         <table class="table table-hover align-middle mb-0 real-estate-table">
                             <thead>
                                 <tr>
-                                    <th class="py-3 px-3">{% trans "Title" %}</th>
-                                    <th class="py-3 px-3">{% trans "Property" %}</th>
-                                    <th class="py-3 px-3">{% trans "Category" %}</th>
-                                    <th class="py-3 px-3">{% trans "Date" %}</th>
-                                    <th class="py-3 px-3 text-end">{% trans "Amount" %}</th>
+                                    <th class="py-3 px-3 cursor-pointer user-select-none" @click="sortDocuments('title')" style="cursor: pointer;">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <span>{% trans "Title" %}</span>
+                                            <i class="bi" :class="docSortCol === 'title' ? (docSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                        </div>
+                                    </th>
+                                    <th class="py-3 px-3 cursor-pointer user-select-none" @click="sortDocuments('real_estate_name')" style="cursor: pointer;">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <span>{% trans "Property" %}</span>
+                                            <i class="bi" :class="docSortCol === 'real_estate_name' ? (docSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                        </div>
+                                    </th>
+                                    <th class="py-3 px-3 cursor-pointer user-select-none" @click="sortDocuments('category_display')" style="cursor: pointer;">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <span>{% trans "Category" %}</span>
+                                            <i class="bi" :class="docSortCol === 'category_display' ? (docSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                        </div>
+                                    </th>
+                                    <th class="py-3 px-3 cursor-pointer user-select-none" @click="sortDocuments('date')" style="cursor: pointer;">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <span>{% trans "Date" %}</span>
+                                            <i class="bi" :class="docSortCol === 'date' ? (docSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                        </div>
+                                    </th>
+                                    <th class="py-3 px-3 text-end cursor-pointer user-select-none" @click="sortDocuments('amount')" style="cursor: pointer;">
+                                        <div class="d-flex align-items-center justify-content-end">
+                                            <span class="me-2">{% trans "Amount" %}</span>
+                                            <i class="bi" :class="docSortCol === 'amount' ? (docSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                        </div>
+                                    </th>
                                     <th class="py-3 px-3">{% trans "File Size" %}</th>
                                     <th class="py-3 px-3 text-end" style="width: 1%;">{% trans "Actions" %}</th>
                                 </tr>
+                                <!-- Inline Filter Row (Dashboard Style) -->
+                                <tr style="background-color: var(--app-table-filter-bg) !important;">
+                                    <td class="p-1 px-3 border-0">
+                                        <input type="text" x-model="docFilters.title" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body" style="font-size: 0.75rem;" placeholder="{% trans 'Filter Titel...' %}">
+                                    </td>
+                                    <td class="p-1 px-3 border-0">
+                                        <input type="text" x-model="docFilters.real_estate" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body" style="font-size: 0.75rem;" placeholder="{% trans 'Filter Objekt...' %}">
+                                    </td>
+                                    <td class="p-1 px-3 border-0">
+                                        <input type="text" x-model="docFilters.category" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body" style="font-size: 0.75rem;" placeholder="{% trans 'Kategorie...' %}">
+                                    </td>
+                                    <td class="p-1 px-3 border-0" colspan="4"></td>
+                                </tr>
                             </thead>
                             <tbody>
-                                {% for doc in overview.documents_data.documents %}
-                                <tr>
-                                    <td class="py-3 px-3">
-                                        <div class="fw-bold">{{ doc.title }}</div>
-                                        {% if doc.notes %}
-                                        <div class="small opacity-75">{{ doc.notes }}</div>
-                                        {% endif %}
-                                    </td>
-                                    <td class="py-3 px-3">
-                                        <span class="badge rounded-pill bg-body-tertiary text-body border border-secondary border-opacity-20 px-2 py-1">
-                                            {{ doc.real_estate.name }}
-                                        </span>
-                                    </td>
-                                    <td class="py-3 px-3">
-                                        <span class="badge rounded-pill bg-info-subtle text-info border border-info border-opacity-25 px-2 py-1">
-                                            {{ doc.get_category_display }}
-                                        </span>
-                                    </td>
-                                    <td class="py-3 px-3 font-monospace small">{{ doc.date|date:"d.m.Y" }}</td>
-                                    <td class="py-3 px-3 text-end">
-                                        {% if doc.amount %}
-                                        <span class="font-monospace fw-semibold">{{ doc.amount|floatformat:2|intcomma }} €</span>
-                                        {% else %}
-                                        <span class="text-muted">-</span>
-                                        {% endif %}
-                                    </td>
-                                    <td class="py-3 px-3 font-monospace small opacity-75">{{ doc.file_size_display }}</td>
-                                    <td class="py-3 px-3 text-end text-nowrap">
-                                        <div class="btn-group btn-group-sm">
-                                            {% if doc.file %}
-                                            <a href="{{ doc.file.url }}" target="_blank" class="btn btn-outline-secondary border-0 px-2 py-1" title="{% trans 'Open' %}">
-                                                <i class="bi bi-box-arrow-up-right"></i>
-                                            </a>
-                                            {% endif %}
-                                            <a href="{% url 'finance:property_document_delete' doc.id %}" class="btn btn-outline-danger border-0 px-2 py-1" onclick="return confirm('{% trans "Are you sure you want to delete this document?" %}');" title="{% trans 'Delete' %}">
-                                                <i class="bi bi-trash"></i>
-                                            </a>
-                                        </div>
+                                <template x-for="doc in filteredDocuments" :key="doc.id">
+                                    <tr>
+                                        <td class="py-3 px-3">
+                                            <div class="fw-bold" x-text="doc.title"></div>
+                                            <template x-if="doc.notes">
+                                                <div class="small opacity-75" x-text="doc.notes"></div>
+                                            </template>
+                                        </td>
+                                        <td class="py-3 px-3">
+                                            <span class="badge rounded-pill bg-body-tertiary text-body border border-secondary border-opacity-20 px-2 py-1" x-text="doc.real_estate_name"></span>
+                                        </td>
+                                        <td class="py-3 px-3">
+                                            <span class="badge rounded-pill bg-info-subtle text-info border border-info border-opacity-25 px-2 py-1" x-text="doc.category_display"></span>
+                                        </td>
+                                        <td class="py-3 px-3 font-monospace small" x-text="doc.date_display"></td>
+                                        <td class="py-3 px-3 text-end">
+                                            <template x-if="doc.amount !== null">
+                                                <span class="font-monospace fw-semibold"><span x-text="formatEuro(doc.amount)"></span> €</span>
+                                            </template>
+                                            <template x-if="doc.amount === null">
+                                                <span class="text-muted">-</span>
+                                            </template>
+                                        </td>
+                                        <td class="py-3 px-3 font-monospace small opacity-75" x-text="doc.file_size_display"></td>
+                                        <td class="py-3 px-3 text-end text-nowrap">
+                                            <div class="btn-group btn-group-sm">
+                                                <template x-if="doc.file_url">
+                                                    <a :href="doc.file_url" target="_blank" class="btn btn-outline-secondary border-0 px-2 py-1" title="{% trans 'Open' %}">
+                                                        <i class="bi bi-box-arrow-up-right"></i>
+                                                    </a>
+                                                </template>
+                                                <a :href="'/finance/property-documents/delete/' + doc.id + '/'" class="btn btn-outline-danger border-0 px-2 py-1" onclick="return confirm('{% trans "Are you sure you want to delete this document?" %}');" title="{% trans 'Delete' %}">
+                                                    <i class="bi bi-trash"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </template>
+                                <tr x-show="filteredDocuments.length === 0">
+                                    <td colspan="7" class="text-center py-4 opacity-75">
+                                        <i class="bi bi-search me-1"></i>{% trans "No matching documents found." %}
                                     </td>
                                 </tr>
-                                {% endfor %}
                             </tbody>
                         </table>
                     </div>
@@ -1866,17 +2137,52 @@
                         <table class="table table-sm table-hover align-middle mb-0 font-monospace real-estate-table" style="font-size: 0.8rem;">
                             <thead class="sticky-top">
                                 <tr>
-                                    <th class="py-2 px-3">{% trans "Year" %}</th>
-                                    <th class="py-2 px-3 text-end">{% trans "Starting Balance" %}</th>
-                                    <th class="py-2 px-3 text-end">{% trans "Total Installment" %}</th>
-                                    <th class="py-2 px-3 text-end text-danger">{% trans "Interest Portion" %}</th>
-                                    <th class="py-2 px-3 text-end text-success">{% trans "Principal Portion" %}</th>
-                                    <th class="py-2 px-3 text-end text-primary">{% trans "Extra Prepayment" %}</th>
-                                    <th class="py-2 px-3 text-end">{% trans "Ending Balance" %}</th>
+                                    <th class="py-2 px-3 cursor-pointer user-select-none" @click="sortSchedule('year')" style="cursor: pointer;">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <span>{% trans "Year" %}</span>
+                                            <i class="bi" :class="scheduleSortCol === 'year' ? (scheduleSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                        </div>
+                                    </th>
+                                    <th class="py-2 px-3 text-end cursor-pointer user-select-none" @click="sortSchedule('balance_start')" style="cursor: pointer;">
+                                        <div class="d-flex align-items-center justify-content-end">
+                                            <span class="me-1">{% trans "Starting Balance" %}</span>
+                                            <i class="bi" :class="scheduleSortCol === 'balance_start' ? (scheduleSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                        </div>
+                                    </th>
+                                    <th class="py-2 px-3 text-end cursor-pointer user-select-none" @click="sortSchedule('total_installment')" style="cursor: pointer;">
+                                        <div class="d-flex align-items-center justify-content-end">
+                                            <span class="me-1">{% trans "Total Installment" %}</span>
+                                            <i class="bi" :class="scheduleSortCol === 'total_installment' ? (scheduleSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                        </div>
+                                    </th>
+                                    <th class="py-2 px-3 text-end text-danger cursor-pointer user-select-none" @click="sortSchedule('total_interest')" style="cursor: pointer;">
+                                        <div class="d-flex align-items-center justify-content-end">
+                                            <span class="me-1">{% trans "Interest Portion" %}</span>
+                                            <i class="bi" :class="scheduleSortCol === 'total_interest' ? (scheduleSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                        </div>
+                                    </th>
+                                    <th class="py-2 px-3 text-end text-success cursor-pointer user-select-none" @click="sortSchedule('total_principal')" style="cursor: pointer;">
+                                        <div class="d-flex align-items-center justify-content-end">
+                                            <span class="me-1">{% trans "Principal Portion" %}</span>
+                                            <i class="bi" :class="scheduleSortCol === 'total_principal' ? (scheduleSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                        </div>
+                                    </th>
+                                    <th class="py-2 px-3 text-end text-primary cursor-pointer user-select-none" @click="sortSchedule('total_extra')" style="cursor: pointer;">
+                                        <div class="d-flex align-items-center justify-content-end">
+                                            <span class="me-1">{% trans "Extra Prepayment" %}</span>
+                                            <i class="bi" :class="scheduleSortCol === 'total_extra' ? (scheduleSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                        </div>
+                                    </th>
+                                    <th class="py-2 px-3 text-end cursor-pointer user-select-none" @click="sortSchedule('balance_end')" style="cursor: pointer;">
+                                        <div class="d-flex align-items-center justify-content-end">
+                                            <span class="me-1">{% trans "Ending Balance" %}</span>
+                                            <i class="bi" :class="scheduleSortCol === 'balance_end' ? (scheduleSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                        </div>
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <template x-for="row in scheduleState.rows" :key="row.year">
+                                <template x-for="row in sortedScheduleRows" :key="row.year">
                                     <tr :class="{'opacity-75': !row.is_future}">
                                         <td>
                                             <span class="fw-bold" x-text="row.year"></span>
@@ -2154,14 +2460,34 @@
                         <table class="table table-sm table-hover align-middle mb-0 font-monospace real-estate-table" style="font-size: 0.85rem;">
                             <thead>
                                 <tr>
-                                    <th class="py-2 px-3">{% trans "Interest Rate (Scenario)" %}</th>
-                                    <th class="py-2 px-3 text-end">{% trans "New Monthly Rate" %}</th>
-                                    <th class="py-2 px-3 text-end">{% trans "Extra Burden / Month" %}</th>
-                                    <th class="py-2 px-3 text-end">{% trans "Extra Burden / Year" %}</th>
+                                    <th class="py-2 px-3 cursor-pointer user-select-none" @click="sortStress('code')">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <span>{% trans "Interest Rate (Scenario)" %}</span>
+                                            <i class="bi ms-1" :class="stressState.sortCol === 'code' ? (stressState.sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                        </div>
+                                    </th>
+                                    <th class="py-2 px-3 text-end cursor-pointer user-select-none" @click="sortStress('rate_installment')">
+                                        <div class="d-flex align-items-center justify-content-end">
+                                            <span>{% trans "New Monthly Rate" %}</span>
+                                            <i class="bi ms-1" :class="stressState.sortCol === 'rate_installment' ? (stressState.sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                        </div>
+                                    </th>
+                                    <th class="py-2 px-3 text-end cursor-pointer user-select-none" @click="sortStress('diff_monthly')">
+                                        <div class="d-flex align-items-center justify-content-end">
+                                            <span>{% trans "Extra Burden / Month" %}</span>
+                                            <i class="bi ms-1" :class="stressState.sortCol === 'diff_monthly' ? (stressState.sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                        </div>
+                                    </th>
+                                    <th class="py-2 px-3 text-end cursor-pointer user-select-none" @click="sortStress('diff_annual')">
+                                        <div class="d-flex align-items-center justify-content-end">
+                                            <span>{% trans "Extra Burden / Year" %}</span>
+                                            <i class="bi ms-1" :class="stressState.sortCol === 'diff_annual' ? (stressState.sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                        </div>
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <template x-for="sc in getStressScenarios()" :key="sc.code">
+                                <template x-for="sc in sortedStressScenarios" :key="sc.code">
                                     <tr>
                                         <td>
                                             <span class="fw-bold" x-text="sc.label"></span>
@@ -2313,6 +2639,248 @@ function realEstateLoansApp() {
             currentRate: 3.5,
             currentInstallment: 0,
             customRate: 4.5
+        },
+
+        // ==========================================
+        // Reactive Datasets & Search / Sort States
+        // ==========================================
+        loans: {{ loans_json|safe|default:"[]" }},
+        loanFilters: { name: '', real_estate: '', lock_status: '' },
+        loanSortCol: 'current_balance',
+        loanSortDir: 'desc',
+
+        components: {{ components_json|safe|default:"[]" }},
+        compFilters: { name: '', real_estate: '', condition: '' },
+        compSortCol: 'remaining_years',
+        compSortDir: 'asc',
+
+        calendarMonths: {{ calendar_json|safe|default:"[]" }},
+        calFilters: { search: '' },
+        calSortCol: 'month_num',
+        calSortDir: 'asc',
+
+        taxProperties: {{ tax_table_json|safe|default:"[]" }},
+        taxFilters: { search: '' },
+        taxSortCol: 'taxable_result',
+        taxSortDir: 'asc',
+
+        documents: {{ documents_json|safe|default:"[]" }},
+        docFilters: { title: '', real_estate: '', category: '' },
+        docSortCol: 'date',
+        docSortDir: 'desc',
+
+        scheduleSortCol: 'year',
+        scheduleSortDir: 'asc',
+
+        stressSortCol: 'code',
+        stressSortDir: 'asc',
+
+        // 1. Loans Filter & Sort
+        get filteredLoans() {
+            return this.loans.filter(l => {
+                const n = (l.name + ' ' + l.provider + ' ' + l.account_number).toLowerCase();
+                const fn = (this.loanFilters.name || '').toLowerCase();
+                if (fn && !n.includes(fn)) return false;
+
+                const r = (l.real_estate_name || '').toLowerCase();
+                const fr = (this.loanFilters.real_estate || '').toLowerCase();
+                if (fr && !r.includes(fr)) return false;
+
+                const s = (l.lock_status || '').toLowerCase();
+                const fs = (this.loanFilters.lock_status || '').toLowerCase();
+                if (fs && !s.includes(fs)) return false;
+
+                return true;
+            }).sort((a, b) => {
+                let va = a[this.loanSortCol];
+                let vb = b[this.loanSortCol];
+                if (typeof va === 'string') {
+                    va = va.toLowerCase();
+                    vb = (vb || '').toLowerCase();
+                    return this.loanSortDir === 'asc' ? va.localeCompare(vb) : vb.localeCompare(va);
+                }
+                va = va || 0;
+                vb = vb || 0;
+                return this.loanSortDir === 'asc' ? va - vb : vb - va;
+            });
+        },
+        sortLoans(col) {
+            if (this.loanSortCol === col) {
+                this.loanSortDir = this.loanSortDir === 'asc' ? 'desc' : 'asc';
+            } else {
+                this.loanSortCol = col;
+                this.loanSortDir = 'desc';
+            }
+        },
+
+        // 2. Components Filter & Sort
+        get filteredComponents() {
+            return this.components.filter(c => {
+                const n = (c.name + ' ' + c.notes).toLowerCase();
+                const fn = (this.compFilters.name || '').toLowerCase();
+                if (fn && !n.includes(fn)) return false;
+
+                const r = (c.real_estate_name || '').toLowerCase();
+                const fr = (this.compFilters.real_estate || '').toLowerCase();
+                if (fr && !r.includes(fr)) return false;
+
+                const cond = (c.condition || '').toLowerCase();
+                const fcond = (this.compFilters.condition || '').toLowerCase();
+                if (fcond && !cond.includes(fcond)) return false;
+
+                return true;
+            }).sort((a, b) => {
+                let va = a[this.compSortCol];
+                let vb = b[this.compSortCol];
+                if (typeof va === 'string') {
+                    va = va.toLowerCase();
+                    vb = (vb || '').toLowerCase();
+                    return this.compSortDir === 'asc' ? va.localeCompare(vb) : vb.localeCompare(va);
+                }
+                va = va !== undefined ? va : 0;
+                vb = vb !== undefined ? vb : 0;
+                return this.compSortDir === 'asc' ? va - vb : vb - va;
+            });
+        },
+        sortComponents(col) {
+            if (this.compSortCol === col) {
+                this.compSortDir = this.compSortDir === 'asc' ? 'desc' : 'asc';
+            } else {
+                this.compSortCol = col;
+                this.compSortDir = 'asc';
+            }
+        },
+
+        // 3. Calendar Filter & Sort
+        get filteredCalendarMonths() {
+            return this.calendarMonths.filter(m => {
+                const q = (this.calFilters.search || '').toLowerCase();
+                if (!q) return true;
+                const matchName = (m.month_name || '').toLowerCase().includes(q);
+                const matchEvents = (m.events || []).some(ev => (ev.title || '').toLowerCase().includes(q));
+                return matchName || matchEvents;
+            }).sort((a, b) => {
+                let va = a[this.calSortCol];
+                let vb = b[this.calSortCol];
+                if (typeof va === 'string') {
+                    va = va.toLowerCase();
+                    vb = (vb || '').toLowerCase();
+                    return this.calSortDir === 'asc' ? va.localeCompare(vb) : vb.localeCompare(va);
+                }
+                va = va || 0;
+                vb = vb || 0;
+                return this.calSortDir === 'asc' ? va - vb : vb - va;
+            });
+        },
+        sortCalendar(col) {
+            if (this.calSortCol === col) {
+                this.calSortDir = this.calSortDir === 'asc' ? 'desc' : 'asc';
+            } else {
+                this.calSortCol = col;
+                this.calSortDir = 'asc';
+            }
+        },
+
+        // 4. Tax (Anlage V) Filter & Sort
+        get filteredTaxProperties() {
+            return this.taxProperties.filter(p => {
+                const q = (this.taxFilters.search || '').toLowerCase();
+                if (!q) return true;
+                return (p.name || '').toLowerCase().includes(q);
+            }).sort((a, b) => {
+                let va = a[this.taxSortCol];
+                let vb = b[this.taxSortCol];
+                if (typeof va === 'string') {
+                    va = va.toLowerCase();
+                    vb = (vb || '').toLowerCase();
+                    return this.taxSortDir === 'asc' ? va.localeCompare(vb) : vb.localeCompare(va);
+                }
+                va = va || 0;
+                vb = vb || 0;
+                return this.taxSortDir === 'asc' ? va - vb : vb - va;
+            });
+        },
+        sortTax(col) {
+            if (this.taxSortCol === col) {
+                this.taxSortDir = this.taxSortDir === 'asc' ? 'desc' : 'asc';
+            } else {
+                this.taxSortCol = col;
+                this.taxSortDir = 'asc';
+            }
+        },
+
+        // 5. Documents Filter & Sort
+        get filteredDocuments() {
+            return this.documents.filter(d => {
+                const t = (d.title + ' ' + d.notes).toLowerCase();
+                const ft = (this.docFilters.title || '').toLowerCase();
+                if (ft && !t.includes(ft)) return false;
+
+                const r = (d.real_estate_name || '').toLowerCase();
+                const fr = (this.docFilters.real_estate || '').toLowerCase();
+                if (fr && !r.includes(fr)) return false;
+
+                const cat = (d.category || '').toLowerCase();
+                const fcat = (this.docFilters.category || '').toLowerCase();
+                if (fcat && !cat.includes(fcat)) return false;
+
+                return true;
+            }).sort((a, b) => {
+                let va = a[this.docSortCol];
+                let vb = b[this.docSortCol];
+                if (typeof va === 'string') {
+                    va = va.toLowerCase();
+                    vb = (vb || '').toLowerCase();
+                    return this.docSortDir === 'asc' ? va.localeCompare(vb) : vb.localeCompare(va);
+                }
+                va = va !== undefined && va !== null ? va : 0;
+                vb = vb !== undefined && vb !== null ? vb : 0;
+                return this.docSortDir === 'asc' ? va - vb : vb - va;
+            });
+        },
+        sortDocuments(col) {
+            if (this.docSortCol === col) {
+                this.docSortDir = this.docSortDir === 'asc' ? 'desc' : 'asc';
+            } else {
+                this.docSortCol = col;
+                this.docSortDir = 'desc';
+            }
+        },
+
+        // 6. Schedule Modal Sort
+        get sortedScheduleRows() {
+            if (!this.scheduleState.rows) return [];
+            return [...this.scheduleState.rows].sort((a, b) => {
+                let va = a[this.scheduleSortCol] || 0;
+                let vb = b[this.scheduleSortCol] || 0;
+                return this.scheduleSortDir === 'asc' ? va - vb : vb - va;
+            });
+        },
+        sortSchedule(col) {
+            if (this.scheduleSortCol === col) {
+                this.scheduleSortDir = this.scheduleSortDir === 'asc' ? 'desc' : 'asc';
+            } else {
+                this.scheduleSortCol = col;
+                this.scheduleSortDir = 'asc';
+            }
+        },
+
+        // 7. Stress Modal Sort
+        get sortedStressScenarios() {
+            const scs = this.getStressScenarios();
+            return scs.sort((a, b) => {
+                let va = a[this.stressSortCol] || 0;
+                let vb = b[this.stressSortCol] || 0;
+                return this.stressSortDir === 'asc' ? va - vb : vb - va;
+            });
+        },
+        sortStress(col) {
+            if (this.stressSortCol === col) {
+                this.stressSortDir = this.stressSortDir === 'asc' ? 'desc' : 'asc';
+            } else {
+                this.stressSortCol = col;
+                this.stressSortDir = 'asc';
+            }
         },
 
         formatEuro(val) {

@@ -3945,7 +3945,10 @@ msgid "Rented (V+V)"
 msgstr "Vermietet (V+V)"
 
 msgid "Digital Document Safe"
-msgstr "Digitaler Dokumenten-Safe"
+msgstr "Dokumente"
+
+msgid "Documents"
+msgstr "Dokumente"
 
 msgid "Securely store contracts, land register excerpts, energy certificates and invoices."
 msgstr "Verträge, Grundbuchauszüge, Energieausweise und Rechnungen sicher ablegen."

@@ -3567,9 +3567,140 @@ def real_estate_loans_view(request):
         'cumulative': overview['cashflow_calendar']['chart_cumulative'],
     })
 
+    # 1. Loans Table JSON
+    loans_table_data = []
+    for item in overview['all_loans']:
+        l = item['loan']
+        det = item['details']
+        loans_table_data.append({
+            'id': l.id,
+            'name': l.name or '',
+            'provider': l.provider or '',
+            'account_number': l.account_number or '',
+            'loan_type': l.loan_type,
+            'loan_type_display': str(l.get_loan_type_display()),
+            'real_estate_id': l.real_estate_id,
+            'real_estate_name': l.real_estate.name if l.real_estate else '',
+            'nominal_amount': float(l.nominal_amount or 0),
+            'interest_rate': float(l.interest_rate or 0),
+            'effective_interest_rate': float(l.effective_interest_rate) if l.effective_interest_rate is not None else None,
+            'initial_repayment_rate': float(l.initial_repayment_rate) if l.initial_repayment_rate is not None else None,
+            'calculated_initial_repayment': float(det.get('calculated_initial_repayment') or 0),
+            'special_repayment_rate': float(l.special_repayment_rate or 0),
+            'monthly_installment': float(l.monthly_installment or 0),
+            'current_balance': float(det.get('current_balance') or 0),
+            'current_interest_portion': float(det.get('current_interest_portion') or 0),
+            'current_principal_portion': float(det.get('current_principal_portion') or 0),
+            'interest_lock_end': l.interest_lock_end.strftime('%Y-%m-%d') if l.interest_lock_end else '',
+            'interest_lock_end_display': l.interest_lock_end.strftime('%d.%m.%Y') if l.interest_lock_end else '',
+            'lock_status': det.get('lock_status', ''),
+            'lock_months_left': det.get('lock_months_left'),
+            'total_interest_projected': float(det.get('total_interest_projected') or 0),
+            'payoff_date': det.get('payoff_date').strftime('%m.%Y') if det.get('payoff_date') else '',
+            'balance_at_lock_end': float(det.get('balance_at_lock_end') or 0),
+            'start_date': l.start_date.strftime('%Y-%m-%d') if l.start_date else '',
+            'end_date': l.end_date.strftime('%Y-%m-%d') if l.end_date else '',
+            'allows_extra_repayment': bool(l.allows_extra_repayment),
+            'notes': l.notes or '',
+        })
+
+    # 2. Components Table JSON
+    components_table_data = []
+    for c in overview['components_roadmap']['all_components']:
+        obj = c['obj']
+        components_table_data.append({
+            'id': obj.id,
+            'real_estate_id': obj.real_estate_id,
+            'real_estate_name': obj.real_estate.name if obj.real_estate else '',
+            'component_type': obj.component_type,
+            'component_type_display': str(obj.get_component_type_display()),
+            'name': obj.name or '',
+            'installation_year': int(obj.installation_year or 0),
+            'expected_lifespan': int(obj.expected_lifespan or 0),
+            'remaining_years': int(c.get('remaining_years', 0)),
+            'replacement_year': int(c.get('replacement_year', 0)),
+            'cost': float(c.get('cost') or 0),
+            'estimated_cost': str(obj.estimated_cost or ''),
+            'condition': obj.condition,
+            'condition_display': str(obj.get_condition_display()),
+            'notes': obj.notes or '',
+        })
+
+    # 3. Calendar Table JSON
+    calendar_table_data = []
+    for m in overview['cashflow_calendar']['months']:
+        calendar_table_data.append({
+            'month_num': m['month_num'],
+            'month_name': m['month_name'],
+            'total_items_count': m['total_items_count'],
+            'events': [{
+                'title': ev.get('title', ''),
+                'badge_class': ev.get('badge_class', ''),
+                'icon': ev.get('icon', '')
+            } for ev in m.get('events', [])],
+            'rental_income': float(m['rental_income']),
+            'debt_service': float(m['debt_service']),
+            'maintenance': float(m['maintenance']),
+            'ancillary': float(m['ancillary']),
+            'total_expenses': float(m['total_expenses']),
+            'net_cashflow': float(m['net_cashflow']),
+            'cumulative_cashflow': float(m['cumulative_cashflow']),
+            'items_inflow': [{
+                'title': item.get('title', ''),
+                'property_name': item.get('property_name', ''),
+                'amount': float(item.get('amount', 0))
+            } for item in m.get('items_inflow', [])],
+            'items_outflow': [{
+                'title': item.get('title', ''),
+                'property_name': item.get('property_name', ''),
+                'category': item.get('category', ''),
+                'amount': float(item.get('amount', 0))
+            } for item in m.get('items_outflow', [])],
+        })
+
+    # 4. Tax (Anlage V) Table JSON
+    tax_table_data = []
+    for p in overview['properties']:
+        re_obj = p['real_estate']
+        tax = p.get('tax_metrics', {})
+        tax_table_data.append({
+            'id': re_obj.id,
+            'name': re_obj.name,
+            'is_rental': bool(tax.get('is_rental', False)),
+            'annual_rental_income': float(tax.get('annual_rental_income', 0)),
+            'annual_afa': float(tax.get('annual_afa', 0)),
+            'annual_interest': float(tax.get('annual_interest', 0)),
+            'operating_costs': float(tax.get('annual_regular_costs', 0)) + float(tax.get('annual_invoice_costs', 0)),
+            'total_werbungskosten': float(tax.get('total_werbungskosten', 0)),
+            'taxable_result': float(tax.get('taxable_result', 0)),
+        })
+
+    # 5. Documents Table JSON
+    documents_table_data = []
+    for doc in overview['documents_data']['documents']:
+        documents_table_data.append({
+            'id': doc.id,
+            'title': doc.title or '',
+            'real_estate_id': doc.real_estate_id,
+            'real_estate_name': doc.real_estate.name if doc.real_estate else '',
+            'category': doc.category,
+            'category_display': str(doc.get_category_display()),
+            'date': doc.date.strftime('%Y-%m-%d') if doc.date else '',
+            'date_display': doc.date.strftime('%d.%m.%Y') if doc.date else '',
+            'amount': float(doc.amount) if doc.amount is not None else None,
+            'file_size_display': doc.file_size_display,
+            'file_url': doc.file.url if doc.file else '',
+            'notes': doc.notes or '',
+        })
+
     context = {
         'overview': overview,
         'calendar_chart_json': calendar_chart_json,
+        'loans_json': json.dumps(loans_table_data),
+        'components_json': json.dumps(components_table_data),
+        'calendar_json': json.dumps(calendar_table_data),
+        'tax_table_json': json.dumps(tax_table_data),
+        'documents_json': json.dumps(documents_table_data),
         'card_colors': card_colors,
         're_form': re_form,
         'loan_form': loan_form,
