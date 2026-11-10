@@ -4678,3 +4678,9 @@ msgstr "Eingezahltes Eigenkapital"
 
 msgid "Value (€)"
 msgstr "Wert (€)"
+
+msgid "New Account/Depot"
+msgstr "Neues Konto/Depot"
+
+msgid "New Physical Asset"
+msgstr "Neuer Sachwert"
