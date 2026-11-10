@@ -4280,11 +4280,17 @@ msgstr "Schreibt laufende Lebenshaltungskosten unter Berücksichtigung der Infla
 msgid "Due Components (<= 5 Yrs)"
 msgstr "Fällige Komponenten (<= 5 Jahre)"
 
+msgid "Due Components (<= 5 Yrs):"
+msgstr "Fällige Komponenten (<= 5 Jahre):"
+
 msgid "No urgent components due."
 msgstr "Keine dringenden Komponenten fällig."
 
 msgid "Coverage Details"
 msgstr "Deckungsdetails"
+
+msgid "Coverage Details:"
+msgstr "Deckungsdetails:"
 
 msgid "Saved Reserves"
 msgstr "Angesparte Rücklagen"
@@ -4295,11 +4301,20 @@ msgstr "Bedarf 5 Jahre"
 msgid "Deductions by Property"
 msgstr "Abzüge nach Objekt"
 
+msgid "Deductions by Property:"
+msgstr "Abzüge nach Objekt:"
+
 msgid "Tax Result by Property"
 msgstr "Steuerergebnis nach Objekt"
 
+msgid "Tax Result by Property:"
+msgstr "Steuerergebnis nach Objekt:"
+
 msgid "Tax Estimation Basis"
 msgstr "Steuerberechnungsgrundlage"
+
+msgid "Tax Estimation Basis:"
+msgstr "Steuerberechnungsgrundlage:"
 
 msgid "Property"
 msgstr "Objekt"
