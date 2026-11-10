@@ -788,14 +788,15 @@
                 </div>
                 <div class="modal-body p-4" style="font-size: 0.9rem; line-height: 1.6;">
                     <h6 class="fw-bold text-primary">{% trans "Where does the data come from?" %}</h6>
-                    <p>{% trans "Payout figures are based on your recorded pension contracts in the" %} <a href="javascript:void(0)" onclick="scrollToPensionsTable('infoTimelineModal')" class="fw-bold text-decoration-underline text-primary">{% trans "Active Pension Contracts Table" %}</a>.</p>
+                    <p>{% trans "The timeline combines your recorded pension contracts, recurring income (salary, side jobs), rental income, asset withdrawal plans, and active living expenses and loan installments." %}</p>
                     
                     <h6 class="fw-bold text-primary mt-3">{% trans "How is it calculated?" %}</h6>
                     <ul class="ps-3 mb-3">
-                        <li><strong>{% trans "Projected Net Pension" %}:</strong> {% trans "Sums up all monthly net payouts of contracts whose retirement age or payout start date is reached in the respective year." %}</li>
+                        <li><strong>{% trans "Projected Total Income (Blue Line)" %}:</strong> {% trans "Includes all active inflows in the given year: salary (until end date/retirement), net pension payouts once active, rental income from real estate, and asset withdrawal plans." %}</li>
+                        <li><strong>{% trans "Projected Net Pension (Green Area)" %}:</strong> {% trans "Sums up all monthly net payouts of contracts whose retirement age or payout start date is reached in the respective year." %}</li>
+                        <li><strong>{% trans "Monthly Expenses (Orange Dashed)" %}:</strong> {% trans "Projects ongoing living expenses into the future considering inflation, while automatically removing expired contracts and paid-off loans." %}</li>
+                        <li><strong>{% trans "Target Net Pension (Inflation-adjusted)" %}:</strong> {% trans "Projects your desired pension target into the future using the annual inflation rate stored in your profile." %}</li>
                         <li><strong>{% trans "Adjustment Rate / Dynamics" %}:</strong> {% trans "If 'Indexed (Inflation Adjustment)' is activated, payouts increase annually by the configured pension adjustment rate upon retirement." %}</li>
-                        <li><strong>{% trans "Target Net Pension (Today's Purchasing Power)" %}:</strong> {% trans "Represents your desired amount (from individual contracts or your profile settings)." %}</li>
-                        <li><strong>{% trans "Target Net Pension (Inflation-adjusted)" %}:</strong> {% trans "Projects your desired amount into the future using the annual inflation rate stored in your profile (e.g. 2.0%) to show the real purchasing power gap." %}</li>
                     </ul>
                 </div>
             </div>

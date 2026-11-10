@@ -67,17 +67,14 @@
 }
 /* Karteikarten-Reiter Navigation */
 .folder-tabs-bar {
-    border-bottom: 2px solid rgba(0,0,0,0.08);
+    border-bottom: 2px solid var(--app-table-border-color, rgba(0,0,0,0.08));
     padding-left: 0.5rem;
     gap: 0.35rem;
 }
-[data-bs-theme="dark"] .folder-tabs-bar {
-    border-bottom-color: rgba(255,255,255,0.12);
-}
 .folder-tabs-bar .nav-link {
-    color: var(--bs-body-color);
-    background-color: rgba(0,0,0,0.04);
-    border: 1px solid rgba(0,0,0,0.08);
+    color: var(--app-card-color, var(--bs-body-color));
+    background-color: rgba(125,125,125,0.06);
+    border: 1px solid var(--app-table-border-color, rgba(0,0,0,0.08));
     border-bottom: none;
     border-top-left-radius: 0.75rem !important;
     border-top-right-radius: 0.75rem !important;
@@ -86,32 +83,46 @@
     margin-bottom: -2px;
     padding: 0.65rem 1.35rem;
     position: relative;
-    opacity: 0.78;
+    opacity: 0.82;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-[data-bs-theme="dark"] .folder-tabs-bar .nav-link {
-    background-color: rgba(255,255,255,0.05);
-    border-color: rgba(255,255,255,0.12);
 }
 .folder-tabs-bar .nav-link:hover {
     opacity: 1;
     transform: translateY(-2px);
     background-color: var(--app-card-bg);
+    color: var(--app-card-color);
 }
 .folder-tabs-bar .nav-link.active {
     background: var(--app-card-bg) !important;
-    color: var(--app-primary, var(--bs-primary)) !important;
-    border-color: rgba(0,0,0,0.1) rgba(0,0,0,0.1) transparent !important;
+    color: var(--app-primary, #0d6efd) !important;
+    border-color: var(--app-table-border-color, rgba(0,0,0,0.1)) var(--app-table-border-color, rgba(0,0,0,0.1)) transparent !important;
     border-top: 3px solid var(--app-primary, #0d6efd) !important;
     box-shadow: 0 -4px 12px rgba(0,0,0,0.06);
     opacity: 1;
     font-weight: 700 !important;
     z-index: 2;
 }
-[data-bs-theme="dark"] .folder-tabs-bar .nav-link.active {
-    background: var(--app-card-bg) !important;
-    border-color: rgba(255,255,255,0.15) rgba(255,255,255,0.15) transparent !important;
-    border-top: 3px solid var(--app-primary, #0d6efd) !important;
+
+/* Table Harmonization matching Pension Planning */
+.real-estate-table {
+    font-size: 0.85rem;
+    --bs-table-bg: var(--app-table-body-bg) !important;
+    --bs-table-color: var(--app-table-body-text) !important;
+    border-color: var(--app-table-border-color) !important;
+}
+.real-estate-table thead th {
+    background-color: var(--app-table-header-bg) !important;
+    color: var(--app-table-header-text) !important;
+    padding: 0.75rem 0.85rem !important;
+    border: none !important;
+    font-weight: 600;
+}
+.real-estate-table tbody td {
+    padding: 0.75rem 0.85rem !important;
+    border-color: var(--app-table-border-color) !important;
+}
+.real-estate-table tbody tr:hover {
+    --bs-table-hover-bg: rgba(125,125,125,0.07) !important;
 }
 </style>
 <div x-data="realEstateLoansApp()">
@@ -355,12 +366,12 @@
             <div class="row g-4">
                 {% for p in overview.properties %}
                 <div class="col-12 col-xl-6">
-                    <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+                    <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden" style="background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color);">
                         <!-- Card Header -->
-                        <div class="p-3 border-bottom d-flex justify-content-between align-items-center" style="border-color: rgba(255,255,255,0.08) !important;">
+                        <div class="card-header border-0 d-flex justify-content-between align-items-center py-3 px-3">
                             <div>
-                                <h5 class="fw-bold mb-1">{{ p.real_estate.name }}</h5>
-                                <div class="small opacity-75">
+                                <h5 class="fw-bold mb-1 text-white">{{ p.real_estate.name }}</h5>
+                                <div class="small opacity-85 text-white">
                                     <i class="bi bi-geo-alt me-1"></i>{{ p.real_estate.location|default:_("No location specified") }}
                                     {% if p.real_estate.current_tenant %}
                                     <span class="ms-2">| <i class="bi bi-person me-1"></i>{{ p.real_estate.current_tenant }}</span>
@@ -368,11 +379,11 @@
                                 </div>
                             </div>
                             <div class="d-flex align-items-center gap-2">
-                                <span class="badge {% if p.ltv <= 60 %}bg-success{% elif p.ltv <= 80 %}bg-info text-dark{% else %}bg-warning text-dark{% endif %} rounded-pill px-3 py-1">
+                                <span class="badge bg-white bg-opacity-25 text-white border border-white border-opacity-25 rounded-pill px-3 py-1 font-monospace">
                                     LTV: {{ p.ltv }} %
                                 </span>
                                 <div class="dropdown">
-                                    <button class="btn btn-sm btn-link text-muted p-0" type="button" data-bs-toggle="dropdown">
+                                    <button class="btn btn-sm btn-link text-white p-0" type="button" data-bs-toggle="dropdown">
                                         <i class="bi bi-three-dots-vertical fs-5"></i>
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
@@ -577,119 +588,124 @@
                 </button>
             </div>
             {% else %}
-            <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0" style="font-size: 0.85rem;">
-                        <thead class="table-light">
-                            <tr class="text-uppercase small">
-                                <th>{% trans "Loan / Bank" %}</th>
-                                <th>{% trans "Type & Assignment" %}</th>
-                                <th>{% trans "Interest & Repayment" %}</th>
-                                <th>{% trans "Monthly Installment" %}</th>
-                                <th class="text-end">{% trans "Current Balance" %}</th>
-                                <th>{% trans "Interest Lock" %}</th>
-                                <th class="text-end">{% trans "Analyses & Actions" %}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for item in overview.all_loans %}
-                            <tr>
-                                <td>
-                                    <div class="fw-bold">{{ item.loan.name }}</div>
-                                    <div class="small opacity-75">
-                                        {{ item.loan.provider }}
-                                        {% if item.loan.account_number %}
-                                        | <span class="font-monospace">{% trans "Acc" %}: {{ item.loan.account_number }}</span>
-                                        {% endif %}
-                                    </div>
-                                </td>
-                                <td>
-                                    <div>
-                                        <span class="badge bg-secondary bg-opacity-25 text-secondary-emphasis" style="font-size: 0.7rem;">
-                                            {{ item.loan.get_loan_type_display }}
-                                        </span>
-                                    </div>
-                                    <div class="mt-1">
-                                        {% if item.loan.real_estate %}
-                                        <span class="badge bg-primary bg-opacity-10 text-primary">
-                                            <i class="bi bi-house me-1"></i>{{ item.loan.real_estate.name }}
-                                        </span>
-                                        {% else %}
-                                        <span class="badge bg-secondary opacity-50">
-                                            {% trans "Unsecured Loan" %}
-                                        </span>
-                                        {% endif %}
-                                    </div>
-                                </td>
-                                <td>
-                                    <div><strong>{{ item.loan.interest_rate }} %</strong> <span class="small opacity-75">{% trans "Debit Interest" %}</span></div>
-                                    <div class="small opacity-75">
-                                        {% if item.loan.effective_interest_rate %}Eff: {{ item.loan.effective_interest_rate }} % | {% endif %}
-                                        {% trans "Repay." %}: {{ item.details.calculated_initial_repayment }} %
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="fw-bold font-monospace">{{ item.loan.monthly_installment|floatformat:2|intcomma }} €</div>
-                                    <div class="small opacity-75 font-monospace" style="font-size: 0.72rem;">
-                                        {% trans "Interest" %}: {{ item.details.current_interest_portion|floatformat:0 }} € | {% trans "Principal" %}: {{ item.details.current_principal_portion|floatformat:0 }} €
-                                    </div>
-                                </td>
-                                <td class="text-end">
-                                    <div class="fw-bold font-monospace text-danger fs-6">{{ item.details.current_balance|floatformat:2|intcomma }} €</div>
-                                    <div class="small opacity-75 font-monospace" style="font-size: 0.7rem;">
-                                        Start: {{ item.loan.nominal_amount|floatformat:0|intcomma }} €
-                                    </div>
-                                </td>
-                                <td>
-                                    {% if item.loan.interest_lock_end %}
-                                    <div>{{ item.loan.interest_lock_end|date:"d.m.Y" }}</div>
-                                    {% if item.details.lock_status == 'expired' %}
-                                    <span class="badge bg-danger">{% trans "Expired" %}</span>
-                                    {% elif item.details.lock_status == 'critical' %}
-                                    <span class="badge bg-danger">{% trans "In" %} {{ item.details.lock_months_left }}M</span>
-                                    {% elif item.details.lock_status == 'warning' %}
-                                    <span class="badge bg-warning text-dark">{% trans "In" %} {{ item.details.lock_months_left }}M</span>
-                                    {% else %}
-                                    <span class="badge bg-success bg-opacity-25 text-success">{% trans "In" %} {{ item.details.lock_months_left }}M</span>
-                                    {% endif %}
-                                    {% else %}
-                                    <span class="opacity-50">-</span>
-                                    {% endif %}
-                                </td>
-                                <td class="text-end">
-                                    <div class="btn-group btn-group-sm">
-                                        <!-- Amortization Schedule Modal Trigger -->
-                                        <button type="button" class="btn btn-outline-primary" title="{% trans 'Full Amortization Schedule' %}" @click="openScheduleModal({{ item.loan.id }}, '{{ item.loan.name|escapejs }}')">
-                                            <i class="bi bi-calendar2-range"></i>
-                                        </button>
-                                        <!-- What-If Prepayment Simulator -->
-                                        <button type="button" class="btn btn-outline-success" title="{% trans 'Simulate What-If Prepayment' %}" @click="openWhatIfModal({{ item.loan.id }}, '{{ item.loan.name|escapejs }}', {{ item.details.total_interest_projected }}, '{{ item.details.payoff_date|date:'m.Y'|default:'' }}')">
-                                            <i class="bi bi-calculator"></i>
-                                        </button>
-                                        <!-- Refinancing Stress Test Modal Trigger -->
+            <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden" id="loansTable" style="background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color);">
+                <div class="card-header border-0 d-flex justify-content-between align-items-center">
+                    <span class="fw-bold"><i class="bi bi-bank me-2 opacity-75"></i>{% trans "Active Loans & Debts" %}</span>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0 real-estate-table">
+                            <thead>
+                                <tr>
+                                    <th class="py-3 px-3">{% trans "Loan / Bank" %}</th>
+                                    <th class="py-3 px-3">{% trans "Type & Assignment" %}</th>
+                                    <th class="py-3 px-3">{% trans "Interest & Repayment" %}</th>
+                                    <th class="py-3 px-3">{% trans "Monthly Installment" %}</th>
+                                    <th class="py-3 px-3 text-end">{% trans "Current Balance" %}</th>
+                                    <th class="py-3 px-3">{% trans "Interest Lock" %}</th>
+                                    <th class="py-3 px-3 text-end" style="width: 1%;">{% trans "Actions" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in overview.all_loans %}
+                                <tr>
+                                    <td class="py-3 px-3">
+                                        <div class="fw-bold">{{ item.loan.name }}</div>
+                                        <div class="small opacity-75">
+                                            {{ item.loan.provider }}
+                                            {% if item.loan.account_number %}
+                                            | <span class="font-monospace">{% trans "Acc" %}: {{ item.loan.account_number }}</span>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td class="py-3 px-3">
+                                        <div>
+                                            <span class="badge rounded-pill bg-body-tertiary text-body border border-secondary border-opacity-20" style="font-size: 0.7rem;">
+                                                {{ item.loan.get_loan_type_display }}
+                                            </span>
+                                        </div>
+                                        <div class="mt-1">
+                                            {% if item.loan.real_estate %}
+                                            <span class="badge rounded-pill bg-primary-subtle text-primary border border-primary border-opacity-25" style="font-size: 0.7rem;">
+                                                <i class="bi bi-house me-1"></i>{{ item.loan.real_estate.name }}
+                                            </span>
+                                            {% else %}
+                                            <span class="badge rounded-pill bg-body-tertiary text-muted border border-secondary border-opacity-20 opacity-75" style="font-size: 0.7rem;">
+                                                {% trans "Unsecured Loan" %}
+                                            </span>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td class="py-3 px-3">
+                                        <div><strong>{{ item.loan.interest_rate }} %</strong> <span class="small opacity-75">{% trans "Debit Interest" %}</span></div>
+                                        <div class="small opacity-75 font-monospace">
+                                            {% if item.loan.effective_interest_rate %}Eff: {{ item.loan.effective_interest_rate }} % | {% endif %}
+                                            {% trans "Repay." %}: {{ item.details.calculated_initial_repayment }} %
+                                        </div>
+                                    </td>
+                                    <td class="py-3 px-3">
+                                        <div class="fw-bold font-monospace">{{ item.loan.monthly_installment|floatformat:2|intcomma }} €</div>
+                                        <div class="small opacity-75 font-monospace" style="font-size: 0.72rem;">
+                                            {% trans "Interest" %}: {{ item.details.current_interest_portion|floatformat:0 }} € | {% trans "Principal" %}: {{ item.details.current_principal_portion|floatformat:0 }} €
+                                        </div>
+                                    </td>
+                                    <td class="py-3 px-3 text-end">
+                                        <div class="fw-bold font-monospace text-danger fs-6">{{ item.details.current_balance|floatformat:2|intcomma }} €</div>
+                                        <div class="small opacity-75 font-monospace" style="font-size: 0.7rem;">
+                                            Start: {{ item.loan.nominal_amount|floatformat:0|intcomma }} €
+                                        </div>
+                                    </td>
+                                    <td class="py-3 px-3">
                                         {% if item.loan.interest_lock_end %}
-                                        <button type="button" class="btn btn-outline-warning text-dark" title="{% trans 'Refinancing Stress Test' %}" @click="openStressTestModal({{ item.loan.id }}, '{{ item.loan.name|escapejs }}', {{ item.details.balance_at_lock_end }}, '{{ item.loan.interest_lock_end|date:'d.m.Y' }}', {{ item.loan.interest_rate }}, {{ item.loan.monthly_installment }})">
-                                            <i class="bi bi-graph-up-arrow"></i>
-                                        </button>
+                                        <div class="font-monospace small">{{ item.loan.interest_lock_end|date:"d.m.Y" }}</div>
+                                        {% if item.details.lock_status == 'expired' %}
+                                        <span class="badge rounded-pill bg-danger border border-danger border-opacity-25">{% trans "Expired" %}</span>
+                                        {% elif item.details.lock_status == 'critical' %}
+                                        <span class="badge rounded-pill bg-danger border border-danger border-opacity-25">{% trans "In" %} {{ item.details.lock_months_left }}M</span>
+                                        {% elif item.details.lock_status == 'warning' %}
+                                        <span class="badge rounded-pill bg-warning-subtle text-warning border border-warning border-opacity-25">{% trans "In" %} {{ item.details.lock_months_left }}M</span>
+                                        {% else %}
+                                        <span class="badge rounded-pill bg-success-subtle text-success border border-success border-opacity-25">{% trans "In" %} {{ item.details.lock_months_left }}M</span>
                                         {% endif %}
-                                        <!-- Prepayment Add -->
-                                        <button type="button" class="btn btn-outline-secondary" title="{% trans 'Record Prepayment' %}" @click="openExtraRepaymentForLoanModal({{ item.loan.id }})">
-                                            <i class="bi bi-cash-stack"></i>
-                                        </button>
-                                        <!-- Edit -->
-                                        <button type="button" class="btn btn-outline-secondary" title="{% trans 'Edit' %}" @click="openEditLoanModal({{ item.loan.id }}, '{{ item.loan.name|escapejs }}', '{{ item.loan.provider|escapejs }}', '{{ item.loan.account_number|escapejs }}', '{{ item.loan.nominal_amount }}', '{{ item.loan.interest_rate }}', '{{ item.loan.effective_interest_rate|default:'' }}', '{{ item.loan.initial_repayment_rate|default:'' }}', '{{ item.loan.special_repayment_rate|default:'0' }}', '{{ item.loan.monthly_installment }}', '{{ item.loan.start_date|date:'Y-m-d' }}', '{{ item.loan.end_date|date:'Y-m-d'|default:'' }}', '{{ item.loan.interest_lock_end|date:'Y-m-d'|default:'' }}', '{{ item.loan.real_estate_id|default:'' }}', {{ item.loan.allows_extra_repayment|yesno:'true,false' }}, '{{ item.loan.notes|escapejs }}', '{{ item.loan.loan_type }}')">
-                                            <i class="bi bi-pencil"></i>
-                                        </button>
-                                        <!-- Delete -->
-                                        <a href="{% url 'finance:loan_delete' item.loan.id %}" class="btn btn-outline-danger" title="{% trans 'Delete' %}" onclick="return confirm('{% trans "Are you sure you want to delete this loan?" %}');">
-                                            <i class="bi bi-trash"></i>
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                                        {% else %}
+                                        <span class="opacity-50">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="py-3 px-3 text-end text-nowrap">
+                                        <div class="btn-group btn-group-sm">
+                                            <!-- Amortization Schedule Modal Trigger -->
+                                            <button type="button" class="btn btn-outline-secondary border-0 px-2 py-1" title="{% trans 'Full Amortization Schedule' %}" @click="openScheduleModal({{ item.loan.id }}, '{{ item.loan.name|escapejs }}')">
+                                                <i class="bi bi-calendar2-range"></i>
+                                            </button>
+                                            <!-- What-If Prepayment Simulator -->
+                                            <button type="button" class="btn btn-outline-secondary border-0 px-2 py-1" title="{% trans 'Simulate What-If Prepayment' %}" @click="openWhatIfModal({{ item.loan.id }}, '{{ item.loan.name|escapejs }}', {{ item.details.total_interest_projected }}, '{{ item.details.payoff_date|date:'m.Y'|default:'' }}')">
+                                                <i class="bi bi-calculator"></i>
+                                            </button>
+                                            <!-- Refinancing Stress Test Modal Trigger -->
+                                            {% if item.loan.interest_lock_end %}
+                                            <button type="button" class="btn btn-outline-warning border-0 px-2 py-1" title="{% trans 'Refinancing Stress Test' %}" @click="openStressTestModal({{ item.loan.id }}, '{{ item.loan.name|escapejs }}', {{ item.details.balance_at_lock_end }}, '{{ item.loan.interest_lock_end|date:'d.m.Y' }}', {{ item.loan.interest_rate }}, {{ item.loan.monthly_installment }})">
+                                                <i class="bi bi-graph-up-arrow"></i>
+                                            </button>
+                                            {% endif %}
+                                            <!-- Prepayment Add -->
+                                            <button type="button" class="btn btn-outline-secondary border-0 px-2 py-1" title="{% trans 'Record Prepayment' %}" @click="openExtraRepaymentForLoanModal({{ item.loan.id }})">
+                                                <i class="bi bi-cash-stack"></i>
+                                            </button>
+                                            <!-- Edit -->
+                                            <button type="button" class="btn btn-outline-secondary border-0 px-2 py-1" title="{% trans 'Edit' %}" @click="openEditLoanModal({{ item.loan.id }}, '{{ item.loan.name|escapejs }}', '{{ item.loan.provider|escapejs }}', '{{ item.loan.account_number|escapejs }}', '{{ item.loan.nominal_amount }}', '{{ item.loan.interest_rate }}', '{{ item.loan.effective_interest_rate|default:'' }}', '{{ item.loan.initial_repayment_rate|default:'' }}', '{{ item.loan.special_repayment_rate|default:'0' }}', '{{ item.loan.monthly_installment }}', '{{ item.loan.start_date|date:'Y-m-d' }}', '{{ item.loan.end_date|date:'Y-m-d'|default:'' }}', '{{ item.loan.interest_lock_end|date:'Y-m-d'|default:'' }}', '{{ item.loan.real_estate_id|default:'' }}', {{ item.loan.allows_extra_repayment|yesno:'true,false' }}, '{{ item.loan.notes|escapejs }}', '{{ item.loan.loan_type }}')">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                            <!-- Delete -->
+                                            <a href="{% url 'finance:loan_delete' item.loan.id %}" class="btn btn-outline-danger border-0 px-2 py-1" title="{% trans 'Delete' %}" onclick="return confirm('{% trans "Are you sure you want to delete this loan?" %}');">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
             {% endif %}
@@ -847,20 +863,16 @@
                 </div>
             </div>
 
-            <!-- Top Action Header -->
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5 class="fw-bold mb-0">
-                    <i class="bi bi-clipboard-pulse text-primary me-2"></i>{% trans "Renovation Roadmap & Components" %}
-                </h5>
-                <button type="button" class="btn btn-primary rounded-pill px-4 btn-sm" @click="openAddComponentModal()">
-                    <i class="bi bi-plus-lg me-1"></i>{% trans "Add Component" %}
-                </button>
-            </div>
-
             <!-- Component Table -->
-            <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4" style="background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color);">
+                <div class="card-header border-0 d-flex justify-content-between align-items-center">
+                    <span class="fw-bold"><i class="bi bi-clipboard-pulse me-2 opacity-75"></i>{% trans "Renovation Roadmap & Components" %}</span>
+                    <button type="button" class="btn btn-sm btn-link text-white text-decoration-none p-1" @click="openAddComponentModal()" title="{% trans 'Add Component' %}">
+                        <i class="bi bi-plus-lg fs-6"></i>
+                    </button>
+                </div>
                 {% if not overview.components_roadmap.all_components %}
-                <div class="text-center py-5 p-4">
+                <div class="card-body text-center py-5 p-4">
                     <i class="bi bi-tools display-5 opacity-50 mb-3 d-block"></i>
                     <h6 class="fw-bold">{% trans "No property components recorded yet" %}</h6>
                     <p class="text-muted small mb-3">{% trans "Track heating, roof, windows, electrical systems and their remaining life to anticipate renovation costs." %}</p>
@@ -869,75 +881,79 @@
                     </button>
                 </div>
                 {% else %}
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="table-light small text-uppercase">
-                            <tr>
-                                <th class="ps-4">{% trans "Component / Specification" %}</th>
-                                <th>{% trans "Property" %}</th>
-                                <th>{% trans "Type" %}</th>
-                                <th>{% trans "Installed" %}</th>
-                                <th>{% trans "Lifespan" %}</th>
-                                <th>{% trans "Remaining" %}</th>
-                                <th>{% trans "Est. Cost" %}</th>
-                                <th>{% trans "Condition" %}</th>
-                                <th class="text-end pe-4">{% trans "Actions" %}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for c in overview.components_roadmap.all_components %}
-                            <tr>
-                                <td class="ps-4">
-                                    <div class="fw-bold">{{ c.obj.name }}</div>
-                                    {% if c.obj.notes %}
-                                    <div class="small opacity-75">{{ c.obj.notes }}</div>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    <span class="badge bg-secondary bg-opacity-25 text-body rounded-pill px-2 py-1">
-                                        {{ c.obj.real_estate.name }}
-                                    </span>
-                                </td>
-                                <td>{{ c.obj.get_component_type_display }}</td>
-                                <td>{{ c.obj.installation_year }}</td>
-                                <td>{{ c.obj.expected_lifespan }} {% trans "Years" %}</td>
-                                <td>
-                                    {% if c.remaining_years <= 0 %}
-                                    <span class="badge bg-danger rounded-pill px-2 py-1">
-                                        <i class="bi bi-exclamation-triangle me-1"></i>{% trans "Overdue" %} ({{ c.replacement_year }})
-                                    </span>
-                                    {% elif c.remaining_years <= 5 %}
-                                    <span class="badge bg-warning text-dark rounded-pill px-2 py-1">
-                                        {{ c.remaining_years }} {% trans "Years" %} ({{ c.replacement_year }})
-                                    </span>
-                                    {% else %}
-                                    <span class="badge bg-success bg-opacity-25 text-success rounded-pill px-2 py-1">
-                                        {{ c.remaining_years }} {% trans "Years" %} ({{ c.replacement_year }})
-                                    </span>
-                                    {% endif %}
-                                </td>
-                                <td class="font-monospace fw-bold">{{ c.cost|floatformat:2|intcomma }} €</td>
-                                <td>
-                                    {% if c.obj.condition == 'good' %}
-                                    <span class="badge bg-success rounded-pill px-2 py-1">{% trans "Good" %}</span>
-                                    {% elif c.obj.condition == 'moderate' %}
-                                    <span class="badge bg-warning text-dark rounded-pill px-2 py-1">{% trans "Moderate" %}</span>
-                                    {% else %}
-                                    <span class="badge bg-danger rounded-pill px-2 py-1">{% trans "Critical" %}</span>
-                                    {% endif %}
-                                </td>
-                                <td class="text-end pe-4">
-                                    <button class="btn btn-sm btn-link text-primary p-0 me-2" @click="openEditComponentModal({{ c.obj.id }}, {{ c.obj.real_estate.id }}, '{{ c.obj.component_type }}', '{{ c.obj.name|escapejs }}', {{ c.obj.installation_year }}, {{ c.obj.expected_lifespan }}, '{{ c.obj.estimated_cost }}', '{{ c.obj.condition }}', '{{ c.obj.notes|escapejs }}')">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-                                    <a href="{% url 'finance:property_component_delete' c.obj.id %}" class="btn btn-sm btn-link text-danger p-0" onclick="return confirm('{% trans "Are you sure you want to delete this component?" %}');">
-                                        <i class="bi bi-trash"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0 real-estate-table">
+                            <thead>
+                                <tr>
+                                    <th class="py-3 px-3">{% trans "Component / Specification" %}</th>
+                                    <th class="py-3 px-3">{% trans "Property" %}</th>
+                                    <th class="py-3 px-3">{% trans "Type" %}</th>
+                                    <th class="py-3 px-3">{% trans "Installed" %}</th>
+                                    <th class="py-3 px-3">{% trans "Lifespan" %}</th>
+                                    <th class="py-3 px-3">{% trans "Remaining" %}</th>
+                                    <th class="py-3 px-3 text-end">{% trans "Est. Cost" %}</th>
+                                    <th class="py-3 px-3">{% trans "Condition" %}</th>
+                                    <th class="py-3 px-3 text-end" style="width: 1%;">{% trans "Actions" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for c in overview.components_roadmap.all_components %}
+                                <tr>
+                                    <td class="py-3 px-3">
+                                        <div class="fw-bold">{{ c.obj.name }}</div>
+                                        {% if c.obj.notes %}
+                                        <div class="small opacity-75">{{ c.obj.notes }}</div>
+                                        {% endif %}
+                                    </td>
+                                    <td class="py-3 px-3">
+                                        <span class="badge rounded-pill bg-body-tertiary text-body border border-secondary border-opacity-20 px-2 py-1">
+                                            {{ c.obj.real_estate.name }}
+                                        </span>
+                                    </td>
+                                    <td class="py-3 px-3">{{ c.obj.get_component_type_display }}</td>
+                                    <td class="py-3 px-3 font-monospace">{{ c.obj.installation_year }}</td>
+                                    <td class="py-3 px-3 font-monospace">{{ c.obj.expected_lifespan }} {% trans "Years" %}</td>
+                                    <td class="py-3 px-3">
+                                        {% if c.remaining_years <= 0 %}
+                                        <span class="badge rounded-pill bg-danger border border-danger border-opacity-25 px-2 py-1">
+                                            <i class="bi bi-exclamation-triangle me-1"></i>{% trans "Overdue" %} ({{ c.replacement_year }})
+                                        </span>
+                                        {% elif c.remaining_years <= 5 %}
+                                        <span class="badge rounded-pill bg-warning-subtle text-warning border border-warning border-opacity-25 px-2 py-1">
+                                            {{ c.remaining_years }} {% trans "Years" %} ({{ c.replacement_year }})
+                                        </span>
+                                        {% else %}
+                                        <span class="badge rounded-pill bg-success-subtle text-success border border-success border-opacity-25 px-2 py-1">
+                                            {{ c.remaining_years }} {% trans "Years" %} ({{ c.replacement_year }})
+                                        </span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="py-3 px-3 text-end font-monospace fw-bold">{{ c.cost|floatformat:2|intcomma }} €</td>
+                                    <td class="py-3 px-3">
+                                        {% if c.obj.condition == 'good' %}
+                                        <span class="badge rounded-pill bg-success-subtle text-success border border-success border-opacity-25 px-2 py-1">{% trans "Good" %}</span>
+                                        {% elif c.obj.condition == 'moderate' %}
+                                        <span class="badge rounded-pill bg-warning-subtle text-warning border border-warning border-opacity-25 px-2 py-1">{% trans "Moderate" %}</span>
+                                        {% else %}
+                                        <span class="badge rounded-pill bg-danger border border-danger border-opacity-25 px-2 py-1">{% trans "Critical" %}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="py-3 px-3 text-end text-nowrap">
+                                        <div class="btn-group btn-group-sm">
+                                            <button type="button" class="btn btn-outline-secondary border-0 px-2 py-1" @click="openEditComponentModal({{ c.obj.id }}, {{ c.obj.real_estate.id }}, '{{ c.obj.component_type }}', '{{ c.obj.name|escapejs }}', {{ c.obj.installation_year }}, {{ c.obj.expected_lifespan }}, '{{ c.obj.estimated_cost }}', '{{ c.obj.condition }}', '{{ c.obj.notes|escapejs }}')" title="{% trans 'Edit' %}">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                            <a href="{% url 'finance:property_component_delete' c.obj.id %}" class="btn btn-outline-danger border-0 px-2 py-1" onclick="return confirm('{% trans "Are you sure you want to delete this component?" %}');" title="{% trans 'Delete' %}">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 {% endif %}
             </div>
@@ -1113,23 +1129,27 @@
             </div>
 
             <!-- Table with Collapsible Monthly Line Items -->
-            <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0 text-center">
-                        <thead class="table-light small text-uppercase">
-                            <tr>
-                                <th style="width: 40px;"></th>
-                                <th class="text-start">{% trans "Month" %}</th>
-                                <th class="text-start">{% trans "Scheduled Events / Due Dates" %}</th>
-                                <th>{% trans "Rental Income" %}</th>
-                                <th>{% trans "Debt Service" %}</th>
-                                <th>{% trans "Maintenance / Reserve" %}</th>
-                                <th>{% trans "Ancillary Operating" %}</th>
-                                <th>{% trans "Total Costs" %}</th>
-                                <th>{% trans "Monthly Net" %}</th>
-                                <th class="text-end pe-4">{% trans "Cumulative Net" %}</th>
-                            </tr>
-                        </thead>
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4" style="background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color);">
+                <div class="card-header border-0 d-flex justify-content-between align-items-center">
+                    <span class="fw-bold"><i class="bi bi-calendar3 me-2 opacity-75"></i>{% trans "Payment Calendar Breakdown" %}</span>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0 text-center real-estate-table">
+                            <thead>
+                                <tr>
+                                    <th class="py-3 px-3" style="width: 40px;"></th>
+                                    <th class="py-3 px-3 text-start">{% trans "Month" %}</th>
+                                    <th class="py-3 px-3 text-start">{% trans "Scheduled Events / Due Dates" %}</th>
+                                    <th class="py-3 px-3">{% trans "Rental Income" %}</th>
+                                    <th class="py-3 px-3">{% trans "Debt Service" %}</th>
+                                    <th class="py-3 px-3">{% trans "Maintenance / Reserve" %}</th>
+                                    <th class="py-3 px-3">{% trans "Ancillary Operating" %}</th>
+                                    <th class="py-3 px-3">{% trans "Total Costs" %}</th>
+                                    <th class="py-3 px-3">{% trans "Monthly Net" %}</th>
+                                    <th class="py-3 px-3 text-end pe-4">{% trans "Cumulative Net" %}</th>
+                                </tr>
+                            </thead>
                         <tbody>
                             {% for m in overview.cashflow_calendar.months %}
                             <!-- Summary Month Row -->
@@ -1219,26 +1239,27 @@
                             </tr>
                             {% endfor %}
                         </tbody>
-                        <tfoot class="table-light fw-bold">
+                        <tfoot class="fw-bold" style="background-color: var(--app-table-header-bg) !important; color: var(--app-table-header-text) !important;">
                             <tr>
-                                <td></td>
-                                <td class="text-start">{% trans "Total Year" %}</td>
-                                <td></td>
-                                <td class="font-monospace text-success">+{{ overview.cashflow_calendar.annual_totals.total_rent|floatformat:2|intcomma }} €</td>
-                                <td class="font-monospace text-danger">-{{ overview.cashflow_calendar.annual_totals.total_debt|floatformat:2|intcomma }} €</td>
-                                <td class="font-monospace text-warning">-{{ overview.cashflow_calendar.annual_totals.total_maintenance|floatformat:2|intcomma }} €</td>
-                                <td class="font-monospace text-secondary">-{{ overview.cashflow_calendar.annual_totals.total_ancillary|floatformat:2|intcomma }} €</td>
-                                <td class="font-monospace text-danger fw-bold">-{{ overview.cashflow_calendar.annual_totals.total_expenses|floatformat:2|intcomma }} €</td>
-                                <td class="font-monospace fw-bold {% if overview.cashflow_calendar.annual_totals.total_net >= 0 %}text-success{% else %}text-danger{% endif %}">
+                                <td class="py-3 px-3"></td>
+                                <td class="py-3 px-3 text-start">{% trans "Total Year" %}</td>
+                                <td class="py-3 px-3"></td>
+                                <td class="py-3 px-3 font-monospace text-success">+{{ overview.cashflow_calendar.annual_totals.total_rent|floatformat:2|intcomma }} €</td>
+                                <td class="py-3 px-3 font-monospace text-danger">-{{ overview.cashflow_calendar.annual_totals.total_debt|floatformat:2|intcomma }} €</td>
+                                <td class="py-3 px-3 font-monospace text-warning">-{{ overview.cashflow_calendar.annual_totals.total_maintenance|floatformat:2|intcomma }} €</td>
+                                <td class="py-3 px-3 font-monospace text-secondary">-{{ overview.cashflow_calendar.annual_totals.total_ancillary|floatformat:2|intcomma }} €</td>
+                                <td class="py-3 px-3 font-monospace text-danger fw-bold">-{{ overview.cashflow_calendar.annual_totals.total_expenses|floatformat:2|intcomma }} €</td>
+                                <td class="py-3 px-3 font-monospace fw-bold {% if overview.cashflow_calendar.annual_totals.total_net >= 0 %}text-success{% else %}text-danger{% endif %}">
                                     {% if overview.cashflow_calendar.annual_totals.total_net >= 0 %}+{% endif %}{{ overview.cashflow_calendar.annual_totals.total_net|floatformat:2|intcomma }} €
                                 </td>
-                                <td class="text-end pe-4 font-monospace fw-bold {% if overview.cashflow_calendar.annual_totals.total_net >= 0 %}text-success{% else %}text-danger{% endif %}">
+                                <td class="py-3 px-3 text-end pe-4 font-monospace fw-bold {% if overview.cashflow_calendar.annual_totals.total_net >= 0 %}text-success{% else %}text-danger{% endif %}">
                                     {% if overview.cashflow_calendar.annual_totals.total_net >= 0 %}+{% endif %}{{ overview.cashflow_calendar.annual_totals.total_net|floatformat:2|intcomma }} €
                                 </td>
                             </tr>
                         </tfoot>
                     </table>
                 </div>
+            </div>
             </div>
         </div>
 
@@ -1411,64 +1432,62 @@
             </div>
 
             <!-- Tax Breakdown Table per Property -->
-            <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-5" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0 text-center">
-                        <thead class="table-light small text-uppercase">
-                            <tr>
-                                <th class="text-start ps-4">{% trans "Property" %}</th>
-                                <th>{% trans "Type" %}</th>
-                                <th>{% trans "Gross Rent / Yr" %}</th>
-                                <th>{% trans "Building AfA" %}</th>
-                                <th>{% trans "Mortgage Interest" %}</th>
-                                <th>{% trans "Operating & Invoices" %}</th>
-                                <th>{% trans "Total Deductions" %}</th>
-                                <th class="text-end pe-4">{% trans "Taxable Result (V+V)" %}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for p in overview.properties %}
-                            <tr>
-                                <td class="text-start ps-4 fw-bold">{{ p.real_estate.name }}</td>
-                                <td>
-                                    {% if p.tax_metrics.is_rental %}
-                                    <span class="badge bg-primary bg-opacity-25 text-primary rounded-pill px-2 py-1">{% trans "Rented (V+V)" %}</span>
-                                    {% else %}
-                                    <span class="badge bg-secondary bg-opacity-25 text-body rounded-pill px-2 py-1">{% trans "Owner-Occupied" %}</span>
-                                    {% endif %}
-                                </td>
-                                <td class="font-monospace text-success">+{{ p.tax_metrics.annual_rental_income|floatformat:2|intcomma }} €</td>
-                                <td class="font-monospace text-danger">-{{ p.tax_metrics.annual_afa|floatformat:2|intcomma }} €</td>
-                                <td class="font-monospace text-danger">-{{ p.tax_metrics.annual_interest|floatformat:2|intcomma }} €</td>
-                                <td class="font-monospace text-warning">-{{ p.tax_metrics.annual_regular_costs|add:p.tax_metrics.annual_invoice_costs|floatformat:2|intcomma }} €</td>
-                                <td class="font-monospace text-danger fw-semibold">-{{ p.tax_metrics.total_werbungskosten|floatformat:2|intcomma }} €</td>
-                                <td class="text-end pe-4 font-monospace fw-bold {% if p.tax_metrics.taxable_result >= 0 %}text-danger{% else %}text-success{% endif %}">
-                                    {% if p.tax_metrics.taxable_result >= 0 %}+{% endif %}{{ p.tax_metrics.taxable_result|floatformat:2|intcomma }} €
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-5" style="background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color);">
+                <div class="card-header border-0 d-flex justify-content-between align-items-center">
+                    <span class="fw-bold"><i class="bi bi-receipt me-2 opacity-75"></i>{% trans "Tax Results & Deductions per Property (Anlage V)" %}</span>
                 </div>
-            </div>
-
-            <!-- Section 2: Document Safe (Dokumentenablage) -->
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <div>
-                    <h5 class="fw-bold mb-1">
-                        <i class="bi bi-folder-check text-primary me-2"></i>{% trans "Digital Document Safe" %}
-                    </h5>
-                    <p class="text-muted small mb-0">{% trans "Securely store contracts, land register excerpts, energy certificates and invoices." %}</p>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0 text-center real-estate-table">
+                            <thead>
+                                <tr>
+                                    <th class="py-3 px-3 text-start">{% trans "Property" %}</th>
+                                    <th class="py-3 px-3">{% trans "Type" %}</th>
+                                    <th class="py-3 px-3">{% trans "Gross Rent / Yr" %}</th>
+                                    <th class="py-3 px-3">{% trans "Building AfA" %}</th>
+                                    <th class="py-3 px-3">{% trans "Mortgage Interest" %}</th>
+                                    <th class="py-3 px-3">{% trans "Operating & Invoices" %}</th>
+                                    <th class="py-3 px-3">{% trans "Total Deductions" %}</th>
+                                    <th class="py-3 px-3 text-end pe-4">{% trans "Taxable Result (V+V)" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for p in overview.properties %}
+                                <tr>
+                                    <td class="py-3 px-3 text-start fw-bold">{{ p.real_estate.name }}</td>
+                                    <td class="py-3 px-3">
+                                        {% if p.tax_metrics.is_rental %}
+                                        <span class="badge rounded-pill bg-primary-subtle text-primary border border-primary border-opacity-25 px-2 py-1">{% trans "Rented (V+V)" %}</span>
+                                        {% else %}
+                                        <span class="badge rounded-pill bg-body-tertiary text-body border border-secondary border-opacity-20 px-2 py-1">{% trans "Owner-Occupied" %}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="py-3 px-3 font-monospace text-success">+{{ p.tax_metrics.annual_rental_income|floatformat:2|intcomma }} €</td>
+                                    <td class="py-3 px-3 font-monospace text-danger">-{{ p.tax_metrics.annual_afa|floatformat:2|intcomma }} €</td>
+                                    <td class="py-3 px-3 font-monospace text-danger">-{{ p.tax_metrics.annual_interest|floatformat:2|intcomma }} €</td>
+                                    <td class="py-3 px-3 font-monospace text-warning">-{{ p.tax_metrics.annual_regular_costs|add:p.tax_metrics.annual_invoice_costs|floatformat:2|intcomma }} €</td>
+                                    <td class="py-3 px-3 font-monospace text-danger fw-semibold">-{{ p.tax_metrics.total_werbungskosten|floatformat:2|intcomma }} €</td>
+                                    <td class="py-3 px-3 text-end pe-4 font-monospace fw-bold {% if p.tax_metrics.taxable_result >= 0 %}text-danger{% else %}text-success{% endif %}">
+                                        {% if p.tax_metrics.taxable_result >= 0 %}+{% endif %}{{ p.tax_metrics.taxable_result|floatformat:2|intcomma }} €
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-                <button type="button" class="btn btn-primary rounded-pill px-4 btn-sm" @click="openUploadDocumentModal()">
-                    <i class="bi bi-upload me-1"></i>{% trans "Upload Document" %}
-                </button>
             </div>
 
             <!-- Documents Table -->
-            <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4" style="background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color);">
+                <div class="card-header border-0 d-flex justify-content-between align-items-center">
+                    <span class="fw-bold"><i class="bi bi-folder-check me-2 opacity-75"></i>{% trans "Digital Document Safe" %}</span>
+                    <button type="button" class="btn btn-sm btn-link text-white text-decoration-none p-1" @click="openUploadDocumentModal()" title="{% trans 'Upload Document' %}">
+                        <i class="bi bi-upload fs-6"></i>
+                    </button>
+                </div>
                 {% if not overview.documents_data.documents %}
-                <div class="text-center py-5 p-4">
+                <div class="card-body text-center py-5 p-4">
                     <i class="bi bi-file-earmark-arrow-up display-5 opacity-50 mb-3 d-block"></i>
                     <h6 class="fw-bold">{% trans "No documents stored yet" %}</h6>
                     <p class="text-muted small mb-3">{% trans "Upload your purchase contracts, loan agreements, energy certificates or craftsman invoices." %}</p>
@@ -1477,61 +1496,65 @@
                     </button>
                 </div>
                 {% else %}
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="table-light small text-uppercase">
-                            <tr>
-                                <th class="ps-4">{% trans "Title" %}</th>
-                                <th>{% trans "Property" %}</th>
-                                <th>{% trans "Category" %}</th>
-                                <th>{% trans "Date" %}</th>
-                                <th>{% trans "Amount" %}</th>
-                                <th>{% trans "File Size" %}</th>
-                                <th class="text-end pe-4">{% trans "Actions" %}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for doc in overview.documents_data.documents %}
-                            <tr>
-                                <td class="ps-4">
-                                    <div class="fw-bold">{{ doc.title }}</div>
-                                    {% if doc.notes %}
-                                    <div class="small opacity-75">{{ doc.notes }}</div>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    <span class="badge bg-secondary bg-opacity-25 text-body rounded-pill px-2 py-1">
-                                        {{ doc.real_estate.name }}
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="badge bg-info bg-opacity-10 text-info-emphasis rounded-pill px-2 py-1">
-                                        {{ doc.get_category_display }}
-                                    </span>
-                                </td>
-                                <td>{{ doc.date|date:"d.m.Y" }}</td>
-                                <td>
-                                    {% if doc.amount %}
-                                    <span class="font-monospace fw-semibold">{{ doc.amount|floatformat:2|intcomma }} €</span>
-                                    {% else %}
-                                    <span class="text-muted">-</span>
-                                    {% endif %}
-                                </td>
-                                <td class="font-monospace small opacity-75">{{ doc.file_size_display }}</td>
-                                <td class="text-end pe-4">
-                                    {% if doc.file %}
-                                    <a href="{{ doc.file.url }}" target="_blank" class="btn btn-sm btn-outline-primary rounded-pill px-3 me-2">
-                                        <i class="bi bi-download me-1"></i>{% trans "Open" %}
-                                    </a>
-                                    {% endif %}
-                                    <a href="{% url 'finance:property_document_delete' doc.id %}" class="btn btn-sm btn-link text-danger p-0" onclick="return confirm('{% trans "Are you sure you want to delete this document?" %}');">
-                                        <i class="bi bi-trash"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0 real-estate-table">
+                            <thead>
+                                <tr>
+                                    <th class="py-3 px-3">{% trans "Title" %}</th>
+                                    <th class="py-3 px-3">{% trans "Property" %}</th>
+                                    <th class="py-3 px-3">{% trans "Category" %}</th>
+                                    <th class="py-3 px-3">{% trans "Date" %}</th>
+                                    <th class="py-3 px-3 text-end">{% trans "Amount" %}</th>
+                                    <th class="py-3 px-3">{% trans "File Size" %}</th>
+                                    <th class="py-3 px-3 text-end" style="width: 1%;">{% trans "Actions" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for doc in overview.documents_data.documents %}
+                                <tr>
+                                    <td class="py-3 px-3">
+                                        <div class="fw-bold">{{ doc.title }}</div>
+                                        {% if doc.notes %}
+                                        <div class="small opacity-75">{{ doc.notes }}</div>
+                                        {% endif %}
+                                    </td>
+                                    <td class="py-3 px-3">
+                                        <span class="badge rounded-pill bg-body-tertiary text-body border border-secondary border-opacity-20 px-2 py-1">
+                                            {{ doc.real_estate.name }}
+                                        </span>
+                                    </td>
+                                    <td class="py-3 px-3">
+                                        <span class="badge rounded-pill bg-info-subtle text-info border border-info border-opacity-25 px-2 py-1">
+                                            {{ doc.get_category_display }}
+                                        </span>
+                                    </td>
+                                    <td class="py-3 px-3 font-monospace small">{{ doc.date|date:"d.m.Y" }}</td>
+                                    <td class="py-3 px-3 text-end">
+                                        {% if doc.amount %}
+                                        <span class="font-monospace fw-semibold">{{ doc.amount|floatformat:2|intcomma }} €</span>
+                                        {% else %}
+                                        <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="py-3 px-3 font-monospace small opacity-75">{{ doc.file_size_display }}</td>
+                                    <td class="py-3 px-3 text-end text-nowrap">
+                                        <div class="btn-group btn-group-sm">
+                                            {% if doc.file %}
+                                            <a href="{{ doc.file.url }}" target="_blank" class="btn btn-outline-secondary border-0 px-2 py-1" title="{% trans 'Open' %}">
+                                                <i class="bi bi-box-arrow-up-right"></i>
+                                            </a>
+                                            {% endif %}
+                                            <a href="{% url 'finance:property_document_delete' doc.id %}" class="btn btn-outline-danger border-0 px-2 py-1" onclick="return confirm('{% trans "Are you sure you want to delete this document?" %}');" title="{% trans 'Delete' %}">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 {% endif %}
             </div>
@@ -1839,17 +1862,17 @@
                         </div>
                     </div>
 
-                    <div class="table-responsive rounded-3 border" style="max-height: 450px;">
-                        <table class="table table-sm table-hover align-middle mb-0 font-monospace" style="font-size: 0.8rem;">
-                            <thead class="table-light sticky-top">
-                                <tr class="text-uppercase small">
-                                    <th>{% trans "Year" %}</th>
-                                    <th class="text-end">{% trans "Starting Balance" %}</th>
-                                    <th class="text-end">{% trans "Total Installment" %}</th>
-                                    <th class="text-end text-danger">{% trans "Interest Portion" %}</th>
-                                    <th class="text-end text-success">{% trans "Principal Portion" %}</th>
-                                    <th class="text-end text-primary">{% trans "Extra Prepayment" %}</th>
-                                    <th class="text-end">{% trans "Ending Balance" %}</th>
+                    <div class="table-responsive rounded-3 border" style="max-height: 450px; border-color: var(--app-table-border-color) !important;">
+                        <table class="table table-sm table-hover align-middle mb-0 font-monospace real-estate-table" style="font-size: 0.8rem;">
+                            <thead class="sticky-top">
+                                <tr>
+                                    <th class="py-2 px-3">{% trans "Year" %}</th>
+                                    <th class="py-2 px-3 text-end">{% trans "Starting Balance" %}</th>
+                                    <th class="py-2 px-3 text-end">{% trans "Total Installment" %}</th>
+                                    <th class="py-2 px-3 text-end text-danger">{% trans "Interest Portion" %}</th>
+                                    <th class="py-2 px-3 text-end text-success">{% trans "Principal Portion" %}</th>
+                                    <th class="py-2 px-3 text-end text-primary">{% trans "Extra Prepayment" %}</th>
+                                    <th class="py-2 px-3 text-end">{% trans "Ending Balance" %}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -2127,14 +2150,14 @@
                     </div>
 
                     <h6 class="small fw-bold text-uppercase opacity-75 mb-2">{% trans "Scenarios on Interest Rate Shift" %}</h6>
-                    <div class="table-responsive rounded-3 border mb-3">
-                        <table class="table table-sm table-hover align-middle mb-0 font-monospace" style="font-size: 0.85rem;">
-                            <thead class="table-light">
-                                <tr class="text-uppercase small">
-                                    <th>{% trans "Interest Rate (Scenario)" %}</th>
-                                    <th class="text-end">{% trans "New Monthly Rate" %}</th>
-                                    <th class="text-end">{% trans "Extra Burden / Month" %}</th>
-                                    <th class="text-end">{% trans "Extra Burden / Year" %}</th>
+                    <div class="table-responsive rounded-3 border mb-3" style="border-color: var(--app-table-border-color) !important;">
+                        <table class="table table-sm table-hover align-middle mb-0 font-monospace real-estate-table" style="font-size: 0.85rem;">
+                            <thead>
+                                <tr>
+                                    <th class="py-2 px-3">{% trans "Interest Rate (Scenario)" %}</th>
+                                    <th class="py-2 px-3 text-end">{% trans "New Monthly Rate" %}</th>
+                                    <th class="py-2 px-3 text-end">{% trans "Extra Burden / Month" %}</th>
+                                    <th class="py-2 px-3 text-end">{% trans "Extra Burden / Year" %}</th>
                                 </tr>
                             </thead>
                             <tbody>

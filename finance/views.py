@@ -3543,6 +3543,8 @@ def real_estate_loans_view(request):
     card_colors = {
         'real_estate_bg': summary_colors.get('total_real_estate', {}).get('bg_color') or '#20c997',
         'real_estate_text': summary_colors.get('total_real_estate', {}).get('text_color') or '#ffffff',
+        'property_bg': summary_colors.get('total_real_estate', {}).get('bg_color') or '#20c997',
+        'property_text': summary_colors.get('total_real_estate', {}).get('text_color') or '#ffffff',
         'debt_bg': summary_colors.get('total_debts', {}).get('bg_color') or '#746d6d',
         'debt_text': summary_colors.get('total_debts', {}).get('text_color') or '#ffffff',
         'equity_bg': summary_colors.get('total_combined_assets', {}).get('bg_color') or '#0d6efd',
