@@ -2297,7 +2297,15 @@ def dynamic_theme_css(request):
             z-index: 1100 !important;
         }}
 
-        /* Inline Tabular table container - clean scrollbar on demand */
+        /* Fix admin-interface forcing permanent horizontal scrollbar with empty arrows */
+        .admin-interface .inline-related.tabular {{
+            overflow-x: visible !important;
+            overflow-y: visible !important;
+        }}
+        .admin-interface .inline-group[data-inline-type="tabular"] {{
+            overflow-x: auto !important;
+            scrollbar-width: thin;
+        }}
         .inline-group .tabular .wrapper {{
             overflow-x: auto !important;
             scrollbar-width: thin;
