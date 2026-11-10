@@ -1,0 +1,1084 @@
+{% extends "base.html" %}
+{% load i18n humanize static %}
+
+{% block extra_head %}
+<!-- Alpine.js & Chart.js -->
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+.metric-card-col {
+    position: relative;
+    z-index: 1;
+}
+.metric-card-col:hover {
+    z-index: 9999 !important;
+}
+.widget-expand-card {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    position: relative;
+    overflow: visible !important;
+    border-radius: 1rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+.widget-expand-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.18) !important;
+}
+.widget-hover-details {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 2px;
+    padding: 0.85rem 1rem;
+    border-radius: 0 0 1rem 1rem;
+    box-shadow: 0 14px 28px rgba(0,0,0,0.22);
+    z-index: 10000 !important;
+    backdrop-filter: blur(8px);
+}
+.widget-expand-card:hover .widget-hover-details {
+    display: block !important;
+}
+.card-glass-glow {
+    position: absolute;
+    top: -30%;
+    right: -20%;
+    width: 140px;
+    height: 140px;
+    background: radial-gradient(circle, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0) 70%);
+    pointer-events: none;
+    border-radius: 50%;
+}
+.assets-table th {
+    background-color: var(--app-table-header-bg) !important;
+    color: var(--app-table-header-text) !important;
+    border-bottom: 1px solid var(--app-table-border-color) !important;
+    white-space: nowrap;
+}
+.assets-table td {
+    background-color: var(--app-table-row-bg) !important;
+    color: var(--app-table-row-text) !important;
+    border-bottom: 1px solid var(--app-table-border-color) !important;
+}
+.assets-table tr:hover td {
+    background-color: var(--app-table-row-hover-bg) !important;
+}
+.cursor-pointer {
+    cursor: pointer;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div x-data="assetsOverviewApp()" x-init="init()" class="container-fluid px-3 px-md-4 py-4">
+
+    <!-- Page Title & Header Actions -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+        <div>
+            <h2 class="fw-bold mb-1" style="color: var(--app-card-color);">
+                <i class="bi bi-cash-coin text-primary me-2"></i>{% trans "Assets, Accounts & Wealth Management" %}
+            </h2>
+            <p class="text-muted small mb-0 d-flex align-items-center flex-wrap gap-2">
+                <span class="badge rounded-pill bg-body-tertiary text-body border border-secondary border-opacity-25 px-2.5 py-1" style="font-size: 0.75rem;">
+                    <i class="bi bi-shield-check text-success me-1"></i>{% trans "Emergency Fund Health" %}:
+                    <strong :class="emergencyMonthsCovered >= 3 ? 'text-success' : 'text-danger'" x-text="emergencyMonthsCovered + ' {% trans 'Months' %}'"></strong>
+                    <span class="opacity-75 ms-1">({% trans 'Target' %}: 3-6)</span>
+                </span>
+                <span class="badge rounded-pill bg-body-tertiary text-body border border-secondary border-opacity-25 px-2.5 py-1" style="font-size: 0.75rem;">
+                    <i class="bi bi-arrow-repeat text-info me-1"></i>{% trans "Monthly Savings Volume" %}:
+                    <strong class="text-primary" x-text="formatEuro(totalMonthlySavings) + ' € / M'"></strong>
+                </span>
+            </p>
+        </div>
+        <div class="d-flex gap-2">
+            <button class="btn btn-primary d-flex align-items-center gap-2 shadow-sm rounded-pill px-3 py-2"
+                    style="background: var(--app-gradient); border: none;"
+                    @click="openAddAssetModal()">
+                <i class="bi bi-plus-circle"></i>
+                <span class="fw-semibold">{% trans "New Account / Depot" %}</span>
+            </button>
+            <button class="btn btn-outline-secondary d-flex align-items-center gap-2 shadow-sm rounded-pill px-3 py-2"
+                    @click="openAddPhysicalModal()">
+                <i class="bi bi-gem"></i>
+                <span class="fw-semibold">{% trans "New Physical Asset / Gold" %}</span>
+            </button>
+            <button class="btn btn-outline-primary d-flex align-items-center gap-2 shadow-sm rounded-pill px-3 py-2"
+                    @click="openQuickSnapshotModal()">
+                <i class="bi bi-camera"></i>
+                <span class="fw-semibold">{% trans "Record Date Snapshot" %}</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Top KPI Summary Bar (Theme Aware) -->
+    <div class="row g-3 mb-4">
+        <!-- 1. Total Wealth (Net Worth in Liquid & Tangible Assets) -->
+        <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
+            <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card_colors.total_bg }}; color: {{ card_colors.total_text }}; border: none;">
+                <div class="card-glass-glow"></div>
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em; color: inherit;">
+                            {% trans "Total Asset Wealth" %}
+                        </span>
+                        <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
+                            {{ total_wealth|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ profile.currency|default:"EUR" }}</span>
+                        </h3>
+                        <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                            {% trans "Accounts, Depots, Crypto & Physical" %}
+                        </span>
+                    </div>
+                    <div class="ms-2"><i class="bi bi-pie-chart fs-5"></i></div>
+                </div>
+
+                <!-- Hover Details -->
+                <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card_colors.total_bg }}; color: {{ card_colors.total_text }};">
+                    <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Asset Class Allocation" %}:</span>
+                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                        <span>{% trans "Cash & Overnight" %}</span>
+                        <span class="font-monospace fw-bold">{{ total_cash|floatformat:2|intcomma }} {{ profile.currency|default:"EUR" }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                        <span>{% trans "Depots & Securities" %}</span>
+                        <span class="font-monospace fw-bold">{{ total_depot|floatformat:2|intcomma }} {{ profile.currency|default:"EUR" }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                        <span>{% trans "Crypto & Precious Metals" %}</span>
+                        <span class="font-monospace fw-bold">{{ total_crypto|add:total_metals|floatformat:2|intcomma }} {{ profile.currency|default:"EUR" }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                        <span>{% trans "Physical Assets & Valuables" %}</span>
+                        <span class="font-monospace fw-bold">{{ total_physical|floatformat:2|intcomma }} {{ profile.currency|default:"EUR" }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Liquidity & Emergency Fund -->
+        <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
+            <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card_colors.cash_bg }}; color: {{ card_colors.cash_text }}; border: none;">
+                <div class="card-glass-glow"></div>
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em; color: inherit;">
+                            {% trans "Liquid Assets & Notgroschen" %}
+                        </span>
+                        <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
+                            {{ total_cash|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ profile.currency|default:"EUR" }}</span>
+                        </h3>
+                        <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                            {% trans "Designated Reserve" %}: {{ emergency_fund_actual|floatformat:2|intcomma }} {{ profile.currency|default:"EUR" }}
+                        </span>
+                    </div>
+                    <div class="ms-2"><i class="bi bi-wallet2 fs-5"></i></div>
+                </div>
+
+                <!-- Hover Details -->
+                <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card_colors.cash_bg }}; color: {{ card_colors.cash_text }};">
+                    <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Liquidity Health Check" %}:</span>
+                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                        <span>{% trans "Monthly Outflow / Fix" %}</span>
+                        <span class="font-monospace fw-bold">{{ monthly_expenses|floatformat:2|intcomma }} {{ profile.currency|default:"EUR" }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                        <span>{% trans "3-Month Target" %}</span>
+                        <span class="font-monospace fw-bold">{{ emergency_target|floatformat:2|intcomma }} {{ profile.currency|default:"EUR" }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                        <span>{% trans "Coverage Quotient" %}</span>
+                        <span class="font-monospace fw-bold" :class="emergencyMonthsCovered >= 3 ? 'text-success' : 'text-warning'" x-text="emergencyMonthsCovered + ' {% trans 'Months' %}'"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. ETF Depots & Capital Market -->
+        <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
+            <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card_colors.depot_bg }}; color: {{ card_colors.depot_text }}; border: none;">
+                <div class="card-glass-glow"></div>
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em; color: inherit;">
+                            {% trans "ETF & Securities Depots" %}
+                        </span>
+                        <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
+                            {{ total_depot|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ profile.currency|default:"EUR" }}</span>
+                        </h3>
+                        <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                            {% trans "Monthly Inflow" %}: +{{ total_monthly_savings|floatformat:2|intcomma }} {{ profile.currency|default:"EUR" }}
+                        </span>
+                    </div>
+                    <div class="ms-2"><i class="bi bi-graph-up-arrow fs-5"></i></div>
+                </div>
+
+                <!-- Hover Details -->
+                <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card_colors.depot_bg }}; color: {{ card_colors.depot_text }};">
+                    <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Depots Breakdown" %}:</span>
+                    <template x-for="a in assets.filter(item => item.asset_type === 'depot')" :key="a.id">
+                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                            <span class="text-truncate flex-grow-1" x-text="a.name"></span>
+                            <span class="font-monospace fw-bold text-end" x-text="formatEuro(a.value) + ' €'"></span>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Crypto, Metals & Physical -->
+        <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
+            <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card_colors.physical_bg }}; color: {{ card_colors.physical_text }}; border: none;">
+                <div class="card-glass-glow"></div>
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em; color: inherit;">
+                            {% trans "Alternative & Physical Assets" %}
+                        </span>
+                        <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
+                            {{ total_crypto|add:total_metals|add:total_physical|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ profile.currency|default:"EUR" }}</span>
+                        </h3>
+                        <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                            {% trans "Bitcoin, Gold, Tangibles & Collectibles" %}
+                        </span>
+                    </div>
+                    <div class="ms-2"><i class="bi bi-gem fs-5"></i></div>
+                </div>
+
+                <!-- Hover Details -->
+                <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card_colors.physical_bg }}; color: {{ card_colors.physical_text }};">
+                    <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Alternative Breakdown" %}:</span>
+                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                        <span>{% trans "Cryptocurrencies" %}</span>
+                        <span class="font-monospace fw-bold">{{ total_crypto|floatformat:2|intcomma }} €</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                        <span>{% trans "Precious Metals" %}</span>
+                        <span class="font-monospace fw-bold">{{ total_metals|floatformat:2|intcomma }} €</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                        <span>{% trans "Physical Tangibles" %}</span>
+                        <span class="font-monospace fw-bold">{{ total_physical|floatformat:2|intcomma }} €</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Historical Progression Chart (Stacked Asset Classes) -->
+    <div class="card border-0 shadow-sm rounded-4 p-3 mb-4" style="background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color);">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2 mb-2">
+            <div>
+                <h6 class="fw-bold mb-0">
+                    <i class="bi bi-activity text-primary me-2"></i>{% trans "Historical Wealth Timeline & Performance" %}
+                </h6>
+                <span class="small opacity-75">{% trans "Progression across recorded key dates by asset category" %}</span>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2.5 py-1.5 rounded-pill small">
+                    <i class="bi bi-calendar-event me-1"></i><span x-text="historyChartData.labels ? historyChartData.labels.length + ' {% trans 'Record Dates' %}' : '0'"></span>
+                </span>
+            </div>
+        </div>
+        <div style="position: relative; height: 260px; width: 100%;">
+            <canvas id="assetHistoryChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Tab Navigation -->
+    <ul class="nav nav-pills mb-4 gap-2" id="assetsTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link rounded-pill px-4 fw-semibold" :class="activeTab === 'all' ? 'active' : ''" @click="setTab('all')" type="button">
+                <i class="bi bi-collection me-1"></i>{% trans "All Accounts & Assets" %}
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link rounded-pill px-4 fw-semibold" :class="activeTab === 'depots' ? 'active' : ''" @click="setTab('depots')" type="button">
+                <i class="bi bi-graph-up me-1"></i>{% trans "ETFs & Depots" %}
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link rounded-pill px-4 fw-semibold" :class="activeTab === 'crypto-metals' ? 'active' : ''" @click="setTab('crypto-metals')" type="button">
+                <i class="bi bi-currency-bitcoin me-1"></i>{% trans "Crypto & Precious Metals" %}
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link rounded-pill px-4 fw-semibold" :class="activeTab === 'physical' ? 'active' : ''" @click="setTab('physical')" type="button">
+                <i class="bi bi-gem me-1"></i>{% trans "Physical Assets (Gold/Cars)" %}
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link rounded-pill px-4 fw-semibold" :class="activeTab === 'simulation' ? 'active' : ''" @click="setTab('simulation')" type="button">
+                <i class="bi bi-sliders me-1"></i>{% trans "Simulations & Calculators" %}
+            </button>
+        </li>
+    </ul>
+
+    <!-- ======================================================== -->
+    <!-- TAB 1: ACCOUNTS & ASSETS TABLE (FILTER & SORT)          -->
+    <!-- ======================================================== -->
+    <div x-show="activeTab === 'all' || activeTab === 'depots' || activeTab === 'crypto-metals'" class="mb-4">
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color);">
+            <div class="card-header border-0 d-flex justify-content-between align-items-center">
+                <span class="fw-bold">
+                    <i class="bi bi-list-task me-2 opacity-75"></i>
+                    <span x-text="activeTab === 'depots' ? '{% trans 'Securities & ETF Depots' %}' : (activeTab === 'crypto-metals' ? '{% trans 'Cryptocurrencies & Precious Metals' %}' : '{% trans 'All Financial Accounts & Assets' %}')"></span>
+                </span>
+                <span class="badge rounded-pill bg-white bg-opacity-25 text-white" x-text="filteredAssets.length + ' / ' + assets.length"></span>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0 assets-table">
+                        <thead>
+                            <tr>
+                                <th class="py-3 px-3 cursor-pointer user-select-none" @click="sortAssets('name')">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <span>{% trans "Account / Asset Name" %}</span>
+                                        <i class="bi" :class="assetSortCol === 'name' ? (assetSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                    </div>
+                                </th>
+                                <th class="py-3 px-3 cursor-pointer user-select-none" @click="sortAssets('asset_type')">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <span>{% trans "Class" %}</span>
+                                        <i class="bi" :class="assetSortCol === 'asset_type' ? (assetSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                    </div>
+                                </th>
+                                <th class="py-3 px-3 cursor-pointer user-select-none" @click="sortAssets('institution')">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <span>{% trans "Institution / Broker" %}</span>
+                                        <i class="bi" :class="assetSortCol === 'institution' ? (assetSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                    </div>
+                                </th>
+                                <th class="py-3 px-3 cursor-pointer user-select-none text-end" @click="sortAssets('growth_rate')">
+                                    <div class="d-flex align-items-center justify-content-end">
+                                        <span>{% trans "Interest / Return p.a." %}</span>
+                                        <i class="bi ms-1" :class="assetSortCol === 'growth_rate' ? (assetSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                    </div>
+                                </th>
+                                <th class="py-3 px-3 cursor-pointer user-select-none text-end" @click="sortAssets('monthly_savings_amount')">
+                                    <div class="d-flex align-items-center justify-content-end">
+                                        <span>{% trans "Savings Plan" %}</span>
+                                        <i class="bi ms-1" :class="assetSortCol === 'monthly_savings_amount' ? (assetSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                    </div>
+                                </th>
+                                <th class="py-3 px-3 cursor-pointer user-select-none text-end" @click="sortAssets('value')">
+                                    <div class="d-flex align-items-center justify-content-end">
+                                        <span>{% trans "Current Value" %}</span>
+                                        <i class="bi ms-1" :class="assetSortCol === 'value' ? (assetSortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up opacity-50'"></i>
+                                    </div>
+                                </th>
+                                <th class="py-3 px-3 text-end" style="width: 1%;">{% trans "Actions" %}</th>
+                            </tr>
+                            <!-- Inline Filter Row -->
+                            <tr style="background-color: var(--app-table-filter-bg) !important;">
+                                <td class="p-1 px-3 border-0">
+                                    <input type="text" x-model="assetFilters.name" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body" placeholder="{% trans 'Filter Name...' %}">
+                                </td>
+                                <td class="p-1 px-3 border-0">
+                                    <select x-model="assetFilters.asset_type" class="form-select form-select-sm border-0 bg-white bg-opacity-10 text-body">
+                                        <option value="">{% trans 'All Classes' %}</option>
+                                        <option value="cash">{% trans 'Cash & Checking' %}</option>
+                                        <option value="overnight">{% trans 'Overnight & Emergency' %}</option>
+                                        <option value="depot">{% trans 'ETF & Stocks Depot' %}</option>
+                                        <option value="crypto">{% trans 'Crypto' %}</option>
+                                        <option value="precious_metal">{% trans 'Precious Metals' %}</option>
+                                    </select>
+                                </td>
+                                <td class="p-1 px-3 border-0">
+                                    <input type="text" x-model="assetFilters.institution" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body" placeholder="{% trans 'Filter Bank...' %}">
+                                </td>
+                                <td class="p-1 px-3 border-0" colspan="4"></td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template x-for="a in filteredAssets" :key="a.id">
+                                <tr>
+                                    <td class="py-3 px-3">
+                                        <div class="fw-bold d-flex align-items-center gap-1">
+                                            <span x-text="a.name"></span>
+                                            <template x-if="a.is_emergency_fund">
+                                                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-2 py-0.5" style="font-size: 0.65rem;">
+                                                    <i class="bi bi-shield-check me-1"></i>{% trans "Notgroschen" %}
+                                                </span>
+                                            </template>
+                                        </div>
+                                        <div class="small opacity-75" x-show="a.isin_ticker">
+                                            <span class="font-monospace" x-text="a.isin_ticker"></span>
+                                        </div>
+                                    </td>
+                                    <td class="py-3 px-3">
+                                        <span class="badge rounded-pill bg-body-tertiary text-body border border-secondary border-opacity-20" style="font-size: 0.72rem;" x-text="a.asset_type_display"></span>
+                                    </td>
+                                    <td class="py-3 px-3">
+                                        <span class="opacity-85" x-text="a.institution || '-'"></span>
+                                    </td>
+                                    <td class="py-3 px-3 text-end font-monospace">
+                                        <span x-text="a.growth_rate + ' %'"></span>
+                                        <template x-if="a.teaser_active">
+                                            <div class="small text-warning" style="font-size: 0.7rem;">
+                                                <i class="bi bi-lightning-fill"></i> <span x-text="a.interest_teaser_rate + ' % bis ' + a.interest_teaser_until_display"></span>
+                                            </div>
+                                        </template>
+                                    </td>
+                                    <td class="py-3 px-3 text-end font-monospace">
+                                        <span :class="a.monthly_savings_amount > 0 ? 'text-primary fw-bold' : 'opacity-50'" x-text="a.monthly_savings_amount > 0 ? '+' + formatEuro(a.monthly_savings_amount) + ' €' : '-'"></span>
+                                    </td>
+                                    <td class="py-3 px-3 text-end font-monospace fw-bold fs-6">
+                                        <span x-text="formatEuro(a.value) + ' €'"></span>
+                                        <template x-if="a.snapshots && a.snapshots.length > 1">
+                                            <div class="small" :class="a.change_pct >= 0 ? 'text-success' : 'text-danger'" style="font-size: 0.7rem;">
+                                                <span x-text="(a.change_pct >= 0 ? '+' : '') + a.change_pct + ' %'"></span>
+                                            </div>
+                                        </template>
+                                    </td>
+                                    <td class="py-3 px-3 text-end text-nowrap">
+                                        <button type="button" class="btn btn-sm btn-outline-primary rounded-pill p-1 px-2 me-1" @click="openSnapshotModalFor(a, 'asset')" title="{% trans 'Stichtagshistorie' %}">
+                                            <i class="bi bi-clock-history"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill p-1 px-2 me-1" @click="openEditAssetModal(a)" title="{% trans 'Bearbeiten' %}">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <a :href="'/finance/assets/delete/' + a.id + '/?tab=' + activeTab" class="btn btn-sm btn-outline-danger rounded-pill p-1 px-2" onclick="return confirm('{% trans 'Asset unwiderruflich löschen?' %}')" title="{% trans 'Löschen' %}">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </template>
+                            <tr x-show="filteredAssets.length === 0">
+                                <td colspan="7" class="text-center py-4 opacity-75">
+                                    <i class="bi bi-search me-1"></i>{% trans "Keine passenden Anlagen gefunden." %}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- TAB 4: PHYSICAL ASSETS (GOLD, OLDTIMER, UHREN)           -->
+    <!-- ======================================================== -->
+    <div x-show="activeTab === 'physical'" class="mb-4">
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color);">
+            <div class="card-header border-0 d-flex justify-content-between align-items-center">
+                <span class="fw-bold"><i class="bi bi-gem me-2 opacity-75"></i>{% trans "Sachwerte, Gold & Sachvermögen" %}</span>
+                <span class="badge rounded-pill bg-white bg-opacity-25 text-white" x-text="physicalAssets.length + ' {% trans 'Sachwerte' %}'"></span>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0 assets-table">
+                        <thead>
+                            <tr>
+                                <th class="py-3 px-3">{% trans "Gegenstand / Sachwert" %}</th>
+                                <th class="py-3 px-3">{% trans "Lagerort / Aufbewahrung" %}</th>
+                                <th class="py-3 px-3 text-end">{% trans "Wertentwicklung p.a." %}</th>
+                                <th class="py-3 px-3 text-end">{% trans "Lagerkosten / Monat" %}</th>
+                                <th class="py-3 px-3 text-end">{% trans "Aktueller Wert" %}</th>
+                                <th class="py-3 px-3 text-end" style="width: 1%;">{% trans "Aktionen" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template x-for="pa in physicalAssets" :key="pa.id">
+                                <tr>
+                                    <td class="py-3 px-3">
+                                        <div class="fw-bold" x-text="pa.name"></div>
+                                        <template x-if="pa.is_sold">
+                                            <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-2 py-0.5" style="font-size: 0.65rem;">{% trans "Verkauft" %}</span>
+                                        </template>
+                                    </td>
+                                    <td class="py-3 px-3">
+                                        <span class="opacity-85" x-text="pa.location || '-'"></span>
+                                    </td>
+                                    <td class="py-3 px-3 text-end font-monospace">
+                                        <span x-text="pa.appreciation_rate + ' %'"></span>
+                                    </td>
+                                    <td class="py-3 px-3 text-end font-monospace text-danger">
+                                        <span x-text="pa.storage_costs_monthly > 0 ? '-' + formatEuro(pa.storage_costs_monthly) + ' €' : '-'"></span>
+                                    </td>
+                                    <td class="py-3 px-3 text-end font-monospace fw-bold fs-6">
+                                        <span x-text="formatEuro(pa.value) + ' €'"></span>
+                                    </td>
+                                    <td class="py-3 px-3 text-end text-nowrap">
+                                        <button type="button" class="btn btn-sm btn-outline-primary rounded-pill p-1 px-2 me-1" @click="openSnapshotModalFor(pa, 'physical')" title="{% trans 'Stichtagshistorie' %}">
+                                            <i class="bi bi-clock-history"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill p-1 px-2 me-1" @click="openEditPhysicalModal(pa)" title="{% trans 'Bearbeiten' %}">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <a :href="'/finance/assets/physical/delete/' + pa.id + '/'" class="btn btn-sm btn-outline-danger rounded-pill p-1 px-2" onclick="return confirm('{% trans 'Sachwert löschen?' %}')" title="{% trans 'Löschen' %}">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </template>
+                            <tr x-show="physicalAssets.length === 0">
+                                <td colspan="6" class="text-center py-4 opacity-75">
+                                    <i class="bi bi-info-circle me-1"></i>{% trans "Keine Sachwerte erfasst." %}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- TAB 5: SIMULATIONS & CALCULATORS                         -->
+    <!-- ======================================================== -->
+    <div x-show="activeTab === 'simulation'" class="mb-4">
+        <div class="row g-4">
+            <!-- 1. Zinseszins & ETF Sparplan Rechner -->
+            <div class="col-12 col-lg-6">
+                <div class="card border-0 shadow-sm rounded-4 p-4 h-100" style="background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color);">
+                    <h5 class="fw-bold mb-1"><i class="bi bi-calculator text-primary me-2"></i>{% trans "ETF-Sparplan & Zinseszins-Simulation" %}</h5>
+                    <p class="text-muted small mb-4">{% trans "Berechne das Endkapital basierend auf Startkapital, Monatsrate und Erwartungsrendite." %}</p>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">{% trans "Startkapital (€)" %}</label>
+                            <input type="number" x-model.number="sim.initial" class="form-control font-monospace">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">{% trans "Monatliche Sparrate (€)" %}</label>
+                            <input type="number" x-model.number="sim.monthly" class="form-control font-monospace">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">{% trans "Erwartete Rendite (% p.a.)" %}</label>
+                            <input type="number" step="0.5" x-model.number="sim.rate" class="form-control font-monospace">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">{% trans "Anlagehorizont (Jahre)" %}</label>
+                            <input type="number" min="1" max="40" x-model.number="sim.years" class="form-control font-monospace">
+                        </div>
+                    </div>
+
+                    <div class="p-3 rounded-4 bg-body-tertiary mt-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="opacity-75">{% trans "Eingezahltes Eigenkapital" %}:</span>
+                            <strong class="font-monospace" x-text="formatEuro(simResult.totalDeposited) + ' €'"></strong>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="opacity-75">{% trans "Erwirtschaftete Zinsen/Kursgewinne" %}:</span>
+                            <strong class="font-monospace text-success" x-text="'+' + formatEuro(simResult.interestGains) + ' €'"></strong>
+                        </div>
+                        <hr class="my-2 border-secondary border-opacity-25">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="fw-bold fs-6">{% trans "Voraussichtliches Endkapital" %}:</span>
+                            <span class="fw-bold font-monospace fs-5 text-primary" x-text="formatEuro(simResult.endBalance) + ' €'"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Notgroschen & Entnahme-Strategie -->
+            <div class="col-12 col-lg-6">
+                <div class="card border-0 shadow-sm rounded-4 p-4 h-100" style="background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color);">
+                    <h5 class="fw-bold mb-1"><i class="bi bi-shield-shaded text-success me-2"></i>{% trans "Notgroschen- & Entnahme-Check" %}</h5>
+                    <p class="text-muted small mb-4">{% trans "Überprüfung der Liquiditätsreserve und Simulation monatlicher passiver Entnahmen (4 %-Regel)." %}</p>
+
+                    <!-- Notgroschen Ampel -->
+                    <div class="p-3 rounded-4 mb-4 border" :class="emergencyMonthsCovered >= 3 ? 'border-success bg-success bg-opacity-10' : 'border-warning bg-warning bg-opacity-10'">
+                        <div class="d-flex align-items-center gap-3">
+                            <i class="bi fs-1" :class="emergencyMonthsCovered >= 3 ? 'bi-shield-check text-success' : 'bi-exclamation-triangle text-warning'"></i>
+                            <div>
+                                <h6 class="fw-bold mb-0" x-text="emergencyMonthsCovered >= 3 ? '{% trans 'Notgroschen ist solide aufgestellt' %}' : '{% trans 'Notgroschen unter 3 Monatsausgaben' %}'"></h6>
+                                <p class="small mb-0 opacity-75" x-text="'Aktuell sind ' + emergencyMonthsCovered + ' Monate an Fixausgaben auf Notgroschen-Konten reserviert.'"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4% Regel Entnahmerechner -->
+                    <label class="form-label small fw-bold">{% trans "4%-Entnahmeregel auf aktuelles Gesamtvermögen" %}</label>
+                    <div class="p-3 rounded-4 bg-body-tertiary">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="opacity-75">{% trans "Jährliche sichere Entnahme (4 % SWR)" %}:</span>
+                            <strong class="font-monospace text-primary" x-text="formatEuro(totalWealthNumber * 0.04) + ' € / Jahr'"></strong>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="opacity-75">{% trans "Mögliche monatliche Zusatzrente" %}:</span>
+                            <strong class="font-monospace text-success fs-6" x-text="formatEuro((totalWealthNumber * 0.04) / 12) + ' € / Monat'"></strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- MODAL 1: ADD / EDIT ASSET (ACCOUNT / DEPOT)              -->
+    <!-- ======================================================== -->
+    <div class="modal fade" id="assetModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+                <form :action="editAssetId ? '/finance/assets/save/' + editAssetId + '/' : '/finance/assets/save/'" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="current_tab" :value="activeTab">
+                    <div class="modal-header border-0 pb-0">
+                        <h5 class="modal-title fw-bold" x-text="editAssetId ? '{% trans 'Konto / Depot bearbeiten' %}' : '{% trans 'Neues Konto oder Depot anlegen' %}'"></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body pt-3">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">{% trans "Bezeichnung / Name" %}</label>
+                                <input type="text" name="name" x-model="assetForm.name" class="form-control" required placeholder="z. B. DKB Giro, Trade Republic MSCI World">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">{% trans "Anlageklasse / Typ" %}</label>
+                                <select name="asset_type" x-model="assetForm.asset_type" class="form-select">
+                                    <option value="cash">{% trans "Girokonto / Liquidität" %}</option>
+                                    <option value="overnight">{% trans "Tagesgeld / Notgroschen / Festgeld" %}</option>
+                                    <option value="depot">{% trans "Wertpapierdepot (ETFs / Aktien)" %}</option>
+                                    <option value="crypto">{% trans "Kryptowährungen (Bitcoin & Co.)" %}</option>
+                                    <option value="precious_metal">{% trans "Edelmetalle (Gold / Silber)" %}</option>
+                                    <option value="other">{% trans "Sonstige Geldanlage" %}</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">{% trans "Bank / Broker / Plattform" %}</label>
+                                <input type="text" name="institution" x-model="assetForm.institution" class="form-control" placeholder="z. B. ING, DKB, Scalable, Bitpanda">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">{% trans "ISIN / WKN / Ticker (optional)" %}</label>
+                                <input type="text" name="isin_ticker" x-model="assetForm.isin_ticker" class="form-control font-monospace" placeholder="z. B. IE00B4L5Y983 oder BTC">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">{% trans "Aktueller Wert (€)" %}</label>
+                                <input type="number" step="0.01" name="value" x-model="assetForm.value" class="form-control font-monospace" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">{% trans "Zinssatz / Erwartungsrendite (% p.a.)" %}</label>
+                                <input type="number" step="0.01" name="growth_rate" x-model="assetForm.growth_rate" class="form-control font-monospace">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">{% trans "Monatlicher Sparplan / Zukauf (€)" %}</label>
+                                <input type="number" step="0.01" name="monthly_savings_amount" x-model="assetForm.monthly_savings_amount" class="form-control font-monospace">
+                            </div>
+                            <div class="col-md-6 d-flex align-items-center">
+                                <div class="form-check mt-3">
+                                    <input type="checkbox" name="is_emergency_fund" x-model="assetForm.is_emergency_fund" class="form-check-input" id="isEmergencyCheck">
+                                    <label class="form-check-label small fw-semibold" for="isEmergencyCheck">{% trans "Als Notgroschen-Reserve werten" %}</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">{% trans "Abbrechen" %}</button>
+                        <button type="submit" class="btn btn-primary rounded-pill px-4" style="background: var(--app-gradient); border: none;">{% trans "Speichern" %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- MODAL 2: ADD / EDIT PHYSICAL ASSET                       -->
+    <!-- ======================================================== -->
+    <div class="modal fade" id="physicalModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+                <form :action="editPhysicalId ? '/finance/assets/physical/save/' + editPhysicalId + '/' : '/finance/assets/physical/save/'" method="post">
+                    {% csrf_token %}
+                    <div class="modal-header border-0 pb-0">
+                        <h5 class="modal-title fw-bold" x-text="editPhysicalId ? '{% trans 'Sachwert bearbeiten' %}' : '{% trans 'Neuen Sachwert / Gold anlegen' %}'"></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body pt-3">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">{% trans "Bezeichnung" %}</label>
+                                <input type="text" name="name" x-model="physicalForm.name" class="form-control" required placeholder="z. B. Goldmünzen Krügerrand, Rolex Submariner">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">{% trans "Aktueller Wert (€)" %}</label>
+                                <input type="number" step="0.01" name="value" x-model="physicalForm.value" class="form-control font-monospace" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">{% trans "Wertentwicklung p.a. (%)" %}</label>
+                                <input type="number" step="0.01" name="appreciation_rate" x-model="physicalForm.appreciation_rate" class="form-control font-monospace">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">{% trans "Lagerort / Aufbewahrung" %}</label>
+                                <input type="text" name="location" x-model="physicalForm.location" class="form-control" placeholder="z. B. Bankschließfach, Heimtresor">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">{% trans "Monatliche Lager-/Wartungskosten (€)" %}</label>
+                                <input type="number" step="0.01" name="storage_costs_monthly" x-model="physicalForm.storage_costs_monthly" class="form-control font-monospace">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">{% trans "Abbrechen" %}</button>
+                        <button type="submit" class="btn btn-primary rounded-pill px-4" style="background: var(--app-gradient); border: none;">{% trans "Speichern" %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- MODAL 3: SNAPSHOT HISTORY MODAL                          -->
+    <!-- ======================================================== -->
+    <div class="modal fade" id="snapshotModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+                <div class="modal-header border-0 pb-0">
+                    <div>
+                        <h5 class="modal-title fw-bold">
+                            <i class="bi bi-clock-history text-primary me-2"></i>{% trans "Stichtags-Historie & Wertentwicklung" %}
+                        </h5>
+                        <span class="small opacity-75" x-text="activeSnapshotTarget.name"></span>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body pt-3">
+                    <!-- Inline Add Snapshot Form -->
+                    <form action="/finance/assets/snapshot/save/" method="post" class="p-3 rounded-4 bg-body-tertiary mb-3">
+                        {% csrf_token %}
+                        <input type="hidden" name="target_type" :value="activeSnapshotTarget.type">
+                        <input type="hidden" name="target_id" :value="activeSnapshotTarget.id">
+                        <input type="hidden" name="current_tab" :value="activeTab">
+                        <div class="row g-2 align-items-end">
+                            <div class="col-md-4">
+                                <label class="form-label small fw-bold">{% trans "Stichtag" %}</label>
+                                <input type="date" name="date" class="form-control" required value="{{ today|date:'Y-m-d' }}">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-bold">{% trans "Wert (€)" %}</label>
+                                <input type="number" step="0.01" name="value" class="form-control font-monospace" required :value="activeSnapshotTarget.value">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-bold">{% trans "Notiz" %}</label>
+                                <input type="text" name="notes" class="form-control" placeholder="z. B. Quartalsabschluss">
+                            </div>
+                            <div class="col-md-1">
+                                <button type="submit" class="btn btn-primary rounded-circle p-2 w-100" style="background: var(--app-gradient); border: none;" title="{% trans 'Hinzufügen' %}">
+                                    <i class="bi bi-plus-lg"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Snapshot History Table -->
+                    <div class="table-responsive rounded-3 border">
+                        <table class="table table-sm table-hover align-middle mb-0" style="font-size: 0.85rem;">
+                            <thead class="bg-body-tertiary">
+                                <tr>
+                                    <th class="py-2 px-3">{% trans "Datum" %}</th>
+                                    <th class="py-2 px-3 text-end">{% trans "Stichtagswert" %}</th>
+                                    <th class="py-2 px-3">{% trans "Notiz" %}</th>
+                                    <th class="py-2 px-3 text-end" style="width: 1%;"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template x-for="s in activeSnapshotTarget.snapshots" :key="s.id">
+                                    <tr>
+                                        <td class="py-2 px-3 font-monospace fw-bold" x-text="s.date_display"></td>
+                                        <td class="py-2 px-3 font-monospace text-end fw-bold text-success" x-text="formatEuro(s.value) + ' €'"></td>
+                                        <td class="py-2 px-3 small opacity-75" x-text="s.notes || '-'"></td>
+                                        <td class="py-2 px-3 text-end">
+                                            <a :href="'/finance/assets/snapshot/delete/' + s.id + '/?tab=' + activeTab" class="btn btn-sm btn-link text-danger p-0" onclick="return confirm('{% trans 'Stichtag löschen?' %}')">
+                                                <i class="bi bi-x-circle"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </template>
+                                <tr x-show="!activeSnapshotTarget.snapshots || activeSnapshotTarget.snapshots.length === 0">
+                                    <td colspan="4" class="text-center py-3 opacity-75">{% trans "Noch keine historischen Stichtagswerte vorhanden." %}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+function assetsOverviewApp() {
+    return {
+        activeTab: 'all',
+        assets: {{ assets_json|safe|default:"[]" }},
+        physicalAssets: {{ physical_json|safe|default:"[]" }},
+        historyChartData: {{ history_chart_json|safe|default:"{}" }},
+        emergencyMonthsCovered: {{ emergency_months_covered|default:0 }},
+        totalMonthlySavings: {{ total_monthly_savings|default:0 }},
+        totalWealthNumber: {{ total_wealth|default:0 }},
+
+        // Filters & Sorting for Assets
+        assetFilters: { name: '', asset_type: '', institution: '' },
+        assetSortCol: 'value',
+        assetSortDir: 'desc',
+
+        // Modals state
+        editAssetId: null,
+        assetForm: {
+            name: '',
+            asset_type: 'cash',
+            institution: '',
+            isin_ticker: '',
+            value: '',
+            growth_rate: '0.0',
+            monthly_savings_amount: '0.0',
+            is_emergency_fund: false
+        },
+        editPhysicalId: null,
+        physicalForm: {
+            name: '',
+            value: '',
+            appreciation_rate: '0.0',
+            location: '',
+            storage_costs_monthly: '0.0'
+        },
+        activeSnapshotTarget: { id: null, type: 'asset', name: '', value: 0, snapshots: [] },
+
+        // Simulation State
+        sim: {
+            initial: 25000,
+            monthly: 500,
+            rate: 7.0,
+            years: 15
+        },
+
+        init() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const tab = urlParams.get('tab');
+            if (tab) this.activeTab = tab;
+            this.$nextTick(() => {
+                this.renderChart();
+            });
+        },
+
+        setTab(tab) {
+            this.activeTab = tab;
+            const url = new URL(window.location);
+            url.searchParams.set('tab', tab);
+            window.history.replaceState({}, '', url);
+        },
+
+        get filteredAssets() {
+            let list = this.assets;
+            if (this.activeTab === 'depots') {
+                list = list.filter(a => a.asset_type === 'depot');
+            } else if (this.activeTab === 'crypto-metals') {
+                list = list.filter(a => a.asset_type === 'crypto' || a.asset_type === 'precious_metal');
+            }
+
+            return list.filter(a => {
+                const qName = (this.assetFilters.name || '').toLowerCase();
+                if (qName && !a.name.toLowerCase().includes(qName)) return false;
+
+                const qType = this.assetFilters.asset_type;
+                if (qType && a.asset_type !== qType) return false;
+
+                const qInst = (this.assetFilters.institution || '').toLowerCase();
+                if (qInst && !(a.institution || '').toLowerCase().includes(qInst)) return false;
+
+                return true;
+            }).sort((a, b) => {
+                let va = a[this.assetSortCol];
+                let vb = b[this.assetSortCol];
+                if (typeof va === 'string') {
+                    va = va.toLowerCase();
+                    vb = (vb || '').toLowerCase();
+                    return this.assetSortDir === 'asc' ? va.localeCompare(vb) : vb.localeCompare(va);
+                }
+                va = va || 0;
+                vb = vb || 0;
+                return this.assetSortDir === 'asc' ? va - vb : vb - va;
+            });
+        },
+
+        sortAssets(col) {
+            if (this.assetSortCol === col) {
+                this.assetSortDir = this.assetSortDir === 'asc' ? 'desc' : 'asc';
+            } else {
+                this.assetSortCol = col;
+                this.assetSortDir = 'desc';
+            }
+        },
+
+        openAddAssetModal() {
+            this.editAssetId = null;
+            this.assetForm = {
+                name: '',
+                asset_type: this.activeTab === 'depots' ? 'depot' : (this.activeTab === 'crypto-metals' ? 'crypto' : 'cash'),
+                institution: '',
+                isin_ticker: '',
+                value: '',
+                growth_rate: '0.0',
+                monthly_savings_amount: '0.0',
+                is_emergency_fund: false
+            };
+            new bootstrap.Modal(document.getElementById('assetModal')).show();
+        },
+
+        openEditAssetModal(a) {
+            this.editAssetId = a.id;
+            this.assetForm = {
+                name: a.name,
+                asset_type: a.asset_type,
+                institution: a.institution,
+                isin_ticker: a.isin_ticker,
+                value: a.value,
+                growth_rate: a.growth_rate,
+                monthly_savings_amount: a.monthly_savings_amount,
+                is_emergency_fund: a.is_emergency_fund
+            };
+            new bootstrap.Modal(document.getElementById('assetModal')).show();
+        },
+
+        openAddPhysicalModal() {
+            this.editPhysicalId = null;
+            this.physicalForm = {
+                name: '',
+                value: '',
+                appreciation_rate: '0.0',
+                location: '',
+                storage_costs_monthly: '0.0'
+            };
+            new bootstrap.Modal(document.getElementById('physicalModal')).show();
+        },
+
+        openEditPhysicalModal(pa) {
+            this.editPhysicalId = pa.id;
+            this.physicalForm = {
+                name: pa.name,
+                value: pa.value,
+                appreciation_rate: pa.appreciation_rate,
+                location: pa.location,
+                storage_costs_monthly: pa.storage_costs_monthly
+            };
+            new bootstrap.Modal(document.getElementById('physicalModal')).show();
+        },
+
+        openSnapshotModalFor(item, type) {
+            this.activeSnapshotTarget = {
+                id: item.id,
+                type: type,
+                name: item.name,
+                value: item.value,
+                snapshots: item.snapshots || []
+            };
+            new bootstrap.Modal(document.getElementById('snapshotModal')).show();
+        },
+
+        openQuickSnapshotModal() {
+            if (this.assets.length > 0) {
+                this.openSnapshotModalFor(this.assets[0], 'asset');
+            } else if (this.physicalAssets.length > 0) {
+                this.openSnapshotModalFor(this.physicalAssets[0], 'physical');
+            }
+        },
+
+        // ETF / Compound Simulation logic
+        get simResult() {
+            const P = Number(this.sim.initial) || 0;
+            const PMT = Number(this.sim.monthly) || 0;
+            const r = (Number(this.sim.rate) || 0) / 100.0 / 12.0;
+            const n = (Number(this.sim.years) || 1) * 12;
+
+            let balance = P;
+            let totalDeposited = P;
+
+            for (let i = 0; i < n; i++) {
+                balance = balance * (1 + r) + PMT;
+                totalDeposited += PMT;
+            }
+
+            return {
+                totalDeposited: Math.round(totalDeposited),
+                interestGains: Math.round(balance - totalDeposited),
+                endBalance: Math.round(balance)
+            };
+        },
+
+        formatEuro(val) {
+            if (val === null || val === undefined) return '0,00';
+            return Number(val).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        },
+
+        renderChart() {
+            const canvas = document.getElementById('assetHistoryChart');
+            if (!canvas) return;
+
+            const d = this.historyChartData;
+            if (!d.labels || d.labels.length === 0) return;
+
+            new Chart(canvas, {
+                type: 'line',
+                data: {
+                    labels: d.labels,
+                    datasets: [
+                        {
+                            label: '{% trans "Gesamtvermögen" %}',
+                            data: d.total,
+                            borderColor: '#0d6efd',
+                            backgroundColor: 'rgba(13, 110, 253, 0.08)',
+                            fill: true,
+                            tension: 0.3,
+                            borderWidth: 3
+                        },
+                        {
+                            label: '{% trans "ETFs & Depots" %}',
+                            data: d.depot,
+                            borderColor: '#198754',
+                            borderDash: [5, 5],
+                            tension: 0.3,
+                            borderWidth: 2
+                        },
+                        {
+                            label: '{% trans "Liquidität & Notgroschen" %}',
+                            data: d.cash,
+                            borderColor: '#0dcaf0',
+                            borderDash: [2, 2],
+                            tension: 0.3,
+                            borderWidth: 1.5
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                font: { size: 11, family: 'system-ui' },
+                                boxWidth: 12
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) => `${ctx.dataset.label}: ${Number(ctx.raw).toLocaleString('de-DE', {minimumFractionDigits: 2})} €`
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            ticks: {
+                                callback: (v) => Number(v).toLocaleString('de-DE') + ' €'
+                            },
+                            grid: {
+                                color: 'rgba(150, 150, 150, 0.15)'
+                            }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+    }
+}
+</script>
+{% endblock %}

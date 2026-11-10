@@ -518,12 +518,11 @@ class CashFlowSourceAdmin(BaseOwnedModelAdmin):
 
 @admin.register(Asset)
 class AssetAdmin(BaseOwnedModelAdmin):
-    list_display = ('name', 'user', 'value', 'growth_rate', 'interest_teaser_rate', 'interest_teaser_until', 'withdrawal_amount', 'withdrawal_start_date')
-
-    list_filter = ('user',)
+    list_display = ('name', 'user', 'asset_type', 'value', 'growth_rate', 'monthly_savings_amount', 'is_emergency_fund', 'interest_teaser_rate', 'interest_teaser_until')
+    list_filter = ('asset_type', 'is_emergency_fund', 'user')
     list_select_related = ('user',)
-    search_fields = ('name',)
-    list_editable = ('value', 'growth_rate', 'interest_teaser_rate', 'interest_teaser_until', 'withdrawal_amount', 'withdrawal_start_date')
+    search_fields = ('name', 'institution', 'isin_ticker')
+    list_editable = ('asset_type', 'value', 'growth_rate', 'monthly_savings_amount', 'is_emergency_fund')
     inlines = [AssetSnapshotInline]
     snapshot_value_field = 'value'
 

@@ -4324,3 +4324,75 @@ msgstr "Objekt"
 
 msgid "Payment Calendar Breakdown"
 msgstr "Aufschlüsselung Zahlungskalender"
+
+msgid "Assets & Accounts"
+msgstr "Vermögen & Konten"
+
+msgid "Assets, Accounts & Wealth Management"
+msgstr "Vermögen, Konten & Depotverwaltung"
+
+msgid "Emergency Fund Health"
+msgstr "Notgroschen-Status"
+
+msgid "Monthly Savings Volume"
+msgstr "Monatliches Sparvolumen"
+
+msgid "New Account / Depot"
+msgstr "Neues Konto / Depot"
+
+msgid "New Physical Asset / Gold"
+msgstr "Neuer Sachwert / Gold"
+
+msgid "Record Date Snapshot"
+msgstr "Stichtagswert erfassen"
+
+msgid "Total Asset Wealth"
+msgstr "Gesamtvermögen (Anlagen & Sachwerte)"
+
+msgid "Accounts, Depots, Crypto & Physical"
+msgstr "Konten, Depots, Krypto & Sachwerte"
+
+msgid "Liquid Assets & Notgroschen"
+msgstr "Liquide Mittel & Notgroschen"
+
+msgid "ETF & Securities Depots"
+msgstr "ETFs & Wertpapierdepots"
+
+msgid "Alternative & Physical Assets"
+msgstr "Alternative & physische Sachwerte"
+
+msgid "Historical Wealth Timeline & Performance"
+msgstr "Vermögensverlauf & Wertentwicklung"
+
+msgid "All Accounts & Assets"
+msgstr "Alle Konten & Anlagen"
+
+msgid "ETFs & Depots"
+msgstr "ETFs & Depots"
+
+msgid "Crypto & Precious Metals"
+msgstr "Krypto & Edelmetalle"
+
+msgid "Physical Assets (Gold/Cars)"
+msgstr "Sachwerte (Gold/Werte)"
+
+msgid "Simulations & Calculators"
+msgstr "Simulationen & Rechner"
+
+msgid "Girokonto / Liquidität"
+msgstr "Girokonto / Liquidität"
+
+msgid "Tagesgeld / Notgroschen / Festgeld"
+msgstr "Tagesgeld / Notgroschen / Festgeld"
+
+msgid "Wertpapierdepot (ETFs / Aktien)"
+msgstr "Wertpapierdepot (ETFs / Aktien)"
+
+msgid "Kryptowährungen (Bitcoin / Altcoins)"
+msgstr "Kryptowährungen (Bitcoin / Altcoins)"
+
+msgid "Edelmetalle (Gold / Silber)"
+msgstr "Edelmetalle (Gold / Silber)"
+
+msgid "Sonstige Geldanlage"
+msgstr "Sonstige Geldanlage"

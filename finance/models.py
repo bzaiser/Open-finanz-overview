@@ -68,8 +68,23 @@ class CashFlowSource(models.Model):
         return f"{self.name} ({self.value})"
 
 class Asset(models.Model):
+    ASSET_TYPE_CHOICES = [
+        ('cash', _('Girokonto / Liquidität')),
+        ('overnight', _('Tagesgeld / Notgroschen / Festgeld')),
+        ('depot', _('Wertpapierdepot (ETFs / Aktien)')),
+        ('crypto', _('Kryptowährungen (Bitcoin / Altcoins)')),
+        ('precious_metal', _('Edelmetalle (Gold / Silber)')),
+        ('other', _('Sonstige Geldanlage')),
+    ]
+
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='assets')
     name = models.CharField(_("Display Name"), max_length=100)
+    asset_type = models.CharField(_("Asset Type"), max_length=20, choices=ASSET_TYPE_CHOICES, default='cash')
+    institution = models.CharField(_("Bank / Broker / Platform"), max_length=100, blank=True, null=True)
+    isin_ticker = models.CharField(_("ISIN / WKN / Ticker"), max_length=30, blank=True, null=True)
+    monthly_savings_amount = models.DecimalField(_("Monthly Savings Plan"), max_digits=10, decimal_places=2, default=0.0, help_text=_("Optional regular monthly savings or purchase amount"))
+    is_emergency_fund = models.BooleanField(_("Emergency Fund (Notgroschen)"), default=False, help_text=_("Designate this cash/overnight account as emergency liquidity reserve"))
+
     value = models.DecimalField(_("Current Value"), max_digits=12, decimal_places=2)
     growth_rate = models.DecimalField(_("Annual Growth Rate (%)"), max_digits=5, decimal_places=2, default=0.0)
     interest_teaser_rate = models.DecimalField(_("Teaser Interest Rate (%)"), max_digits=5, decimal_places=2, null=True, blank=True, help_text=_("Higher promotional interest rate (e.g. for new customers)"))

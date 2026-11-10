@@ -487,6 +487,12 @@
                            {% trans 'Real Estate & Loans' %}
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'assets_overview' %}active{% endif %}" href="{% url 'finance:assets_overview' %}">
+                           <i class="bi bi-cash-coin me-1"></i>
+                           {% trans 'Assets & Accounts' %}
+                        </a>
+                    </li>
                     {# Bank Import disabled for now #}
                     {# <li class="nav-item"> #}
                     {#     <a class="nav-link" href="{% url 'finance:import_transactions' %}"> #}

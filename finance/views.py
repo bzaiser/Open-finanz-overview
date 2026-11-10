@@ -11,12 +11,13 @@ from django.utils import timezone, translation
 from django.utils.translation import gettext_lazy as _, gettext as _eager
 from django.contrib import messages
 from .services import SimulationEngine
+from django.contrib.contenttypes.models import ContentType
 from .models import (
     PropertyComponent,
     Asset, CashFlowSource, OneTimeEvent, Pension, Category, 
-    ImportBatch, PendingTransaction, ImportFilter, ProcessedTransactionHash, AssetSnapshot
+    ImportBatch, PendingTransaction, ImportFilter, ProcessedTransactionHash, AssetSnapshot, PhysicalAsset
 )
-from .forms import BankImportForm
+from .forms import BankImportForm, AssetForm, PhysicalAssetForm
 from core.models import UserProfile, get_default_dashboard_config
 from .import_services import ExcelParserService
 from django.core.serializers.json import DjangoJSONEncoder
@@ -3890,3 +3891,424 @@ def property_document_delete(request, pk):
     doc.delete()
     messages.success(request, f"{_('Document')} '{title}' {_('was deleted.')}")
     return redirect(f"{reverse('finance:real_estate_loans')}?tab=tax-docs")
+
+
+# ==============================================================================
+# ASSETS & ACCOUNTS OVERVIEW (VERMÖGEN & KONTEN)
+# ==============================================================================
+
+@login_required
+def assets_overview_view(request):
+    user = request.user
+    profile = user.profile
+    today = timezone.now().date()
+    
+    # Configurable colors from Profile / Dashboard
+    dashboard_config = profile.dashboard_config or {}
+    summary_layout = dashboard_config.get('summary_layout', [])
+    summary_colors = {}
+    for item in summary_layout:
+        if isinstance(item, dict) and 'id' in item:
+            summary_colors[item['id']] = {
+                'bg_color': item.get('bg_color', ''),
+                'text_color': item.get('text_color', '')
+            }
+
+    card_colors = {
+        'cash_bg': summary_colors.get('current_assets', {}).get('bg_color') or '#0d6efd',
+        'cash_text': summary_colors.get('current_assets', {}).get('text_color') or '#ffffff',
+        'depot_bg': summary_colors.get('monthly_income', {}).get('bg_color') or '#198754',
+        'depot_text': summary_colors.get('monthly_income', {}).get('text_color') or '#ffffff',
+        'physical_bg': summary_colors.get('total_physical_assets', {}).get('bg_color') or '#8a2be2',
+        'physical_text': summary_colors.get('total_physical_assets', {}).get('text_color') or '#ffffff',
+        'total_bg': summary_colors.get('total_combined_assets', {}).get('bg_color') or '#ffc107',
+        'total_text': summary_colors.get('total_combined_assets', {}).get('text_color') or '#212529',
+    }
+
+    # Query all assets & physical assets
+    all_assets = list(Asset.objects.filter(user=user).order_by('asset_type', 'name'))
+    all_physical = list(PhysicalAsset.objects.filter(user=user).order_by('name'))
+
+    # Generic relation ContentType references
+    ct_asset = ContentType.objects.get_for_model(Asset)
+    ct_physical = ContentType.objects.get_for_model(PhysicalAsset)
+
+    # Fetch snapshots for all assets & physical assets
+    asset_ids = [a.id for a in all_assets]
+    pa_ids = [pa.id for pa in all_physical]
+
+    asset_snapshots = list(AssetSnapshot.objects.filter(
+        user=user, content_type=ct_asset, object_id__in=asset_ids
+    ).order_by('-date'))
+    pa_snapshots = list(AssetSnapshot.objects.filter(
+        user=user, content_type=ct_physical, object_id__in=pa_ids
+    ).order_by('-date'))
+
+    snapshots_by_asset = {}
+    for s in asset_snapshots:
+        snapshots_by_asset.setdefault(s.object_id, []).append({
+            'id': s.id,
+            'date': s.date.strftime('%Y-%m-%d'),
+            'date_display': s.date.strftime('%d.%m.%Y'),
+            'value': float(s.value),
+            'notes': s.notes or ''
+        })
+
+    snapshots_by_pa = {}
+    for s in pa_snapshots:
+        snapshots_by_pa.setdefault(s.object_id, []).append({
+            'id': s.id,
+            'date': s.date.strftime('%Y-%m-%d'),
+            'date_display': s.date.strftime('%d.%m.%Y'),
+            'value': float(s.value),
+            'notes': s.notes or ''
+        })
+
+    # Grouped datasets and totals
+    total_cash = Decimal('0.00')
+    total_depot = Decimal('0.00')
+    total_crypto = Decimal('0.00')
+    total_metals = Decimal('0.00')
+    total_other = Decimal('0.00')
+    emergency_fund_actual = Decimal('0.00')
+    total_monthly_savings = Decimal('0.00')
+
+    assets_json = []
+    for a in all_assets:
+        val = a.value or Decimal('0.00')
+        sav = a.monthly_savings_amount or Decimal('0.00')
+        total_monthly_savings += sav
+
+        if a.is_emergency_fund:
+            emergency_fund_actual += val
+
+        if a.asset_type in ['cash', 'overnight']:
+            total_cash += val
+        elif a.asset_type == 'depot':
+            total_depot += val
+        elif a.asset_type == 'crypto':
+            total_crypto += val
+        elif a.asset_type == 'precious_metal':
+            total_metals += val
+        else:
+            total_other += val
+
+        # Performance & return since oldest snapshot
+        snaps = snapshots_by_asset.get(a.id, [])
+        first_val = snaps[-1]['value'] if snaps else float(val)
+        change_abs = float(val) - first_val
+        change_pct = (change_abs / first_val * 100.0) if first_val > 0 else 0.0
+
+        teaser_active = bool(a.interest_teaser_rate is not None and a.interest_teaser_until and today <= a.interest_teaser_until)
+
+        assets_json.append({
+            'id': a.id,
+            'name': a.name,
+            'asset_type': a.asset_type,
+            'asset_type_display': str(a.get_asset_type_display()),
+            'institution': a.institution or '',
+            'isin_ticker': a.isin_ticker or '',
+            'value': float(val),
+            'growth_rate': float(a.growth_rate or 0),
+            'monthly_savings_amount': float(sav),
+            'is_emergency_fund': bool(a.is_emergency_fund),
+            'interest_teaser_rate': float(a.interest_teaser_rate) if a.interest_teaser_rate is not None else None,
+            'interest_teaser_until': a.interest_teaser_until.strftime('%Y-%m-%d') if a.interest_teaser_until else '',
+            'interest_teaser_until_display': a.interest_teaser_until.strftime('%d.%m.%Y') if a.interest_teaser_until else '',
+            'teaser_active': teaser_active,
+            'withdrawal_amount': float(a.withdrawal_amount or 0),
+            'withdrawal_start_date': a.withdrawal_start_date.strftime('%Y-%m-%d') if a.withdrawal_start_date else '',
+            'snapshots': snaps,
+            'change_abs': change_abs,
+            'change_pct': round(change_pct, 2)
+        })
+
+    # Physical assets
+    total_physical = Decimal('0.00')
+    total_physical_storage_costs = Decimal('0.00')
+    physical_json = []
+    for pa in all_physical:
+        val = pa.value or Decimal('0.00')
+        if not pa.is_sold:
+            total_physical += val
+        total_physical_storage_costs += (pa.storage_costs_monthly or Decimal('0.00'))
+        
+        snaps = snapshots_by_pa.get(pa.id, [])
+        first_val = snaps[-1]['value'] if snaps else float(val)
+        change_abs = float(val) - first_val
+        change_pct = (change_abs / first_val * 100.0) if first_val > 0 else 0.0
+
+        physical_json.append({
+            'id': pa.id,
+            'name': pa.name,
+            'value': float(val),
+            'appreciation_rate': float(pa.appreciation_rate or 0),
+            'location': pa.location or '',
+            'storage_costs_monthly': float(pa.storage_costs_monthly or 0),
+            'is_sold': bool(pa.is_sold),
+            'sale_date': pa.sale_date.strftime('%Y-%m-%d') if pa.sale_date else '',
+            'sale_date_display': pa.sale_date.strftime('%d.%m.%Y') if pa.sale_date else '',
+            'acquisition_date': pa.acquisition_date.strftime('%Y-%m-%d') if pa.acquisition_date else '',
+            'acquisition_date_display': pa.acquisition_date.strftime('%d.%m.%Y') if pa.acquisition_date else '',
+            'snapshots': snaps,
+            'change_abs': change_abs,
+            'change_pct': round(change_pct, 2)
+        })
+
+    total_wealth = total_cash + total_depot + total_crypto + total_metals + total_other + total_physical
+
+    # Emergency Fund Health Check calculation
+    monthly_expenses = Decimal('0.00')
+    for exp in CashFlowSource.objects.filter(user=user, is_income=False):
+        monthly_expenses += exp.monthly_amount
+    
+    target_months = 3
+    emergency_target = monthly_expenses * Decimal(str(target_months))
+    emergency_months_covered = float(emergency_fund_actual / monthly_expenses) if monthly_expenses > 0 else 0.0
+
+    # Build History Chart Timeline (combining snapshots from all assets)
+    history_dates = set()
+    for s in asset_snapshots:
+        history_dates.add(s.date)
+    for s in pa_snapshots:
+        history_dates.add(s.date)
+    
+    # Always include today
+    history_dates.add(today)
+    sorted_dates = sorted(list(history_dates))
+
+    chart_labels = [d.strftime('%m/%y') for d in sorted_dates]
+    chart_cash_series = []
+    chart_depot_series = []
+    chart_crypto_series = []
+    chart_physical_series = []
+    chart_total_series = []
+
+    for d in sorted_dates:
+        # Sum value for that date (or latest prior snapshot)
+        d_cash = 0.0
+        d_depot = 0.0
+        d_crypto = 0.0
+        d_phys = 0.0
+        
+        for a in assets_json:
+            # find latest snapshot <= d
+            valid_snaps = [sn for sn in a['snapshots'] if sn['date'] <= d.strftime('%Y-%m-%d')]
+            val = valid_snaps[0]['value'] if valid_snaps else a['value']
+            if a['asset_type'] in ['cash', 'overnight']:
+                d_cash += val
+            elif a['asset_type'] == 'depot':
+                d_depot += val
+            elif a['asset_type'] in ['crypto', 'precious_metal']:
+                d_crypto += val
+            else:
+                d_cash += val
+
+        for pa in physical_json:
+            valid_snaps = [sn for sn in pa['snapshots'] if sn['date'] <= d.strftime('%Y-%m-%d')]
+            val = valid_snaps[0]['value'] if valid_snaps else pa['value']
+            d_phys += val
+
+        chart_cash_series.append(round(d_cash, 2))
+        chart_depot_series.append(round(d_depot, 2))
+        chart_crypto_series.append(round(d_crypto, 2))
+        chart_physical_series.append(round(d_phys, 2))
+        chart_total_series.append(round(d_cash + d_depot + d_crypto + d_phys, 2))
+
+    history_chart_json = json.dumps({
+        'labels': chart_labels,
+        'cash': chart_cash_series,
+        'depot': chart_depot_series,
+        'crypto_metals': chart_crypto_series,
+        'physical': chart_physical_series,
+        'total': chart_total_series
+    })
+
+    # Forms
+    asset_form = AssetForm()
+    pa_form = PhysicalAssetForm()
+
+    context = {
+        'profile': profile,
+        'today': today,
+        'card_colors': card_colors,
+        'total_wealth': total_wealth,
+        'total_cash': total_cash,
+        'total_depot': total_depot,
+        'total_crypto': total_crypto,
+        'total_metals': total_metals,
+        'total_physical': total_physical,
+        'total_monthly_savings': total_monthly_savings,
+        'total_physical_storage_costs': total_physical_storage_costs,
+        'monthly_expenses': monthly_expenses,
+        'emergency_fund_actual': emergency_fund_actual,
+        'emergency_target': emergency_target,
+        'emergency_months_covered': round(emergency_months_covered, 1),
+        'assets_json': json.dumps(assets_json),
+        'physical_json': json.dumps(physical_json),
+        'history_chart_json': history_chart_json,
+        'asset_form': asset_form,
+        'pa_form': pa_form,
+    }
+
+    return render(request, 'finance/assets_overview.html', context)
+
+
+@login_required
+def asset_save(request, pk=None):
+    user = request.user
+    instance = get_object_or_404(Asset, pk=pk, user=user) if pk else None
+
+    if request.method == 'POST':
+        form = AssetForm(request.POST, instance=instance)
+        if form.is_valid():
+            asset_obj = form.save(commit=False)
+            asset_obj.user = user
+            asset_obj.save()
+
+            # Optional snapshot creation on save
+            snap_val_str = request.POST.get('snapshot_value')
+            snap_date_str = request.POST.get('snapshot_date')
+            if snap_val_str and snap_date_str:
+                try:
+                    s_date = datetime.datetime.strptime(snap_date_str, '%Y-%m-%d').date()
+                    s_val = Decimal(snap_val_str)
+                    ct = ContentType.objects.get_for_model(Asset)
+                    AssetSnapshot.objects.update_or_create(
+                        user=user,
+                        content_type=ct,
+                        object_id=asset_obj.id,
+                        date=s_date,
+                        defaults={'value': s_val, 'notes': request.POST.get('snapshot_notes', '')}
+                    )
+                except (ValueError, TypeError):
+                    pass
+
+            msg = _('Asset updated successfully.') if pk else _('Asset created successfully.')
+            messages.success(request, msg)
+        else:
+            messages.error(request, f"{_('Error saving asset')}: {form.errors.as_text()}")
+
+    tab = request.POST.get('current_tab', 'all')
+    return redirect(f"{reverse('finance:assets_overview')}?tab={tab}")
+
+
+@login_required
+def asset_delete(request, pk):
+    asset_obj = get_object_or_404(Asset, pk=pk, user=request.user)
+    name = asset_obj.name
+    
+    # Also delete associated snapshots
+    ct = ContentType.objects.get_for_model(Asset)
+    AssetSnapshot.objects.filter(user=request.user, content_type=ct, object_id=asset_obj.id).delete()
+    
+    asset_obj.delete()
+    messages.success(request, f"{_('Asset')} '{name}' {_('was deleted.')}")
+    tab = request.GET.get('tab', 'all')
+    return redirect(f"{reverse('finance:assets_overview')}?tab={tab}")
+
+
+@login_required
+def physical_asset_save(request, pk=None):
+    user = request.user
+    instance = get_object_or_404(PhysicalAsset, pk=pk, user=user) if pk else None
+
+    if request.method == 'POST':
+        form = PhysicalAssetForm(request.POST, instance=instance)
+        if form.is_valid():
+            pa_obj = form.save(commit=False)
+            pa_obj.user = user
+            pa_obj.save()
+
+            # Optional snapshot creation
+            snap_val_str = request.POST.get('snapshot_value')
+            snap_date_str = request.POST.get('snapshot_date')
+            if snap_val_str and snap_date_str:
+                try:
+                    s_date = datetime.datetime.strptime(snap_date_str, '%Y-%m-%d').date()
+                    s_val = Decimal(snap_val_str)
+                    ct = ContentType.objects.get_for_model(PhysicalAsset)
+                    AssetSnapshot.objects.update_or_create(
+                        user=user,
+                        content_type=ct,
+                        object_id=pa_obj.id,
+                        date=s_date,
+                        defaults={'value': s_val, 'notes': request.POST.get('snapshot_notes', '')}
+                    )
+                except (ValueError, TypeError):
+                    pass
+
+            msg = _('Physical asset updated successfully.') if pk else _('Physical asset created successfully.')
+            messages.success(request, msg)
+        else:
+            messages.error(request, f"{_('Error saving physical asset')}: {form.errors.as_text()}")
+
+    return redirect(f"{reverse('finance:assets_overview')}?tab=physical")
+
+
+@login_required
+def physical_asset_delete(request, pk):
+    pa_obj = get_object_or_404(PhysicalAsset, pk=pk, user=request.user)
+    name = pa_obj.name
+    
+    ct = ContentType.objects.get_for_model(PhysicalAsset)
+    AssetSnapshot.objects.filter(user=request.user, content_type=ct, object_id=pa_obj.id).delete()
+    
+    pa_obj.delete()
+    messages.success(request, f"{_('Physical asset')} '{name}' {_('was deleted.')}")
+    return redirect(f"{reverse('finance:assets_overview')}?tab=physical")
+
+
+@login_required
+def asset_snapshot_save(request):
+    if request.method == 'POST':
+        user = request.user
+        target_type = request.POST.get('target_type', 'asset')
+        target_id = request.POST.get('target_id')
+        snapshot_date_str = request.POST.get('date')
+        value_str = request.POST.get('value')
+        notes = request.POST.get('notes', '')
+
+        if target_type == 'physical':
+            target_obj = get_object_or_404(PhysicalAsset, id=target_id, user=user)
+            ct = ContentType.objects.get_for_model(PhysicalAsset)
+        else:
+            target_obj = get_object_or_404(Asset, id=target_id, user=user)
+            ct = ContentType.objects.get_for_model(Asset)
+
+        try:
+            snap_date = datetime.datetime.strptime(snapshot_date_str, '%Y-%m-%d').date()
+            val = Decimal(value_str)
+
+            AssetSnapshot.objects.update_or_create(
+                user=user,
+                content_type=ct,
+                object_id=target_obj.id,
+                date=snap_date,
+                defaults={
+                    'value': val,
+                    'notes': notes
+                }
+            )
+
+            # Auto-update current object value if snapshot date is today or in future
+            if snap_date >= timezone.now().date():
+                target_obj.value = val
+                target_obj.save()
+
+            messages.success(request, _('Historical record date saved successfully.'))
+        except (ValueError, TypeError) as e:
+            messages.error(request, f"{_('Invalid value or date format')}: {e}")
+
+    tab = request.POST.get('current_tab', 'all')
+    return redirect(f"{reverse('finance:assets_overview')}?tab={tab}")
+
+
+@login_required
+def asset_snapshot_delete(request, pk):
+    user = request.user
+    snapshot = get_object_or_404(AssetSnapshot, id=pk, user=user)
+    snapshot.delete()
+    messages.success(request, _('Record date snapshot deleted.'))
+    tab = request.GET.get('tab', 'all')
+    return redirect(f"{reverse('finance:assets_overview')}?tab={tab}")

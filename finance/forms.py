@@ -186,6 +186,8 @@ class PropertyComponentForm(forms.ModelForm):
         self.fields['real_estate'].empty_label = _('-- Select Real Estate --')
 
 
+
+
 class PropertyDocumentForm(forms.ModelForm):
     class Meta:
         model = PropertyDocument
@@ -208,3 +210,48 @@ class PropertyDocumentForm(forms.ModelForm):
         if user:
             self.fields['real_estate'].queryset = RealEstate.objects.filter(user=user).order_by('name')
         self.fields['real_estate'].empty_label = _('-- Select Real Estate --')
+
+
+
+from .models import Asset, PhysicalAsset, AssetSnapshot
+
+class AssetForm(forms.ModelForm):
+    class Meta:
+        model = Asset
+        fields = [
+            'name', 'asset_type', 'institution', 'isin_ticker', 'value', 'growth_rate',
+            'monthly_savings_amount', 'is_emergency_fund', 'interest_teaser_rate',
+            'interest_teaser_until', 'withdrawal_amount', 'withdrawal_start_date'
+        ]
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('e.g. DKB Giro, Trade Republic Depot, Bitcoin Wallet')}),
+            'asset_type': forms.Select(attrs={'class': 'form-select'}),
+            'institution': forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('e.g. ING, DKB, Scalable, Bison')}),
+            'isin_ticker': forms.TextInput(attrs={'class': 'form-control font-monospace', 'placeholder': _('e.g. IE00B4L5Y983, BTC')}),
+            'value': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
+            'growth_rate': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
+            'monthly_savings_amount': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
+            'is_emergency_fund': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'interest_teaser_rate': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
+            'interest_teaser_until': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'withdrawal_amount': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
+            'withdrawal_start_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+        }
+
+class PhysicalAssetForm(forms.ModelForm):
+    class Meta:
+        model = PhysicalAsset
+        fields = [
+            'name', 'value', 'appreciation_rate', 'location', 'storage_costs_monthly',
+            'acquisition_date', 'sale_date', 'is_sold'
+        ]
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('e.g. Goldmünzen Krügerrand, Rolex Submariner, Oldtimer Porsche 911')}),
+            'value': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
+            'appreciation_rate': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
+            'location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('e.g. Banktresor, Tresor daheim')}),
+            'storage_costs_monthly': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
+            'acquisition_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'sale_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'is_sold': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
