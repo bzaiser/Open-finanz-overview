@@ -22,8 +22,8 @@
       {
         "id": "inc_kindergeld",
         "name": "Kindergeld / Elterngeld",
-        "category_slug": "gehalt",
-        "category_name": "Gehalt",
+        "category_slug": "familie-kinder",
+        "category_name": "Familie & Kinder",
         "frequency": "monthly",
         "amount": 1.0
       },

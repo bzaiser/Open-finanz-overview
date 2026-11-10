@@ -70,6 +70,7 @@ class Command(BaseCommand):
         cat_investment = get_cat("investment", "Investment", "#6f42c1")
         cat_sparen = get_cat("sparen", "Sparen", "#198754")
         cat_health = get_cat("health", "Gesundheit", "#e83e8c")
+        cat_familie_kinder = get_cat("familie-kinder", "Familie & Kinder", "#ffc107")
 
 
         # 5. Einnahmen (mit Enddaten zur Rente / Ausbildung Kinder)
@@ -106,7 +107,7 @@ class Command(BaseCommand):
             value=Decimal("510.00"),
             is_income=True,
             frequency="monthly",
-            category=cat_gehalt,
+            category=cat_familie_kinder,
             template_id="inc_kindergeld",
             end_date=date(2032, 12, 31),
             notes="Kindergeld bis voraussichtliches Ausbildungsende"
