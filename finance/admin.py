@@ -182,11 +182,18 @@ class AssetSnapshotInline(GenericTabularInline):
     model = AssetSnapshot
     form = AssetSnapshotInlineForm
     extra = 0
-    fields = ('date', 'value', 'expected_payout_net', 'disability_pension_net', 'pension_points', 'point_value', 'notes')
+    fields = ('date', 'value', 'notes')
     classes = ['collapse']
 
     def get_fields(self, request, obj=None):
-        fields = list(self.fields)
+        if obj and isinstance(obj, Pension):
+            if obj.pension_type == 'statutory':
+                fields = ['date', 'value', 'expected_payout_net', 'disability_pension_net', 'pension_points', 'point_value', 'notes']
+            else:
+                fields = ['date', 'value', 'expected_payout_net', 'disability_pension_net', 'notes']
+        else:
+            fields = ['date', 'value', 'notes']
+
         if request.user.is_superuser:
             fields.insert(0, 'user')
         return fields
