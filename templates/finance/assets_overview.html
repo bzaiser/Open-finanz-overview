@@ -473,13 +473,13 @@
                                         </template>
                                     </td>
                                     <td class="py-3 px-3 text-end text-nowrap">
-                                        <button type="button" class="btn btn-sm btn-outline-primary rounded-pill p-1 px-2 me-1" @click="openSnapshotModalFor(a, 'asset')" title="{% trans 'Stichtagshistorie' %}">
+                                        <button type="button" class="btn btn-sm btn-outline-primary rounded-pill p-1 px-2 me-1" @click="openSnapshotModalFor(a, 'asset')" title="{% trans 'History' %}">
                                             <i class="bi bi-clock-history"></i>
                                         </button>
-                                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill p-1 px-2 me-1" @click="openEditAssetModal(a)" title="{% trans 'Bearbeiten' %}">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill p-1 px-2 me-1" @click="openEditAssetModal(a)" title="{% trans 'Edit' %}">
                                             <i class="bi bi-pencil"></i>
                                         </button>
-                                        <a :href="'/finance/assets/delete/' + a.id + '/?tab=' + activeTab" class="btn btn-sm btn-outline-danger rounded-pill p-1 px-2" onclick="return confirm('{% trans 'Asset unwiderruflich löschen?' %}')" title="{% trans 'Löschen' %}">
+                                        <a :href="'/finance/assets/delete/' + a.id + '/?tab=' + activeTab" class="btn btn-sm btn-outline-danger rounded-pill p-1 px-2" onclick="return confirm('{% trans 'Delete asset permanently?' %}')" title="{% trans 'Delete' %}">
                                             <i class="bi bi-trash"></i>
                                         </a>
                                     </td>
@@ -487,7 +487,7 @@
                             </template>
                             <tr x-show="filteredAssets.length === 0">
                                 <td colspan="7" class="text-center py-4 opacity-75">
-                                    <i class="bi bi-search me-1"></i>{% trans "Keine passenden Anlagen gefunden." %}
+                                    <i class="bi bi-search me-1"></i>{% trans "No matching assets found." %}
                                 </td>
                             </tr>
                         </tbody>
@@ -503,20 +503,20 @@
     <div x-show="activeTab === 'physical'" class="mb-4">
         <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color);">
             <div class="card-header border-0 d-flex justify-content-between align-items-center">
-                <span class="fw-bold"><i class="bi bi-gem me-2 opacity-75"></i>{% trans "Sachwerte, Gold & Sachvermögen" %}</span>
-                <span class="badge rounded-pill bg-white bg-opacity-25 text-white" x-text="physicalAssets.length + ' {% trans 'Sachwerte' %}'"></span>
+                <span class="fw-bold"><i class="bi bi-gem me-2 opacity-75"></i>{% trans "Physical Assets & Valuables" %}</span>
+                <span class="badge rounded-pill bg-white bg-opacity-25 text-white" x-text="physicalAssets.length + ' {% trans 'Items' %}'"></span>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0 assets-table">
                         <thead>
                             <tr>
-                                <th class="py-3 px-3">{% trans "Gegenstand / Sachwert" %}</th>
-                                <th class="py-3 px-3">{% trans "Lagerort / Aufbewahrung" %}</th>
-                                <th class="py-3 px-3 text-end">{% trans "Wertentwicklung p.a." %}</th>
-                                <th class="py-3 px-3 text-end">{% trans "Lagerkosten / Monat" %}</th>
-                                <th class="py-3 px-3 text-end">{% trans "Aktueller Wert" %}</th>
-                                <th class="py-3 px-3 text-end" style="width: 1%;">{% trans "Aktionen" %}</th>
+                                <th class="py-3 px-3">{% trans "Asset / Item" %}</th>
+                                <th class="py-3 px-3">{% trans "Storage Location" %}</th>
+                                <th class="py-3 px-3 text-end">{% trans "Appreciation p.a." %}</th>
+                                <th class="py-3 px-3 text-end">{% trans "Storage Cost / Month" %}</th>
+                                <th class="py-3 px-3 text-end">{% trans "Current Value" %}</th>
+                                <th class="py-3 px-3 text-end" style="width: 1%;">{% trans "Actions" %}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -525,7 +525,7 @@
                                     <td class="py-3 px-3">
                                         <div class="fw-bold" x-text="pa.name"></div>
                                         <template x-if="pa.is_sold">
-                                            <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-2 py-0.5" style="font-size: 0.65rem;">{% trans "Verkauft" %}</span>
+                                            <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-2 py-0.5" style="font-size: 0.65rem;">{% trans "Sold" %}</span>
                                         </template>
                                     </td>
                                     <td class="py-3 px-3">
@@ -541,13 +541,13 @@
                                         <span x-text="formatEuro(pa.value) + ' €'"></span>
                                     </td>
                                     <td class="py-3 px-3 text-end text-nowrap">
-                                        <button type="button" class="btn btn-sm btn-outline-primary rounded-pill p-1 px-2 me-1" @click="openSnapshotModalFor(pa, 'physical')" title="{% trans 'Stichtagshistorie' %}">
+                                        <button type="button" class="btn btn-sm btn-outline-primary rounded-pill p-1 px-2 me-1" @click="openSnapshotModalFor(pa, 'physical')" title="{% trans 'History' %}">
                                             <i class="bi bi-clock-history"></i>
                                         </button>
-                                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill p-1 px-2 me-1" @click="openEditPhysicalModal(pa)" title="{% trans 'Bearbeiten' %}">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill p-1 px-2 me-1" @click="openEditPhysicalModal(pa)" title="{% trans 'Edit' %}">
                                             <i class="bi bi-pencil"></i>
                                         </button>
-                                        <a :href="'/finance/assets/physical/delete/' + pa.id + '/'" class="btn btn-sm btn-outline-danger rounded-pill p-1 px-2" onclick="return confirm('{% trans 'Sachwert löschen?' %}')" title="{% trans 'Löschen' %}">
+                                        <a :href="'/finance/assets/physical/delete/' + pa.id + '/'" class="btn btn-sm btn-outline-danger rounded-pill p-1 px-2" onclick="return confirm('{% trans 'Delete physical asset?' %}')" title="{% trans 'Delete' %}">
                                             <i class="bi bi-trash"></i>
                                         </a>
                                     </td>
@@ -555,7 +555,7 @@
                             </template>
                             <tr x-show="physicalAssets.length === 0">
                                 <td colspan="6" class="text-center py-4 opacity-75">
-                                    <i class="bi bi-info-circle me-1"></i>{% trans "Keine Sachwerte erfasst." %}
+                                    <i class="bi bi-info-circle me-1"></i>{% trans "No physical assets recorded." %}
                                 </td>
                             </tr>
                         </tbody>
@@ -573,40 +573,40 @@
             <!-- 1. Zinseszins & ETF Sparplan Rechner -->
             <div class="col-12 col-lg-6">
                 <div class="card border-0 shadow-sm rounded-4 p-4 h-100" style="background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color);">
-                    <h5 class="fw-bold mb-1"><i class="bi bi-calculator text-primary me-2"></i>{% trans "ETF-Sparplan & Zinseszins-Simulation" %}</h5>
-                    <p class="text-muted small mb-4">{% trans "Berechne das Endkapital basierend auf Startkapital, Monatsrate und Erwartungsrendite." %}</p>
+                    <h5 class="fw-bold mb-1"><i class="bi bi-calculator text-primary me-2"></i>{% trans "ETF Savings Plan & Compound Interest Simulation" %}</h5>
+                    <p class="text-muted small mb-4">{% trans "Calculate final capital based on initial investment, monthly savings and expected return." %}</p>
 
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="form-label small fw-bold">{% trans "Startkapital (€)" %}</label>
+                            <label class="form-label small fw-bold">{% trans "Initial Capital (€)" %}</label>
                             <input type="number" x-model.number="sim.initial" class="form-control font-monospace">
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label small fw-bold">{% trans "Monatliche Sparrate (€)" %}</label>
+                            <label class="form-label small fw-bold">{% trans "Monthly Savings (€)" %}</label>
                             <input type="number" x-model.number="sim.monthly" class="form-control font-monospace">
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label small fw-bold">{% trans "Erwartete Rendite (% p.a.)" %}</label>
+                            <label class="form-label small fw-bold">{% trans "Expected Return (% p.a.)" %}</label>
                             <input type="number" step="0.5" x-model.number="sim.rate" class="form-control font-monospace">
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label small fw-bold">{% trans "Anlagehorizont (Jahre)" %}</label>
+                            <label class="form-label small fw-bold">{% trans "Investment Horizon (Years)" %}</label>
                             <input type="number" min="1" max="40" x-model.number="sim.years" class="form-control font-monospace">
                         </div>
                     </div>
 
                     <div class="p-3 rounded-4 bg-body-tertiary mt-4">
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="opacity-75">{% trans "Eingezahltes Eigenkapital" %}:</span>
+                            <span class="opacity-75">{% trans "Total Contributions" %}:</span>
                             <strong class="font-monospace" x-text="formatEuro(simResult.totalDeposited) + ' €'"></strong>
                         </div>
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="opacity-75">{% trans "Erwirtschaftete Zinsen/Kursgewinne" %}:</span>
+                            <span class="opacity-75">{% trans "Interest / Capital Gains" %}:</span>
                             <strong class="font-monospace text-success" x-text="'+' + formatEuro(simResult.interestGains) + ' €'"></strong>
                         </div>
                         <hr class="my-2 border-secondary border-opacity-25">
                         <div class="d-flex justify-content-between align-items-center">
-                            <span class="fw-bold fs-6">{% trans "Voraussichtliches Endkapital" %}:</span>
+                            <span class="fw-bold fs-6">{% trans "Projected Ending Balance" %}:</span>
                             <span class="fw-bold font-monospace fs-5 text-primary" x-text="formatEuro(simResult.endBalance) + ' €'"></span>
                         </div>
                     </div>
@@ -616,30 +616,30 @@
             <!-- 2. Notgroschen & Entnahme-Strategie -->
             <div class="col-12 col-lg-6">
                 <div class="card border-0 shadow-sm rounded-4 p-4 h-100" style="background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color);">
-                    <h5 class="fw-bold mb-1"><i class="bi bi-shield-shaded text-success me-2"></i>{% trans "Notgroschen- & Entnahme-Check" %}</h5>
-                    <p class="text-muted small mb-4">{% trans "Überprüfung der Liquiditätsreserve und Simulation monatlicher passiver Entnahmen (4 %-Regel)." %}</p>
+                    <h5 class="fw-bold mb-1"><i class="bi bi-shield-shaded text-success me-2"></i>{% trans "Emergency Fund & Withdrawal Check" %}</h5>
+                    <p class="text-muted small mb-4">{% trans "Check liquidity reserve coverage and simulate monthly passive withdrawals (4% rule)." %}</p>
 
                     <!-- Notgroschen Ampel -->
                     <div class="p-3 rounded-4 mb-4 border" :class="emergencyMonthsCovered >= 3 ? 'border-success bg-success bg-opacity-10' : 'border-warning bg-warning bg-opacity-10'">
                         <div class="d-flex align-items-center gap-3">
                             <i class="bi fs-1" :class="emergencyMonthsCovered >= 3 ? 'bi-shield-check text-success' : 'bi-exclamation-triangle text-warning'"></i>
                             <div>
-                                <h6 class="fw-bold mb-0" x-text="emergencyMonthsCovered >= 3 ? '{% trans 'Notgroschen ist solide aufgestellt' %}' : '{% trans 'Notgroschen unter 3 Monatsausgaben' %}'"></h6>
-                                <p class="small mb-0 opacity-75" x-text="'Aktuell sind ' + emergencyMonthsCovered + ' Monate an Fixausgaben auf Notgroschen-Konten reserviert.'"></p>
+                                <h6 class="fw-bold mb-0" x-text="emergencyMonthsCovered >= 3 ? '{% trans 'Emergency fund is well funded' %}' : '{% trans 'Emergency fund under 3 months' %}'"></h6>
+                                <p class="small mb-0 opacity-75" x-text="'{% trans 'Coverage' %}: ' + emergencyMonthsCovered + ' {% trans 'Months of fixed expenses reserved.' %}'"></p>
                             </div>
                         </div>
                     </div>
 
                     <!-- 4% Regel Entnahmerechner -->
-                    <label class="form-label small fw-bold">{% trans "4%-Entnahmeregel auf aktuelles Gesamtvermögen" %}</label>
+                    <label class="form-label small fw-bold">{% trans "4% Safe Withdrawal Rate (SWR)" %}</label>
                     <div class="p-3 rounded-4 bg-body-tertiary">
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="opacity-75">{% trans "Jährliche sichere Entnahme (4 % SWR)" %}:</span>
-                            <strong class="font-monospace text-primary" x-text="formatEuro(totalWealthNumber * 0.04) + ' € / Jahr'"></strong>
+                            <span class="opacity-75">{% trans "Annual Safe Withdrawal (4%)" %}:</span>
+                            <strong class="font-monospace text-primary" x-text="formatEuro(totalWealthNumber * 0.04) + ' € / {% trans 'Year' %}'"></strong>
                         </div>
                         <div class="d-flex justify-content-between align-items-center">
-                            <span class="opacity-75">{% trans "Mögliche monatliche Zusatzrente" %}:</span>
-                            <strong class="font-monospace text-success fs-6" x-text="formatEuro((totalWealthNumber * 0.04) / 12) + ' € / Monat'"></strong>
+                            <span class="opacity-75">{% trans "Potential Monthly Income" %}:</span>
+                            <strong class="font-monospace text-success fs-6" x-text="formatEuro((totalWealthNumber * 0.04) / 12) + ' € / {% trans 'Month' %}'"></strong>
                         </div>
                     </div>
                 </div>
@@ -657,28 +657,28 @@
                     {% csrf_token %}
                     <input type="hidden" name="current_tab" :value="activeTab">
                     <div class="modal-header border-0 pb-0">
-                        <h5 class="modal-title fw-bold" x-text="editAssetId ? '{% trans 'Konto / Depot bearbeiten' %}' : '{% trans 'Neues Konto oder Depot anlegen' %}'"></h5>
+                        <h5 class="modal-title fw-bold" x-text="editAssetId ? '{% trans 'Edit Account / Depot' %}' : '{% trans 'Add New Account or Depot' %}'"></h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body pt-3">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label class="form-label small fw-bold">{% trans "Bezeichnung / Name" %}</label>
-                                <input type="text" name="name" x-model="assetForm.name" class="form-control" required placeholder="z. B. DKB Giro, Trade Republic MSCI World">
+                                <label class="form-label small fw-bold">{% trans "Account / Depot Name" %}</label>
+                                <input type="text" name="name" x-model="assetForm.name" class="form-control" required placeholder="z. B. DKB Giro, Scalable World">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label small fw-bold">{% trans "Anlageklasse / Typ" %}</label>
+                                <label class="form-label small fw-bold">{% trans "Asset Class / Type" %}</label>
                                 <select name="asset_type" x-model="assetForm.asset_type" class="form-select">
-                                    <option value="cash">{% trans "Girokonto / Liquidität" %}</option>
-                                    <option value="overnight">{% trans "Tagesgeld / Notgroschen / Festgeld" %}</option>
-                                    <option value="depot">{% trans "Wertpapierdepot (ETFs / Aktien)" %}</option>
-                                    <option value="crypto">{% trans "Kryptowährungen (Bitcoin & Co.)" %}</option>
-                                    <option value="precious_metal">{% trans "Edelmetalle (Gold / Silber)" %}</option>
-                                    <option value="other">{% trans "Sonstige Geldanlage" %}</option>
+                                    <option value="cash">{% trans "Cash & Checking" %}</option>
+                                    <option value="overnight">{% trans "Overnight & Emergency Fund" %}</option>
+                                    <option value="depot">{% trans "Securities & ETF Depot" %}</option>
+                                    <option value="crypto">{% trans "Cryptocurrencies (Bitcoin & Co.)" %}</option>
+                                    <option value="precious_metal">{% trans "Precious Metals (Gold / Silver)" %}</option>
+                                    <option value="other">{% trans "Other Financial Asset" %}</option>
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label small fw-bold">{% trans "Bank / Broker / Plattform" %}</label>
+                                <label class="form-label small fw-bold">{% trans "Bank / Broker / Platform" %}</label>
                                 <input type="text" name="institution" x-model="assetForm.institution" class="form-control" placeholder="z. B. ING, DKB, Scalable, Bitpanda">
                             </div>
                             <div class="col-md-6">
@@ -686,28 +686,28 @@
                                 <input type="text" name="isin_ticker" x-model="assetForm.isin_ticker" class="form-control font-monospace" placeholder="z. B. IE00B4L5Y983 oder BTC">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label small fw-bold">{% trans "Aktueller Wert (€)" %}</label>
+                                <label class="form-label small fw-bold">{% trans "Current Value (€)" %}</label>
                                 <input type="number" step="0.01" name="value" x-model="assetForm.value" class="form-control font-monospace" required>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label small fw-bold">{% trans "Zinssatz / Erwartungsrendite (% p.a.)" %}</label>
+                                <label class="form-label small fw-bold">{% trans "Interest Rate / Expected Return (% p.a.)" %}</label>
                                 <input type="number" step="0.01" name="growth_rate" x-model="assetForm.growth_rate" class="form-control font-monospace">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label small fw-bold">{% trans "Monatlicher Sparplan / Zukauf (€)" %}</label>
+                                <label class="form-label small fw-bold">{% trans "Monthly Savings Plan (€)" %}</label>
                                 <input type="number" step="0.01" name="monthly_savings_amount" x-model="assetForm.monthly_savings_amount" class="form-control font-monospace">
                             </div>
                             <div class="col-md-6 d-flex align-items-center">
                                 <div class="form-check mt-3">
                                     <input type="checkbox" name="is_emergency_fund" x-model="assetForm.is_emergency_fund" class="form-check-input" id="isEmergencyCheck">
-                                    <label class="form-check-label small fw-semibold" for="isEmergencyCheck">{% trans "Als Notgroschen-Reserve werten" %}</label>
+                                    <label class="form-check-label small fw-semibold" for="isEmergencyCheck">{% trans "Designate as emergency fund reserve" %}</label>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer border-0">
-                        <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">{% trans "Abbrechen" %}</button>
-                        <button type="submit" class="btn btn-primary rounded-pill px-4" style="background: var(--app-gradient); border: none;">{% trans "Speichern" %}</button>
+                        <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
+                        <button type="submit" class="btn btn-primary rounded-pill px-4" style="background: var(--app-gradient); border: none;">{% trans "Save" %}</button>
                     </div>
                 </form>
             </div>
@@ -723,36 +723,36 @@
                 <form :action="editPhysicalId ? '/finance/assets/physical/save/' + editPhysicalId + '/' : '/finance/assets/physical/save/'" method="post">
                     {% csrf_token %}
                     <div class="modal-header border-0 pb-0">
-                        <h5 class="modal-title fw-bold" x-text="editPhysicalId ? '{% trans 'Sachwert bearbeiten' %}' : '{% trans 'Neuen Sachwert / Gold anlegen' %}'"></h5>
+                        <h5 class="modal-title fw-bold" x-text="editPhysicalId ? '{% trans 'Edit Physical Asset' %}' : '{% trans 'Add Physical Asset / Valuables' %}'"></h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body pt-3">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label class="form-label small fw-bold">{% trans "Bezeichnung" %}</label>
+                                <label class="form-label small fw-bold">{% trans "Item / Asset Description" %}</label>
                                 <input type="text" name="name" x-model="physicalForm.name" class="form-control" required placeholder="z. B. Goldmünzen Krügerrand, Rolex Submariner">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label small fw-bold">{% trans "Aktueller Wert (€)" %}</label>
+                                <label class="form-label small fw-bold">{% trans "Current Value (€)" %}</label>
                                 <input type="number" step="0.01" name="value" x-model="physicalForm.value" class="form-control font-monospace" required>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label small fw-bold">{% trans "Wertentwicklung p.a. (%)" %}</label>
+                                <label class="form-label small fw-bold">{% trans "Appreciation Rate (% p.a.)" %}</label>
                                 <input type="number" step="0.01" name="appreciation_rate" x-model="physicalForm.appreciation_rate" class="form-control font-monospace">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label small fw-bold">{% trans "Lagerort / Aufbewahrung" %}</label>
+                                <label class="form-label small fw-bold">{% trans "Storage Location / Safekeeping" %}</label>
                                 <input type="text" name="location" x-model="physicalForm.location" class="form-control" placeholder="z. B. Bankschließfach, Heimtresor">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label small fw-bold">{% trans "Monatliche Lager-/Wartungskosten (€)" %}</label>
+                                <label class="form-label small fw-bold">{% trans "Monthly Storage / Maintenance Cost (€)" %}</label>
                                 <input type="number" step="0.01" name="storage_costs_monthly" x-model="physicalForm.storage_costs_monthly" class="form-control font-monospace">
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer border-0">
-                        <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">{% trans "Abbrechen" %}</button>
-                        <button type="submit" class="btn btn-primary rounded-pill px-4" style="background: var(--app-gradient); border: none;">{% trans "Speichern" %}</button>
+                        <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
+                        <button type="submit" class="btn btn-primary rounded-pill px-4" style="background: var(--app-gradient); border: none;">{% trans "Save" %}</button>
                     </div>
                 </form>
             </div>
@@ -768,7 +768,7 @@
                 <div class="modal-header border-0 pb-0">
                     <div>
                         <h5 class="modal-title fw-bold">
-                            <i class="bi bi-clock-history text-primary me-2"></i>{% trans "Stichtags-Historie & Wertentwicklung" %}
+                            <i class="bi bi-clock-history text-primary me-2"></i>{% trans "Historical Snapshots & Progression" %}
                         </h5>
                         <span class="small opacity-75" x-text="activeSnapshotTarget.name"></span>
                     </div>
@@ -783,19 +783,19 @@
                         <input type="hidden" name="current_tab" :value="activeTab">
                         <div class="row g-2 align-items-end">
                             <div class="col-md-4">
-                                <label class="form-label small fw-bold">{% trans "Stichtag" %}</label>
+                                <label class="form-label small fw-bold">{% trans "Record Date" %}</label>
                                 <input type="date" name="date" class="form-control" required value="{{ today|date:'Y-m-d' }}">
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label small fw-bold">{% trans "Wert (€)" %}</label>
+                                <label class="form-label small fw-bold">{% trans "Value (€)" %}</label>
                                 <input type="number" step="0.01" name="value" class="form-control font-monospace" required :value="activeSnapshotTarget.value">
                             </div>
                             <div class="col-md-3">
-                                <label class="form-label small fw-bold">{% trans "Notiz" %}</label>
+                                <label class="form-label small fw-bold">{% trans "Notes / Comment" %}</label>
                                 <input type="text" name="notes" class="form-control" placeholder="z. B. Quartalsabschluss">
                             </div>
                             <div class="col-md-1">
-                                <button type="submit" class="btn btn-primary rounded-circle p-2 w-100" style="background: var(--app-gradient); border: none;" title="{% trans 'Hinzufügen' %}">
+                                <button type="submit" class="btn btn-primary rounded-circle p-2 w-100" style="background: var(--app-gradient); border: none;" title="{% trans 'Add' %}">
                                     <i class="bi bi-plus-lg"></i>
                                 </button>
                             </div>
@@ -807,9 +807,9 @@
                         <table class="table table-sm table-hover align-middle mb-0" style="font-size: 0.85rem;">
                             <thead class="bg-body-tertiary">
                                 <tr>
-                                    <th class="py-2 px-3">{% trans "Datum" %}</th>
-                                    <th class="py-2 px-3 text-end">{% trans "Stichtagswert" %}</th>
-                                    <th class="py-2 px-3">{% trans "Notiz" %}</th>
+                                    <th class="py-2 px-3">{% trans "Date" %}</th>
+                                    <th class="py-2 px-3 text-end">{% trans "Recorded Value" %}</th>
+                                    <th class="py-2 px-3">{% trans "Notes" %}</th>
                                     <th class="py-2 px-3 text-end" style="width: 1%;"></th>
                                 </tr>
                             </thead>
@@ -820,14 +820,14 @@
                                         <td class="py-2 px-3 font-monospace text-end fw-bold text-success" x-text="formatEuro(s.value) + ' €'"></td>
                                         <td class="py-2 px-3 small opacity-75" x-text="s.notes || '-'"></td>
                                         <td class="py-2 px-3 text-end">
-                                            <a :href="'/finance/assets/snapshot/delete/' + s.id + '/?tab=' + activeTab" class="btn btn-sm btn-link text-danger p-0" onclick="return confirm('{% trans 'Stichtag löschen?' %}')">
+                                            <a :href="'/finance/assets/snapshot/delete/' + s.id + '/?tab=' + activeTab" class="btn btn-sm btn-link text-danger p-0" onclick="return confirm('{% trans 'Delete snapshot?' %}')">
                                                 <i class="bi bi-x-circle"></i>
                                             </a>
                                         </td>
                                     </tr>
                                 </template>
                                 <tr x-show="!activeSnapshotTarget.snapshots || activeSnapshotTarget.snapshots.length === 0">
-                                    <td colspan="4" class="text-center py-3 opacity-75">{% trans "Noch keine historischen Stichtagswerte vorhanden." %}</td>
+                                    <td colspan="4" class="text-center py-3 opacity-75">{% trans "No historical snapshots recorded yet." %}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -1061,7 +1061,7 @@ function assetsOverviewApp() {
                     labels: d.labels,
                     datasets: [
                         {
-                            label: '{% trans "Gesamtvermögen" %}',
+                            label: '{% trans "Total Wealth" %}',
                             data: d.total,
                             borderColor: '#0d6efd',
                             backgroundColor: 'rgba(13, 110, 253, 0.08)',
@@ -1078,7 +1078,7 @@ function assetsOverviewApp() {
                             borderWidth: 2
                         },
                         {
-                            label: '{% trans "Liquidität & Notgroschen" %}',
+                            label: '{% trans "Liquidity & Emergency Fund" %}',
                             data: d.cash,
                             borderColor: '#0dcaf0',
                             borderDash: [2, 2],

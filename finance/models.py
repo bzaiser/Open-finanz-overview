@@ -69,12 +69,12 @@ class CashFlowSource(models.Model):
 
 class Asset(models.Model):
     ASSET_TYPE_CHOICES = [
-        ('cash', _('Girokonto / Liquidität')),
-        ('overnight', _('Tagesgeld / Notgroschen / Festgeld')),
-        ('depot', _('Wertpapierdepot (ETFs / Aktien)')),
-        ('crypto', _('Kryptowährungen (Bitcoin / Altcoins)')),
-        ('precious_metal', _('Edelmetalle (Gold / Silber)')),
-        ('other', _('Sonstige Geldanlage')),
+        ('cash', _('Cash & Checking')),
+        ('overnight', _('Overnight & Emergency Fund')),
+        ('depot', _('Securities & ETF Depot')),
+        ('crypto', _('Cryptocurrencies (Bitcoin / Altcoins)')),
+        ('precious_metal', _('Precious Metals (Gold / Silver)')),
+        ('other', _('Other Financial Asset')),
     ]
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='assets')

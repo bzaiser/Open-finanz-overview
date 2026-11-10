@@ -4396,3 +4396,285 @@ msgstr "Edelmetalle (Gold / Silber)"
 
 msgid "Sonstige Geldanlage"
 msgstr "Sonstige Geldanlage"
+
+msgid "3-Month Target"
+msgstr "3-Monats-Ziel"
+
+msgid "4% Safe Withdrawal Rate (SWR)"
+msgstr "4 %-Entnahmeregel (SWR)"
+
+msgid "Account / Asset Name"
+msgstr "Konto / Anlagebezeichnung"
+
+msgid "Account / Depot Name"
+msgstr "Konto- / Depotbezeichnung"
+
+msgid "Add"
+msgstr "Hinzufügen"
+
+msgid "Add New Account or Depot"
+msgstr "Neues Konto oder Depot anlegen"
+
+msgid "Add Physical Asset / Valuables"
+msgstr "Neuen Sachwert / Gold anlegen"
+
+msgid "All Classes"
+msgstr "Alle Anlageklassen"
+
+msgid "All Financial Accounts & Assets"
+msgstr "Alle Geldanlagen & Konten"
+
+msgid "Alternative Breakdown"
+msgstr "Aufschlüsselung alternative Anlagen"
+
+msgid "Annual Safe Withdrawal (4%)"
+msgstr "Jährliche sichere Entnahme (4 %)"
+
+msgid "Appreciation Rate (% p.a.)"
+msgstr "Wertentwicklung p.a. (%)"
+
+msgid "Appreciation p.a."
+msgstr "Wertentwicklung p.a."
+
+msgid "Asset / Item"
+msgstr "Gegenstand / Sachwert"
+
+msgid "Asset Class / Type"
+msgstr "Anlageklasse / Typ"
+
+msgid "Asset Class Allocation"
+msgstr "Aufteilung nach Anlageklassen"
+
+msgid "Bank / Broker / Platform"
+msgstr "Bank / Broker / Plattform"
+
+msgid "Bitcoin, Gold, Tangibles & Collectibles"
+msgstr "Bitcoin, Gold, Sachwerte & Sammlerobjekte"
+
+msgid "Calculate final capital based on initial investment, monthly savings and expected return."
+msgstr "Berechnen Sie das Endkapital basierend auf Startkapital, Monatsrate und Erwartungsrendite."
+
+msgid "Cash & Checking"
+msgstr "Girokonto & Liquidität"
+
+msgid "Cash & Overnight"
+msgstr "Giro & Tagesgeld"
+
+msgid "Check liquidity reserve coverage and simulate monthly passive withdrawals (4% rule)."
+msgstr "Überprüfen Sie die Liquiditätsreserve und simulieren Sie monatliche Entnahmen (4 %-Regel)."
+
+msgid "Class"
+msgstr "Klasse"
+
+msgid "Coverage"
+msgstr "Reichweite"
+
+msgid "Coverage Quotient"
+msgstr "Deckungsgrad"
+
+msgid "Crypto"
+msgstr "Krypto"
+
+msgid "Cryptocurrencies"
+msgstr "Kryptowährungen"
+
+msgid "Cryptocurrencies & Precious Metals"
+msgstr "Krypto & Edelmetalle"
+
+msgid "Cryptocurrencies (Bitcoin & Co.)"
+msgstr "Kryptowährungen (Bitcoin & Co.)"
+
+msgid "Current Value (€)"
+msgstr "Aktueller Wert (€)"
+
+msgid "Delete asset permanently?"
+msgstr "Vermögenswert unwiderruflich löschen?"
+
+msgid "Delete physical asset?"
+msgstr "Sachwert wirklich löschen?"
+
+msgid "Delete snapshot?"
+msgstr "Stichtag wirklich löschen?"
+
+msgid "Depots & Securities"
+msgstr "Depots & Wertpapiere"
+
+msgid "Depots Breakdown"
+msgstr "Aufschlüsselung Depots"
+
+msgid "Designate as emergency fund reserve"
+msgstr "Als Notgroschen-Reserve deklarieren"
+
+msgid "Designated Reserve"
+msgstr "Reservierter Notgroschen"
+
+msgid "ETF & Stocks Depot"
+msgstr "ETF- & Wertpapierdepot"
+
+msgid "ETF Savings Plan & Compound Interest Simulation"
+msgstr "ETF-Sparplan & Zinseszins-Simulation"
+
+msgid "Edit Account / Depot"
+msgstr "Konto / Depot bearbeiten"
+
+msgid "Edit Physical Asset"
+msgstr "Sachwert bearbeiten"
+
+msgid "Emergency Fund & Withdrawal Check"
+msgstr "Notgroschen- & Entnahme-Check"
+
+msgid "Emergency fund is well funded"
+msgstr "Notgroschen ist solide aufgestellt"
+
+msgid "Emergency fund under 3 months"
+msgstr "Notgroschen unter 3 Monatsausgaben"
+
+msgid "Expected Return (% p.a.)"
+msgstr "Erwartete Rendite (% p.a.)"
+
+msgid "Filter Bank..."
+msgstr "Bank / Broker filtern..."
+
+msgid "Filter Name..."
+msgstr "Name filtern..."
+
+msgid "Historical Snapshots & Progression"
+msgstr "Stichtags-Historie & Wertentwicklung"
+
+msgid "History"
+msgstr "Historie"
+
+msgid "ISIN / WKN / Ticker (optional)"
+msgstr "ISIN / WKN / Ticker (optional)"
+
+msgid "Initial Capital (€)"
+msgstr "Startkapital (€)"
+
+msgid "Institution / Broker"
+msgstr "Institut / Broker"
+
+msgid "Interest / Capital Gains"
+msgstr "Zinsen / Kursgewinne"
+
+msgid "Interest / Return p.a."
+msgstr "Zins / Rendite p.a."
+
+msgid "Interest Rate / Expected Return (% p.a.)"
+msgstr "Zinssatz / Erwartungsrendite (% p.a.)"
+
+msgid "Investment Horizon (Years)"
+msgstr "Anlagehorizont (Jahre)"
+
+msgid "Item / Asset Description"
+msgstr "Bezeichnung / Gegenstand"
+
+msgid "Items"
+msgstr "Positionen"
+
+msgid "Liquidity & Emergency Fund"
+msgstr "Liquidität & Notgroschen"
+
+msgid "Liquidity Health Check"
+msgstr "Liquiditäts-Check"
+
+msgid "Monthly Inflow"
+msgstr "Monatlicher Zufluss"
+
+msgid "Monthly Outflow / Fix"
+msgstr "Monatliche Fixausgaben"
+
+msgid "Monthly Savings (€)"
+msgstr "Monatliche Sparrate (€)"
+
+msgid "Monthly Savings Plan (€)"
+msgstr "Monatlicher Sparplan (€)"
+
+msgid "Monthly Storage / Maintenance Cost (€)"
+msgstr "Monatliche Lager-/Wartungskosten (€)"
+
+msgid "Months of fixed expenses reserved."
+msgstr "Monate an Fixausgaben reserviert."
+
+msgid "No historical snapshots recorded yet."
+msgstr "Noch keine historischen Stichtagswerte vorhanden."
+
+msgid "No matching assets found."
+msgstr "Keine passenden Anlagen gefunden."
+
+msgid "No physical assets recorded."
+msgstr "Keine Sachwerte erfasst."
+
+msgid "Notes / Comment"
+msgstr "Notiz / Kommentar"
+
+msgid "Notgroschen"
+msgstr "Notgroschen"
+
+msgid "Other Financial Asset"
+msgstr "Sonstige Geldanlage"
+
+msgid "Overnight & Emergency"
+msgstr "Tagesgeld & Notgroschen"
+
+msgid "Overnight & Emergency Fund"
+msgstr "Tagesgeld & Notgroschen"
+
+msgid "Physical Assets & Valuables"
+msgstr "Sachwerte & Edelmetalle"
+
+msgid "Physical Tangibles"
+msgstr "Physische Sachwerte"
+
+msgid "Potential Monthly Income"
+msgstr "Mögliche Monatsrente (netto)"
+
+msgid "Precious Metals"
+msgstr "Edelmetalle"
+
+msgid "Precious Metals (Gold / Silver)"
+msgstr "Edelmetalle (Gold / Silber)"
+
+msgid "Progression across recorded key dates by asset category"
+msgstr "Entwicklung über erfasste Stichtage nach Anlageklasse"
+
+msgid "Projected Ending Balance"
+msgstr "Voraussichtliches Endkapital"
+
+msgid "Recorded Value"
+msgstr "Stichtagswert"
+
+msgid "Save"
+msgstr "Speichern"
+
+msgid "Savings Plan"
+msgstr "Sparplan"
+
+msgid "Securities & ETF Depot"
+msgstr "Wertpapier- & ETF-Depot"
+
+msgid "Securities & ETF Depots"
+msgstr "Wertpapier- & ETF-Depots"
+
+msgid "Sold"
+msgstr "Verkauft"
+
+msgid "Storage Cost / Month"
+msgstr "Lagerkosten / Monat"
+
+msgid "Storage Location"
+msgstr "Lagerort / Aufbewahrung"
+
+msgid "Storage Location / Safekeeping"
+msgstr "Lagerort / Aufbewahrung"
+
+msgid "Target"
+msgstr "Ziel"
+
+msgid "Timeline & Performance"
+msgstr "Verlauf & Performance"
+
+msgid "Total Contributions"
+msgstr "Eingezahltes Eigenkapital"
+
+msgid "Value (€)"
+msgstr "Wert (€)"
