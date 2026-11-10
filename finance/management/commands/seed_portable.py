@@ -79,9 +79,10 @@ class Command(BaseCommand):
             categories[slug] = cat
 
         # 5. Assets & Pensions
-        Asset.objects.create(user=user, name="Girokonto", value=Decimal("2500.00"), growth_rate=0.0)
-        Asset.objects.create(user=user, name="Tagesgeld", value=Decimal("15000.00"), growth_rate=2.5)
-        Asset.objects.create(user=user, name="ETF Portfolio", value=Decimal("45000.00"), growth_rate=7.0)
+        Asset.objects.create(user=user, name="Girokonto", asset_type="cash", institution="DKB", value=Decimal("2500.00"), growth_rate=0.0)
+        Asset.objects.create(user=user, name="Tagesgeld (Notgroschen)", asset_type="overnight", institution="Trade Republic", is_emergency_fund=True, value=Decimal("15000.00"), growth_rate=3.25)
+        Asset.objects.create(user=user, name="ETF Portfolio (MSCI World)", asset_type="depot", institution="Scalable Capital", isin_ticker="IE00B4L5Y983", monthly_savings_amount=Decimal("350.00"), value=Decimal("45000.00"), growth_rate=7.0)
+        Asset.objects.create(user=user, name="Bitcoin", asset_type="crypto", institution="Hardware Wallet", isin_ticker="BTC", value=Decimal("7500.00"), growth_rate=12.0)
         
         Pension.objects.create(
             user=user, provider="Gesetzliche Rente", current_value=0, 

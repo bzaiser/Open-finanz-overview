@@ -3,7 +3,7 @@ from django.conf import settings
 from core.models import CustomUser, UserProfile
 from finance.models import (
     Asset, CashFlowSource, OneTimeEvent, Category, RealEstate, Loan, Pension,
-    AssetSnapshot, PropertyComponent
+    AssetSnapshot, PropertyComponent, PhysicalAsset
 )
 from datetime import date
 from decimal import Decimal
@@ -73,20 +73,55 @@ class Command(BaseCommand):
             category_objects[key] = cat
 
         # 4. Create Assets
-        Asset.objects.create(
+        ct_asset = ContentType.objects.get_for_model(Asset)
+        ct_pa = ContentType.objects.get_for_model(PhysicalAsset)
+
+        a1 = Asset.objects.create(
             user=user, name='Checking Account (Sparkasse)',
+            asset_type='cash',
+            institution='Sparkasse',
             value=Decimal('4200.00'),
         )
-        Asset.objects.create(
+        a2 = Asset.objects.create(
             user=user, name='Emergency Fund (Overnight Account)',
+            asset_type='overnight',
+            institution='ING',
             value=Decimal('15000.00'),
-            growth_rate=Decimal('2.5')
+            growth_rate=Decimal('2.5'),
+            is_emergency_fund=True
         )
-        Asset.objects.create(
+        a3 = Asset.objects.create(
             user=user, name='MSCI World ETF',
+            asset_type='depot',
+            institution='Trade Republic',
+            isin_ticker='IE00B4L5Y983',
             value=Decimal('48000.00'),
-            growth_rate=Decimal('7.0')
+            growth_rate=Decimal('7.0'),
+            monthly_savings_amount=Decimal('450.00')
         )
+        a4 = Asset.objects.create(
+            user=user, name='Bitcoin (Cold Wallet)',
+            asset_type='crypto',
+            institution='Bitbox02',
+            isin_ticker='BTC',
+            value=Decimal('9500.00'),
+            growth_rate=Decimal('12.0')
+        )
+
+        # Historical Snapshots for MSCI World ETF
+        AssetSnapshot.objects.create(user=user, content_type=ct_asset, object_id=a3.id, date=date(2025, 1, 1), value=Decimal('38500.00'), notes='Jahresanfang 2025')
+        AssetSnapshot.objects.create(user=user, content_type=ct_asset, object_id=a3.id, date=date(2025, 7, 1), value=Decimal('43200.00'), notes='Halbjahr 2025')
+        AssetSnapshot.objects.create(user=user, content_type=ct_asset, object_id=a3.id, date=date(2026, 1, 1), value=Decimal('46100.00'), notes='Jahresanfang 2026')
+
+        # Physical Assets
+        pa1 = PhysicalAsset.objects.create(
+            user=user, name='Goldmünzen Krügerrand (1 oz)',
+            value=Decimal('2450.00'),
+            appreciation_rate=Decimal('4.5'),
+            location='Heimtresor',
+            acquisition_date=date(2022, 5, 10)
+        )
+        AssetSnapshot.objects.create(user=user, content_type=ct_pa, object_id=pa1.id, date=date(2025, 1, 1), value=Decimal('2100.00'), notes='Goldpreis 2025')
 
         # 5. Create Income (CashFlowSource)
         CashFlowSource.objects.create(

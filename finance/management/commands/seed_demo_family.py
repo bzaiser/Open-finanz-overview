@@ -4,7 +4,7 @@ from datetime import date
 from core.models import CustomUser, UserProfile
 from finance.models import (
     Category, CashFlowSource, Asset, RealEstate, Loan, Pension, AssetSnapshot,
-    PropertyComponent
+    PropertyComponent, PhysicalAsset
 )
 from django.contrib.contenttypes.models import ContentType
 
@@ -586,23 +586,62 @@ class Command(BaseCommand):
         )
 
         # 8. Bankkonten & Vermögen
-        Asset.objects.create(
+        ct_asset = ContentType.objects.get_for_model(Asset)
+        ct_pa = ContentType.objects.get_for_model(PhysicalAsset)
+
+        a_giro = Asset.objects.create(
             user=user,
             name="Girokonto Sparkasse",
+            asset_type="cash",
+            institution="Kreissparkasse",
             value=Decimal("14500.00")
         )
-        Asset.objects.create(
+        a_tagesgeld = Asset.objects.create(
             user=user,
             name="Tagesgeld (Notgroschen)",
+            asset_type="overnight",
+            institution="ING",
             value=Decimal("30000.00"),
-            growth_rate=Decimal("2.50")
+            growth_rate=Decimal("2.50"),
+            is_emergency_fund=True
         )
-        Asset.objects.create(
+        a_depot = Asset.objects.create(
             user=user,
             name="ETF Depot (MSCI World / All World)",
+            asset_type="depot",
+            institution="Scalable Capital",
+            isin_ticker="IE00BK5BQT80",
             value=Decimal("140000.00"),
-            growth_rate=Decimal("6.00")
+            growth_rate=Decimal("6.50"),
+            monthly_savings_amount=Decimal("750.00")
         )
+        a_crypto = Asset.objects.create(
+            user=user,
+            name="Bitcoin Portfolio",
+            asset_type="crypto",
+            institution="Bison / Hardware Wallet",
+            isin_ticker="BTC",
+            value=Decimal("12500.00"),
+            growth_rate=Decimal("10.00"),
+            monthly_savings_amount=Decimal("100.00")
+        )
+
+        # Historical Snapshots for ETF Depot
+        AssetSnapshot.objects.create(user=user, content_type=ct_asset, object_id=a_depot.id, date=date(2025, 1, 1), value=Decimal("118000.00"), notes="Jahresanfang 2025")
+        AssetSnapshot.objects.create(user=user, content_type=ct_asset, object_id=a_depot.id, date=date(2025, 7, 1), value=Decimal("127500.00"), notes="Halbjahr 2025")
+        AssetSnapshot.objects.create(user=user, content_type=ct_asset, object_id=a_depot.id, date=date(2026, 1, 1), value=Decimal("134000.00"), notes="Jahresanfang 2026")
+
+        # Physical Assets
+        pa_gold = PhysicalAsset.objects.create(
+            user=user,
+            name="Goldbarren (50g Feingold)",
+            value=Decimal("3850.00"),
+            appreciation_rate=Decimal("5.0"),
+            location="Banktresor",
+            storage_costs_monthly=Decimal("5.00"),
+            acquisition_date=date(2021, 3, 15)
+        )
+        AssetSnapshot.objects.create(user=user, content_type=ct_pa, object_id=pa_gold.id, date=date(2025, 1, 1), value=Decimal("3200.00"), notes="Wert 2025")
 
         # 9. Rentenverträge (Aktueller Rentenwert: 40,79 €)
         CURRENT_RENTENWERT = Decimal("40.79")

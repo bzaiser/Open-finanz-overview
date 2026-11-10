@@ -2,8 +2,9 @@ from django.core.management.base import BaseCommand
 from core.models import CustomUser, UserProfile
 from finance.models import (
     Asset, CashFlowSource, OneTimeEvent, Category, 
-    PhysicalAsset, RealEstate, Loan, Pension
+    PhysicalAsset, RealEstate, Loan, Pension, AssetSnapshot
 )
+from django.contrib.contenttypes.models import ContentType
 from datetime import date, timedelta
 from decimal import Decimal
 
@@ -43,14 +44,23 @@ class Command(BaseCommand):
         cats = {name: Category.objects.get_or_create(name=name)[0] for name in cat_names}
 
         # 4. Assets (Liquid & Stocks)
-        Asset.objects.create(user=user, name='Girokonto (DKB)', value=Decimal('2850.00'))
-        Asset.objects.create(user=user, name='Tagesgeld (Notgroschen)', value=Decimal('15000.00'), growth_rate=Decimal('3.5'))
-        Asset.objects.create(user=user, name='Vanguard FTSE All-World', value=Decimal('42500.00'), growth_rate=Decimal('7.0'))
-        Asset.objects.create(user=user, name='Bitcoin (Cold Wallet)', value=Decimal('8200.00'), growth_rate=Decimal('15.0'))
+        ct_asset = ContentType.objects.get_for_model(Asset)
+        ct_pa = ContentType.objects.get_for_model(PhysicalAsset)
+
+        Asset.objects.create(user=user, name='Girokonto (DKB)', asset_type='cash', institution='DKB', value=Decimal('2850.00'))
+        Asset.objects.create(user=user, name='Tagesgeld (Notgroschen)', asset_type='overnight', institution='ING', is_emergency_fund=True, value=Decimal('15000.00'), growth_rate=Decimal('3.5'))
+        a_etf = Asset.objects.create(user=user, name='Vanguard FTSE All-World', asset_type='depot', institution='Trade Republic', isin_ticker='IE00BK5BQT80', monthly_savings_amount=Decimal('500.00'), value=Decimal('42500.00'), growth_rate=Decimal('7.0'))
+        Asset.objects.create(user=user, name='Bitcoin (Cold Wallet)', asset_type='crypto', institution='Bitbox02', isin_ticker='BTC', value=Decimal('8200.00'), growth_rate=Decimal('15.0'))
+
+        # Snapshots for ETF
+        AssetSnapshot.objects.create(user=user, content_type=ct_asset, object_id=a_etf.id, date=date(2025, 1, 1), value=Decimal('34000.00'), notes='Jahresstart 2025')
+        AssetSnapshot.objects.create(user=user, content_type=ct_asset, object_id=a_etf.id, date=date(2025, 7, 1), value=Decimal('38500.00'), notes='Halbjahr 2025')
+        AssetSnapshot.objects.create(user=user, content_type=ct_asset, object_id=a_etf.id, date=date(2026, 1, 1), value=Decimal('40800.00'), notes='Jahresstart 2026')
 
         # 5. Physical Assets (Sachwerte)
-        PhysicalAsset.objects.create(user=user, name='VW Golf VIII', value=Decimal('22000.00'), appreciation_rate=Decimal('-5.0'))
-        PhysicalAsset.objects.create(user=user, name='Rolex Submariner', value=Decimal('11200.00'), appreciation_rate=Decimal('3.0'))
+        PhysicalAsset.objects.create(user=user, name='VW Golf VIII', value=Decimal('22000.00'), appreciation_rate=Decimal('-5.0'), location='Garage', storage_costs_monthly=Decimal('30.00'))
+        pa_watch = PhysicalAsset.objects.create(user=user, name='Rolex Submariner', value=Decimal('11200.00'), appreciation_rate=Decimal('3.0'), location='Heimtresor', acquisition_date=date(2022, 6, 1))
+        AssetSnapshot.objects.create(user=user, content_type=ct_pa, object_id=pa_watch.id, date=date(2025, 1, 1), value=Decimal('10500.00'), notes='Marktwert 2025')
 
         # 6. Real Estate & Corresponding Loan
         apartment = RealEstate.objects.create(
