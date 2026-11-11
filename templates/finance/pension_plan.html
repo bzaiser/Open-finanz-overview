@@ -76,7 +76,7 @@
                     </div>
                     <div class="ms-2"><i class="bi bi-piggy-bank fs-5"></i></div>
                 </div>
-                <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem;">
+                <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {{ target_color }}; color: #ffffff;">
                     <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
                         <span>{% trans "Gesetzliche Rente" %}:</span>
                         <span class="font-monospace fw-bold">{% if life_stage == 'retirement' %}{{ statutory_current_monthly_payout|floatformat:0|intcomma }}{% else %}{{ statutory_monthly_net|floatformat:0|intcomma }}{% endif %} €</span>
@@ -116,7 +116,7 @@
                     </div>
                     <div class="ms-2"><i class="bi bi-shield-check fs-5"></i></div>
                 </div>
-                <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem;">
+                <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {% if audit_overview.high_gap_count > 0 %}#dc3545{% elif audit_overview.gap_count > 0 %}#fd7e14{% else %}#198754{% endif %}; color: #ffffff;">
                     {% for item in protection_audit.checklist %}
                     <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10">
                         <span class="text-truncate me-2">{{ item.title }}</span>
@@ -150,7 +150,7 @@
                     </div>
                     <div class="ms-2"><i class="bi bi-file-earmark-check fs-5"></i></div>
                 </div>
-                <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem;">
+                <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: var(--app-primary, #0d6efd); color: #ffffff;">
                     <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Aktive Verträge" %}:</span>
                     {% for ins in insurances %}
                         {% if ins.is_active %}
@@ -189,7 +189,7 @@
                     </div>
                     <div class="ms-2"><i class="bi bi-shield-exclamation fs-5"></i></div>
                 </div>
-                <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem;">
+                <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {% if protection_audit.emergency_months_covered >= protection_audit.emergency_target_months and protection_audit.disability_gap_primary <= 0 %}#198754{% elif protection_audit.emergency_months_covered >= 2 %}#0dcaf0{% else %}#fd7e14{% endif %}; color: #ffffff;">
                     <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
                         <span>{% trans "Notfallreserve" %}:</span>
                         <span class="font-monospace fw-bold">{{ protection_audit.emergency_reserve|floatformat:0|intcomma }} €</span>
@@ -252,7 +252,7 @@
                     </div>
                 </div>
                 <!-- Hover Expand Details: Statutory Contracts -->
-                <div class="widget-hover-details border-top border-white border-opacity-25 pt-2">
+                <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ statutory_color }}; color: #ffffff;">
                     <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Statutory Contracts" %}:</span>
                     {% for p in pensions %}
                         {% if p.pension_type == 'statutory' %}
@@ -294,7 +294,7 @@
                     </div>
                 </div>
                 <!-- Hover Expand Details: Private Contracts (Capital & Payout) -->
-                <div class="widget-hover-details border-top border-white border-opacity-25 pt-2">
+                <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ private_color }}; color: #ffffff;">
                     <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Angespartes Kapital (Verträge)" %}:</span>
                     {% for p in pensions %}
                         {% if p.pension_type != 'statutory' and p.current_value > 0 %}
@@ -351,7 +351,7 @@
                     </div>
                 </div>
                 <!-- Hover Expand Details: Breakdown of all contracts -->
-                <div class="widget-hover-details border-top border-white border-opacity-25 pt-2">
+                <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ target_color }}; color: #ffffff;">
                     <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "All Contracts (Net Pension & Start)" %}:</span>
                     {% for p in pensions %}
                     <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10" style="font-size: 0.75rem;">
@@ -395,7 +395,7 @@
                     </div>
                 </div>
                 <!-- Hover Expand Details: Gap Formula & Details -->
-                <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem;">
+                <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {% if pension_gap <= 0 %}#198754{% else %}#dc3545{% endif %}; color: #ffffff;">
                     {% if life_stage == 'retirement' %}
                     <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
                         <span>{% trans "Total Income today" %}:</span>
@@ -633,7 +633,7 @@
                         </div>
                         <div class="ms-2"><i class="bi bi-wallet2 fs-5"></i></div>
                     </div>
-                    <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem;">
+                    <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: var(--app-primary, #0d6efd); color: #ffffff;">
                         {% for ins in insurances %}
                             {% if ins.is_active %}
                             <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
@@ -661,7 +661,7 @@
                         </div>
                         <div class="ms-2"><i class="bi bi-heart-pulse fs-5"></i></div>
                     </div>
-                    <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem;">
+                    <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {% if protection_audit.disability_gap_primary > 0 %}#fd7e14{% else %}#198754{% endif %}; color: #ffffff;">
                         <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
                             <span>{% trans "DRV EM-Rente" %}:</span>
                             <span class="font-monospace fw-bold">{{ protection_audit.drv_disability_primary|floatformat:0|intcomma }} €</span>
@@ -691,7 +691,7 @@
                         </div>
                         <div class="ms-2"><i class="bi bi-people fs-5"></i></div>
                     </div>
-                    <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem;">
+                    <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {% if protection_audit.term_life_gap > 0 %}#fd7e14{% else %}#0dcaf0{% endif %}; color: #ffffff;">
                         <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
                             <span>{% trans "Abgesicherte Summe" %}:</span>
                             <span class="font-monospace fw-bold">{{ protection_audit.term_life_covered|floatformat:0|intcomma }} €</span>
@@ -717,7 +717,7 @@
                         </div>
                         <div class="ms-2"><i class="bi bi-shield-check fs-5"></i></div>
                     </div>
-                    <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem;">
+                    <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {% if audit_overview.high_gap_count > 0 %}#dc3545{% elif audit_overview.gap_count > 0 %}#6f42c1{% else %}#198754{% endif %}; color: #ffffff;">
                         {% for item in protection_audit.checklist %}
                         <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
                             <span class="text-truncate me-2">{{ item.title }}</span>
@@ -864,7 +864,7 @@
                         </div>
                         <div class="ms-2"><i class="bi bi-piggy-bank fs-5"></i></div>
                     </div>
-                    <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem;">
+                    <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {% if protection_audit.emergency_months_covered >= protection_audit.emergency_target_months %}#198754{% elif protection_audit.emergency_months_covered >= 2 %}#0dcaf0{% else %}#dc3545{% endif %}; color: #ffffff;">
                         <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
                             <span>{% trans "Zielwert" %} ({{ protection_audit.emergency_target_months }}×):</span>
                             <span class="font-monospace fw-bold">{{ protection_audit.emergency_target|floatformat:0|intcomma }} €</span>
@@ -900,7 +900,7 @@
                         </div>
                         <div class="ms-2"><i class="bi bi-briefcase fs-5"></i></div>
                     </div>
-                    <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem;">
+                    <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {% if protection_audit.job_loss_runway_months is None %}#198754{% elif protection_audit.job_loss_runway_months >= 6 %}#0dcaf0{% else %}#fd7e14{% endif %}; color: #ffffff;">
                         <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
                             <span>{% trans "Erwerbseinkommen (Primary)" %}:</span>
                             <span class="font-monospace fw-bold">{{ protection_audit.primary_earned_monthly|floatformat:0|intcomma }} €</span>
@@ -932,7 +932,7 @@
                         </div>
                         <div class="ms-2"><i class="bi bi-heart-pulse fs-5"></i></div>
                     </div>
-                    <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem;">
+                    <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {% if protection_audit.disability_gap_primary <= 0 %}#198754{% else %}#dc3545{% endif %}; color: #ffffff;">
                         <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
                             <span>{% trans "DRV EM-Rente" %}:</span>
                             <span class="font-monospace fw-bold">{{ protection_audit.drv_disability_primary|floatformat:0|intcomma }} €</span>
@@ -968,7 +968,7 @@
                         </div>
                         <div class="ms-2"><i class="bi bi-people fs-5"></i></div>
                     </div>
-                    <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem;">
+                    <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {% if protection_audit.term_life_gap > 0 %}#fd7e14{% else %}#6f42c1{% endif %}; color: #ffffff;">
                         <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
                             <span>{% trans "Empfohlene Deckung (3×)" %}:</span>
                             <span class="font-monospace fw-bold">{{ protection_audit.recommended_term_life|floatformat:0|intcomma }} €</span>

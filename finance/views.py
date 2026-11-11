@@ -233,8 +233,8 @@ def dashboard_view(request):
             summary_layout.append({
                 'id': widget_id,
                 'visible': False, 
-                'bg_color': 'var(--app-card-bg)',
-                'text_color': 'var(--app-card-color)',
+                'bg_color': widget_info.get('default_bg', 'var(--app-card-bg)'),
+                'text_color': widget_info.get('default_text', 'var(--app-card-color)'),
                 'order': len(summary_layout) + 1
             })
 
@@ -3457,10 +3457,12 @@ def pension_plan_view(request):
     dashboard_config = profile.dashboard_config or {}
     summary_layout = dashboard_config.get('summary_layout', [])
     summary_colors = {item['id']: item for item in summary_layout if isinstance(item, dict) and 'id' in item}
+    def _valid_card_color(val, default):
+        return val if val and val not in ('var(--app-card-bg)', 'var(--bs-body-bg)') else default
 
-    statutory_color = summary_colors.get('current_pension_payout', {}).get('bg_color') or '#fd7e14'
-    private_color = summary_colors.get('total_pensions', {}).get('bg_color') or '#0dcaf0'
-    target_color = summary_colors.get('expected_payout', {}).get('bg_color') or '#6f42c1'
+    statutory_color = _valid_card_color(summary_colors.get('current_pension_payout', {}).get('bg_color'), '#fd7e14')
+    private_color = _valid_card_color(summary_colors.get('total_pensions', {}).get('bg_color'), '#0dcaf0')
+    target_color = _valid_card_color(summary_colors.get('expected_payout', {}).get('bg_color'), '#6f42c1')
 
     pensions_json = []
     for p in pensions:
