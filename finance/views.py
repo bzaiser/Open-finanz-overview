@@ -2867,18 +2867,25 @@ def cash_flow_annual_adjustment(request):
                 # end_date of new entry = 31.12. of the new start year
                 new_end_date = datetime.date(new_start_date.year, 12, 31)
 
-                CashFlowSource.objects.create(
+                new_cf = CashFlowSource.objects.create(
                     user=user,
                     name=cf.name,
                     value=new_value,
                     is_income=cf.is_income,
                     frequency=cf.frequency,
                     category=cf.category,
+                    owner_role=cf.owner_role,
                     start_date=new_start_date,
                     end_date=new_end_date,
                     is_inflation_adjusted=cf.is_inflation_adjusted,
                     notes=new_notes
                 )
+                for policy in InsurancePolicy.objects.filter(user=user, linked_cash_flow=cf):
+                    policy.linked_cash_flow = new_cf
+                    policy.premium_amount = new_cf.value
+                    policy.payment_frequency = new_cf.frequency
+                    policy.save(update_fields=['linked_cash_flow', 'premium_amount', 'payment_frequency'])
+                ImportFilter.objects.filter(user=user, linked_cash_flow=cf).update(linked_cash_flow=new_cf)
                 copied_count += 1
                 
         messages.success(request, f"{_('Annual adjustment completed successfully.')} {copied_count} {_('entries updated and copied.')}")

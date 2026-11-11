@@ -333,9 +333,11 @@ class InsurancePolicyForm(forms.ModelForm):
         user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
         if user:
+            linked_cf_id = self.instance.linked_cash_flow_id if (self.instance and self.instance.pk) else None
             self.fields['linked_cash_flow'].queryset = CashFlowSource.objects.filter(
-                user=user, is_income=False
+                CashFlowSource.expense_choices_q(user_id=user.pk, include_pk=linked_cf_id)
             ).order_by('name')
+        self.fields['linked_cash_flow'].label_from_instance = lambda obj: obj.format_choice_label()
         self.fields['linked_cash_flow'].empty_label = _('-- Keine Verknüpfung (Beitrag separat zählen) --')
         self.fields['linked_cash_flow'].required = False
         self.fields['waiting_period_months'].required = False

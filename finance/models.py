@@ -75,6 +75,34 @@ class CashFlowSource(models.Model):
     def __str__(self):
         return f"{self.name} ({self.value})"
 
+    @classmethod
+    def active_on_q(cls, ref_date=None):
+        """Return Q filter for cash flows active on ref_date (defaults to today)."""
+        if ref_date is None:
+            ref_date = timezone.localdate()
+        return (
+            (models.Q(start_date__isnull=True) | models.Q(start_date__lte=ref_date))
+            & (models.Q(end_date__isnull=True) | models.Q(end_date__gte=ref_date))
+        )
+
+    @classmethod
+    def expense_choices_q(cls, user_id=None, include_pk=None, ref_date=None):
+        """Return Q filter for currently valid expense cash flows (optionally scoped by user)."""
+        active_expense_q = cls.active_on_q(ref_date=ref_date) & models.Q(is_income=False)
+        q = (models.Q(user_id=user_id) & active_expense_q) if user_id else active_expense_q
+        if include_pk:
+            q = q | models.Q(pk=include_pk)
+        return q
+
+    def format_choice_label(self):
+        """Format label with optional validity range for linked policy dropdowns."""
+        base = str(self)
+        if not self.start_date and not self.end_date:
+            return base
+        start_s = self.start_date.strftime('%d.%m.%Y') if self.start_date else '...'
+        end_s = self.end_date.strftime('%d.%m.%Y') if self.end_date else '...'
+        return f"{base} [{start_s}–{end_s}]"
+
 class Asset(models.Model):
     ASSET_TYPE_CHOICES = [
         ('cash', _('Cash & Checking')),

@@ -486,6 +486,175 @@ class InsurancePolicyAdminTests(TestCase):
         self.assertContains(r_snap, "Monatliche Nettorente (€)")
         self.assertContains(r_snap, "Wert")
 
+    def test_admin_filters_out_expired_and_future_cashflows_but_keeps_existing_link(self):
+        today = timezone.localdate()
+        expired_cf = CashFlowSource.objects.create(
+            user=self.admin_user,
+            name="Abgelaufene Police",
+            value=Decimal("20.00"),
+            is_income=False,
+            start_date=today - datetime.timedelta(days=400),
+            end_date=today - datetime.timedelta(days=10),
+        )
+        future_cf = CashFlowSource.objects.create(
+            user=self.admin_user,
+            name="Zukünftige Police",
+            value=Decimal("30.00"),
+            is_income=False,
+            start_date=today + datetime.timedelta(days=10),
+            end_date=today + datetime.timedelta(days=375),
+        )
+        self.client.force_login(self.admin_user)
+
+        add_html = self.client.get(reverse("admin:finance_insurancepolicy_add")).content.decode("utf-8")
+        self.assertNotIn(f'value="{expired_cf.pk}"', add_html)
+        self.assertNotIn(f'value="{future_cf.pk}"', add_html)
+        self.assertIn(f'<option value="{self.admin_cf_free.pk}">', add_html)
+
+        legacy_policy = InsurancePolicy.objects.create(
+            user=self.admin_user,
+            name="Altvertrag",
+            premium_amount=Decimal("20.00"),
+            linked_cash_flow=expired_cf,
+        )
+        change_html = self.client.get(
+            reverse("admin:finance_insurancepolicy_change", args=[legacy_policy.pk])
+        ).content.decode("utf-8")
+        self.assertIn(f'<option value="{expired_cf.pk}" selected>', change_html)
+
+    def test_annual_adjustment_wizard_relinks_insurance_and_updates_premium(self):
+        from finance.models import ImportFilter
+
+        today = timezone.localdate()
+        old_cf = CashFlowSource.objects.create(
+            user=self.admin_user,
+            name="KFZ Schutz",
+            value=Decimal("50.00"),
+            is_income=False,
+            frequency="monthly",
+            start_date=today - datetime.timedelta(days=365),
+        )
+        policy = InsurancePolicy.objects.create(
+            user=self.admin_user,
+            name="KFZ Police",
+            insurance_type="kfz",
+            premium_amount=Decimal("50.00"),
+            payment_frequency="monthly",
+            linked_cash_flow=old_cf,
+        )
+        imp_filter = ImportFilter.objects.create(
+            user=self.admin_user,
+            target_name="KFZ Abbuchung",
+            linked_cash_flow=old_cf,
+        )
+
+        self.client.force_login(self.admin_user)
+        resp = self.client.post(
+            reverse("finance:cash_flow_annual_adjustment"),
+            {
+                "selected_items": [str(old_cf.pk)],
+                "new_start_date": today.isoformat(),
+                "adjustment_percent": "10",
+            },
+        )
+        self.assertEqual(resp.status_code, 302)
+
+        old_cf.refresh_from_db()
+        self.assertEqual(old_cf.end_date, today - datetime.timedelta(days=1))
+
+        new_cf = CashFlowSource.objects.filter(user=self.admin_user, name="KFZ Schutz").exclude(pk=old_cf.pk).get()
+        self.assertEqual(new_cf.value, Decimal("55.00"))
+
+        policy.refresh_from_db()
+        self.assertEqual(policy.linked_cash_flow_id, new_cf.pk)
+        self.assertEqual(policy.premium_amount, Decimal("55.00"))
+
+        imp_filter.refresh_from_db()
+        self.assertEqual(imp_filter.linked_cash_flow_id, new_cf.pk)
+
+        add_html = self.client.get(reverse("admin:finance_insurancepolicy_add")).content.decode("utf-8")
+        self.assertNotIn(f'value="{old_cf.pk}"', add_html)
+        self.assertIn(f'<option value="{new_cf.pk}" disabled="disabled">', add_html)
+
+        new_cf.value = Decimal("60.00")
+        new_cf.save()
+        policy.refresh_from_db()
+        self.assertEqual(policy.premium_amount, Decimal("60.00"))
+
+    def test_admin_changelists_default_to_current_user_when_multiple_users_exist(self):
+        from finance.models import PropertyComponent, RealEstate
+
+        other_policy = InsurancePolicy.objects.create(
+            user=self.other_user, name="Other Policy Only", premium_amount=Decimal("12.00")
+        )
+        admin_re = RealEstate.objects.create(user=self.admin_user, name="Admin Haus", property_value=Decimal("200000"))
+        other_re = RealEstate.objects.create(user=self.other_user, name="Other Haus", property_value=Decimal("150000"))
+        admin_comp = PropertyComponent.objects.create(
+            real_estate=admin_re, component_type="roof", name="Admin Dach", installation_year=2020
+        )
+        other_comp = PropertyComponent.objects.create(
+            real_estate=other_re, component_type="roof", name="Other Dach", installation_year=2019
+        )
+
+        self.client.force_login(self.admin_user)
+
+        # Default view filters to current user and marks "(Du)" selected
+        ins_resp = self.client.get(reverse("admin:finance_insurancepolicy_changelist"))
+        self.assertEqual(ins_resp.status_code, 200)
+        self.assertContains(ins_resp, self.existing_policy.name)
+        self.assertNotContains(ins_resp, other_policy.name)
+        self.assertContains(ins_resp, f"?user={self.admin_user.pk}")
+        self.assertContains(ins_resp, "Alle Benutzer anzeigen")
+
+        # Switching to ?user=all reveals other user's policy
+        ins_all = self.client.get(reverse("admin:finance_insurancepolicy_changelist") + "?user=all")
+        self.assertContains(ins_all, self.existing_policy.name)
+        self.assertContains(ins_all, other_policy.name)
+
+        # Related-user admin (PropertyComponentAdmin) defaults to current user
+        comp_resp = self.client.get(reverse("admin:finance_propertycomponent_changelist"))
+        self.assertContains(comp_resp, admin_comp.name)
+        self.assertNotContains(comp_resp, other_comp.name)
+        comp_all = self.client.get(reverse("admin:finance_propertycomponent_changelist") + "?user=all")
+        self.assertContains(comp_all, other_comp.name)
+
+        # PK-based user views (FinancialStatusProxyAdmin & CustomUserAdmin) default to current user
+        fs_resp = self.client.get(reverse("admin:finance_financialstatusproxy_changelist"))
+        self.assertEqual([u.pk for u in fs_resp.context["cl"].result_list], [self.admin_user.pk])
+        fs_all = self.client.get(reverse("admin:finance_financialstatusproxy_changelist") + "?user=all")
+        self.assertEqual({u.pk for u in fs_all.context["cl"].result_list}, {self.admin_user.pk, self.other_user.pk})
+
+        cu_resp = self.client.get(reverse("admin:core_customuser_changelist"))
+        self.assertEqual([u.pk for u in cu_resp.context["cl"].result_list], [self.admin_user.pk])
+        cu_all = self.client.get(reverse("admin:core_customuser_changelist") + "?user=all")
+        self.assertEqual({u.pk for u in cu_all.context["cl"].result_list}, {self.admin_user.pk, self.other_user.pk})
+
+        # Standard staff user sees only own objects and no user switcher filter
+        from django.contrib.auth.models import Permission
+        view_perm = Permission.objects.get(codename="view_insurancepolicy")
+        self.other_user.user_permissions.add(view_perm)
+        self.other_user.is_staff = True
+        self.other_user.save(update_fields=["is_staff"])
+        self.client.force_login(self.other_user)
+        staff_resp = self.client.get(reverse("admin:finance_insurancepolicy_changelist"))
+        self.assertEqual(staff_resp.status_code, 200)
+        self.assertContains(staff_resp, other_policy.name)
+        self.assertNotContains(staff_resp, self.existing_policy.name)
+        self.assertNotContains(staff_resp, "Alle Benutzer anzeigen")
+
+        # When only 1 active user remains, superuser sees no user filter sidebar
+        self.other_user.is_active = False
+        self.other_user.save(update_fields=["is_active"])
+        self.client.force_login(self.admin_user)
+        single_resp = self.client.get(reverse("admin:finance_insurancepolicy_changelist"))
+        self.assertEqual(single_resp.status_code, 200)
+        self.assertNotContains(single_resp, "Alle Benutzer anzeigen")
+
+        # CategoryAdmin column renders "Systemkategorie" in German
+        cat_resp = self.client.get(reverse("admin:finance_category_changelist"), HTTP_ACCEPT_LANGUAGE="de")
+        self.assertEqual(cat_resp.status_code, 200)
+        self.assertContains(cat_resp, "Systemkategorie")
+
 
 class AssetModalSaveTests(TestCase):
     def setUp(self):

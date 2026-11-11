@@ -12,10 +12,18 @@ from django.utils import timezone
 class CurrentUserDefaultFilter(admin.SimpleListFilter):
     title = _('Benutzer')
     parameter_name = 'user'
+    user_lookup_field = 'user'
+
+    def __init__(self, request, params, model, model_admin):
+        self.request = request
+        self.user_lookup_field = getattr(model_admin, 'user_filter_field', self.user_lookup_field)
+        super().__init__(request, params, model, model_admin)
 
     def lookups(self, request, model_admin):
         from core.models import CustomUser
-        users = CustomUser.objects.filter(is_active=True).order_by('username')
+        users = list(CustomUser.objects.filter(is_active=True).order_by('username'))
+        if len(users) <= 1:
+            return []
         items = [('all', _('--- Alle Benutzer anzeigen ---'))]
         for u in users:
             label = f"{u.username} (Du)" if u.pk == request.user.pk else u.username
@@ -23,11 +31,11 @@ class CurrentUserDefaultFilter(admin.SimpleListFilter):
         return items
 
     def choices(self, changelist):
-        # Override choices to hide the default Django 'All' which has value None,
-        # so that our explicit 'all' option behaves cleanly.
+        default_val = str(self.request.user.pk) if self.request and self.request.user.is_authenticated else 'all'
+        selected_val = self.value() or default_val
         for lookup, title in self.lookup_choices:
             yield {
-                'selected': self.value() == str(lookup) or (self.value() is None and lookup == 'all'),
+                'selected': selected_val == str(lookup),
                 'query_string': changelist.get_query_string({self.parameter_name: lookup}, []),
                 'display': title,
             }
@@ -37,34 +45,53 @@ class CurrentUserDefaultFilter(admin.SimpleListFilter):
         if val == 'all':
             return queryset
         if val:
-            return queryset.filter(user_id=val)
-        # Default when opening the changelist without explicit ?user= query param
-        if request.user.is_authenticated:
-            return queryset.filter(user=request.user)
+            try:
+                user_pk = int(val)
+            except (TypeError, ValueError):
+                return queryset.none()
+            return queryset.filter(**{self.user_lookup_field: user_pk})
+        if self.lookup_choices and request.user.is_authenticated:
+            return queryset.filter(**{self.user_lookup_field: request.user.pk})
         return queryset
 
 
-class BaseOwnedModelAdmin(admin.ModelAdmin):
-    """
-    Base Admin class that enforces user-scoped management:
-    - Non-superusers only see their own objects.
-    - Superusers default to seeing their own objects, with a filter to switch to other users or view all.
-    - Non-superusers have the 'user' field hidden and autofilled to request.user.
-    """
+class CurrentUserFilterMixin:
+    """Scope changelists to own objects for standard users and default superusers to self."""
+    user_filter_field = 'user'
+
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         if not request.user.is_superuser:
-            return qs.filter(user=request.user)
+            return qs.filter(**{self.user_filter_field: request.user})
         return qs
 
-    def changelist_view(self, request, extra_context=None):
-        if request.user.is_superuser and 'user' not in request.GET:
-            # Superusers default to seeing all records, with a filter sidebar to select users
-            q = request.GET.copy()
-            q['user'] = 'all'
-            request.GET = q
-            request.META['QUERY_STRING'] = q.urlencode()
-        return super().changelist_view(request, extra_context=extra_context)
+    def get_list_filter(self, request):
+        """Apply CurrentUserDefaultFilter for superusers and hide user filters for standard users."""
+        filters = super().get_list_filter(request) or ()
+        raw_user_fields = {'user', self.user_filter_field, CurrentUserDefaultFilter}
+        if not request.user.is_superuser:
+            return tuple(f for f in filters if f not in raw_user_fields)
+        new_filters = []
+        has_user_filter = False
+        for f in filters:
+            if f in raw_user_fields:
+                if not has_user_filter:
+                    new_filters.append(CurrentUserDefaultFilter)
+                    has_user_filter = True
+            else:
+                new_filters.append(f)
+        if not has_user_filter:
+            new_filters.append(CurrentUserDefaultFilter)
+        return tuple(new_filters)
+
+
+class BaseOwnedModelAdmin(CurrentUserFilterMixin, admin.ModelAdmin):
+    """
+    Base Admin class that enforces user-scoped management:
+    - Non-superusers only see their own objects.
+    - Superusers default to seeing their own objects when multiple users exist, with a filter to view all or switch users.
+    - Non-superusers have the 'user' field hidden and autofilled to request.user.
+    """
 
     def get_exclude(self, request, obj=None):
         exclude = super().get_exclude(request, obj) or []
@@ -153,24 +180,6 @@ class BaseOwnedModelAdmin(admin.ModelAdmin):
             obj.delete()
             
         formset.save_m2m()
-
-    def get_list_filter(self, request):
-        """Apply CurrentUserDefaultFilter for superusers, hide user filter for standard users."""
-        filters = super().get_list_filter(request) or ()
-        if not request.user.is_superuser:
-            return tuple(f for f in filters if f != 'user' and f != CurrentUserDefaultFilter)
-        # Replace raw 'user' with CurrentUserDefaultFilter, or add it if not present
-        new_filters = []
-        has_user_filter = False
-        for f in filters:
-            if f == 'user' or f == CurrentUserDefaultFilter:
-                new_filters.append(CurrentUserDefaultFilter)
-                has_user_filter = True
-            else:
-                new_filters.append(f)
-        if not has_user_filter:
-            new_filters.append(CurrentUserDefaultFilter)
-        return tuple(new_filters)
 
 class AssetSnapshotInlineForm(forms.ModelForm):
     class Meta:
@@ -496,19 +505,13 @@ class LoanInline(admin.TabularInline):
     classes = ['collapse']
 
 @admin.register(FinancialStatusProxy)
-class FinancialStatusAdmin(admin.ModelAdmin):
+class FinancialStatusAdmin(CurrentUserFilterMixin, admin.ModelAdmin):
+    user_filter_field = 'pk'
     inlines = [CashFlowSourceInline, AssetInline, OneTimeEventInline, PensionInline, PhysicalAssetInline, RealEstateInline, LoanInline]
     fieldsets = (
         (None, {'fields': ('username',)}),
     )
     list_display = ('username', 'email', 'is_staff')
-    
-    def get_queryset(self, request):
-        # Zeige nur den eigenen User an (außer für Superuser, die alles sehen können)
-        qs = super().get_queryset(request)
-        if request.user.is_superuser:
-            return qs
-        return qs.filter(id=request.user.id)
 
     def has_add_permission(self, request):
         return False # User werden hier nicht neu angelegt
@@ -574,13 +577,15 @@ class RealEstateAdmin(BaseOwnedModelAdmin):
     snapshot_value_field = 'property_value'
 
 @admin.register(PropertyComponent)
-class PropertyComponentAdmin(admin.ModelAdmin):
+class PropertyComponentAdmin(CurrentUserFilterMixin, admin.ModelAdmin):
+    user_filter_field = 'real_estate__user'
     list_display = ('name', 'real_estate', 'component_type', 'installation_year', 'expected_lifespan', 'estimated_cost', 'condition')
     list_filter = ('component_type', 'condition', 'real_estate__user')
     search_fields = ('name', 'real_estate__name')
 
 @admin.register(PropertyDocument)
-class PropertyDocumentAdmin(admin.ModelAdmin):
+class PropertyDocumentAdmin(CurrentUserFilterMixin, admin.ModelAdmin):
+    user_filter_field = 'real_estate__user'
     list_display = ('title', 'real_estate', 'category', 'date', 'amount', 'uploaded_at')
     list_filter = ('category', 'real_estate__user')
     search_fields = ('title', 'real_estate__name')
@@ -773,12 +778,15 @@ class InsurancePolicyAdminForm(forms.ModelForm):
         }
         self._linked_by_other = linked_by_other
 
-        cf_filter = Q(user_id=selected_user_id, is_income=False) if selected_user_id else Q(pk__isnull=True)
-        if self.instance and self.instance.pk and self.instance.linked_cash_flow_id:
-            cf_filter = cf_filter | Q(pk=self.instance.linked_cash_flow_id)
+        linked_cf_id = self.instance.linked_cash_flow_id if (self.instance and self.instance.pk) else None
+        if selected_user_id:
+            cf_filter = CashFlowSource.expense_choices_q(user_id=selected_user_id, include_pk=linked_cf_id)
+        else:
+            cf_filter = Q(pk=linked_cf_id) if linked_cf_id else Q(pk__isnull=True)
 
         qs = CashFlowSource.objects.filter(cf_filter).order_by('name')
         self.fields['linked_cash_flow'].queryset = qs
+        self.fields['linked_cash_flow'].label_from_instance = lambda obj: obj.format_choice_label()
 
         widget = self.fields['linked_cash_flow'].widget
         inner_widget = getattr(widget, 'widget', widget)
@@ -801,20 +809,21 @@ class InsurancePolicyAdminForm(forms.ModelForm):
 
         is_superuser = bool(self.request and self.request.user.is_superuser)
         if is_superuser:
-            meta_qs = CashFlowSource.objects.filter(is_income=False).order_by('name')
+            meta_qs = CashFlowSource.objects.filter(
+                CashFlowSource.expense_choices_q(include_pk=linked_cf_id)
+            ).order_by('name')
         elif self.request and self.request.user.is_authenticated:
-            meta_qs = CashFlowSource.objects.filter(user=self.request.user, is_income=False).order_by('name')
+            meta_qs = CashFlowSource.objects.filter(
+                CashFlowSource.expense_choices_q(user_id=self.request.user.pk, include_pk=linked_cf_id)
+            ).order_by('name')
         else:
             meta_qs = qs
-
-        if self.instance and self.instance.pk and self.instance.linked_cash_flow_id:
-            meta_qs = meta_qs | CashFlowSource.objects.filter(pk=self.instance.linked_cash_flow_id)
 
         cashflows_meta = [
             {
                 'id': cf.pk,
                 'user_id': cf.user_id,
-                'label': str(cf),
+                'label': cf.format_choice_label(),
                 'value': f"{cf.value:.2f}" if cf.value is not None else "0.00",
                 'frequency': cf.frequency,
                 'is_disabled': cf.pk in linked_by_other,

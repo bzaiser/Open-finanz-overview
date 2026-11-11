@@ -192,7 +192,7 @@ msgstr "Hex-Farbcode, z.B. #FF0000"
 
 #: finance/models.py:12
 msgid "System Category"
-msgstr "Kategorie"
+msgstr "Systemkategorie"
 
 #: finance/models.py:15 finance/models.py:48 finance/models.py:266
 #: finance/models.py:295

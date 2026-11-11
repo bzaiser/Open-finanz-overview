@@ -2,18 +2,12 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext_lazy as _
 from .models import CustomUser, UserProfile
-from finance.admin import CashFlowSourceInline, BaseOwnedModelAdmin
+from finance.admin import CashFlowSourceInline, BaseOwnedModelAdmin, CurrentUserFilterMixin
 
 @admin.register(CustomUser)
-class CustomUserAdmin(UserAdmin):
+class CustomUserAdmin(CurrentUserFilterMixin, UserAdmin):
+    user_filter_field = 'pk'
     inlines = [CashFlowSourceInline]
-
-    def get_queryset(self, request):
-        qs = super().get_queryset(request)
-        if not request.user.is_superuser:
-            # Regular staff users only see their own account
-            return qs.filter(id=request.user.id)
-        return qs
 
     def get_fieldsets(self, request, obj=None):
         if not request.user.is_superuser:

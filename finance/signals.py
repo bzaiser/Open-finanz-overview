@@ -50,3 +50,15 @@ def invalidate_forecast_on_repayment(sender, instance, **kwargs):
     if instance.loan and instance.loan.user_id:
         clear_user_forecast_cache(instance.loan.user_id)
 
+
+@receiver(post_save, sender=CashFlowSource)
+def sync_linked_insurances_on_cashflow_save(sender, instance, created, **kwargs):
+    """Keep linked InsurancePolicy premiums aligned when a CashFlowSource changes."""
+    if created:
+        return
+    for policy in instance.linked_insurances.all():
+        if policy.premium_amount != instance.value or policy.payment_frequency != instance.frequency:
+            policy.premium_amount = instance.value
+            policy.payment_frequency = instance.frequency
+            policy.save(update_fields=['premium_amount', 'payment_frequency'])
+
