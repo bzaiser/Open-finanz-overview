@@ -1,4 +1,4 @@
-# Finanz-Übersicht 🚀
+# Finanzplan – Das High-End Finanz- & Vorsorge-Cockpit 🚀
 
 [![Language: Multi-5](https://img.shields.io/badge/Language-Multi--5-blue)](#-internationalisierung)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -8,37 +8,46 @@
 > [!TIP]
 > **English Documentation**: You can find the English version of the documentation here: [README.md](README.md) 🇺🇸
 
-**Das High-End Finanz-Cockpit** — Ein hochentwickeltes Werkzeug für langfristige Finanzprognosen, das dir extreme Klarheit über dein zukünftiges Nettovermögen verschafft.
+**Das ganzheitliche Finanz-, Vorsorge- und Immobilien-Cockpit** — Eine hochpräzise 30+-Jahre-Simulations-Engine für Haushalte, Familien und Immobilienbesitzer mit echter Kaufkraftberechnung, Risiko-Audit und Krisen-Stresstests.
 
 ---
 
 ## 🌟 Vision & Überblick
 
-Finanzplan ist mehr als nur eine Tracking-App. Es ist eine **Simulations-Engine** für dein Leben. Es projiziert deine finanzielle Kurve über 30+ Jahre und berücksichtigt dabei Vermögenswerte, Verbindlichkeiten, wiederkehrende Cashflows und Einmalereignisse – und das alles unter strikter Berücksichtigung der inflationsbedingten Entwertung deiner Kaufkraft.
+Finanzplan ist mehr als nur eine Tracking-App. Es ist eine **Simulations-Engine** für dein Leben. Es projiziert deine finanzielle Kurve über 30+ Jahre und berücksichtigt dabei Vermögenswerte, Immobilien, Darlehen, Vorsorgeansprüche, wiederkehrende Cashflows und Einmalereignisse – und das alles unter strikter Berücksichtigung der inflationsbedingten Entwertung deiner Kaufkraft.
 
 ---
 
-## ✨ Experten-Features
+## ✨ Kernmodule & Experten-Features
 
-### 🧠 Intelligenter KI-Bank-Import (2.0)
-Unser KI-gestützter Import liest nicht nur CSV-Dateien; er **versteht** sie.
-- **Mustererkennung**: Bereinigt Bankbeschreibungen automatisch und sucht nach sich wiederholenden Mustern.
-- **Gelerntes Gedächtnis**: Merkt sich deine früheren Kategorisierungen und wendet sie automatisch auf neue Importe an.
-- **Dubletten-Fingerabdruck**: Jede Transaktion erhält einen eindeutigen Hash, um überlappende Importe zu verhindern.
-- **Privacy First**: Wähle zwischen **100% lokaler KI** (Ollama) oder Hochleistungs-Cloud-Providern (Gemini, Groq).
+### 📈 1. Präzisions-Simulations-Engine & Dashboard (`/finance/dashboard/`)
+- **Real- vs. Nominalwert**: Jede Kennzahl und jede Chart.js-Zeitreihe zeigt sowohl nominale Euro-Werte als auch die inflationsbereinigte **reale Kaufkraft** in heutigen Preisen.
+- **Interaktive Stichtags-Zeitreise**: Verschiebe den Stichtag auf jeden beliebigen Monat bis zum Simulations-Endalter (Standard: 90 Jahre) inkl. aufklappbarer KPI-Hover-Cards.
+- **Krisen- & Stresstest-Simulator**: Simuliere *Jobverlust (ALG I)*, *Berufsunfähigkeit (BU)*, *Börsencrash (-X %)*, *Anschlussfinanzierungs-Schock (+X %)* oder *Notfallausgaben* im direkten Vergleich zur Baseline-Kurve („Ohne Krise“).
 
-### 📈 Präzisions-Simulations-Engine
-Verstehe die Mathematik hinter deinem Vermögen.
-- **Real- vs. Nominalwert**: Unterscheide zwischen dem absoluten Geld, das du hast, und seiner realen Kaufkraft.
-- **Inflationspuffer**: Konfigurierbare Inflationsraten zur Visualisierung deines "echten" Nettovermögens.
-- **Dynamiken & Indexierung**: Simuliere Karriereschritte mit Gehaltsdynamiken und vertraglich indexierte Rentensteigerungen.
-- **Zinseszins-Logik**: Monatliche Verzinsung des Wachstums für jede einzelne Anlageklasse.
+### 🏛️ 2. Altersvorsorge, Versicherungen & Risiko-Check (`/finance/pensions/`)
+- **4 Vorsorge-Durchführungswege**: Gesetzliche Rente (DRV inkl. Entgeltpunkten, aktuellem Rentenwert `40,79 €` und Erwerbsminderungsrente), Private Kapital-/Rentenversicherung, Beamtenpension sowie Berufsständisches Versorgungswerk / VBL.
+- **3 Auszahlungsmodelle**: Monatlicher Auszahlungsplan mit Kapitalverzehr, lebenslange Rente oder einmalige Kapitalabfindung (automatischer Zufluss ins Barvermögen).
+- **Versicherungs- & Absicherungs-Check (`InsurancePolicy`)**: Ampel-Checkliste für Pflicht- und Kernversicherungen, BU-Lücken-Berechnung (80 %-Regel), Risikoleben-Bedarf (3× Jahreseinkommen + Restschuld) und Notgroschen-Reichweite.
 
-### 🎨 Design-Harmonie-System
-Ein Premium-Erlebnis für Premium-Daten.
-- **Mathematische Farbharmonien**: Wähle eine Primärfarbe und unsere Engine berechnet perfekt abgestimmte komplementäre oder analoge Paletten.
-- **Glassmorphism UI**: High-End-Tiefeneffekte mit Backdrop-Filtern und Transparenz.
-- **Night-Mode Perfektion**: Eine dedizierte Midnight-Theme-Engine für augenschonende Analysen bei Nacht.
+### 🏘️ 3. Immobilien, Darlehen & Steuer-Cockpit (`/finance/real-estate/`)
+- **Darlehens- & Tilgungsrechner**: Annuitäten-, Tilgungs- und endfällige Darlehen mit LTV-Überwachung, Zinsbindungs-Frühwarnung und **interaktivem Sondertilgungs-Simulator** (Zinsersparnis & Laufzeitverkürzung).
+- **Sanierungsfahrplan (`PropertyComponent`)**: Lebenszyklus-Tracking für Dach, Heizung, Fenster & Fassade inkl. 20-Jahres-Rücklagen-Prognose.
+- **Steuern (Anlage V) & Zahlungskalender**: 12-Monats-Cashflow-Kalender und automatische Berechnung von Gebäude-AfA, Schuldzinsen, Erhaltungsaufwand und zu versteuerndem Vermietungsergebnis.
+
+### 💰 4. Vermögen, Konten & Sachwerte (`/finance/assets/`)
+- **Alle Anlageklassen**: Giro/Bargeld, Tagesgeld, ETF-/Wertpapierdepots, Krypto, Edelmetalle und physische Sachwerte (`PhysicalAsset`).
+- **Tagesgeld-Hopping**: Überwachung von Aktionszinsen (`interest_teaser_rate` / `interest_teaser_until`) mit automatischem Rückfall auf den Basiszins nach Ablauf.
+- **Automatische Sparplan-Reconciliation**: Konto-Sparpläne (`monthly_savings_amount`) bauen monatlich verzinstes Vermögen auf, ohne mit manuellen Spar-Cashflows doppelt gezählt zu werden.
+
+### 🪄 5. Geführter Einrichtungs-Wizard & 5 Zielgruppen-Demoprofile
+- **Standmitteilungs-Wizard (`/finance/wizard/`)**: Erfasst Haushalt, Partner, DRV-Renteninformationen, Privatvorsorge, Cashflows, Vermögen, Immobilien und Kredite mit intelligentem Stichtags-Schutz (`AssetSnapshot`).
+- **Jährlicher Anpassungs-Assistent (`/finance/cash-flows/`)**: Schreibt Gehälter und Verträge zum Jahreswechsel mit sauberer Stichtags-Historie fort.
+- **6 Lebenssituationen & 1-Klick-Demodaten**: Maßgeschneiderte Presets für *Standard/Familie (`demo_familie`)*, *Geringverdiener (`gering`)*, *Alleinerziehend (`allein`)*, *Studierende (`student`)* und *Frührentner (`rentner`)*.
+
+### 🎨 6. Design-Harmonie-System
+- **Mathematische Farbharmonien**: Wähle aus fertigen Farb-Presets (*Deep Ocean*, *Emerald Trust*, *Sunset Gold*, *Midnight Purple*) oder erstelle eigene Paletten.
+- **Glassmorphism UI & Night-Mode**: High-End-Tiefeneffekte mit automatischem Dark/Light-Mode.
 
 ---
 

@@ -31,32 +31,32 @@
                         <div class="col-md-6 col-lg-3">
                             <div class="p-3 rounded-4 bg-body border h-100 shadow-sm">
                                 <div class="badge bg-primary rounded-pill mb-2 px-3 py-1">{% trans "Schritt 1" %}</div>
-                                <h5 class="fw-bold fs-6" data-editable-key="help_text_5">{{ content_map.help_text_5|default:_('Profil & Haushalt anlegen')|safe }}</h5>
-                                <p class="small text-muted mb-0" data-editable-key="help_text_36">{{ content_map.help_text_36|default:_('Gehe im Menü auf \'Einstellungen\'. Lege fest, ob du Einzelperson oder ein Paar bist, und trage Geburtsdaten sowie Ziel-Renteneintrittsalter ein.')|safe }}</p>
+                                <h5 class="fw-bold fs-6" data-editable-key="help_text_5">{{ content_map.help_text_5|default:_('Profil & Lebenssituation')|safe }}</h5>
+                                <p class="small text-muted mb-0" data-editable-key="help_text_36">{{ content_map.help_text_36|default:_('Wähle unter \'Einstellungen\' oder im Wizard deine Lebenssituation (Standard, Familie, Alleinerziehend, Student, Frührentner), Geburtsdaten und Ziel-Rentenalter.')|safe }}</p>
                             </div>
                         </div>
                         <!-- Step 2 -->
                         <div class="col-md-6 col-lg-3">
                             <div class="p-3 rounded-4 bg-body border h-100 shadow-sm">
                                 <div class="badge bg-info text-white rounded-pill mb-2 px-3 py-1">{% trans "Schritt 2" %}</div>
-                                <h5 class="fw-bold fs-6" data-editable-key="help_text_6">{{ content_map.help_text_6|default:_('Wizard starten')|safe }}</h5>
-                                <p class="small text-muted mb-0" data-editable-key="help_text_37">{{ content_map.help_text_37|default:_('Klicke im Bereich Vorsorge auf \'🪄 Standmitteilung / Wizard\'. Trage deine DRV-Rentenpunkte, Betriebsrenten und Sparverträge einfach ein.')|safe }}</p>
+                                <h5 class="fw-bold fs-6" data-editable-key="help_text_6">{{ content_map.help_text_6|default:_('Einrichtungs-Wizard')|safe }}</h5>
+                                <p class="small text-muted mb-0" data-editable-key="help_text_37">{{ content_map.help_text_37|default:_('Öffne oben rechts im Benutzermenü \'🪄 Einrichtungs-Wizard\'. Erfasse DRV-Rentenpunkte (40,79 €), Privatvorsorge, Konten, Immobilien und Kredite.')|safe }}</p>
                             </div>
                         </div>
                         <!-- Step 3 -->
                         <div class="col-md-6 col-lg-3">
                             <div class="p-3 rounded-4 bg-body border h-100 shadow-sm">
                                 <div class="badge bg-warning text-dark rounded-pill mb-2 px-3 py-1">{% trans "Schritt 3" %}</div>
-                                <h5 class="fw-bold fs-6" data-editable-key="help_text_7">{{ content_map.help_text_7|default:_('Einnahmen & Ausgaben')|safe }}</h5>
-                                <p class="small text-muted mb-0" data-editable-key="help_text_38">{{ content_map.help_text_38|default:_('Erfasse im Wizard oder im Menü \'Einnahmen / Ausgaben\' deine regelmäßigen Monatsströme (Gehalt, Miete, Lebenshaltung).')|safe }}</p>
+                                <h5 class="fw-bold fs-6" data-editable-key="help_text_7">{{ content_map.help_text_7|default:_('Cashflow & Absicherung')|safe }}</h5>
+                                <p class="small text-muted mb-0" data-editable-key="help_text_38">{{ content_map.help_text_38|default:_('Prüfe unter \'Einnahmen & Ausgaben\' deine laufenden Ströme, nutze den Jährlichen Anpassungs-Assistenten und kontrolliere deinen Versicherungs- & Risiko-Check.')|safe }}</p>
                             </div>
                         </div>
                         <!-- Step 4 -->
                         <div class="col-md-6 col-lg-3">
                             <div class="p-3 rounded-4 bg-body border h-100 shadow-sm">
                                 <div class="badge bg-success rounded-pill mb-2 px-3 py-1">{% trans "Schritt 4" %}</div>
-                                <h5 class="fw-bold fs-6" data-editable-key="help_text_8">{{ content_map.help_text_8|default:_('Dashboard & Stichtag')|safe }}</h5>
-                                <p class="small text-muted mb-0" data-editable-key="help_text_39">{{ content_map.help_text_39|default:_('Betrachte deine 30-Jahre-Finanzkurve im Dashboard. Verschiebe den \'Stichtag\' in die Zukunft, um deine Kaufkraft im Ruhestand zu prüfen.')|safe }}</p>
+                                <h5 class="fw-bold fs-6" data-editable-key="help_text_8">{{ content_map.help_text_8|default:_('Dashboard & Stresstest')|safe }}</h5>
+                                <p class="small text-muted mb-0" data-editable-key="help_text_39">{{ content_map.help_text_39|default:_('Analysiere deine 30+-Jahre-Projektion im Dashboard, verschiebe den Stichtag in die Zukunft und teste Krisenszenarien (Jobverlust, BU, Börsencrash, Zinsanstieg).')|safe }}</p>
                             </div>
                         </div>
                     </div>
@@ -139,11 +139,11 @@
                                     <div class="alert alert-primary bg-opacity-10 border-primary text-dark font-monospace mb-3">
                                         <strong>{% trans "Bruttorente (€)" %} = {% trans "Entgeltpunkte (EP)" %} × {% trans "Aktueller Rentenwert (€)" %}</strong>
                                     </div>
-                                    <p><strong>{% trans "Beispiel:" %}</strong> {% trans "Du hast 65,20 Entgeltpunkte gesammelt. Bei einem Rentenwert von 39,32 € ergibt das:" %}</p>
-                                    <p class="font-monospace text-dark ms-3">65,20 EP × 39,32 € = 2.563,66 € {% trans "Bruttorente pro Monat" %}</p>
+                                    <p><strong>{% trans "Beispiel:" %}</strong> {% trans "Du hast 65,20 Entgeltpunkte gesammelt. Bei einem Rentenwert von 40,79 € ergibt das:" %}</p>
+                                    <p class="font-monospace text-dark ms-3">65,20 EP × 40,79 € = 2.659,51 € {% trans "Bruttorente pro Monat" %}</p>
                                     <hr>
                                     <p><strong>{% trans "Abzug für Kranken- und Pflegeversicherung (KV/PV):" %}</strong></p>
-                                    <p data-editable-key="help_text_16">{{ content_map.help_text_16|default:_('Von der Bruttorente werden ca. 11,5 % für Kranken- und Pflegeversicherung abgezogen (ca. 7,3 % KV + 4,0 % PV abzüglich Bundeszuschuss). Die verbleibende Nettorente vor Steuern beträgt im Beispiel ca. 2.268,84 €.')|safe }}</p>
+                                    <p data-editable-key="help_text_16">{{ content_map.help_text_16|default:_('Von der Bruttorente werden ca. 11,5 % für Kranken- und Pflegeversicherung abgezogen (ca. 7,3 % KV + 4,0 % PV abzüglich Bundeszuschuss). Die verbleibende Nettorente vor Steuern beträgt im Beispiel ca. 2.353,67 €.')|safe }}</p>
                                 </div>
                             </div>
                         </div>
@@ -357,7 +357,63 @@
                             </div>
                         </div>
 
-                        <!-- Item 9: Django Admin Interface -->
+                        <!-- Item 9: Immobilien, Kredite, Sondertilgung & Anlage V -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed px-4 py-4 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faqRealEstateLoans">
+                                    <i class="bi bi-houses-fill me-2 text-primary"></i> {% trans "Immobilien, Kredite, Sondertilgungs-Simulator, Sanierungsfahrplan & Steuern (Anlage V)" %}
+                                </button>
+                            </h2>
+                            <div id="faqRealEstateLoans" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
+                                <div class="accordion-body px-4 pb-4 text-muted" data-editable-key="help_text_48">
+                                    {{ content_map.help_text_48|default:_('<p>Unter <strong>„Immobilien & Kredite“</strong> (<code>/finance/real-estate/</code>) verwaltest du dein gesamtes Immobilienportfolio in 5 spezialisierten Reitern:</p><ul><li><strong>Immobilien-Portfolio:</strong> Verkehrswert, jährliche Wertsteigerung, Nettokaltmiete, Nebenkosten, Instandhaltungsrücklage und Netto-Eigenkapital je Objekt.</li><li><strong>Darlehen & Tilgungsplan:</strong> Unterstützt <em>Annuitätendarlehen</em>, <em>Tilgungsdarlehen (feste Tilgung)</em> und <em>endfällige Darlehen</em> inkl. Beleihungsauslauf (LTV), Zinsbindungs-Frühwarnung (<code>interest_lock_end</code>) und <strong>interaktivem Sondertilgungs-Simulator</strong> (berechnet Zinsersparnis in € sowie Laufzeitverkürzung in Jahren/Monaten).</li><li><strong>Sanierungsfahrplan (PropertyComponent):</strong> Überwacht Bauteile wie Dach, Heizung, Fenster und Fassade mit Einbaujahr, Restlebensdauer und 20-Jahres-Kostenprognose.</li><li><strong>Zahlungskalender & Steuern (Anlage V):</strong> 12-Monats-Cashflow-Kalender sowie automatische Steuerberechnung für vermietete Objekte (Gebäudeanteil %, lineare AfA p.a., abzugsfähige Schuldzinsen, hinterlegte Handwerkerrechnungen und zu versteuerndes Ergebnis).</li></ul>')|safe }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Item 10: Vermögen, Konten, Sachwerte & Tagesgeld-Hopping -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed px-4 py-4 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faqAssetsTeaser">
+                                    <i class="bi bi-piggy-bank-fill me-2 text-success"></i> {% trans "Vermögen, Konten, Physische Sachwerte & Tagesgeld-Hopping (Aktionszins)" %}
+                                </button>
+                            </h2>
+                            <div id="faqAssetsTeaser" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
+                                <div class="accordion-body px-4 pb-4 text-muted" data-editable-key="help_text_49">
+                                    {{ content_map.help_text_49|default:_('<p>Im Modul <strong>„Vermögen & Konten“</strong> (<code>/finance/assets/</code>) erfasst du sämtliche liquiden und gebundenen Vermögenswerte:</p><ul><li><strong>6 Finanz-Anlageklassen + Sachwerte:</strong> Giro/Bargeld, Tagesgeld/Geldmarkt, ETF-/Wertpapierdepot, Kryptowährungen, Edelmetalle sowie physische Sachwerte (Fahrzeuge, Uhren, Kunst inkl. Unterhaltskosten und geplantem Verkaufsdatum).</li><li><strong>Tagesgeld-Hopping (Aktionszins-Wächter):</strong> Hinterlege einen befristeten Aktionszins (<code>interest_teaser_rate</code>) mit Ablaufdatum (<code>interest_teaser_until</code>). Die Simulation verzinst bis zum Stichtag mit dem Aktionszins, schaltet danach automatisch auf den regulären Basiszins zurück und warnt rechtzeitig vor Ablauf im Dashboard.</li><li><strong>Sparplan-Reconciliation:</strong> Monatliche Konto-Sparpläne (<code>monthly_savings_amount</code>) bauen verzinstes Vermögen auf und werden automatisch mit manuellen Spar-Ausgaben abgeglichen, damit Sparraten niemals doppelt gezählt werden.</li></ul>')|safe }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Item 11: Versicherungen & Risiko-Check -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed px-4 py-4 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faqInsurancesRisk">
+                                    <i class="bi bi-shield-fill-check me-2 text-warning"></i> {% trans "Versicherungen, Ampel-Checkliste & Risiko-/Notfall-Check (Notgroschen, ALG I, BU, Risikoleben)" %}
+                                </button>
+                            </h2>
+                            <div id="faqInsurancesRisk" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
+                                <div class="accordion-body px-4 pb-4 text-muted" data-editable-key="help_text_50">
+                                    {{ content_map.help_text_50|default:_('<p>Unter <strong>„Vorsorge & Absicherung“</strong> (<code>/finance/pensions/</code>) stehen neben den 4 Vorsorgewegen (Gesetzliche Rente, Privatrente, Beamtenpension, Versorgungswerk/VBL) zwei dedizierte Schutz-Tabs bereit:</p><ul><li><strong>Versicherungen & Absicherung:</strong> Verwalte 11 Versicherungssparten. Ist eine Police mit einer Ausgabe verknüpft (<code>linked_cash_flow</code>), verhindert das System jede Doppelzählung im Cashflow. Die <strong>Ampel-Checkliste</strong> prüft automatisch Pflicht- und Kernversicherungen (Haftpflicht, BU, Wohngebäude, Risikoleben).</li><li><strong>Risiko- & Notfall-Check:</strong> Berechnet deine <strong>Notgroschen-Reichweite</strong> (Ziel: 3 Monate Ausgaben Standard, 6 Monate bei knappem Budget/Alleinerziehend/Frührentner, 2 Monate für Studierende), deinen <strong>Jobverlust-Puffer (ALG I: 60 % / 67 %)</strong>, deine <strong>Berufsunfähigkeits-Lücke (80 %-Regel inkl. DRV-Erwerbsminderungsrente + privater BU)</strong> sowie deinen <strong>Hinterbliebenenschutz (3× Jahresnetto + Kredit-Restschuld)</strong>.</li></ul>')|safe }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Item 12: Dashboard Krisen-Simulator & Jährlicher Anpassungs-Assistent -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed px-4 py-4 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faqStressAndAnnual">
+                                    <i class="bi bi-lightning-charge-fill me-2 text-danger"></i> {% trans "Dashboard Krisen-Simulator (Stresstest) & Jährlicher Anpassungs-Assistent" %}
+                                </button>
+                            </h2>
+                            <div id="faqStressAndAnnual" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
+                                <div class="accordion-body px-4 pb-4 text-muted" data-editable-key="help_text_51">
+                                    {{ content_map.help_text_51|default:_('<ul><li><strong>Krisen- & Stresstest-Simulator (Dashboard):</strong> Simuliere 5 reale Schockszenarien mit direkter Baseline-Vergleichskurve (<em>„Ohne Krise“</em>): <strong>1. Jobverlust (ALG I)</strong> inkl. optionaler Sparplan-Pause, <strong>2. Berufsunfähigkeit (BU)</strong>, <strong>3. Börsencrash (-X % auf Depots/Krypto)</strong>, <strong>4. Anschlussfinanzierungs-Schock (+X % Zins nach Zinsbindung)</strong> und <strong>5. Ungeplante Notfallausgabe</strong>.</li><li><strong>Jährlicher Anpassungs-Assistent (Einnahmen & Ausgaben):</strong> Wähle beliebige laufende Verträge oder Gehälter aus, lege ein neues Startdatum (z. B. <code>01.01.2027</code>) und eine prozentuale Anpassung fest. Das System beendet den bisherigen Eintrag sauber am Vortag, legt den neuen Zeitraum an und zieht verknüpfte Versicherungspolicen automatisch mit.</li></ul>')|safe }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Item 13: Django Admin Interface -->
                         <div class="accordion-item">
                             <h2 class="accordion-header">
                                 <button class="accordion-button collapsed px-4 py-4 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faqAdminInterface">
@@ -392,15 +448,15 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body p-4">
-                <h6 class="fw-bold text-primary mb-3" data-editable-key="help_text_29">{{ content_map.help_text_29|default:_('Schritt-für-Schritt Einrichtung')|safe }}</h6>
+                <h6 class="fw-bold text-primary mb-3" data-editable-key="help_text_29">{{ content_map.help_text_29|default:_('Schritt-für-Schritt Einrichtung (Benutzermenü oben rechts → 🪄 Einrichtungs-Wizard)')|safe }}</h6>
                 <ol class="small text-muted mb-4">
-                    <li class="mb-2"><strong>{% trans "Haushalt & Personen:" %}</strong> {% trans "Wähle zwischen Einzelperson oder Paar/Ehepaar und gib die Geburtsdaten sowie das geplante Renteneintrittsalter beider Personen ein." %}</li>
-                    <li class="mb-2"><strong>{% trans "Gesetzliche Rentenmitteilungen (DRV):" %}</strong> {% trans "Trage die Entgeltpunkte (EP), den aktuellen Rentenwert (z. B. 39,32 €) und den Stichtag 'Stand vom' aus deinem Brief der Deutschen Rentenversicherung ein." %}</li>
-                    <li class="mb-2"><strong>{% trans "Private Vorsorge & Betriebsrenten:" %}</strong> {% trans "Gib bestehende Verträge (Allianz, Riester, bAV) mit aktuellem Kapitalwert und garantierter bzw. hochgerechneter Rente ein." %}</li>
-                    <li class="mb-2"><strong>{% trans "Einkommen & Ausgaben:" %}</strong> {% trans "Erfasse Gehalte, regelmäßige Sparraten und Lebenshaltungskosten inkl. Zuordnung zu deinen individuellen Kategorien." %}</li>
+                    <li class="mb-2"><strong>{% trans "Haushalt, Lebenssituation & Personen:" %}</strong> {% trans "Wähle deine Lebenssituation (Standard, Knappes Budget, Alleinerziehend, Student, Arbeitssuchend, Frührentner), Einzelperson oder Paar sowie Geburtsdaten und geplantes Renteneintrittsalter." %}</li>
+                    <li class="mb-2"><strong>{% trans "Gesetzliche Rentenmitteilungen (DRV):" %}</strong> {% trans "Trage die Entgeltpunkte (EP), den aktuellen Rentenwert (Standard: 40,79 €), die Erwerbsminderungsrente und den Stichtag 'Stand vom' aus deiner DRV-Renteninformation ein." %}</li>
+                    <li class="mb-2"><strong>{% trans "Private Vorsorge, bAV, Beamtenpension & Versorgungswerk:" %}</strong> {% trans "Gib bestehende Verträge mit aktuellem Kapitalwert, Sparbeitrag, Auszahlungsart (Auszahlungsplan, lebenslange Rente oder Einmalkapital) und Rentenwerten ein." %}</li>
+                    <li class="mb-2"><strong>{% trans "Einkommen, Ausgaben, Vermögen, Immobilien & Kredite:" %}</strong> {% trans "Erfasse deine monatlichen Einnahmen/Ausgaben, Konten & Depots (inkl. Sparplänen & Notgroschen-Markierung) sowie Immobilien und Darlehen." %}</li>
                 </ol>
                 <div class="alert alert-info bg-opacity-10 border-info text-dark small mb-0">
-                    <i class="bi bi-info-circle me-1"></i> <strong>{% trans "Keine Duplikate:" %}</strong> {% trans "Wenn du den Wizard erneut ausführst, werden bestehende Verträge aktualisiert anstatt doppelt angelegt zu werden." %}
+                    <i class="bi bi-info-circle me-1"></i> <strong>{% trans "Keine Duplikate:" %}</strong> {% trans "Wenn du den Wizard erneut ausführst, werden bestehende Verträge aktualisiert und historische Stichtage als Snapshot gesichert." %}
                 </div>
             </div>
         </div>
@@ -445,10 +501,12 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body p-4">
-                <h6 class="fw-bold mb-3" data-editable-key="help_text_35">{{ content_map.help_text_35|default:_('Formeln der Finanz-Simulation:')|safe }}</h6>
+                <h6 class="fw-bold mb-3" data-editable-key="help_text_35">{{ content_map.help_text_35|default:_('Formeln der Finanz-Simulation (SimulationEngine):')|safe }}</h6>
                 <ul class="small text-muted mb-4">
-                    <li class="mb-2"><strong>{% trans "Zinseszins Vermögen:" %}</strong> <span class="font-monospace text-dark" data-editable-key="help_text_46">{{ content_map.help_text_46|default:_('Vermögen')|safe }}</span></li>
-                    <li class="mb-2"><strong>{% trans "Nettorente gesetzlich:" %}</strong> <span class="font-monospace text-dark" data-editable-key="help_text_47">{{ content_map.help_text_47|default:_('Netto')|safe }}</span></li>
+                    <li class="mb-2"><strong>{% trans "Zinseszins Vermögen (monatlich):" %}</strong> <span class="font-monospace text-dark" data-editable-key="help_text_46">{{ content_map.help_text_46|default:_('B(t+1) = B(t) × (1 + r_eff / 12) + Sparrate_mtl − Entnahme_mtl')|safe }}</span></li>
+                    <li class="mb-2"><strong>{% trans "Nettorente gesetzlich (DRV):" %}</strong> <span class="font-monospace text-dark" data-editable-key="help_text_47">{{ content_map.help_text_47|default:_('Nettorente = (Entgeltpunkte × 40,79 €) × (1 − Sozialabzug % / 100)')|safe }}</span></li>
+                    <li class="mb-2"><strong>{% trans "Reale Kaufkraft (Inflationsbereinigung):" %}</strong> <span class="font-monospace text-dark">V_real(t) = V_nominal(t) / (1 + Inflation)^(Monate / 12)</span></li>
+                    <li class="mb-2"><strong>{% trans "Darlehenstilgung & Sondertilgung:" %}</strong> <span class="font-monospace text-dark">Zins_mtl = Restschuld × (Sollzins / 12) | Tilgung_mtl = Monatsrate − Zins_mtl + Sondertilgung</span></li>
                 </ul>
             </div>
         </div>

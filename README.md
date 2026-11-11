@@ -1,4 +1,4 @@
-# Finance Overview 🚀
+# Finanzplan – The High-End Financial & Retirement Cockpit 🚀
 
 [![Language: Multi-5](https://img.shields.io/badge/Language-Multi--5-blue)](#-internationalization)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -8,37 +8,46 @@
 > [!TIP]
 > **Deutschsprachige Dokumentation**: Du findest die deutsche Version der Dokumentation hier: [README.de.md](README.de.md) 🇩🇪
 
-**The High-End Financial Cockpit** — A sophisticated, long-term financial forecasting tool designed to give you extreme clarity on your future net worth. 
+**The Holistic Financial, Retirement & Real Estate Cockpit** — A high-precision 30+ year simulation engine for households, families, and property owners featuring real purchasing-power math, protection audits, and crisis stress testing.
 
 ---
 
 ## 🌟 Vision & Overview
 
-Finanzplan is more than just a tracking app. It is a **Simulation Engine** for your life. It projects your financial trajectory over 30+ years, accounting for assets, liabilities, recurring cash flows, and one-time events, while strictly factoring in the eroding effect of inflation on your purchasing power.
+Finanzplan is more than just a tracking app. It is a **Simulation Engine** for your life. It projects your financial trajectory over 30+ years, accounting for assets, real estate, loans, pension entitlements, recurring cash flows, and one-time events, while strictly factoring in the eroding effect of inflation on your purchasing power.
 
 ---
 
-## ✨ Key Expert Features
+## ✨ Core Modules & Expert Features
 
-### 🧠 Smart AI Bank Import (2.0)
-Our AI-assisted import doesn't just read CSV files; it **understands** them.
-- **Pattern Recognition**: Automatically cleans bank descriptions and searches for repeating patterns.
-- **Learned Memory**: Remembers your previous categorizations and applies them to new imports.
-- **Duplicate Fingerprinting**: Every transaction gets a unique hash to prevent overlapping imports.
-- **Privacy First**: Choose between **100% Local AI** (Ollama) or high-performance cloud providers (Gemini, Groq).
+### 📈 1. Precision Simulation Engine & Dashboard (`/finance/dashboard/`)
+- **Real vs. Nominal Purchasing Power**: Every KPI card and Chart.js time series displays both nominal values and inflation-discounted **real purchasing power** in today's euros.
+- **Interactive Target Date (`Stichtag`) Time Travel**: Inspect your balance sheet in any future month up to your simulation max age (default: 90) with expandable hover breakdowns.
+- **Crisis & Stress-Test Simulator**: Simulate *Job Loss (ALG I)*, *Occupational Disability (BU)*, *Market Crash (-X%)*, *Refinancing Rate Shock (+X%)*, or *Emergency Expenses* with live baseline comparison curves.
 
-### 📈 Precision Simulation Engine
-Understand the math behind your wealth.
-- **Real vs. Nominal Value**: Distinguish between the absolute money you have and its real purchasing power.
-- **Inflation Buffer**: Configurable inflation rates to visualize your "Real" net worth.
-- **Dynamics & Indexing**: Simulate career growth with salary dynamics and contract-indexed pension increases.
-- **Compound Interest Logic**: Monthly compounding of growth for every individual asset class.
+### 🏛️ 2. Retirement Planning, Insurances & Protection Audit (`/finance/pensions/`)
+- **4 Pension Pillars**: Statutory Pension (DRV with pension points, `40.79 €` point value, and disability pension), Private Capital Pension, Civil Service Pension (`civil_service`), and Professional/Occupational Funds (`occupational_fund`).
+- **3 Payout Models**: Monthly capital drawdown, lifelong annuity, or one-time lump-sum payout (automatically credited to liquid cash at maturity).
+- **Insurance & Risk Audit (`InsurancePolicy`)**: Traffic-light coverage checklist, disability gap analysis (80% net rule), term-life protection check (3× annual net income + current loan debt), and emergency fund runway.
 
-### 🎨 Design Harmony System
-A premium experience for premium data.
-- **Mathematical Color Harmonies**: Choose a primary color, and our engine calculates perfectly matched Complementary or Analogous palettes.
-- **Glassmorphism UI**: High-end depth effects with backdrop filters and translucency.
-- **Night Mode Mastery**: A dedicated midnight theme engine for eye-soothing nighttime analysis.
+### 🏘️ 3. Real Estate, Loans & Tax Cockpit (`/finance/real-estate/`)
+- **Loan & Amortization Engine**: Annuity, fixed-amortization, and bullet loans with live LTV tracking, interest-lock expiry alerts, and an **interactive Extra Repayment Simulator** (interest saved & months/years shaved off).
+- **Renovation Roadmap (`PropertyComponent`)**: Lifecycle tracking for roof, heating, windows, and facade with 20-year capex forecasting.
+- **Rental Tax (Anlage V) & Payment Calendar**: 12-month property cashflow calendar and automated calculation of linear building depreciation (AfA), deductible loan interest, maintenance invoices, and taxable rental result.
+
+### 💰 4. Assets, Accounts & Physical Valuables (`/finance/assets/`)
+- **All Asset Classes**: Cash/Checking, Overnight/Money Market, ETF/Securities Depots, Crypto, Precious Metals, and Physical Assets (`PhysicalAsset`).
+- **Promotional Teaser Rate Guard**: Tracks promotional overnight rates (`interest_teaser_rate` / `interest_teaser_until`) with automatic fallback to standard growth rates after expiry.
+- **Automated Savings Reconciliation**: Account savings plans (`monthly_savings_amount`) compound monthly into wealth while reconciling with manual savings cash flows to prevent double-counting.
+
+### 🪄 5. Guided Setup Wizard & 5 Target-Group Demo Profiles
+- **Statement & Setup Wizard (`/finance/wizard/`)**: Captures household & partner data, statutory/private pension statements, cash flows, assets, properties, and loans with chronological snapshot protection (`AssetSnapshot`).
+- **Annual Adjustment Wizard (`/finance/cash-flows/`)**: Rolls over recurring contracts and salaries into the new year while preserving clean historical end dates.
+- **6 Household Situations & 1-Click Demo Profiles**: Tailored dashboard presets for *Standard Family (`demo_familie`)*, *Low Income (`gering`)*, *Single Parent (`allein`)*, *Student (`student`)*, and *Early Retiree (`rentner`)*.
+
+### 🎨 6. Design Harmony System
+- **Mathematical Color Harmonies**: Choose from curated color presets (*Deep Ocean*, *Emerald Trust*, *Sunset Gold*, *Midnight Purple*) or build custom palettes.
+- **Glassmorphism UI & Night Mode**: High-end depth effects with automatic dark/light theme adaptation.
 
 ---
 
