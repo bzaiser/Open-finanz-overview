@@ -2,7 +2,7 @@
 <div id="dashboard-summary" class="row mb-4" {% if request.META.HTTP_HX_REQUEST or 'HX-Request' in request.headers %}hx-swap-oob="true"{% endif %}>
     {% for item in summary_layout %}
     {% if item.visible %}
-    <div class="col-md-3 mb-3" style="order: {{ item.order }};">
+    <div class="col-12 col-sm-6 col-xl-3 mb-3 metric-card-col" style="order: {{ item.order }};">
         <div class="card metric-card widget-expand-card h-100"
              style="background: linear-gradient(135deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0) 100%), {{ item.bg_color|default:'#ffffff' }}; color: {{ item.text_color|default:'#212529' }};">
             <div class="card-glass-glow"></div>
@@ -24,7 +24,7 @@
                 </div>
                 
                 <div class="metric-value">
-                    <h3 class="mb-0 fw-bold">
+                    <h3 class="mb-0 fw-bold font-monospace">
                         {% if item.id == 'current_assets' %}
                         {{ current_assets_total|intcomma }}
                         {% elif item.id == 'monthly_income' %}

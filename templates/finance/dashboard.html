@@ -23,15 +23,15 @@
                     {% trans "Overview of assets, cash flow, retirement planning, and loans." %}
                 </p>
             </div>
-            <div class="d-flex align-items-center gap-2">
-                <button class="btn btn-primary shadow-sm" style="background: var(--app-gradient); border: none;" data-bs-toggle="modal" data-bs-target="#configModal">
+            <div class="d-flex flex-wrap align-items-center gap-2">
+                <button class="btn btn-primary app-action-btn shadow-sm" style="background: var(--app-gradient); border: none;" data-bs-toggle="modal" data-bs-target="#configModal">
                     <i class="bi bi-layout-text-window-reverse"></i>
-                    {% trans "Configure Layout" %}
+                    <span>{% trans "Configure Layout" %}</span>
                 </button>
                 <div id="sim-button-wrapper" class="position-relative d-inline-block">
-                    <button class="btn btn-primary shadow-sm" style="background: var(--app-gradient); border: none;" data-bs-toggle="offcanvas" data-bs-target="#simulationOffcanvas">
-                        <i class="bi bi-gear me-1"></i>
-                        {% trans "Simulation" %}
+                    <button class="btn btn-primary app-action-btn shadow-sm" style="background: var(--app-gradient); border: none;" data-bs-toggle="offcanvas" data-bs-target="#simulationOffcanvas">
+                        <i class="bi bi-gear"></i>
+                        <span>{% trans "Simulation" %}</span>
                     </button>
                     {% if is_simulation_active %}
                     <span class="position-absolute start-50 translate-middle-x small fw-bold sim-blinking text-nowrap" style="top: 100%; font-size: 0.68rem; margin-top: 2px;">

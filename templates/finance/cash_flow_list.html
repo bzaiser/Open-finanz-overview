@@ -13,14 +13,14 @@
             </h2>
             <p class="text-muted small mb-0">{% trans "Overview of all cash flows (manual entries, pensions, rental income, asset withdrawals, and loan payments)." %}</p>
         </div>
-        <div class="d-flex gap-2">
-            <button class="btn btn-primary d-flex align-items-center gap-2 shadow-sm rounded-pill px-3 py-2"
+        <div class="d-flex flex-wrap gap-2">
+            <button class="btn btn-primary app-action-btn shadow-sm"
                     style="background: var(--app-gradient); border: none;"
                     data-bs-toggle="modal" data-bs-target="#annualAdjustmentWizardModal">
                 <i class="bi bi-magic"></i>
                 <span>{% trans "Annual Adjustment Wizard" %}</span>
             </button>
-            <button class="btn btn-primary d-flex align-items-center gap-2 shadow-sm rounded-pill px-3 py-2"
+            <button class="btn btn-primary app-action-btn shadow-sm"
                     style="background: var(--app-gradient); border: none;"
                     @click="openAddModal()">
                 <i class="bi bi-plus-lg"></i>
@@ -31,7 +31,7 @@
 
     <!-- Summary Metric Cards -->
     <div class="row g-3 mb-4">
-        <div class="col-md-4">
+        <div class="col-12 col-md-4 metric-card-col">
             <div class="card metric-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ income_card_bg }}; color: {{ income_card_text }}; border: none;">
                 <div class="card-glass-glow"></div>
                 <div class="d-flex justify-content-between align-items-start">
@@ -53,7 +53,7 @@
             </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-12 col-md-4 metric-card-col">
             <div class="card metric-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ expense_card_bg }}; color: {{ expense_card_text }}; border: none;">
                 <div class="card-glass-glow"></div>
                 <div class="d-flex justify-content-between align-items-start">
@@ -75,7 +75,7 @@
             </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-12 col-md-4 metric-card-col">
             <div class="card metric-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), var(--app-primary); color: #ffffff; border: none;">
                 <div class="card-glass-glow"></div>
                 <div class="d-flex justify-content-between align-items-start">
@@ -102,7 +102,7 @@
     <div class="card border-0 shadow-sm rounded-4 mb-3" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
         <div class="card-body p-2 px-3">
             <form method="get" id="yearFilterForm" class="row g-2 align-items-center">
-                <div class="col-md-3">
+                <div class="col-12 col-sm-6 col-xl-3">
                     <div class="input-group input-group-sm">
                         <span class="input-group-text bg-transparent border-end-0 text-muted">
                             <i class="bi bi-search"></i>
@@ -110,20 +110,20 @@
                         <input type="text" x-model="searchQuery" class="form-control border-start-0" placeholder="{% trans 'Search by name, category, note...' %}">
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="btn-group btn-group-sm w-100" role="group">
-                        <button type="button" class="btn btn-outline-secondary" :class="{'active': activeTab === 'all'}" @click="activeTab = 'all'">
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="btn-group btn-group-sm w-100 flex-wrap flex-sm-nowrap" role="group">
+                        <button type="button" class="btn btn-outline-secondary text-truncate" :class="{'active': activeTab === 'all'}" @click="activeTab = 'all'">
                             {% trans "All" %} (<span x-text="items.length"></span>)
                         </button>
-                        <button type="button" class="btn btn-outline-success" :class="{'active': activeTab === 'income'}" @click="activeTab = 'income'">
+                        <button type="button" class="btn btn-outline-success text-truncate" :class="{'active': activeTab === 'income'}" @click="activeTab = 'income'">
                             <i class="bi bi-arrow-up-right"></i> {% trans "Income" %}
                         </button>
-                        <button type="button" class="btn btn-outline-danger" :class="{'active': activeTab === 'expense'}" @click="activeTab = 'expense'">
+                        <button type="button" class="btn btn-outline-danger text-truncate" :class="{'active': activeTab === 'expense'}" @click="activeTab = 'expense'">
                             <i class="bi bi-arrow-down-right"></i> {% trans "Expenses" %}
                         </button>
                     </div>
                 </div>
-                <div class="col-md-2">
+                <div class="col-6 col-md-4 col-xl-2">
                     <select x-model="categoryFilter" class="form-select form-select-sm">
                         <option value="">{% trans "All Categories" %}</option>
                         {% for cat in categories %}
@@ -131,7 +131,7 @@
                         {% endfor %}
                     </select>
                 </div>
-                <div class="col-md-2">
+                <div class="col-6 col-md-4 col-xl-2">
                     <div class="input-group input-group-sm">
                         <span class="input-group-text bg-transparent border-end-0 text-muted" title="{% trans 'Filter by Year' %}">
                             <i class="bi bi-calendar3"></i>
@@ -146,7 +146,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-md-2 text-end">
+                <div class="col-12 col-md-4 col-xl-2 text-end">
                     <button type="button" class="btn btn-sm btn-outline-secondary w-100 d-flex align-items-center justify-content-center gap-1"
                             @click="resetAllFilters()"
                             title="{% trans 'Reset all search, sorting and grouping settings' %}">
