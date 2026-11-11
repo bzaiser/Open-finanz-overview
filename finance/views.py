@@ -3428,6 +3428,19 @@ def pension_plan_view(request):
         })
 
     protection_audit = calculate_protection_audit(request.user)
+    checklist_items = protection_audit.get('checklist', [])
+    relevant_checks = [c for c in checklist_items if c.get('status') != 'not_applicable']
+    ok_checks = [c for c in relevant_checks if c.get('status') == 'ok']
+    gap_checks = [c for c in relevant_checks if c.get('status') == 'gap']
+    high_gap_checks = [c for c in gap_checks if c.get('priority') == 'high']
+    audit_overview = {
+        'ok_count': len(ok_checks),
+        'gap_count': len(gap_checks),
+        'high_gap_count': len(high_gap_checks),
+        'relevant_count': len(relevant_checks),
+        'total_count': len(checklist_items),
+        'active_policies_count': sum(1 for ins in insurances if ins.is_active),
+    }
 
     context = {
         'pensions': pensions,
@@ -3436,6 +3449,7 @@ def pension_plan_view(request):
         'insurances': insurances,
         'insurances_json': json.dumps(insurances_json),
         'protection_audit': protection_audit,
+        'audit_overview': audit_overview,
         'insurance_form': InsurancePolicyForm(user=request.user),
         'life_stage': life_stage,
         'user_current_age': user_current_age,

@@ -172,7 +172,7 @@ class UserProfile(models.Model):
     sidebar_bg_color = models.CharField(_("Sidebar Background"), max_length=7, default="#f8f9fa")
     
     # Table Specific Colors
-    table_header_bg_color = models.CharField(_("Table Header Background"), max_length=7, default="#212529")
+    table_header_bg_color = models.CharField(_("Table Header Background"), max_length=7, default="#0d6efd")
     table_header_text_color = models.CharField(_("Table Header Text"), max_length=7, default="#ffffff")
     table_filter_bg_color = models.CharField(_("Table Filter Background"), max_length=7, default="#f1f3f5")
     table_body_bg_color = models.CharField(_("Table Body Background"), max_length=7, default="#ffffff")

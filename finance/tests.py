@@ -271,6 +271,9 @@ class RiskAndInsuranceTests(TestCase):
         self.assertEqual(resp_page.status_code, 200)
         self.assertContains(resp_page, "Haftpflicht Test")
         self.assertContains(resp_page, "Risiko- & Notfall-Check")
+        self.assertContains(resp_page, "Vorsorge & Rentenbasis")
+        self.assertContains(resp_page, "Absicherungs-Check")
+        self.assertContains(resp_page, "Basis-Schutz Quote")
 
         resp_del = self.client.post(reverse("finance:insurance_delete", args=[policy.id]))
         self.assertEqual(resp_del.status_code, 302)
@@ -330,6 +333,7 @@ class TargetGroupSeedCommandsTests(TestCase):
 
             r_dash = self.client.get(reverse("finance:dashboard"))
             self.assertEqual(r_dash.status_code, 200, f"Dashboard failed for {uname}")
+            self.assertContains(r_dash, "--app-table-header-bg: #0d6efd;")
 
             r_htmx = self.client.post(
                 reverse("finance:dashboard"),

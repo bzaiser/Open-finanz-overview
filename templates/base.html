@@ -49,7 +49,7 @@
             --app-gradient: linear-gradient(135deg, {{ user.profile.gradient_start|default:"#6610f2" }} 0%, {{ user.profile.gradient_end|default:"#0d6efd" }} 100%);
             
             /* Table Styles from UserProfile */
-            --app-table-header-bg: {{ user.profile.table_header_bg_color|default:"#212529" }};
+            --app-table-header-bg: {{ user.profile.table_header_bg_color|default:"#0d6efd" }};
             --app-table-header-text: {{ user.profile.table_header_text_color|default:"#ffffff" }};
             --app-table-filter-bg: {{ user.profile.table_filter_bg_color|default:"rgba(0,0,0,0.05)" }};
             --app-table-body-bg: {{ user.profile.table_body_bg_color|default:"var(--app-card-bg)" }};
@@ -78,6 +78,19 @@
             --app-preview-gradient: linear-gradient(135deg, #6610f2 0%, #0d6efd 100%);
             --app-gradient: var(--app-preview-gradient);
             --app-primary: #0d6efd;
+            --app-secondary: #6c757d;
+            --app-card-bg: #ffffff;
+            --app-card-color: #212529;
+            --app-sidebar-bg: #f8f9fa;
+            --app-table-header-bg: #0d6efd;
+            --app-table-header-text: #ffffff;
+            --app-table-filter-bg: #f1f3f5;
+            --app-table-body-bg: #ffffff;
+            --app-table-body-text: #212529;
+            --app-table-border-color: #dee2e6;
+            --app-input-bg: #ffffff;
+            --app-input-color: #212529;
+            --app-input-border: #dee2e6;
         }
     </style>
     {% endif %}
@@ -189,7 +202,10 @@
         }
 
         /* Global Table Unification */
+        .table thead,
         .table thead th {
+            --bs-table-bg: var(--app-table-header-bg) !important;
+            --bs-table-color: var(--app-table-header-text) !important;
             background-color: var(--app-table-header-bg) !important;
             color: var(--app-table-header-text) !important;
         }
