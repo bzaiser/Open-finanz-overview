@@ -47,11 +47,17 @@ def calculate_protection_audit(user):
     situation = getattr(profile, 'household_situation', 'standard') if profile else 'standard'
     has_partner = bool(profile and (profile.partner_name or (profile.display_name and '&' in profile.display_name)))
 
-    cash_flows = list(CashFlowSource.objects.filter(user=user).select_related('category'))
+    from django.utils import timezone
+    from .models import PhysicalAsset
+    from .services_realestate import calculate_loan_schedule
+
+    today = timezone.localdate()
+    cash_flows = list(CashFlowSource.objects.filter(CashFlowSource.active_on_q(ref_date=today), user=user).select_related('category'))
     assets = list(Asset.objects.filter(user=user))
     pensions = list(Pension.objects.filter(user=user))
     loans = list(Loan.objects.filter(user=user))
     real_estates = list(RealEstate.objects.filter(user=user, is_sold=False))
+    physical_assets = list(PhysicalAsset.objects.filter(user=user, is_sold=False))
     insurances = list(InsurancePolicy.objects.filter(user=user, is_active=True))
 
     # 1. Income & Expense Baseline
@@ -62,7 +68,7 @@ def calculate_protection_audit(user):
     has_children = False
 
     for cf in cash_flows:
-        amt = cf.monthly_amount or Decimal('0.00')
+        amt = (cf.value or Decimal('0.00')) if cf.frequency == 'monthly' else ((cf.value or Decimal('0.00')) / Decimal('12'))
         if cf.is_income:
             total_income += amt
             if cf.template_id in {'inc_kindergeld', 'inc_kinderzuschlag', 'inc_unterhalt'} or 'kindergeld' in (cf.name or '').lower():
@@ -80,16 +86,61 @@ def calculate_protection_audit(user):
             if cf.template_id == 'exp_kinderbetreuung':
                 has_children = True
 
+    # Real estate rental income & ongoing costs
+    for re in real_estates:
+        if re.acquisition_date and re.acquisition_date > today:
+            continue
+        if re.sale_date and re.sale_date <= today:
+            continue
+        if re.rental_income_monthly and re.rental_income_monthly > 0:
+            total_income += re.rental_income_monthly
+        re_costs = (re.maintenance_costs_monthly or Decimal('0.00')) + (re.ancillary_costs_monthly or Decimal('0.00'))
+        if re_costs > 0:
+            monthly_expenses += re_costs
+
+    # Physical asset storage costs
+    for pa in physical_assets:
+        if pa.acquisition_date and pa.acquisition_date > today:
+            continue
+        if pa.sale_date and pa.sale_date <= today:
+            continue
+        if pa.storage_costs_monthly and pa.storage_costs_monthly > 0:
+            monthly_expenses += pa.storage_costs_monthly
+
+    # Ongoing pension contributions
+    for p in pensions:
+        if p.monthly_contribution and p.monthly_contribution > 0:
+            if not p.contribution_end_date or p.contribution_end_date >= today:
+                monthly_expenses += p.monthly_contribution
+
     # Add unlinked active insurance premiums & loan installments to monthly outflow
     monthly_insurance_premiums = Decimal('0.00')
     for ins in insurances:
-        prem = ins.monthly_premium_amount
+        if ins.start_date and ins.start_date > today:
+            continue
+        if ins.end_date and ins.end_date < today:
+            continue
+        prem = (ins.premium_amount or Decimal('0.00')) if ins.payment_frequency == 'monthly' else (
+            ((ins.premium_amount or Decimal('0.00')) / Decimal('3')) if ins.payment_frequency == 'quarterly' else
+            (((ins.premium_amount or Decimal('0.00')) / Decimal('6')) if ins.payment_frequency == 'semi_annual' else
+             ((ins.premium_amount or Decimal('0.00')) / Decimal('12')))
+        )
         monthly_insurance_premiums += prem
         if ins.include_in_cashflow and ins.linked_cash_flow_id is None:
             monthly_expenses += prem
 
     for loan in loans:
+        if loan.start_date and loan.start_date > today:
+            continue
+        if loan.end_date and loan.end_date < today:
+            continue
         monthly_expenses += (loan.monthly_installment or Decimal('0.00'))
+
+    total_income = total_income.quantize(Decimal('0.01'))
+    primary_earned = primary_earned.quantize(Decimal('0.01'))
+    partner_earned = partner_earned.quantize(Decimal('0.01'))
+    monthly_expenses = monthly_expenses.quantize(Decimal('0.01'))
+    monthly_insurance_premiums = monthly_insurance_premiums.quantize(Decimal('0.01'))
 
     # 2. Liquid Reserves & Emergency Fund
     emergency_reserve = Decimal('0.00')
@@ -134,7 +185,10 @@ def calculate_protection_audit(user):
             if ins.insured_person in {'primary', 'joint'}:
                 term_life_primary += ins.coverage_lump_sum
 
-    total_loan_debt = sum((l.nominal_amount or Decimal('0.00')) for l in loans)
+    total_loan_debt = sum(
+        (calculate_loan_schedule(l).get('current_balance') or Decimal('0.00'))
+        for l in loans
+    )
     # Recommended lump sum: remaining debt + 3 years of partner/primary income replacement
     annual_income_ref = max(primary_earned, partner_earned) * Decimal('12')
     recommended_term_life = total_loan_debt + (annual_income_ref * Decimal('3') if (has_partner or has_children) else Decimal('0.00'))

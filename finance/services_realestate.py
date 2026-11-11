@@ -73,8 +73,8 @@ def calculate_loan_schedule(loan, as_of_date=None, extra_one_time=Decimal('0.00'
             
         interest_month = (balance * monthly_rate).quantize(Decimal('0.01'))
         
-        # Check loan end date
-        if loan.end_date and curr_date > loan.end_date.replace(day=1):
+        # Check loan end date (only stops bullet loans after maturity; annuity/fixed continue until balance <= 0.01)
+        if loan_type == 'bullet' and loan.end_date and curr_date > loan.end_date.replace(day=1):
             if not payoff_date:
                 payoff_date = curr_date
             break

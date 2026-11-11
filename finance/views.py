@@ -449,6 +449,7 @@ def dashboard_view(request):
         if year not in yearly_buckets:
             yearly_buckets[year] = {
                 'date': d['date'], # Sample date for month/day checks
+                'month_count': 0,
                 'nominal_net_worth': 0,
                 'real_net_worth': 0,
                 'monthly_income': 0,
@@ -463,6 +464,7 @@ def dashboard_view(request):
             }
         
         bucket = yearly_buckets[year]
+        bucket['month_count'] += 1
         # Net worth is a point-in-time value, take the last one of the year
         bucket['nominal_net_worth'] = d.get('nominal_net_worth', 0)
         bucket['real_net_worth'] = d.get('real_net_worth', 0)
@@ -503,6 +505,24 @@ def dashboard_view(request):
         # One Time Events
         if d['one_time_events']:
             bucket['one_time_events'].extend(d['one_time_events'])
+
+    # Normalize partial start/end years (e.g. 10-month start year) to full 12-month annual rate for flow metrics
+    for bucket in yearly_buckets.values():
+        m_cnt = bucket.get('month_count', 12)
+        if 0 < m_cnt < 12:
+            scale = 12.0 / float(m_cnt)
+            bucket['monthly_income'] = round(float(bucket['monthly_income']) * scale, 2)
+            bucket['monthly_expenses'] = round(float(bucket['monthly_expenses']) * scale, 2)
+            bucket['category_breakdown'] = {
+                k: round(float(v) * scale, 2) for k, v in bucket['category_breakdown'].items()
+            }
+            bucket['income_category_breakdown'] = {
+                k: round(float(v) * scale, 2) for k, v in bucket['income_category_breakdown'].items()
+            }
+            bucket['debug_breakdown'] = {
+                cat: {ik: round(float(iv) * scale, 2) for ik, iv in items.items()}
+                for cat, items in bucket['debug_breakdown'].items()
+            }
 
     sorted_years = sorted(yearly_buckets.keys())
     
@@ -718,11 +738,6 @@ def dashboard_view(request):
             return 0
         return first_idx
 
-    # DEBUG: Check debugData before trimming
-    for ds in expense_evo_datasets:
-        if 'debugData' in ds:
-            print(f"DEBUG: Dataset {ds['label']} has debugData with length {len(ds['debugData'])}")
-
     def trim_chart_data(labels, datasets, stichtag_index=None, fixed_start_idx=None):
         """
         Trims leading zero-data periods using either a fixed index or auto-detection.
@@ -898,11 +913,11 @@ def dashboard_view(request):
                 ],
                 'datasets': [{
                     'data': [
-                        round(current_month_data.get('real_asset_total', 0), 2),
-                        round(current_month_data.get('real_pension_total', 0), 2),
-                        round(current_month_data.get('real_accumulated_cash', 0), 2),
-                        round(current_month_data.get('real_physical_asset_total', 0), 2),
-                        round(current_month_data.get('real_real_estate_total', 0), 2),
+                        max(0.0, round(current_month_data.get('real_asset_total', 0), 2)),
+                        max(0.0, round(current_month_data.get('real_pension_total', 0), 2)),
+                        max(0.0, round(current_month_data.get('real_accumulated_cash', 0), 2)),
+                        max(0.0, round(current_month_data.get('real_physical_asset_total', 0), 2)),
+                        max(0.0, round(current_month_data.get('real_real_estate_total', 0), 2)),
                     ],
                     'backgroundColor': ['#0d6efd', '#6f42c1', '#198754', '#8a2be2', '#20c997'],
                     'hoverOffset': 8,
@@ -1106,6 +1121,26 @@ def dashboard_view(request):
                 'year': e.date.strftime('%d.%m.%Y')
             })
 
+    # 5. Real Estate rental income
+    for re in user.real_estates.all():
+        rent = float(re.rental_income_monthly or 0)
+        if rent > 0:
+            is_owned = True
+            if re.acquisition_date and re.acquisition_date.replace(day=1) > target_date:
+                is_owned = False
+            if re.sale_date and re.sale_date.replace(day=1) <= target_date:
+                is_owned = False
+            if re.is_sold and target_date >= (re.sale_date or today).replace(day=1):
+                is_owned = False
+            if is_owned:
+                table_data_income.append({
+                    'name': f"{_('Mieteinnahme')}: {re.name}",
+                    'amount': rent,
+                    'category': _('Real Estate'),
+                    'type': _('Contract'),
+                    'year': format_period(re.acquisition_date, re.sale_date)
+                })
+
     table_data_expense = []
     # 1. Manual Cash Flows
     for cf in user.cash_flows.select_related('category').filter(is_income=False):
@@ -1186,6 +1221,20 @@ def dashboard_view(request):
                     'year': str(re.sale_date.year) if re.sale_date else continuous_label
                 })
 
+    # 6. Unlinked active Insurance Policies (Expense)
+    for ins in user.insurances.filter(is_active=True, include_in_cashflow=True, linked_cash_flow__isnull=True):
+        if (not ins.start_date or ins.start_date.replace(day=1) <= target_date) and \
+           (not ins.end_date or ins.end_date.replace(day=1) >= target_date):
+            prem = float(ins.monthly_premium_amount or 0)
+            if prem > 0:
+                table_data_expense.append({
+                    'name': f"{_('Insurance')}: {ins.name}",
+                    'amount': prem,
+                    'category': _('Versicherungen und Bank'),
+                    'type': _('Contract'),
+                    'year': str(ins.end_date.year) if ins.end_date else continuous_label
+                })
+
     asset_balances_stichtag = current_month_data.get('asset_balances', {})
     pension_balances_stichtag = current_month_data.get('pension_balances', {})
     table_data_asset = []
@@ -1209,6 +1258,8 @@ def dashboard_view(request):
 
 
     for p in user.pensions.all():
+        if p.pension_type == 'statutory':
+            continue
         p_bal = pension_balances_stichtag.get(str(p.id), float(p.current_value or 0))
         table_data_asset.append({
             'name': f"{_('Pension')}: {p.provider}", 
@@ -2645,6 +2696,32 @@ def cash_flow_list(request):
                 'can_wizard': False,
             })
 
+    # 2g. Unlinked active Insurance Policies
+    for ins in user.insurances.filter(is_active=True, include_in_cashflow=True, linked_cash_flow__isnull=True):
+        if ins.premium_amount and ins.premium_amount > 0:
+            unified_items.append({
+                'id': f"ins_{ins.id}",
+                'raw_id': ins.id,
+                'name': f"{_('Insurance')}: {ins.name}",
+                'value': Decimal(str(ins.premium_amount)),
+                'monthly_amount': Decimal(str(ins.monthly_premium_amount)),
+                'is_income': False,
+                'frequency': ins.payment_frequency,
+                'frequency_display': str(ins.get_payment_frequency_display()),
+                'category_id': None,
+                'category_name': 'Versicherungen und Bank',
+                'category_translated': str(_('Versicherungen und Bank')),
+                'start_date': ins.start_date,
+                'end_date': ins.end_date,
+                'is_inflation_adjusted': False,
+                'notes': f"{_('Insurance policy')}: {ins.name}",
+                'source_type': 'insurance',
+                'source_label': str(_('Insurance')),
+                'edit_url': f"/admin/finance/insurancepolicy/{ins.id}/change/",
+                'can_edit': False,
+                'can_wizard': False,
+            })
+
     # 3. Determine available years
     years_set = {current_year - 2, current_year - 1, current_year, current_year + 1, current_year + 2}
     for item in unified_items:
@@ -2686,13 +2763,14 @@ def cash_flow_list(request):
         if is_active:
             m_val = item['monthly_amount']
             y_val = m_val * Decimal('12') if item['frequency'] == 'monthly' else item['value']
+            m_exact = item['value'] if item['frequency'] == 'monthly' else (y_val / Decimal('12'))
             
             # Only add to MONTHLY metric cards if the item is currently active (not expired)
             if is_currently_running:
                 if item['is_income']:
-                    monthly_income_sum += m_val
+                    monthly_income_sum += m_exact
                 else:
-                    monthly_expense_sum += m_val
+                    monthly_expense_sum += m_exact
             
             # Add to YEARLY metric cards
             if item['is_income']:
@@ -3005,27 +3083,31 @@ def pension_plan_view(request):
             start_ok = not cf.start_date or cf.start_date <= check_date
             end_ok = not cf.end_date or cf.end_date >= check_date
             if start_ok and end_ok:
-                amt = cf.monthly_amount
+                amt = cf.value if cf.frequency == 'monthly' else ((cf.value or Decimal('0.00')) / Decimal('12'))
                 if y > current_year and (cf.is_inflation_adjusted or not cf.end_date):
                     years_inf = y - current_year
                     amt = amt * ((Decimal('1.0') + inflation_rate) ** Decimal(str(years_inf)))
                 exp += amt
 
-        # 2. Real Estate Maintenance Costs
+        # 2. Real Estate Maintenance & Ancillary Costs
         for re in all_real_estates:
+            if re.is_sold and (not re.sale_date or re.sale_date <= check_date):
+                continue
             acq_ok = not re.acquisition_date or re.acquisition_date <= check_date
-            sale_ok = not re.sale_date or re.sale_date >= check_date
-            if acq_ok and sale_ok and re.maintenance_costs_monthly and re.maintenance_costs_monthly > 0:
-                amt = Decimal(str(re.maintenance_costs_monthly))
+            sale_ok = not re.sale_date or re.sale_date > check_date
+            re_costs = Decimal(str(re.maintenance_costs_monthly or 0)) + Decimal(str(re.ancillary_costs_monthly or 0))
+            if acq_ok and sale_ok and re_costs > 0:
                 if y > current_year:
                     years_inf = y - current_year
-                    amt = amt * ((Decimal('1.0') + inflation_rate) ** Decimal(str(years_inf)))
-                exp += amt
+                    re_costs = re_costs * ((Decimal('1.0') + inflation_rate) ** Decimal(str(years_inf)))
+                exp += re_costs
 
         # 3. Physical Asset Storage Costs
         for pa in all_physical_assets:
+            if pa.is_sold and (not pa.sale_date or pa.sale_date <= check_date):
+                continue
             acq_ok = not pa.acquisition_date or pa.acquisition_date <= check_date
-            sale_ok = not pa.sale_date or pa.sale_date >= check_date
+            sale_ok = not pa.sale_date or pa.sale_date > check_date
             if acq_ok and sale_ok and pa.storage_costs_monthly and pa.storage_costs_monthly > 0:
                 amt = Decimal(str(pa.storage_costs_monthly))
                 if y > current_year:
@@ -3039,6 +3121,19 @@ def pension_plan_view(request):
             end_ok = not loan.end_date or loan.end_date >= check_date
             if start_ok and end_ok and loan.monthly_installment and loan.monthly_installment > 0:
                 exp += Decimal(str(loan.monthly_installment))
+
+        # 5. Pension Monthly Contributions (during accumulation phase)
+        for p in pensions:
+            if p.monthly_contribution and p.monthly_contribution > 0:
+                if not p.contribution_end_date or p.contribution_end_date >= check_date:
+                    exp += Decimal(str(p.monthly_contribution))
+
+        # 6. Unlinked Active Insurance Policies
+        for ins in user.insurances.filter(is_active=True, include_in_cashflow=True, linked_cash_flow__isnull=True):
+            start_ok = not ins.start_date or ins.start_date <= check_date
+            end_ok = not ins.end_date or ins.end_date >= check_date
+            if start_ok and end_ok and ins.monthly_premium_amount and ins.monthly_premium_amount > 0:
+                exp += Decimal(str(ins.monthly_premium_amount))
 
         return exp
 
@@ -3249,9 +3344,12 @@ def pension_plan_view(request):
             'year': sp_year
         })
 
-    # Group total snapshots by year for capital
+    # Group total snapshots by year for private capital pensions only (exclude statutory payout claims)
+    private_pension_ids = {p.id for p in pensions if p.pension_type != 'statutory'}
     snapshots_by_year = {}
     for s in snapshots:
+        if s.object_id not in private_pension_ids:
+            continue
         y = s.date.year
         if y not in snapshots_by_year:
             snapshots_by_year[y] = {'val': Decimal('0.00')}
@@ -4233,14 +4331,30 @@ def assets_overview_view(request):
 
     total_wealth = total_cash + total_depot + total_crypto + total_metals + total_other + total_physical
 
-    # Emergency Fund Health Check calculation
+    # Emergency Fund Health Check calculation (unified across all active outflow sources)
     monthly_expenses = Decimal('0.00')
-    for exp in CashFlowSource.objects.filter(user=user, is_income=False):
-        monthly_expenses += exp.monthly_amount
+    for exp in CashFlowSource.objects.filter(CashFlowSource.active_on_q(ref_date=today), user=user, is_income=False):
+        monthly_expenses += (exp.value if exp.frequency == 'monthly' else ((exp.value or Decimal('0.00')) / Decimal('12')))
+    for re in RealEstate.objects.filter(user=user, is_sold=False):
+        if (not re.acquisition_date or re.acquisition_date <= today) and (not re.sale_date or re.sale_date > today):
+            monthly_expenses += (re.maintenance_costs_monthly or Decimal('0.00')) + (re.ancillary_costs_monthly or Decimal('0.00'))
+    for pa in all_physical:
+        if not pa.is_sold and (not pa.acquisition_date or pa.acquisition_date <= today) and (not pa.sale_date or pa.sale_date > today):
+            monthly_expenses += (pa.storage_costs_monthly or Decimal('0.00'))
+    for p in Pension.objects.filter(user=user):
+        if p.monthly_contribution and p.monthly_contribution > 0 and (not p.contribution_end_date or p.contribution_end_date >= today):
+            monthly_expenses += p.monthly_contribution
+    for ins in InsurancePolicy.objects.filter(user=user, is_active=True, include_in_cashflow=True, linked_cash_flow__isnull=True):
+        if (not ins.start_date or ins.start_date <= today) and (not ins.end_date or ins.end_date >= today):
+            monthly_expenses += ins.monthly_premium_amount
+    for loan in Loan.objects.filter(user=user):
+        if (not loan.start_date or loan.start_date <= today) and (not loan.end_date or loan.end_date >= today):
+            monthly_expenses += (loan.monthly_installment or Decimal('0.00'))
+    monthly_expenses = monthly_expenses.quantize(Decimal('0.01'))
     
-    target_months = 3
-    emergency_target = monthly_expenses * Decimal(str(target_months))
-    emergency_months_covered = float(emergency_fund_actual / monthly_expenses) if monthly_expenses > 0 else 0.0
+    target_months = 6 if getattr(profile, 'household_situation', 'standard') in {'low_income', 'single_parent', 'early_retiree'} else (2 if getattr(profile, 'household_situation', 'standard') == 'student' else 3)
+    emergency_target = (monthly_expenses * Decimal(str(target_months))).quantize(Decimal('0.01'))
+    emergency_months_covered = float((emergency_fund_actual / monthly_expenses).quantize(Decimal('0.1'))) if monthly_expenses > 0 else 0.0
 
     # Build History Chart Timeline (combining snapshots from all assets)
     history_dates = set()

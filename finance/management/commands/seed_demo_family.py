@@ -4,7 +4,7 @@ from datetime import date
 from core.models import CustomUser, UserProfile
 from finance.models import (
     Category, CashFlowSource, Asset, RealEstate, Loan, Pension, AssetSnapshot,
-    PropertyComponent, PhysicalAsset
+    PropertyComponent, PhysicalAsset, InsurancePolicy
 )
 from django.contrib.contenttypes.models import ContentType
 
@@ -41,8 +41,10 @@ class Command(BaseCommand):
         profile.save()
 
         # 3. Clean existing demo data for clean rerun
+        InsurancePolicy.objects.filter(user=user).delete()
         CashFlowSource.objects.filter(user=user).delete()
         Asset.objects.filter(user=user).delete()
+        PhysicalAsset.objects.filter(user=user).delete()
         PropertyComponent.objects.filter(real_estate__user=user).delete()
         RealEstate.objects.filter(user=user).delete()
         Loan.objects.filter(user=user).delete()
@@ -81,6 +83,7 @@ class Command(BaseCommand):
             value=Decimal("4850.00"),
             is_income=True,
             frequency="monthly",
+            owner_role="primary",
             category=cat_gehalt,
             template_id="inc_gehalt",
             end_date=date(2043, 5, 31),
@@ -94,8 +97,9 @@ class Command(BaseCommand):
             value=Decimal("1950.00"),
             is_income=True,
             frequency="monthly",
+            owner_role="partner",
             category=cat_gehalt,
-            template_id="inc_minijob",
+            template_id="inc_gehalt",
             end_date=date(2045, 9, 30),
             notes="Teilzeitgehalt Sandra (endet bei Renteneintritt)"
         )
@@ -107,6 +111,7 @@ class Command(BaseCommand):
             value=Decimal("510.00"),
             is_income=True,
             frequency="monthly",
+            owner_role="joint",
             category=cat_familie_kinder,
             template_id="inc_kindergeld",
             end_date=date(2032, 12, 31),
@@ -119,23 +124,15 @@ class Command(BaseCommand):
             value=Decimal("1800.00"),
             is_income=True,
             frequency="yearly",
+            owner_role="joint",
             category=cat_investment,
             template_id="inc_dividenden",
             notes="Ausschüttungen aus ETF-Depot & Tagesgeld"
         )
 
 
-        # 6. Regelmäßige Ausgaben aus Vorlagenkatalog (nach Hausrate 2.350 € fast vollständig gebunden)
-        # Wohnen & Haus
-        CashFlowSource.objects.create(
-            user=user,
-            name="Nebenkosten / Hausgeld",
-            value=Decimal("380.00"),
-            is_income=False,
-            frequency="monthly",
-            category=cat_wohnen,
-            template_id="exp_nebenkosten"
-        )
+        # 6. Regelmäßige Ausgaben aus Vorlagenkatalog (Instandhaltung & Nebenkosten EFH/ETW sind direkt am RealEstate-Objekt hinterlegt)
+        # Wohnen & Haus (Versorger & Abgaben)
         CashFlowSource.objects.create(
             user=user,
             name="Gas / Fernwärme / Heizöl",
@@ -163,7 +160,7 @@ class Command(BaseCommand):
             category=cat_wohnen,
             template_id="exp_grundsteuer"
         )
-        CashFlowSource.objects.create(
+        cf_wohngeb = CashFlowSource.objects.create(
             user=user,
             name="Wohngebäudeversicherung",
             value=Decimal("720.00"),
@@ -171,15 +168,6 @@ class Command(BaseCommand):
             frequency="yearly",
             category=cat_wohnen,
             template_id="exp_wohngebaeude"
-        )
-        CashFlowSource.objects.create(
-            user=user,
-            name="Instandhaltung & Reparaturen",
-            value=Decimal("1500.00"),
-            is_income=False,
-            frequency="yearly",
-            category=cat_wohnen,
-            template_id="exp_instandhaltung"
         )
 
         CashFlowSource.objects.create(
@@ -221,7 +209,7 @@ class Command(BaseCommand):
 
 
         # Versicherungen & Finanzen
-        CashFlowSource.objects.create(
+        cf_haftpflicht = CashFlowSource.objects.create(
             user=user,
             name="Privathaftpflichtversicherung",
             value=Decimal("120.00"),
@@ -230,7 +218,7 @@ class Command(BaseCommand):
             category=cat_versicherungen,
             template_id="exp_haftpflicht"
         )
-        CashFlowSource.objects.create(
+        cf_hausrat = CashFlowSource.objects.create(
             user=user,
             name="Hausratversicherung",
             value=Decimal("240.00"),
@@ -240,7 +228,7 @@ class Command(BaseCommand):
             template_id="exp_hausrat"
         )
 
-        CashFlowSource.objects.create(
+        cf_recht = CashFlowSource.objects.create(
             user=user,
             name="Rechtsschutzversicherung (Familie)",
             value=Decimal("280.00"),
@@ -268,7 +256,7 @@ class Command(BaseCommand):
             template_id="exp_kontofuehrung"
         )
 
-        CashFlowSource.objects.create(
+        cf_bu = CashFlowSource.objects.create(
             user=user,
             name="Berufsunfähigkeitsversicherung (BU Markus)",
             value=Decimal("110.00"),
@@ -300,7 +288,7 @@ class Command(BaseCommand):
         )
 
         # KFZ & Mobilität (Familienwagen + Kleinwagen)
-        CashFlowSource.objects.create(
+        cf_kfz_ins = CashFlowSource.objects.create(
             user=user,
             name="KFZ-Versicherung",
             value=Decimal("1200.00"),
@@ -603,6 +591,7 @@ class Command(BaseCommand):
             institution="ING",
             value=Decimal("30000.00"),
             growth_rate=Decimal("2.50"),
+            monthly_savings_amount=Decimal("150.00"),
             is_emergency_fund=True
         )
         a_depot = Asset.objects.create(
@@ -613,7 +602,7 @@ class Command(BaseCommand):
             isin_ticker="IE00BK5BQT80",
             value=Decimal("140000.00"),
             growth_rate=Decimal("6.50"),
-            monthly_savings_amount=Decimal("750.00")
+            monthly_savings_amount=Decimal("300.00")
         )
         a_crypto = Asset.objects.create(
             user=user,
@@ -623,7 +612,7 @@ class Command(BaseCommand):
             isin_ticker="BTC",
             value=Decimal("12500.00"),
             growth_rate=Decimal("10.00"),
-            monthly_savings_amount=Decimal("100.00")
+            monthly_savings_amount=Decimal("0.00")
         )
 
         # Historical Snapshots for ETF Depot
@@ -653,9 +642,11 @@ class Command(BaseCommand):
             user=user,
             provider="Deutsche Rentenversicherung (Markus)",
             pension_type="statutory",
+            owner_role="primary",
             pension_points=Decimal("48.5000"),
             point_value=CURRENT_RENTENWERT,
             social_deduction_rate=Decimal("11.50"),
+            disability_pension_net=Decimal("1450.00"),
             expected_payout_at_retirement=Decimal("2320.00"),
             retirement_age=67,
             start_payout_date=date(2043, 5, 15)
@@ -683,9 +674,11 @@ class Command(BaseCommand):
             user=user,
             provider="Deutsche Rentenversicherung (Sandra)",
             pension_type="statutory",
+            owner_role="partner",
             pension_points=Decimal("32.0000"),
             point_value=CURRENT_RENTENWERT,
             social_deduction_rate=Decimal("11.50"),
+            disability_pension_net=Decimal("980.00"),
             expected_payout_at_retirement=Decimal("1510.00"),
             retirement_age=67,
             start_payout_date=date(2045, 9, 1)
@@ -700,10 +693,11 @@ class Command(BaseCommand):
 
         # C) Private Altersvorsorge / Betriebsrente Markus (bAV)
         # Beiträge enden mit 67 (31.05.2043), Auszahlung startet 01.06.2043
-        Pension.objects.create(
+        p_allianz = Pension.objects.create(
             user=user,
             provider="Allianz Direktversicherung (Markus bAV)",
             pension_type="capital",
+            owner_role="primary",
             current_value=Decimal("72000.00"),
             monthly_contribution=Decimal("250.00"),
             growth_rate=Decimal("3.50"),
@@ -712,13 +706,24 @@ class Command(BaseCommand):
             contribution_end_date=date(2043, 5, 31),
             start_payout_date=date(2043, 6, 1)
         )
+        AssetSnapshot.objects.create(
+            user=user, content_type=ct_pension, object_id=p_allianz.id,
+            date=date(2025, 1, 1), value=Decimal("66500.00"),
+            notes="Standmitteilung 01/2025"
+        )
+        AssetSnapshot.objects.create(
+            user=user, content_type=ct_pension, object_id=p_allianz.id,
+            date=date(2026, 1, 1), value=Decimal("69500.00"),
+            notes="Standmitteilung 01/2026"
+        )
 
         # D) Riester Rente Sandra
         # Beiträge enden mit 67 (30.09.2045), Auszahlung startet 01.10.2045
-        Pension.objects.create(
+        p_riester = Pension.objects.create(
             user=user,
             provider="Union Investment Riester (Sandra)",
             pension_type="capital",
+            owner_role="partner",
             current_value=Decimal("28500.00"),
             monthly_contribution=Decimal("160.00"),
             growth_rate=Decimal("3.00"),
@@ -726,6 +731,95 @@ class Command(BaseCommand):
             retirement_age=67,
             contribution_end_date=date(2045, 9, 30),
             start_payout_date=date(2045, 10, 1)
+        )
+        AssetSnapshot.objects.create(
+            user=user, content_type=ct_pension, object_id=p_riester.id,
+            date=date(2025, 1, 1), value=Decimal("25500.00"),
+            notes="Standmitteilung 01/2025"
+        )
+        AssetSnapshot.objects.create(
+            user=user, content_type=ct_pension, object_id=p_riester.id,
+            date=date(2026, 1, 1), value=Decimal("27000.00"),
+            notes="Standmitteilung 01/2026"
+        )
+
+        # 10. Versicherungspolicen (verknüpft mit den CashFlowSource-Einträgen)
+        InsurancePolicy.objects.create(
+            user=user,
+            name="Berufsunfähigkeitsversicherung (BU Markus)",
+            insurance_type="disability",
+            provider="Allianz",
+            insured_person="primary",
+            premium_amount=Decimal("110.00"),
+            payment_frequency="monthly",
+            coverage_monthly_payout=Decimal("2500.00"),
+            waiting_period_months=0,
+            linked_cash_flow=cf_bu,
+            include_in_cashflow=True,
+            is_active=True,
+            end_date=date(2043, 5, 31),
+        )
+        InsurancePolicy.objects.create(
+            user=user,
+            name="Privathaftpflichtversicherung (Familientarif)",
+            insurance_type="liability",
+            provider="HUK-COBURG",
+            insured_person="joint",
+            premium_amount=Decimal("120.00"),
+            payment_frequency="yearly",
+            coverage_lump_sum=Decimal("50000000.00"),
+            linked_cash_flow=cf_haftpflicht,
+            include_in_cashflow=True,
+            is_active=True,
+        )
+        InsurancePolicy.objects.create(
+            user=user,
+            name="Hausratversicherung",
+            insurance_type="household",
+            provider="HUK-COBURG",
+            insured_person="joint",
+            premium_amount=Decimal("240.00"),
+            payment_frequency="yearly",
+            coverage_lump_sum=Decimal("120000.00"),
+            linked_cash_flow=cf_hausrat,
+            include_in_cashflow=True,
+            is_active=True,
+        )
+        InsurancePolicy.objects.create(
+            user=user,
+            name="Wohngebäudeversicherung (Eigenheim)",
+            insurance_type="residential_building",
+            provider="Allianz",
+            insured_person="joint",
+            premium_amount=Decimal("720.00"),
+            payment_frequency="yearly",
+            linked_cash_flow=cf_wohngeb,
+            include_in_cashflow=True,
+            is_active=True,
+        )
+        InsurancePolicy.objects.create(
+            user=user,
+            name="Rechtsschutzversicherung (Familie)",
+            insurance_type="legal",
+            provider="ARAG",
+            insured_person="joint",
+            premium_amount=Decimal("280.00"),
+            payment_frequency="yearly",
+            linked_cash_flow=cf_recht,
+            include_in_cashflow=True,
+            is_active=True,
+        )
+        InsurancePolicy.objects.create(
+            user=user,
+            name="KFZ-Versicherung (Vollkasko)",
+            insurance_type="kfz",
+            provider="HUK24",
+            insured_person="joint",
+            premium_amount=Decimal("1200.00"),
+            payment_frequency="yearly",
+            linked_cash_flow=cf_kfz_ins,
+            include_in_cashflow=True,
+            is_active=True,
         )
 
         self.stdout.write(self.style.SUCCESS("[OK] Realistischer Demo-Familien-Datensatz erfolgreich angelegt!"))

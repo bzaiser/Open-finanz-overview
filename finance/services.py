@@ -312,6 +312,7 @@ class SimulationEngine:
 
             # 1. Wealth Accumulation and Growth - Continuous Simulation
             current_monthly_asset_withdrawal = Decimal('0.00')
+            current_monthly_asset_savings = Decimal('0.00')
             
             # Apply Asset Growth & Withdrawals
             if i > 0: # Start growth from the second month
@@ -331,7 +332,13 @@ class SimulationEngine:
                         rate = (asset_growth_rate / 100) + self.investment_return_offset
                         item['balance'] *= ((1 + (rate / 12)) ** step_months)
 
-                        if asset.withdrawal_start_date and current_date >= asset.withdrawal_start_date.replace(day=1):
+                        in_withdrawal = bool(asset.withdrawal_start_date and current_date >= asset.withdrawal_start_date.replace(day=1))
+                        if not pause_savings_now and not in_withdrawal and asset.monthly_savings_amount and asset.monthly_savings_amount > 0:
+                            sav_add = Decimal(str(asset.monthly_savings_amount)) * step_months
+                            item['balance'] += sav_add
+                            current_monthly_asset_savings += sav_add
+
+                        if in_withdrawal:
                             withdrawal = (asset.withdrawal_amount or Decimal('0.00')) * step_months
                             item['balance'] = max(Decimal('0'), item['balance'] - withdrawal)
                             current_monthly_asset_withdrawal += withdrawal
@@ -465,6 +472,9 @@ class SimulationEngine:
                         item['balance'] = latest_snap.value
 
             for item in pensions_state:
+                if item['pension'].pension_type == 'statutory':
+                    item['balance'] = Decimal('0.00')
+                    continue
                 key = (ct_pension, item['pension'].id, current_date.year, current_date.month)
                 if key in snapshots_by_obj:
                     item['balance'] = snapshots_by_obj[key]
@@ -582,6 +592,7 @@ class SimulationEngine:
                 income_category_breakdown[p_cat] = income_category_breakdown.get(p_cat, Decimal('0')) + p_amt
             
             suspended_earned_income = Decimal('0.00')
+            manual_savings_cf_this_month = Decimal('0.00')
             for cf in cash_flows:
                 if cf.start_date and cf.start_date.replace(day=1) > current_date: continue
                 if cf.end_date and cf.end_date.replace(day=1) < current_date: continue
@@ -620,12 +631,16 @@ class SimulationEngine:
                 if cf.is_income:
                     monthly_income += val * step_months
                     cat_name = cf.category.name if cf.category else "Uncategorized"
-                    income_category_breakdown[cat_name] = income_category_breakdown.get(cat_name, Decimal('0')) + (val * step_months)
+                    income_category_breakdown[cat_name] = income_category_breakdown.get(cat_cat if False else cat_name, Decimal('0')) + (val * step_months)
                     if cat_name not in debug_breakdown: debug_breakdown[cat_name] = {}
                     debug_breakdown[cat_name][f"CF: {cf.name}"] = debug_breakdown[cat_name].get(f"CF: {cf.name}", Decimal('0')) + (val * step_months)
                 else:
                     monthly_expenses += val * step_months
                     cat_name = cf.category.name if cf.category else "Uncategorized"
+                    cat_slug = cf.category.slug.lower() if (cf.category and cf.category.slug) else ''
+                    cat_name_lower = cat_name.lower()
+                    if cf.template_id in {'exp_etf_sparplan', 'exp_notgroschen', 'exp_sparplan'} or cat_slug in {'sparen', 'investment', 'investition'} or cat_name_lower in {'sparen', 'investition', 'investment'}:
+                        manual_savings_cf_this_month += (val * step_months)
                     category_breakdown[cat_name] = category_breakdown.get(cat_name, Decimal('0')) + (val * step_months)
                     if cat_name not in debug_breakdown: debug_breakdown[cat_name] = {}
                     debug_breakdown[cat_name][f"CF: {cf.name}"] = debug_breakdown[cat_name].get(f"CF: {cf.name}", Decimal('0')) + (val * step_months)
@@ -743,13 +758,19 @@ class SimulationEngine:
                 loan = item['loan']
                 # Loan only active if after/at start_date and still has balance
                 if current_date >= loan.start_date.replace(day=1) and item['balance'] > 0:
-                    if not loan.end_date or current_date <= loan.end_date.replace(day=1):
+                    loan_type = getattr(loan, 'loan_type', 'annuity')
+                    if loan_type != 'bullet' or not loan.end_date or current_date <= loan.end_date.replace(day=1):
                         installment = loan.monthly_installment
                         # Interest calculation relative to current balance
                         interest = item['balance'] * ((loan.interest_rate or Decimal('0')) / 100 / 12)
                         
-                        # Apply installment (part interest, rest principal)
-                        if installment > item['balance'] + interest:
+                        # Bullet loan pays only interest until maturity, then full balance
+                        if loan_type == 'bullet':
+                            if loan.end_date and current_date.year == loan.end_date.year and current_date.month == loan.end_date.month:
+                                installment = item['balance'] + interest
+                            else:
+                                installment = interest
+                        elif installment > item['balance'] + interest:
                             installment = item['balance'] + interest
                         
                         current_monthly_loan_installment += installment
@@ -762,9 +783,8 @@ class SimulationEngine:
                         # Extra repayments lookup (O(1))
                         extras_this_month = sum(e.amount for e in repayments_by_loan_month.get(loan.id, {}).get((current_date.year, current_date.month), []))
                         
-                        if i > 0: # Only update balance from second month of core loop
-                            reduction = (installment - interest) + extras_this_month
-                            item['balance'] = max(Decimal('0'), item['balance'] - reduction)
+                        reduction = (installment - interest) + extras_this_month
+                        item['balance'] = max(Decimal('0'), item['balance'] - reduction)
                         
                         # Numerical Safety: Cap values to prevent JSON-breaking Infinity
                         item['balance'] = min(item['balance'], Decimal('1e15'))
@@ -804,10 +824,15 @@ class SimulationEngine:
                         'date': event.date.isoformat(), 'value': float(round(event.value, 2)),
                     })
 
+            # Reconcile manual savings cashflows with Asset.monthly_savings_amount
+            # - Any manual savings cashflow not already added via Asset.monthly_savings_amount builds liquid cash
+            # - Any Asset.monthly_savings_amount exceeding manual savings cashflows is funded out of liquid cash
+            savings_reconciliation = manual_savings_cf_this_month - current_monthly_asset_savings
+
             # Monthly Savings only for future months
             monthly_savings = monthly_income - monthly_expenses
             if is_future:
-                accumulated_cash += (monthly_savings + event_impact + pension_lump_sum_impact)
+                accumulated_cash += (monthly_savings + savings_reconciliation + event_impact + pension_lump_sum_impact)
             else:
                 # In the past, we only respect explicit event impacts if they represent data
                 # but usually, we want accumulated_cash to stay at 0 unless snapshots exist
@@ -847,7 +872,10 @@ class SimulationEngine:
             pension_total = get_category_total(pensions_state, ct_pension, current_date.year, current_date.month, 'pension')
             physical_asset_total = get_category_total(physical_assets_state, ct_pa, current_date.year, current_date.month)
             real_estate_total = get_category_total(real_estates_state, ct_re, current_date.year, current_date.month)
-            loan_total = sum(item['balance'] for item in loans_state)
+            loan_total = sum(
+                item['balance'] for item in loans_state
+                if not item['loan'].start_date or current_date >= item['loan'].start_date.replace(day=1)
+            )
             
             total_nominal = asset_total + pension_total + accumulated_cash + physical_asset_total + real_estate_total - loan_total
             
@@ -885,7 +913,14 @@ class SimulationEngine:
                 'monthly_pension_contribution': float(round(current_monthly_pension_contribution, 2)),
                 'category_breakdown': {k: float(round(v, 2)) for k, v in category_breakdown.items()},
                 'income_category_breakdown': {k: float(round(v, 2)) for k, v in income_category_breakdown.items()},
-                'loan_balances': {str(item['loan'].id): float(round(item['balance'], 2)) for item in loans_state},
+                'loan_balances': {
+                    str(item['loan'].id): (
+                        float(round(item['balance'], 2))
+                        if (not item['loan'].start_date or current_date >= item['loan'].start_date.replace(day=1))
+                        else 0.0
+                    )
+                    for item in loans_state
+                },
                 'pension_balances': {str(item['pension'].id): float(round(item['balance'] / inflation_factor, 2)) for item in pensions_state},
                 'asset_balances': {str(item['asset'].id): float(round(item['balance'] / inflation_factor, 2)) for item in assets_state},
                 'cash_flow_values': {k: float(round(v, 2)) for k, v in month_cf_values.items()},
