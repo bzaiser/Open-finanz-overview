@@ -8,7 +8,7 @@ from django.contrib import messages
 from django.utils.translation import gettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
 
-from core.models import UserProfile
+from core.models import UserProfile, get_dashboard_config_for_situation
 from .models import (
     Category, CashFlowSource, Asset, RealEstate, Loan, Pension, AssetSnapshot
 )
@@ -40,6 +40,7 @@ def wizard_page_view(request):
         'partner_birth_date': profile.partner_birth_date.strftime('%Y-%m-%d') if (profile and profile.partner_birth_date) else '',
         'partner_retirement_age': profile.partner_retirement_age if profile else 67,
         'target_monthly_payout': float(profile.target_pension_payout) if (profile and profile.target_pension_payout) else '',
+        'household_situation': profile.household_situation if profile else 'standard',
         'hide_wizard_on_start': profile.hide_wizard_on_start if profile else False,
     }
 
@@ -105,8 +106,8 @@ def wizard_page_view(request):
                 return line.split(':', 1)[1].strip()
         return ''
 
-    incomes = [{'id': c.id, 'name': c.name, 'amount': float(c.value), 'frequency': c.frequency, 'template_id': _extract_template_id(c)} for c in cash_flows if c.is_income]
-    expenses = [{'id': c.id, 'name': c.name, 'amount': float(c.value), 'frequency': c.frequency, 'template_id': _extract_template_id(c)} for c in cash_flows if not c.is_income]
+    incomes = [{'id': c.id, 'name': c.name, 'amount': float(c.value), 'frequency': c.frequency, 'owner_role': c.owner_role, 'template_id': _extract_template_id(c)} for c in cash_flows if c.is_income]
+    expenses = [{'id': c.id, 'name': c.name, 'amount': float(c.value), 'frequency': c.frequency, 'owner_role': c.owner_role, 'template_id': _extract_template_id(c)} for c in cash_flows if not c.is_income]
 
     # Pre-populate assets, real estate & loans
     assets = [{'name': a.name, 'value': float(a.value), 'growth_rate': float(a.growth_rate)} for a in Asset.objects.filter(user=request.user)]
@@ -228,6 +229,14 @@ def wizard_save_api(request):
                 if profile.hide_wizard_on_start != new_hide:
                     profile.hide_wizard_on_start = new_hide
                     profile_changed = True
+
+            new_situation = data.get('household_situation')
+            valid_situations = {c[0] for c in UserProfile.HOUSEHOLD_SITUATION_CHOICES}
+            if new_situation in valid_situations and profile.household_situation != new_situation:
+                profile.household_situation = new_situation
+                if data.get('apply_situation_dashboard_preset', True):
+                    profile.dashboard_config = get_dashboard_config_for_situation(new_situation)
+                profile_changed = True
 
             new_display_name = p1_name if household_type == 'single' else f"{p1_name} & {p2_name or 'Partner'}"
             if profile.display_name != new_display_name:
@@ -448,6 +457,8 @@ def wizard_save_api(request):
                         cf_obj.value = amt
                         cf_obj.category = cat_obj
                         cf_obj.frequency = inc.get('frequency', 'monthly')
+                        if inc.get('owner_role') in ('primary', 'partner', 'joint'):
+                            cf_obj.owner_role = inc.get('owner_role')
                         if t_id:
                             cf_obj.template_id = t_id
                         # Clean legacy tpl_id from notes if present
@@ -510,6 +521,8 @@ def wizard_save_api(request):
                         cf_obj.value = amt
                         cf_obj.category = cat_obj
                         cf_obj.frequency = exp.get('frequency', 'yearly')
+                        if exp.get('owner_role') in ('primary', 'partner', 'joint'):
+                            cf_obj.owner_role = exp.get('owner_role')
                         if t_id:
                             cf_obj.template_id = t_id
                         # Clean legacy tpl_id from notes if present

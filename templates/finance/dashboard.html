@@ -201,6 +201,102 @@
                 </div>
             </div>
 
+            <!-- Section 3: Lebensrisiko-Szenario (Stresstest) -->
+            <div class="mb-4">
+                <h6 class="text-uppercase text-danger fw-bold small mb-3 border-bottom pb-2">
+                    <i class="bi bi-shield-exclamation me-1"></i> {% trans "Lebensrisiko-Szenario (Stresstest)" %}
+                </h6>
+
+                <div class="mb-3">
+                    <label for="risk_scenario_type" class="form-label small fw-bold mb-1">{% trans "Szenario" %}</label>
+                    <select class="form-select form-select-sm" id="risk_scenario_type" name="risk_scenario_type" onchange="toggleRiskScenarioFields()">
+                        <option value="none" {% if simulation_params.risk_scenario.type == 'none' or not simulation_params.risk_scenario.type %}selected{% endif %}>{% trans "Kein Schock (Normalverlauf)" %}</option>
+                        <option value="job_loss" {% if simulation_params.risk_scenario.type == 'job_loss' %}selected{% endif %}>{% trans "Jobverlust / Arbeitslosigkeit (ALG I)" %}</option>
+                        <option value="disability" {% if simulation_params.risk_scenario.type == 'disability' %}selected{% endif %}>{% trans "Berufsunfähigkeit (BU / EM-Rente)" %}</option>
+                        <option value="partner_death" {% if simulation_params.risk_scenario.type == 'partner_death' %}selected{% endif %}>{% trans "Todesfall Partner / Hauptverdiener" %}</option>
+                        <option value="emergency_expense" {% if simulation_params.risk_scenario.type == 'emergency_expense' %}selected{% endif %}>{% trans "Unerwartete Notfallausgabe" %}</option>
+                    </select>
+                </div>
+
+                <div id="risk-scenario-details" style="{% if simulation_params.risk_scenario.type == 'none' or not simulation_params.risk_scenario.type %}display:none;{% endif %}">
+                    <div class="mb-2" id="risk-person-row">
+                        <label for="risk_scenario_person" class="form-label small fw-bold mb-1">{% trans "Betroffene Person" %}</label>
+                        <select class="form-select form-select-sm" id="risk_scenario_person" name="risk_scenario_person">
+                            <option value="primary" {% if simulation_params.risk_scenario.person == 'primary' or not simulation_params.risk_scenario.person %}selected{% endif %}>{% trans "Hauptperson" %}</option>
+                            <option value="partner" {% if simulation_params.risk_scenario.person == 'partner' %}selected{% endif %}>{% trans "Partner / Partnerin" %}</option>
+                        </select>
+                    </div>
+
+                    <div class="row g-2 mb-2">
+                        <div class="col-6">
+                            <label for="risk_scenario_start_date" class="form-label small fw-bold mb-1">{% trans "Eintrittsdatum" %}</label>
+                            <input type="date" class="form-control form-control-sm" id="risk_scenario_start_date" name="risk_scenario_start_date"
+                                   value="{{ simulation_params.risk_scenario.start_date|default:'' }}">
+                        </div>
+                        <div class="col-6" id="risk-duration-row">
+                            <label for="risk_scenario_duration" class="form-label small fw-bold mb-1">{% trans "Dauer (Monate)" %}</label>
+                            <input type="number" class="form-control form-control-sm" id="risk_scenario_duration" name="risk_scenario_duration"
+                                   min="1" max="60" value="{{ simulation_params.risk_scenario.duration_months|default:'12' }}">
+                        </div>
+                    </div>
+
+                    <div class="mb-2" id="risk-emergency-row">
+                        <label for="risk_scenario_emergency_amount" class="form-label small fw-bold mb-1">{% trans "Notfallbetrag (€)" %}</label>
+                        <input type="number" class="form-control form-control-sm" id="risk_scenario_emergency_amount" name="risk_scenario_emergency_amount"
+                               min="0" step="100" value="{{ simulation_params.risk_scenario.emergency_amount|default:'5000'|stringformat:'d' }}">
+                    </div>
+
+                    <div class="form-check form-switch mt-2" id="risk-pause-row">
+                        <input class="form-check-input" type="checkbox" id="risk_scenario_pause_savings" name="risk_scenario_pause_savings"
+                               {% if simulation_params.risk_scenario.pause_savings %}checked{% endif %}>
+                        <label class="form-check-label small" for="risk_scenario_pause_savings">
+                            {% trans "Sparraten während Krise pausieren" %}
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+            function toggleRiskScenarioFields() {
+                var sel = document.getElementById('risk_scenario_type');
+                var details = document.getElementById('risk-scenario-details');
+                if (!sel || !details) return;
+                var val = sel.value;
+                if (val === 'none') {
+                    details.style.display = 'none';
+                    return;
+                }
+                details.style.display = '';
+                var personRow = document.getElementById('risk-person-row');
+                var durationRow = document.getElementById('risk-duration-row');
+                var emergencyRow = document.getElementById('risk-emergency-row');
+                var pauseRow = document.getElementById('risk-pause-row');
+                if (val === 'emergency_expense') {
+                    if (personRow) personRow.style.display = 'none';
+                    if (durationRow) durationRow.style.display = 'none';
+                    if (pauseRow) pauseRow.style.display = 'none';
+                    if (emergencyRow) emergencyRow.style.display = '';
+                } else if (val === 'partner_death') {
+                    if (personRow) personRow.style.display = '';
+                    if (durationRow) durationRow.style.display = 'none';
+                    if (pauseRow) pauseRow.style.display = '';
+                    if (emergencyRow) emergencyRow.style.display = 'none';
+                } else {
+                    if (personRow) personRow.style.display = '';
+                    if (durationRow) durationRow.style.display = '';
+                    if (pauseRow) pauseRow.style.display = '';
+                    if (emergencyRow) emergencyRow.style.display = 'none';
+                }
+                var dateInput = document.getElementById('risk_scenario_start_date');
+                if (dateInput && !dateInput.value) {
+                    var d = new Date();
+                    d.setMonth(d.getMonth() + 1);
+                    dateInput.value = d.toISOString().slice(0, 10);
+                }
+            }
+            document.addEventListener('DOMContentLoaded', toggleRiskScenarioFields);
+            </script>
+
             <div class="d-grid gap-2 mb-3">
                 <button type="submit" class="btn btn-primary d-flex align-items-center justify-content-center gap-2 shadow-sm rounded-pill py-2" style="background: var(--app-gradient); border: none;">
                     <span id="sim-loading" class="spinner-border spinner-border-sm htmx-indicator" role="status"></span>

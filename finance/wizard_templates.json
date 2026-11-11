@@ -42,6 +42,70 @@
         "category_name": "Gehalt",
         "frequency": "monthly",
         "amount": 1.0
+      },
+      {
+        "id": "inc_alg1",
+        "name": "Arbeitslosengeld I (ALG I)",
+        "category_slug": "sozialleistungen",
+        "category_name": "Sozialleistungen & Transfers",
+        "frequency": "monthly",
+        "amount": 1.0
+      },
+      {
+        "id": "inc_buergergeld",
+        "name": "Bürgergeld / Grundsicherung",
+        "category_slug": "sozialleistungen",
+        "category_name": "Sozialleistungen & Transfers",
+        "frequency": "monthly",
+        "amount": 1.0
+      },
+      {
+        "id": "inc_wohngeld",
+        "name": "Wohngeld / Lastenzuschuss",
+        "category_slug": "sozialleistungen",
+        "category_name": "Sozialleistungen & Transfers",
+        "frequency": "monthly",
+        "amount": 1.0
+      },
+      {
+        "id": "inc_kinderzuschlag",
+        "name": "Kinderzuschlag (KiZ)",
+        "category_slug": "familie-kinder",
+        "category_name": "Familie & Kinder",
+        "frequency": "monthly",
+        "amount": 1.0
+      },
+      {
+        "id": "inc_bafoeg",
+        "name": "BAföG / Stipendium / Bildungskredit",
+        "category_slug": "bildung",
+        "category_name": "Bildung & Studium",
+        "frequency": "monthly",
+        "amount": 1.0
+      },
+      {
+        "id": "inc_unterhalt",
+        "name": "Unterhalt / Unterhaltsvorschuss",
+        "category_slug": "familie-kinder",
+        "category_name": "Familie & Kinder",
+        "frequency": "monthly",
+        "amount": 1.0
+      },
+      {
+        "id": "inc_em_rente",
+        "name": "Erwerbsminderungsrente",
+        "category_slug": "gehalt",
+        "category_name": "Gehalt",
+        "frequency": "monthly",
+        "amount": 1.0
+      },
+      {
+        "id": "inc_pflegegeld",
+        "name": "Pflegegeld / Krankengeld",
+        "category_slug": "sozialleistungen",
+        "category_name": "Sozialleistungen & Transfers",
+        "frequency": "monthly",
+        "amount": 1.0
       }
     ]
   },
@@ -214,6 +278,46 @@
         "category_name": "Versicherungen und Bank",
         "frequency": "monthly",
         "amount": 1.0
+      },
+      {
+        "id": "exp_risikoleben",
+        "name": "Risikolebensversicherung",
+        "category_slug": "versicherungen",
+        "category_name": "Versicherungen und Bank",
+        "frequency": "monthly",
+        "amount": 1.0
+      },
+      {
+        "id": "exp_krankentagegeld",
+        "name": "Krankentagegeldversicherung",
+        "category_slug": "versicherungen",
+        "category_name": "Versicherungen und Bank",
+        "frequency": "monthly",
+        "amount": 1.0
+      },
+      {
+        "id": "exp_unfall",
+        "name": "Unfallversicherung",
+        "category_slug": "versicherungen",
+        "category_name": "Versicherungen und Bank",
+        "frequency": "yearly",
+        "amount": 1.0
+      },
+      {
+        "id": "exp_ratenzahlung",
+        "name": "Konsumkredit / Ratenzahlung",
+        "category_slug": "versicherungen",
+        "category_name": "Versicherungen und Bank",
+        "frequency": "monthly",
+        "amount": 1.0
+      },
+      {
+        "id": "exp_studienkredit",
+        "name": "Studienkredit / BAföG-Rückzahlung",
+        "category_slug": "bildung",
+        "category_name": "Bildung & Studium",
+        "frequency": "monthly",
+        "amount": 1.0
       }
     ]
   },
@@ -321,6 +425,14 @@
         "category_slug": "health",
         "category_name": "Gesundheit",
         "frequency": "yearly",
+        "amount": 1.0
+      },
+      {
+        "id": "exp_kinderbetreuung",
+        "name": "Kita / Hort / Schulverpflegung",
+        "category_slug": "familie-kinder",
+        "category_name": "Familie & Kinder",
+        "frequency": "monthly",
         "amount": 1.0
       }
     ]

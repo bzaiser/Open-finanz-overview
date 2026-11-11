@@ -2,7 +2,7 @@ from django.contrib import admin
 from django import forms
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
-from .models import Category, CashFlowSource, Asset, OneTimeEvent, Pension, FinancialStatusProxy, PhysicalAsset, RealEstate, Loan, LoanExtraRepayment, AssetSnapshot, PropertyComponent, PropertyDocument
+from .models import Category, CashFlowSource, Asset, OneTimeEvent, Pension, FinancialStatusProxy, PhysicalAsset, RealEstate, Loan, LoanExtraRepayment, AssetSnapshot, PropertyComponent, PropertyDocument, InsurancePolicy
 from django.contrib.contenttypes.admin import GenericTabularInline
 from django.contrib.contenttypes.models import ContentType
 from django.utils import timezone
@@ -735,3 +735,11 @@ class AssetSnapshotAdmin(BaseOwnedModelAdmin):
             'admin/js/vendor/jquery/jquery.js',
             'admin/js/jquery.init.js',
         )
+
+
+@admin.register(InsurancePolicy)
+class InsurancePolicyAdmin(BaseOwnedModelAdmin):
+    list_display = ('name', 'user', 'insurance_type', 'insured_person', 'provider', 'premium_amount', 'payment_frequency', 'coverage_lump_sum', 'coverage_monthly_payout', 'is_active')
+    list_filter = ('insurance_type', 'insured_person', 'is_active', 'user')
+    list_select_related = ('user',)
+    search_fields = ('name', 'provider', 'policy_number')

@@ -9,6 +9,13 @@ from django.contrib.contenttypes.models import ContentType
 from decimal import Decimal
 
 
+OWNER_ROLE_CHOICES = [
+    ('primary', _('Hauptperson')),
+    ('partner', _('Partner/in')),
+    ('joint', _('Gemeinsam / Haushalt')),
+]
+
+
 class Category(models.Model):
     name = models.CharField(_("Display Name"), max_length=100)
     slug = models.SlugField(_("Slug"), unique=True, blank=True)
@@ -51,6 +58,7 @@ class CashFlowSource(models.Model):
     is_inflation_adjusted = models.BooleanField(_("Indexed (Inflation Adjustment)"), default=True, help_text=_("If checked, the payout will increase annually based on the global pension increase rate."))
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, verbose_name=_("Category"))
     frequency = models.CharField(_("Frequency"), max_length=20, default='monthly', choices=FREQUENCY_CHOICES)
+    owner_role = models.CharField(_("Zugeordnete Person"), max_length=20, choices=OWNER_ROLE_CHOICES, default='primary')
     notes = models.TextField(_("Notes"), blank=True, null=True)
     template_id = models.CharField(_("Template ID"), max_length=100, blank=True, null=True, db_index=True)
     
@@ -132,6 +140,7 @@ class Pension(models.Model):
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='pensions')
     provider = models.CharField(_("Provider/Name"), max_length=100)
+    owner_role = models.CharField(_("Zugeordnete Person"), max_length=20, choices=OWNER_ROLE_CHOICES, default='primary')
     pension_type = models.CharField(_("Pension Type"), max_length=20, choices=PENSION_TYPE_CHOICES, default='capital')
     payout_type = models.CharField(_("Payout Type"), max_length=20, choices=PAYOUT_TYPE_CHOICES, default='capital_drawdown', help_text=_("Auszahlungsart: Kapitalverzehr, lebenslange Rente oder Einmalabfindung"))
     current_value = models.DecimalField(_("Current Value"), max_digits=12, decimal_places=2, default=0.00)
@@ -410,6 +419,7 @@ class Loan(models.Model):
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='loans')
     loan_type = models.CharField(_("Loan Type"), max_length=20, choices=LOAN_TYPE_CHOICES, default='annuity')
+    owner_role = models.CharField(_("Zugeordnete Person"), max_length=20, choices=OWNER_ROLE_CHOICES, default='joint')
     name = models.CharField(_("Display Name"), max_length=100)
     provider = models.CharField(_("Provider / Bank"), max_length=100, blank=True)
     nominal_amount = models.DecimalField(_("Initial Loan Amount"), max_digits=12, decimal_places=2)
@@ -524,3 +534,86 @@ class AssetSnapshot(models.Model):
 
     def __str__(self):
         return f"{self.date} - {self.content_object}: {self.value}"
+
+
+class InsurancePolicy(models.Model):
+    INSURANCE_TYPE_CHOICES = [
+        ('liability', _('Privathaftpflichtversicherung')),
+        ('disability', _('Berufsunfähigkeitsversicherung (BU)')),
+        ('term_life', _('Risikolebensversicherung')),
+        ('sick_pay', _('Krankentagegeldversicherung')),
+        ('accident', _('Unfallversicherung')),
+        ('household', _('Hausratversicherung')),
+        ('building', _('Wohngebäudeversicherung')),
+        ('legal', _('Rechtsschutzversicherung')),
+        ('health_addon', _('Krankenzusatz / PKV')),
+        ('kfz', _('KFZ-Versicherung')),
+        ('other', _('Sonstige Versicherung')),
+    ]
+
+    INSURED_PERSON_CHOICES = [
+        ('primary', _('Hauptperson')),
+        ('partner', _('Partner/in')),
+        ('joint', _('Gemeinsam / Familie')),
+        ('children', _('Kinder')),
+    ]
+
+    FREQUENCY_CHOICES = [
+        ('monthly', _('Monthly')),
+        ('yearly', _('Yearly')),
+    ]
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='insurances')
+    name = models.CharField(_("Bezeichnung / Tarif"), max_length=120)
+    provider = models.CharField(_("Versicherungsgesellschaft"), max_length=120, blank=True)
+    policy_number = models.CharField(_("Policen- / Vertragsnummer"), max_length=80, blank=True)
+    insurance_type = models.CharField(_("Versicherungsart"), max_length=30, choices=INSURANCE_TYPE_CHOICES, default='liability')
+    insured_person = models.CharField(_("Versicherte Person"), max_length=20, choices=INSURED_PERSON_CHOICES, default='primary')
+    premium_amount = models.DecimalField(_("Beitrag (€)"), max_digits=10, decimal_places=2, default=0.00)
+    payment_frequency = models.CharField(_("Zahlweise"), max_length=20, choices=FREQUENCY_CHOICES, default='monthly')
+    linked_cash_flow = models.ForeignKey(
+        CashFlowSource, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='linked_insurances', verbose_name=_("Verknüpfter Cashflow-Eintrag"),
+        help_text=_("Optional: Verknüpfung zu bestehendem Ausgaben-Eintrag, um Doppelzählung zu vermeiden.")
+    )
+    include_in_cashflow = models.BooleanField(
+        _("In Cashflow-Prognose berücksichtigen"),
+        default=True,
+        help_text=_("Wenn aktiviert und kein Cashflow-Eintrag verknüpft ist, fließt der Beitrag in die Simulation ein.")
+    )
+    coverage_lump_sum = models.DecimalField(
+        _("Deckungssumme / Einmalzahlung (€)"), max_digits=14, decimal_places=2, null=True, blank=True,
+        help_text=_("z. B. Todesfallsumme bei Risikoleben oder Invaliditätssumme")
+    )
+    coverage_monthly_payout = models.DecimalField(
+        _("Monatliche Leistungsrente (€)"), max_digits=10, decimal_places=2, null=True, blank=True,
+        help_text=_("z. B. monatliche BU-Rente oder Krankentagegeld-Leistung")
+    )
+    waiting_period_months = models.PositiveIntegerField(
+        _("Karenzzeit (Monate)"), default=0,
+        help_text=_("Wartezeit in Monaten bis zur Leistungszahlung (z. B. 6 Monate bei BU)")
+    )
+    payout_duration_months = models.PositiveIntegerField(
+        _("Leistungsdauer (Monate)"), null=True, blank=True,
+        help_text=_("Optional begrenzte Leistungsdauer (leer = unbegrenzt bzw. bis Vertragsende)")
+    )
+    start_date = models.DateField(_("Vertragsbeginn"), null=True, blank=True)
+    end_date = models.DateField(_("Vertragsende / Ablaufdatum"), null=True, blank=True)
+    is_active = models.BooleanField(_("Aktiv"), default=True)
+    notes = models.TextField(_("Notes"), blank=True)
+
+    class Meta:
+        verbose_name = _("Insurance Policy")
+        verbose_name_plural = _("Insurance Policies")
+        ordering = ['insurance_type', 'name']
+
+    @property
+    def monthly_premium_amount(self):
+        if not self.premium_amount:
+            return Decimal('0.00')
+        if self.payment_frequency == 'yearly':
+            return (self.premium_amount / Decimal('12')).quantize(Decimal('0.01'))
+        return self.premium_amount
+
+    def __str__(self):
+        return f"{self.name} ({self.get_insurance_type_display()})"

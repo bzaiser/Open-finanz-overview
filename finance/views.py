@@ -11,13 +11,14 @@ from django.utils import timezone, translation
 from django.utils.translation import gettext_lazy as _, gettext as _eager
 from django.contrib import messages
 from .services import SimulationEngine
+from .services_risk import calculate_protection_audit
 from django.contrib.contenttypes.models import ContentType
 from .models import (
     PropertyComponent,
-    Asset, CashFlowSource, OneTimeEvent, Pension, Category, 
+    Asset, CashFlowSource, OneTimeEvent, Pension, Category, InsurancePolicy,
     ImportBatch, PendingTransaction, ImportFilter, ProcessedTransactionHash, AssetSnapshot, PhysicalAsset
 )
-from .forms import BankImportForm, AssetForm, PhysicalAssetForm
+from .forms import BankImportForm, AssetForm, PhysicalAssetForm, InsurancePolicyForm
 from core.models import UserProfile, get_default_dashboard_config
 from .import_services import ExcelParserService
 from django.core.serializers.json import DjangoJSONEncoder
@@ -305,6 +306,16 @@ def dashboard_view(request):
     simulation_params = profile_params.copy()
     current_today = timezone.now().date()
     simulation_params['stichtag'] = current_today
+    default_risk_start = (current_today.replace(day=1) + datetime.timedelta(days=32)).replace(day=1).strftime('%Y-%m-%d')
+    default_risk_scenario = {
+        'type': 'none',
+        'person': 'primary',
+        'start_date': default_risk_start,
+        'duration_months': 12,
+        'pause_savings': True,
+        'emergency_amount': 5000.0,
+    }
+    simulation_params['risk_scenario'] = default_risk_scenario.copy()
 
     # Session handling for persistent active simulation state
     if request.GET.get('reset_simulation'):
@@ -312,6 +323,7 @@ def dashboard_view(request):
             del request.session['active_simulation']
         simulation_params = profile_params.copy()
         simulation_params['stichtag'] = current_today
+        simulation_params['risk_scenario'] = default_risk_scenario.copy()
     elif request.method == 'POST' and 'config_update' not in request.POST:
         # Handle Simulation Update from POST form
         def safe_float(val, default):
@@ -331,16 +343,34 @@ def dashboard_view(request):
             except (ValueError, TypeError):
                 simulation_params['stichtag'] = current_today
 
+        risk_type = request.POST.get('risk_scenario_type', 'none')
+        if risk_type not in {'none', 'job_loss', 'disability', 'partner_death', 'emergency_expense'}:
+            risk_type = 'none'
+        try:
+            risk_dur = max(1, min(60, int(request.POST.get('risk_scenario_duration') or 12)))
+        except (TypeError, ValueError):
+            risk_dur = 12
+        simulation_params['risk_scenario'] = {
+            'type': risk_type,
+            'person': request.POST.get('risk_scenario_person') if request.POST.get('risk_scenario_person') in {'primary', 'partner'} else 'primary',
+            'start_date': request.POST.get('risk_scenario_start_date') or default_risk_start,
+            'duration_months': risk_dur,
+            'pause_savings': request.POST.get('risk_scenario_pause_savings') in {'on', 'true', '1', 'True'},
+            'emergency_amount': safe_float(request.POST.get('risk_scenario_emergency_amount'), 5000.0),
+        }
+
         # Check if parameters actually differ from profile defaults
         param_diff = any(
             abs(float(simulation_params[k]) - float(profile_params[k])) > 0.001
             for k in profile_params
         )
         stichtag_diff = simulation_params['stichtag'].replace(day=1) != current_today.replace(day=1)
+        risk_diff = simulation_params['risk_scenario']['type'] != 'none'
         
-        if param_diff or stichtag_diff:
-            sess_params = {k: float(v) for k, v in simulation_params.items() if k != 'stichtag'}
+        if param_diff or stichtag_diff or risk_diff:
+            sess_params = {k: float(v) for k, v in simulation_params.items() if k not in {'stichtag', 'risk_scenario'}}
             sess_params['stichtag'] = simulation_params['stichtag'].strftime('%Y-%m-%d')
+            sess_params['risk_scenario'] = simulation_params['risk_scenario']
             request.session['active_simulation'] = sess_params
         else:
             if 'active_simulation' in request.session:
@@ -356,6 +386,8 @@ def dashboard_view(request):
                 simulation_params['stichtag'] = datetime.datetime.strptime(sess['stichtag'], '%Y-%m-%d').date()
             except (ValueError, TypeError):
                 simulation_params['stichtag'] = current_today
+        if isinstance(sess.get('risk_scenario'), dict):
+            simulation_params['risk_scenario'] = {**default_risk_scenario, **sess['risk_scenario']}
 
     # Final check if active simulation differs from defaults
     param_diff = any(
@@ -363,7 +395,8 @@ def dashboard_view(request):
         for k in profile_params
     )
     stichtag_diff = simulation_params['stichtag'].replace(day=1) != current_today.replace(day=1)
-    is_simulation_active = param_diff or stichtag_diff
+    risk_scenario_active = simulation_params['risk_scenario']['type'] != 'none'
+    is_simulation_active = param_diff or stichtag_diff or risk_scenario_active
 
     # Charts affected by simulation parameters (future projections and forecast models)
     affected_charts = [
@@ -384,6 +417,28 @@ def dashboard_view(request):
 
     engine = SimulationEngine(user, simulation_params)
     forecast_data = engine.get_forecast()
+
+    # Optional Baseline comparison when a stress / risk scenario is active
+    baseline_yearly = {}
+    if risk_scenario_active:
+        baseline_params = {**simulation_params, 'risk_scenario': {'type': 'none'}}
+        baseline_forecast = SimulationEngine(user, baseline_params).get_forecast()
+        for bd in baseline_forecast:
+            byr = bd['date'].year
+            if byr not in baseline_yearly:
+                baseline_yearly[byr] = {
+                    'nominal_net_worth': 0,
+                    'liquid_nominal': 0,
+                    'monthly_income': 0,
+                    'monthly_expenses': 0,
+                    'one_time_total': 0,
+                }
+            b_bucket = baseline_yearly[byr]
+            b_bucket['nominal_net_worth'] = bd.get('nominal_net_worth', 0)
+            b_bucket['liquid_nominal'] = float(bd.get('asset_total', 0) + bd.get('accumulated_cash', 0))
+            b_bucket['monthly_income'] += bd['monthly_income']
+            b_bucket['monthly_expenses'] += bd['monthly_expenses']
+            b_bucket['one_time_total'] += bd.get('one_time_impact', 0)
     
     # Prepare Chart Data
     yearly_buckets = {}
@@ -717,10 +772,14 @@ def dashboard_view(request):
     # Force language activation for chart data to ensure consistent translation
     with translation.override(translation.get_language()):
         # 1. Trim each chart individually for maximum compactness (no leading zeros)
-        nw_labels, nw_datasets, nw_stichtag = trim_chart_data(labels_yearly, [
+        nw_series = [
             {'label': _('Net Worth (Nominal)'), 'data': net_worth_nominal, 'borderColor': '#0d6efd', 'fill': False, 'borderWidth': 4},
             {'label': _('Net Worth (Real)'), 'data': net_worth_real, 'borderColor': '#0d6efd', 'borderDash': [5, 5], 'fill': False, 'borderWidth': 2},
-        ], stichtag_year_index)
+        ]
+        if risk_scenario_active and baseline_yearly:
+            nw_base = [float(baseline_yearly.get(y, {}).get('nominal_net_worth', 0)) for y in sorted_years]
+            nw_series.append({'label': _('Baseline ohne Stresstest (Nominal)'), 'data': nw_base, 'borderColor': '#6c757d', 'borderDash': [8, 4], 'fill': False, 'borderWidth': 2})
+        nw_labels, nw_datasets, nw_stichtag = trim_chart_data(labels_yearly, nw_series, stichtag_year_index)
 
         re_labels, re_datasets, re_stichtag = trim_chart_data(labels_yearly, [
             {'label': _('Real Estate (Nominal)'), 'data': real_estate_yearly, 'borderColor': '#fd7e14', 'backgroundColor': 'rgba(253, 126, 20, 0.1)', 'fill': True},
@@ -732,21 +791,36 @@ def dashboard_view(request):
             {'label': _('Physical Assets (Real)'), 'data': physical_asset_real_yearly, 'borderColor': '#8a2be2', 'borderDash': [5, 5], 'fill': False},
         ], stichtag_year_index)
 
-        lp_labels, lp_datasets, lp_stichtag = trim_chart_data(labels_yearly, [
+        lp_series = [
             {'label': _('Liquid Assets (Nominal)'), 'data': liquid_assets_yearly, 'borderColor': '#198754', 'fill': False},
             {'label': _('Liquid Assets (Real)'), 'data': liquid_assets_real_yearly, 'borderColor': '#198754', 'borderDash': [5, 5], 'fill': False},
             {'label': _('Pension Capital (Nominal)'), 'data': pension_yearly, 'borderColor': '#6f42c1', 'fill': False},
             {'label': _('Pension Capital (Real)'), 'data': pension_real_yearly, 'borderColor': '#6f42c1', 'borderDash': [5, 5], 'fill': False},
-        ], stichtag_year_index)
+        ]
+        if risk_scenario_active and baseline_yearly:
+            lp_base = [float(baseline_yearly.get(y, {}).get('liquid_nominal', 0)) for y in sorted_years]
+            lp_series.append({'label': _('Liquidität Baseline (Nominal)'), 'data': lp_base, 'borderColor': '#6c757d', 'borderDash': [8, 4], 'fill': False, 'borderWidth': 2})
+        lp_labels, lp_datasets, lp_stichtag = trim_chart_data(labels_yearly, lp_series, stichtag_year_index)
 
         # Cashflow Trend (Income vs Expenses)
-        cf_labels, cf_datasets, cf_stichtag = trim_chart_data(labels_yearly, [
+        cf_series = [
             {'label': _('Income'), 'data': income_yearly, 'backgroundColor': 'rgba(25, 135, 84, 0.7)', 'order': 2, 
              'debugData': [yearly_buckets[y]['income_category_breakdown'] for y in sorted_years]},
             {'label': _('Expenses'), 'data': expenses_yearly, 'backgroundColor': 'rgba(220, 53, 69, 0.7)', 'order': 2,
              'debugData': [yearly_buckets[y]['category_breakdown'] for y in sorted_years]},
             {'label': _('Net Savings'), 'data': net_savings_yearly, 'type': 'line', 'borderColor': '#0d6efd', 'borderWidth': 2, 'fill': False, 'pointRadius': 3, 'order': 1},
-        ], stichtag_year_index)
+        ]
+        if risk_scenario_active and baseline_yearly:
+            cf_base = [
+                float(
+                    baseline_yearly.get(y, {}).get('monthly_income', 0)
+                    - baseline_yearly.get(y, {}).get('monthly_expenses', 0)
+                    + baseline_yearly.get(y, {}).get('one_time_total', 0)
+                )
+                for y in sorted_years
+            ]
+            cf_series.append({'label': _('Sparquote Baseline'), 'data': cf_base, 'type': 'line', 'borderColor': '#6c757d', 'borderDash': [8, 4], 'borderWidth': 2, 'fill': False, 'pointRadius': 2, 'order': 0})
+        cf_labels, cf_datasets, cf_stichtag = trim_chart_data(labels_yearly, cf_series, stichtag_year_index)
 
         ie_labels, ie_datasets, ie_stichtag = trim_chart_data(labels_yearly, income_evo_datasets, stichtag_year_index)
         ee_labels, ee_datasets, ee_stichtag = trim_chart_data(labels_yearly, expense_evo_datasets, stichtag_year_index)
@@ -1254,6 +1328,8 @@ def dashboard_view(request):
         'simulation_params': simulation_params,
         'profile_params': profile_params,
         'is_simulation_active': is_simulation_active,
+        'risk_scenario_active': risk_scenario_active,
+        'risk_scenario_summary': getattr(engine, 'risk_metrics', {}),
         'affected_charts': affected_charts,
         'current_net_worth': current_net_worth,
         'projected_net_worth': projected_net_worth,
@@ -3288,6 +3364,8 @@ def pension_plan_view(request):
             'provider': p.provider,
             'pension_type': p.pension_type,
             'pension_type_display': str(p.get_pension_type_display()),
+            'owner_role': getattr(p, 'owner_role', 'primary'),
+            'owner_role_display': str(p.get_owner_role_display()) if hasattr(p, 'get_owner_role_display') else '',
             'payout_type': getattr(p, 'payout_type', 'monthly'),
             'payout_type_display': str(p.get_payout_type_display()),
             'pension_points': float(p.pension_points) if p.pension_points is not None else None,
@@ -3321,10 +3399,44 @@ def pension_plan_view(request):
             'notes': s.notes or ''
         })
 
+    insurances = InsurancePolicy.objects.filter(user=request.user).select_related('linked_cash_flow')
+    insurances_json = []
+    for ins in insurances:
+        insurances_json.append({
+            'id': ins.id,
+            'name': ins.name,
+            'insurance_type': ins.insurance_type,
+            'insurance_type_display': str(ins.get_insurance_type_display()),
+            'provider': ins.provider or '',
+            'insured_person': ins.insured_person,
+            'insured_person_display': str(ins.get_insured_person_display()),
+            'premium_amount': float(ins.premium_amount or 0),
+            'payment_frequency': ins.payment_frequency,
+            'payment_frequency_display': str(ins.get_payment_frequency_display()),
+            'monthly_premium_amount': float(ins.monthly_premium_amount or 0),
+            'coverage_lump_sum': float(ins.coverage_lump_sum or 0),
+            'coverage_monthly_payout': float(ins.coverage_monthly_payout or 0),
+            'waiting_period_months': ins.waiting_period_months or 0,
+            'payout_duration_months': ins.payout_duration_months or 0,
+            'linked_cash_flow': ins.linked_cash_flow_id,
+            'linked_cash_flow_name': ins.linked_cash_flow.name if ins.linked_cash_flow else '',
+            'include_in_cashflow': ins.include_in_cashflow,
+            'is_active': ins.is_active,
+            'start_date': ins.start_date.strftime('%Y-%m-%d') if ins.start_date else '',
+            'end_date': ins.end_date.strftime('%Y-%m-%d') if ins.end_date else '',
+            'notes': ins.notes or '',
+        })
+
+    protection_audit = calculate_protection_audit(request.user)
+
     context = {
         'pensions': pensions,
         'pensions_json': json.dumps(pensions_json),
         'snapshots_json': json.dumps(snapshots_list),
+        'insurances': insurances,
+        'insurances_json': json.dumps(insurances_json),
+        'protection_audit': protection_audit,
+        'insurance_form': InsurancePolicyForm(user=request.user),
         'life_stage': life_stage,
         'user_current_age': user_current_age,
         'total_statutory_points': total_statutory_points,
@@ -3533,6 +3645,31 @@ def pension_snapshot_delete(request, pk):
         return redirect(f"{reverse('finance:pension_plan')}?edit_pension_id={edit_pension_id}")
     return redirect('finance:pension_plan')
 
+
+@login_required
+def insurance_save(request, pk=None):
+    instance = get_object_or_404(InsurancePolicy, id=pk, user=request.user) if pk else None
+    if request.method == 'POST':
+        form = InsurancePolicyForm(request.POST, instance=instance, user=request.user)
+        if form.is_valid():
+            policy = form.save(commit=False)
+            policy.user = request.user
+            policy.save()
+            messages.success(request, _('Versicherungspolice erfolgreich gespeichert.'))
+        else:
+            for field, errors in form.errors.items():
+                for err in errors:
+                    messages.error(request, f"{field}: {err}")
+    return redirect(f"{reverse('finance:pension_plan')}?tab=insurances")
+
+
+@login_required
+def insurance_delete(request, pk):
+    policy = get_object_or_404(InsurancePolicy, id=pk, user=request.user)
+    if request.method == 'POST':
+        policy.delete()
+        messages.success(request, _('Versicherungspolice gelöscht.'))
+    return redirect(f"{reverse('finance:pension_plan')}?tab=insurances")
 
 
 # ==============================================================================

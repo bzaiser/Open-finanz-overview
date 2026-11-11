@@ -3,7 +3,8 @@ from django.dispatch import receiver
 from django.utils.translation import gettext_noop as _
 from .models import (
     Category, Asset, CashFlowSource, OneTimeEvent, Pension,
-    PhysicalAsset, RealEstate, Loan, LoanExtraRepayment, AssetSnapshot
+    PhysicalAsset, RealEstate, Loan, LoanExtraRepayment, AssetSnapshot,
+    InsurancePolicy
 )
 from .services import clear_user_forecast_cache
 
@@ -39,7 +40,7 @@ def invalidate_forecast_cache_receiver(sender, instance, **kwargs):
     if user_id:
         clear_user_forecast_cache(user_id)
 
-for model in [Asset, CashFlowSource, OneTimeEvent, Pension, PhysicalAsset, RealEstate, Loan, AssetSnapshot]:
+for model in [Asset, CashFlowSource, OneTimeEvent, Pension, PhysicalAsset, RealEstate, Loan, AssetSnapshot, InsurancePolicy]:
     post_save.connect(invalidate_forecast_cache_receiver, sender=model)
     post_delete.connect(invalidate_forecast_cache_receiver, sender=model)
 

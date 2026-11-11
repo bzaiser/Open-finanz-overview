@@ -242,17 +242,43 @@
             <i class="bi bi-people"></i> {% trans "1. Haushalt & Personen" %}
         </h4>
         <div class="row g-3 mb-4">
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Haushalts-Typ" %}</label>
                 <select x-model="form.household_type" class="form-select">
                     <option value="single">{% trans "Einzelperson / Single" %}</option>
                     <option value="couple">{% trans "Ehepaar / Partnerschaft" %}</option>
                 </select>
             </div>
-            <div class="col-md-6">
-                <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Ziel-Nettorente im Ruhestand (€/mtl. für Haushalt)" %}</label>
-                <input type="number" step="0.01" x-model="form.target_monthly_payout" class="form-control font-monospace" placeholder="z. B. 3500.00">
+            <div class="col-md-4">
+                <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Lebenssituation / Fokus" %}</label>
+                <select x-model="form.household_situation" class="form-select">
+                    <option value="standard">{% trans "Standard / Vermögensaufbau" %}</option>
+                    <option value="low_income">{% trans "Geringverdiener / Knappes Budget" %}</option>
+                    <option value="single_parent">{% trans "Alleinerziehend" %}</option>
+                    <option value="student">{% trans "Student / Ausbildung" %}</option>
+                    <option value="unemployed">{% trans "Arbeitssuchend (ALG I / Bürgergeld)" %}</option>
+                    <option value="early_retiree">{% trans "Frührentner / Erwerbsminderung" %}</option>
+                </select>
             </div>
+            <div class="col-md-4">
+                <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Ziel-Nettorente im Ruhestand (€/mtl. für Haushalt)" %}</label>
+                <input type="number" step="0.01" x-model="form.target_monthly_payout" class="form-control font-monospace" placeholder="z. B. 2200.00">
+            </div>
+        </div>
+        <div x-show="form.household_situation !== 'standard'" class="alert alert-info border-0 rounded-3 py-2 px-3 small mb-4">
+            <i class="bi bi-compass me-1"></i>
+            <span x-show="form.household_situation === 'low_income' || form.household_situation === 'single_parent'">
+                {% trans "Fokus auf Monats-Cashflow, Notgroschen-Aufbau, staatliche Transfers (Wohngeld/KiZ/Unterhalt) & Basisschutz." %}
+            </span>
+            <span x-show="form.household_situation === 'student'">
+                {% trans "Fokus auf Studienfinanzierung (BAföG/Nebenjob), WG-Budget, Studienkredit-Tilgung & Privathaftpflicht." %}
+            </span>
+            <span x-show="form.household_situation === 'unemployed'">
+                {% trans "Fokus auf Liquiditätsreichweite (ALG I / Bürgergeld), Fixkosten-Check & verzichtbare Policen." %}
+            </span>
+            <span x-show="form.household_situation === 'early_retiree'">
+                {% trans "Fokus auf Erwerbsminderungs-/Frührente, Inflationsschutz & Kapitalverzehr-Reichweite." %}
+            </span>
         </div>
 
         <!-- Person 1 -->
@@ -484,13 +510,20 @@
         </h6>
         <template x-for="(inc, index) in form.incomes" :key="'inc-' + index">
             <div class="row g-2 mb-2 align-items-center">
-                <div class="col-md-5">
+                <div :class="form.household_type === 'couple' ? 'col-md-4' : 'col-md-5'">
                     <input type="text" x-model="inc.name" class="form-control" placeholder="z. B. Gehalt Vollzeit / Teilzeit">
                 </div>
-                <div class="col-md-3">
+                <div :class="form.household_type === 'couple' ? 'col-md-2' : 'col-md-3'">
                     <input type="number" step="0.01" x-model="inc.amount" class="form-control font-monospace" placeholder="Betrag in €">
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-3" x-show="form.household_type === 'couple'">
+                    <select x-model="inc.owner_role" class="form-select">
+                        <option value="primary" x-text="form.p1_name || 'Person 1'"></option>
+                        <option value="partner" x-text="form.p2_name || 'Partner/in'"></option>
+                        <option value="joint">{% trans "Gemeinsam" %}</option>
+                    </select>
+                </div>
+                <div :class="form.household_type === 'couple' ? 'col-md-2' : 'col-md-3'">
                     <span class="badge bg-body-secondary text-secondary border px-2 py-1 small text-truncate d-inline-block w-100 text-center" x-text="inc.category_name || 'Gehalt'"></span>
                 </div>
                 <div class="col-md-1">
@@ -749,6 +782,8 @@
             ],
             form: {
                 household_type: (prof.partner_name || (prof.display_name && prof.display_name.includes('&'))) ? 'couple' : 'single',
+                household_situation: prof.household_situation || 'standard',
+                apply_situation_dashboard_preset: true,
                 target_monthly_payout: prof.target_monthly_payout || '',
                 p1_name: prof.display_name ? prof.display_name.split('&')[0].trim() : '',
                 p1_birth_date: prof.birth_date || '',

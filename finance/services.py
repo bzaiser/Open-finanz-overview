@@ -7,7 +7,8 @@ from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.core.cache import cache
-from .models import Asset, CashFlowSource, OneTimeEvent, Pension, PhysicalAsset, RealEstate, Loan, LoanExtraRepayment
+from .models import Asset, CashFlowSource, OneTimeEvent, Pension, PhysicalAsset, RealEstate, Loan, LoanExtraRepayment, InsurancePolicy
+from .services_risk import is_earned_income_cf
 from core.models import UserProfile
 
 def clear_user_forecast_cache(user_id):
@@ -136,6 +137,7 @@ class SimulationEngine:
                 cached_payload = cache.get(cache_key)
                 if cached_payload is not None and isinstance(cached_payload, dict) and 'forecast' in cached_payload:
                     self.loan_interest_totals = cached_payload.get('loan_interest_totals', {})
+                    self.risk_metrics = cached_payload.get('risk_metrics', {})
                     return cached_payload['forecast']
             except Exception:
                 pass
@@ -152,6 +154,63 @@ class SimulationEngine:
         one_time_events = list(self.user.events.all())
         physical_assets = list(self.user.physical_assets.all())
         real_estates = list(self.user.real_estates.all())
+        insurances = list(self.user.insurances.filter(is_active=True))
+
+        # Risk / Stress Scenario Parameters
+        risk_cfg = self.params.get('risk_scenario') or {}
+        scenario_type = risk_cfg.get('type') or 'none'
+        affected_person = risk_cfg.get('person') or 'primary'
+        pause_savings = bool(risk_cfg.get('pause_savings', True))
+        try:
+            scenario_duration = max(1, int(risk_cfg.get('duration_months') or 12))
+        except (TypeError, ValueError):
+            scenario_duration = 12
+        try:
+            emergency_amount = Decimal(str(risk_cfg.get('emergency_amount') or 5000))
+        except Exception:
+            emergency_amount = Decimal('5000')
+        try:
+            expense_reduction_pct = Decimal(str(risk_cfg.get('expense_reduction_pct') or 20)) / Decimal('100')
+        except Exception:
+            expense_reduction_pct = Decimal('0.20')
+
+        today_norm_init = today.replace(day=1)
+        raw_s_start = risk_cfg.get('start_date')
+        scenario_start = today_norm_init + relativedelta(months=1)
+        if raw_s_start:
+            if isinstance(raw_s_start, datetime.date):
+                scenario_start = raw_s_start.replace(day=1)
+            elif isinstance(raw_s_start, str):
+                try:
+                    scenario_start = datetime.datetime.strptime(raw_s_start, '%Y-%m-%d').date().replace(day=1)
+                except ValueError:
+                    pass
+        scenario_end = scenario_start + relativedelta(months=scenario_duration)
+
+        if affected_person == 'partner' and self.profile.partner_birth_date:
+            affected_ret_date = (self.profile.partner_birth_date + relativedelta(years=self.profile.partner_retirement_age or 67)).replace(day=1)
+        elif self.profile.birth_date:
+            affected_ret_date = (self.profile.birth_date + relativedelta(years=self.profile.retirement_age or 67)).replace(day=1)
+        else:
+            affected_ret_date = today_norm_init + relativedelta(years=25)
+
+        has_children = (
+            getattr(self.profile, 'household_situation', 'standard') == 'single_parent'
+            or any(
+                cf.is_income and (
+                    cf.template_id in {'inc_kindergeld', 'inc_kinderzuschlag', 'inc_unterhalt'}
+                    or 'kindergeld' in (cf.name or '').lower()
+                )
+                for cf in cash_flows
+            )
+        )
+        self.risk_metrics = {
+            'scenario_type': scenario_type,
+            'scenario_start': scenario_start.isoformat() if scenario_type != 'none' else None,
+            'runway_months': None,
+            'min_liquid_buffer': None,
+            'min_buffer_date': None,
+        }
 
         global_re_growth = Decimal(str(self.params.get('real_estate_growth_rate', 0.0)))
 
@@ -236,6 +295,21 @@ class SimulationEngine:
             months_from_today = (current_date.year - today_normalized.year) * 12 + (current_date.month - today_normalized.month)
             year_passed_decimal = Decimal(str(max(0, months_from_today))) / 12
 
+            # Risk scenario activity check for this month
+            scenario_active = False
+            if scenario_type == 'job_loss':
+                scenario_active = scenario_start <= current_date < scenario_end
+            elif scenario_type == 'disability':
+                scenario_active = scenario_start <= current_date < affected_ret_date
+            elif scenario_type == 'partner_death':
+                scenario_active = current_date >= scenario_start
+            elif scenario_type == 'emergency_expense':
+                scenario_active = current_date == scenario_start
+
+            pause_savings_now = scenario_active and pause_savings and scenario_type in {'job_loss', 'disability'}
+            events_this_month = []
+            debug_breakdown = {}
+
             # 1. Wealth Accumulation and Growth - Continuous Simulation
             current_monthly_asset_withdrawal = Decimal('0.00')
             
@@ -285,8 +359,13 @@ class SimulationEngine:
                         # Growth applies to current balance
                         rate = (pension.growth_rate or Decimal('0.00')) / 100
                         item['balance'] *= ((1 + (rate / 12)) ** step_months)
-                        # Contribution only if before end date
-                        if not pension.contribution_end_date or current_date < pension.contribution_end_date.replace(day=1):
+                        # Contribution only if before end date and not paused by crisis scenario
+                        p_role = getattr(pension, 'owner_role', 'primary')
+                        p_paused = (
+                            (pause_savings_now and p_role in {affected_person, 'joint'})
+                            or (scenario_type == 'partner_death' and scenario_active and p_role == 'partner')
+                        )
+                        if not p_paused and (not pension.contribution_end_date or current_date < pension.contribution_end_date.replace(day=1)):
                             item['balance'] += ((pension.monthly_contribution or Decimal('0.00')) * step_months)
                     
                     # Numerical Safety
@@ -404,8 +483,13 @@ class SimulationEngine:
             for p_item in pensions_state:
                 p = p_item['pension']
                 # Contributions (only if currently paying AND NOT IN THE PAST to avoid ghost entries)
+                p_role = getattr(p, 'owner_role', 'primary')
+                p_paused = (
+                    (pause_savings_now and p_role in {affected_person, 'joint'})
+                    or (scenario_type == 'partner_death' and scenario_active and p_role == 'partner')
+                )
                 is_paying = False
-                if p.monthly_contribution and p.monthly_contribution > 0:
+                if not p_paused and p.monthly_contribution and p.monthly_contribution > 0:
                     # Contribution window check
                     in_window = True
                     if p.contribution_end_date and current_date >= p.contribution_end_date.replace(day=1):
@@ -421,8 +505,27 @@ class SimulationEngine:
                             if cat_name not in debug_breakdown: debug_breakdown[cat_name] = {}
                             debug_breakdown[cat_name][f"Pension: {p.provider}"] = debug_breakdown[cat_name].get(f"Pension: {p.provider}", Decimal('0')) + p.monthly_contribution
                 
+                # Disability pension payout during disability scenario (before regular retirement)
+                if (
+                    scenario_type == 'disability'
+                    and scenario_active
+                    and p_role in {affected_person, 'joint'}
+                    and p.disability_pension_net
+                    and (not p.start_payout_date or current_date < p.start_payout_date.replace(day=1))
+                ):
+                    years_since_dis = max(0, ((current_date.year - scenario_start.year) * 12 + (current_date.month - scenario_start.month)) // 12)
+                    dis_inc = self.pension_increase if p.is_indexed else Decimal('0.00')
+                    dis_val = Decimal(str(p.disability_pension_net)) * ((1 + dis_inc) ** Decimal(str(years_since_dis)))
+                    current_monthly_pension_payout += dis_val * step_months
+                    month_pension_payouts[str(p.id)] = dis_val
+                    current_monthly_pension_payout_fixed += dis_val * step_months
+                    p_cat = str(_('Erwerbsminderungsrente'))
+                    month_pension_payout_categories[p_cat] = month_pension_payout_categories.get(p_cat, Decimal('0')) + (dis_val * step_months)
+
                 # Payout: only if after/at start payout date
                 if p.start_payout_date and current_date >= p.start_payout_date.replace(day=1):
+                    # In partner_death scenario, partner's own pension converts to ~55% survivor pension
+                    survivor_factor = Decimal('0.55') if (scenario_type == 'partner_death' and scenario_active and p_role == 'partner') else Decimal('1.00')
                     # Check if one-time lump-sum payout
                     if getattr(p, 'payout_type', 'monthly') == 'one_time':
                         is_payout_month = (current_date.year == p.start_payout_date.year and current_date.month == p.start_payout_date.month)
@@ -449,7 +552,7 @@ class SimulationEngine:
                             
                             # Grow Nominal Payout by pension_increase rate annually (step function) if indexed
                             actual_increase = self.pension_increase if p.is_indexed else Decimal('0.00')
-                            payout_val = payout_val * ((1 + actual_increase) ** full_years_since_start)
+                            payout_val = payout_val * ((1 + actual_increase) ** full_years_since_start) * survivor_factor
                             current_monthly_pension_payout += payout_val * step_months
                             month_pension_payouts[str(p.id)] = payout_val
                             
@@ -461,7 +564,7 @@ class SimulationEngine:
                             else:
                                 current_monthly_pension_payout_fixed += payout_val * step_months
 
-                            p_cat = p.provider if p.pension_type == 'statutory' else str(_('Auszahlung Vorsorgeverträge'))
+                            p_cat = str(_('Witwen- / Hinterbliebenenrente')) if survivor_factor < 1 else (p.provider if p.pension_type == 'statutory' else str(_('Auszahlung Vorsorgeverträge')))
                             month_pension_payout_categories[p_cat] = month_pension_payout_categories.get(p_cat, Decimal('0')) + (payout_val * step_months)
 
             # 3. Process Cash Flows (Income/Expenses)
@@ -470,16 +573,6 @@ class SimulationEngine:
             category_breakdown = {
                 "Sparen": current_monthly_pension_contribution
             }
-            debug_breakdown = {}
-            if current_monthly_pension_contribution > 0:
-                cat_name = "Sparen"
-                if cat_name not in debug_breakdown: debug_breakdown[cat_name] = {}
-                for p_item in pensions_state:
-                    p = p_item['pension']
-                    # We use the same 'ghost filter' logic here
-                    if current_date >= today_normalized and p.monthly_contribution and p.monthly_contribution > 0:
-                        if not p.contribution_end_date or current_date < p.contribution_end_date.replace(day=1):
-                            debug_breakdown[cat_name][f"Pension: {p.provider}"] = debug_breakdown[cat_name].get(f"Pension: {p.provider}", Decimal('0')) + p.monthly_contribution
 
             income_category_breakdown = {}
             if current_monthly_asset_withdrawal > 0:
@@ -488,16 +581,40 @@ class SimulationEngine:
             for p_cat, p_amt in month_pension_payout_categories.items():
                 income_category_breakdown[p_cat] = income_category_breakdown.get(p_cat, Decimal('0')) + p_amt
             
+            suspended_earned_income = Decimal('0.00')
             for cf in cash_flows:
                 if cf.start_date and cf.start_date.replace(day=1) > current_date: continue
                 if cf.end_date and cf.end_date.replace(day=1) < current_date: continue
                 
+                cf_role = getattr(cf, 'owner_role', 'primary')
+                if scenario_type == 'partner_death' and scenario_active and cf_role == 'partner':
+                    continue
+
                 amount = cf.value
                 if cf.is_inflation_adjusted:
                     rate = self.salary_increase if cf.is_income else self.inflation_rate
                     amount = amount * ((1 + rate) ** year_passed_decimal)
 
                 val = amount if cf.frequency == 'monthly' else amount / 12
+
+                if not cf.is_income and pause_savings_now:
+                    cat_slug = cf.category.slug.lower() if (cf.category and cf.category.slug) else ''
+                    if cf.template_id in {'exp_etf_sparplan', 'exp_notgroschen'} or cat_slug in {'sparen', 'investment'}:
+                        continue
+
+                if cf.is_income and scenario_active and scenario_type in {'job_loss', 'disability'} and is_earned_income_cf(cf):
+                    if cf_role == affected_person:
+                        suspended_earned_income += val
+                        val = Decimal('0.00')
+                    elif cf_role == 'joint':
+                        suspended_earned_income += val * Decimal('0.50')
+                        val = val * Decimal('0.50')
+
+                if not cf.is_income and scenario_type == 'partner_death' and scenario_active and cf_role == 'joint':
+                    cat_slug = cf.category.slug.lower() if (cf.category and cf.category.slug) else ''
+                    if cat_slug not in {'wohnen', 'wohnen-haushalt', 'housing'} and cf.template_id != 'exp_kaltmiete':
+                        val = val * (Decimal('1.00') - expense_reduction_pct)
+
                 month_cf_values[str(cf.id)] = val
 
                 if cf.is_income:
@@ -512,6 +629,68 @@ class SimulationEngine:
                     category_breakdown[cat_name] = category_breakdown.get(cat_name, Decimal('0')) + (val * step_months)
                     if cat_name not in debug_breakdown: debug_breakdown[cat_name] = {}
                     debug_breakdown[cat_name][f"CF: {cf.name}"] = debug_breakdown[cat_name].get(f"CF: {cf.name}", Decimal('0')) + (val * step_months)
+
+            # 3.1 Active Insurance Policies (Premiums & Crisis Payouts)
+            scenario_event_impact = Decimal('0.00')
+            if current_date >= today_normalized:
+                for ins in insurances:
+                    if ins.start_date and ins.start_date.replace(day=1) > current_date:
+                        continue
+                    if ins.end_date and ins.end_date.replace(day=1) < current_date:
+                        continue
+                    if scenario_type == 'partner_death' and scenario_active and current_date == scenario_start:
+                        if ins.insurance_type == 'term_life' and ins.insured_person in {affected_person, 'joint'} and ins.coverage_lump_sum:
+                            scenario_event_impact += ins.coverage_lump_sum
+                            events_this_month.append({
+                                'name': f"{ins.name} ({_('Risikoleben-Auszahlung')})",
+                                'description': _('Todesfall-Leistung aus Risikolebensversicherung'),
+                                'date': current_date.isoformat(),
+                                'value': float(round(ins.coverage_lump_sum, 2)),
+                            })
+
+                    if scenario_type == 'partner_death' and scenario_active and ins.insured_person == affected_person:
+                        continue
+
+                    if ins.include_in_cashflow and ins.linked_cash_flow_id is None and ins.premium_amount and ins.premium_amount > 0:
+                        prem_val = ins.monthly_premium_amount
+                        monthly_expenses += prem_val * step_months
+                        cat_name = "Versicherungen und Bank"
+                        category_breakdown[cat_name] = category_breakdown.get(cat_name, Decimal('0')) + (prem_val * step_months)
+                        if cat_name not in debug_breakdown: debug_breakdown[cat_name] = {}
+                        debug_breakdown[cat_name][f"Insurance: {ins.name}"] = debug_breakdown[cat_name].get(f"Insurance: {ins.name}", Decimal('0')) + (prem_val * step_months)
+
+                    if scenario_type == 'disability' and scenario_active and ins.insurance_type == 'disability' and ins.insured_person in {affected_person, 'joint'} and ins.coverage_monthly_payout:
+                        months_into = (current_date.year - scenario_start.year) * 12 + (current_date.month - scenario_start.month)
+                        wait_m = ins.waiting_period_months or 0
+                        dur_m = ins.payout_duration_months
+                        if months_into >= wait_m and (dur_m is None or months_into < wait_m + dur_m):
+                            payout_amt = ins.coverage_monthly_payout
+                            monthly_income += payout_amt * step_months
+                            cat_name = str(_('Versicherungsleistung'))
+                            income_category_breakdown[cat_name] = income_category_breakdown.get(cat_name, Decimal('0')) + (payout_amt * step_months)
+                            if cat_name not in debug_breakdown: debug_breakdown[cat_name] = {}
+                            debug_breakdown[cat_name][f"BU: {ins.name}"] = debug_breakdown[cat_name].get(f"BU: {ins.name}", Decimal('0')) + (payout_amt * step_months)
+
+                # ALG I replacement during first 12 months of job loss
+                if scenario_type == 'job_loss' and scenario_active and suspended_earned_income > 0:
+                    months_into = (current_date.year - scenario_start.year) * 12 + (current_date.month - scenario_start.month)
+                    if months_into < 12:
+                        alg1_rate = Decimal('0.67') if has_children else Decimal('0.60')
+                        alg1_val = (suspended_earned_income * alg1_rate).quantize(Decimal('0.01'))
+                        monthly_income += alg1_val * step_months
+                        cat_name = str(_('Sozialleistungen & Transfers'))
+                        income_category_breakdown[cat_name] = income_category_breakdown.get(cat_name, Decimal('0')) + (alg1_val * step_months)
+                        if cat_name not in debug_breakdown: debug_breakdown[cat_name] = {}
+                        debug_breakdown[cat_name]["ALG I (60/67%)"] = debug_breakdown[cat_name].get("ALG I (60/67%)", Decimal('0')) + (alg1_val * step_months)
+
+                if scenario_type == 'emergency_expense' and scenario_active and current_date == scenario_start and emergency_amount > 0:
+                    scenario_event_impact -= emergency_amount
+                    events_this_month.append({
+                        'name': str(_('Unerwartete Großausgabe (Stresstest)')),
+                        'description': str(_('Simulierter Notfall / Großreparatur')),
+                        'date': current_date.isoformat(),
+                        'value': float(round(-emergency_amount, 2)),
+                    })
 
             # Cash flows from PhysicalAssets and RealEstate
             for item in physical_assets_state:
@@ -559,7 +738,6 @@ class SimulationEngine:
                             debug_breakdown[cat_name][f"RE Costs: {re.name}"] = debug_breakdown[cat_name].get(f"RE Costs: {re.name}", Decimal('0')) + costs
 
             # 2.1 Process Loans (Installments and Interest)
-            events_this_month = []
             current_monthly_loan_installment = Decimal('0.00')
             for item in loans_state:
                 loan = item['loan']
@@ -618,7 +796,7 @@ class SimulationEngine:
             monthly_expenses += current_monthly_loan_installment
 
             # 3. One Time Events lookup (O(1))
-            event_impact = Decimal('0.00')
+            event_impact = scenario_event_impact
             for event in events_by_month.get((current_date.year, current_date.month), []):
                     event_impact += event.value
                     events_this_month.append({
@@ -634,6 +812,22 @@ class SimulationEngine:
                 # In the past, we only respect explicit event impacts if they represent data
                 # but usually, we want accumulated_cash to stay at 0 unless snapshots exist
                 accumulated_cash = Decimal('0.00')
+
+            # Track liquid buffer & runway for active risk scenario
+            if scenario_type != 'none' and current_date >= scenario_start:
+                liquid_reserves = sum(
+                    item['balance'] for item in assets_state
+                    if item['asset'].asset_type in {'cash', 'overnight'}
+                )
+                net_liquid_buffer = liquid_reserves + accumulated_cash
+                if self.risk_metrics['min_liquid_buffer'] is None or float(net_liquid_buffer) < self.risk_metrics['min_liquid_buffer']:
+                    self.risk_metrics['min_liquid_buffer'] = float(round(net_liquid_buffer, 2))
+                    self.risk_metrics['min_buffer_date'] = current_date.isoformat()
+                if net_liquid_buffer < 0 and self.risk_metrics['runway_months'] is None:
+                    self.risk_metrics['runway_months'] = (
+                        (current_date.year - scenario_start.year) * 12
+                        + (current_date.month - scenario_start.month)
+                    )
             
             # Totals calculation
             # Helper to get orphan snapshot totals (snapshots for objects not in the current active list)
@@ -709,7 +903,8 @@ class SimulationEngine:
             try:
                 cache.set(cache_key, {
                     'forecast': data,
-                    'loan_interest_totals': self.loan_interest_totals
+                    'loan_interest_totals': self.loan_interest_totals,
+                    'risk_metrics': self.risk_metrics,
                 }, timeout=86400)
             except Exception:
                 pass

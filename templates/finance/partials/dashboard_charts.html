@@ -13,6 +13,36 @@
     {% endif %}
 </div>
 {% endif %}
+{% if risk_scenario_active and risk_scenario_summary %}
+<div class="alert {% if risk_scenario_summary.runway_months is not None %}alert-danger{% else %}alert-warning{% endif %} d-flex flex-wrap justify-content-between align-items-center shadow-sm mb-4" role="alert">
+    <div>
+        <strong><i class="bi bi-shield-exclamation me-2"></i>{% trans "Stresstest aktiv" %}:</strong>
+        {% if risk_scenario_summary.scenario_type == 'job_loss' %}{% trans "Jobverlust / Arbeitslosigkeit" %}
+        {% elif risk_scenario_summary.scenario_type == 'disability' %}{% trans "Berufsunfähigkeit" %}
+        {% elif risk_scenario_summary.scenario_type == 'partner_death' %}{% trans "Todesfall" %}
+        {% elif risk_scenario_summary.scenario_type == 'emergency_expense' %}{% trans "Notfallausgabe" %}
+        {% else %}{{ risk_scenario_summary.scenario_type }}{% endif %}
+        <span class="ms-2 small">
+            ({% trans "ab" %} {{ risk_scenario_summary.scenario_start }})
+        </span>
+        <span class="ms-3">
+            {% trans "Minimaler Liquiditätspuffer" %}: <strong>{{ risk_scenario_summary.min_liquid_buffer|floatformat:0|intcomma }} €</strong>
+        </span>
+        {% if risk_scenario_summary.runway_months is not None %}
+        <span class="badge bg-danger ms-2">
+            {% trans "Liquidität erschöpft nach" %} {{ risk_scenario_summary.runway_months }} {% trans "Monaten" %}
+        </span>
+        {% else %}
+        <span class="badge bg-success ms-2">
+            {% trans "Liquidität bleibt positiv" %}
+        </span>
+        {% endif %}
+    </div>
+    <a href="{% url 'finance:dashboard' %}?reset_simulation=1" class="btn btn-sm btn-outline-dark mt-2 mt-md-0">
+        <i class="bi bi-x-circle me-1"></i>{% trans "Stresstest beenden" %}
+    </a>
+</div>
+{% endif %}
 <div class="row">
     {% for item in layout %}
     {% if item.visible %}

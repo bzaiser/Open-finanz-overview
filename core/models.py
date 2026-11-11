@@ -38,6 +38,44 @@ def get_default_dashboard_config():
         ]
     }
 
+
+def get_dashboard_config_for_situation(situation):
+    """Returns a target-group tailored default dashboard configuration."""
+    config = get_default_dashboard_config()
+    budget_focused = {'low_income', 'single_parent', 'student', 'unemployed'}
+    if situation in budget_focused:
+        hidden_charts = {'real_estate_forecast_chart', 'physical_asset_forecast_chart'}
+        hidden_summary = {'total_physical_assets', 'total_real_estate'}
+        priority_order = {
+            'cashflow_chart': 0,
+            'budget_pie_chart': 1,
+            'upcoming_dates_widget': 2,
+            'income_table_widget': 3,
+            'expense_table_widget': 4,
+            'loan_evolution_chart': 5,
+            'loan_table_widget': 6,
+            'net_worth_chart': 7,
+        }
+        for item in config['layout']:
+            if item['id'] in hidden_charts:
+                item['visible'] = False
+            if item['id'] in priority_order:
+                item['order'] = priority_order[item['id']]
+            else:
+                item['order'] += 10
+        config['layout'].sort(key=lambda x: x['order'])
+        for s_item in config['summary_layout']:
+            if s_item['id'] in hidden_summary:
+                s_item['visible'] = False
+    elif situation == 'early_retiree':
+        for item in config['layout']:
+            if item['id'] in {'real_estate_forecast_chart', 'physical_asset_forecast_chart'}:
+                item['visible'] = False
+            elif item['id'] == 'liquid_pension_forecast_chart':
+                item['order'] = 1
+        config['layout'].sort(key=lambda x: x['order'])
+    return config
+
 class CustomUser(AbstractUser):
     @property
     def best_name(self):
@@ -53,8 +91,23 @@ class CustomUser(AbstractUser):
         return self.username
 
 class UserProfile(models.Model):
+    HOUSEHOLD_SITUATION_CHOICES = [
+        ('standard', _('Standard / Vermögensaufbau')),
+        ('low_income', _('Geringverdiener / Knappes Budget')),
+        ('single_parent', _('Alleinerziehend')),
+        ('student', _('Student / Ausbildung')),
+        ('unemployed', _('Arbeitssuchend (ALG I / Bürgergeld)')),
+        ('early_retiree', _('Frührentner / Erwerbsminderung')),
+    ]
+
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='profile')
     display_name = models.CharField(_("Display Name"), max_length=100, blank=True, null=True)
+    household_situation = models.CharField(
+        _("Lebenssituation / Zielgruppe"),
+        max_length=20,
+        choices=HOUSEHOLD_SITUATION_CHOICES,
+        default='standard',
+    )
     avatar = models.ImageField(_("Avatar"), upload_to='avatars/', blank=True, null=True)
     birth_date = models.DateField(_("Birth Date"), blank=True, null=True)
 
