@@ -1,6 +1,5 @@
 {% load i18n humanize %}
-{% if request.headers.HX_Request %}
-{% include 'finance/partials/dashboard_summary.html' %}
+{% if request.META.HTTP_HX_REQUEST or 'HX-Request' in request.headers %}
 <div id="sim-button-wrapper" class="position-relative d-inline-block" hx-swap-oob="true">
     <button class="btn btn-primary shadow-sm" style="background: var(--app-gradient); border: none;" data-bs-toggle="offcanvas" data-bs-target="#simulationOffcanvas">
         <i class="bi bi-gear me-1"></i>
@@ -20,11 +19,19 @@
         {% if risk_scenario_summary.scenario_type == 'job_loss' %}{% trans "Jobverlust / Arbeitslosigkeit" %}
         {% elif risk_scenario_summary.scenario_type == 'disability' %}{% trans "Berufsunfähigkeit" %}
         {% elif risk_scenario_summary.scenario_type == 'partner_death' %}{% trans "Todesfall" %}
+        {% elif risk_scenario_summary.scenario_type == 'market_crash' %}{% trans "Börsen- & Vermögenscrash" %}
+        {% elif risk_scenario_summary.scenario_type == 'interest_shock' %}{% trans "Zinsschock & Inflationswelle" %}
         {% elif risk_scenario_summary.scenario_type == 'emergency_expense' %}{% trans "Notfallausgabe" %}
         {% else %}{{ risk_scenario_summary.scenario_type }}{% endif %}
         <span class="ms-2 small">
             ({% trans "ab" %} {{ risk_scenario_summary.scenario_start }})
         </span>
+        {% if kpi_deltas.end_net_worth_nominal_delta %}
+        <span class="ms-3">
+            {% trans "Endvermögen-Effekt" %}: <strong class="{% if kpi_deltas.end_net_worth_nominal_delta < 0 %}text-danger{% else %}text-success{% endif %}">{{ kpi_deltas.end_net_worth_nominal_delta|floatformat:0|intcomma }} €</strong>
+            <span class="small opacity-75">({% trans "Real" %}: {{ kpi_deltas.end_net_worth_real_delta|floatformat:0|intcomma }} €)</span>
+        </span>
+        {% endif %}
         <span class="ms-3">
             {% trans "Minimaler Liquiditätspuffer" %}: <strong>{{ risk_scenario_summary.min_liquid_buffer|floatformat:0|intcomma }} €</strong>
         </span>

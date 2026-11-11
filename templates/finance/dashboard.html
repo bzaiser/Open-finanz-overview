@@ -214,6 +214,8 @@
                         <option value="job_loss" {% if simulation_params.risk_scenario.type == 'job_loss' %}selected{% endif %}>{% trans "Jobverlust / Arbeitslosigkeit (ALG I)" %}</option>
                         <option value="disability" {% if simulation_params.risk_scenario.type == 'disability' %}selected{% endif %}>{% trans "Berufsunfähigkeit (BU / EM-Rente)" %}</option>
                         <option value="partner_death" {% if simulation_params.risk_scenario.type == 'partner_death' %}selected{% endif %}>{% trans "Todesfall Partner / Hauptverdiener" %}</option>
+                        <option value="market_crash" {% if simulation_params.risk_scenario.type == 'market_crash' %}selected{% endif %}>{% trans "Börsen- & Vermögenscrash (-40 %)" %}</option>
+                        <option value="interest_shock" {% if simulation_params.risk_scenario.type == 'interest_shock' %}selected{% endif %}>{% trans "Zinsschock & Inflationswelle (+3,5 % Zins)" %}</option>
                         <option value="emergency_expense" {% if simulation_params.risk_scenario.type == 'emergency_expense' %}selected{% endif %}>{% trans "Unerwartete Notfallausgabe" %}</option>
                     </select>
                 </div>
@@ -236,14 +238,34 @@
                         <div class="col-6" id="risk-duration-row">
                             <label for="risk_scenario_duration" class="form-label small fw-bold mb-1">{% trans "Dauer (Monate)" %}</label>
                             <input type="number" class="form-control form-control-sm" id="risk_scenario_duration" name="risk_scenario_duration"
-                                   min="1" max="60" value="{{ simulation_params.risk_scenario.duration_months|default:'12' }}">
+                                   min="1" max="120" value="{{ simulation_params.risk_scenario.duration_months|default:'24' }}">
                         </div>
+                    </div>
+
+                    <div class="mb-2" id="risk-crash-row" style="display:none;">
+                        <label for="risk_scenario_crash_pct" class="form-label small fw-bold mb-1">{% trans "Einbruch Depots & Märkte (%)" %}</label>
+                        <input type="number" class="form-control form-control-sm" id="risk_scenario_crash_pct" name="risk_scenario_crash_pct"
+                               min="5" max="90" step="5" value="{{ simulation_params.risk_scenario.crash_pct|default:'40'|floatformat:0 }}">
+                    </div>
+
+                    <div class="mb-2" id="risk-interest-row" style="display:none;">
+                        <label for="risk_scenario_interest_shock_pct" class="form-label small fw-bold mb-1">{% trans "Zinsanstieg Kredite (%-Punkte)" %}</label>
+                        <input type="number" class="form-control form-control-sm" id="risk_scenario_interest_shock_pct" name="risk_scenario_interest_shock_pct"
+                               min="0.5" max="15.0" step="0.5" value="{{ simulation_params.risk_scenario.interest_shock_pct|default:'3.5' }}">
                     </div>
 
                     <div class="mb-2" id="risk-emergency-row">
                         <label for="risk_scenario_emergency_amount" class="form-label small fw-bold mb-1">{% trans "Notfallbetrag (€)" %}</label>
                         <input type="number" class="form-control form-control-sm" id="risk_scenario_emergency_amount" name="risk_scenario_emergency_amount"
-                               min="0" step="100" value="{{ simulation_params.risk_scenario.emergency_amount|default:'5000'|stringformat:'d' }}">
+                               min="0" step="1000" value="{{ simulation_params.risk_scenario.emergency_amount|default:'50000'|floatformat:0 }}">
+                    </div>
+
+                    <div class="form-check form-switch mt-2" id="risk-insurance-row">
+                        <input class="form-check-input" type="checkbox" id="risk_scenario_include_private_insurance" name="risk_scenario_include_private_insurance"
+                               {% if simulation_params.risk_scenario.include_private_insurance %}checked{% endif %}>
+                        <label class="form-check-label small" for="risk_scenario_include_private_insurance">
+                            {% trans "Private Risiko-Policen (BU / Risikoleben) anrechnen" %}
+                        </label>
                     </div>
 
                     <div class="form-check form-switch mt-2" id="risk-pause-row">
@@ -270,17 +292,42 @@
                 var personRow = document.getElementById('risk-person-row');
                 var durationRow = document.getElementById('risk-duration-row');
                 var emergencyRow = document.getElementById('risk-emergency-row');
+                var crashRow = document.getElementById('risk-crash-row');
+                var interestRow = document.getElementById('risk-interest-row');
+                var insuranceRow = document.getElementById('risk-insurance-row');
                 var pauseRow = document.getElementById('risk-pause-row');
+                if (crashRow) crashRow.style.display = 'none';
+                if (interestRow) interestRow.style.display = 'none';
+                if (insuranceRow) insuranceRow.style.display = 'none';
                 if (val === 'emergency_expense') {
                     if (personRow) personRow.style.display = 'none';
                     if (durationRow) durationRow.style.display = 'none';
                     if (pauseRow) pauseRow.style.display = 'none';
                     if (emergencyRow) emergencyRow.style.display = '';
+                } else if (val === 'market_crash') {
+                    if (personRow) personRow.style.display = 'none';
+                    if (durationRow) durationRow.style.display = '';
+                    if (pauseRow) pauseRow.style.display = 'none';
+                    if (emergencyRow) emergencyRow.style.display = 'none';
+                    if (crashRow) crashRow.style.display = '';
+                } else if (val === 'interest_shock') {
+                    if (personRow) personRow.style.display = 'none';
+                    if (durationRow) durationRow.style.display = '';
+                    if (pauseRow) pauseRow.style.display = 'none';
+                    if (emergencyRow) emergencyRow.style.display = 'none';
+                    if (interestRow) interestRow.style.display = '';
                 } else if (val === 'partner_death') {
                     if (personRow) personRow.style.display = '';
                     if (durationRow) durationRow.style.display = 'none';
                     if (pauseRow) pauseRow.style.display = '';
                     if (emergencyRow) emergencyRow.style.display = 'none';
+                    if (insuranceRow) insuranceRow.style.display = '';
+                } else if (val === 'disability') {
+                    if (personRow) personRow.style.display = '';
+                    if (durationRow) durationRow.style.display = 'none';
+                    if (pauseRow) pauseRow.style.display = '';
+                    if (emergencyRow) emergencyRow.style.display = 'none';
+                    if (insuranceRow) insuranceRow.style.display = '';
                 } else {
                     if (personRow) personRow.style.display = '';
                     if (durationRow) durationRow.style.display = '';
@@ -290,8 +337,7 @@
                 var dateInput = document.getElementById('risk_scenario_start_date');
                 if (dateInput && !dateInput.value) {
                     var d = new Date();
-                    d.setMonth(d.getMonth() + 1);
-                    dateInput.value = d.toISOString().slice(0, 10);
+                    dateInput.value = d.toISOString().slice(0, 7) + '-01';
                 }
             }
             document.addEventListener('DOMContentLoaded', toggleRiskScenarioFields);

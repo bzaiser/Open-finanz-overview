@@ -48,11 +48,30 @@
                         {% endif %}
                         <span class="ms-1 fs-6 fw-normal opacity-75">{{ profile.currency }}</span>
                     </h3>
-                    <div class="small opacity-75 mt-1" style="font-size: 0.65rem;">
-                        {% if item.id == 'expected_payout' %}
-                            <i class="bi bi-file-earmark-text me-1"></i>{% trans "Sum from contracts" %} <span class="ms-1">(Nominal)</span>
-                        {% else %}
-                            <i class="bi bi-calendar3 me-1"></i>{{ simulation_params.stichtag|date:"M Y" }}
+                    <div class="small opacity-75 mt-1 d-flex flex-wrap align-items-center justify-content-between gap-1" style="font-size: 0.65rem;">
+                        <span>
+                            {% if item.id == 'expected_payout' %}
+                                <i class="bi bi-file-earmark-text me-1"></i>{% trans "Sum from contracts" %} <span class="ms-1">(Nominal)</span>
+                            {% else %}
+                                <i class="bi bi-calendar3 me-1"></i>{{ simulation_params.stichtag|date:"M Y" }}
+                            {% endif %}
+                        </span>
+                        {% if risk_scenario_active and kpi_deltas %}
+                            {% if item.id == 'current_assets' and kpi_deltas.current_assets %}
+                                <span class="badge bg-dark bg-opacity-50 text-white font-monospace">Δ {% if kpi_deltas.current_assets > 0 %}+{% endif %}{{ kpi_deltas.current_assets|intcomma }} {{ profile.currency }}</span>
+                            {% elif item.id == 'monthly_income' and kpi_deltas.monthly_income %}
+                                <span class="badge bg-dark bg-opacity-50 text-white font-monospace">Δ {% if kpi_deltas.monthly_income > 0 %}+{% endif %}{{ kpi_deltas.monthly_income|intcomma }} {{ profile.currency }}</span>
+                            {% elif item.id == 'monthly_expenses' and kpi_deltas.monthly_expenses %}
+                                <span class="badge bg-dark bg-opacity-50 text-white font-monospace">Δ {% if kpi_deltas.monthly_expenses > 0 %}+{% endif %}{{ kpi_deltas.monthly_expenses|intcomma }} {{ profile.currency }}</span>
+                            {% elif item.id == 'total_pensions' and kpi_deltas.total_pensions %}
+                                <span class="badge bg-dark bg-opacity-50 text-white font-monospace">Δ {% if kpi_deltas.total_pensions > 0 %}+{% endif %}{{ kpi_deltas.total_pensions|intcomma }} {{ profile.currency }}</span>
+                            {% elif item.id == 'current_pension_payout' and kpi_deltas.current_pension_payout %}
+                                <span class="badge bg-dark bg-opacity-50 text-white font-monospace">Δ {% if kpi_deltas.current_pension_payout > 0 %}+{% endif %}{{ kpi_deltas.current_pension_payout|intcomma }} {{ profile.currency }}</span>
+                            {% elif item.id == 'total_real_estate' and kpi_deltas.total_real_estate %}
+                                <span class="badge bg-dark bg-opacity-50 text-white font-monospace">Δ {% if kpi_deltas.total_real_estate > 0 %}+{% endif %}{{ kpi_deltas.total_real_estate|intcomma }} {{ profile.currency }}</span>
+                            {% elif item.id == 'total_combined_assets' and kpi_deltas.total_combined_assets %}
+                                <span class="badge bg-dark bg-opacity-50 text-white font-monospace">Δ {% if kpi_deltas.total_combined_assets > 0 %}+{% endif %}{{ kpi_deltas.total_combined_assets|intcomma }} {{ profile.currency }}</span>
+                            {% endif %}
                         {% endif %}
                     </div>
                 </div>

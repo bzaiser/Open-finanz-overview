@@ -190,7 +190,7 @@ def dashboard_view(request):
         profile.hide_wizard_on_start = True
         profile.save(update_fields=['hide_wizard_on_start'])
 
-    if not profile.hide_wizard_on_start and request.GET.get('skip_wizard') != '1':
+    if not profile.hide_wizard_on_start and request.GET.get('skip_wizard') != '1' and request.method != 'POST' and not request.headers.get('HX-Request'):
         return redirect('finance:setup_wizard')
     
     # Helper for safe merging of defaults
@@ -306,14 +306,17 @@ def dashboard_view(request):
     simulation_params = profile_params.copy()
     current_today = timezone.now().date()
     simulation_params['stichtag'] = current_today
-    default_risk_start = (current_today.replace(day=1) + datetime.timedelta(days=32)).replace(day=1).strftime('%Y-%m-%d')
+    default_risk_start = current_today.replace(day=1).strftime('%Y-%m-%d')
     default_risk_scenario = {
         'type': 'none',
         'person': 'primary',
         'start_date': default_risk_start,
-        'duration_months': 12,
-        'pause_savings': True,
-        'emergency_amount': 5000.0,
+        'duration_months': 24,
+        'pause_savings': False,
+        'include_private_insurance': False,
+        'emergency_amount': 50000.0,
+        'crash_pct': 40.0,
+        'interest_shock_pct': 3.5,
     }
     simulation_params['risk_scenario'] = default_risk_scenario.copy()
 
@@ -344,20 +347,31 @@ def dashboard_view(request):
                 simulation_params['stichtag'] = current_today
 
         risk_type = request.POST.get('risk_scenario_type', 'none')
-        if risk_type not in {'none', 'job_loss', 'disability', 'partner_death', 'emergency_expense'}:
+        if risk_type not in {'none', 'job_loss', 'disability', 'partner_death', 'market_crash', 'interest_shock', 'emergency_expense'}:
             risk_type = 'none'
         try:
-            risk_dur = max(1, min(60, int(request.POST.get('risk_scenario_duration') or 12)))
+            risk_dur = max(1, min(120, int(request.POST.get('risk_scenario_duration') or 24)))
         except (TypeError, ValueError):
-            risk_dur = 12
+            risk_dur = 24
         simulation_params['risk_scenario'] = {
             'type': risk_type,
             'person': request.POST.get('risk_scenario_person') if request.POST.get('risk_scenario_person') in {'primary', 'partner'} else 'primary',
             'start_date': request.POST.get('risk_scenario_start_date') or default_risk_start,
             'duration_months': risk_dur,
             'pause_savings': request.POST.get('risk_scenario_pause_savings') in {'on', 'true', '1', 'True'},
-            'emergency_amount': safe_float(request.POST.get('risk_scenario_emergency_amount'), 5000.0),
+            'include_private_insurance': request.POST.get('risk_scenario_include_private_insurance') in {'on', 'true', '1', 'True'},
+            'emergency_amount': safe_float(request.POST.get('risk_scenario_emergency_amount'), 50000.0),
+            'crash_pct': safe_float(request.POST.get('risk_scenario_crash_pct'), 40.0),
+            'interest_shock_pct': safe_float(request.POST.get('risk_scenario_interest_shock_pct'), 3.5),
         }
+        # If stress test starts after current stichtag, advance stichtag to crisis start so KPI cards & pie charts show the crisis impact immediately
+        if risk_type != 'none':
+            try:
+                r_start_dt = datetime.datetime.strptime(simulation_params['risk_scenario']['start_date'], '%Y-%m-%d').date()
+                if simulation_params['stichtag'].replace(day=1) < r_start_dt.replace(day=1):
+                    simulation_params['stichtag'] = r_start_dt
+            except Exception:
+                pass
 
         # Check if parameters actually differ from profile defaults
         param_diff = any(
@@ -420,6 +434,7 @@ def dashboard_view(request):
 
     # Optional Baseline comparison when a stress / risk scenario is active
     baseline_yearly = {}
+    baseline_forecast = []
     if risk_scenario_active:
         baseline_params = {**simulation_params, 'risk_scenario': {'type': 'none'}}
         baseline_forecast = SimulationEngine(user, baseline_params).get_forecast()
@@ -427,18 +442,32 @@ def dashboard_view(request):
             byr = bd['date'].year
             if byr not in baseline_yearly:
                 baseline_yearly[byr] = {
+                    'month_count': 0,
                     'nominal_net_worth': 0,
+                    'real_net_worth': 0,
                     'liquid_nominal': 0,
+                    'pension_nominal': 0,
+                    'real_estate_nominal': 0,
                     'monthly_income': 0,
                     'monthly_expenses': 0,
                     'one_time_total': 0,
                 }
             b_bucket = baseline_yearly[byr]
+            b_bucket['month_count'] += 1
             b_bucket['nominal_net_worth'] = bd.get('nominal_net_worth', 0)
+            b_bucket['real_net_worth'] = bd.get('real_net_worth', 0)
             b_bucket['liquid_nominal'] = float(bd.get('asset_total', 0) + bd.get('accumulated_cash', 0))
+            b_bucket['pension_nominal'] = float(bd.get('pension_total', 0))
+            b_bucket['real_estate_nominal'] = float(bd.get('real_estate_total', 0))
             b_bucket['monthly_income'] += bd['monthly_income']
             b_bucket['monthly_expenses'] += bd['monthly_expenses']
             b_bucket['one_time_total'] += bd.get('one_time_impact', 0)
+        for b_bucket in baseline_yearly.values():
+            bm_cnt = b_bucket.get('month_count', 12)
+            if 0 < bm_cnt < 12:
+                b_scale = 12.0 / float(bm_cnt)
+                b_bucket['monthly_income'] = round(float(b_bucket['monthly_income']) * b_scale, 2)
+                b_bucket['monthly_expenses'] = round(float(b_bucket['monthly_expenses']) * b_scale, 2)
     
     # Prepare Chart Data
     yearly_buckets = {}
@@ -793,13 +822,19 @@ def dashboard_view(request):
         ]
         if risk_scenario_active and baseline_yearly:
             nw_base = [float(baseline_yearly.get(y, {}).get('nominal_net_worth', 0)) for y in sorted_years]
+            nw_real_base = [float(baseline_yearly.get(y, {}).get('real_net_worth', 0)) for y in sorted_years]
             nw_series.append({'label': _('Baseline ohne Stresstest (Nominal)'), 'data': nw_base, 'borderColor': '#6c757d', 'borderDash': [8, 4], 'fill': False, 'borderWidth': 2})
+            nw_series.append({'label': _('Baseline ohne Stresstest (Real)'), 'data': nw_real_base, 'borderColor': '#adb5bd', 'borderDash': [4, 4], 'fill': False, 'borderWidth': 1.5})
         nw_labels, nw_datasets, nw_stichtag = trim_chart_data(labels_yearly, nw_series, stichtag_year_index)
 
-        re_labels, re_datasets, re_stichtag = trim_chart_data(labels_yearly, [
+        re_series = [
             {'label': _('Real Estate (Nominal)'), 'data': real_estate_yearly, 'borderColor': '#fd7e14', 'backgroundColor': 'rgba(253, 126, 20, 0.1)', 'fill': True},
             {'label': _('Real Estate (Real)'), 'data': real_estate_real_yearly, 'borderColor': '#fd7e14', 'borderDash': [5, 5], 'fill': False},
-        ], stichtag_year_index)
+        ]
+        if risk_scenario_active and baseline_yearly:
+            re_base = [float(baseline_yearly.get(y, {}).get('real_estate_nominal', 0)) for y in sorted_years]
+            re_series.append({'label': _('Immobilien Baseline (Nominal)'), 'data': re_base, 'borderColor': '#6c757d', 'borderDash': [8, 4], 'fill': False, 'borderWidth': 2})
+        re_labels, re_datasets, re_stichtag = trim_chart_data(labels_yearly, re_series, stichtag_year_index)
 
         pa_labels, pa_datasets, pa_stichtag = trim_chart_data(labels_yearly, [
             {'label': _('Physical Assets (Nominal)'), 'data': physical_asset_yearly, 'borderColor': '#8a2be2', 'backgroundColor': 'rgba(138, 43, 226, 0.1)', 'fill': True},
@@ -814,7 +849,9 @@ def dashboard_view(request):
         ]
         if risk_scenario_active and baseline_yearly:
             lp_base = [float(baseline_yearly.get(y, {}).get('liquid_nominal', 0)) for y in sorted_years]
+            pen_base = [float(baseline_yearly.get(y, {}).get('pension_nominal', 0)) for y in sorted_years]
             lp_series.append({'label': _('Liquidität Baseline (Nominal)'), 'data': lp_base, 'borderColor': '#6c757d', 'borderDash': [8, 4], 'fill': False, 'borderWidth': 2})
+            lp_series.append({'label': _('Vorsorge Baseline (Nominal)'), 'data': pen_base, 'borderColor': '#adb5bd', 'borderDash': [4, 4], 'fill': False, 'borderWidth': 1.5})
         lp_labels, lp_datasets, lp_stichtag = trim_chart_data(labels_yearly, lp_series, stichtag_year_index)
 
         # Cashflow Trend (Income vs Expenses)
@@ -1008,11 +1045,39 @@ def dashboard_view(request):
     current_monthly_income = round(current_month_data.get('monthly_income', 0), 2)
     current_monthly_expenses = round(current_month_data.get('monthly_expenses', 0), 2)
     current_pensions_total = round(current_month_data.get('real_pension_total', 0), 2)
-    current_assets_total = round(current_month_data.get('real_asset_total', 0) + current_pensions_total, 2)
+    overdraft_adj = min(0.0, float(current_month_data.get('real_accumulated_cash', 0)))
+    current_assets_total = round(current_month_data.get('real_asset_total', 0) + current_pensions_total + overdraft_adj, 2)
     current_physical_assets_total = round(current_month_data.get('real_physical_asset_total', 0), 2)
     current_real_estate_total = round(current_month_data.get('real_real_estate_total', 0), 2)
     current_debts_total = round(current_month_data.get('real_loan_total', 0), 2)
     current_total_combined = round(current_assets_total + current_physical_assets_total + current_real_estate_total - current_debts_total, 2)
+
+    kpi_deltas = {}
+    if risk_scenario_active and baseline_forecast:
+        base_month_data = min(baseline_forecast, key=lambda d: abs((d['date'] - target_date).days))
+        base_last_month = baseline_forecast[-1]
+        base_pensions = round(base_month_data.get('real_pension_total', 0), 2)
+        base_overdraft = min(0.0, float(base_month_data.get('real_accumulated_cash', 0)))
+        base_assets = round(base_month_data.get('real_asset_total', 0) + base_pensions + base_overdraft, 2)
+        base_phys = round(base_month_data.get('real_physical_asset_total', 0), 2)
+        base_re = round(base_month_data.get('real_real_estate_total', 0), 2)
+        base_debts = round(base_month_data.get('real_loan_total', 0), 2)
+        base_combined = round(base_assets + base_phys + base_re - base_debts, 2)
+        base_end_real_nw = round(base_last_month.get('real_net_worth', 0), 2)
+        base_end_nom_nw = round(base_last_month.get('nominal_net_worth', 0), 2)
+        stress_end_nom_nw = round(last_month.get('nominal_net_worth', 0), 2)
+        kpi_deltas = {
+            'current_assets': round(current_assets_total - base_assets, 2),
+            'monthly_income': round(current_monthly_income - round(base_month_data.get('monthly_income', 0), 2), 2),
+            'monthly_expenses': round(current_monthly_expenses - round(base_month_data.get('monthly_expenses', 0), 2), 2),
+            'total_pensions': round(current_pensions_total - base_pensions, 2),
+            'current_pension_payout': round(current_month_data.get('monthly_pension_payout', 0) - base_month_data.get('monthly_pension_payout', 0), 2),
+            'total_real_estate': round(current_real_estate_total - base_re, 2),
+            'total_debts': round(current_debts_total - base_debts, 2),
+            'total_combined_assets': round(current_total_combined - base_combined, 2),
+            'end_net_worth_real_delta': round(projected_net_worth - base_end_real_nw, 2),
+            'end_net_worth_nominal_delta': round(stress_end_nom_nw - base_end_nom_nw, 2),
+        }
     
     # Calculate Total Expected Payout (Real value at Stichtag)
     raw_expected_sum = sum(p.expected_payout_at_retirement or 0 for p in user.pensions.all())
@@ -1064,6 +1129,7 @@ def dashboard_view(request):
     table_data_income = []
     month_cf_values = current_month_data.get('cash_flow_values', {})
     month_pension_payouts = current_month_data.get('pension_payout_values', {})
+    month_debug = current_month_data.get('debug_breakdown', {})
     
     # 1. Manual Cash Flows (Income)
     for cf in user.cash_flows.select_related('category').filter(is_income=True):
@@ -1071,13 +1137,14 @@ def dashboard_view(request):
            (not cf.end_date or cf.end_date.replace(day=1) >= target_date):
             sim_val = month_cf_values.get(str(cf.id))
             amt = sim_val if sim_val is not None else (float(cf.value) if cf.frequency == 'monthly' else float(cf.value) / 12)
-            table_data_income.append({
-                'name': cf.name, 
-                'amount': float(amt), 
-                'category': cf.category.translated_name if cf.category else _('Income'),
-                'type': _('Manual'),
-                'year': format_period(cf.start_date, cf.end_date)
-            })
+            if amt > 0:
+                table_data_income.append({
+                    'name': cf.name, 
+                    'amount': float(amt), 
+                    'category': cf.category.translated_name if cf.category else _('Income'),
+                    'type': _('Manual'),
+                    'year': format_period(cf.start_date, cf.end_date)
+                })
     
     # 2. Asset withdrawals (Income, only if > 0)
     for a in user.assets.all():
@@ -1092,11 +1159,24 @@ def dashboard_view(request):
             })
 
     table_data_current_pension_payout = []
-    # 3. Pension payouts (Income, only if > 0)
+    # 3. Pension payouts (Income, only if > 0, including disability/survivor pensions before retirement)
     for p in user.pensions.all():
-        if p.start_payout_date and p.start_payout_date.replace(day=1) <= target_date:
-            p_sim = month_pension_payouts.get(str(p.id))
-            p_amt = p_sim if p_sim is not None else float(p.expected_payout_at_retirement or p.gross_payout or 0)
+        p_sim = month_pension_payouts.get(str(p.id))
+        if p_sim is not None and p_sim > 0:
+            p_amt = float(p_sim)
+            table_data_income.append({
+                'name': f"{_('Pension')}: {p.provider}", 
+                'amount': p_amt, 
+                'category': _('Pension'),
+                'type': _('Contract'),
+                'year': format_period(p.start_payout_date, None)
+            })
+            table_data_current_pension_payout.append({
+                'name': p.provider,
+                'amount': p_amt
+            })
+        elif p.start_payout_date and p.start_payout_date.replace(day=1) <= target_date:
+            p_amt = float(p.expected_payout_at_retirement or p.gross_payout or 0)
             if p_amt > 0:
                 table_data_income.append({
                     'name': f"{_('Pension')}: {p.provider}", 
@@ -1108,6 +1188,18 @@ def dashboard_view(request):
                 table_data_current_pension_payout.append({
                     'name': p.provider,
                     'amount': float(p_amt)
+                })
+
+    # 3b. Crisis Income (ALG I / Private BU Payout)
+    for cat_key in (str(_('Sozialleistungen & Transfers')), str(_('Versicherungsleistung'))):
+        for item_label, item_val in month_debug.get(cat_key, {}).items():
+            if item_val and float(item_val) > 0:
+                table_data_income.append({
+                    'name': item_label,
+                    'amount': float(item_val),
+                    'category': cat_key,
+                    'type': _('Simulation'),
+                    'year': continuous_label
                 })
 
     # 4. One-Time Income Events occurring at target_date month
@@ -1148,37 +1240,54 @@ def dashboard_view(request):
            (not cf.end_date or cf.end_date.replace(day=1) >= target_date):
             sim_val = month_cf_values.get(str(cf.id))
             amt = sim_val if sim_val is not None else (float(cf.value) if cf.frequency == 'monthly' else float(cf.value) / 12)
-            table_data_expense.append({
-                'name': cf.name, 
-                'amount': float(amt), 
-                'category': cf.category.translated_name if cf.category else _('Expense'),
-                'type': _('Manual'),
-                'year': str(cf.start_date.year) if cf.start_date else continuous_label
-            })
+            if amt > 0:
+                table_data_expense.append({
+                    'name': cf.name, 
+                    'amount': float(amt), 
+                    'category': cf.category.translated_name if cf.category else _('Expense'),
+                    'type': _('Manual'),
+                    'year': str(cf.start_date.year) if cf.start_date else continuous_label
+                })
 
-    # 2. Pension contributions (Expense)
+    # 2. Pension contributions (Expense, using actual simulated breakdown so paused contributions are hidden)
+    sparen_debug = month_debug.get("Sparen", {})
     for p in user.pensions.all():
         if p.monthly_contribution and p.monthly_contribution > 0:
             if not p.contribution_end_date or p.contribution_end_date.replace(day=1) > target_date:
-                table_data_expense.append({
-                    'name': f"{_('Contribution')}: {p.provider}", 
-                    'amount': float(p.monthly_contribution or 0), 
-                    'category': _('Savings'),
-                    'type': _('Contract'),
-                    'year': str(p.contribution_end_date.year) if p.contribution_end_date else continuous_label
-                })
+                p_contrib_sim = sparen_debug.get(f"Pension: {p.provider}")
+                if p_contrib_sim is not None and float(p_contrib_sim) > 0:
+                    table_data_expense.append({
+                        'name': f"{_('Contribution')}: {p.provider}", 
+                        'amount': float(p_contrib_sim), 
+                        'category': _('Savings'),
+                        'type': _('Contract'),
+                        'year': str(p.contribution_end_date.year) if p.contribution_end_date else continuous_label
+                    })
 
-    # 3. Loan installments (Expense)
+    # 2b. Crisis Expense (BU Pflege- & Therapiemehrbedarf)
+    bu_extra = month_debug.get("Gesundheit", {}).get(str(_('BU Pflege- & Therapiemehrbedarf')))
+    if bu_extra and float(bu_extra) > 0:
+        table_data_expense.append({
+            'name': str(_('BU Pflege- & Therapiemehrbedarf')),
+            'amount': float(bu_extra),
+            'category': _('Gesundheit'),
+            'type': _('Simulation'),
+            'year': continuous_label
+        })
+
+    # 3. Loan installments (Expense, using actual simulated installment so interest shock is shown)
+    kredit_debug = month_debug.get("Kredit", {})
     for l in user.loans.all():
-        l_state = next((item for item in forecast_data if item['date'] == target_date), None)
         if (not l.end_date or l.end_date.replace(day=1) >= target_date) and (l.start_date.replace(day=1) <= target_date):
-            table_data_expense.append({
-                'name': f"{_('Loan Installment')}: {l.name}", 
-                'amount': float(l.monthly_installment), 
-                'category': _('Loan'),
-                'type': _('Contract'),
-                'year': str(l.end_date.year) if l.end_date else continuous_label
-            })
+            l_sim_inst = kredit_debug.get(f"Loan: {l.name}", float(l.monthly_installment))
+            if float(l_sim_inst) > 0:
+                table_data_expense.append({
+                    'name': f"{_('Loan Installment')}: {l.name}", 
+                    'amount': float(l_sim_inst), 
+                    'category': _('Loan'),
+                    'type': _('Contract'),
+                    'year': str(l.end_date.year) if l.end_date else continuous_label
+                })
 
     # 4. Physical Asset storage costs (Expense)
     for pa in user.physical_assets.all():
@@ -1381,6 +1490,7 @@ def dashboard_view(request):
         'is_simulation_active': is_simulation_active,
         'risk_scenario_active': risk_scenario_active,
         'risk_scenario_summary': getattr(engine, 'risk_metrics', {}),
+        'kpi_deltas': kpi_deltas,
         'affected_charts': affected_charts,
         'current_net_worth': current_net_worth,
         'projected_net_worth': projected_net_worth,
