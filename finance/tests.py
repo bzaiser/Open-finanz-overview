@@ -311,13 +311,18 @@ class RiskAndInsuranceTests(TestCase):
 
 class TargetGroupSeedCommandsTests(TestCase):
     def test_seed_target_groups_and_render_pages(self):
-        call_command("seed_target_groups")
+        resp_seed = self.client.post(reverse("load_demo_family"), follow=True)
+        self.assertEqual(resp_seed.status_code, 200)
+        for uname in ("demo_familie", "gering", "allein", "student", "rentner"):
+            self.assertContains(resp_seed, uname)
+            u = CustomUser.objects.get(username=uname)
+            self.assertTrue(u.check_password(uname), f"Password mismatch for {uname}")
 
         usernames = [
-            "demo_geringverdiener",
-            "demo_alleinerziehend",
-            "demo_student",
-            "demo_fruehrentner",
+            "gering",
+            "allein",
+            "student",
+            "rentner",
         ]
         for uname in usernames:
             user = CustomUser.objects.get(username=uname)

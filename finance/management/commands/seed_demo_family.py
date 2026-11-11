@@ -14,7 +14,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         username = "demo_familie"
         email = "demo@finanzplan.local"
-        password = "DemoUser2026!"
+        password = username
 
         # 1. Create or update user
         user, created = CustomUser.objects.get_or_create(

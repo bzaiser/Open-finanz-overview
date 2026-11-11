@@ -6,6 +6,7 @@ from django.contrib.auth.views import LoginView
 from django.contrib.auth.decorators import login_required
 from django.core.management import call_command
 from django.views.decorators.http import require_POST
+from django.utils.html import format_html, format_html_join
 from django.utils.translation import gettext as _
 from django.utils import translation
 from .forms import CustomUserCreationForm, UserProfileForm, AppAuthenticationForm
@@ -36,14 +37,36 @@ class AppLoginView(LoginView):
 def load_demo_family_view(request):
     try:
         call_command('seed_demo_family')
-        user = CustomUser.objects.filter(username='demo_familie').first()
-        if user:
+        call_command('seed_target_groups')
+        demo_accounts = [
+            ('demo_familie', _('Familie (Standard)')),
+            ('gering', _('Geringverdiener')),
+            ('allein', _('Alleinerziehend')),
+            ('student', _('Student')),
+            ('rentner', _('Frührentner')),
+        ]
+        existing = [
+            (uname, label)
+            for uname, label in demo_accounts
+            if CustomUser.objects.filter(username=uname).exists()
+        ]
+        if existing:
+            list_items = format_html_join(
+                '',
+                '<li><strong>{}</strong> &ndash; {} ({}: <code>{}</code>)</li>',
+                [(uname, label, _('Passwort'), uname) for uname, label in existing],
+            )
             messages.success(
                 request,
-                _('Benutzer erfolgreich importiert! Benutzername: demo_familie | Passwort: DemoUser2026!')
+                format_html(
+                    '<strong>{}</strong> ({}):<ul class="mb-0 mt-1 ps-3">{}</ul>',
+                    _('Demo-Benutzer erfolgreich importiert'),
+                    _('Passwort ist jeweils gleich dem Benutzernamen'),
+                    list_items,
+                ),
             )
         else:
-            messages.error(request, _("Demo-Benutzer konnte nicht erstellt werden."))
+            messages.error(request, _("Demo-Benutzer konnten nicht erstellt werden."))
     except Exception as e:
         messages.error(request, f"{_('Fehler beim Laden der Demodaten')}: {e}")
     return redirect('login')

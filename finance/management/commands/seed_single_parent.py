@@ -11,12 +11,12 @@ class Command(BaseCommand):
     help = "Seeds demo_alleinerziehend: Single parent part-time with childcare costs, maintenance & BU/Term Life"
 
     def handle(self, *args, **options):
-        username = "demo_alleinerziehend"
+        username = "allein"
         user, _ = CustomUser.objects.get_or_create(
             username=username,
             defaults={'email': 'alleinerziehend@finanzplan.local', 'first_name': 'Anna', 'last_name': 'Keller'}
         )
-        user.set_password("DemoUser2026!")
+        user.set_password(username)
         user.save()
 
         profile, _ = UserProfile.objects.get_or_create(user=user)

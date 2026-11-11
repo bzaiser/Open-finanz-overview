@@ -11,12 +11,12 @@ class Command(BaseCommand):
     help = "Seeds demo_student: Student with BAföG, Minijob, shared flat rent & KfW student loan"
 
     def handle(self, *args, **options):
-        username = "demo_student"
+        username = "student"
         user, _ = CustomUser.objects.get_or_create(
             username=username,
             defaults={'email': 'student@finanzplan.local', 'first_name': 'Tim', 'last_name': 'Neumann'}
         )
-        user.set_password("DemoUser2026!")
+        user.set_password(username)
         user.save()
 
         profile, _ = UserProfile.objects.get_or_create(user=user)

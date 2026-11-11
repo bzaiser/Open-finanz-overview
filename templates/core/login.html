@@ -23,10 +23,10 @@
                     <form method="post" action="{% url 'load_demo_family' %}">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-outline-success w-100 py-2 fw-semibold shadow-sm">
-                            <i class="bi bi-people-fill me-1"></i> {% trans "Demouser mit Demodaten importieren" %}
+                            <i class="bi bi-people-fill me-1"></i> {% trans "Alle Demo-Profile mit Demodaten importieren" %}
                         </button>
                         <div class="form-text text-muted text-center mt-2 small">
-                            <i class="bi bi-exclamation-triangle text-warning me-1"></i>{% trans "Hinweis: Vorhandene Daten des Benutzers demo_familie werden dabei vorher gelöscht und zurückgesetzt." %}
+                            <i class="bi bi-exclamation-triangle text-warning me-1"></i>{% trans "Hinweis: Vorhandene Daten von demo_familie, gering, allein, student & rentner werden zurückgesetzt (Passwort = Benutzername)." %}
                         </div>
                     </form>
                 </div>

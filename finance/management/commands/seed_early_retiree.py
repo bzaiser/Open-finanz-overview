@@ -11,12 +11,12 @@ class Command(BaseCommand):
     help = "Seeds demo_fruehrentner: Early retiree / reduced earning capacity pension & healthcare gap focus"
 
     def handle(self, *args, **options):
-        username = "demo_fruehrentner"
+        username = "rentner"
         user, _ = CustomUser.objects.get_or_create(
             username=username,
             defaults={'email': 'fruehrentner@finanzplan.local', 'first_name': 'Sabine', 'last_name': 'Hoffmann'}
         )
-        user.set_password("DemoUser2026!")
+        user.set_password(username)
         user.save()
 
         profile, _ = UserProfile.objects.get_or_create(user=user)
