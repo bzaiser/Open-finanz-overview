@@ -1929,7 +1929,7 @@ def import_search_as_group(request, batch_id):
     make_recurring = request.POST.get('make_recurring') == 'on'  # Checkbox value
     
     if not (q and target_name and category_id):
-        return HttpResponse('<div class="alert alert-danger small">Bitte alle Felder ausfÃ¼llen.</div>', status=400)
+        return HttpResponse('<div class="alert alert-danger small">Bitte alle Felder ausfüllen.</div>', status=400)
     
     category = get_object_or_404(Category, id=category_id)
     
@@ -2242,7 +2242,7 @@ def delete_all_import_history(request):
     cache_key = f"import_progress_{request.user.id}"
     cache.delete(cache_key)
     
-    messages.success(request, _(f"Gesamte Import-Historie ({count} Batches) wurde gelÃ¶scht."))
+    messages.success(request, _("Gesamte Import-Historie (%(count)s Batches) wurde gelöscht.") % {'count': count})
     return redirect('finance:import_transactions')
 def dynamic_theme_css(request):
     """
@@ -2580,7 +2580,7 @@ def cash_flow_list(request):
                 'frequency': 'monthly',
                 'frequency_display': str(_('Monthly')),
                 'category_id': None,
-                'category_name': 'VermÃ¶gen',
+                'category_name': 'Vermögen',
                 'category_translated': str(_('Asset withdrawal')),
                 'start_date': a.withdrawal_start_date,
                 'end_date': None,

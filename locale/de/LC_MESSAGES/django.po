@@ -4684,3 +4684,549 @@ msgstr "Neues Konto/Depot"
 
 msgid "New Physical Asset"
 msgstr "Neuer Sachwert"
+
+msgid "-- No Plan Matching --"
+msgstr "-- Kein Plan-Abgleich --"
+
+msgid "-- Select Real Estate --"
+msgstr "-- Immobilie wählen --"
+
+msgid "1. Open Items (To be assigned)"
+msgstr "1. Offene Posten (zuzuordnen)"
+
+msgid "2. Preview: Ready to Import (Summarized)"
+msgstr "2. Vorschau: Bereit zum Import (Zusammengefasst)"
+
+msgid "AI Diagnosis & Status"
+msgstr "KI-Diagnose & Status"
+
+msgid "AI is analyzing data..."
+msgstr "KI analysiert Daten..."
+
+msgid "Active Loans & Debts"
+msgstr "Aktive Kredite & Schulden"
+
+msgid "Administration"
+msgstr "Administration"
+
+msgid "All"
+msgstr "Alle"
+
+msgid "All items assigned!"
+msgstr "Alle Posten zugeordnet!"
+
+msgid "Analysis complete - View transactions"
+msgstr "Analyse abgeschlossen – Transaktionen ansehen"
+
+msgid "Analysis failed"
+msgstr "Analyse fehlgeschlagen"
+
+msgid "Analysis in progress..."
+msgstr "Analyse läuft..."
+
+msgid "Ancillary Costs"
+msgstr "Nebenkosten"
+
+msgid "Annual adjustment completed successfully."
+msgstr "Jährliche Anpassung erfolgreich abgeschlossen."
+
+msgid "Are you sure you want to delete this cash flow entry?"
+msgstr "Möchtest du diesen Cashflow-Eintrag wirklich löschen?"
+
+msgid "Are you sure you want to delete this pension entry?"
+msgstr "Möchtest du diesen Vorsorge-Eintrag wirklich löschen?"
+
+msgid "Asset created successfully."
+msgstr "Vermögenswert erfolgreich angelegt."
+
+msgid "Asset updated successfully."
+msgstr "Vermögenswert erfolgreich aktualisiert."
+
+msgid "Assumed Tax Rate"
+msgstr "Angenommener Steuersatz"
+
+msgid "Back to Dashboard"
+msgstr "Zurück zum Dashboard"
+
+msgid "Back to Import"
+msgstr "Zurück zum Import"
+
+msgid "Back to Transaction Review"
+msgstr "Zurück zur Transaktionsprüfung"
+
+msgid "Back to Upload"
+msgstr "Zurück zum Upload"
+
+msgid "Basis V+V Result"
+msgstr "Ergebnis Anlage V+V"
+
+msgid "Birth Date (Person 1)"
+msgstr "Geburtsdatum (Person 1)"
+
+msgid "CSV Export"
+msgstr "CSV-Export"
+
+msgid "Cache & Maintenance"
+msgstr "Cache & Wartung"
+
+msgid "Cancel analysis & Delete"
+msgstr "Analyse abbrechen & löschen"
+
+msgid "Cash flow entry deleted."
+msgstr "Cashflow-Eintrag gelöscht."
+
+msgid "Cash flow entry saved successfully."
+msgstr "Cashflow-Eintrag erfolgreich gespeichert."
+
+msgid "Choose color"
+msgstr "Farbe wählen"
+
+msgid "Clean up the open items above until they are correctly summarized in the import preview below."
+msgstr "Bereinige die offenen Posten oben, bis sie in der Import-Vorschau unten korrekt zusammengefasst sind."
+
+msgid "Clear History"
+msgstr "Verlauf leeren"
+
+msgid "Click to toggle group"
+msgstr "Klicken zum Auf-/Zuklappen der Gruppe"
+
+msgid "Color (Default: Gray)"
+msgstr "Farbe (Standard: Grau)"
+
+msgid "Condition"
+msgstr "Bedingung"
+
+msgid "Conflict: An entry for this year already exists in the plan!"
+msgstr "Konflikt: Für dieses Jahr existiert bereits ein Eintrag im Plan!"
+
+msgid "Conflicts (will be skipped)"
+msgstr "Konflikte (werden übersprungen)"
+
+msgid "Content"
+msgstr "Inhalt"
+
+msgid "Copied!"
+msgstr "Kopiert!"
+
+msgid "Copy All"
+msgstr "Alle kopieren"
+
+msgid "Copy Template from Booking"
+msgstr "Vorlage aus Buchung übernehmen"
+
+msgid "Count"
+msgstr "Anzahl"
+
+msgid "Create New Filter"
+msgstr "Neuen Filter erstellen"
+
+msgid "Create category"
+msgstr "Kategorie erstellen"
+
+msgid "Create new category"
+msgstr "Neue Kategorie erstellen"
+
+msgid "Create new plan entry"
+msgstr "Neuen Planeintrag erstellen"
+
+msgid "Create plan entry"
+msgstr "Planeintrag erstellen"
+
+msgid "Dashboard & Settings"
+msgstr "Dashboard & Einstellungen"
+
+msgid "Define rules to automatically group transactions."
+msgstr "Regeln definieren, um Transaktionen automatisch zu gruppieren."
+
+msgid "Delete all temporary data"
+msgstr "Alle temporären Daten löschen"
+
+msgid "Details / Note"
+msgstr "Details / Notiz"
+
+msgid "Do you really want to cancel the analysis? All data from this import will be deleted."
+msgstr "Möchtest du die Analyse wirklich abbrechen? Alle Daten dieses Imports werden gelöscht."
+
+msgid "Do you really want to delete all unmerged imports?"
+msgstr "Möchtest du wirklich alle noch nicht übernommenen Importe löschen?"
+
+msgid "Do you really want to delete the entire import history (all open and applied batches)?"
+msgstr "Möchtest du wirklich den gesamten Import-Verlauf (alle offenen und übernommenen Läufe) löschen?"
+
+msgid "Do you really want to import all currently filtered transactions as one group?"
+msgstr "Möchtest du wirklich alle aktuell gefilterten Transaktionen als eine Gruppe importieren?"
+
+msgid "Earliest date to show in charts. Leave empty for automatic (based on oldest snapshot or current year)."
+msgstr "Frühestes Datum in Diagrammen. Leer lassen für Automatik (ältester Stichtag oder aktuelles Jahr)."
+
+msgid "Edit Filter"
+msgstr "Filter bearbeiten"
+
+msgid "Editable Page Content"
+msgstr "Bearbeitbarer Seiteninhalt"
+
+msgid "Editable Page Contents"
+msgstr "Bearbeitbare Seiteninhalte"
+
+msgid "Error saving"
+msgstr "Fehler beim Speichern"
+
+msgid "Error saving asset"
+msgstr "Fehler beim Speichern des Vermögenswerts"
+
+msgid "Error saving entry. Please check your inputs."
+msgstr "Fehler beim Speichern des Eintrags. Bitte überprüfe deine Eingaben."
+
+msgid "Error saving pension entry. Please check your inputs."
+msgstr "Fehler beim Speichern des Vorsorge-Eintrags. Bitte überprüfe deine Eingaben."
+
+msgid "Error saving physical asset"
+msgstr "Fehler beim Speichern des Sachwerts"
+
+msgid "Error saving snapshot"
+msgstr "Fehler beim Speichern des Stichtagswerts"
+
+msgid "Fallback & Forecasts"
+msgstr "Fallback & Prognosen"
+
+msgid "Filter Suggestions:"
+msgstr "Filter-Vorschläge:"
+
+msgid "Gross Rent by Property"
+msgstr "Bruttomiete nach Objekt"
+
+msgid "Here you can check if your API keys are correctly configured and the AI services are responding."
+msgstr "Hier kannst du prüfen, ob deine API-Keys korrekt konfiguriert sind und die KI-Dienste antworten."
+
+msgid "Hide Setup Wizard on Startup"
+msgstr "Einrichtungs-Wizard beim Start ausblenden"
+
+msgid "Highlight the part above (e.g. 'REWE') that is relevant for the filter."
+msgstr "Markiere oben den Textteil (z. B. 'REWE'), der für den Filter relevant ist."
+
+msgid "Historical record date saved successfully."
+msgstr "Historischer Stichtag erfolgreich gespeichert."
+
+msgid "Historical snapshot saved successfully."
+msgstr "Historischer Stichtagswert erfolgreich gespeichert."
+
+msgid "If both keys are missing, the system uses a simple keyword match. For best results, you should provide a Groq key (free) in your .env file."
+msgstr "Wenn beide Keys fehlen, nutzt das System einen einfachen Stichwortvergleich. Für beste Ergebnisse solltest du einen (kostenlosen) Groq-Key in deiner .env-Datei hinterlegen."
+
+msgid "If linked, the system warns about price deviations > 2%."
+msgstr "Bei Verknüpfung warnt das System bei Preisabweichungen > 2 %."
+
+msgid "Import Notes"
+msgstr "Import-Hinweise"
+
+msgid "Import now"
+msgstr "Jetzt importieren"
+
+msgid "Income?"
+msgstr "Einnahme?"
+
+msgid "Interest Lock Alert"
+msgstr "Zinsbindungs-Hinweis"
+
+msgid "Invalid date or percentage value."
+msgstr "Ungültiges Datum oder ungültiger Prozentwert."
+
+msgid "Invalid value or date format"
+msgstr "Ungültiger Wert oder ungültiges Datumsformat"
+
+msgid "Key present"
+msgstr "Schlüssel vorhanden"
+
+msgid "Link with Finance Plan (Matching)"
+msgstr "Mit Finanzplan verknüpfen (Abgleich)"
+
+msgid "Linked with Finance Plan"
+msgstr "Mit Finanzplan verknüpft"
+
+msgid "Loan Name"
+msgstr "Kreditname"
+
+msgid "Main model for categorization"
+msgstr "Hauptmodell für Kategorisierung"
+
+msgid "Maintenance/Costs"
+msgstr "Instandhaltung / Kosten"
+
+msgid "Manage Import Filters"
+msgstr "Import-Filter verwalten"
+
+msgid "Mark as expense"
+msgstr "Als Ausgabe markieren"
+
+msgid "Mark as income"
+msgstr "Als Einnahme markieren"
+
+msgid "Move back up"
+msgstr "Nach oben verschieben"
+
+msgid "New Category"
+msgstr "Neue Kategorie"
+
+msgid "New Plan Entry"
+msgstr "Neuer Planeintrag"
+
+msgid "No filters defined yet."
+msgstr "Noch keine Filter definiert."
+
+msgid "No key found"
+msgstr "Kein Schlüssel gefunden"
+
+msgid "No matching components found."
+msgstr "Keine passenden Bauteile gefunden."
+
+msgid "No matching documents found."
+msgstr "Keine passenden Dokumente gefunden."
+
+msgid "No matching income or expense entries found."
+msgstr "Keine passenden Einnahmen oder Ausgaben gefunden."
+
+msgid "No matching loans found."
+msgstr "Keine passenden Kredite gefunden."
+
+msgid "No matching records found."
+msgstr "Keine passenden Einträge gefunden."
+
+msgid "No rented properties."
+msgstr "Keine vermieteten Objekte."
+
+msgid "No transactions ready for import yet. Assign filters above."
+msgstr "Noch keine Transaktionen zum Import bereit. Weise oben Filter zu."
+
+msgid "No transactions ready yet."
+msgstr "Noch keine Transaktionen bereit."
+
+msgid "Note:"
+msgstr "Hinweis:"
+
+msgid "Optional"
+msgstr "Optional"
+
+msgid "Overnight & Money Market"
+msgstr "Tagesgeld / Geldmarkt"
+
+msgid "Overwrite?"
+msgstr "Überschreiben?"
+
+msgid "Page"
+msgstr "Seite"
+
+msgid "Pension entry deleted."
+msgstr "Vorsorge-Eintrag gelöscht."
+
+msgid "Pension entry saved successfully."
+msgstr "Vorsorge-Eintrag erfolgreich gespeichert."
+
+msgid "Person 1 (Main)"
+msgstr "Person 1 (Hauptperson)"
+
+msgid "Person 2 (Partner)"
+msgstr "Person 2 (Partner/in)"
+
+msgid "Personal info"
+msgstr "Persönliche Daten"
+
+msgid "Physical Assets (Real)"
+msgstr "Sachwerte (Physisch)"
+
+msgid "Physical asset"
+msgstr "Sachwert"
+
+msgid "Physical asset created successfully."
+msgstr "Sachwert erfolgreich angelegt."
+
+msgid "Physical asset updated successfully."
+msgstr "Sachwert erfolgreich aktualisiert."
+
+msgid "Plan Conflict"
+msgstr "Plan-Konflikt"
+
+msgid "Planning & Simulation"
+msgstr "Planung & Simulation"
+
+msgid "Please select at least one entry and specify a valid new start date."
+msgstr "Bitte mindestens einen Eintrag auswählen und ein gültiges neues Startdatum angeben."
+
+msgid "Previous Imports"
+msgstr "Bisherige Importe"
+
+msgid "Projected regular old-age pension ('Sollten bis zum Rentenbeginn Beiträge wie in den letzten 5 Jahren gezahlt werden...')"
+msgstr "Hochgerechnete Regelaltersrente ('Sollten bis zum Rentenbeginn Beiträge wie in den letzten 5 Jahren gezahlt werden...')"
+
+msgid "Projects your desired pension target into the future using the annual inflation rate stored in your profile."
+msgstr "Projiziert deine gewünschte Zielrente mit der im Profil hinterlegten jährlichen Inflationsrate in die Zukunft."
+
+msgid "Real Estate Property"
+msgstr "Immobilie"
+
+msgid "Really discard this summarized item?"
+msgstr "Diesen zusammengefassten Posten wirklich verwerfen?"
+
+msgid "Reconciliation & Import"
+msgstr "Abgleich & Import"
+
+msgid "Record date snapshot deleted."
+msgstr "Stichtagswert gelöscht."
+
+msgid "Reserves by Property"
+msgstr "Rücklagen nach Objekt"
+
+msgid "Reset Search"
+msgstr "Suche zurücksetzen"
+
+msgid "Retirement Age (Person 1)"
+msgstr "Rentenalter (Person 1)"
+
+msgid "Review & Assign"
+msgstr "Prüfen & Zuordnen"
+
+msgid "Save Filter"
+msgstr "Filter speichern"
+
+msgid "Save changes"
+msgstr "Änderungen speichern"
+
+msgid "Search & Group (e.g. Aldi)..."
+msgstr "Suchen & Gruppieren (z. B. Aldi)..."
+
+msgid "Search Terms (separated by ; )"
+msgstr "Suchbegriffe (getrennt durch ;)"
+
+msgid "Search Terms (separated by ;)"
+msgstr "Suchbegriffe (getrennt durch ;)"
+
+msgid "Section Key"
+msgstr "Abschnitts-Schlüssel"
+
+msgid "Select category..."
+msgstr "Kategorie wählen..."
+
+msgid "Select text and paste above"
+msgstr "Text markieren und oben einfügen"
+
+msgid "Select the concrete asset to create a snapshot for. This will automatically fill the Type and ID fields."
+msgstr "Wähle den konkreten Vermögenswert für den Stichtag aus. Typ und ID werden automatisch ausgefüllt."
+
+msgid "Simulation"
+msgstr "Simulation"
+
+msgid "Simulation Max Age"
+msgstr "Simulations-Höchstalter"
+
+msgid "Simulation Parameters"
+msgstr "Simulationsparameter"
+
+msgid "Simulation Start Date"
+msgstr "Simulations-Startdatum"
+
+msgid "Snapshot deleted successfully."
+msgstr "Stichtagswert erfolgreich gelöscht."
+
+msgid "Start Analysis"
+msgstr "Analyse starten"
+
+msgid "Status Check"
+msgstr "Status-Prüfung"
+
+msgid "Status..."
+msgstr "Status..."
+
+msgid "Storage"
+msgstr "Speicher / Lagerung"
+
+msgid "Sum"
+msgstr "Summe"
+
+msgid "Sum from contracts"
+msgstr "Summe aus Verträgen"
+
+msgid "Supported formats: .xlsx, .xls"
+msgstr "Unterstützte Formate: .xlsx, .xls"
+
+msgid "System"
+msgstr "System"
+
+msgid "Table Filter BG"
+msgstr "Tabellenfilter-Hintergrund"
+
+msgid "Table Filter Background"
+msgstr "Tabellenfilter-Hintergrund"
+
+msgid "Take all filtered as GROUP"
+msgstr "Alle Gefilterten als GRUPPE übernehmen"
+
+msgid "Take into Finance Plan"
+msgstr "In Finanzplan übernehmen"
+
+msgid "Target Allocation by Property"
+msgstr "Ziel-Allokation nach Objekt"
+
+msgid "Target Monthly Pension Payout (€)"
+msgstr "Gewünschte monatliche Zielrente (€)"
+
+msgid "Target Name (e.g. Groceries)"
+msgstr "Zielname (z. B. Lebensmittel)"
+
+msgid "Target net monthly payout at retirement for pension gap analysis."
+msgstr "Gewünschte monatliche Nettorente im Ruhestand für die Rentenlücken-Analyse."
+
+msgid "Target retirement age for planning and gap calculation (default 67)"
+msgstr "Geplantes Renteneintrittsalter für Planung und Lückenberechnung (Standard 67)"
+
+msgid "Tax Results & Deductions per Property (Anlage V)"
+msgstr "Steuerergebnisse & Abzüge je Objekt (Anlage V)"
+
+msgid "The AI automatically recognizes income, expenses, and recurring subscriptions/salaries."
+msgstr "Die KI erkennt automatisch Einnahmen, Ausgaben sowie wiederkehrende Abos und Gehälter."
+
+msgid "The spreadsheet should contain columns for Date, Purpose, and Amount."
+msgstr "Die Tabelle sollte Spalten für Datum, Verwendungszweck und Betrag enthalten."
+
+msgid "Theme & Styling"
+msgstr "Design & Farben"
+
+msgid "This import has already been applied."
+msgstr "Dieser Import wurde bereits übernommen."
+
+msgid "Title"
+msgstr "Titel"
+
+msgid "Unmarked conflicts will be skipped during import."
+msgstr "Nicht markierte Konflikte werden beim Import übersprungen."
+
+msgid "Update Simulation"
+msgstr "Simulation aktualisieren"
+
+msgid "Upload"
+msgstr "Hochladen"
+
+msgid "User"
+msgstr "Benutzer"
+
+msgid "Version"
+msgstr "Version"
+
+msgid "Years"
+msgstr "Jahre"
+
+msgid "You can now final review and save the import below."
+msgstr "Du kannst den Import unten abschließend prüfen und speichern."
+
+msgid "Your data is being categorized by AI. Please do not close this window."
+msgstr "Deine Daten werden von der KI kategorisiert. Bitte schließe dieses Fenster nicht."
+
+msgid "e.g. 123456789"
+msgstr "z. B. 123456789"
+
+msgid "e.g. Statutory Pension, Allianz Riester"
+msgstr "z. B. Gesetzliche Rente, Allianz Riester"
+
+msgid "entries updated and copied."
+msgstr "Einträge aktualisiert und kopiert."
+
+msgid "ETF Savings Plan & Compound Interest Calculator"
+msgstr "ETF-Sparplan & Zinseszins Rechner"

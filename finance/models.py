@@ -78,7 +78,7 @@ class CashFlowSource(models.Model):
 class Asset(models.Model):
     ASSET_TYPE_CHOICES = [
         ('cash', _('Cash & Checking')),
-        ('overnight', _('Overnight & Emergency Fund')),
+        ('overnight', _('Overnight & Money Market')),
         ('depot', _('Securities & ETF Depot')),
         ('crypto', _('Cryptocurrencies (Bitcoin / Altcoins)')),
         ('precious_metal', _('Precious Metals (Gold / Silver)')),
@@ -129,7 +129,7 @@ class Pension(models.Model):
         ('capital', _('Kapital- / Private Rentenversicherung')),
         ('statutory', _('Gesetzliche Rente (DRV)')),
         ('civil_service', _('Beamtenpension / Ruhegehalt')),
-        ('occupational_fund', _('BerufsstÃ¤ndisches Versorgungswerk / VBL')),
+        ('occupational_fund', _('Berufsständisches Versorgungswerk / VBL')),
     ]
 
     PAYOUT_TYPE_CHOICES = [
@@ -150,13 +150,13 @@ class Pension(models.Model):
     # Statutory pension fields
     pension_points = models.DecimalField(_("Pension Points (Entgeltpunkte)"), max_digits=8, decimal_places=4, null=True, blank=True, help_text=_("Number of statutory pension points accumulated"))
     point_value = models.DecimalField(_("Point Value (€)"), max_digits=6, decimal_places=2, null=True, blank=True, help_text=_("Value of 1 pension point in EUR (e.g. 40.79)"))
-    gross_payout_amount = models.DecimalField(_("Gross Monthly Payout (â‚¬)"), max_digits=10, decimal_places=2, null=True, blank=True, help_text=_("Calculated automatically from points * point_value, or enter manually"))
+    gross_payout_amount = models.DecimalField(_("Gross Monthly Payout (€)"), max_digits=10, decimal_places=2, null=True, blank=True, help_text=_("Calculated automatically from points * point_value, or enter manually"))
     social_deduction_rate = models.DecimalField(_("Social Security Deduction (%)"), max_digits=5, decimal_places=2, default=11.50, help_text=_("Deduction percentage for health & nursing care insurance (~11.5%)"))
-    disability_pension_net = models.DecimalField(_("Disability Pension Net (â‚¬/month)"), max_digits=10, decimal_places=2, blank=True, null=True, help_text=_("Pension in case of full reduction in earning capacity ('WÃ¤ren Sie heute voll erwerbsgemindert...')"))
+    disability_pension_net = models.DecimalField(_("Disability Pension Net (€/month)"), max_digits=10, decimal_places=2, blank=True, null=True, help_text=_("Pension in case of full reduction in earning capacity ('Wären Sie heute voll erwerbsgemindert...')"))
 
-    expected_payout_at_retirement = models.DecimalField(_("Expected Monthly Net Payout"), max_digits=10, decimal_places=2, blank=True, null=True, help_text=_("Projected regular old-age pension ('Sollten bis zum Rentenbeginn BeitrÃ¤ge gezahlt werden...')"))
+    expected_payout_at_retirement = models.DecimalField(_("Expected Monthly Net Payout"), max_digits=10, decimal_places=2, blank=True, null=True, help_text=_("Projected regular old-age pension ('Sollten bis zum Rentenbeginn Beiträge gezahlt werden...')"))
     retirement_age = models.PositiveIntegerField(_("Retirement Age"), blank=True, null=True, help_text=_("Target retirement age for this specific pension contract (e.g. 67)"))
-    target_pension_payout = models.DecimalField(_("Target Monthly Payout (â‚¬)"), max_digits=12, decimal_places=2, blank=True, null=True, help_text=_("Target net monthly payout desired for this specific contract"))
+    target_pension_payout = models.DecimalField(_("Target Monthly Payout (€)"), max_digits=12, decimal_places=2, blank=True, null=True, help_text=_("Target net monthly payout desired for this specific contract"))
     is_indexed = models.BooleanField(_("Indexed (Inflation Adjustment)"), default=True, help_text=_("If checked, the payout will increase annually based on the global pension increase rate."))
     contribution_end_date = models.DateField(verbose_name=_("Contribution End Date"), blank=True, null=True, help_text=_("Date when you stop paying into this pension"))
     start_payout_date = models.DateField(_("Payout Start Date"), blank=True, null=True, help_text=_("Approximate date when pension payout starts"))

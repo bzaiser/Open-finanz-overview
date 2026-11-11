@@ -1,5 +1,7 @@
+import json
 from django.contrib import admin
 from django import forms
+from django.db.models import Q
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from .models import Category, CashFlowSource, Asset, OneTimeEvent, Pension, FinancialStatusProxy, PhysicalAsset, RealEstate, Loan, LoanExtraRepayment, AssetSnapshot, PropertyComponent, PropertyDocument, InsurancePolicy
@@ -737,9 +739,124 @@ class AssetSnapshotAdmin(BaseOwnedModelAdmin):
         )
 
 
+class InsurancePolicyAdminForm(forms.ModelForm):
+    class Meta:
+        model = InsurancePolicy
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super().__init__(*args, **kwargs)
+        if 'linked_cash_flow' not in self.fields:
+            return
+
+        selected_user_id = None
+        if self.is_bound and 'user' in self.data and self.data.get('user'):
+            selected_user_id = self.data.get('user')
+        elif self.instance and self.instance.pk and self.instance.user_id:
+            selected_user_id = self.instance.user_id
+        elif self.initial.get('user'):
+            selected_user_id = self.initial.get('user')
+        elif self.request and self.request.user.is_authenticated:
+            selected_user_id = self.request.user.pk
+
+        already_linked_qs = InsurancePolicy.objects.filter(linked_cash_flow__isnull=False)
+        if self.instance and self.instance.pk:
+            already_linked_qs = already_linked_qs.exclude(pk=self.instance.pk)
+        linked_by_other = {
+            p.linked_cash_flow_id: p.name
+            for p in already_linked_qs.only('linked_cash_flow_id', 'name')
+        }
+        self._linked_by_other = linked_by_other
+
+        cf_filter = Q(user_id=selected_user_id, is_income=False) if selected_user_id else Q(pk__isnull=True)
+        if self.instance and self.instance.pk and self.instance.linked_cash_flow_id:
+            cf_filter = cf_filter | Q(pk=self.instance.linked_cash_flow_id)
+
+        qs = CashFlowSource.objects.filter(cf_filter).order_by('name')
+        self.fields['linked_cash_flow'].queryset = qs
+
+        widget = self.fields['linked_cash_flow'].widget
+        inner_widget = getattr(widget, 'widget', widget)
+        orig_create_option = inner_widget.create_option
+
+        def create_option_with_disabled(name, value, label, selected, index, subindex=None, attrs=None):
+            option = orig_create_option(name, value, label, selected, index, subindex=subindex, attrs=attrs)
+            raw_val = getattr(value, 'value', value)
+            if raw_val not in (None, ''):
+                try:
+                    pk = int(raw_val)
+                except (TypeError, ValueError):
+                    pk = None
+                if pk and pk in linked_by_other:
+                    option['attrs']['disabled'] = 'disabled'
+                    option['label'] = f"{option['label']} ({_('bereits verknüpft')}: {linked_by_other[pk]})"
+            return option
+
+        inner_widget.create_option = create_option_with_disabled
+
+        is_superuser = bool(self.request and self.request.user.is_superuser)
+        if is_superuser:
+            meta_qs = CashFlowSource.objects.filter(is_income=False).order_by('name')
+        elif self.request and self.request.user.is_authenticated:
+            meta_qs = CashFlowSource.objects.filter(user=self.request.user, is_income=False).order_by('name')
+        else:
+            meta_qs = qs
+
+        if self.instance and self.instance.pk and self.instance.linked_cash_flow_id:
+            meta_qs = meta_qs | CashFlowSource.objects.filter(pk=self.instance.linked_cash_flow_id)
+
+        cashflows_meta = [
+            {
+                'id': cf.pk,
+                'user_id': cf.user_id,
+                'label': str(cf),
+                'value': f"{cf.value:.2f}" if cf.value is not None else "0.00",
+                'frequency': cf.frequency,
+                'is_disabled': cf.pk in linked_by_other,
+                'linked_policy': linked_by_other.get(cf.pk, ''),
+            }
+            for cf in meta_qs.distinct()
+        ]
+        cashflows_json = json.dumps(cashflows_meta)
+        widget.attrs['data-cashflows'] = cashflows_json
+        if inner_widget is not widget:
+            inner_widget.attrs['data-cashflows'] = cashflows_json
+
+    def clean_linked_cash_flow(self):
+        cf = self.cleaned_data.get('linked_cash_flow')
+        if cf and cf.pk in getattr(self, '_linked_by_other', {}):
+            raise forms.ValidationError(
+                _("Dieser Cashflow-Eintrag ist bereits mit '%(policy)s' verknüpft.") % {
+                    'policy': self._linked_by_other[cf.pk]
+                }
+            )
+        return cf
+
+
 @admin.register(InsurancePolicy)
 class InsurancePolicyAdmin(BaseOwnedModelAdmin):
+    form = InsurancePolicyAdminForm
     list_display = ('name', 'user', 'insurance_type', 'insured_person', 'provider', 'premium_amount', 'payment_frequency', 'coverage_lump_sum', 'coverage_monthly_payout', 'is_active')
     list_filter = ('insurance_type', 'insured_person', 'is_active', 'user')
     list_select_related = ('user',)
     search_fields = ('name', 'provider', 'policy_number')
+
+    def get_changeform_initial_data(self, request):
+        initial = super().get_changeform_initial_data(request)
+        if 'user' not in initial and request.user.is_authenticated:
+            initial['user'] = request.user.pk
+        return initial
+
+    def get_form(self, request, obj=None, **kwargs):
+        FormClass = super().get_form(request, obj, **kwargs)
+
+        class RequestBoundInsurancePolicyForm(FormClass):
+            def __init__(self, *args, **form_kwargs):
+                form_kwargs['request'] = request
+                super().__init__(*args, **form_kwargs)
+
+        return RequestBoundInsurancePolicyForm
+
+    class Media:
+        js = ('js/admin_insurance_policy.js',)

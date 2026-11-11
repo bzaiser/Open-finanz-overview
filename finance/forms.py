@@ -1,4 +1,6 @@
-﻿from django import forms
+﻿from decimal import Decimal
+
+from django import forms
 from django.utils.translation import gettext_lazy as _
 
 class BankImportForm(forms.Form):
@@ -251,6 +253,33 @@ class AssetForm(forms.ModelForm):
             'withdrawal_amount': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
             'withdrawal_start_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['growth_rate'].required = False
+        self.fields['monthly_savings_amount'].required = False
+        self.fields['withdrawal_amount'].required = False
+        if self.is_bound:
+            for optional_modal_field in (
+                'interest_teaser_rate',
+                'interest_teaser_until',
+                'withdrawal_amount',
+                'withdrawal_start_date',
+            ):
+                if optional_modal_field not in self.data:
+                    self.fields.pop(optional_modal_field, None)
+
+    def clean_growth_rate(self):
+        val = self.cleaned_data.get('growth_rate')
+        return Decimal('0.00') if val is None else val
+
+    def clean_monthly_savings_amount(self):
+        val = self.cleaned_data.get('monthly_savings_amount')
+        return Decimal('0.00') if val is None else val
+
+    def clean_withdrawal_amount(self):
+        val = self.cleaned_data.get('withdrawal_amount')
+        return Decimal('0.00') if val is None else val
 
 class PhysicalAssetForm(forms.ModelForm):
     class Meta:

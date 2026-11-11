@@ -415,7 +415,7 @@
                                     <select x-model="assetFilters.asset_type" class="form-select form-select-sm border-0 bg-white bg-opacity-10 text-body">
                                         <option value="">{% trans 'All Classes' %}</option>
                                         <option value="cash">{% trans 'Cash & Checking' %}</option>
-                                        <option value="overnight">{% trans 'Overnight & Emergency' %}</option>
+                                        <option value="overnight">{% trans 'Overnight & Money Market' %}</option>
                                         <option value="depot">{% trans 'ETF & Stocks Depot' %}</option>
                                         <option value="crypto">{% trans 'Crypto' %}</option>
                                         <option value="precious_metal">{% trans 'Precious Metals' %}</option>
@@ -569,7 +569,7 @@
             <!-- 1. Zinseszins & ETF Sparplan Rechner -->
             <div class="col-12 col-lg-6">
                 <div class="card border-0 shadow-sm rounded-4 p-4 h-100" style="background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color);">
-                    <h5 class="fw-bold mb-1"><i class="bi bi-calculator text-primary me-2"></i>{% trans "ETF Savings Plan & Compound Interest Simulation" %}</h5>
+                    <h5 class="fw-bold mb-1"><i class="bi bi-calculator text-primary me-2"></i>{% trans "ETF Savings Plan & Compound Interest Calculator" %}</h5>
                     <p class="text-muted small mb-4">{% trans "Calculate final capital based on initial investment, monthly savings and expected return." %}</p>
 
                     <div class="row g-3">
@@ -587,7 +587,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-bold">{% trans "Investment Horizon (Years)" %}</label>
-                            <input type="number" min="1" max="40" x-model.number="sim.years" class="form-control font-monospace">
+                            <input type="number" min="0" max="40" x-model.number="sim.years" class="form-control font-monospace">
                         </div>
                     </div>
 
@@ -666,7 +666,7 @@
                                 <label class="form-label small fw-bold">{% trans "Asset Class / Type" %}</label>
                                 <select name="asset_type" x-model="assetForm.asset_type" class="form-select">
                                     <option value="cash">{% trans "Cash & Checking" %}</option>
-                                    <option value="overnight">{% trans "Overnight & Emergency Fund" %}</option>
+                                    <option value="overnight">{% trans "Overnight & Money Market" %}</option>
                                     <option value="depot">{% trans "Securities & ETF Depot" %}</option>
                                     <option value="crypto">{% trans "Cryptocurrencies (Bitcoin & Co.)" %}</option>
                                     <option value="precious_metal">{% trans "Precious Metals (Gold / Silver)" %}</option>
@@ -875,10 +875,10 @@ function assetsOverviewApp() {
 
         // Simulation State
         sim: {
-            initial: 25000,
-            monthly: 500,
-            rate: 7.0,
-            years: 15
+            initial: 0,
+            monthly: 0,
+            rate: 0,
+            years: 0
         },
 
         init() {
@@ -1022,7 +1022,7 @@ function assetsOverviewApp() {
             const P = Number(this.sim.initial) || 0;
             const PMT = Number(this.sim.monthly) || 0;
             const r = (Number(this.sim.rate) || 0) / 100.0 / 12.0;
-            const n = (Number(this.sim.years) || 1) * 12;
+            const n = Math.max(0, Number(this.sim.years) || 0) * 12;
 
             let balance = P;
             let totalDeposited = P;

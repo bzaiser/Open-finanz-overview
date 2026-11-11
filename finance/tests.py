@@ -353,3 +353,153 @@ class TargetGroupSeedCommandsTests(TestCase):
 
             r_assets = self.client.get(reverse("finance:assets_overview"))
             self.assertEqual(r_assets.status_code, 200, f"Assets overview failed for {uname}")
+
+
+class InsurancePolicyAdminTests(TestCase):
+    def setUp(self):
+        self.admin_user = CustomUser.objects.create_superuser(
+            username="admin_u", email="a@example.com", password="AdminPassword123!"
+        )
+        self.other_user = CustomUser.objects.create_user(
+            username="other_u", email="o@example.com", password="OtherPassword123!"
+        )
+        self.admin_cf_free = CashFlowSource.objects.create(
+            user=self.admin_user, name="Haftpflicht Frei", value=Decimal("9.90"), is_income=False, frequency="monthly"
+        )
+        self.admin_cf_linked = CashFlowSource.objects.create(
+            user=self.admin_user, name="BU Verknüpft", value=Decimal("55.00"), is_income=False, frequency="monthly"
+        )
+        self.admin_cf_income = CashFlowSource.objects.create(
+            user=self.admin_user, name="Admin Gehalt", value=Decimal("3000.00"), is_income=True, frequency="monthly"
+        )
+        self.other_cf_free = CashFlowSource.objects.create(
+            user=self.other_user, name="Other Hausrat", value=Decimal("14.00"), is_income=False, frequency="monthly"
+        )
+        self.existing_policy = InsurancePolicy.objects.create(
+            user=self.admin_user,
+            name="Bestehende BU",
+            insurance_type="disability",
+            premium_amount=Decimal("55.00"),
+            linked_cash_flow=self.admin_cf_linked,
+        )
+
+    def test_admin_add_defaults_user_filters_cashflows_and_disables_linked(self):
+        self.client.force_login(self.admin_user)
+        add_url = reverse("admin:finance_insurancepolicy_add")
+        resp = self.client.get(add_url)
+        self.assertEqual(resp.status_code, 200)
+        html = resp.content.decode("utf-8")
+
+        # Currently logged-in user selected by default
+        self.assertIn(f'<option value="{self.admin_user.pk}" selected', html)
+        # Only selected user's expense cashflows in <select> options initially
+        self.assertIn(f'<option value="{self.admin_cf_free.pk}">', html)
+        self.assertNotIn(f'<option value="{self.other_cf_free.pk}"', html)
+        self.assertNotIn(f'<option value="{self.admin_cf_income.pk}"', html)
+        # Already linked cashflow rendered disabled and not selectable
+        self.assertIn(f'<option value="{self.admin_cf_linked.pk}" disabled="disabled">', html)
+        self.assertIn("admin_insurance_policy.js", html)
+        self.assertIn("data-cashflows", html)
+
+        # Trying to POST with already-linked cashflow is rejected
+        resp_post_dup = self.client.post(
+            add_url,
+            {
+                "user": self.admin_user.pk,
+                "name": "Zweite BU",
+                "insurance_type": "disability",
+                "insured_person": "primary",
+                "premium_amount": "55.00",
+                "payment_frequency": "monthly",
+                "linked_cash_flow": self.admin_cf_linked.pk,
+                "waiting_period_months": "0",
+            },
+        )
+        self.assertEqual(resp_post_dup.status_code, 200)
+        self.assertContains(resp_post_dup, "bereits mit")
+
+        # Switching user to other_user and selecting other_cf_free succeeds
+        resp_post_other = self.client.post(
+            add_url,
+            {
+                "user": self.other_user.pk,
+                "name": "Hausrat Other",
+                "insurance_type": "household",
+                "insured_person": "primary",
+                "premium_amount": "14.00",
+                "payment_frequency": "monthly",
+                "linked_cash_flow": self.other_cf_free.pk,
+                "waiting_period_months": "0",
+            },
+        )
+        self.assertEqual(resp_post_other.status_code, 302)
+        self.assertTrue(
+            InsurancePolicy.objects.filter(
+                user=self.other_user, name="Hausrat Other", linked_cash_flow=self.other_cf_free
+            ).exists()
+        )
+
+    def test_admin_change_keeps_own_linked_cashflow_selectable(self):
+        self.client.force_login(self.admin_user)
+        change_url = reverse("admin:finance_insurancepolicy_change", args=[self.existing_policy.pk])
+        resp = self.client.get(change_url)
+        self.assertEqual(resp.status_code, 200)
+        html = resp.content.decode("utf-8")
+        self.assertIn(f'<option value="{self.admin_cf_linked.pk}" selected>', html)
+
+
+class AssetModalSaveTests(TestCase):
+    def setUp(self):
+        self.user = CustomUser.objects.create_user(username="asset_u", password="AssetPassword123!")
+        self.asset = Asset.objects.create(
+            user=self.user,
+            name="Tagesgeld Alt",
+            asset_type="overnight",
+            institution="",
+            value=Decimal("5000.00"),
+            growth_rate=Decimal("2.50"),
+            monthly_savings_amount=Decimal("100.00"),
+            is_emergency_fund=False,
+            withdrawal_amount=Decimal("50.00"),
+        )
+
+    def test_asset_modal_save_updates_institution_and_emergency_fund(self):
+        self.client.force_login(self.user)
+        resp = self.client.post(
+            reverse("finance:asset_edit", args=[self.asset.pk]),
+            {
+                "current_tab": "all",
+                "name": "Tagesgeld Neu",
+                "asset_type": "overnight",
+                "institution": "ING DiBa",
+                "isin_ticker": "",
+                "value": "5500.00",
+                "growth_rate": "",
+                "monthly_savings_amount": "",
+                "is_emergency_fund": "on",
+            },
+        )
+        self.assertEqual(resp.status_code, 302)
+        self.asset.refresh_from_db()
+        self.assertEqual(self.asset.name, "Tagesgeld Neu")
+        self.assertEqual(self.asset.institution, "ING DiBa")
+        self.assertTrue(self.asset.is_emergency_fund)
+        self.assertEqual(self.asset.withdrawal_amount, Decimal("50.00"))
+
+        resp_off = self.client.post(
+            reverse("finance:asset_edit", args=[self.asset.pk]),
+            {
+                "current_tab": "all",
+                "name": "Tagesgeld Neu",
+                "asset_type": "overnight",
+                "institution": "DKB",
+                "isin_ticker": "",
+                "value": "5500.00",
+                "growth_rate": "3.00",
+                "monthly_savings_amount": "0.00",
+            },
+        )
+        self.assertEqual(resp_off.status_code, 302)
+        self.asset.refresh_from_db()
+        self.assertEqual(self.asset.institution, "DKB")
+        self.assertFalse(self.asset.is_emergency_fund)
