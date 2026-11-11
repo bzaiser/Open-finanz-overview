@@ -2207,7 +2207,7 @@ def quick_create_cash_flow(request):
         )
         
         # Build OOB response for ALL CashFlow dropdowns
-        new_option = f'<option value="{cf.id}" selected>{cf.name} ({cf.value} â‚¬)</option>'
+        new_option = f'<option value="{cf.id}" selected>{cf.name} ({cf.value} €)</option>'
         
         html = f'''
             {new_option}
@@ -3219,7 +3219,7 @@ def pension_plan_view(request):
             sp_series.append(val)
 
         statutory_datasets.append({
-            'label': sp.provider + ' (â‚¬/' + str(_("month net")) + ')',
+            'label': sp.provider + ' (€/' + str(_("month net")) + ')',
             'data': sp_series,
             'borderColor': color,
             'backgroundColor': 'transparent',

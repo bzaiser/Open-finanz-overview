@@ -351,8 +351,13 @@ class TargetGroupSeedCommandsTests(TestCase):
             r_pens = self.client.get(reverse("finance:pension_plan"))
             self.assertEqual(r_pens.status_code, 200, f"Pension plan failed for {uname}")
 
-            r_assets = self.client.get(reverse("finance:assets_overview"))
+            r_assets = self.client.get(reverse("finance:assets_overview"), HTTP_ACCEPT_LANGUAGE="de")
             self.assertEqual(r_assets.status_code, 200, f"Assets overview failed for {uname}")
+            self.assertContains(r_assets, "4 %-Entnahmeregel (SWR)")
+            self.assertContains(r_assets, "Jährliche sichere Entnahme (4 %)")
+            self.assertContains(r_assets, "Erwartete Rendite (% p.a.)")
+            self.assertContains(r_assets, "ETF-Sparplan & Zinseszins Rechner")
+            self.assertContains(r_assets, "Tagesgeld / Geldmarkt")
 
 
 class InsurancePolicyAdminTests(TestCase):
@@ -446,6 +451,40 @@ class InsurancePolicyAdminTests(TestCase):
         self.assertEqual(resp.status_code, 200)
         html = resp.content.decode("utf-8")
         self.assertIn(f'<option value="{self.admin_cf_linked.pk}" selected>', html)
+
+    def test_admin_changelists_render_german_translations(self):
+        from django.contrib.contenttypes.models import ContentType
+        from finance.models import Asset, AssetSnapshot, PropertyComponent, RealEstate
+
+        re_obj = RealEstate.objects.create(
+            user=self.admin_user, name="Haus Test", property_value=Decimal("250000.00")
+        )
+        PropertyComponent.objects.create(
+            real_estate=re_obj, component_type="roof", name="Dach", installation_year=2020
+        )
+        asset_obj = Asset.objects.create(user=self.admin_user, name="Konto", value=Decimal("1000.00"))
+        AssetSnapshot.objects.create(
+            user=self.admin_user,
+            content_type=ContentType.objects.get_for_model(Asset),
+            object_id=asset_obj.pk,
+            date=datetime.date(2026, 1, 1),
+            value=Decimal("1000.00"),
+        )
+
+        self.client.force_login(self.admin_user)
+        r_ins = self.client.get(reverse("admin:finance_insurancepolicy_changelist"), HTTP_ACCEPT_LANGUAGE="de")
+        self.assertEqual(r_ins.status_code, 200)
+        self.assertContains(r_ins, "Versicherungspolicen")
+
+        r_comp = self.client.get(reverse("admin:finance_propertycomponent_changelist"), HTTP_ACCEPT_LANGUAGE="de")
+        self.assertEqual(r_comp.status_code, 200)
+        self.assertContains(r_comp, "Bauteilbezeichnung / Spezifikation")
+
+        r_snap = self.client.get(reverse("admin:finance_assetsnapshot_changelist"), HTTP_ACCEPT_LANGUAGE="de")
+        self.assertEqual(r_snap.status_code, 200)
+        self.assertContains(r_snap, "Vermögenswert / Objekt")
+        self.assertContains(r_snap, "Monatliche Nettorente (€)")
+        self.assertContains(r_snap, "Wert")
 
 
 class AssetModalSaveTests(TestCase):

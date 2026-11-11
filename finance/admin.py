@@ -715,9 +715,13 @@ class AssetSnapshotForm(forms.ModelForm):
 @admin.register(AssetSnapshot)
 class AssetSnapshotAdmin(BaseOwnedModelAdmin):
     form = AssetSnapshotForm
-    list_display = ('date', 'content_object', 'value', 'expected_payout_net', 'pension_points', 'point_value', 'user')
+    list_display = ('date', 'display_content_object', 'value', 'expected_payout_net', 'pension_points', 'point_value', 'user')
     list_filter = ('date', 'user')
     search_fields = ('notes',)
+
+    @admin.display(description=_("Asset/Object"))
+    def display_content_object(self, obj):
+        return obj.content_object
     
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)

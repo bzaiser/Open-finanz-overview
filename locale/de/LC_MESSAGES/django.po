@@ -1790,7 +1790,7 @@ msgid "Asset Snapshots"
 msgstr "Historische Daten"
 
 msgid "Asset/Object"
-msgstr "Asset / Objekt"
+msgstr "Vermögenswert / Objekt"
 
 msgid "Konto/Anlage"
 msgstr "Konto/Anlage"
@@ -5230,3 +5230,144 @@ msgstr "Einträge aktualisiert und kopiert."
 
 msgid "ETF Savings Plan & Compound Interest Calculator"
 msgstr "ETF-Sparplan & Zinseszins Rechner"
+
+#, python-format
+msgid "Rechenbeispiel bei 2,0 %% Inflation:"
+msgstr "Rechenbeispiel bei 2,0 %% Inflation:"
+
+#, python-format
+msgid "Der angegebene Monatswert entwickelt sich durch jährliche Dynamisierung (z. B. +1,5 %% Rentenanpassung) kontinuierlich weiter bis zum Starttermin."
+msgstr "Der angegebene Monatswert entwickelt sich durch jährliche Dynamisierung (z. B. +1,5 %% Rentenanpassung) kontinuierlich weiter bis zum Starttermin."
+
+#, python-format
+msgid "Gehälter wachsen jährlich mit deiner individuellen Gehaltssteigerungsrate (z. B. +2,0 %% p.a.) und enden automatisch mit Erreichen deines gesetzlichen Rentenalters."
+msgstr "Gehälter wachsen jährlich mit deiner individuellen Gehaltssteigerungsrate (z. B. +2,0 %% p.a.) und enden automatisch mit Erreichen deines gesetzlichen Rentenalters."
+
+#, python-format
+msgid "Expected Return (%% p.a.)"
+msgstr "Erwartete Rendite (%% p.a.)"
+
+#, python-format
+msgid "Check liquidity reserve coverage and simulate monthly passive withdrawals (4%% rule)."
+msgstr "Überprüfen Sie die Liquiditätsreserve und simulieren Sie monatliche Entnahmen (4 %%-Regel)."
+
+#, python-format
+msgid "4%% Safe Withdrawal Rate (SWR)"
+msgstr "4 %%-Entnahmeregel (SWR)"
+
+#, python-format
+msgid "Annual Safe Withdrawal (4%%)"
+msgstr "Jährliche sichere Entnahme (4 %%)"
+
+#, python-format
+msgid "Interest Rate / Expected Return (%% p.a.)"
+msgstr "Zinssatz / Erwartungsrendite (%% p.a.)"
+
+#, python-format
+msgid "Appreciation Rate (%% p.a.)"
+msgstr "Wertentwicklung p.a. (%%)"
+
+#, python-format
+msgid "If linked, the system warns about price deviations > 2%%."
+msgstr "Bei Verknüpfung warnt das System bei Preisabweichungen > 2 %%."
+
+#, python-format
+msgid "Social Security Deduction (%%)"
+msgstr "Abzug Kranken- & Pflegeversicherung (%%)"
+
+#, python-format
+msgid "Calculated from earnings points × current pension value minus health & long-term care insurance contributions (~11.5%%)."
+msgstr "Wird aus Entgeltpunkten × Aktuellem Rentenwert abzüglich Kranken- & Pflegeversicherungsbeiträgen (~11,5 %%) berechnet."
+
+msgid "Asset Type"
+msgstr "Anlageklasse / Typ"
+
+msgid "Associated Real Estate"
+msgstr "Zugeordnete Immobilie"
+
+msgid "Additional multiline notes or details"
+msgstr "Zusätzliche mehrzeilige Notizen oder Details"
+
+msgid "Annual Special Repayment Limit (%)"
+msgstr "Jährliches Sondertilgungsrecht (%)"
+
+msgid "Annual Special Repayment Limit (%%)"
+msgstr "Jährliches Sondertilgungsrecht (%%)"
+
+msgid "Component Name / Specification"
+msgstr "Bauteilbezeichnung / Spezifikation"
+
+msgid "Cryptocurrencies (Bitcoin / Altcoins)"
+msgstr "Kryptowährungen (Bitcoin / Altcoins)"
+
+msgid "Current accumulated reserve for this property"
+msgstr "Aktuell angesparte Rücklage für dieses Objekt"
+
+msgid "Date when the teaser rate expires and falls back to the standard growth rate"
+msgstr "Datum, ab dem der Aktionszins endet und der Standardzins gilt"
+
+msgid "Designate this cash/overnight account as emergency liquidity reserve"
+msgstr "Dieses Konto als eiserne Notgroschen-Liquiditätsreserve markieren"
+
+msgid "Disability Pension Net (€)"
+msgstr "Erwerbsminderungsrente netto (€)"
+
+msgid "Effective Interest Rate (%)"
+msgstr "Effektivzins (%)"
+
+msgid "Effective Interest Rate (%%)"
+msgstr "Effektivzins (%%)"
+
+msgid "Emergency Fund (Notgroschen)"
+msgstr "Notgroschen-Reserve"
+
+msgid "e.g. Grocery shopping"
+msgstr "z. B. Lebensmitteleinkauf"
+
+msgid "Import Filter"
+msgstr "Import-Filter"
+
+msgid "Insurance Policies"
+msgstr "Versicherungspolicen"
+
+msgid "Insurance Policy"
+msgstr "Versicherungspolice"
+
+msgid "ISIN / WKN / Ticker"
+msgstr "ISIN / WKN / Ticker"
+
+msgid "If checked, the payout will increase annually based on the global pension increase rate."
+msgstr "Falls aktiviert, steigt der Betrag jährlich um die globale Renten-/Inflationsanpassung."
+
+msgid "Monthly Net Payout (€)"
+msgstr "Monatliche Nettorente (€)"
+
+msgid "Monthly Savings Plan"
+msgstr "Monatlicher Sparplan"
+
+msgid "Monthly allocation to the maintenance reserve"
+msgstr "Monatliche Zuführung zur Instandhaltungsrücklage"
+
+msgid "My Financial Status"
+msgstr "Mein Finanzstatus"
+
+msgid "Optional regular monthly savings or purchase amount"
+msgstr "Optionaler regelmäßiger monatlicher Spar- oder Kaufbetrag"
+
+msgid "Payout Type"
+msgstr "Auszahlungsart"
+
+msgid "Provider/Name"
+msgstr "Anbieter / Name"
+
+msgid "Semicolon-separated MD5 hashes of original Excel rows"
+msgstr "Durch Semikolon getrennte MD5-Hashes der ursprünglichen Excel-Zeilen"
+
+msgid "Template ID"
+msgstr "Vorlagen-ID"
+
+msgid "Value"
+msgstr "Wert"
+
+msgid "Value of 1 pension point in EUR (e.g. 40.79)"
+msgstr "Wert eines Entgeltpunktes in EUR (z. B. 40,79)"
