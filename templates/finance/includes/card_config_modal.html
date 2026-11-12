@@ -1,19 +1,73 @@
+<style>
+#configModal .cfg-nav-pills {
+    background-color: rgba(125, 125, 125, 0.08) !important;
+    border: 1px solid var(--app-table-border-color, rgba(0,0,0,0.1)) !important;
+}
+#configModal .cfg-nav-pills .nav-link {
+    color: var(--app-card-color, var(--bs-body-color)) !important;
+    opacity: 0.75;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+#configModal .cfg-nav-pills .nav-link:hover {
+    opacity: 1;
+    background-color: rgba(125, 125, 125, 0.08);
+}
+#configModal .cfg-nav-pills .nav-link.active {
+    background: var(--app-gradient) !important;
+    color: #ffffff !important;
+    opacity: 1 !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+}
+#configModal .accordion-item {
+    border-color: var(--app-table-border-color, rgba(0,0,0,0.1)) !important;
+    background-color: var(--app-card-bg, #ffffff) !important;
+}
+#configModal .accordion-button {
+    background-color: var(--app-table-filter-bg, rgba(0,0,0,0.03)) !important;
+    color: var(--app-card-color, var(--bs-body-color)) !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+#configModal .accordion-button:not(.collapsed) {
+    background: color-mix(in srgb, var(--app-primary, #0d6efd) 10%, var(--app-card-bg, #ffffff)) !important;
+    color: var(--app-primary, #0d6efd) !important;
+    font-weight: 700;
+}
+#configModal .table thead th,
+#configModal .cfg-table-head th {
+    background-color: var(--app-table-header-bg, #0d6efd) !important;
+    color: var(--app-table-header-text, #ffffff) !important;
+    border-color: var(--app-table-border-color, rgba(0,0,0,0.1)) !important;
+}
+#configModal .table td {
+    background-color: var(--app-card-bg, #ffffff) !important;
+    color: var(--app-card-color, #212529) !important;
+    border-color: var(--app-table-border-color, rgba(0,0,0,0.08)) !important;
+}
+#configModal .table-hover tbody tr:hover td {
+    background-color: var(--app-table-row-hover-bg, rgba(13,110,253,0.06)) !important;
+}
+#configModal .cfg-icon-primary {
+    color: var(--app-primary, #0d6efd) !important;
+}
+</style>
 {% load i18n %}
 
 <div class="modal fade" id="configModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="configModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
-        <div class="modal-content" style="background-color: var(--app-card-bg, #ffffff) !important; color: var(--app-card-color, #212529) !important;">
-            <div class="modal-header border-bottom" style="background-color: rgba(0,0,0,0.02);">
-                <div class="d-flex align-items-center gap-2">
-                    <div class="p-2 rounded-3 bg-primary bg-opacity-10 text-primary">
+        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+            <div class="modal-header border-0 py-3 px-4" style="background: var(--app-gradient) !important; color: #ffffff !important;">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="p-2 rounded-3 bg-white bg-opacity-20 text-white d-flex align-items-center justify-content-center">
                         <i class="bi bi-sliders fs-5"></i>
                     </div>
                     <div>
-                        <h5 class="modal-title fw-bold mb-0" id="configModalLabel">{% trans "Layout & Informationskarten anpassen" %}</h5>
-                        <small class="text-muted">{% trans "Farben, Sichtbarkeit und Reihenfolge aller Metrikkarten und Diagramme konfigurieren" %}</small>
+                        <h5 class="modal-title fw-bold mb-0 text-white" id="configModalLabel">{% trans "Layout & Informationskarten anpassen" %}</h5>
+                        <p class="small mb-0 text-white opacity-85">{% trans "Farben, Sichtbarkeit und Reihenfolge aller Metrikkarten und Diagramme konfigurieren" %}</p>
                     </div>
                 </div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
             <div class="modal-body p-3 p-md-4">
@@ -27,7 +81,7 @@
                     <input type="hidden" name="card_groups_json" id="card_groups_json">
 
                     <!-- Main Navigation Tabs -->
-                    <ul class="nav nav-pills nav-fill mb-4 p-1 rounded-4 gap-1 border" id="configModalNav" role="tablist" style="background-color: rgba(0,0,0,0.03);">
+                    <ul class="nav nav-pills nav-fill mb-4 p-1 rounded-4 gap-1 cfg-nav-pills">
                         <li class="nav-item" role="presentation">
                             <button class="nav-link active rounded-3 py-2 fw-semibold d-flex align-items-center justify-content-center gap-2" id="cfg-tab-btn-dashboard" data-bs-toggle="pill" data-bs-target="#cfg-pane-dashboard" type="button" role="tab">
                                 <i class="bi bi-speedometer2"></i>
@@ -65,18 +119,18 @@
                         
                         <!-- 1. DASHBOARD TAB -->
                         <div class="tab-pane fade show active" id="cfg-pane-dashboard" role="tabpanel">
-                            <div class="alert alert-info py-2 mb-3 border-0 bg-info bg-opacity-10 text-info-emphasis d-flex align-items-center gap-2">
+                            <div class="alert py-2 mb-3 border-0 rounded-3 d-flex align-items-center gap-2" style="background-color: color-mix(in srgb, var(--app-primary, #0d6efd) 10%, var(--app-card-bg, #ffffff)); color: var(--app-card-color, #212529); border: 1px solid var(--app-table-border-color, rgba(0,0,0,0.08)) !important;">
                                 <i class="bi bi-info-circle-fill"></i>
                                 <small>{% trans "Passen Sie die Zusammenfassungskarten und Diagramme des Dashboards per Drag & Drop, Sichtbarkeit und Farben an." %}</small>
                             </div>
 
                             <h6 class="fw-bold mb-3 d-flex align-items-center gap-2">
-                                <i class="bi bi-grid-fill text-primary"></i>
+                                <i class="bi bi-grid-fill cfg-icon-primary"></i>
                                 {% trans "Zusammenfassungskarten (Kopfbereich)" %}
                             </h6>
                             <div class="table-responsive mb-4 border rounded-3 overflow-hidden">
                                 <table class="table table-hover table-sm align-middle mb-0">
-                                    <thead class="table-light">
+                                    <thead class="cfg-table-head">
                                         <tr>
                                             <th style="width: 40px;"></th>
                                             <th>{% trans "Widget" %}</th>
@@ -115,12 +169,12 @@
                             </div>
 
                             <h6 class="fw-bold mb-3 d-flex align-items-center gap-2">
-                                <i class="bi bi-pie-chart-fill text-primary"></i>
+                                <i class="bi bi-pie-chart-fill cfg-icon-primary"></i>
                                 {% trans "Charts & Widgets" %}
                             </h6>
                             <div class="table-responsive border rounded-3 overflow-hidden">
                                 <table class="table table-hover table-sm align-middle mb-0">
-                                    <thead class="table-light">
+                                    <thead class="cfg-table-head">
                                         <tr>
                                             <th style="width: 40px;"></th>
                                             <th style="width: 70px;" class="text-center">{% trans "Sichtbar" %}</th>
@@ -165,13 +219,13 @@
 
                         <!-- 2. CASH FLOW TAB -->
                         <div class="tab-pane fade" id="cfg-pane-cashflow" role="tabpanel">
-                            <div class="alert alert-info py-2 mb-3 border-0 bg-info bg-opacity-10 text-info-emphasis d-flex align-items-center gap-2">
+                            <div class="alert py-2 mb-3 border-0 rounded-3 d-flex align-items-center gap-2" style="background-color: color-mix(in srgb, var(--app-primary, #0d6efd) 10%, var(--app-card-bg, #ffffff)); color: var(--app-card-color, #212529); border: 1px solid var(--app-table-border-color, rgba(0,0,0,0.08)) !important;">
                                 <i class="bi bi-info-circle-fill"></i>
                                 <small>{% trans "Metrikkarten für Einnahmen, Ausgaben und monatlichen Überschuss konfigurieren." %}</small>
                             </div>
                             <div class="table-responsive border rounded-3 overflow-hidden">
                                 <table class="table table-hover table-sm align-middle mb-0">
-                                    <thead class="table-light">
+                                    <thead class="cfg-table-head">
                                         <tr>
                                             <th style="width: 40px;"></th>
                                             <th>{% trans "Karte" %}</th>
@@ -207,7 +261,7 @@
 
                         <!-- 3. PENSION & INSURANCES TAB (Accordions for sections) -->
                         <div class="tab-pane fade" id="cfg-pane-pension" role="tabpanel">
-                            <div class="alert alert-info py-2 mb-3 border-0 bg-info bg-opacity-10 text-info-emphasis d-flex align-items-center gap-2">
+                            <div class="alert py-2 mb-3 border-0 rounded-3 d-flex align-items-center gap-2" style="background-color: color-mix(in srgb, var(--app-primary, #0d6efd) 10%, var(--app-card-bg, #ffffff)); color: var(--app-card-color, #212529); border: 1px solid var(--app-table-border-color, rgba(0,0,0,0.08)) !important;">
                                 <i class="bi bi-info-circle-fill"></i>
                                 <small>{% trans "Konfigurieren Sie die Kopfkarten sowie die Karten innerhalb der jeweiligen Unter-Tabs der Altersvorsorge." %}</small>
                             </div>
@@ -216,15 +270,15 @@
                                 <!-- Section 1: Overview Top -->
                                 <div class="accordion-item border rounded-3 mb-3 overflow-hidden">
                                     <h2 class="accordion-header" id="headingPensionTop">
-                                        <button class="accordion-button fw-bold py-2 bg-light text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePensionTop" aria-expanded="true">
-                                            <i class="bi bi-layout-text-window-reverse text-primary me-2"></i>
+                                        <button class="accordion-button fw-bold py-2 " type="button" data-bs-toggle="collapse" data-bs-target="#collapsePensionTop" aria-expanded="true">
+                                            <i class="bi bi-layout-text-window-reverse cfg-icon-primary me-2"></i>
                                             {% trans "Kopfbereich / Gesamtübersicht (4 Karten)" %}
                                         </button>
                                     </h2>
                                     <div id="collapsePensionTop" class="accordion-collapse collapse show">
                                         <div class="accordion-body p-0">
                                             <table class="table table-hover table-sm align-middle mb-0">
-                                                <thead class="table-light">
+                                                <thead class="cfg-table-head">
                                                     <tr>
                                                         <th style="width: 40px;"></th>
                                                         <th>{% trans "Karte" %}</th>
@@ -262,15 +316,15 @@
                                 <!-- Section 2: Tab Pensions -->
                                 <div class="accordion-item border rounded-3 mb-3 overflow-hidden">
                                     <h2 class="accordion-header" id="headingPensionTabPensions">
-                                        <button class="accordion-button collapsed fw-bold py-2 bg-light text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePensionTabPensions">
-                                            <i class="bi bi-bank text-info me-2"></i>
+                                        <button class="accordion-button collapsed fw-bold py-2 " type="button" data-bs-toggle="collapse" data-bs-target="#collapsePensionTabPensions">
+                                            <i class="bi bi-bank cfg-icon-primary me-2"></i>
                                             {% trans "Tab: Altersvorsorge (4 Karten)" %}
                                         </button>
                                     </h2>
                                     <div id="collapsePensionTabPensions" class="accordion-collapse collapse">
                                         <div class="accordion-body p-0">
                                             <table class="table table-hover table-sm align-middle mb-0">
-                                                <thead class="table-light">
+                                                <thead class="cfg-table-head">
                                                     <tr>
                                                         <th style="width: 40px;"></th>
                                                         <th>{% trans "Karte" %}</th>
@@ -308,15 +362,15 @@
                                 <!-- Section 3: Tab Insurances -->
                                 <div class="accordion-item border rounded-3 mb-3 overflow-hidden">
                                     <h2 class="accordion-header" id="headingPensionTabIns">
-                                        <button class="accordion-button collapsed fw-bold py-2 bg-light text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePensionTabIns">
-                                            <i class="bi bi-file-earmark-medical text-primary me-2"></i>
+                                        <button class="accordion-button collapsed fw-bold py-2 " type="button" data-bs-toggle="collapse" data-bs-target="#collapsePensionTabIns">
+                                            <i class="bi bi-file-earmark-medical cfg-icon-primary me-2"></i>
                                             {% trans "Tab: Versicherungen (4 Karten)" %}
                                         </button>
                                     </h2>
                                     <div id="collapsePensionTabIns" class="accordion-collapse collapse">
                                         <div class="accordion-body p-0">
                                             <table class="table table-hover table-sm align-middle mb-0">
-                                                <thead class="table-light">
+                                                <thead class="cfg-table-head">
                                                     <tr>
                                                         <th style="width: 40px;"></th>
                                                         <th>{% trans "Karte" %}</th>
@@ -354,7 +408,7 @@
                                 <!-- Section 4: Tab Risk Check -->
                                 <div class="accordion-item border rounded-3 overflow-hidden">
                                     <h2 class="accordion-header" id="headingPensionTabRisk">
-                                        <button class="accordion-button collapsed fw-bold py-2 bg-light text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePensionTabRisk">
+                                        <button class="accordion-button collapsed fw-bold py-2 " type="button" data-bs-toggle="collapse" data-bs-target="#collapsePensionTabRisk">
                                             <i class="bi bi-shield-exclamation text-danger me-2"></i>
                                             {% trans "Tab: Risiko-Check (4 Karten)" %}
                                         </button>
@@ -362,7 +416,7 @@
                                     <div id="collapsePensionTabRisk" class="accordion-collapse collapse">
                                         <div class="accordion-body p-0">
                                             <table class="table table-hover table-sm align-middle mb-0">
-                                                <thead class="table-light">
+                                                <thead class="cfg-table-head">
                                                     <tr>
                                                         <th style="width: 40px;"></th>
                                                         <th>{% trans "Karte" %}</th>
@@ -401,7 +455,7 @@
 
                         <!-- 4. REAL ESTATE & LOANS TAB (Accordions for sections) -->
                         <div class="tab-pane fade" id="cfg-pane-realestate" role="tabpanel">
-                            <div class="alert alert-info py-2 mb-3 border-0 bg-info bg-opacity-10 text-info-emphasis d-flex align-items-center gap-2">
+                            <div class="alert py-2 mb-3 border-0 rounded-3 d-flex align-items-center gap-2" style="background-color: color-mix(in srgb, var(--app-primary, #0d6efd) 10%, var(--app-card-bg, #ffffff)); color: var(--app-card-color, #212529); border: 1px solid var(--app-table-border-color, rgba(0,0,0,0.08)) !important;">
                                 <i class="bi bi-info-circle-fill"></i>
                                 <small>{% trans "Konfigurieren Sie die Kopfkarten sowie die Karten innerhalb der Tabs Sanierung, Kalender und Steuerbelege." %}</small>
                             </div>
@@ -410,15 +464,15 @@
                                 <!-- Section 1: Overview Top -->
                                 <div class="accordion-item border rounded-3 mb-3 overflow-hidden">
                                     <h2 class="accordion-header" id="headingRETop">
-                                        <button class="accordion-button fw-bold py-2 bg-light text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRETop" aria-expanded="true">
-                                            <i class="bi bi-layout-text-window-reverse text-success me-2"></i>
+                                        <button class="accordion-button fw-bold py-2 " type="button" data-bs-toggle="collapse" data-bs-target="#collapseRETop" aria-expanded="true">
+                                            <i class="bi bi-layout-text-window-reverse cfg-icon-primary me-2"></i>
                                             {% trans "Kopfbereich / Gesamtübersicht (4 Karten)" %}
                                         </button>
                                     </h2>
                                     <div id="collapseRETop" class="accordion-collapse collapse show">
                                         <div class="accordion-body p-0">
                                             <table class="table table-hover table-sm align-middle mb-0">
-                                                <thead class="table-light">
+                                                <thead class="cfg-table-head">
                                                     <tr>
                                                         <th style="width: 40px;"></th>
                                                         <th>{% trans "Karte" %}</th>
@@ -456,15 +510,15 @@
                                 <!-- Section 2: Tab Renovation -->
                                 <div class="accordion-item border rounded-3 mb-3 overflow-hidden">
                                     <h2 class="accordion-header" id="headingRERenovation">
-                                        <button class="accordion-button collapsed fw-bold py-2 bg-light text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRERenovation">
-                                            <i class="bi bi-hammer text-warning me-2"></i>
+                                        <button class="accordion-button collapsed fw-bold py-2 " type="button" data-bs-toggle="collapse" data-bs-target="#collapseRERenovation">
+                                            <i class="bi bi-hammer cfg-icon-primary me-2"></i>
                                             {% trans "Tab: Modernisierung & Sanierung (4 Karten)" %}
                                         </button>
                                     </h2>
                                     <div id="collapseRERenovation" class="accordion-collapse collapse">
                                         <div class="accordion-body p-0">
                                             <table class="table table-hover table-sm align-middle mb-0">
-                                                <thead class="table-light">
+                                                <thead class="cfg-table-head">
                                                     <tr>
                                                         <th style="width: 40px;"></th>
                                                         <th>{% trans "Karte" %}</th>
@@ -502,15 +556,15 @@
                                 <!-- Section 3: Tab Calendar -->
                                 <div class="accordion-item border rounded-3 mb-3 overflow-hidden">
                                     <h2 class="accordion-header" id="headingRECalendar">
-                                        <button class="accordion-button collapsed fw-bold py-2 bg-light text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRECalendar">
-                                            <i class="bi bi-calendar-event text-primary me-2"></i>
+                                        <button class="accordion-button collapsed fw-bold py-2 " type="button" data-bs-toggle="collapse" data-bs-target="#collapseRECalendar">
+                                            <i class="bi bi-calendar-event cfg-icon-primary me-2"></i>
                                             {% trans "Tab: Fristen & Kalender (4 Karten)" %}
                                         </button>
                                     </h2>
                                     <div id="collapseRECalendar" class="accordion-collapse collapse">
                                         <div class="accordion-body p-0">
                                             <table class="table table-hover table-sm align-middle mb-0">
-                                                <thead class="table-light">
+                                                <thead class="cfg-table-head">
                                                     <tr>
                                                         <th style="width: 40px;"></th>
                                                         <th>{% trans "Karte" %}</th>
@@ -548,15 +602,15 @@
                                 <!-- Section 4: Tab Tax Docs -->
                                 <div class="accordion-item border rounded-3 overflow-hidden">
                                     <h2 class="accordion-header" id="headingRETaxDocs">
-                                        <button class="accordion-button collapsed fw-bold py-2 bg-light text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRETaxDocs">
-                                            <i class="bi bi-receipt text-info me-2"></i>
+                                        <button class="accordion-button collapsed fw-bold py-2 " type="button" data-bs-toggle="collapse" data-bs-target="#collapseRETaxDocs">
+                                            <i class="bi bi-receipt cfg-icon-primary me-2"></i>
                                             {% trans "Tab: Steuer & Belege (4 Karten)" %}
                                         </button>
                                     </h2>
                                     <div id="collapseRETaxDocs" class="accordion-collapse collapse">
                                         <div class="accordion-body p-0">
                                             <table class="table table-hover table-sm align-middle mb-0">
-                                                <thead class="table-light">
+                                                <thead class="cfg-table-head">
                                                     <tr>
                                                         <th style="width: 40px;"></th>
                                                         <th>{% trans "Karte" %}</th>
@@ -595,13 +649,13 @@
 
                         <!-- 5. ASSETS & ACCOUNTS TAB -->
                         <div class="tab-pane fade" id="cfg-pane-assets" role="tabpanel">
-                            <div class="alert alert-info py-2 mb-3 border-0 bg-info bg-opacity-10 text-info-emphasis d-flex align-items-center gap-2">
+                            <div class="alert py-2 mb-3 border-0 rounded-3 d-flex align-items-center gap-2" style="background-color: color-mix(in srgb, var(--app-primary, #0d6efd) 10%, var(--app-card-bg, #ffffff)); color: var(--app-card-color, #212529); border: 1px solid var(--app-table-border-color, rgba(0,0,0,0.08)) !important;">
                                 <i class="bi bi-info-circle-fill"></i>
                                 <small>{% trans "Metrikkarten für Gesamtvermögen, Liquidität, Wertpapiere und Sachwerte anpassen." %}</small>
                             </div>
                             <div class="table-responsive border rounded-3 overflow-hidden">
                                 <table class="table table-hover table-sm align-middle mb-0">
-                                    <thead class="table-light">
+                                    <thead class="cfg-table-head">
                                         <tr>
                                             <th style="width: 40px;"></th>
                                             <th>{% trans "Karte" %}</th>
@@ -639,14 +693,14 @@
                 </form>
             </div>
 
-            <div class="modal-footer border-top d-flex justify-content-between" style="background-color: rgba(0,0,0,0.02);">
-                <button type="button" class="btn btn-outline-secondary btn-sm" id="cfg-reset-defaults-btn">
+            <div class="modal-footer border-top d-flex justify-content-between py-3 px-4" style="background-color: rgba(0,0,0,0.02); border-color: var(--app-table-border-color, rgba(0,0,0,0.08)) !important;">
+                <button type="button" class="btn btn-outline-secondary rounded-pill px-3" id="cfg-reset-defaults-btn">
                     <i class="bi bi-arrow-counterclockwise me-1"></i> {% trans "Standard wiederherstellen" %}
                 </button>
                 <div class="d-flex gap-2">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Abbrechen" %}</button>
-                    <button type="button" class="btn btn-primary px-4 fw-bold" id="cfg-modal-save-btn">
-                        <i class="bi bi-check-lg me-1"></i> {% trans "Speichern" %}
+                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">{% trans "Abbrechen" %}</button>
+                    <button type="button" class="btn btn-primary rounded-pill px-4 shadow-sm fw-bold" id="cfg-modal-save-btn" style="background: var(--app-gradient) !important; border: none !important;">
+                        <i class="bi bi-check2 me-1"></i> {% trans "Speichern" %}
                     </button>
                 </div>
             </div>
