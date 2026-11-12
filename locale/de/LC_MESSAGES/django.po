@@ -5485,7 +5485,7 @@ msgstr "Alles durchsuchen: Vertrag, Rechnung, Policen-Nr., Bank, ISIN, Mieter, P
 msgid "No search filter active — showing recent entries across all areas. Enter a keyword above to search everything."
 msgstr "Kein Suchfilter aktiv — aktuelle Einträge aus allen Bereichen werden angezeigt. Oben Suchbegriff eingeben, um alles zu durchsuchen."
 
-msgid "Open Document Vault"
+msgid "Open Documents"
 msgstr "Dokumente öffnen"
 
 msgid "View / Open"

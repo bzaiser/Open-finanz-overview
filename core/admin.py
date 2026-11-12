@@ -59,14 +59,19 @@ class EditablePageContentAdmin(admin.ModelAdmin):
     search_fields = ('section_key', 'content')
 
 
+from .forms import DesignHarmonyAdminForm
+
 @admin.register(DesignHarmony)
 class DesignHarmonyAdmin(admin.ModelAdmin):
+    form = DesignHarmonyAdminForm
     list_display = ('name', 'preview_badge', 'order', 'primary_color', 'background_color', 'text_color', 'is_active')
     list_editable = ('order', 'is_active')
     list_filter = ('is_active',)
     search_fields = ('name',)
+    readonly_fields = ('live_preview',)
     fieldsets = (
         (None, {'fields': ('name', 'order', 'is_active')}),
+        (_('Live-Vorschau'), {'fields': ('live_preview',)}),
         (_('Colors & Gradient'), {
             'fields': (
                 'primary_color', 'gradient_start', 'gradient_end',
@@ -82,6 +87,52 @@ class DesignHarmonyAdmin(admin.ModelAdmin):
             )
         }),
     )
+
+    def live_preview(self, obj):
+        from django.utils.html import format_html
+        start = obj.gradient_start if obj and obj.gradient_start else '#6610f2'
+        end = obj.gradient_end if obj and obj.gradient_end else '#0d6efd'
+        primary = obj.primary_color if obj and obj.primary_color else '#0d6efd'
+        bg = obj.background_color if obj and obj.background_color else '#ffffff'
+        text = obj.text_color if obj and obj.text_color else '#212529'
+        return format_html(
+            '''
+            <div id="harmony-admin-preview" style="padding: 1.5rem; border-radius: 12px; background: {}; color: {}; border: 2px solid {}; max-width: 480px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                <div id="preview-gradient-box" style="height: 50px; border-radius: 8px; background: linear-gradient(135deg, {} 0%, {} 100%); margin-bottom: 12px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: bold; text-shadow: 0 1px 2px rgba(0,0,0,0.4);">
+                    {}
+                </div>
+                <div style="display: flex; gap: 8px; align-items: center; font-size: 0.85rem;">
+                    <span id="preview-btn" style="padding: 4px 12px; border-radius: 20px; background: {}; color: #fff; font-weight: 600;">Button</span>
+                    <span>Textfarbe Vorschau auf Hintergrund</span>
+                </div>
+            </div>
+            <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                function updateAdminPreview() {
+                    const gStart = document.getElementById('id_gradient_start')?.value || '#6610f2';
+                    const gEnd = document.getElementById('id_gradient_end')?.value || '#0d6efd';
+                    const prim = document.getElementById('id_primary_color')?.value || '#0d6efd';
+                    const bg = document.getElementById('id_background_color')?.value || '#ffffff';
+                    const txt = document.getElementById('id_text_color')?.value || '#212529';
+                    const gBox = document.getElementById('preview-gradient-box');
+                    const container = document.getElementById('harmony-admin-preview');
+                    const btn = document.getElementById('preview-btn');
+                    if (gBox) gBox.style.background = `linear-gradient(135deg, ${gStart} 0%, ${gEnd} 100%)`;
+                    if (container) {
+                        container.style.backgroundColor = bg;
+                        container.style.color = txt;
+                        container.style.borderColor = prim;
+                    }
+                    if (btn) btn.style.backgroundColor = prim;
+                }
+                const inputs = document.querySelectorAll('input[type="color"]');
+                inputs.forEach(inp => inp.addEventListener('input', updateAdminPreview));
+            });
+            </script>
+            ''',
+            bg, text, primary, start, end, obj.name or _('Preset Preview'), primary
+        )
+    live_preview.short_description = _("Live Vorschau")
 
     def preview_badge(self, obj):
         from django.utils.html import format_html

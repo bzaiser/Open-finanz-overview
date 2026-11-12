@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.utils.translation import gettext_lazy as _
-from .models import CustomUser, UserProfile
+from .models import CustomUser, UserProfile, DesignHarmony
 
 class AppAuthenticationForm(AuthenticationForm):
     remember_me = forms.BooleanField(
@@ -156,4 +156,23 @@ class UserProfileForm(forms.ModelForm):
         widgets = {
             'avatar': forms.FileInput(attrs={'class': 'form-control form-control-sm'}),
             'dark_mode_config': forms.HiddenInput(),
+        }
+
+
+class DesignHarmonyAdminForm(forms.ModelForm):
+    class Meta:
+        model = DesignHarmony
+        fields = '__all__'
+        widgets = {
+            'primary_color': forms.TextInput(attrs={'type': 'color', 'style': 'height: 40px; width: 80px; padding: 2px; cursor: pointer; vertical-align: middle;'}),
+            'gradient_start': forms.TextInput(attrs={'type': 'color', 'style': 'height: 40px; width: 80px; padding: 2px; cursor: pointer; vertical-align: middle;'}),
+            'gradient_end': forms.TextInput(attrs={'type': 'color', 'style': 'height: 40px; width: 80px; padding: 2px; cursor: pointer; vertical-align: middle;'}),
+            'background_color': forms.TextInput(attrs={'type': 'color', 'style': 'height: 40px; width: 80px; padding: 2px; cursor: pointer; vertical-align: middle;'}),
+            'sidebar_bg_color': forms.TextInput(attrs={'type': 'color', 'style': 'height: 40px; width: 80px; padding: 2px; cursor: pointer; vertical-align: middle;'}),
+            'text_color': forms.TextInput(attrs={'type': 'color', 'style': 'height: 40px; width: 80px; padding: 2px; cursor: pointer; vertical-align: middle;'}),
+            'table_header_bg_color': forms.TextInput(attrs={'type': 'color', 'style': 'height: 40px; width: 80px; padding: 2px; cursor: pointer; vertical-align: middle;'}),
+            'table_header_text_color': forms.TextInput(attrs={'type': 'color', 'style': 'height: 40px; width: 80px; padding: 2px; cursor: pointer; vertical-align: middle;'}),
+            'table_body_bg_color': forms.TextInput(attrs={'type': 'color', 'style': 'height: 40px; width: 80px; padding: 2px; cursor: pointer; vertical-align: middle;'}),
+            'table_body_text_color': forms.TextInput(attrs={'type': 'color', 'style': 'height: 40px; width: 80px; padding: 2px; cursor: pointer; vertical-align: middle;'}),
+            'table_border_color': forms.TextInput(attrs={'type': 'color', 'style': 'height: 40px; width: 80px; padding: 2px; cursor: pointer; vertical-align: middle;'}),
         }

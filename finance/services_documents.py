@@ -496,7 +496,7 @@ def search_all_user_data(user, query='', scope='all'):
                 'kind': _('One-Time Event'),
                 'title': ev.name,
                 'subtitle': ev.date.strftime('%d.%m.%Y') if ev.date else '',
-                'amount': float(ev.amount or 0),
+                'amount': float(ev.value or 0),
                 'url': reverse('finance:cash_flow_list'),
             })
 

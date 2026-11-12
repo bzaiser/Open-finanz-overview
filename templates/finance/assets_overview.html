@@ -393,16 +393,18 @@
                                             </div>
                                         </template>
                                     </td>
-                                    <td class="py-3 px-3 text-end text-nowrap">
-                                        <button type="button" class="btn btn-sm btn-outline-primary rounded-pill p-1 px-2 me-1" @click="openSnapshotModalFor(a, 'asset')" title="{% trans 'History' %}">
-                                            <i class="bi bi-clock-history"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill p-1 px-2 me-1" @click="openEditAssetModal(a)" title="{% trans 'Edit' %}">
-                                            <i class="bi bi-pencil"></i>
-                                        </button>
-                                        <a :href="'/finance/assets/delete/' + a.id + '/?tab=' + activeTab" class="btn btn-sm btn-outline-danger rounded-pill p-1 px-2" onclick="return confirm('{% trans 'Delete asset permanently?' %}')" title="{% trans 'Delete' %}">
-                                            <i class="bi bi-trash"></i>
-                                        </a>
+                                    <td class="py-2 px-3 text-end text-nowrap">
+                                        <div class="table-actions">
+                                            <button type="button" class="btn btn-sm btn-outline-primary table-action-btn" @click="openSnapshotModalFor(a, 'asset')" title="{% trans 'History' %}">
+                                                <i class="bi bi-clock-history"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary table-action-btn" @click="openEditAssetModal(a)" title="{% trans 'Edit' %}">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                            <a :href="'/finance/assets/delete/' + a.id + '/?tab=' + activeTab" class="btn btn-sm btn-outline-danger table-action-btn" onclick="return confirm('{% trans 'Delete asset permanently?' %}')" title="{% trans 'Delete' %}">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </div>
                                     </td>
                                 </tr>
                             </template>
@@ -461,16 +463,18 @@
                                     <td class="py-3 px-3 text-end font-monospace fw-bold fs-6">
                                         <span x-text="formatEuro(pa.value) + ' €'"></span>
                                     </td>
-                                    <td class="py-3 px-3 text-end text-nowrap">
-                                        <button type="button" class="btn btn-sm btn-outline-primary rounded-pill p-1 px-2 me-1" @click="openSnapshotModalFor(pa, 'physical')" title="{% trans 'History' %}">
-                                            <i class="bi bi-clock-history"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill p-1 px-2 me-1" @click="openEditPhysicalModal(pa)" title="{% trans 'Edit' %}">
-                                            <i class="bi bi-pencil"></i>
-                                        </button>
-                                        <a :href="'/finance/assets/physical/delete/' + pa.id + '/?tab=' + activeTab" class="btn btn-sm btn-outline-danger rounded-pill p-1 px-2" onclick="return confirm('{% trans 'Delete physical asset?' %}')" title="{% trans 'Delete' %}">
-                                            <i class="bi bi-trash"></i>
-                                        </a>
+                                    <td class="py-2 px-3 text-end text-nowrap">
+                                        <div class="table-actions">
+                                            <button type="button" class="btn btn-sm btn-outline-primary table-action-btn" @click="openSnapshotModalFor(pa, 'physical')" title="{% trans 'History' %}">
+                                                <i class="bi bi-clock-history"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary table-action-btn" @click="openEditPhysicalModal(pa)" title="{% trans 'Edit' %}">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                            <a :href="'/finance/assets/physical/delete/' + pa.id + '/?tab=' + activeTab" class="btn btn-sm btn-outline-danger table-action-btn" onclick="return confirm('{% trans 'Delete physical asset?' %}')" title="{% trans 'Delete' %}">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </div>
                                     </td>
                                 </tr>
                             </template>

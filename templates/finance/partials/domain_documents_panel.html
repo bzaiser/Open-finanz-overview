@@ -46,16 +46,18 @@
                         <td class="small" x-text="doc.related_object_label || '—'"></td>
                         <td class="text-end font-monospace small" x-text="doc.amount !== null ? doc.amount.toLocaleString('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' €' : '—'"></td>
                         <td class="text-end text-nowrap">
-                            <button type="button" @click="openViewer(doc.id)" class="btn btn-sm btn-outline-secondary rounded-pill px-2" title="{% trans 'View / Open' %}">
-                                <i class="bi bi-eye"></i>
-                            </button>
-                            <a :href="doc.download_url + '?download=1'" class="btn btn-sm btn-outline-secondary rounded-pill px-2" title="{% trans 'Download' %}">
-                                <i class="bi bi-download"></i>
-                            </a>
-                            <a :href="doc.delete_url + '?next={{ next_url|urlencode }}'" class="btn btn-sm btn-outline-danger rounded-pill px-2"
-                               onclick="return confirm('{% trans "Are you sure you want to delete this document?" %}');" title="{% trans 'Delete' %}">
-                                <i class="bi bi-trash"></i>
-                            </a>
+                            <div class="table-actions">
+                                <button type="button" @click="openViewer(doc.id)" class="btn btn-sm btn-outline-secondary table-action-btn" title="{% trans 'View / Open' %}">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                                <a :href="doc.download_url + '?download=1'" class="btn btn-sm btn-outline-secondary table-action-btn" title="{% trans 'Download' %}">
+                                    <i class="bi bi-download"></i>
+                                </a>
+                                <a :href="doc.delete_url + '?next={{ next_url|urlencode }}'" class="btn btn-sm btn-outline-danger table-action-btn"
+                                   onclick="return confirm('{% trans "Are you sure you want to delete this document?" %}');" title="{% trans 'Delete' %}">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
                         </td>
                     </tr>
                 </template>
