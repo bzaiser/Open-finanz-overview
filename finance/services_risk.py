@@ -38,13 +38,17 @@ def is_earned_income_cf(cf):
     return True
 
 
-def calculate_protection_audit(user):
+def calculate_protection_audit(user, situation_override=None, life_stage=None):
     """
     Computes a structured risk & insurance protection audit tailored to the user's
-    household situation, income structure, loans, assets, and active InsurancePolicy records.
+    household situation, life stage (accumulation/transition/retirement), income structure,
+    loans, assets, and active InsurancePolicy records.
     """
+    from core.models import UserProfile
     profile = getattr(user, 'profile', None)
-    situation = getattr(profile, 'household_situation', 'standard') if profile else 'standard'
+    saved_situation = getattr(profile, 'household_situation', 'standard') if profile else 'standard'
+    valid_situations = {c[0] for c in UserProfile.HOUSEHOLD_SITUATION_CHOICES}
+    situation = situation_override if (situation_override in valid_situations) else saved_situation
     has_partner = bool(profile and (profile.partner_name or (profile.display_name and '&' in profile.display_name)))
 
     from django.utils import timezone
@@ -52,6 +56,31 @@ def calculate_protection_audit(user):
     from .services_realestate import calculate_loan_schedule
 
     today = timezone.localdate()
+    user_age = None
+    user_years_to_ret = None
+    if profile and profile.birth_date:
+        user_age = today.year - profile.birth_date.year - ((today.month, today.day) < (profile.birth_date.month, profile.birth_date.day))
+        user_years_to_ret = max(0, (profile.retirement_age or 67) - user_age)
+    partner_age = None
+    partner_years_to_ret = None
+    if profile and profile.partner_birth_date:
+        partner_age = today.year - profile.partner_birth_date.year - ((today.month, today.day) < (profile.partner_birth_date.month, profile.partner_birth_date.day))
+        partner_years_to_ret = max(0, (profile.partner_retirement_age or 67) - partner_age)
+
+    if not life_stage:
+        if user_age is not None and profile and user_age >= (profile.retirement_age or 67):
+            life_stage = 'retirement'
+        elif user_years_to_ret is not None and user_years_to_ret <= 5:
+            life_stage = 'transition'
+        else:
+            life_stage = 'accumulation'
+    is_retired = (life_stage == 'retirement') or (situation == 'early_retiree')
+    partner_working_long = bool(
+        has_partner and (
+            (partner_years_to_ret is not None and partner_years_to_ret > 5)
+            or (user_age is not None and partner_age is not None and (user_age - partner_age) >= 8 and partner_years_to_ret != 0)
+        )
+    )
     cash_flows = list(CashFlowSource.objects.filter(CashFlowSource.active_on_q(ref_date=today), user=user).select_related('category'))
     assets = list(Asset.objects.filter(user=user))
     pensions = list(Pension.objects.filter(user=user))
@@ -275,35 +304,53 @@ def calculate_protection_audit(user):
         _('Policen-Schutz aktiv') if 'liability' in existing_types else _('Fehlt – höchste Priorität!'),
     )
 
-    need_bu = situation in {'standard', 'low_income', 'single_parent'} and primary_earned > 0
+    need_bu = (not is_retired and situation in {'standard', 'low_income', 'single_parent'} and primary_earned > 0) or (is_retired and partner_working_long and partner_earned > 0)
+    bu_priority = 'recommended' if (is_retired and partner_working_long) else ('essential' if (situation == 'single_parent' or primary_earned > 0) else 'optional')
+    bu_reason = (
+        _('Im Ruhestand nur für den noch deutlich länger berufstätigen Partner prüfen.')
+        if (is_retired and partner_working_long)
+        else _('Schließt die Lücke zwischen Nettoeinkommen und gesetzlicher Erwerbsminderungsrente.')
+    )
     if 'disability' in existing_types:
         bu_hint = f"{_('Policen-Schutz aktiv')} ({_('Bedarf gedeckt')})" if disability_gap_primary <= 0 else f"{_('Policen-Schutz aktiv')} ({_('Restlücke')}: {disability_gap_primary:,.0f} €/mtl.)"
+    elif is_retired and partner_working_long:
+        bu_hint = _('Partner-Absicherung prüfen')
     else:
         bu_hint = f"{_('Lücke')}: {disability_gap_primary:,.0f} €/mtl." if disability_gap_primary > 0 else _('Bedarf gedeckt')
     add_check(
         'disability',
         _('Berufsunfähigkeits- / Erwerbsunfähigkeitsschutz'),
-        'essential' if (situation == 'single_parent' or primary_earned > 0) else 'optional',
+        bu_priority,
         need_bu,
-        _('Schließt die Lücke zwischen Nettoeinkommen und gesetzlicher Erwerbsminderungsrente.'),
+        bu_reason,
         bu_hint,
     )
 
-    need_term_life = has_partner or has_children or total_loan_debt > Decimal('10000')
+    if is_retired:
+        need_term_life = partner_working_long or has_children or total_loan_debt > Decimal('30000')
+        term_life_priority = 'recommended' if need_term_life else 'optional'
+        term_life_reason = _('Im Ruhestand in der Regel nur prüfen, falls der Partner deutlich jünger / noch lange berufstätig ist, Kinder versorgt werden oder hohe Restschulden bestehen.')
+    else:
+        need_term_life = has_partner or has_children or total_loan_debt > Decimal('10000')
+        term_life_priority = 'essential' if (has_children or total_loan_debt > Decimal('30000')) else 'recommended'
+        term_life_reason = _('Sichert Hinterbliebene & laufende Kredite bei Tod eines Partners / Elternteils ab.')
+
     if 'term_life' in existing_types:
         rlv_hint = f"{_('Policen-Schutz aktiv')} ({_('Abgesichert')})" if term_life_gap <= 0 else f"{_('Policen-Schutz aktiv')} ({_('Restlücke')}: ca. {term_life_gap:,.0f} €)"
+    elif is_retired and need_term_life:
+        rlv_hint = _('Bei jüngerem Partner / Restschuld prüfen')
     else:
         rlv_hint = f"{_('Empfehlung')}: ca. {recommended_term_life:,.0f} €" if term_life_gap > 0 else _('Abgesichert')
     add_check(
         'term_life',
         _('Risikolebensversicherung'),
-        'essential' if (has_children or total_loan_debt > Decimal('30000')) else 'recommended',
+        term_life_priority,
         need_term_life,
-        _('Sichert Hinterbliebene & laufende Kredite bei Tod eines Partners / Elternteils ab.'),
+        term_life_reason,
         rlv_hint,
     )
 
-    if (primary_earned > Decimal('1200') and situation not in {'student', 'unemployed', 'early_retiree'}) or 'sick_pay' in existing_types:
+    if (not is_retired and primary_earned > Decimal('1200') and situation not in {'student', 'unemployed', 'early_retiree'}) or 'sick_pay' in existing_types:
         add_check(
             'sick_pay',
             _('Krankentagegeldversicherung'),
@@ -313,7 +360,8 @@ def calculate_protection_audit(user):
             _('Policen-Schutz aktiv') if 'sick_pay' in existing_types else '',
         )
 
-    if real_estates or 'building' in existing_types:
+    has_buildings = any(getattr(re, 'property_type', 'apartment') != 'land' for re in real_estates)
+    if has_buildings or 'building' in existing_types:
         add_check(
             'building',
             _('Wohngebäudeversicherung'),
@@ -342,11 +390,13 @@ def calculate_protection_audit(user):
         if situation == 'unemployed':
             optimization_hints.append(str(_('Bei Bürgergeld-Bezug: Angemessene Pflicht-/Privathaftpflicht & KFZ-Haftpflicht können einkommensmindernd berücksichtigt werden.')))
 
-    from core.models import UserProfile
     situation_label = dict(UserProfile.HOUSEHOLD_SITUATION_CHOICES).get(situation, situation)
 
     return {
         'situation': situation,
+        'saved_situation': saved_situation,
+        'is_situation_overridden': situation != saved_situation,
+        'life_stage': life_stage,
         'situation_label': str(situation_label),
         'has_partner': has_partner,
         'has_children': has_children,

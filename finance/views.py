@@ -3644,7 +3644,12 @@ def pension_plan_view(request):
             'notes': ins.notes or '',
         })
 
-    protection_audit = calculate_protection_audit(request.user)
+    selected_situation = request.GET.get('situation')
+    protection_audit = calculate_protection_audit(
+        request.user,
+        situation_override=selected_situation,
+        life_stage=life_stage,
+    )
     checklist_items = protection_audit.get('checklist', [])
     relevant_checks = [c for c in checklist_items if c.get('status') != 'not_applicable']
     ok_checks = [c for c in relevant_checks if c.get('status') == 'ok']
@@ -3666,6 +3671,7 @@ def pension_plan_view(request):
         'insurances': insurances,
         'insurances_json': json.dumps(insurances_json),
         'protection_audit': protection_audit,
+        'situation_choices': UserProfile.HOUSEHOLD_SITUATION_CHOICES,
         'audit_overview': audit_overview,
         'insurance_form': InsurancePolicyForm(user=request.user),
         'life_stage': life_stage,

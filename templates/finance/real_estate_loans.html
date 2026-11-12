@@ -272,7 +272,10 @@
                         <!-- Card Header -->
                         <div class="card-header border-0 d-flex justify-content-between align-items-center py-3 px-3">
                             <div>
-                                <h5 class="fw-bold mb-1 text-white">{{ p.real_estate.name }}</h5>
+                                <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
+                                    <h5 class="fw-bold mb-0 text-white">{{ p.real_estate.name }}</h5>
+                                    <span class="badge bg-white bg-opacity-25 text-white border border-white border-opacity-25 rounded-pill px-2 py-0 small">{{ p.real_estate.get_property_type_display }}</span>
+                                </div>
                                 <div class="small opacity-85 text-white">
                                     <i class="bi bi-geo-alt me-1"></i>{{ p.real_estate.location|default:_("No location specified") }}
                                     {% if p.real_estate.current_tenant %}
@@ -290,7 +293,7 @@
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
                                         <li>
-                                            <a class="dropdown-item small" href="#" @click.prevent="openEditPropertyModal({{ p.real_estate.id }}, '{{ p.real_estate.name|escapejs }}', '{{ p.real_estate.property_value }}', '{{ p.real_estate.appreciation_rate }}', '{{ p.real_estate.location|escapejs }}', '{{ p.real_estate.current_tenant|escapejs }}', '{{ p.real_estate.rental_income_monthly }}', '{{ p.real_estate.maintenance_costs_monthly }}', '{{ p.real_estate.ancillary_costs_monthly }}', '{{ p.real_estate.construction_year|default:'' }}', '{{ p.real_estate.living_space_sqm|default:'' }}', '{{ p.real_estate.current_maintenance_reserve|default:'' }}', '{{ p.real_estate.monthly_maintenance_allocation|default:'' }}', '{{ p.real_estate.building_share_percent|default:'70.0' }}', '{{ p.real_estate.depreciation_rate_percent|default:'2.0' }}', {{ p.real_estate.is_rental_property|yesno:'true,false' }}, '{{ p.real_estate.acquisition_date|date:'Y-m-d'|default:'' }}', {{ p.real_estate.is_sold|yesno:'true,false' }})">
+                                            <a class="dropdown-item small" href="#" @click.prevent="openEditPropertyModal({{ p.real_estate.id }}, '{{ p.real_estate.name|escapejs }}', '{{ p.real_estate.property_type|default:'apartment' }}', '{{ p.real_estate.property_value }}', '{{ p.real_estate.appreciation_rate }}', '{{ p.real_estate.location|escapejs }}', '{{ p.real_estate.current_tenant|escapejs }}', '{{ p.real_estate.rental_income_monthly }}', '{{ p.real_estate.maintenance_costs_monthly }}', '{{ p.real_estate.ancillary_costs_monthly }}', '{{ p.real_estate.construction_year|default:'' }}', '{{ p.real_estate.living_space_sqm|default:'' }}', '{{ p.real_estate.current_maintenance_reserve|default:'' }}', '{{ p.real_estate.monthly_maintenance_allocation|default:'' }}', '{{ p.real_estate.building_share_percent|default:'70.0' }}', '{{ p.real_estate.depreciation_rate_percent|default:'2.0' }}', {{ p.real_estate.is_rental_property|yesno:'true,false' }}, '{{ p.real_estate.acquisition_date|date:'Y-m-d'|default:'' }}', {{ p.real_estate.is_sold|yesno:'true,false' }})">
                                                 <i class="bi bi-pencil me-2"></i>{% trans "Edit" %}
                                             </a>
                                         </li>
@@ -993,15 +996,30 @@
                             <div>
                                 <h6 class="fw-bold mb-0">{{ p.real_estate.name }}</h6>
                                 <span class="small opacity-75">
-                                    {% if p.real_estate.living_space_sqm %}{{ p.real_estate.living_space_sqm }} m² | {% endif %}
-                                    {% if p.real_estate.construction_year %}{% trans "Built" %} {{ p.real_estate.construction_year }} ({{ p.reserve_metrics.building_age }} {% trans "Years" %}){% endif %}
+                                    {% if p.reserve_metrics.is_land %}
+                                        {{ p.real_estate.get_property_type_display }}{% if p.real_estate.living_space_sqm %} | {{ p.real_estate.living_space_sqm }} m²{% endif %}
+                                    {% else %}
+                                        {% if p.real_estate.living_space_sqm %}{{ p.real_estate.living_space_sqm }} m² | {% endif %}
+                                        {% if p.real_estate.construction_year %}{% trans "Built" %} {{ p.real_estate.construction_year }} ({{ p.reserve_metrics.building_age }} {% trans "Years" %}){% endif %}
+                                    {% endif %}
                                 </span>
                             </div>
+                            {% if p.reserve_metrics.is_land %}
+                            <span class="badge bg-secondary rounded-pill px-3 py-1">
+                                {% trans "No Building Reserve Required" %}
+                            </span>
+                            {% else %}
                             <span class="badge {% if p.reserve_metrics.is_sufficient %}bg-success{% else %}bg-warning text-dark{% endif %} rounded-pill px-3 py-1">
                                 {% if p.reserve_metrics.is_sufficient %}{% trans "Reserve Sufficient" %}{% else %}{% trans "Reserve Gap" %}{% endif %}
                             </span>
+                            {% endif %}
                         </div>
 
+                        {% if p.reserve_metrics.is_land %}
+                        <div class="p-3 rounded-3 bg-body-tertiary small text-muted">
+                            <i class="bi bi-info-circle me-1"></i>{% trans "Unbuilt land / plots do not require a building maintenance reserve (Peters Formula / § 28 II. BV)." %}
+                        </div>
+                        {% else %}
                         <div class="row g-3 text-center mb-3">
                             <div class="col-4 border-end">
                                 <div class="small opacity-75 text-uppercase">{% trans "Current Reserve" %}</div>
@@ -1033,6 +1051,7 @@
                                 </strong>
                             </div>
                         </div>
+                        {% endif %}
                     </div>
                 </div>
                 {% endfor %}
@@ -1747,11 +1766,21 @@
                     {% csrf_token %}
                     <div class="modal-body pt-3">
                         <div class="row g-3 mb-3">
-                            <div class="col-md-7">
+                            <div class="col-md-5">
                                 <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Property Name / Designation" %}</label>
                                 <input type="text" name="name" x-model="propertyForm.name" class="form-control" placeholder="{% trans 'e.g. Downtown Apartment' %}" required>
                             </div>
-                            <div class="col-md-5">
+                            <div class="col-md-4">
+                                <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Property Type" %}</label>
+                                <select name="property_type" x-model="propertyForm.property_type" class="form-select">
+                                    <option value="apartment">{% trans "Apartment / Condominium" %}</option>
+                                    <option value="house">{% trans "Single-Family / Semi-Detached House" %}</option>
+                                    <option value="multi_family">{% trans "Multi-Family Building" %}</option>
+                                    <option value="land">{% trans "Land / Plot (Unbuilt)" %}</option>
+                                    <option value="commercial">{% trans "Commercial / Other" %}</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
                                 <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Current Market Value (€)" %}</label>
                                 <input type="number" step="0.01" name="property_value" x-model="propertyForm.property_value" class="form-control font-monospace" placeholder="0.00" required>
                             </div>
@@ -1776,7 +1805,7 @@
                             <h6 class="small fw-bold text-uppercase opacity-75 mb-3">{% trans "Operating & Rental (Monthly)" %}</h6>
                             <div class="row g-3">
                                 <div class="col-md-4">
-                                    <label class="form-label small opacity-75">{% trans "Rental Income Net (€)" %}</label>
+                                    <label class="form-label small opacity-75" x-text="propertyForm.property_type === 'land' ? '{% trans "Lease / Rental Income Net (€)" %}' : '{% trans "Rental Income Net (€)" %}'">{% trans "Rental Income Net (€)" %}</label>
                                     <input type="number" step="0.01" name="rental_income_monthly" x-model="propertyForm.rental_income_monthly" class="form-control font-monospace" placeholder="0.00">
                                 </div>
                                 <div class="col-md-4">
@@ -1787,29 +1816,34 @@
                                     <label class="form-label small opacity-75">{% trans "Ancillary Operating Costs (€)" %}</label>
                                     <input type="number" step="0.01" name="ancillary_costs_monthly" x-model="propertyForm.ancillary_costs_monthly" class="form-control font-monospace" placeholder="0.00">
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-3" x-show="propertyForm.property_type !== 'land'">
                                     <label class="form-label small opacity-75">{% trans "Construction Year" %}</label>
                                     <input type="number" name="construction_year" x-model="propertyForm.construction_year" class="form-control font-monospace" placeholder="1995">
                                 </div>
                                 <div class="col-md-3">
-                                    <label class="form-label small opacity-75">{% trans "Living Space (sqm)" %}</label>
+                                    <label class="form-label small opacity-75" x-text="propertyForm.property_type === 'land' ? '{% trans "Plot Area (sqm)" %}' : '{% trans "Living Space (sqm)" %}'">{% trans "Living Space (sqm)" %}</label>
                                     <input type="number" step="0.01" name="living_space_sqm" x-model="propertyForm.living_space_sqm" class="form-control font-monospace" placeholder="85.00">
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-3" x-show="propertyForm.property_type !== 'land'">
                                     <label class="form-label small opacity-75">{% trans "Current Reserve (€)" %}</label>
                                     <input type="number" step="0.01" name="current_maintenance_reserve" x-model="propertyForm.current_maintenance_reserve" class="form-control font-monospace" placeholder="5000.00">
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-3" x-show="propertyForm.property_type !== 'land'">
                                     <label class="form-label small opacity-75">{% trans "Monthly Reserve Allocation (€)" %}</label>
                                     <input type="number" step="0.01" name="monthly_maintenance_allocation" x-model="propertyForm.monthly_maintenance_allocation" class="form-control font-monospace" placeholder="150.00">
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-3" x-show="propertyForm.property_type !== 'land'">
                                     <label class="form-label small opacity-75">{% trans "Building Share (% AfA)" %}</label>
                                     <input type="number" step="0.1" name="building_share_percent" x-model="propertyForm.building_share_percent" class="form-control font-monospace" placeholder="70.0">
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-3" x-show="propertyForm.property_type !== 'land'">
                                     <label class="form-label small opacity-75">{% trans "Depreciation Rate (% AfA p.a.)" %}</label>
                                     <input type="number" step="0.01" name="depreciation_rate_percent" x-model="propertyForm.depreciation_rate_percent" class="form-control font-monospace" placeholder="2.00">
+                                </div>
+                                <div class="col-12" x-show="propertyForm.property_type === 'land'">
+                                    <div class="alert alert-info py-2 px-3 small mb-0">
+                                        <i class="bi bi-info-circle me-1"></i>{% trans "For unbuilt land / plots, tax depreciation (AfA = 0 %) and building maintenance reserves are automatically disabled." %}
+                                    </div>
                                 </div>
                                 <div class="col-md-6 d-flex align-items-center mt-3">
                                     <div class="form-check">
@@ -2443,6 +2477,7 @@ function realEstateLoansApp() {
         propertyForm: {
             id: null,
             name: '',
+            property_type: 'apartment',
             property_value: '',
             appreciation_rate: '1.5',
             location: '',
@@ -2799,6 +2834,7 @@ function realEstateLoansApp() {
             this.propertyForm = {
                 id: null,
                 name: '',
+                property_type: 'apartment',
                 property_value: '',
                 appreciation_rate: '1.5',
                 location: '',
@@ -2819,10 +2855,11 @@ function realEstateLoansApp() {
             new bootstrap.Modal(document.getElementById('propertyModal')).show();
         },
 
-        openEditPropertyModal(id, name, val, app, loc, tenant, rent, maint, anc, constYear, sqm, res, alloc, bldShare, deprRate, isRental, acq, sold) {
+        openEditPropertyModal(id, name, propType, val, app, loc, tenant, rent, maint, anc, constYear, sqm, res, alloc, bldShare, deprRate, isRental, acq, sold) {
             this.propertyForm = {
                 id: id,
                 name: name,
+                property_type: propType || 'apartment',
                 property_value: val,
                 appreciation_rate: app,
                 location: loc,

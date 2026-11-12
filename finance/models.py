@@ -315,8 +315,17 @@ class PhysicalAsset(models.Model):
 
 
 class RealEstate(models.Model):
+    PROPERTY_TYPE_CHOICES = [
+        ('apartment', _('Apartment / Condominium')),
+        ('house', _('Single-Family / Semi-Detached House')),
+        ('multi_family', _('Multi-Family Building')),
+        ('land', _('Land / Plot (Unbuilt)')),
+        ('commercial', _('Commercial / Other')),
+    ]
+
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='real_estates')
     name = models.CharField(_("Provider / Name"), max_length=100)
+    property_type = models.CharField(_("Property Type"), max_length=20, choices=PROPERTY_TYPE_CHOICES, default='apartment')
     property_value = models.DecimalField(_("Property Value"), max_digits=12, decimal_places=2)
     appreciation_rate = models.DecimalField(_("Annual Appreciation Rate (%)"), max_digits=5, decimal_places=2, default=0.0)
     location = models.CharField(_("Location"), max_length=255, blank=True)

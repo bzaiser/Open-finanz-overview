@@ -550,10 +550,31 @@ def calculate_reserve_metrics_for_property(re):
     Computes maintenance reserve recommendations:
     - Peterssche Formel: (Property value * 70% * 1.5) / 80 / 12
     - § 28 Abs. 2 II. BV: depending on building age and living space
+    For unbuilt land ('land'), no building maintenance reserve is recommended.
     """
     current_year = timezone.now().year
     prop_val = Decimal(str(re.property_value or '0.00'))
     living_sqm = Decimal(str(re.living_space_sqm or '0.00')) if re.living_space_sqm else Decimal('0.00')
+    is_land = getattr(re, 'property_type', 'apartment') == 'land'
+    current_reserve = Decimal(str(re.current_maintenance_reserve or '0.00'))
+    actual_monthly = Decimal(str(re.monthly_maintenance_allocation or re.maintenance_costs_monthly or '0.00'))
+
+    if is_land:
+        return {
+            'is_land': True,
+            'building_age': None,
+            'living_space_sqm': living_sqm,
+            'current_reserve': current_reserve,
+            'actual_monthly_allocation': actual_monthly,
+            'peters_annual': Decimal('0.00'),
+            'peters_monthly': Decimal('0.00'),
+            'iibv_rate_sqm': Decimal('0.00'),
+            'iibv_annual': Decimal('0.00'),
+            'iibv_monthly': Decimal('0.00'),
+            'monthly_gap_peters': actual_monthly,
+            'is_sufficient': True,
+        }
+
     const_year = re.construction_year or (current_year - 30)
     building_age = max(0, current_year - const_year)
 
@@ -579,14 +600,12 @@ def calculate_reserve_metrics_for_property(re):
 
     iibv_monthly = (iibv_annual / Decimal('12.0')).quantize(Decimal('0.01'))
 
-    current_reserve = Decimal(str(re.current_maintenance_reserve or '0.00'))
-    actual_monthly = Decimal(str(re.monthly_maintenance_allocation or re.maintenance_costs_monthly or '0.00'))
-
     # Gap compared to Peterssche Formel
     monthly_gap_peters = actual_monthly - peters_monthly
     is_sufficient = monthly_gap_peters >= Decimal('0.00')
 
     return {
+        'is_land': False,
         'building_age': building_age,
         'living_space_sqm': living_sqm,
         'current_reserve': current_reserve,
@@ -877,8 +896,15 @@ def calculate_property_tax_metrics(re, linked_loans, year=None):
         year = timezone.now().year
 
     prop_val = Decimal(str(re.property_value or '0.00'))
-    bld_share = Decimal(str(re.building_share_percent or '70.0')) / Decimal('100.0')
-    depr_rate = Decimal(str(re.depreciation_rate_percent or '2.0')) / Decimal('100.0')
+    is_land = getattr(re, 'property_type', 'apartment') == 'land'
+    if is_land:
+        bld_share = Decimal('0.00')
+        depr_rate = Decimal('0.00')
+    else:
+        raw_bld_share = re.building_share_percent if re.building_share_percent is not None else Decimal('70.0')
+        raw_depr_rate = re.depreciation_rate_percent if re.depreciation_rate_percent is not None else Decimal('2.0')
+        bld_share = Decimal(str(raw_bld_share)) / Decimal('100.0')
+        depr_rate = Decimal(str(raw_depr_rate)) / Decimal('100.0')
     is_rental = getattr(re, 'is_rental_property', True)
 
     # 1. Rental income

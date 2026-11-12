@@ -91,7 +91,7 @@ class RealEstateForm(forms.ModelForm):
     class Meta:
         model = RealEstate
         fields = [
-            'name', 'property_value', 'appreciation_rate', 'location',
+            'name', 'property_type', 'property_value', 'appreciation_rate', 'location',
             'current_tenant', 'rental_income_monthly', 'maintenance_costs_monthly',
             'ancillary_costs_monthly', 'construction_year', 'living_space_sqm',
             'current_maintenance_reserve', 'monthly_maintenance_allocation',
@@ -100,6 +100,7 @@ class RealEstateForm(forms.ModelForm):
         ]
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('e.g. Downtown Apartment, Multi-Family Home')}),
+            'property_type': forms.Select(attrs={'class': 'form-select'}),
             'property_value': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
             'appreciation_rate': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
             'location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('e.g. Main Street 12, Berlin')}),
@@ -118,6 +119,35 @@ class RealEstateForm(forms.ModelForm):
             'sale_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'is_sold': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for fname in (
+            'appreciation_rate', 'rental_income_monthly', 'maintenance_costs_monthly',
+            'ancillary_costs_monthly', 'current_maintenance_reserve', 'monthly_maintenance_allocation',
+            'building_share_percent', 'depreciation_rate_percent',
+        ):
+            self.fields[fname].required = False
+
+    def clean(self):
+        cleaned = super().clean()
+        for fname in (
+            'appreciation_rate', 'rental_income_monthly', 'maintenance_costs_monthly',
+            'ancillary_costs_monthly', 'current_maintenance_reserve', 'monthly_maintenance_allocation',
+        ):
+            if cleaned.get(fname) is None:
+                cleaned[fname] = Decimal('0.00')
+        if cleaned.get('property_type') == 'land':
+            cleaned['building_share_percent'] = Decimal('0.00')
+            cleaned['depreciation_rate_percent'] = Decimal('0.00')
+            cleaned['current_maintenance_reserve'] = Decimal('0.00')
+            cleaned['monthly_maintenance_allocation'] = Decimal('0.00')
+        else:
+            if cleaned.get('building_share_percent') is None:
+                cleaned['building_share_percent'] = Decimal('70.0')
+            if cleaned.get('depreciation_rate_percent') is None:
+                cleaned['depreciation_rate_percent'] = Decimal('2.0')
+        return cleaned
 
 
 class LoanForm(forms.ModelForm):

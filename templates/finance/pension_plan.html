@@ -31,6 +31,23 @@
                         {% trans "Target Retirement Age" %}: <strong class="text-primary" x-text="retirementAge + ' {% trans "years" %} (' + retirementYear + ')'"></strong>
                     </span>
                 </span>
+                <div class="d-inline-flex align-items-center gap-1 bg-body-tertiary border border-secondary border-opacity-25 rounded-pill px-2.5 py-0.5" style="font-size: 0.75rem;">
+                    <i class="bi bi-person-badge text-primary"></i>
+                    <span class="text-muted">{% trans "Lebenssituation" %}:</span>
+                    <select class="form-select form-select-sm border-0 bg-transparent fw-semibold py-0 ps-1 pe-4 shadow-none"
+                            style="width: auto; font-size: 0.75rem; cursor: pointer;"
+                            aria-label="{% trans 'Lebenssituation umschalten' %}"
+                            @change="window.location.href = '?tab=' + activeTab + '&situation=' + encodeURIComponent($event.target.value)">
+                        {% for val, label in situation_choices %}
+                        <option value="{{ val }}" {% if protection_audit.situation == val %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                    {% if protection_audit.is_situation_overridden %}
+                    <a :href="'?tab=' + activeTab" class="text-decoration-none text-warning ms-1" title="{% trans 'Auf gespeicherte Lebenssituation zurücksetzen' %}">
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                    </a>
+                    {% endif %}
+                </div>
             </p>
         </div>
         <div class="d-flex flex-wrap gap-2">

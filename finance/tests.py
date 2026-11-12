@@ -747,3 +747,75 @@ class AssetModalSaveTests(TestCase):
         self.assertEqual(loan_add_resp.status_code, 200)
         self.assertContains(loan_add_resp, own_re.name)
         self.assertNotContains(loan_add_resp, foreign_re.name)
+
+    def test_land_property_type_tax_reserves_and_risk_audit(self):
+        from finance.forms import RealEstateForm
+        from finance.models import RealEstate
+        from finance.services_realestate import (
+            calculate_property_tax_metrics,
+            calculate_reserve_metrics_for_property,
+        )
+        from finance.services_risk import calculate_protection_audit
+
+        land_user = CustomUser.objects.create_user(username="land_owner", password="LandPassword123!")
+
+        form = RealEstateForm(
+            data={
+                "name": "Ackerland Nord",
+                "property_type": "land",
+                "property_value": "120000.00",
+                "appreciation_rate": "1.50",
+                "rental_income_monthly": "250.00",
+                "maintenance_costs_monthly": "20.00",
+                "ancillary_costs_monthly": "10.00",
+                "living_space_sqm": "15000.00",
+                "is_rental_property": True,
+            }
+        )
+        self.assertTrue(form.is_valid(), form.errors)
+        land = form.save(commit=False)
+        land.user = land_user
+        land.save()
+
+        self.assertEqual(land.building_share_percent, Decimal("0.00"))
+        self.assertEqual(land.depreciation_rate_percent, Decimal("0.00"))
+
+        res_metrics = calculate_reserve_metrics_for_property(land)
+        self.assertTrue(res_metrics["is_land"])
+        self.assertIsNone(res_metrics["building_age"])
+        self.assertEqual(res_metrics["peters_monthly"], Decimal("0.00"))
+        self.assertEqual(res_metrics["iibv_monthly"], Decimal("0.00"))
+        self.assertTrue(res_metrics["is_sufficient"])
+
+        tax_metrics = calculate_property_tax_metrics(land, [])
+        self.assertEqual(tax_metrics["building_value"], Decimal("0.00"))
+        self.assertEqual(tax_metrics["annual_afa"], Decimal("0.00"))
+        self.assertEqual(tax_metrics["annual_rental_income"], Decimal("3000.00"))
+
+        # Non-land property with explicit 0% building share must not fall back to 70%
+        zero_share_house = RealEstate.objects.create(
+            user=land_user,
+            name="Sonderobjekt 0% AfA",
+            property_type="commercial",
+            property_value=Decimal("100000.00"),
+            building_share_percent=Decimal("0.00"),
+            depreciation_rate_percent=Decimal("0.00"),
+        )
+        zero_tax = calculate_property_tax_metrics(zero_share_house, [])
+        self.assertEqual(zero_tax["building_value"], Decimal("0.00"))
+        self.assertEqual(zero_tax["annual_afa"], Decimal("0.00"))
+
+        # Land only -> no mandatory building insurance in audit
+        zero_share_house.delete()
+        audit_land_only = calculate_protection_audit(land_user)
+        self.assertNotIn("building", [c["type"] for c in audit_land_only["checklist"]])
+
+        # Adding a house -> building insurance required
+        RealEstate.objects.create(
+            user=land_user,
+            name="Wohnhaus",
+            property_type="house",
+            property_value=Decimal("350000.00"),
+        )
+        audit_with_house = calculate_protection_audit(land_user)
+        self.assertIn("building", [c["type"] for c in audit_with_house["checklist"]])

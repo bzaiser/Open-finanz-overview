@@ -5371,3 +5371,37 @@ msgstr "Wert"
 
 msgid "Value of 1 pension point in EUR (e.g. 40.79)"
 msgstr "Wert eines Entgeltpunktes in EUR (z. B. 40,79)"
+
+
+msgid "Property Type"
+msgstr "Objekttyp"
+
+msgid "Apartment / Condominium"
+msgstr "Wohnung / ETW"
+
+msgid "Single-Family / Semi-Detached House"
+msgstr "Einfamilienhaus / Doppelhaushälfte"
+
+msgid "Multi-Family Building"
+msgstr "Mehrfamilienhaus"
+
+msgid "Land / Plot (Unbuilt)"
+msgstr "Grundstück / Liegenschaft (unbebaut)"
+
+msgid "Commercial / Other"
+msgstr "Gewerbe / Sonstiges"
+
+msgid "Lease / Rental Income Net (€)"
+msgstr "Pacht- / Mieteinnahmen (Netto €)"
+
+msgid "Plot Area (sqm)"
+msgstr "Grundstücksfläche (m²)"
+
+msgid "No Building Reserve Required"
+msgstr "Keine Gebäude-Rücklage nötig"
+
+msgid "Unbuilt land / plots do not require a building maintenance reserve (Peters Formula / § 28 II. BV)."
+msgstr "Für unbebaute Grundstücke / Liegenschaften ist keine Gebäude-Instandhaltungsrücklage (Peterssche Formel / § 28 II. BV) erforderlich."
+
+msgid "For unbuilt land / plots, tax depreciation (AfA = 0 %) and building maintenance reserves are automatically disabled."
+msgstr "Bei unbebauten Grundstücken / Liegenschaften werden AfA (0 %) und Gebäude-Instandhaltungsrücklagen automatisch deaktiviert."
