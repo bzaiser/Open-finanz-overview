@@ -1,21 +1,21 @@
 {% load i18n %}
-<div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="background-color: var(--app-card-bg); color: var(--app-card-color);"
+<div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color) !important;"
      x-data="domainDocumentsPanelApp()">
-    <div class="card-header border-0 py-3 px-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
+    <div class="card-header border-0 py-3 px-3 d-flex flex-wrap justify-content-between align-items-center gap-2 text-white">
         <div class="d-flex align-items-center gap-2">
-            <h5 class="fw-bold mb-0"><i class="bi bi-folder2-open text-primary me-2"></i>{% trans "Documents" %}</h5>
-            <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill" x-text="filtered.length"></span>
+            <h5 class="fw-bold mb-0"><i class="bi bi-folder2-open me-2"></i>{% trans "Documents" %}</h5>
+            <span class="badge bg-white bg-opacity-25 text-white rounded-pill font-monospace" x-text="filtered.length"></span>
         </div>
         <div class="d-flex flex-wrap align-items-center gap-2">
             <div class="input-group input-group-sm" style="width: 240px;">
                 <span class="input-group-text"><i class="bi bi-search"></i></span>
                 <input type="text" class="form-control" x-model="search" placeholder="{% trans 'Search documents...' %}">
             </div>
-            <button type="button" class="btn btn-sm btn-primary rounded-pill px-3"
+            <button type="button" class="btn btn-sm bg-white bg-opacity-25 text-white border border-white border-opacity-25 rounded-pill px-3 fw-semibold"
                     onclick="window.dispatchEvent(new CustomEvent('open-document-modal', { detail: { domain: '{{ default_domain }}', nextUrl: '{{ next_url }}' } }))">
                 <i class="bi bi-plus-lg me-1"></i>{% trans "Upload Document" %}
             </button>
-            <a href="{% url 'finance:documents_vault' %}?domain={{ default_domain }}" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
+            <a href="{% url 'finance:documents_vault' %}?domain={{ default_domain }}" class="btn btn-sm bg-white bg-opacity-25 text-white border border-white border-opacity-25 rounded-pill px-3">
                 {% trans "All Documents" %}
             </a>
         </div>
@@ -41,12 +41,12 @@
                             <div class="fw-semibold" x-text="doc.title"></div>
                             <div class="small text-muted" x-text="doc.filename + ' · ' + doc.file_size"></div>
                         </td>
-                        <td><span class="badge bg-primary bg-opacity-10 text-primary rounded-pill" x-text="doc.domain_display"></span></td>
+                        <td><span class="badge rounded-pill px-2 py-1" style="background: var(--app-gradient); color: #fff;" x-text="doc.domain_display"></span></td>
                         <td class="small" x-text="doc.category_display"></td>
                         <td class="small" x-text="doc.related_object_label || '—'"></td>
                         <td class="text-end font-monospace small" x-text="doc.amount !== null ? doc.amount.toLocaleString('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' €' : '—'"></td>
                         <td class="text-end text-nowrap">
-                            <a :href="doc.download_url" target="_blank" class="btn btn-sm btn-outline-primary rounded-pill px-2" title="{% trans 'View / Open' %}">
+                            <a :href="doc.download_url" target="_blank" class="btn btn-sm btn-outline-secondary rounded-pill px-2" title="{% trans 'View / Open' %}">
                                 <i class="bi bi-eye"></i>
                             </a>
                             <a :href="doc.download_url + '?download=1'" class="btn btn-sm btn-outline-secondary rounded-pill px-2" title="{% trans 'Download' %}">

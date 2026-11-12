@@ -6,33 +6,35 @@
 {% block content %}
 <div class="container-fluid px-3 px-lg-4 py-3" x-data="documentsVaultApp()">
 
-    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
         <div>
-            <h2 class="fw-bold mb-1">
-                <i class="bi bi-folder2-open text-primary me-2"></i>{% trans "Document Vault" %}
+            <h2 class="fw-bold mb-1 text-muted">
+                <i class="bi bi-folder2-open me-2" style="color: var(--app-primary);"></i>{% trans "Document Vault" %}
             </h2>
             <p class="text-muted small mb-0">{% trans "Central storage for all documents across real estate, loans, insurance, pensions, and accounts." %}</p>
         </div>
-        <div class="d-flex gap-2">
-            <a href="{% url 'finance:global_search' %}" class="btn btn-outline-secondary rounded-pill px-3">
-                <i class="bi bi-search me-1"></i>{% trans "Global Search" %}
+        <div class="d-flex flex-wrap gap-2">
+            <a href="{% url 'finance:global_search' %}" class="btn btn-outline-secondary app-action-btn shadow-sm">
+                <i class="bi bi-search"></i>
+                <span>{% trans "Global Search" %}</span>
             </a>
-            <button type="button" class="btn btn-primary rounded-pill px-4" @click="openUpload()">
-                <i class="bi bi-plus-lg me-1"></i>{% trans "Upload Document" %}
+            <button type="button" class="btn btn-primary app-action-btn shadow-sm" style="background: var(--app-gradient); border: none;" @click="openUpload()">
+                <i class="bi bi-plus-lg"></i>
+                <span>{% trans "Upload Document" %}</span>
             </button>
         </div>
     </div>
 
-    <!-- Domain Quick Filter Pills -->
+    <!-- Domain Quick Filter Pills (Theme-matched) -->
     <div class="d-flex flex-wrap gap-2 mb-3">
-        <button type="button" class="btn btn-sm rounded-pill px-3"
-                :class="filters.domain === '' ? 'btn-primary' : 'btn-outline-secondary'"
+        <button type="button" class="btn btn-sm rounded-pill px-3 fw-semibold"
+                :style="filters.domain === '' ? 'background: var(--app-gradient); color: #fff; border: none;' : 'background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color);'"
                 @click="filters.domain = ''">
             {% trans "All" %} (<span x-text="docs.length"></span>)
         </button>
         {% for val, label in doc_domain_choices %}
-        <button type="button" class="btn btn-sm rounded-pill px-3"
-                :class="filters.domain === '{{ val }}' ? 'btn-primary' : 'btn-outline-secondary'"
+        <button type="button" class="btn btn-sm rounded-pill px-3 fw-semibold"
+                :style="filters.domain === '{{ val }}' ? 'background: var(--app-gradient); color: #fff; border: none;' : 'background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color);'"
                 @click="filters.domain = '{{ val }}'">
             {{ label }} (<span x-text="docs.filter(d => d.domain === '{{ val }}').length"></span>)
         </button>
@@ -40,7 +42,7 @@
     </div>
 
     <!-- Filter Bar -->
-    <div class="card border-0 shadow-sm rounded-4 mb-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+    <div class="card border-0 shadow-sm rounded-4 mb-4" style="background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color) !important;">
         <div class="card-body py-3">
             <div class="row g-2 align-items-center">
                 <div class="col-md-4">
@@ -66,7 +68,7 @@
                     </select>
                 </div>
                 <div class="col-md-3 d-flex justify-content-md-end align-items-center gap-2">
-                    <span class="small text-muted" x-text="filteredDocs.length + ' / ' + docs.length + ' {% trans "Documents" %}'"></span>
+                    <span class="badge rounded-pill px-3 py-2 font-monospace" style="background: var(--app-gradient); color: #fff;" x-text="filteredDocs.length + ' / ' + docs.length"></span>
                     <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill" @click="resetFilters()" x-show="filters.domain || filters.category || filters.year || filters.q">
                         <i class="bi bi-x-circle me-1"></i>{% trans "Reset" %}
                     </button>
@@ -76,7 +78,11 @@
     </div>
 
     <!-- Documents Table -->
-    <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color) !important;">
+        <div class="card-header border-0 py-3 px-3 d-flex justify-content-between align-items-center text-white">
+            <h5 class="fw-bold mb-0"><i class="bi bi-files me-2"></i>{% trans "Documents" %}</h5>
+            <span class="badge bg-white bg-opacity-25 text-white rounded-pill px-3 py-1 font-monospace" x-text="filteredDocs.length + ' {% trans "Documents" %}'"></span>
+        </div>
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
                 <thead>
@@ -99,13 +105,13 @@
                                 <div class="small text-muted" x-text="doc.filename + ' · ' + doc.file_size"></div>
                             </td>
                             <td>
-                                <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-2" x-text="doc.domain_display"></span>
+                                <span class="badge rounded-pill px-2 py-1" style="background: var(--app-gradient); color: #fff;" x-text="doc.domain_display"></span>
                             </td>
                             <td class="small" x-text="doc.category_display"></td>
                             <td class="small" x-text="doc.related_object_label || '—'"></td>
                             <td class="text-end font-monospace small" x-text="doc.amount !== null ? doc.amount.toLocaleString('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' €' : '—'"></td>
                             <td class="text-end text-nowrap">
-                                <a :href="doc.download_url" target="_blank" class="btn btn-sm btn-outline-primary rounded-pill px-2" title="{% trans 'View / Open' %}">
+                                <a :href="doc.download_url" target="_blank" class="btn btn-sm btn-outline-secondary rounded-pill px-2" title="{% trans 'View / Open' %}">
                                     <i class="bi bi-eye"></i>
                                 </a>
                                 <a :href="doc.download_url + '?download=1'" class="btn btn-sm btn-outline-secondary rounded-pill px-2" title="{% trans 'Download' %}">

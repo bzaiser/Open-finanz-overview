@@ -3,10 +3,10 @@
      x-data="unifiedDocumentModalApp()"
      @open-document-modal.window="openModal($event.detail)">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg rounded-4">
+        <div class="modal-content border-0 shadow-lg rounded-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
             <div class="modal-header border-0 pb-0">
                 <h5 class="modal-title fw-bold">
-                    <i class="bi bi-file-earmark-arrow-up me-2 text-primary"></i>{% trans "Upload Document" %}
+                    <i class="bi bi-file-earmark-arrow-up me-2"></i>{% trans "Upload Document" %}
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
@@ -28,43 +28,43 @@
                             <select :name="objectFieldName" x-model="objectId" class="form-select">
                                 <option value="">{% trans "-- Optional / None --" %}</option>
                                 <template x-for="obj in availableObjects" :key="obj.id">
-                                    <option :value="obj.id" x-text="obj.name"></option>
+                                    <option :value="String(obj.id)" :selected="String(obj.id) === String(objectId)" x-text="obj.name"></option>
                                 </template>
                             </select>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Document Title" %}</label>
-                            {{ document_form.title }}
+                            <input type="text" name="title" class="form-control" placeholder="{% trans 'e.g. Purchase Contract, Policy, Annual Statement' %}" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Category" %}</label>
                             <select name="category" x-model="category" class="form-select" required>
                                 <template x-for="cat in availableCategories" :key="cat.value">
-                                    <option :value="cat.value" x-text="cat.label"></option>
+                                    <option :value="cat.value" :selected="cat.value === category" x-text="cat.label"></option>
                                 </template>
                             </select>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Date" %}</label>
-                            {{ document_form.date }}
+                            <input type="date" name="date" x-model="dateValue" class="form-control" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Amount (€, optional)" %}</label>
-                            {{ document_form.amount }}
+                            <input type="number" name="amount" step="0.01" class="form-control font-monospace" placeholder="0.00">
                         </div>
                         <div class="col-12">
                             <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "File (PDF, Image, etc.)" %}</label>
-                            {{ document_form.file }}
+                            <input type="file" name="file" class="form-control" required>
                         </div>
                         <div class="col-12">
                             <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Notes" %}</label>
-                            {{ document_form.notes }}
+                            <textarea name="notes" class="form-control" rows="2" placeholder="{% trans 'Optional notes on this document...' %}"></textarea>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer border-0">
                     <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
-                    <button type="submit" class="btn btn-primary rounded-pill px-4">
+                    <button type="submit" class="btn btn-primary rounded-pill px-4" style="background: var(--app-gradient); border: none;">
                         <i class="bi bi-cloud-upload me-1"></i>{% trans "Upload" %}
                     </button>
                 </div>
@@ -79,6 +79,7 @@ function unifiedDocumentModalApp() {
         domain: 'real_estate',
         objectId: '',
         category: 'other',
+        dateValue: new Date().toISOString().split('T')[0],
         nextUrl: window.location.pathname + window.location.search,
         domainObjects: {{ doc_domain_objects_json|safe }},
         domainCategories: {{ doc_domain_categories_json|safe }},
@@ -102,18 +103,25 @@ function unifiedDocumentModalApp() {
         openModal(detail) {
             const d = detail || {};
             this.domain = d.domain || 'real_estate';
-            this.objectId = d.objectId ? String(d.objectId) : '';
-            const cats = this.domainCategories[this.domain] || [];
-            this.category = d.category || (cats.length ? cats[0].value : 'other');
+            this.dateValue = new Date().toISOString().split('T')[0];
             this.nextUrl = d.nextUrl || (window.location.pathname + window.location.search);
-            new bootstrap.Modal(document.getElementById('unifiedDocumentModal')).show();
+            const cats = this.domainCategories[this.domain] || [];
+            const targetCat = d.category || (cats.length ? cats[0].value : 'other');
+            const targetObj = d.objectId ? String(d.objectId) : '';
+            this.$nextTick(() => {
+                this.category = targetCat;
+                this.objectId = targetObj;
+            });
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('unifiedDocumentModal')).show();
         },
         onDomainChange() {
             this.objectId = '';
             const cats = this.availableCategories;
-            if (cats.length && !cats.some(c => c.value === this.category)) {
-                this.category = cats[0].value;
-            }
+            this.$nextTick(() => {
+                if (cats.length && !cats.some(c => c.value === this.category)) {
+                    this.category = cats[0].value;
+                }
+            });
         }
     };
 }
