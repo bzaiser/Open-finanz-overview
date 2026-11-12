@@ -4,42 +4,7 @@
 {% block title %}{% trans "Documents" %} - Finanzplan{% endblock %}
 
 {% block content %}
-<div class="container-fluid px-3 px-lg-4 py-3"
-     x-data="{
-        docs: {{ documents_json|safe }},
-        filters: {
-            domain: '{{ initial_domain|escapejs }}',
-            category: '',
-            year: '',
-            q: ''
-        },
-        get years() {
-            const set = new Set();
-            this.docs.forEach(d => { if (d.date) set.add(d.date.slice(0, 4)); });
-            return Array.from(set).sort().reverse();
-        },
-        get filteredDocs() {
-            const q = this.filters.q.trim().toLowerCase();
-            return this.docs.filter(d => {
-                if (this.filters.domain && d.domain !== this.filters.domain) return false;
-                if (this.filters.category && d.category !== this.filters.category) return false;
-                if (this.filters.year && (!d.date || !d.date.startsWith(this.filters.year))) return false;
-                if (q) {
-                    const hay = `${d.title} ${d.domain_display} ${d.category_display} ${d.related_object_label} ${d.notes} ${d.filename}`.toLowerCase();
-                    if (!hay.includes(q)) return false;
-                }
-                return true;
-            });
-        },
-        resetFilters() {
-            this.filters = { domain: '', category: '', year: '', q: '' };
-        },
-        openUpload() {
-            window.dispatchEvent(new CustomEvent('open-document-modal', {
-                detail: { domain: this.filters.domain || 'real_estate' }
-            }));
-        }
-     }">
+<div class="container-fluid px-3 px-lg-4 py-3" x-data="documentsVaultApp()">
 
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
         <div>
@@ -166,4 +131,44 @@
 </div>
 
 {% include 'finance/partials/document_modal.html' %}
+
+<script>
+function documentsVaultApp() {
+    return {
+        docs: {{ documents_json|safe }},
+        filters: {
+            domain: '{{ initial_domain|escapejs }}',
+            category: '',
+            year: '',
+            q: ''
+        },
+        get years() {
+            const set = new Set();
+            this.docs.forEach(d => { if (d.date) set.add(d.date.slice(0, 4)); });
+            return Array.from(set).sort().reverse();
+        },
+        get filteredDocs() {
+            const q = this.filters.q.trim().toLowerCase();
+            return this.docs.filter(d => {
+                if (this.filters.domain && d.domain !== this.filters.domain) return false;
+                if (this.filters.category && d.category !== this.filters.category) return false;
+                if (this.filters.year && (!d.date || !d.date.startsWith(this.filters.year))) return false;
+                if (q) {
+                    const hay = `${d.title} ${d.domain_display} ${d.category_display} ${d.related_object_label} ${d.notes} ${d.filename}`.toLowerCase();
+                    if (!hay.includes(q)) return false;
+                }
+                return true;
+            });
+        },
+        resetFilters() {
+            this.filters = { domain: '', category: '', year: '', q: '' };
+        },
+        openUpload() {
+            window.dispatchEvent(new CustomEvent('open-document-modal', {
+                detail: { domain: this.filters.domain || 'real_estate' }
+            }));
+        }
+    };
+}
+</script>
 {% endblock %}

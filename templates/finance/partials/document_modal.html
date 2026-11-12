@@ -1,46 +1,6 @@
 {% load i18n %}
 <div class="modal fade" id="unifiedDocumentModal" tabindex="-1"
-     x-data="{
-        domain: 'real_estate',
-        objectId: '',
-        category: 'other',
-        nextUrl: window.location.pathname + window.location.search,
-        domainObjects: {{ doc_domain_objects_json|safe }},
-        domainCategories: {{ doc_domain_categories_json|safe }},
-        get availableObjects() {
-            return this.domainObjects[this.domain] || [];
-        },
-        get availableCategories() {
-            return this.domainCategories[this.domain] || [];
-        },
-        get objectFieldName() {
-            const map = {
-                real_estate: 'real_estate',
-                loan: 'loan',
-                insurance: 'insurance_policy',
-                pension: 'pension',
-                asset: 'asset',
-                physical_asset: 'physical_asset',
-            };
-            return map[this.domain] || '';
-        },
-        openModal(detail) {
-            const d = detail || {};
-            this.domain = d.domain || 'real_estate';
-            this.objectId = d.objectId ? String(d.objectId) : '';
-            const cats = this.domainCategories[this.domain] || [];
-            this.category = d.category || (cats.length ? cats[0].value : 'other');
-            this.nextUrl = d.nextUrl || (window.location.pathname + window.location.search);
-            new bootstrap.Modal(document.getElementById('unifiedDocumentModal')).show();
-        },
-        onDomainChange() {
-            this.objectId = '';
-            const cats = this.availableCategories;
-            if (cats.length && !cats.some(c => c.value === this.category)) {
-                this.category = cats[0].value;
-            }
-        }
-     }"
+     x-data="unifiedDocumentModalApp()"
      @open-document-modal.window="openModal($event.detail)">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg rounded-4">
@@ -112,3 +72,49 @@
         </div>
     </div>
 </div>
+
+<script>
+function unifiedDocumentModalApp() {
+    return {
+        domain: 'real_estate',
+        objectId: '',
+        category: 'other',
+        nextUrl: window.location.pathname + window.location.search,
+        domainObjects: {{ doc_domain_objects_json|safe }},
+        domainCategories: {{ doc_domain_categories_json|safe }},
+        get availableObjects() {
+            return this.domainObjects[this.domain] || [];
+        },
+        get availableCategories() {
+            return this.domainCategories[this.domain] || [];
+        },
+        get objectFieldName() {
+            const map = {
+                real_estate: 'real_estate',
+                loan: 'loan',
+                insurance: 'insurance_policy',
+                pension: 'pension',
+                asset: 'asset',
+                physical_asset: 'physical_asset',
+            };
+            return map[this.domain] || '';
+        },
+        openModal(detail) {
+            const d = detail || {};
+            this.domain = d.domain || 'real_estate';
+            this.objectId = d.objectId ? String(d.objectId) : '';
+            const cats = this.domainCategories[this.domain] || [];
+            this.category = d.category || (cats.length ? cats[0].value : 'other');
+            this.nextUrl = d.nextUrl || (window.location.pathname + window.location.search);
+            new bootstrap.Modal(document.getElementById('unifiedDocumentModal')).show();
+        },
+        onDomainChange() {
+            this.objectId = '';
+            const cats = this.availableCategories;
+            if (cats.length && !cats.some(c => c.value === this.category)) {
+                this.category = cats[0].value;
+            }
+        }
+    };
+}
+</script>

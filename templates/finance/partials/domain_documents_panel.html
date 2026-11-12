@@ -1,16 +1,6 @@
 {% load i18n %}
 <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="background-color: var(--app-card-bg); color: var(--app-card-color);"
-     x-data="{
-        docs: {{ domain_documents_json|safe }},
-        search: '',
-        get filtered() {
-            const q = this.search.trim().toLowerCase();
-            if (!q) return this.docs;
-            return this.docs.filter(d =>
-                `${d.title} ${d.category_display} ${d.related_object_label} ${d.notes} ${d.filename}`.toLowerCase().includes(q)
-            );
-        }
-     }">
+     x-data="domainDocumentsPanelApp()">
     <div class="card-header border-0 py-3 px-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
         <div class="d-flex align-items-center gap-2">
             <h5 class="fw-bold mb-0"><i class="bi bi-folder2-open text-primary me-2"></i>{% trans "Documents" %}</h5>
@@ -78,3 +68,19 @@
         </table>
     </div>
 </div>
+
+<script>
+function domainDocumentsPanelApp() {
+    return {
+        docs: {{ domain_documents_json|safe }},
+        search: '',
+        get filtered() {
+            const q = this.search.trim().toLowerCase();
+            if (!q) return this.docs;
+            return this.docs.filter(d =>
+                `${d.title} ${d.category_display} ${d.related_object_label} ${d.notes} ${d.filename}`.toLowerCase().includes(q)
+            );
+        }
+    };
+}
+</script>
