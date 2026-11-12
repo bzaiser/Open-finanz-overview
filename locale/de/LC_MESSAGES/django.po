@@ -84,23 +84,23 @@ msgstr "Sidebar-Hintergrund"
 
 #: core/forms.py:91
 msgid "Table Header BG"
-msgstr "Tabellenkopf-Text"
+msgstr "Tabellenkopf Hintergrund"
 
 #: core/forms.py:96 core/models.py:79
 msgid "Table Header Text"
-msgstr "Tabellenkopf-Text"
+msgstr "Tabellenkopf Textfarbe"
 
 #: core/forms.py:101 core/forms.py:106
 msgid "Table Body BG"
-msgstr "Tabellenkopf-Text"
+msgstr "Tabellen-Zeilen Hintergrund"
 
 #: core/forms.py:111 core/models.py:82
 msgid "Table Body Text"
-msgstr "Tabellenkopf-Text"
+msgstr "Tabellen-Zeilen Textfarbe"
 
 #: core/forms.py:116
 msgid "Table Border"
-msgstr "Sekundärfarbe"
+msgstr "Tabellen-Rahmenfarbe"
 
 #: core/models.py:21 templates/core/profile.html:45 core/models.py:22
 msgid "Avatar"
