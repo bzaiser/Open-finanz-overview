@@ -5488,12 +5488,6 @@ msgstr "Kein Suchfilter aktiv — aktuelle Einträge aus allen Bereichen werden 
 msgid "Open Document Vault"
 msgstr "Dokumenten-Tresor öffnen"
 
-msgid "All Categories"
-msgstr "Alle Kategorien"
-
-msgid "All Years"
-msgstr "Alle Jahre"
-
 msgid "View / Open"
 msgstr "Ansehen / Öffnen"
 
@@ -5505,9 +5499,6 @@ msgstr "Für diesen Bereich wurden noch keine Dokumente erfasst."
 
 msgid "All Documents"
 msgstr "Alle Dokumente"
-
-msgid "Real Estate & Loans"
-msgstr "Immobilien & Darlehen"
 
 msgid "Insurance & Pensions"
 msgstr "Versicherungen & Rente"
