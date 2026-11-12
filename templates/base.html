@@ -677,69 +677,87 @@
                     {#     </a> #}
                     {# </li> #}
                 </ul>
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center flex-row gap-3">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center flex-column flex-lg-row gap-lg-3 gap-1 pt-2 pt-lg-0 border-top border-lg-0 border-white border-opacity-10">
                     {% if user.is_authenticated %}
-                    <!-- Documents Vault & Global Search Icons -->
-                    <li class="nav-item d-flex align-items-center">
-                        <a class="nav-link d-flex align-items-center p-0 {% if request.resolver_match.url_name == 'documents_vault' %}text-primary{% endif %}"
-                           href="{% url 'finance:documents_vault' %}"
-                           title="{% trans 'Documents' %}"
-                           aria-label="{% trans 'Documents' %}">
-                            <i class="bi bi-folder2-open fs-5"></i>
-                        </a>
-                    </li>
-                    <li class="nav-item d-flex align-items-center">
-                        <a class="nav-link d-flex align-items-center p-0 {% if request.resolver_match.url_name == 'global_search' %}text-primary{% endif %}"
+                    <!-- 1. Global Search -->
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center p-lg-0 py-2 px-3 {% if request.resolver_match.url_name == 'global_search' %}text-primary{% endif %}"
                            href="{% url 'finance:global_search' %}"
                            title="{% trans 'Global Search' %}"
                            aria-label="{% trans 'Global Search' %}">
                             <i class="bi bi-search fs-5"></i>
+                            <span class="d-lg-none ms-2">{% trans "Global Search" %}</span>
                         </a>
                     </li>
-                    <!-- Global Night Toggle -->
-                    <li class="nav-item d-flex align-items-center">
-                        <a href="{% url 'toggle_night_mode' %}" class="nav-link d-flex align-items-center gap-2 p-0" title="{% trans 'Toggle Night Mode' %}">
-                            <i class="bi bi-moon-stars{% if user.profile.auto_night_mode %}-fill text-warning{% endif %}"></i>
+                    <!-- 2. Documents -->
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center p-lg-0 py-2 px-3 {% if request.resolver_match.url_name == 'documents_vault' %}text-primary{% endif %}"
+                           href="{% url 'finance:documents_vault' %}"
+                           title="{% trans 'Documents' %}"
+                           aria-label="{% trans 'Documents' %}">
+                            <i class="bi bi-folder2-open fs-5"></i>
+                            <span class="d-lg-none ms-2">{% trans "Documents" %}</span>
+                        </a>
+                    </li>
+                    <!-- 3. Settings -->
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center p-lg-0 py-2 px-3 {% if request.resolver_match.url_name == 'profile' %}text-primary{% endif %}"
+                           href="{% url 'profile' %}"
+                           title="{% trans 'Settings' %}"
+                           aria-label="{% trans 'Settings' %}">
+                            <i class="bi bi-gear fs-5"></i>
+                            <span class="d-lg-none ms-2">{% trans "Settings" %}</span>
+                        </a>
+                    </li>
+                    <!-- 4. Administration (Staff only) -->
+                    {% if user.is_staff %}
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center p-lg-0 py-2 px-3"
+                           href="{% url 'admin:index' %}"
+                           title="{% trans 'Administration' %}"
+                           aria-label="{% trans 'Administration' %}">
+                            <i class="bi bi-shield-lock fs-5"></i>
+                            <span class="d-lg-none ms-2">{% trans "Administration" %}</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                    <!-- Night Mode Toggle -->
+                    <li class="nav-item">
+                        <a href="{% url 'toggle_night_mode' %}" class="nav-link d-flex align-items-center justify-content-between justify-content-lg-start gap-2 p-lg-0 py-2 px-3" title="{% trans 'Toggle Night Mode' %}">
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="bi bi-moon-stars{% if user.profile.auto_night_mode %}-fill text-warning{% endif %} fs-5"></i>
+                                <span class="d-lg-none">{% trans "Night Mode" %}</span>
+                            </div>
                             <div class="form-check form-switch m-0">
                                 <input class="form-check-input" type="checkbox" role="switch" {% if user.profile.auto_night_mode %}checked{% endif %} style="cursor: pointer; pointer-events: none;">
                             </div>
                         </a>
                     </li>
-                    {% if user.is_staff %}
-                    <li class="nav-item d-flex align-items-center">
-                        <a class="nav-link d-flex align-items-center p-0" href="{% url 'admin:index' %}" title="{% trans 'Administration' %}" aria-label="{% trans 'Administration' %}">
-                            <i class="bi bi-shield-lock fs-5"></i>
-                        </a>
-                    </li>
-                    {% endif %}
-                    <li class="nav-item d-flex align-items-center">
-                        <a class="nav-link d-flex align-items-center p-0" href="{% url 'profile' %}" title="{% trans 'Settings' %}" aria-label="{% trans 'Settings' %}">
-                            <i class="bi bi-gear fs-5"></i>
-                        </a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                    <!-- 5. User Account Dropdown (Dedicated Row in Burger Menu) -->
+                    <li class="nav-item dropdown pt-1 pt-lg-0 border-top border-lg-0 border-white border-opacity-10">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center py-2 px-3 p-lg-0" href="#" id="navbarDropdown" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false" title="{{ user.best_name }}">
-                            {% if user.profile.avatar %}<img src="{{ user.profile.avatar.url }}" class="rounded-circle"
-                                height="30" width="30">{% else %}<i class="bi bi-person-circle"></i>{% endif %}
-                            {{ user.best_name|slice:":10" }}{% if user.best_name|length > 10 %}...{% endif %}
+                            {% if user.profile.avatar %}<img src="{{ user.profile.avatar.url }}" class="rounded-circle me-1"
+                                height="28" width="28">{% else %}<i class="bi bi-person-circle fs-5 me-1"></i>{% endif %}
+                            <span>{{ user.best_name|slice:":12" }}{% if user.best_name|length > 12 %}...{% endif %}</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end shadow border-0" style="z-index: 1050;">
-                            <li><a class="dropdown-item" href="{% url 'finance:setup_wizard' %}"><i class="bi bi-magic me-1"></i> {% trans 'Einrichtungs-Wizard' %}</a></li>
+                            <li><a class="dropdown-item" href="{% url 'finance:setup_wizard' %}"><i class="bi bi-magic me-2"></i>{% trans 'Einrichtungs-Wizard' %}</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="bi bi-gear me-1"></i> {% trans 'Einstellungen' %}</a></li>
+                            <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="bi bi-gear me-2"></i>{% trans 'Einstellungen' %}</a></li>
                             {% if user.is_staff %}
-                            <li><a class="dropdown-item" href="{% url 'admin:index' %}"><i class="bi bi-shield-lock me-1"></i> {% trans 'Admin' %}</a></li>
+                            <li><a class="dropdown-item" href="{% url 'admin:index' %}"><i class="bi bi-shield-lock me-2"></i>{% trans 'Admin' %}</a></li>
                             {% endif %}
-                            <li><a class="dropdown-item" href="{% url 'help' %}"><i class="bi bi-question-circle me-1"></i> {% trans 'Help' %}</a></li>
-                            <li><a class="dropdown-item" href="{% url 'about' %}"><i class="bi bi-info-circle me-1"></i> {% trans 'About' %}</a></li>
-
+                            <li><a class="dropdown-item" href="{% url 'help' %}"><i class="bi bi-question-circle me-2"></i>{% trans 'Help' %}</a></li>
+                            <li><a class="dropdown-item" href="{% url 'about' %}"><i class="bi bi-info-circle me-2"></i>{% trans 'About' %}</a></li>
+                            <li><hr class="dropdown-divider"></li>
                             <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li>
-                                <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button type="submit"
-                                        class="dropdown-item">{% trans 'Logout' %}</button></form>
+                                <form method="post" action="{% url 'logout' %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="dropdown-item text-danger">
+                                        <i class="bi bi-box-arrow-right me-2"></i>{% trans 'Logout' %}
+                                    </button>
+                                </form>
                             </li>
                         </ul>
                     </li>
