@@ -1,0 +1,786 @@
+{% load i18n %}
+
+<div class="modal fade" id="configModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="configModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
+        <div class="modal-content" style="background-color: var(--app-card-bg, #ffffff) !important; color: var(--app-card-color, #212529) !important;">
+            <div class="modal-header border-bottom" style="background-color: rgba(0,0,0,0.02);">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="p-2 rounded-3 bg-primary bg-opacity-10 text-primary">
+                        <i class="bi bi-sliders fs-5"></i>
+                    </div>
+                    <div>
+                        <h5 class="modal-title fw-bold mb-0" id="configModalLabel">{% trans "Layout & Informationskarten anpassen" %}</h5>
+                        <small class="text-muted">{% trans "Farben, Sichtbarkeit und Reihenfolge aller Metrikkarten und Diagramme konfigurieren" %}</small>
+                    </div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body p-3 p-md-4">
+                <form id="global-card-config-form" method="POST" action="{% url 'finance:save_card_config' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                    <input type="hidden" name="config_update" value="1">
+                    <input type="hidden" name="layout_json" id="layout_json">
+                    <input type="hidden" name="summary_layout_json" id="summary_layout_json">
+                    <input type="hidden" name="simulation_panel_json" id="simulation_panel_json">
+                    <input type="hidden" name="card_groups_json" id="card_groups_json">
+
+                    <!-- Main Navigation Tabs -->
+                    <ul class="nav nav-pills nav-fill mb-4 p-1 rounded-4 gap-1 border" id="configModalNav" role="tablist" style="background-color: rgba(0,0,0,0.03);">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active rounded-3 py-2 fw-semibold d-flex align-items-center justify-content-center gap-2" id="cfg-tab-btn-dashboard" data-bs-toggle="pill" data-bs-target="#cfg-pane-dashboard" type="button" role="tab">
+                                <i class="bi bi-speedometer2"></i>
+                                <span>{% trans "Dashboard" %}</span>
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link rounded-3 py-2 fw-semibold d-flex align-items-center justify-content-center gap-2" id="cfg-tab-btn-cashflow" data-bs-toggle="pill" data-bs-target="#cfg-pane-cashflow" type="button" role="tab">
+                                <i class="bi bi-arrow-left-right"></i>
+                                <span>{% trans "Cash Flow" %}</span>
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link rounded-3 py-2 fw-semibold d-flex align-items-center justify-content-center gap-2" id="cfg-tab-btn-pension" data-bs-toggle="pill" data-bs-target="#cfg-pane-pension" type="button" role="tab">
+                                <i class="bi bi-shield-shaded"></i>
+                                <span>{% trans "Altersvorsorge & Vers." %}</span>
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link rounded-3 py-2 fw-semibold d-flex align-items-center justify-content-center gap-2" id="cfg-tab-btn-realestate" data-bs-toggle="pill" data-bs-target="#cfg-pane-realestate" type="button" role="tab">
+                                <i class="bi bi-houses"></i>
+                                <span>{% trans "Immobilien & Kredite" %}</span>
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link rounded-3 py-2 fw-semibold d-flex align-items-center justify-content-center gap-2" id="cfg-tab-btn-assets" data-bs-toggle="pill" data-bs-target="#cfg-pane-assets" type="button" role="tab">
+                                <i class="bi bi-wallet2"></i>
+                                <span>{% trans "Vermögen & Konten" %}</span>
+                            </button>
+                        </li>
+                    </ul>
+
+                    <!-- Tab Contents -->
+                    <div class="tab-content" id="configModalTabContent">
+                        
+                        <!-- 1. DASHBOARD TAB -->
+                        <div class="tab-pane fade show active" id="cfg-pane-dashboard" role="tabpanel">
+                            <div class="alert alert-info py-2 mb-3 border-0 bg-info bg-opacity-10 text-info-emphasis d-flex align-items-center gap-2">
+                                <i class="bi bi-info-circle-fill"></i>
+                                <small>{% trans "Passen Sie die Zusammenfassungskarten und Diagramme des Dashboards per Drag & Drop, Sichtbarkeit und Farben an." %}</small>
+                            </div>
+
+                            <h6 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                                <i class="bi bi-grid-fill text-primary"></i>
+                                {% trans "Zusammenfassungskarten (Kopfbereich)" %}
+                            </h6>
+                            <div class="table-responsive mb-4 border rounded-3 overflow-hidden">
+                                <table class="table table-hover table-sm align-middle mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th style="width: 40px;"></th>
+                                            <th>{% trans "Widget" %}</th>
+                                            <th style="width: 90px;" class="text-center">{% trans "Sichtbar" %}</th>
+                                            <th style="width: 140px;">{% trans "Farben (Bg / Text)" %}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="summary-table-body">
+                                        {% for item in card_config_summary_layout %}
+                                        <tr data-id="{{ item.id }}" data-bg="{{ item.bg_color }}" data-text="{{ item.text_color }}"
+                                            data-visible="{{ item.visible|yesno:'true,false' }}" data-order="{{ item.order }}">
+                                            <td class="text-center"><i class="bi bi-grip-vertical drag-handle text-muted" style="cursor: grab; font-size: 1.15rem;"></i></td>
+                                            <td>
+                                                <div class="d-flex align-items-center gap-2">
+                                                    {% for k, v in card_config_summary_widgets.items %}
+                                                        {% if k == item.id %}
+                                                            <i class="bi {{ v.icon }} text-muted"></i>
+                                                            <span class="fw-semibold">{{ v.title }}</span>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                                <input type="checkbox" class="form-check-input summary-visible" {{ item.visible|yesno:"checked," }}>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex gap-1 align-items-center">
+                                                    <input type="color" class="form-control form-control-color form-control-sm summary-bg" value="{{ item.bg_color }}" title="{% trans 'Hintergrundfarbe' %}">
+                                                    <input type="color" class="form-control form-control-color form-control-sm summary-text" value="{{ item.text_color }}" title="{% trans 'Schriftfarbe' %}">
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <h6 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                                <i class="bi bi-pie-chart-fill text-primary"></i>
+                                {% trans "Charts & Widgets" %}
+                            </h6>
+                            <div class="table-responsive border rounded-3 overflow-hidden">
+                                <table class="table table-hover table-sm align-middle mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th style="width: 40px;"></th>
+                                            <th style="width: 70px;" class="text-center">{% trans "Sichtbar" %}</th>
+                                            <th>{% trans "Chart" %}</th>
+                                            <th style="width: 110px;">{% trans "Breite" %}</th>
+                                            <th style="width: 110px;">{% trans "Höhe" %}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="layout-table-body">
+                                        {% for item in card_config_layout %}
+                                        <tr data-id="{{ item.id }}">
+                                            <td class="text-center drag-handle" style="cursor: grab;"><i class="bi bi-grip-vertical text-muted"></i></td>
+                                            <td class="text-center"><input type="checkbox" class="form-check-input layout-visible" {{ item.visible|yesno:"checked," }}></td>
+                                            <td>
+                                                <span class="fw-semibold">
+                                                {% for k, v in card_config_available_charts.items %}
+                                                    {% if k == item.id %}{{ v.title }}{% endif %}
+                                                {% endfor %}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <select class="form-select form-select-sm layout-width px-2">
+                                                    <option value="4" {% if item.width == 4 %}selected{% endif %}>1/3</option>
+                                                    <option value="6" {% if item.width == 6 %}selected{% endif %}>1/2</option>
+                                                    <option value="8" {% if item.width == 8 %}selected{% endif %}>2/3</option>
+                                                    <option value="12" {% if item.width == 12 %}selected{% endif %}>Full</option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <select class="form-select form-select-sm layout-height px-2">
+                                                    <option value="small" {% if item.height == 'small' %}selected{% endif %}>{% trans "Small" %}</option>
+                                                    <option value="medium" {% if item.height == 'medium' %}selected{% endif %}>{% trans "Medium" %}</option>
+                                                    <option value="large" {% if item.height == 'large' %}selected{% endif %}>{% trans "Large" %}</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- 2. CASH FLOW TAB -->
+                        <div class="tab-pane fade" id="cfg-pane-cashflow" role="tabpanel">
+                            <div class="alert alert-info py-2 mb-3 border-0 bg-info bg-opacity-10 text-info-emphasis d-flex align-items-center gap-2">
+                                <i class="bi bi-info-circle-fill"></i>
+                                <small>{% trans "Metrikkarten für Einnahmen, Ausgaben und monatlichen Überschuss konfigurieren." %}</small>
+                            </div>
+                            <div class="table-responsive border rounded-3 overflow-hidden">
+                                <table class="table table-hover table-sm align-middle mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th style="width: 40px;"></th>
+                                            <th>{% trans "Karte" %}</th>
+                                            <th style="width: 90px;" class="text-center">{% trans "Sichtbar" %}</th>
+                                            <th style="width: 140px;">{% trans "Farben (Bg / Text)" %}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="card-group-table-body" data-group="cash_flow">
+                                        {% for card in card_config_user_groups.cash_flow %}
+                                        <tr data-id="{{ card.id }}" data-group="cash_flow">
+                                            <td class="text-center"><i class="bi bi-grip-vertical drag-handle text-muted" style="cursor: grab; font-size: 1.15rem;"></i></td>
+                                            <td>
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <i class="bi {{ card.icon }} text-muted"></i>
+                                                    <span class="fw-semibold">{{ card.title }}</span>
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                                <input type="checkbox" class="form-check-input group-card-visible" {% if card.visible %}checked{% endif %}>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex gap-1 align-items-center">
+                                                    <input type="color" class="form-control form-control-color form-control-sm group-card-bg" value="{{ card.bg_color }}" title="{% trans 'Hintergrundfarbe' %}">
+                                                    <input type="color" class="form-control form-control-color form-control-sm group-card-text" value="{{ card.text_color }}" title="{% trans 'Schriftfarbe' %}">
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- 3. PENSION & INSURANCES TAB (Accordions for sections) -->
+                        <div class="tab-pane fade" id="cfg-pane-pension" role="tabpanel">
+                            <div class="alert alert-info py-2 mb-3 border-0 bg-info bg-opacity-10 text-info-emphasis d-flex align-items-center gap-2">
+                                <i class="bi bi-info-circle-fill"></i>
+                                <small>{% trans "Konfigurieren Sie die Kopfkarten sowie die Karten innerhalb der jeweiligen Unter-Tabs der Altersvorsorge." %}</small>
+                            </div>
+
+                            <div class="accordion" id="accordionPensionCards">
+                                <!-- Section 1: Overview Top -->
+                                <div class="accordion-item border rounded-3 mb-3 overflow-hidden">
+                                    <h2 class="accordion-header" id="headingPensionTop">
+                                        <button class="accordion-button fw-bold py-2 bg-light text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePensionTop" aria-expanded="true">
+                                            <i class="bi bi-layout-text-window-reverse text-primary me-2"></i>
+                                            {% trans "Kopfbereich / Gesamtübersicht (4 Karten)" %}
+                                        </button>
+                                    </h2>
+                                    <div id="collapsePensionTop" class="accordion-collapse collapse show">
+                                        <div class="accordion-body p-0">
+                                            <table class="table table-hover table-sm align-middle mb-0">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th style="width: 40px;"></th>
+                                                        <th>{% trans "Karte" %}</th>
+                                                        <th style="width: 90px;" class="text-center">{% trans "Sichtbar" %}</th>
+                                                        <th style="width: 140px;">{% trans "Farben (Bg / Text)" %}</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="card-group-table-body" data-group="pension_top">
+                                                    {% for card in card_config_user_groups.pension_top %}
+                                                    <tr data-id="{{ card.id }}" data-group="pension_top">
+                                                        <td class="text-center"><i class="bi bi-grip-vertical drag-handle text-muted" style="cursor: grab; font-size: 1.15rem;"></i></td>
+                                                        <td>
+                                                            <div class="d-flex align-items-center gap-2">
+                                                                <i class="bi {{ card.icon }} text-muted"></i>
+                                                                <span class="fw-semibold">{{ card.title }}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <input type="checkbox" class="form-check-input group-card-visible" {% if card.visible %}checked{% endif %}>
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex gap-1 align-items-center">
+                                                                <input type="color" class="form-control form-control-color form-control-sm group-card-bg" value="{{ card.bg_color }}">
+                                                                <input type="color" class="form-control form-control-color form-control-sm group-card-text" value="{{ card.text_color }}">
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Section 2: Tab Pensions -->
+                                <div class="accordion-item border rounded-3 mb-3 overflow-hidden">
+                                    <h2 class="accordion-header" id="headingPensionTabPensions">
+                                        <button class="accordion-button collapsed fw-bold py-2 bg-light text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePensionTabPensions">
+                                            <i class="bi bi-bank text-info me-2"></i>
+                                            {% trans "Tab: Altersvorsorge (4 Karten)" %}
+                                        </button>
+                                    </h2>
+                                    <div id="collapsePensionTabPensions" class="accordion-collapse collapse">
+                                        <div class="accordion-body p-0">
+                                            <table class="table table-hover table-sm align-middle mb-0">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th style="width: 40px;"></th>
+                                                        <th>{% trans "Karte" %}</th>
+                                                        <th style="width: 90px;" class="text-center">{% trans "Sichtbar" %}</th>
+                                                        <th style="width: 140px;">{% trans "Farben (Bg / Text)" %}</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="card-group-table-body" data-group="pension_tab_pensions">
+                                                    {% for card in card_config_user_groups.pension_tab_pensions %}
+                                                    <tr data-id="{{ card.id }}" data-group="pension_tab_pensions">
+                                                        <td class="text-center"><i class="bi bi-grip-vertical drag-handle text-muted" style="cursor: grab; font-size: 1.15rem;"></i></td>
+                                                        <td>
+                                                            <div class="d-flex align-items-center gap-2">
+                                                                <i class="bi {{ card.icon }} text-muted"></i>
+                                                                <span class="fw-semibold">{{ card.title }}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <input type="checkbox" class="form-check-input group-card-visible" {% if card.visible %}checked{% endif %}>
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex gap-1 align-items-center">
+                                                                <input type="color" class="form-control form-control-color form-control-sm group-card-bg" value="{{ card.bg_color }}">
+                                                                <input type="color" class="form-control form-control-color form-control-sm group-card-text" value="{{ card.text_color }}">
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Section 3: Tab Insurances -->
+                                <div class="accordion-item border rounded-3 mb-3 overflow-hidden">
+                                    <h2 class="accordion-header" id="headingPensionTabIns">
+                                        <button class="accordion-button collapsed fw-bold py-2 bg-light text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePensionTabIns">
+                                            <i class="bi bi-file-earmark-medical text-primary me-2"></i>
+                                            {% trans "Tab: Versicherungen (4 Karten)" %}
+                                        </button>
+                                    </h2>
+                                    <div id="collapsePensionTabIns" class="accordion-collapse collapse">
+                                        <div class="accordion-body p-0">
+                                            <table class="table table-hover table-sm align-middle mb-0">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th style="width: 40px;"></th>
+                                                        <th>{% trans "Karte" %}</th>
+                                                        <th style="width: 90px;" class="text-center">{% trans "Sichtbar" %}</th>
+                                                        <th style="width: 140px;">{% trans "Farben (Bg / Text)" %}</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="card-group-table-body" data-group="pension_tab_insurances">
+                                                    {% for card in card_config_user_groups.pension_tab_insurances %}
+                                                    <tr data-id="{{ card.id }}" data-group="pension_tab_insurances">
+                                                        <td class="text-center"><i class="bi bi-grip-vertical drag-handle text-muted" style="cursor: grab; font-size: 1.15rem;"></i></td>
+                                                        <td>
+                                                            <div class="d-flex align-items-center gap-2">
+                                                                <i class="bi {{ card.icon }} text-muted"></i>
+                                                                <span class="fw-semibold">{{ card.title }}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <input type="checkbox" class="form-check-input group-card-visible" {% if card.visible %}checked{% endif %}>
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex gap-1 align-items-center">
+                                                                <input type="color" class="form-control form-control-color form-control-sm group-card-bg" value="{{ card.bg_color }}">
+                                                                <input type="color" class="form-control form-control-color form-control-sm group-card-text" value="{{ card.text_color }}">
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Section 4: Tab Risk Check -->
+                                <div class="accordion-item border rounded-3 overflow-hidden">
+                                    <h2 class="accordion-header" id="headingPensionTabRisk">
+                                        <button class="accordion-button collapsed fw-bold py-2 bg-light text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePensionTabRisk">
+                                            <i class="bi bi-shield-exclamation text-danger me-2"></i>
+                                            {% trans "Tab: Risiko-Check (4 Karten)" %}
+                                        </button>
+                                    </h2>
+                                    <div id="collapsePensionTabRisk" class="accordion-collapse collapse">
+                                        <div class="accordion-body p-0">
+                                            <table class="table table-hover table-sm align-middle mb-0">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th style="width: 40px;"></th>
+                                                        <th>{% trans "Karte" %}</th>
+                                                        <th style="width: 90px;" class="text-center">{% trans "Sichtbar" %}</th>
+                                                        <th style="width: 140px;">{% trans "Farben (Bg / Text)" %}</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="card-group-table-body" data-group="pension_tab_risk">
+                                                    {% for card in card_config_user_groups.pension_tab_risk %}
+                                                    <tr data-id="{{ card.id }}" data-group="pension_tab_risk">
+                                                        <td class="text-center"><i class="bi bi-grip-vertical drag-handle text-muted" style="cursor: grab; font-size: 1.15rem;"></i></td>
+                                                        <td>
+                                                            <div class="d-flex align-items-center gap-2">
+                                                                <i class="bi {{ card.icon }} text-muted"></i>
+                                                                <span class="fw-semibold">{{ card.title }}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <input type="checkbox" class="form-check-input group-card-visible" {% if card.visible %}checked{% endif %}>
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex gap-1 align-items-center">
+                                                                <input type="color" class="form-control form-control-color form-control-sm group-card-bg" value="{{ card.bg_color }}">
+                                                                <input type="color" class="form-control form-control-color form-control-sm group-card-text" value="{{ card.text_color }}">
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 4. REAL ESTATE & LOANS TAB (Accordions for sections) -->
+                        <div class="tab-pane fade" id="cfg-pane-realestate" role="tabpanel">
+                            <div class="alert alert-info py-2 mb-3 border-0 bg-info bg-opacity-10 text-info-emphasis d-flex align-items-center gap-2">
+                                <i class="bi bi-info-circle-fill"></i>
+                                <small>{% trans "Konfigurieren Sie die Kopfkarten sowie die Karten innerhalb der Tabs Sanierung, Kalender und Steuerbelege." %}</small>
+                            </div>
+
+                            <div class="accordion" id="accordionRealEstateCards">
+                                <!-- Section 1: Overview Top -->
+                                <div class="accordion-item border rounded-3 mb-3 overflow-hidden">
+                                    <h2 class="accordion-header" id="headingRETop">
+                                        <button class="accordion-button fw-bold py-2 bg-light text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRETop" aria-expanded="true">
+                                            <i class="bi bi-layout-text-window-reverse text-success me-2"></i>
+                                            {% trans "Kopfbereich / Gesamtübersicht (4 Karten)" %}
+                                        </button>
+                                    </h2>
+                                    <div id="collapseRETop" class="accordion-collapse collapse show">
+                                        <div class="accordion-body p-0">
+                                            <table class="table table-hover table-sm align-middle mb-0">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th style="width: 40px;"></th>
+                                                        <th>{% trans "Karte" %}</th>
+                                                        <th style="width: 90px;" class="text-center">{% trans "Sichtbar" %}</th>
+                                                        <th style="width: 140px;">{% trans "Farben (Bg / Text)" %}</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="card-group-table-body" data-group="real_estate_top">
+                                                    {% for card in card_config_user_groups.real_estate_top %}
+                                                    <tr data-id="{{ card.id }}" data-group="real_estate_top">
+                                                        <td class="text-center"><i class="bi bi-grip-vertical drag-handle text-muted" style="cursor: grab; font-size: 1.15rem;"></i></td>
+                                                        <td>
+                                                            <div class="d-flex align-items-center gap-2">
+                                                                <i class="bi {{ card.icon }} text-muted"></i>
+                                                                <span class="fw-semibold">{{ card.title }}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <input type="checkbox" class="form-check-input group-card-visible" {% if card.visible %}checked{% endif %}>
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex gap-1 align-items-center">
+                                                                <input type="color" class="form-control form-control-color form-control-sm group-card-bg" value="{{ card.bg_color }}">
+                                                                <input type="color" class="form-control form-control-color form-control-sm group-card-text" value="{{ card.text_color }}">
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Section 2: Tab Renovation -->
+                                <div class="accordion-item border rounded-3 mb-3 overflow-hidden">
+                                    <h2 class="accordion-header" id="headingRERenovation">
+                                        <button class="accordion-button collapsed fw-bold py-2 bg-light text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRERenovation">
+                                            <i class="bi bi-hammer text-warning me-2"></i>
+                                            {% trans "Tab: Modernisierung & Sanierung (4 Karten)" %}
+                                        </button>
+                                    </h2>
+                                    <div id="collapseRERenovation" class="accordion-collapse collapse">
+                                        <div class="accordion-body p-0">
+                                            <table class="table table-hover table-sm align-middle mb-0">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th style="width: 40px;"></th>
+                                                        <th>{% trans "Karte" %}</th>
+                                                        <th style="width: 90px;" class="text-center">{% trans "Sichtbar" %}</th>
+                                                        <th style="width: 140px;">{% trans "Farben (Bg / Text)" %}</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="card-group-table-body" data-group="real_estate_tab_renovation">
+                                                    {% for card in card_config_user_groups.real_estate_tab_renovation %}
+                                                    <tr data-id="{{ card.id }}" data-group="real_estate_tab_renovation">
+                                                        <td class="text-center"><i class="bi bi-grip-vertical drag-handle text-muted" style="cursor: grab; font-size: 1.15rem;"></i></td>
+                                                        <td>
+                                                            <div class="d-flex align-items-center gap-2">
+                                                                <i class="bi {{ card.icon }} text-muted"></i>
+                                                                <span class="fw-semibold">{{ card.title }}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <input type="checkbox" class="form-check-input group-card-visible" {% if card.visible %}checked{% endif %}>
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex gap-1 align-items-center">
+                                                                <input type="color" class="form-control form-control-color form-control-sm group-card-bg" value="{{ card.bg_color }}">
+                                                                <input type="color" class="form-control form-control-color form-control-sm group-card-text" value="{{ card.text_color }}">
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Section 3: Tab Calendar -->
+                                <div class="accordion-item border rounded-3 mb-3 overflow-hidden">
+                                    <h2 class="accordion-header" id="headingRECalendar">
+                                        <button class="accordion-button collapsed fw-bold py-2 bg-light text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRECalendar">
+                                            <i class="bi bi-calendar-event text-primary me-2"></i>
+                                            {% trans "Tab: Fristen & Kalender (4 Karten)" %}
+                                        </button>
+                                    </h2>
+                                    <div id="collapseRECalendar" class="accordion-collapse collapse">
+                                        <div class="accordion-body p-0">
+                                            <table class="table table-hover table-sm align-middle mb-0">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th style="width: 40px;"></th>
+                                                        <th>{% trans "Karte" %}</th>
+                                                        <th style="width: 90px;" class="text-center">{% trans "Sichtbar" %}</th>
+                                                        <th style="width: 140px;">{% trans "Farben (Bg / Text)" %}</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="card-group-table-body" data-group="real_estate_tab_calendar">
+                                                    {% for card in card_config_user_groups.real_estate_tab_calendar %}
+                                                    <tr data-id="{{ card.id }}" data-group="real_estate_tab_calendar">
+                                                        <td class="text-center"><i class="bi bi-grip-vertical drag-handle text-muted" style="cursor: grab; font-size: 1.15rem;"></i></td>
+                                                        <td>
+                                                            <div class="d-flex align-items-center gap-2">
+                                                                <i class="bi {{ card.icon }} text-muted"></i>
+                                                                <span class="fw-semibold">{{ card.title }}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <input type="checkbox" class="form-check-input group-card-visible" {% if card.visible %}checked{% endif %}>
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex gap-1 align-items-center">
+                                                                <input type="color" class="form-control form-control-color form-control-sm group-card-bg" value="{{ card.bg_color }}">
+                                                                <input type="color" class="form-control form-control-color form-control-sm group-card-text" value="{{ card.text_color }}">
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Section 4: Tab Tax Docs -->
+                                <div class="accordion-item border rounded-3 overflow-hidden">
+                                    <h2 class="accordion-header" id="headingRETaxDocs">
+                                        <button class="accordion-button collapsed fw-bold py-2 bg-light text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRETaxDocs">
+                                            <i class="bi bi-receipt text-info me-2"></i>
+                                            {% trans "Tab: Steuer & Belege (4 Karten)" %}
+                                        </button>
+                                    </h2>
+                                    <div id="collapseRETaxDocs" class="accordion-collapse collapse">
+                                        <div class="accordion-body p-0">
+                                            <table class="table table-hover table-sm align-middle mb-0">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th style="width: 40px;"></th>
+                                                        <th>{% trans "Karte" %}</th>
+                                                        <th style="width: 90px;" class="text-center">{% trans "Sichtbar" %}</th>
+                                                        <th style="width: 140px;">{% trans "Farben (Bg / Text)" %}</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="card-group-table-body" data-group="real_estate_tab_taxdocs">
+                                                    {% for card in card_config_user_groups.real_estate_tab_taxdocs %}
+                                                    <tr data-id="{{ card.id }}" data-group="real_estate_tab_taxdocs">
+                                                        <td class="text-center"><i class="bi bi-grip-vertical drag-handle text-muted" style="cursor: grab; font-size: 1.15rem;"></i></td>
+                                                        <td>
+                                                            <div class="d-flex align-items-center gap-2">
+                                                                <i class="bi {{ card.icon }} text-muted"></i>
+                                                                <span class="fw-semibold">{{ card.title }}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <input type="checkbox" class="form-check-input group-card-visible" {% if card.visible %}checked{% endif %}>
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex gap-1 align-items-center">
+                                                                <input type="color" class="form-control form-control-color form-control-sm group-card-bg" value="{{ card.bg_color }}">
+                                                                <input type="color" class="form-control form-control-color form-control-sm group-card-text" value="{{ card.text_color }}">
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5. ASSETS & ACCOUNTS TAB -->
+                        <div class="tab-pane fade" id="cfg-pane-assets" role="tabpanel">
+                            <div class="alert alert-info py-2 mb-3 border-0 bg-info bg-opacity-10 text-info-emphasis d-flex align-items-center gap-2">
+                                <i class="bi bi-info-circle-fill"></i>
+                                <small>{% trans "Metrikkarten für Gesamtvermögen, Liquidität, Wertpapiere und Sachwerte anpassen." %}</small>
+                            </div>
+                            <div class="table-responsive border rounded-3 overflow-hidden">
+                                <table class="table table-hover table-sm align-middle mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th style="width: 40px;"></th>
+                                            <th>{% trans "Karte" %}</th>
+                                            <th style="width: 90px;" class="text-center">{% trans "Sichtbar" %}</th>
+                                            <th style="width: 140px;">{% trans "Farben (Bg / Text)" %}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="card-group-table-body" data-group="assets_top">
+                                        {% for card in card_config_user_groups.assets_top %}
+                                        <tr data-id="{{ card.id }}" data-group="assets_top">
+                                            <td class="text-center"><i class="bi bi-grip-vertical drag-handle text-muted" style="cursor: grab; font-size: 1.15rem;"></i></td>
+                                            <td>
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <i class="bi {{ card.icon }} text-muted"></i>
+                                                    <span class="fw-semibold">{{ card.title }}</span>
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                                <input type="checkbox" class="form-check-input group-card-visible" {% if card.visible %}checked{% endif %}>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex gap-1 align-items-center">
+                                                    <input type="color" class="form-control form-control-color form-control-sm group-card-bg" value="{{ card.bg_color }}">
+                                                    <input type="color" class="form-control form-control-color form-control-sm group-card-text" value="{{ card.text_color }}">
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer border-top d-flex justify-content-between" style="background-color: rgba(0,0,0,0.02);">
+                <button type="button" class="btn btn-outline-secondary btn-sm" id="cfg-reset-defaults-btn">
+                    <i class="bi bi-arrow-counterclockwise me-1"></i> {% trans "Standard wiederherstellen" %}
+                </button>
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Abbrechen" %}</button>
+                    <button type="button" class="btn btn-primary px-4 fw-bold" id="cfg-modal-save-btn">
+                        <i class="bi bi-check-lg me-1"></i> {% trans "Speichern" %}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const configModalEl = document.getElementById('configModal');
+    if (!configModalEl) return;
+
+    // 1. Initial tab handling on modal open
+    configModalEl.addEventListener('show.bs.modal', function(event) {
+        const triggerBtn = event.relatedTarget;
+        if (!triggerBtn) return;
+        
+        const initialTab = triggerBtn.getAttribute('data-initial-tab');
+        if (initialTab) {
+            const tabBtn = document.getElementById('cfg-tab-btn-' + initialTab);
+            if (tabBtn) {
+                const tabInstance = bootstrap.Tab.getOrCreateInstance(tabBtn);
+                tabInstance.show();
+            }
+        }
+    });
+
+    // 2. Initialize SortableJS on all draggable bodies
+    if (typeof Sortable !== 'undefined') {
+        const summaryBody = document.getElementById('summary-table-body');
+        if (summaryBody) {
+            new Sortable(summaryBody, {
+                handle: '.drag-handle',
+                animation: 150,
+                ghostClass: 'table-active'
+            });
+        }
+
+        const layoutBody = document.getElementById('layout-table-body');
+        if (layoutBody) {
+            new Sortable(layoutBody, {
+                handle: '.drag-handle',
+                animation: 150,
+                ghostClass: 'table-active'
+            });
+        }
+
+        document.querySelectorAll('.card-group-table-body').forEach(function(tbody) {
+            new Sortable(tbody, {
+                handle: '.drag-handle',
+                animation: 150,
+                ghostClass: 'table-active'
+            });
+        });
+    }
+
+    // 3. Save handling
+    const saveBtn = document.getElementById('cfg-modal-save-btn');
+    const form = document.getElementById('global-card-config-form');
+
+    if (saveBtn && form) {
+        saveBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            // A. Serialize Dashboard Summary Cards
+            const summaryRows = document.querySelectorAll('#summary-table-body tr');
+            const summaryData = [];
+            summaryRows.forEach((row, index) => {
+                summaryData.push({
+                    id: row.getAttribute('data-id'),
+                    visible: row.querySelector('.summary-visible') ? row.querySelector('.summary-visible').checked : true,
+                    bg_color: row.querySelector('.summary-bg') ? row.querySelector('.summary-bg').value : '',
+                    text_color: row.querySelector('.summary-text') ? row.querySelector('.summary-text').value : '',
+                    order: index + 1
+                });
+            });
+            const summaryInput = document.getElementById('summary_layout_json');
+            if (summaryInput) summaryInput.value = JSON.stringify(summaryData);
+
+            // B. Serialize Dashboard Charts & Widgets
+            const layoutRows = document.querySelectorAll('#layout-table-body tr');
+            const layoutData = [];
+            layoutRows.forEach((row, index) => {
+                layoutData.push({
+                    id: row.getAttribute('data-id'),
+                    visible: row.querySelector('.layout-visible') ? row.querySelector('.layout-visible').checked : true,
+                    width: parseInt(row.querySelector('.layout-width')?.value || '6'),
+                    height: row.querySelector('.layout-height')?.value || 'medium',
+                    order: index + 1
+                });
+            });
+            const layoutInput = document.getElementById('layout_json');
+            if (layoutInput) layoutInput.value = JSON.stringify(layoutData);
+
+            // C. Serialize all Module Card Groups
+            const cardGroups = {};
+            document.querySelectorAll('.card-group-table-body').forEach(tbody => {
+                const groupKey = tbody.getAttribute('data-group');
+                if (!groupKey) return;
+
+                const groupCards = [];
+                tbody.querySelectorAll('tr').forEach((row, index) => {
+                    groupCards.push({
+                        id: row.getAttribute('data-id'),
+                        visible: row.querySelector('.group-card-visible') ? row.querySelector('.group-card-visible').checked : true,
+                        bg_color: row.querySelector('.group-card-bg') ? row.querySelector('.group-card-bg').value : '',
+                        text_color: row.querySelector('.group-card-text') ? row.querySelector('.group-card-text').value : '',
+                        order: index + 1
+                    });
+                });
+                cardGroups[groupKey] = groupCards;
+            });
+            const cardGroupsInput = document.getElementById('card_groups_json');
+            if (cardGroupsInput) cardGroupsInput.value = JSON.stringify(cardGroups);
+
+            // Submit form
+            form.submit();
+        });
+    }
+
+    // 4. Reset to defaults
+    const resetBtn = document.getElementById('cfg-reset-defaults-btn');
+    if (resetBtn && form) {
+        resetBtn.addEventListener('click', function() {
+            if (confirm("{% trans 'Möchten Sie alle Kartenfarben und Layout-Einstellungen auf die Standardwerte zurücksetzen?' %}")) {
+                const cardGroupsInput = document.getElementById('card_groups_json');
+                if (cardGroupsInput) cardGroupsInput.value = JSON.stringify({});
+                const summaryInput = document.getElementById('summary_layout_json');
+                if (summaryInput) summaryInput.value = '';
+                const layoutInput = document.getElementById('layout_json');
+                if (layoutInput) layoutInput.value = '';
+                form.submit();
+            }
+        });
+    }
+});
+</script>

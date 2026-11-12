@@ -40,6 +40,11 @@
             </p>
         </div>
         <div class="d-flex flex-wrap align-items-center gap-2">
+            <button type="button" class="btn btn-outline-secondary btn-sm rounded-circle d-inline-flex align-items-center justify-content-center shadow-sm"
+                    data-bs-toggle="modal" data-bs-target="#configModal" data-initial-tab="realestate"
+                    title="{% trans 'Layout & Farben anpassen' %}" style="width: 38px; height: 38px;">
+                <i class="bi bi-sliders"></i>
+            </button>
             <button type="button" class="btn btn-primary app-action-btn shadow-sm" style="background: var(--app-gradient); border: none;" @click="openExtraRepaymentModal()">
                 <i class="bi bi-plus-lg"></i>
                 <span>{% trans "Extra Prepayment" %}</span>
@@ -57,151 +62,158 @@
 
     <!-- Top Configurable Metric Cards -->
     <div class="row g-3 mb-4">
-        <!-- 1. Total Property Value -->
-        <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
-            <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card_colors.real_estate_bg }}; color: {{ card_colors.real_estate_text }}; border: none;">
-                <div class="card-glass-glow"></div>
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
-                            {% trans "Total Property Value" %}
-                        </span>
-                        <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
-                            {{ overview.total_property_value|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}</span>
-                        </h3>
-                        <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
-                            {{ overview.properties|length }} {% trans "Properties recorded" %}
-                        </span>
-                    </div>
-                    <div class="ms-2">
-                        <i class="bi bi-houses fs-5"></i>
-                    </div>
-                </div>
+        {% for card in card_config_user_groups.real_estate_top %}
+            {% if card.visible %}
+                {% if card.id == 're_top_property_value' %}
+                <!-- 1. Total Property Value -->
+                <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
+                    <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
+                        <div class="card-glass-glow"></div>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
+                                    {% trans "Total Property Value" %}
+                                </span>
+                                <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
+                                    {{ overview.total_property_value|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}</span>
+                                </h3>
+                                <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                                    {{ overview.properties|length }} {% trans "Properties recorded" %}
+                                </span>
+                            </div>
+                            <div class="ms-2">
+                                <i class="bi {{ card.icon|default:'bi-houses' }} fs-5"></i>
+                            </div>
+                        </div>
 
-                <!-- Hover Expand Details: Properties Breakdown -->
-                <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card_colors.real_estate_bg }}; color: {{ card_colors.real_estate_text }};">
-                    <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Real Estate Breakdown" %}:</span>
-                    {% for p in overview.properties %}
-                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
-                        <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ p.real_estate.name }}">{{ p.real_estate.name }}</span>
-                        <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">{{ p.property_value|floatformat:2|intcomma }} <span class="small font-normal opacity-75">{{ user.profile.currency|default:"€" }}</span></span>
+                        <!-- Hover Expand Details: Properties Breakdown -->
+                        <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
+                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Real Estate Breakdown" %}:</span>
+                            {% for p in overview.properties %}
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                                <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ p.real_estate.name }}">{{ p.real_estate.name }}</span>
+                                <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">{{ p.property_value|floatformat:2|intcomma }} <span class="small font-normal opacity-75">{{ user.profile.currency|default:"€" }}</span></span>
+                            </div>
+                            {% empty %}
+                            <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No entries." %}</div>
+                            {% endfor %}
+                        </div>
                     </div>
-                    {% empty %}
-                    <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No entries." %}</div>
-                    {% endfor %}
                 </div>
-            </div>
-        </div>
+                {% elif card.id == 're_top_debt' %}
+                <!-- 2. Total Remaining Debt & LTV -->
+                <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
+                    <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
+                        <div class="card-glass-glow"></div>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
+                                    {% trans "Total Remaining Debt" %}
+                                </span>
+                                <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
+                                    {{ overview.total_debt_all|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}</span>
+                                </h3>
+                                <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                                    LTV: {{ overview.overall_ltv }} % | {% trans "Secured" %}: {{ overview.total_linked_debt|floatformat:0|intcomma }} {{ user.profile.currency|default:"€" }}
+                                </span>
+                            </div>
+                            <div class="ms-2">
+                                <i class="bi {{ card.icon|default:'bi-bank' }} fs-5"></i>
+                            </div>
+                        </div>
 
-        <!-- 2. Total Remaining Debt & LTV -->
-        <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
-            <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card_colors.debt_bg }}; color: {{ card_colors.debt_text }}; border: none;">
-                <div class="card-glass-glow"></div>
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
-                            {% trans "Total Remaining Debt" %}
-                        </span>
-                        <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
-                            {{ overview.total_debt_all|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}</span>
-                        </h3>
-                        <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
-                            LTV: {{ overview.overall_ltv }} % | {% trans "Secured" %}: {{ overview.total_linked_debt|floatformat:0|intcomma }} {{ user.profile.currency|default:"€" }}
-                        </span>
-                    </div>
-                    <div class="ms-2">
-                        <i class="bi bi-bank fs-5"></i>
+                        <!-- Hover Expand Details: Loans Breakdown -->
+                        <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
+                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Loan Portfolio" %}:</span>
+                            {% for item in overview.all_loans %}
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                                <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ item.loan.name }}">{{ item.loan.name }}</span>
+                                <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">{{ item.details.current_balance|floatformat:2|intcomma }} <span class="small font-normal opacity-75">{{ user.profile.currency|default:"€" }}</span></span>
+                            </div>
+                            {% empty %}
+                            <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No entries." %}</div>
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
+                {% elif card.id == 're_top_equity' %}
+                <!-- 3. Net Equity -->
+                <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
+                    <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
+                        <div class="card-glass-glow"></div>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
+                                    {% trans "Net Equity" %}
+                                </span>
+                                <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
+                                    {{ overview.total_equity_all|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}</span>
+                                </h3>
+                                <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                                    {% trans "Property value minus total debt" %}
+                                </span>
+                            </div>
+                            <div class="ms-2">
+                                <i class="bi {{ card.icon|default:'bi-pie-chart' }} fs-5"></i>
+                            </div>
+                        </div>
 
-                <!-- Hover Expand Details: Loans Breakdown -->
-                <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card_colors.debt_bg }}; color: {{ card_colors.debt_text }};">
-                    <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Loan Portfolio" %}:</span>
-                    {% for item in overview.all_loans %}
-                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
-                        <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ item.loan.name }}">{{ item.loan.name }}</span>
-                        <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">{{ item.details.current_balance|floatformat:2|intcomma }} <span class="small font-normal opacity-75">{{ user.profile.currency|default:"€" }}</span></span>
+                        <!-- Hover Expand Details: Property Equity Breakdown -->
+                        <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
+                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Equity by Property" %}:</span>
+                            {% for p in overview.properties %}
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                                <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ p.real_estate.name }}">{{ p.real_estate.name }}</span>
+                                <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">{{ p.equity|floatformat:2|intcomma }} <span class="small font-normal opacity-75">{{ user.profile.currency|default:"€" }}</span></span>
+                            </div>
+                            {% empty %}
+                            <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No entries." %}</div>
+                            {% endfor %}
+                        </div>
                     </div>
-                    {% empty %}
-                    <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No entries." %}</div>
-                    {% endfor %}
                 </div>
-            </div>
-        </div>
+                {% elif card.id == 're_top_cashflow' %}
+                <!-- 4. Monthly Net Cashflow -->
+                <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
+                    <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
+                        <div class="card-glass-glow"></div>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
+                                    {% trans "Monthly Cashflow" %}
+                                </span>
+                                <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
+                                    {% if overview.total_property_cashflow >= 0 %}+{% endif %}{{ overview.total_property_cashflow|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }} / M</span>
+                                </h3>
+                                <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                                    {% trans "Rent minus operating costs and loan installments" %}
+                                </span>
+                            </div>
+                            <div class="ms-2">
+                                <i class="bi {{ card.icon|default:'bi-arrow-left-right' }} fs-5"></i>
+                            </div>
+                        </div>
 
-        <!-- 3. Net Equity -->
-        <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
-            <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card_colors.equity_bg }}; color: {{ card_colors.equity_text }}; border: none;">
-                <div class="card-glass-glow"></div>
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
-                            {% trans "Net Equity" %}
-                        </span>
-                        <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
-                            {{ overview.total_equity_all|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}</span>
-                        </h3>
-                        <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
-                            {% trans "Property value minus total debt" %}
-                        </span>
-                    </div>
-                    <div class="ms-2">
-                        <i class="bi bi-pie-chart fs-5"></i>
+                        <!-- Hover Expand Details: Monthly Cashflow by Property -->
+                        <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
+                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Cashflow by Property" %}:</span>
+                            {% for p in overview.properties %}
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                                <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ p.real_estate.name }}">{{ p.real_estate.name }}</span>
+                                <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto {% if p.net_cashflow >= 0 %}text-white{% else %}text-danger{% endif %}">
+                                    {% if p.net_cashflow >= 0 %}+{% endif %}{{ p.net_cashflow|floatformat:2|intcomma }} <span class="small font-normal opacity-75">{{ user.profile.currency|default:"€" }}</span>
+                                </span>
+                            </div>
+                            {% empty %}
+                            <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No entries." %}</div>
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
-
-                <!-- Hover Expand Details: Property Equity Breakdown -->
-                <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card_colors.equity_bg }}; color: {{ card_colors.equity_text }};">
-                    <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Equity by Property" %}:</span>
-                    {% for p in overview.properties %}
-                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
-                        <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ p.real_estate.name }}">{{ p.real_estate.name }}</span>
-                        <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">{{ p.equity|floatformat:2|intcomma }} <span class="small font-normal opacity-75">{{ user.profile.currency|default:"€" }}</span></span>
-                    </div>
-                    {% empty %}
-                    <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No entries." %}</div>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-
-        <!-- 4. Monthly Net Cashflow -->
-        <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
-            <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card_colors.cashflow_bg }}; color: {{ card_colors.cashflow_text }}; border: none;">
-                <div class="card-glass-glow"></div>
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
-                            {% trans "Monthly Cashflow" %}
-                        </span>
-                        <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
-                            {% if overview.total_property_cashflow >= 0 %}+{% endif %}{{ overview.total_property_cashflow|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }} / M</span>
-                        </h3>
-                        <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
-                            {% trans "Rent minus operating costs and loan installments" %}
-                        </span>
-                    </div>
-                    <div class="ms-2">
-                        <i class="bi bi-arrow-left-right fs-5"></i>
-                    </div>
-                </div>
-
-                <!-- Hover Expand Details: Monthly Cashflow by Property -->
-                <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card_colors.cashflow_bg }}; color: {{ card_colors.cashflow_text }};">
-                    <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Cashflow by Property" %}:</span>
-                    {% for p in overview.properties %}
-                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
-                        <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ p.real_estate.name }}">{{ p.real_estate.name }}</span>
-                        <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto {% if p.net_cashflow >= 0 %}text-white{% else %}text-danger{% endif %}">
-                            {% if p.net_cashflow >= 0 %}+{% endif %}{{ p.net_cashflow|floatformat:2|intcomma }} <span class="small font-normal opacity-75">{{ user.profile.currency|default:"€" }}</span>
-                        </span>
-                    </div>
-                    {% empty %}
-                    <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No entries." %}</div>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    </div>
 
     </div>
 
@@ -678,151 +690,157 @@
         <!-- ========================================== -->
         <div class="tab-pane fade" id="renovation-pane" role="tabpanel">
             
-            <!-- KPI Summary Bar for Reserves & Capital Demand -->
+            <!-- KPI Summary Bar for Reserves & Capital Demand (Configurable) -->
             <div class="row g-3 mb-4">
-                <!-- 1. Accumulated Reserves -->
-                <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
-                    <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card_colors.property_bg }}; color: {{ card_colors.property_text }}; border: none;">
-                        <div class="card-glass-glow"></div>
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
-                                    {% trans "Accumulated Reserves" %}
-                                </span>
-                                <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
-                                    {{ overview.portfolio_reserves.total_current_reserve|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}</span>
-                                </h3>
-                                <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
-                                    {% trans "Total maintenance reserves saved" %}
-                                </span>
-                            </div>
-                            <div class="ms-2">
-                                <i class="bi bi-piggy-bank fs-5"></i>
-                            </div>
-                        </div>
+                {% for card in card_config_user_groups.real_estate_tab_renovation %}
+                    {% if card.visible %}
+                        {% if card.id == 'renov_tab_open' %}
+                        <!-- 1. Accumulated Reserves -->
+                        <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
+                            <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
+                                <div class="card-glass-glow"></div>
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
+                                            {% trans "Accumulated Reserves" %}
+                                        </span>
+                                        <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
+                                            {{ overview.portfolio_reserves.total_current_reserve|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}</span>
+                                        </h3>
+                                        <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                                            {% trans "Total maintenance reserves saved" %}
+                                        </span>
+                                    </div>
+                                    <div class="ms-2">
+                                        <i class="bi {{ card.icon|default:'bi-piggy-bank' }} fs-5"></i>
+                                    </div>
+                                </div>
 
-                        <!-- Hover Expand Details: Reserves by Property -->
-                        <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card_colors.property_bg }}; color: {{ card_colors.property_text }};">
-                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Reserves by Property" %}:</span>
-                            {% for p in overview.properties %}
-                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
-                                <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ p.real_estate.name }}">{{ p.real_estate.name }}</span>
-                                <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">{{ p.reserves.current_reserve|floatformat:2|intcomma }} <span class="small font-normal opacity-75">{{ user.profile.currency|default:"€" }}</span></span>
+                                <!-- Hover Expand Details: Reserves by Property -->
+                                <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
+                                    <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Reserves by Property" %}:</span>
+                                    {% for p in overview.properties %}
+                                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                                        <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ p.real_estate.name }}">{{ p.real_estate.name }}</span>
+                                        <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">{{ p.reserves.current_reserve|floatformat:2|intcomma }} <span class="small font-normal opacity-75">{{ user.profile.currency|default:"€" }}</span></span>
+                                    </div>
+                                    {% empty %}
+                                    <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No entries." %}</div>
+                                    {% endfor %}
+                                </div>
                             </div>
-                            {% empty %}
-                            <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No entries." %}</div>
-                            {% endfor %}
                         </div>
-                    </div>
-                </div>
+                        {% elif card.id == 'renov_tab_costs' %}
+                        <!-- 2. Target Reserve (Peters) -->
+                        <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
+                            <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
+                                <div class="card-glass-glow"></div>
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
+                                            {% trans "Target Reserve (Peters)" %}
+                                        </span>
+                                        <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
+                                            {{ overview.portfolio_reserves.total_target_monthly|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }} / M</span>
+                                        </h3>
+                                        <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                                            {% trans "Recommended monthly saving rate" %}
+                                        </span>
+                                    </div>
+                                    <div class="ms-2">
+                                        <i class="bi {{ card.icon|default:'bi-calculator' }} fs-5"></i>
+                                    </div>
+                                </div>
 
-                <!-- 2. Target Reserve (Peters) -->
-                <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
-                    <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card_colors.equity_bg }}; color: {{ card_colors.equity_text }}; border: none;">
-                        <div class="card-glass-glow"></div>
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
-                                    {% trans "Target Reserve (Peters)" %}
-                                </span>
-                                <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
-                                    {{ overview.portfolio_reserves.total_target_monthly|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }} / M</span>
-                                </h3>
-                                <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
-                                    {% trans "Recommended monthly saving rate" %}
-                                </span>
-                            </div>
-                            <div class="ms-2">
-                                <i class="bi bi-calculator fs-5"></i>
+                                <!-- Hover Expand Details: Monthly Target by Property -->
+                                <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
+                                    <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Target Allocation by Property" %}:</span>
+                                    {% for p in overview.properties %}
+                                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                                        <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ p.real_estate.name }}">{{ p.real_estate.name }}</span>
+                                        <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">{{ p.reserves.peters_target_monthly|floatformat:2|intcomma }} <span class="small font-normal opacity-75">{{ user.profile.currency|default:"€" }}</span></span>
+                                    </div>
+                                    {% empty %}
+                                    <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No entries." %}</div>
+                                    {% endfor %}
+                                </div>
                             </div>
                         </div>
+                        {% elif card.id == 'renov_tab_invested' %}
+                        <!-- 3. Demand Next 5 Years -->
+                        <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
+                            <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
+                                <div class="card-glass-glow"></div>
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
+                                            {% trans "Demand Next 5 Years" %}
+                                        </span>
+                                        <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
+                                            {{ overview.components_roadmap.capital_5_years|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}</span>
+                                        </h3>
+                                        <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                                            {% trans "Estimated cost for upcoming renewals" %}
+                                        </span>
+                                    </div>
+                                    <div class="ms-2">
+                                        <i class="bi {{ card.icon|default:'bi-tools' }} fs-5"></i>
+                                    </div>
+                                </div>
 
-                        <!-- Hover Expand Details: Monthly Target by Property -->
-                        <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card_colors.equity_bg }}; color: {{ card_colors.equity_text }};">
-                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Target Allocation by Property" %}:</span>
-                            {% for p in overview.properties %}
-                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
-                                <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ p.real_estate.name }}">{{ p.real_estate.name }}</span>
-                                <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">{{ p.reserves.peters_target_monthly|floatformat:2|intcomma }} <span class="small font-normal opacity-75">{{ user.profile.currency|default:"€" }}</span></span>
+                                <!-- Hover Expand Details: Components Due in 5 Years -->
+                                <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
+                                    <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Due Components (<= 5 Yrs)" %}:</span>
+                                    {% for c in overview.components_roadmap.due_soon %}
+                                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                                        <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ c.name }} ({{ c.real_estate.name }})">{{ c.name }}</span>
+                                        <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">{{ c.estimated_cost|floatformat:2|intcomma }} <span class="small font-normal opacity-75">{{ user.profile.currency|default:"€" }}</span></span>
+                                    </div>
+                                    {% empty %}
+                                    <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No urgent components due." %}</div>
+                                    {% endfor %}
+                                </div>
                             </div>
-                            {% empty %}
-                            <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No entries." %}</div>
-                            {% endfor %}
                         </div>
-                    </div>
-                </div>
+                        {% elif card.id == 'renov_tab_completed' %}
+                        <!-- 4. 5-Year Reserve Coverage -->
+                        <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
+                            <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
+                                <div class="card-glass-glow"></div>
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
+                                            {% trans "5-Year Reserve Coverage" %}
+                                        </span>
+                                        <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
+                                            {% if overview.portfolio_reserves.reserve_vs_5yr_demand >= 0 %}+{% endif %}{{ overview.portfolio_reserves.reserve_vs_5yr_demand|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}</span>
+                                        </h3>
+                                        <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                                            {% if overview.portfolio_reserves.reserve_vs_5yr_demand >= 0 %}{% trans "Fully covered by reserves" %}{% else %}{% trans "Reserve deficit expected" %}{% endif %}
+                                        </span>
+                                    </div>
+                                    <div class="ms-2">
+                                        <i class="bi {{ card.icon|default:'bi-shield-check' }} fs-5"></i>
+                                    </div>
+                                </div>
 
-                <!-- 3. Demand Next 5 Years -->
-                <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
-                    <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card_colors.debt_bg }}; color: {{ card_colors.debt_text }}; border: none;">
-                        <div class="card-glass-glow"></div>
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
-                                    {% trans "Demand Next 5 Years" %}
-                                </span>
-                                <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
-                                    {{ overview.components_roadmap.capital_5_years|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}</span>
-                                </h3>
-                                <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
-                                    {% trans "Estimated cost for upcoming renewals" %}
-                                </span>
-                            </div>
-                            <div class="ms-2">
-                                <i class="bi bi-tools fs-5"></i>
+                                <!-- Hover Expand Details: Coverage Overview -->
+                                <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
+                                    <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Coverage Details" %}:</span>
+                                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                                        <span>{% trans "Saved Reserves" %}</span>
+                                        <span class="font-monospace fw-bold">{{ overview.portfolio_reserves.total_current_reserve|floatformat:2|intcomma }} {{ user.profile.currency|default:"€" }}</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                                        <span>{% trans "Demand 5 Years" %}</span>
+                                        <span class="font-monospace fw-bold">{{ overview.components_roadmap.capital_5_years|floatformat:2|intcomma }} {{ user.profile.currency|default:"€" }}</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-
-                        <!-- Hover Expand Details: Components Due in 5 Years -->
-                        <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card_colors.debt_bg }}; color: {{ card_colors.debt_text }};">
-                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Due Components (<= 5 Yrs)" %}:</span>
-                            {% for c in overview.components_roadmap.due_soon %}
-                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
-                                <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ c.name }} ({{ c.real_estate.name }})">{{ c.name }}</span>
-                                <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">{{ c.estimated_cost|floatformat:2|intcomma }} <span class="small font-normal opacity-75">{{ user.profile.currency|default:"€" }}</span></span>
-                            </div>
-                            {% empty %}
-                            <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No urgent components due." %}</div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 4. 5-Year Reserve Coverage -->
-                <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
-                    <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card_colors.cashflow_bg }}; color: {{ card_colors.cashflow_text }}; border: none;">
-                        <div class="card-glass-glow"></div>
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
-                                    {% trans "5-Year Reserve Coverage" %}
-                                </span>
-                                <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
-                                    {% if overview.portfolio_reserves.reserve_vs_5yr_demand >= 0 %}+{% endif %}{{ overview.portfolio_reserves.reserve_vs_5yr_demand|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}</span>
-                                </h3>
-                                <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
-                                    {% if overview.portfolio_reserves.reserve_vs_5yr_demand >= 0 %}{% trans "Fully covered by reserves" %}{% else %}{% trans "Reserve deficit expected" %}{% endif %}
-                                </span>
-                            </div>
-                            <div class="ms-2">
-                                <i class="bi bi-shield-check fs-5"></i>
-                            </div>
-                        </div>
-
-                        <!-- Hover Expand Details: Coverage Overview -->
-                        <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card_colors.cashflow_bg }}; color: {{ card_colors.cashflow_text }};">
-                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Coverage Details" %}:</span>
-                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
-                                <span>{% trans "Saved Reserves" %}</span>
-                                <span class="font-monospace fw-bold">{{ overview.portfolio_reserves.total_current_reserve|floatformat:2|intcomma }} {{ user.profile.currency|default:"€" }}</span>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
-                                <span>{% trans "Demand 5 Years" %}</span>
-                                <span class="font-monospace fw-bold">{{ overview.components_roadmap.capital_5_years|floatformat:2|intcomma }} {{ user.profile.currency|default:"€" }}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
             </div>
 
             <!-- Component Table -->
@@ -1077,84 +1095,93 @@
                 </div>
             </div>
 
-            <!-- Annual Summary KPI Bar -->
+            <!-- Annual Summary KPI Bar (Configurable) -->
             <div class="row g-3 mb-4">
-                <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
-                    <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card_colors.property_bg }}; color: {{ card_colors.property_text }}; border: none;">
-                        <div class="card-glass-glow"></div>
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
-                                    {% trans "Total Annual Rent" %}
-                                </span>
-                                <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
-                                    {{ overview.cashflow_calendar.annual_totals.total_rent|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}</span>
-                                </h3>
-                                <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
-                                    {% trans "12 months expected gross rent" %}
-                                </span>
+                {% for card in card_config_user_groups.real_estate_tab_calendar %}
+                    {% if card.visible %}
+                        {% if card.id == 'cal_tab_rent' %}
+                        <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
+                            <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
+                                <div class="card-glass-glow"></div>
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
+                                            {% trans "Total Annual Rent" %}
+                                        </span>
+                                        <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
+                                            {{ overview.cashflow_calendar.annual_totals.total_rent|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}</span>
+                                        </h3>
+                                        <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                                            {% trans "12 months expected gross rent" %}
+                                        </span>
+                                    </div>
+                                    <div class="ms-2"><i class="bi {{ card.icon|default:'bi-wallet2' }} fs-5"></i></div>
+                                </div>
                             </div>
-                            <div class="ms-2"><i class="bi bi-wallet2 fs-5"></i></div>
                         </div>
-                    </div>
-                </div>
-                <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
-                    <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card_colors.debt_bg }}; color: {{ card_colors.debt_text }}; border: none;">
-                        <div class="card-glass-glow"></div>
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
-                                    {% trans "Total Debt Service" %}
-                                </span>
-                                <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
-                                    -{{ overview.cashflow_calendar.annual_totals.total_debt|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}</span>
-                                </h3>
-                                <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
-                                    {% trans "12 months loan installments" %}
-                                </span>
+                        {% elif card.id == 'cal_tab_debt' %}
+                        <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
+                            <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
+                                <div class="card-glass-glow"></div>
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
+                                            {% trans "Total Debt Service" %}
+                                        </span>
+                                        <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
+                                            -{{ overview.cashflow_calendar.annual_totals.total_debt|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}</span>
+                                        </h3>
+                                        <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                                            {% trans "12 months loan installments" %}
+                                        </span>
+                                    </div>
+                                    <div class="ms-2"><i class="bi {{ card.icon|default:'bi-bank' }} fs-5"></i></div>
+                                </div>
                             </div>
-                            <div class="ms-2"><i class="bi bi-bank fs-5"></i></div>
                         </div>
-                    </div>
-                </div>
-                <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
-                    <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card_colors.equity_bg }}; color: {{ card_colors.equity_text }}; border: none;">
-                        <div class="card-glass-glow"></div>
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
-                                    {% trans "Operating & Reserves" %}
-                                </span>
-                                <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
-                                    -{{ overview.cashflow_calendar.annual_totals.total_maintenance|add:overview.cashflow_calendar.annual_totals.total_ancillary|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}</span>
-                                </h3>
-                                <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
-                                    {% trans "Reserves and ancillary costs" %}
-                                </span>
+                        {% elif card.id == 'cal_tab_operating' %}
+                        <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
+                            <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
+                                <div class="card-glass-glow"></div>
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
+                                            {% trans "Operating & Reserves" %}
+                                        </span>
+                                        <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
+                                            -{{ overview.cashflow_calendar.annual_totals.total_maintenance|add:overview.cashflow_calendar.annual_totals.total_ancillary|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}</span>
+                                        </h3>
+                                        <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                                            {% trans "Reserves and ancillary costs" %}
+                                        </span>
+                                    </div>
+                                    <div class="ms-2"><i class="bi {{ card.icon|default:'bi-tools' }} fs-5"></i></div>
+                                </div>
                             </div>
-                            <div class="ms-2"><i class="bi bi-tools fs-5"></i></div>
                         </div>
-                    </div>
-                </div>
-                <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
-                    <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card_colors.cashflow_bg }}; color: {{ card_colors.cashflow_text }}; border: none;">
-                        <div class="card-glass-glow"></div>
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
-                                    {% trans "Annual Net Cashflow" %}
-                                </span>
-                                <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
-                                    {% if overview.cashflow_calendar.annual_totals.total_net >= 0 %}+{% endif %}{{ overview.cashflow_calendar.annual_totals.total_net|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}</span>
-                                </h3>
-                                <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
-                                    {% trans "Full year projected net yield" %}
-                                </span>
+                        {% elif card.id == 'cal_tab_net' %}
+                        <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
+                            <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
+                                <div class="card-glass-glow"></div>
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
+                                            {% trans "Annual Net Cashflow" %}
+                                        </span>
+                                        <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
+                                            {% if overview.cashflow_calendar.annual_totals.total_net >= 0 %}+{% endif %}{{ overview.cashflow_calendar.annual_totals.total_net|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}</span>
+                                        </h3>
+                                        <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                                            {% trans "Full year projected net yield" %}
+                                        </span>
+                                    </div>
+                                    <div class="ms-2"><i class="bi {{ card.icon|default:'bi-piggy-bank' }} fs-5"></i></div>
+                                </div>
                             </div>
-                            <div class="ms-2"><i class="bi bi-piggy-bank fs-5"></i></div>
                         </div>
-                    </div>
-                </div>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
             </div>
 
             <!-- Visual Cashflow Progression Chart -->
@@ -1378,9 +1405,12 @@
 
             <!-- Tax KPI Bar -->
             <div class="row g-3 mb-4">
+                {% for card in card_config_user_groups.real_estate_tab_taxdocs %}
+                {% if card.visible %}
+                {% if card.id == 'tax_tab_rent' %}
                 <!-- 1. Gross Rental Income -->
                 <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
-                    <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card_colors.property_bg }}; color: {{ card_colors.property_text }}; border: none;">
+                    <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color|default:card_colors.property_bg }}; color: {{ card.text_color|default:card_colors.property_text }}; border: none;">
                         <div class="card-glass-glow"></div>
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
@@ -1400,7 +1430,7 @@
                         </div>
 
                         <!-- Hover Expand Details: Gross Rent by Property -->
-                        <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card_colors.property_bg }}; color: {{ card_colors.property_text }};">
+                        <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card.bg_color|default:card_colors.property_bg }}; color: {{ card.text_color|default:card_colors.property_text }};">
                             <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Gross Rent by Property" %}:</span>
                             {% for p in overview.properties %}
                             {% if p.tax_metrics.is_rental %}
@@ -1415,10 +1445,10 @@
                         </div>
                     </div>
                 </div>
-
+                {% elif card.id == 'tax_tab_deductions' %}
                 <!-- 2. Total Deductions (Werbungskosten) -->
                 <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
-                    <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card_colors.debt_bg }}; color: {{ card_colors.debt_text }}; border: none;">
+                    <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color|default:card_colors.debt_bg }}; color: {{ card.text_color|default:card_colors.debt_text }}; border: none;">
                         <div class="card-glass-glow"></div>
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
@@ -1438,7 +1468,7 @@
                         </div>
 
                         <!-- Hover Expand Details: Deductions by Property -->
-                        <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card_colors.debt_bg }}; color: {{ card_colors.debt_text }};">
+                        <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card.bg_color|default:card_colors.debt_bg }}; color: {{ card.text_color|default:card_colors.debt_text }};">
                             <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Deductions by Property" %}:</span>
                             {% for p in overview.properties %}
                             {% if p.tax_metrics.is_rental %}
@@ -1453,10 +1483,10 @@
                         </div>
                     </div>
                 </div>
-
+                {% elif card.id == 'tax_tab_result' %}
                 <!-- 3. Taxable Result (V+V) -->
                 <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
-                    <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card_colors.equity_bg }}; color: {{ card_colors.equity_text }}; border: none;">
+                    <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color|default:card_colors.equity_bg }}; color: {{ card.text_color|default:card_colors.equity_text }}; border: none;">
                         <div class="card-glass-glow"></div>
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
@@ -1476,7 +1506,7 @@
                         </div>
 
                         <!-- Hover Expand Details: Result by Property -->
-                        <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card_colors.equity_bg }}; color: {{ card_colors.equity_text }};">
+                        <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card.bg_color|default:card_colors.equity_bg }}; color: {{ card.text_color|default:card_colors.equity_text }};">
                             <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Tax Result by Property" %}:</span>
                             {% for p in overview.properties %}
                             {% if p.tax_metrics.is_rental %}
@@ -1491,10 +1521,10 @@
                         </div>
                     </div>
                 </div>
-
+                {% elif card.id == 'tax_tab_impact' %}
                 <!-- 4. Est. Tax Impact (~35%) -->
                 <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
-                    <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card_colors.cashflow_bg }}; color: {{ card_colors.cashflow_text }}; border: none;">
+                    <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color|default:card_colors.cashflow_bg }}; color: {{ card.text_color|default:card_colors.cashflow_text }}; border: none;">
                         <div class="card-glass-glow"></div>
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
@@ -1514,7 +1544,7 @@
                         </div>
 
                         <!-- Hover Expand Details: Rate Note -->
-                        <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card_colors.cashflow_bg }}; color: {{ card_colors.cashflow_text }};">
+                        <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card.bg_color|default:card_colors.cashflow_bg }}; color: {{ card.text_color|default:card_colors.cashflow_text }};">
                             <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Tax Estimation Basis" %}:</span>
                             <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
                                 <span>{% trans "Assumed Tax Rate" %}</span>
@@ -1527,6 +1557,9 @@
                         </div>
                     </div>
                 </div>
+                {% endif %}
+                {% endif %}
+                {% endfor %}
             </div>
 
             <!-- Tax Breakdown Table per Property -->

@@ -50,7 +50,12 @@
                 </div>
             </p>
         </div>
-        <div class="d-flex flex-wrap gap-2">
+        <div class="d-flex flex-wrap align-items-center gap-2">
+            <button type="button" class="btn btn-outline-secondary btn-sm rounded-circle d-inline-flex align-items-center justify-content-center shadow-sm"
+                    data-bs-toggle="modal" data-bs-target="#configModal" data-initial-tab="pension"
+                    title="{% trans 'Layout & Farben anpassen' %}" style="width: 38px; height: 38px;">
+                <i class="bi bi-sliders"></i>
+            </button>
             <button x-show="activeTab !== 'insurances'"
                     class="btn btn-primary app-action-btn shadow-sm"
                     style="background: var(--app-gradient); border: none;"
@@ -68,160 +73,166 @@
         </div>
     </div>
 
-    <!-- Global Cross-Tab KPI Overview Cards -->
+    <!-- Global Cross-Tab KPI Overview Cards (Configurable) -->
     <div class="row g-3 mb-4">
-        <!-- 1. Altersvorsorge & Rente -->
-        <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
-            <div class="card metric-card widget-expand-card h-100 p-3" @click="setTab('pensions')"
-                 style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ target_color }}; color: #ffffff; border: none;">
-                <div class="card-glass-glow"></div>
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">
-                            {% trans "Vorsorge & Rentenbasis" %}
-                        </span>
-                        <h3 class="fw-bold mb-0 mt-1 font-monospace">
-                            {% if life_stage == 'retirement' %}{{ current_total_monthly_payout|floatformat:2|intcomma }}{% else %}{{ total_monthly_net|floatformat:2|intcomma }}{% endif %} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span>
-                        </h3>
-                        <span class="small opacity-85" style="font-size: 0.75rem;">
-                            {% if pension_gap > 0 %}
-                                {% trans "Lücke" %}: -{{ pension_gap_abs|floatformat:0|intcomma }} {{ user.profile.currency }}
-                            {% else %}
-                                {% trans "Überschuss" %}: +{{ pension_gap_abs|floatformat:0|intcomma }} {{ user.profile.currency }}
-                            {% endif %}
-                        </span>
-                    </div>
-                    <div class="ms-2"><i class="bi bi-piggy-bank fs-5"></i></div>
-                </div>
-                <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {{ target_color }}; color: #ffffff;">
-                    <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
-                        <span>{% trans "Gesetzliche Rente" %}:</span>
-                        <span class="font-monospace fw-bold">{% if life_stage == 'retirement' %}{{ statutory_current_monthly_payout|floatformat:0|intcomma }}{% else %}{{ statutory_monthly_net|floatformat:0|intcomma }}{% endif %} €</span>
-                    </div>
-                    <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
-                        <span>{% trans "Privatkapital aktuell" %}:</span>
-                        <span class="font-monospace fw-bold">{{ total_capital_value|floatformat:0|intcomma }} €</span>
-                    </div>
-                    <div class="d-flex justify-content-between py-1">
-                        <span>{% trans "Zielrente (heute)" %}:</span>
-                        <span class="font-monospace fw-bold">{{ target_monthly_payout|floatformat:0|intcomma }} €</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 2. Basis-Schutz & Absicherungs-Check -->
-        <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
-            <div class="card metric-card widget-expand-card h-100 p-3" @click="setTab('insurances')"
-                 style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {% if audit_overview.high_gap_count > 0 %}#dc3545{% elif audit_overview.gap_count > 0 %}#fd7e14{% else %}#198754{% endif %}; color: #ffffff; border: none;">
-                <div class="card-glass-glow"></div>
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">
-                            {% trans "Absicherungs-Check" %}
-                        </span>
-                        <h3 class="fw-bold mb-0 mt-1 font-monospace">
-                            {{ audit_overview.ok_count }} / {{ audit_overview.relevant_count }} <span class="fs-6 opacity-75">{% trans "OK" %}</span>
-                        </h3>
-                        <span class="small opacity-85" style="font-size: 0.75rem;">
-                            {% if audit_overview.gap_count > 0 %}
-                                {{ audit_overview.gap_count }} {% trans "offene Lücke(n) prüfen" %}
-                            {% else %}
-                                {% trans "Basisabsicherung vollständig" %}
-                            {% endif %}
-                        </span>
-                    </div>
-                    <div class="ms-2"><i class="bi bi-shield-check fs-5"></i></div>
-                </div>
-                <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {% if audit_overview.high_gap_count > 0 %}#dc3545{% elif audit_overview.gap_count > 0 %}#fd7e14{% else %}#198754{% endif %}; color: #ffffff;">
-                    {% for item in protection_audit.checklist %}
-                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10">
-                        <span class="text-truncate me-2">{{ item.title }}</span>
-                        <span class="fw-bold flex-shrink-0">
-                            {% if item.status == 'ok' %}{% trans "OK" %}
-                            {% elif item.status == 'gap' %}{% trans "Lücke" %}
-                            {% else %}{% trans "Optional" %}{% endif %}
-                        </span>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-
-        <!-- 3. Versicherungen & Monatsbeitrag -->
-        <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
-            <div class="card metric-card widget-expand-card h-100 p-3" @click="setTab('insurances')"
-                 style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), var(--app-primary, #0d6efd); color: #ffffff; border: none;">
-                <div class="card-glass-glow"></div>
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">
-                            {% trans "Versicherungsbeiträge" %}
-                        </span>
-                        <h3 class="fw-bold mb-0 mt-1 font-monospace">
-                            {{ protection_audit.monthly_insurance_premiums|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span>
-                        </h3>
-                        <span class="small opacity-85" style="font-size: 0.75rem;">
-                            {{ audit_overview.active_policies_count }} {% trans "aktive Police(n) / Monat" %}
-                        </span>
-                    </div>
-                    <div class="ms-2"><i class="bi bi-file-earmark-check fs-5"></i></div>
-                </div>
-                <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: var(--app-primary, #0d6efd); color: #ffffff;">
-                    <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Aktive Verträge" %}:</span>
-                    {% for ins in insurances %}
-                        {% if ins.is_active %}
-                        <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
-                            <span class="text-truncate me-2">{{ ins.name }}</span>
-                            <span class="font-monospace fw-bold text-nowrap">{{ ins.monthly_premium_amount|floatformat:2|intcomma }} €</span>
+        {% for card in card_config_user_groups.pension_top %}
+            {% if card.visible %}
+                {% if card.id == 'pension_top_total' %}
+                <!-- 1. Altersvorsorge & Rente -->
+                <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
+                    <div class="card metric-card widget-expand-card h-100 p-3" @click="setTab('pensions')"
+                         style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
+                        <div class="card-glass-glow"></div>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">
+                                    {% trans "Vorsorge & Rentenbasis" %}
+                                </span>
+                                <h3 class="fw-bold mb-0 mt-1 font-monospace">
+                                    {% if life_stage == 'retirement' %}{{ current_total_monthly_payout|floatformat:2|intcomma }}{% else %}{{ total_monthly_net|floatformat:2|intcomma }}{% endif %} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span>
+                                </h3>
+                                <span class="small opacity-85" style="font-size: 0.75rem;">
+                                    {% if pension_gap > 0 %}
+                                        {% trans "Lücke" %}: -{{ pension_gap_abs|floatformat:0|intcomma }} {{ user.profile.currency }}
+                                    {% else %}
+                                        {% trans "Überschuss" %}: +{{ pension_gap_abs|floatformat:0|intcomma }} {{ user.profile.currency }}
+                                    {% endif %}
+                                </span>
+                            </div>
+                            <div class="ms-2"><i class="bi {{ card.icon|default:'bi-piggy-bank' }} fs-5"></i></div>
                         </div>
-                        {% endif %}
-                    {% empty %}
-                        <div class="opacity-75 py-1">{% trans "Keine aktiven Policen hinterlegt." %}</div>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-
-        <!-- 4. Notfall- & Risiko-Status -->
-        <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
-            <div class="card metric-card widget-expand-card h-100 p-3" @click="setTab('risk_check')"
-                 style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {% if protection_audit.emergency_months_covered >= protection_audit.emergency_target_months and protection_audit.disability_gap_primary <= 0 %}#198754{% elif protection_audit.emergency_months_covered >= 2 %}#0dcaf0{% else %}#fd7e14{% endif %}; color: #ffffff; border: none;">
-                <div class="card-glass-glow"></div>
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">
-                            {% trans "Notfall- & Risikopuffer" %}
-                        </span>
-                        <h3 class="fw-bold mb-0 mt-1 font-monospace">
-                            {{ protection_audit.emergency_months_covered }} <span class="fs-6 opacity-75">/ {{ protection_audit.emergency_target_months }} {% trans "Mt." %}</span>
-                        </h3>
-                        <span class="small opacity-85" style="font-size: 0.75rem;">
-                            {% if protection_audit.disability_gap_primary > 0 %}
-                                {% trans "BU-Lücke" %}: -{{ protection_audit.disability_gap_primary|floatformat:0|intcomma }} €/Mt.
-                            {% else %}
-                                {% trans "Notgroschen & BU stabil" %}
-                            {% endif %}
-                        </span>
-                    </div>
-                    <div class="ms-2"><i class="bi bi-shield-exclamation fs-5"></i></div>
-                </div>
-                <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {% if protection_audit.emergency_months_covered >= protection_audit.emergency_target_months and protection_audit.disability_gap_primary <= 0 %}#198754{% elif protection_audit.emergency_months_covered >= 2 %}#0dcaf0{% else %}#fd7e14{% endif %}; color: #ffffff;">
-                    <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
-                        <span>{% trans "Notfallreserve" %}:</span>
-                        <span class="font-monospace fw-bold">{{ protection_audit.emergency_reserve|floatformat:0|intcomma }} €</span>
-                    </div>
-                    <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
-                        <span>{% trans "BU-Schutz (DRV+BU)" %}:</span>
-                        <span class="font-monospace fw-bold">{{ protection_audit.disability_covered_primary|floatformat:0|intcomma }} €</span>
-                    </div>
-                    <div class="d-flex justify-content-between py-1">
-                        <span>{% trans "ALG-I Schätzung" %}:</span>
-                        <span class="font-monospace fw-bold">{{ protection_audit.alg1_estimated|floatformat:0|intcomma }} €</span>
+                        <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
+                            <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
+                                <span>{% trans "Gesetzliche Rente" %}:</span>
+                                <span class="font-monospace fw-bold">{% if life_stage == 'retirement' %}{{ statutory_current_monthly_payout|floatformat:0|intcomma }}{% else %}{{ statutory_monthly_net|floatformat:0|intcomma }}{% endif %} €</span>
+                            </div>
+                            <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
+                                <span>{% trans "Privatkapital aktuell" %}:</span>
+                                <span class="font-monospace fw-bold">{{ total_capital_value|floatformat:0|intcomma }} €</span>
+                            </div>
+                            <div class="d-flex justify-content-between py-1">
+                                <span>{% trans "Zielrente (heute)" %}:</span>
+                                <span class="font-monospace fw-bold">{{ target_monthly_payout|floatformat:0|intcomma }} €</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
+                {% elif card.id == 'pension_top_check' %}
+                <!-- 2. Basis-Schutz & Absicherungs-Check -->
+                <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
+                    <div class="card metric-card widget-expand-card h-100 p-3" @click="setTab('insurances')"
+                         style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
+                        <div class="card-glass-glow"></div>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">
+                                    {% trans "Absicherungs-Check" %}
+                                </span>
+                                <h3 class="fw-bold mb-0 mt-1 font-monospace">
+                                    {{ audit_overview.ok_count }} / {{ audit_overview.relevant_count }} <span class="fs-6 opacity-75">{% trans "OK" %}</span>
+                                </h3>
+                                <span class="small opacity-85" style="font-size: 0.75rem;">
+                                    {% if audit_overview.gap_count > 0 %}
+                                        {{ audit_overview.gap_count }} {% trans "offene Lücke(n) prüfen" %}
+                                    {% else %}
+                                        {% trans "Basisabsicherung vollständig" %}
+                                    {% endif %}
+                                </span>
+                            </div>
+                            <div class="ms-2"><i class="bi {{ card.icon|default:'bi-shield-check' }} fs-5"></i></div>
+                        </div>
+                        <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
+                            {% for item in protection_audit.checklist %}
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10">
+                                <span class="text-truncate me-2">{{ item.title }}</span>
+                                <span class="fw-bold flex-shrink-0">
+                                    {% if item.status == 'ok' %}{% trans "OK" %}
+                                    {% elif item.status == 'gap' %}{% trans "Lücke" %}
+                                    {% else %}{% trans "Optional" %}{% endif %}
+                                </span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% elif card.id == 'pension_top_insurances' %}
+                <!-- 3. Versicherungen & Monatsbeitrag -->
+                <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
+                    <div class="card metric-card widget-expand-card h-100 p-3" @click="setTab('insurances')"
+                         style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
+                        <div class="card-glass-glow"></div>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">
+                                    {% trans "Versicherungsbeiträge" %}
+                                </span>
+                                <h3 class="fw-bold mb-0 mt-1 font-monospace">
+                                    {{ protection_audit.monthly_insurance_premiums|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span>
+                                </h3>
+                                <span class="small opacity-85" style="font-size: 0.75rem;">
+                                    {{ audit_overview.active_policies_count }} {% trans "aktive Police(n) / Monat" %}
+                                </span>
+                            </div>
+                            <div class="ms-2"><i class="bi {{ card.icon|default:'bi-file-earmark-check' }} fs-5"></i></div>
+                        </div>
+                        <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
+                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Aktive Verträge" %}:</span>
+                            {% for ins in insurances %}
+                                {% if ins.is_active %}
+                                <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
+                                    <span class="text-truncate me-2">{{ ins.name }}</span>
+                                    <span class="font-monospace fw-bold text-nowrap">{{ ins.monthly_premium_amount|floatformat:2|intcomma }} €</span>
+                                </div>
+                                {% endif %}
+                            {% empty %}
+                                <div class="opacity-75 py-1">{% trans "Keine aktiven Policen hinterlegt." %}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% elif card.id == 'pension_top_risk' %}
+                <!-- 4. Notfall- & Risiko-Status -->
+                <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
+                    <div class="card metric-card widget-expand-card h-100 p-3" @click="setTab('risk_check')"
+                         style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
+                        <div class="card-glass-glow"></div>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">
+                                    {% trans "Notfall- & Risikopuffer" %}
+                                </span>
+                                <h3 class="fw-bold mb-0 mt-1 font-monospace">
+                                    {{ protection_audit.emergency_months_covered }} <span class="fs-6 opacity-75">/ {{ protection_audit.emergency_target_months }} {% trans "Mt." %}</span>
+                                </h3>
+                                <span class="small opacity-85" style="font-size: 0.75rem;">
+                                    {% if protection_audit.disability_gap_primary > 0 %}
+                                        {% trans "BU-Lücke" %}: -{{ protection_audit.disability_gap_primary|floatformat:0|intcomma }} €/Mt.
+                                    {% else %}
+                                        {% trans "Notgroschen & BU stabil" %}
+                                    {% endif %}
+                                </span>
+                            </div>
+                            <div class="ms-2"><i class="bi {{ card.icon|default:'bi-shield-exclamation' }} fs-5"></i></div>
+                        </div>
+                        <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
+                            <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
+                                <span>{% trans "Notfallreserve" %}:</span>
+                                <span class="font-monospace fw-bold">{{ protection_audit.emergency_reserve|floatformat:0|intcomma }} €</span>
+                            </div>
+                            <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
+                                <span>{% trans "BU-Schutz (DRV+BU)" %}:</span>
+                                <span class="font-monospace fw-bold">{{ protection_audit.disability_covered_primary|floatformat:0|intcomma }} €</span>
+                            </div>
+                            <div class="d-flex justify-content-between py-1">
+                                <span>{% trans "ALG-I Schätzung" %}:</span>
+                                <span class="font-monospace fw-bold">{{ protection_audit.alg1_estimated|floatformat:0|intcomma }} €</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
     </div>
 
     <!-- Folder Tabs Bar -->
@@ -252,261 +263,268 @@
 
     <!-- TAB 1: Altersvorsorge & Renten -->
     <div x-show="activeTab === 'pensions'">
-    <!-- Summary Metric Cards (Life-Stage Aware) -->
+    <!-- Summary Metric Cards (Life-Stage Aware & Configurable) -->
     <div class="row g-3 mb-4">
-        <!-- 1. Statutory Pension Net -->
-        <div class="col-md-3 metric-card-col">
-            <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ statutory_color }}; color: #ffffff;">
-                <div class="card-glass-glow"></div>
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">
-                            {% if life_stage == 'retirement' %}{% trans "Statutory Pension (Current)" %}{% else %}{% trans "Statutory Pension (Net)" %}{% endif %}
-                        </span>
-                        <h3 class="fw-bold mb-0 mt-1 font-monospace">
-                            {% if life_stage == 'retirement' %}{{ statutory_current_monthly_payout|floatformat:2|intcomma }}{% else %}{{ statutory_monthly_net|floatformat:2|intcomma }}{% endif %} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span>
-                        </h3>
-                        <span class="small opacity-75" style="font-size: 0.75rem;">
-                            {{ total_statutory_points|floatformat:2 }} {% trans "Pension Points" %}
-                        </span>
-                    </div>
-                    <div class="ms-2">
-                        <i class="bi bi-cash-stack fs-5"></i>
-                    </div>
-                </div>
-                <!-- Hover Expand Details: Statutory Contracts -->
-                <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ statutory_color }}; color: #ffffff;">
-                    <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Statutory Contracts" %}:</span>
-                    {% for p in pensions %}
-                        {% if p.pension_type == 'statutory' %}
-                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10" style="font-size: 0.75rem;">
-                            <span>{{ p.provider }}</span>
-                            <span class="font-monospace fw-bold">
-                                {% if p.expected_payout_at_retirement %}{{ p.expected_payout_at_retirement|floatformat:2|intcomma }} €{% else %}-{% endif %}
-                                <span class="opacity-75 font-normal">({{ p.pension_points|floatformat:"-4"|default:"0" }} EP)</span>
-                            </span>
+        {% for card in card_config_user_groups.pension_tab_pensions %}
+            {% if card.visible %}
+                {% if card.id == 'pension_tab_statutory' %}
+                <!-- 1. Statutory Pension Net -->
+                <div class="col-md-3 metric-card-col">
+                    <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
+                        <div class="card-glass-glow"></div>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">
+                                    {% if life_stage == 'retirement' %}{% trans "Statutory Pension (Current)" %}{% else %}{% trans "Statutory Pension (Net)" %}{% endif %}
+                                </span>
+                                <h3 class="fw-bold mb-0 mt-1 font-monospace">
+                                    {% if life_stage == 'retirement' %}{{ statutory_current_monthly_payout|floatformat:2|intcomma }}{% else %}{{ statutory_monthly_net|floatformat:2|intcomma }}{% endif %} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span>
+                                </h3>
+                                <span class="small opacity-75" style="font-size: 0.75rem;">
+                                    {{ total_statutory_points|floatformat:2 }} {% trans "Pension Points" %}
+                                </span>
+                            </div>
+                            <div class="ms-2">
+                                <i class="bi {{ card.icon|default:'bi-cash-stack' }} fs-5"></i>
+                            </div>
                         </div>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-
-        <!-- 2. Private Pension Capital & Current Payout -->
-        <div class="col-md-3 metric-card-col">
-            <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ private_color }}; color: #ffffff;">
-                <div class="card-glass-glow"></div>
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">
-                            {% trans "Private Pension Capital" %}
-                        </span>
-                        <h3 class="fw-bold mb-0 mt-1 font-monospace">
-                            {{ total_capital_value|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span>
-                        </h3>
-                        <span class="small opacity-75" style="font-size: 0.75rem;">
-                            {% if life_stage == 'retirement' %}
-                                +{{ private_current_monthly_payout|floatformat:2|intcomma }} {{ user.profile.currency }} / {% trans "month net today" %}
-                            {% else %}
-                                +{{ private_monthly_net|floatformat:2|intcomma }} {{ user.profile.currency }} / {% trans "month net at retirement" %}
-                            {% endif %}
-                        </span>
-                    </div>
-                    <div class="ms-2">
-                        <i class="bi bi-wallet2 fs-5"></i>
-                    </div>
-                </div>
-                <!-- Hover Expand Details: Private Contracts (Capital & Payout) -->
-                <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ private_color }}; color: #ffffff;">
-                    <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Angespartes Kapital (Verträge)" %}:</span>
-                    {% for p in pensions %}
-                        {% if p.pension_type != 'statutory' and p.current_value > 0 %}
-                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
-                            <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ p.provider }}">{{ p.provider }}</span>
-                            <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">
-                                {{ p.current_value|floatformat:2|intcomma }} <span class="small font-normal opacity-75">{{ user.profile.currency }}</span>
-                            </span>
+                        <!-- Hover Expand Details: Statutory Contracts -->
+                        <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
+                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Statutory Contracts" %}:</span>
+                            {% for p in pensions %}
+                                {% if p.pension_type == 'statutory' %}
+                                <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10" style="font-size: 0.75rem;">
+                                    <span>{{ p.provider }}</span>
+                                    <span class="font-monospace fw-bold">
+                                        {% if p.expected_payout_at_retirement %}{{ p.expected_payout_at_retirement|floatformat:2|intcomma }} €{% else %}-{% endif %}
+                                        <span class="opacity-75 font-normal">({{ p.pension_points|floatformat:"-4"|default:"0" }} EP)</span>
+                                    </span>
+                                </div>
+                                {% endif %}
+                            {% endfor %}
                         </div>
-                        {% endif %}
-                    {% empty %}
-                        <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No entries." %}</div>
-                    {% endfor %}
-
-                    <span class="d-block text-uppercase fw-bold opacity-75 mb-1 mt-2" style="font-size: 0.65rem;">{% trans "Vorsorgeverträge (Monatsrente)" %}:</span>
-                    {% for p in pensions %}
-                        {% if p.pension_type != 'statutory' and p.payout_type != 'one_time' and p.expected_payout_at_retirement and p.expected_payout_at_retirement > 0 %}
-                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
-                            <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ p.provider }}">{{ p.provider }}</span>
-                            <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">
-                                +{{ p.expected_payout_at_retirement|floatformat:2|intcomma }} {{ user.profile.currency }}/mtl.
-                            </span>
+                    </div>
+                </div>
+                {% elif card.id == 'pension_tab_private' %}
+                <!-- 2. Private Pension Capital & Current Payout -->
+                <div class="col-md-3 metric-card-col">
+                    <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
+                        <div class="card-glass-glow"></div>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">
+                                    {% trans "Private Pension Capital" %}
+                                </span>
+                                <h3 class="fw-bold mb-0 mt-1 font-monospace">
+                                    {{ total_capital_value|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span>
+                                </h3>
+                                <span class="small opacity-75" style="font-size: 0.75rem;">
+                                    {% if life_stage == 'retirement' %}
+                                        +{{ private_current_monthly_payout|floatformat:2|intcomma }} {{ user.profile.currency }} / {% trans "month net today" %}
+                                    {% else %}
+                                        +{{ private_monthly_net|floatformat:2|intcomma }} {{ user.profile.currency }} / {% trans "month net at retirement" %}
+                                    {% endif %}
+                                </span>
+                            </div>
+                            <div class="ms-2">
+                                <i class="bi {{ card.icon|default:'bi-wallet2' }} fs-5"></i>
+                            </div>
                         </div>
-                        {% endif %}
-                    {% empty %}
-                        <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No entries." %}</div>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
+                        <!-- Hover Expand Details: Private Contracts (Capital & Payout) -->
+                        <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
+                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Angespartes Kapital (Verträge)" %}:</span>
+                            {% for p in pensions %}
+                                {% if p.pension_type != 'statutory' and p.current_value > 0 %}
+                                <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                                    <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ p.provider }}">{{ p.provider }}</span>
+                                    <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">
+                                        {{ p.current_value|floatformat:2|intcomma }} <span class="small font-normal opacity-75">{{ user.profile.currency }}</span>
+                                    </span>
+                                </div>
+                                {% endif %}
+                            {% empty %}
+                                <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No entries." %}</div>
+                            {% endfor %}
 
-        <!-- 3. Total Monthly Net Payout (Today vs Retirement) -->
-        <div class="col-md-3 metric-card-col">
-            <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ target_color }}; color: #ffffff;">
-                <div class="card-glass-glow"></div>
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">
-                            {% if life_stage == 'retirement' %}{% trans "Current Net Income" %}{% else %}{% trans "Total Monthly Net Payout" %}{% endif %}
-                        </span>
-                        <h3 class="fw-bold mb-0 mt-1 font-monospace">
-                            {% if life_stage == 'retirement' %}{{ current_total_monthly_payout|floatformat:2|intcomma }}{% else %}{{ total_monthly_net|floatformat:2|intcomma }}{% endif %} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span>
-                        </h3>
-                        <span class="small opacity-75" style="font-size: 0.75rem;">
+                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1 mt-2" style="font-size: 0.65rem;">{% trans "Vorsorgeverträge (Monatsrente)" %}:</span>
+                            {% for p in pensions %}
+                                {% if p.pension_type != 'statutory' and p.payout_type != 'one_time' and p.expected_payout_at_retirement and p.expected_payout_at_retirement > 0 %}
+                                <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                                    <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ p.provider }}">{{ p.provider }}</span>
+                                    <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">
+                                        +{{ p.expected_payout_at_retirement|floatformat:2|intcomma }} {{ user.profile.currency }}/mtl.
+                                    </span>
+                                </div>
+                                {% endif %}
+                            {% empty %}
+                                <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No entries." %}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% elif card.id == 'pension_tab_total' %}
+                <!-- 3. Total Monthly Net Payout (Today vs Retirement) -->
+                <div class="col-md-3 metric-card-col">
+                    <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
+                        <div class="card-glass-glow"></div>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">
+                                    {% if life_stage == 'retirement' %}{% trans "Current Net Income" %}{% else %}{% trans "Total Monthly Net Payout" %}{% endif %}
+                                </span>
+                                <h3 class="fw-bold mb-0 mt-1 font-monospace">
+                                    {% if life_stage == 'retirement' %}{{ current_total_monthly_payout|floatformat:2|intcomma }}{% else %}{{ total_monthly_net|floatformat:2|intcomma }}{% endif %} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span>
+                                </h3>
+                                <span class="small opacity-75" style="font-size: 0.75rem;">
+                                    {% if life_stage == 'retirement' %}
+                                        {% trans "Actual currently flowing pension payout" %}
+                                    {% else %}
+                                        {% trans "Total expected net income at retirement" %}
+                                    {% endif %}
+                                </span>
+                            </div>
+                            <div class="ms-2">
+                                <i class="bi {{ card.icon|default:'bi-graph-up-arrow' }} fs-5"></i>
+                            </div>
+                        </div>
+                        <!-- Hover Expand Details: Breakdown of all contracts -->
+                        <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
+                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "All Contracts (Net Pension & Start)" %}:</span>
+                            {% for p in pensions %}
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10" style="font-size: 0.75rem;">
+                                <span>{{ p.provider }}</span>
+                                <span class="font-monospace fw-bold">
+                                    {% if p.expected_payout_at_retirement %}{{ p.expected_payout_at_retirement|floatformat:2|intcomma }} €{% else %}-{% endif %}
+                                    <span class="opacity-75 font-normal">({% if p.start_payout_date %}{{ p.start_payout_date|date:"Y" }}{% else %}{{ retirement_year }}{% endif %})</span>
+                                </span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% elif card.id == 'pension_tab_gap' %}
+                <!-- 4. Pension Gap / Surplus (Life-Stage Aware) -->
+                <div class="col-md-3 metric-card-col">
+                    <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
+                        <div class="card-glass-glow"></div>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">
+                                    {% if life_stage == 'retirement' %}
+                                        {% if pension_gap <= 0 %}{% trans "Retirement Coverage (Current)" %}{% else %}{% trans "Retirement Gap (Current)" %}{% endif %}
+                                    {% else %}
+                                        {% if pension_gap <= 0 %}{% trans "Pension Surplus" %}{% else %}{% trans "Pension Gap in Retirement" %}{% endif %}
+                                    {% endif %}
+                                </span>
+                                <h3 class="fw-bold mb-0 mt-1 font-monospace">
+                                    {% if pension_gap > 0 %}-{% else %}+{% endif %}{{ pension_gap_abs|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span>
+                                </h3>
+                                <span class="small opacity-75" style="font-size: 0.75rem;">
+                                    {% if life_stage == 'retirement' %}
+                                        {% if pension_gap <= 0 %}{% trans "Current income covers your goal!" %}{% else %}{% trans "Current shortfall compared to target pension" %}{% endif %}
+                                    {% else %}
+                                        {% if pension_gap <= 0 %}{% trans "Target payout reached in retirement!" %}{% else %}{% trans "Gap to target pension in retirement" %}{% endif %}
+                                    {% endif %}
+                                </span>
+                            </div>
+                            <div class="ms-2">
+                                <i class="bi {{ card.icon|default:'bi-exclamation-triangle' }} fs-5"></i>
+                            </div>
+                        </div>
+                        <!-- Hover Expand Details: Gap Formula & Details -->
+                        <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
                             {% if life_stage == 'retirement' %}
-                                {% trans "Actual currently flowing pension payout" %}
-                            {% else %}
-                                {% trans "Total expected net income at retirement" %}
+                            <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
+                                <span>{% trans "Total Income today" %}:</span>
+                                <span class="font-monospace fw-bold">{{ monthly_income_today|floatformat:2|intcomma }} €</span>
+                            </div>
+                            <div class="d-flex justify-content-between py-0.5 ps-2 opacity-75 small">
+                                <span>• {% trans "Pensions" %}:</span>
+                                <span class="font-monospace">{{ income_today_details.pensions|floatformat:2|intcomma }} €</span>
+                            </div>
+                            {% if income_today_details.real_estate > 0 %}
+                            <div class="d-flex justify-content-between py-0.5 ps-2 opacity-75 small">
+                                <span>• {% trans "Rental income" %}:</span>
+                                <span class="font-monospace">{{ income_today_details.real_estate|floatformat:2|intcomma }} €</span>
+                            </div>
                             {% endif %}
-                        </span>
-                    </div>
-                    <div class="ms-2">
-                        <i class="bi bi-graph-up-arrow fs-5"></i>
-                    </div>
-                </div>
-                <!-- Hover Expand Details: Breakdown of all contracts -->
-                <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ target_color }}; color: #ffffff;">
-                    <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "All Contracts (Net Pension & Start)" %}:</span>
-                    {% for p in pensions %}
-                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10" style="font-size: 0.75rem;">
-                        <span>{{ p.provider }}</span>
-                        <span class="font-monospace fw-bold">
-                            {% if p.expected_payout_at_retirement %}{{ p.expected_payout_at_retirement|floatformat:2|intcomma }} €{% else %}-{% endif %}
-                            <span class="opacity-75 font-normal">({% if p.start_payout_date %}{{ p.start_payout_date|date:"Y" }}{% else %}{{ retirement_year }}{% endif %})</span>
-                        </span>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-
-        <!-- 4. Pension Gap / Surplus (Life-Stage Aware) -->
-        <div class="col-md-3 metric-card-col">
-            <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {% if pension_gap <= 0 %}#198754{% else %}#dc3545{% endif %}; color: #ffffff;">
-                <div class="card-glass-glow"></div>
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">
-                            {% if life_stage == 'retirement' %}
-                                {% if pension_gap <= 0 %}{% trans "Retirement Coverage (Current)" %}{% else %}{% trans "Retirement Gap (Current)" %}{% endif %}
-                            {% else %}
-                                {% if pension_gap <= 0 %}{% trans "Pension Surplus" %}{% else %}{% trans "Pension Gap in Retirement" %}{% endif %}
+                            {% if income_today_details.salary > 0 %}
+                            <div class="d-flex justify-content-between py-0.5 ps-2 opacity-75 small">
+                                <span>• {% trans "Salary" %}:</span>
+                                <span class="font-monospace">{{ income_today_details.salary|floatformat:2|intcomma }} €</span>
+                            </div>
                             {% endif %}
-                        </span>
-                        <h3 class="fw-bold mb-0 mt-1 font-monospace">
-                            {% if pension_gap > 0 %}-{% else %}+{% endif %}{{ pension_gap_abs|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span>
-                        </h3>
-                        <span class="small opacity-75" style="font-size: 0.75rem;">
-                            {% if life_stage == 'retirement' %}
-                                {% if pension_gap <= 0 %}{% trans "Current income covers your goal!" %}{% else %}{% trans "Current shortfall compared to target pension" %}{% endif %}
-                            {% else %}
-                                {% if pension_gap <= 0 %}{% trans "Target payout reached in retirement!" %}{% else %}{% trans "Gap to target pension in retirement" %}{% endif %}
+                            {% if income_today_details.other_income > 0 %}
+                            <div class="d-flex justify-content-between py-0.5 ps-2 opacity-75 small">
+                                <span>• {% trans "Other income" %}:</span>
+                                <span class="font-monospace">{{ income_today_details.other_income|floatformat:2|intcomma }} €</span>
+                            </div>
                             {% endif %}
-                        </span>
-                    </div>
-                    <div class="ms-2">
-                        <i class="bi {% if pension_gap <= 0 %}bi-check-circle{% else %}bi-exclamation-triangle{% endif %} fs-5"></i>
+                            {% if income_today_details.assets > 0 %}
+                            <div class="d-flex justify-content-between py-0.5 ps-2 opacity-75 small">
+                                <span>• {% trans "Asset withdrawal" %}:</span>
+                                <span class="font-monospace">{{ income_today_details.assets|floatformat:2|intcomma }} €</span>
+                            </div>
+                            {% endif %}
+                            <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
+                                <span>{% trans "Monthly expenses today" %}:</span>
+                                <span class="font-monospace fw-bold">{{ monthly_expenses_today|floatformat:2|intcomma }} €</span>
+                            </div>
+                            <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
+                                <span>{% trans "Free surplus today" %}:</span>
+                                <span class="font-monospace fw-bold">{% if current_net_surplus >= 0 %}+{% else %}-{% endif %}{{ current_net_surplus_abs|floatformat:2|intcomma }} €</span>
+                            </div>
+                            <div class="d-flex justify-content-between py-1 mt-1">
+                                <span class="fw-bold">{% trans "Target Pension (Today's purchasing power)" %}:</span>
+                                <span class="font-monospace fw-bold">{{ target_monthly_payout|floatformat:2|intcomma }} €</span>
+                            </div>
+                            {% else %}
+                            <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
+                                <span>{% blocktrans with year=retirement_year %}Target Pension ({{ year }}):{% endblocktrans %}</span>
+                                <span class="font-monospace fw-bold">{{ target_monthly_payout_inflated|floatformat:2|intcomma }} €</span>
+                            </div>
+                            <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
+                                <span class="fw-bold">{% blocktrans with year=retirement_year %}Projected Total Income ({{ year }}):{% endblocktrans %}</span>
+                                <span class="font-monospace fw-bold text-success">{{ monthly_income_at_retirement|floatformat:2|intcomma }} €</span>
+                            </div>
+                            <div class="d-flex justify-content-between py-0.5 ps-2 opacity-75 small">
+                                <span>• {% trans "Pensions" %}:</span>
+                                <span class="font-monospace">{{ income_retirement_details.pensions|floatformat:2|intcomma }} €</span>
+                            </div>
+                            {% if income_retirement_details.real_estate > 0 %}
+                            <div class="d-flex justify-content-between py-0.5 ps-2 opacity-75 small">
+                                <span>• {% trans "Rental income" %}:</span>
+                                <span class="font-monospace">{{ income_retirement_details.real_estate|floatformat:2|intcomma }} €</span>
+                            </div>
+                            {% endif %}
+                            {% if income_retirement_details.other_income > 0 %}
+                            <div class="d-flex justify-content-between py-0.5 ps-2 opacity-75 small">
+                                <span>• {% trans "Continuing income" %}:</span>
+                                <span class="font-monospace">{{ income_retirement_details.other_income|floatformat:2|intcomma }} €</span>
+                            </div>
+                            {% endif %}
+                            {% if income_retirement_details.assets > 0 %}
+                            <div class="d-flex justify-content-between py-0.5 ps-2 opacity-75 small">
+                                <span>• {% trans "Asset withdrawal" %}:</span>
+                                <span class="font-monospace">{{ income_retirement_details.assets|floatformat:2|intcomma }} €</span>
+                            </div>
+                            {% endif %}
+                            <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10 mt-1">
+                                <span>{% trans "Projected expenses (" %}{{ retirement_year }}{% trans ")" %}:</span>
+                                <span class="font-monospace fw-bold text-warning">{{ monthly_expenses_at_retirement|floatformat:2|intcomma }} €</span>
+                            </div>
+                            <div class="d-flex justify-content-between py-1 mt-1">
+                                <span class="fw-bold">{% trans "Net Pension alone" %}:</span>
+                                <span class="font-monospace fw-bold">{{ total_monthly_net|floatformat:2|intcomma }} €</span>
+                            </div>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
-                <!-- Hover Expand Details: Gap Formula & Details -->
-                <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {% if pension_gap <= 0 %}#198754{% else %}#dc3545{% endif %}; color: #ffffff;">
-                    {% if life_stage == 'retirement' %}
-                    <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
-                        <span>{% trans "Total Income today" %}:</span>
-                        <span class="font-monospace fw-bold">{{ monthly_income_today|floatformat:2|intcomma }} €</span>
-                    </div>
-                    <div class="d-flex justify-content-between py-0.5 ps-2 opacity-75 small">
-                        <span>• {% trans "Pensions" %}:</span>
-                        <span class="font-monospace">{{ income_today_details.pensions|floatformat:2|intcomma }} €</span>
-                    </div>
-                    {% if income_today_details.real_estate > 0 %}
-                    <div class="d-flex justify-content-between py-0.5 ps-2 opacity-75 small">
-                        <span>• {% trans "Rental income" %}:</span>
-                        <span class="font-monospace">{{ income_today_details.real_estate|floatformat:2|intcomma }} €</span>
-                    </div>
-                    {% endif %}
-                    {% if income_today_details.salary > 0 %}
-                    <div class="d-flex justify-content-between py-0.5 ps-2 opacity-75 small">
-                        <span>• {% trans "Salary" %}:</span>
-                        <span class="font-monospace">{{ income_today_details.salary|floatformat:2|intcomma }} €</span>
-                    </div>
-                    {% endif %}
-                    {% if income_today_details.other_income > 0 %}
-                    <div class="d-flex justify-content-between py-0.5 ps-2 opacity-75 small">
-                        <span>• {% trans "Other income" %}:</span>
-                        <span class="font-monospace">{{ income_today_details.other_income|floatformat:2|intcomma }} €</span>
-                    </div>
-                    {% endif %}
-                    {% if income_today_details.assets > 0 %}
-                    <div class="d-flex justify-content-between py-0.5 ps-2 opacity-75 small">
-                        <span>• {% trans "Asset withdrawal" %}:</span>
-                        <span class="font-monospace">{{ income_today_details.assets|floatformat:2|intcomma }} €</span>
-                    </div>
-                    {% endif %}
-                    <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
-                        <span>{% trans "Monthly expenses today" %}:</span>
-                        <span class="font-monospace fw-bold">{{ monthly_expenses_today|floatformat:2|intcomma }} €</span>
-                    </div>
-                    <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
-                        <span>{% trans "Free surplus today" %}:</span>
-                        <span class="font-monospace fw-bold">{% if current_net_surplus >= 0 %}+{% else %}-{% endif %}{{ current_net_surplus_abs|floatformat:2|intcomma }} €</span>
-                    </div>
-                    <div class="d-flex justify-content-between py-1 mt-1">
-                        <span class="fw-bold">{% trans "Target Pension (Today's purchasing power)" %}:</span>
-                        <span class="font-monospace fw-bold">{{ target_monthly_payout|floatformat:2|intcomma }} €</span>
-                    </div>
-                    {% else %}
-                    <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
-                        <span>{% blocktrans with year=retirement_year %}Target Pension ({{ year }}):{% endblocktrans %}</span>
-                        <span class="font-monospace fw-bold">{{ target_monthly_payout_inflated|floatformat:2|intcomma }} €</span>
-                    </div>
-                    <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
-                        <span class="fw-bold">{% blocktrans with year=retirement_year %}Projected Total Income ({{ year }}):{% endblocktrans %}</span>
-                        <span class="font-monospace fw-bold text-success">{{ monthly_income_at_retirement|floatformat:2|intcomma }} €</span>
-                    </div>
-                    <div class="d-flex justify-content-between py-0.5 ps-2 opacity-75 small">
-                        <span>• {% trans "Pensions" %}:</span>
-                        <span class="font-monospace">{{ income_retirement_details.pensions|floatformat:2|intcomma }} €</span>
-                    </div>
-                    {% if income_retirement_details.real_estate > 0 %}
-                    <div class="d-flex justify-content-between py-0.5 ps-2 opacity-75 small">
-                        <span>• {% trans "Rental income" %}:</span>
-                        <span class="font-monospace">{{ income_retirement_details.real_estate|floatformat:2|intcomma }} €</span>
-                    </div>
-                    {% endif %}
-                    {% if income_retirement_details.other_income > 0 %}
-                    <div class="d-flex justify-content-between py-0.5 ps-2 opacity-75 small">
-                        <span>• {% trans "Continuing income" %}:</span>
-                        <span class="font-monospace">{{ income_retirement_details.other_income|floatformat:2|intcomma }} €</span>
-                    </div>
-                    {% endif %}
-                    {% if income_retirement_details.assets > 0 %}
-                    <div class="d-flex justify-content-between py-0.5 ps-2 opacity-75 small">
-                        <span>• {% trans "Asset withdrawal" %}:</span>
-                        <span class="font-monospace">{{ income_retirement_details.assets|floatformat:2|intcomma }} €</span>
-                    </div>
-                    {% endif %}
-                    <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10 mt-1">
-                        <span>{% trans "Projected expenses (" %}{{ retirement_year }}{% trans ")" %}:</span>
-                        <span class="font-monospace fw-bold text-warning">{{ monthly_expenses_at_retirement|floatformat:2|intcomma }} €</span>
-                    </div>
-                    <div class="d-flex justify-content-between py-1 mt-1">
-                        <span class="fw-bold">{% trans "Net Pension alone" %}:</span>
-                        <span class="font-monospace fw-bold">{{ total_monthly_net|floatformat:2|intcomma }} €</span>
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    </div>
     </div>
     <!-- Interactive Charts Section -->
     <div class="row g-4 mb-4">
@@ -644,113 +662,119 @@
 
     <!-- TAB 2: Versicherungen & Absicherung -->
     <div x-show="activeTab === 'insurances'" x-cloak>
-        <!-- Summary Strip -->
+        <!-- Summary Strip (Configurable) -->
         <div class="row g-3 mb-4">
-            <div class="col-md-3 metric-card-col">
-                <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), var(--app-primary, #0d6efd); color: #ffffff; border: none;">
-                    <div class="card-glass-glow"></div>
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">{% trans "Monatliche Beiträge (aktiv)" %}</span>
-                            <h3 class="fw-bold mb-0 mt-1 font-monospace">{{ protection_audit.monthly_insurance_premiums|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span></h3>
-                            <span class="small opacity-85" style="font-size: 0.75rem;">{{ audit_overview.active_policies_count }} {% trans "aktive Police(n) im Cashflow" %}</span>
-                        </div>
-                        <div class="ms-2"><i class="bi bi-wallet2 fs-5"></i></div>
-                    </div>
-                    <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: var(--app-primary, #0d6efd); color: #ffffff;">
-                        {% for ins in insurances %}
-                            {% if ins.is_active %}
-                            <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
-                                <span class="text-truncate me-2">{{ ins.name }}</span>
-                                <span class="font-monospace fw-bold text-nowrap">{{ ins.monthly_premium_amount|floatformat:2|intcomma }} €</span>
+            {% for card in card_config_user_groups.pension_tab_insurances %}
+                {% if card.visible %}
+                    {% if card.id == 'ins_tab_monthly' %}
+                    <div class="col-md-3 metric-card-col">
+                        <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
+                            <div class="card-glass-glow"></div>
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">{% trans "Monatliche Beiträge (aktiv)" %}</span>
+                                    <h3 class="fw-bold mb-0 mt-1 font-monospace">{{ protection_audit.monthly_insurance_premiums|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span></h3>
+                                    <span class="small opacity-85" style="font-size: 0.75rem;">{{ audit_overview.active_policies_count }} {% trans "aktive Police(n) im Cashflow" %}</span>
+                                </div>
+                                <div class="ms-2"><i class="bi {{ card.icon|default:'bi-wallet2' }} fs-5"></i></div>
                             </div>
-                            {% endif %}
-                        {% empty %}
-                            <div class="opacity-75 py-1">{% trans "Keine aktiven Policen." %}</div>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3 metric-card-col">
-                <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {% if protection_audit.disability_gap_primary > 0 %}#fd7e14{% else %}#198754{% endif %}; color: #ffffff; border: none;">
-                    <div class="card-glass-glow"></div>
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">{% trans "BU-Schutz gesamt (Mt.)" %}</span>
-                            <h3 class="fw-bold mb-0 mt-1 font-monospace">{{ protection_audit.disability_covered_primary|floatformat:0|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span></h3>
-                            <span class="small opacity-85" style="font-size: 0.75rem;">
-                                {% if protection_audit.disability_gap_primary > 0 %}{% trans "Lücke" %}: -{{ protection_audit.disability_gap_primary|floatformat:0|intcomma }} €{% else %}{% trans "Bedarf gedeckt" %}{% endif %}
-                            </span>
-                        </div>
-                        <div class="ms-2"><i class="bi bi-heart-pulse fs-5"></i></div>
-                    </div>
-                    <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {% if protection_audit.disability_gap_primary > 0 %}#fd7e14{% else %}#198754{% endif %}; color: #ffffff;">
-                        <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
-                            <span>{% trans "DRV EM-Rente" %}:</span>
-                            <span class="font-monospace fw-bold">{{ protection_audit.drv_disability_primary|floatformat:0|intcomma }} €</span>
-                        </div>
-                        <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
-                            <span>{% trans "Private BU-Rente" %}:</span>
-                            <span class="font-monospace fw-bold">{{ protection_audit.bu_monthly_primary|floatformat:0|intcomma }} €</span>
-                        </div>
-                        <div class="d-flex justify-content-between py-1">
-                            <span>{% trans "Zielwert (80% Netto)" %}:</span>
-                            <span class="font-monospace fw-bold">{{ protection_audit.disability_target_primary|floatformat:0|intcomma }} €</span>
+                            <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
+                                {% for ins in insurances %}
+                                    {% if ins.is_active %}
+                                    <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
+                                        <span class="text-truncate me-2">{{ ins.name }}</span>
+                                        <span class="font-monospace fw-bold text-nowrap">{{ ins.monthly_premium_amount|floatformat:2|intcomma }} €</span>
+                                    </div>
+                                    {% endif %}
+                                {% empty %}
+                                    <div class="opacity-75 py-1">{% trans "Keine aktiven Policen." %}</div>
+                                {% endfor %}
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <div class="col-md-3 metric-card-col">
-                <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {% if protection_audit.term_life_gap > 0 %}#fd7e14{% else %}#0dcaf0{% endif %}; color: #ffffff; border: none;">
-                    <div class="card-glass-glow"></div>
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">{% trans "Risikolebens-Schutz" %}</span>
-                            <h3 class="fw-bold mb-0 mt-1 font-monospace">{{ protection_audit.term_life_covered|floatformat:0|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span></h3>
-                            <span class="small opacity-85" style="font-size: 0.75rem;">
-                                {% if protection_audit.recommended_term_life > 0 %}{% trans "Empfohlen" %}: {{ protection_audit.recommended_term_life|floatformat:0|intcomma }} €{% else %}{% trans "Kein familiärer Bedarf" %}{% endif %}
-                            </span>
+                    {% elif card.id == 'ins_tab_bu' %}
+                    <div class="col-md-3 metric-card-col">
+                        <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
+                            <div class="card-glass-glow"></div>
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">{% trans "BU-Schutz gesamt (Mt.)" %}</span>
+                                    <h3 class="fw-bold mb-0 mt-1 font-monospace">{{ protection_audit.disability_covered_primary|floatformat:0|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span></h3>
+                                    <span class="small opacity-85" style="font-size: 0.75rem;">
+                                        {% if protection_audit.disability_gap_primary > 0 %}{% trans "Lücke" %}: -{{ protection_audit.disability_gap_primary|floatformat:0|intcomma }} €{% else %}{% trans "Bedarf gedeckt" %}{% endif %}
+                                    </span>
+                                </div>
+                                <div class="ms-2"><i class="bi {{ card.icon|default:'bi-heart-pulse' }} fs-5"></i></div>
+                            </div>
+                            <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
+                                <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
+                                    <span>{% trans "DRV EM-Rente" %}:</span>
+                                    <span class="font-monospace fw-bold">{{ protection_audit.drv_disability_primary|floatformat:0|intcomma }} €</span>
+                                </div>
+                                <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
+                                    <span>{% trans "Private BU-Rente" %}:</span>
+                                    <span class="font-monospace fw-bold">{{ protection_audit.bu_monthly_primary|floatformat:0|intcomma }} €</span>
+                                </div>
+                                <div class="d-flex justify-content-between py-1">
+                                    <span>{% trans "Zielwert (80% Netto)" %}:</span>
+                                    <span class="font-monospace fw-bold">{{ protection_audit.disability_target_primary|floatformat:0|intcomma }} €</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="ms-2"><i class="bi bi-people fs-5"></i></div>
                     </div>
-                    <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {% if protection_audit.term_life_gap > 0 %}#fd7e14{% else %}#0dcaf0{% endif %}; color: #ffffff;">
-                        <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
-                            <span>{% trans "Abgesicherte Summe" %}:</span>
-                            <span class="font-monospace fw-bold">{{ protection_audit.term_life_covered|floatformat:0|intcomma }} €</span>
-                        </div>
-                        <div class="d-flex justify-content-between py-1">
-                            <span>{% trans "Offene Lücke" %}:</span>
-                            <span class="font-monospace fw-bold">{{ protection_audit.term_life_gap|floatformat:0|intcomma }} €</span>
+                    {% elif card.id == 'ins_tab_life' %}
+                    <div class="col-md-3 metric-card-col">
+                        <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
+                            <div class="card-glass-glow"></div>
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">{% trans "Risikolebens-Schutz" %}</span>
+                                    <h3 class="fw-bold mb-0 mt-1 font-monospace">{{ protection_audit.term_life_covered|floatformat:0|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span></h3>
+                                    <span class="small opacity-85" style="font-size: 0.75rem;">
+                                        {% if protection_audit.recommended_term_life > 0 %}{% trans "Empfohlen" %}: {{ protection_audit.recommended_term_life|floatformat:0|intcomma }} €{% else %}{% trans "Kein familiärer Bedarf" %}{% endif %}
+                                    </span>
+                                </div>
+                                <div class="ms-2"><i class="bi {{ card.icon|default:'bi-people' }} fs-5"></i></div>
+                            </div>
+                            <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
+                                <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
+                                    <span>{% trans "Abgesicherte Summe" %}:</span>
+                                    <span class="font-monospace fw-bold">{{ protection_audit.term_life_covered|floatformat:0|intcomma }} €</span>
+                                </div>
+                                <div class="d-flex justify-content-between py-1">
+                                    <span>{% trans "Offene Lücke" %}:</span>
+                                    <span class="font-monospace fw-bold">{{ protection_audit.term_life_gap|floatformat:0|intcomma }} €</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <div class="col-md-3 metric-card-col">
-                <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {% if audit_overview.high_gap_count > 0 %}#dc3545{% elif audit_overview.gap_count > 0 %}#6f42c1{% else %}#198754{% endif %}; color: #ffffff; border: none;">
-                    <div class="card-glass-glow"></div>
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">{% trans "Basis-Schutz Quote" %}</span>
-                            <h3 class="fw-bold mb-0 mt-1 font-monospace">{{ audit_overview.ok_count }} / {{ audit_overview.relevant_count }}</h3>
-                            <span class="small opacity-85" style="font-size: 0.75rem;">
-                                {% if audit_overview.gap_count > 0 %}{{ audit_overview.gap_count }} {% trans "Empfehlung(en) offen" %}{% else %}{% trans "Alle Pflicht-Checks OK" %}{% endif %}
-                            </span>
+                    {% elif card.id == 'ins_tab_quote' %}
+                    <div class="col-md-3 metric-card-col">
+                        <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
+                            <div class="card-glass-glow"></div>
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">{% trans "Basis-Schutz Quote" %}</span>
+                                    <h3 class="fw-bold mb-0 mt-1 font-monospace">{{ audit_overview.ok_count }} / {{ audit_overview.relevant_count }}</h3>
+                                    <span class="small opacity-85" style="font-size: 0.75rem;">
+                                        {% if audit_overview.gap_count > 0 %}{{ audit_overview.gap_count }} {% trans "Empfehlung(en) offen" %}{% else %}{% trans "Alle Pflicht-Checks OK" %}{% endif %}
+                                    </span>
+                                </div>
+                                <div class="ms-2"><i class="bi {{ card.icon|default:'bi-shield-check' }} fs-5"></i></div>
+                            </div>
+                            <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
+                                {% for item in protection_audit.checklist %}
+                                <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
+                                    <span class="text-truncate me-2">{{ item.title }}</span>
+                                    <span class="fw-bold">{% if item.status == 'ok' %}OK{% elif item.status == 'gap' %}{% trans "Lücke" %}{% else %}-{% endif %}</span>
+                                </div>
+                                {% endfor %}
+                            </div>
                         </div>
-                        <div class="ms-2"><i class="bi bi-shield-check fs-5"></i></div>
                     </div>
-                    <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {% if audit_overview.high_gap_count > 0 %}#dc3545{% elif audit_overview.gap_count > 0 %}#6f42c1{% else %}#198754{% endif %}; color: #ffffff;">
-                        {% for item in protection_audit.checklist %}
-                        <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
-                            <span class="text-truncate me-2">{{ item.title }}</span>
-                            <span class="fw-bold">{% if item.status == 'ok' %}OK{% elif item.status == 'gap' %}{% trans "Lücke" %}{% else %}-{% endif %}</span>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
         </div>
 
         <!-- Ampel-Checkliste Basisabsicherung -->
@@ -879,140 +903,146 @@
     <!-- TAB 3: Risiko- & Notfall-Check -->
     <div x-show="activeTab === 'risk_check'" x-cloak>
         <div class="row g-3 mb-4">
-            <!-- Card 1: Notgroschen -->
-            <div class="col-md-6 col-xl-3 metric-card-col">
-                <div class="card metric-card widget-expand-card h-100 p-3"
-                     style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {% if protection_audit.emergency_months_covered >= protection_audit.emergency_target_months %}#198754{% elif protection_audit.emergency_months_covered >= 2 %}#0dcaf0{% else %}#dc3545{% endif %}; color: #ffffff; border: none;">
-                    <div class="card-glass-glow"></div>
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">{% trans "Notgroschen & Puffer" %}</span>
-                            <h3 class="fw-bold mb-0 mt-1 font-monospace">{{ protection_audit.emergency_reserve|floatformat:0|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span></h3>
-                            <span class="small opacity-85" style="font-size: 0.75rem;">
-                                {{ protection_audit.emergency_months_covered }} / {{ protection_audit.emergency_target_months }} {% trans "Monate gedeckt" %}
-                            </span>
-                        </div>
-                        <div class="ms-2"><i class="bi bi-piggy-bank fs-5"></i></div>
-                    </div>
-                    <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {% if protection_audit.emergency_months_covered >= protection_audit.emergency_target_months %}#198754{% elif protection_audit.emergency_months_covered >= 2 %}#0dcaf0{% else %}#dc3545{% endif %}; color: #ffffff;">
-                        <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
-                            <span>{% trans "Zielwert" %} ({{ protection_audit.emergency_target_months }}×):</span>
-                            <span class="font-monospace fw-bold">{{ protection_audit.emergency_target|floatformat:0|intcomma }} €</span>
-                        </div>
-                        <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
-                            <span>{% trans "Gesamt liquide Mittel" %}:</span>
-                            <span class="font-monospace fw-bold">{{ protection_audit.total_liquid|floatformat:0|intcomma }} €</span>
-                        </div>
-                        <div class="d-flex justify-content-between py-1">
-                            <span>{% trans "Monatliche Ausgaben" %}:</span>
-                            <span class="font-monospace fw-bold">{{ protection_audit.monthly_expenses|floatformat:0|intcomma }} €</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 2: Jobverlust & ALG I -->
-            <div class="col-md-6 col-xl-3 metric-card-col">
-                <div class="card metric-card widget-expand-card h-100 p-3"
-                     style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {% if protection_audit.job_loss_runway_months is None %}#198754{% elif protection_audit.job_loss_runway_months >= 6 %}#0dcaf0{% else %}#fd7e14{% endif %}; color: #ffffff; border: none;">
-                    <div class="card-glass-glow"></div>
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">{% trans "Jobverlust-Puffer (ALG I)" %}</span>
-                            <h3 class="fw-bold mb-0 mt-1 font-monospace">{{ protection_audit.alg1_estimated|floatformat:0|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}/Mt.</span></h3>
-                            <span class="small opacity-85" style="font-size: 0.75rem;">
-                                {% if protection_audit.job_loss_runway_months is not None %}
-                                    {% trans "Reichweite" %}: {{ protection_audit.job_loss_runway_months }} {% trans "Monate" %}
-                                {% else %}
-                                    {% trans "Kein monatliches Defizit" %}
-                                {% endif %}
-                            </span>
-                        </div>
-                        <div class="ms-2"><i class="bi bi-briefcase fs-5"></i></div>
-                    </div>
-                    <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {% if protection_audit.job_loss_runway_months is None %}#198754{% elif protection_audit.job_loss_runway_months >= 6 %}#0dcaf0{% else %}#fd7e14{% endif %}; color: #ffffff;">
-                        <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
-                            <span>{% trans "Erwerbseinkommen (Primary)" %}:</span>
-                            <span class="font-monospace fw-bold">{{ protection_audit.primary_earned_monthly|floatformat:0|intcomma }} €</span>
-                        </div>
-                        <div class="d-flex justify-content-between py-1">
-                            <span>{% trans "Defizit bei Jobverlust" %}:</span>
-                            <span class="font-monospace fw-bold">-{{ protection_audit.job_loss_monthly_deficit|floatformat:0|intcomma }} € / Mt.</span>
+            {% for card in card_config_user_groups.pension_tab_risk %}
+                {% if card.visible %}
+                    {% if card.id == 'risk_tab_emergency' %}
+                    <!-- Card 1: Notgroschen -->
+                    <div class="col-md-6 col-xl-3 metric-card-col">
+                        <div class="card metric-card widget-expand-card h-100 p-3"
+                             style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
+                            <div class="card-glass-glow"></div>
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">{% trans "Notgroschen & Puffer" %}</span>
+                                    <h3 class="fw-bold mb-0 mt-1 font-monospace">{{ protection_audit.emergency_reserve|floatformat:0|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span></h3>
+                                    <span class="small opacity-85" style="font-size: 0.75rem;">
+                                        {{ protection_audit.emergency_months_covered }} / {{ protection_audit.emergency_target_months }} {% trans "Monate gedeckt" %}
+                                    </span>
+                                </div>
+                                <div class="ms-2"><i class="bi {{ card.icon|default:'bi-piggy-bank' }} fs-5"></i></div>
+                            </div>
+                            <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
+                                <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
+                                    <span>{% trans "Zielwert" %} ({{ protection_audit.emergency_target_months }}×):</span>
+                                    <span class="font-monospace fw-bold">{{ protection_audit.emergency_target|floatformat:0|intcomma }} €</span>
+                                </div>
+                                <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
+                                    <span>{% trans "Gesamt liquide Mittel" %}:</span>
+                                    <span class="font-monospace fw-bold">{{ protection_audit.total_liquid|floatformat:0|intcomma }} €</span>
+                                </div>
+                                <div class="d-flex justify-content-between py-1">
+                                    <span>{% trans "Monatliche Ausgaben" %}:</span>
+                                    <span class="font-monospace fw-bold">{{ protection_audit.monthly_expenses|floatformat:0|intcomma }} €</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <!-- Card 3: Berufsunfähigkeit -->
-            <div class="col-md-6 col-xl-3 metric-card-col">
-                <div class="card metric-card widget-expand-card h-100 p-3"
-                     style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {% if protection_audit.disability_gap_primary <= 0 %}#198754{% else %}#dc3545{% endif %}; color: #ffffff; border: none;">
-                    <div class="card-glass-glow"></div>
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">{% trans "Berufsunfähigkeit (BU)" %}</span>
-                            <h3 class="fw-bold mb-0 mt-1 font-monospace">{{ protection_audit.disability_covered_primary|floatformat:0|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}/Mt.</span></h3>
-                            <span class="small opacity-85" style="font-size: 0.75rem;">
-                                {% if protection_audit.disability_gap_primary > 0 %}
-                                    {% trans "Lücke" %}: -{{ protection_audit.disability_gap_primary|floatformat:0|intcomma }} €/Mt.
-                                {% else %}
-                                    {% trans "Bedarf vollständig gedeckt" %}
-                                {% endif %}
-                            </span>
-                        </div>
-                        <div class="ms-2"><i class="bi bi-heart-pulse fs-5"></i></div>
-                    </div>
-                    <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {% if protection_audit.disability_gap_primary <= 0 %}#198754{% else %}#dc3545{% endif %}; color: #ffffff;">
-                        <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
-                            <span>{% trans "DRV EM-Rente" %}:</span>
-                            <span class="font-monospace fw-bold">{{ protection_audit.drv_disability_primary|floatformat:0|intcomma }} €</span>
-                        </div>
-                        <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
-                            <span>{% trans "Private BU" %}:</span>
-                            <span class="font-monospace fw-bold">{{ protection_audit.bu_monthly_primary|floatformat:0|intcomma }} €</span>
-                        </div>
-                        <div class="d-flex justify-content-between py-1">
-                            <span>{% trans "Bedarf (80% Netto / Ausg.)" %}:</span>
-                            <span class="font-monospace fw-bold">{{ protection_audit.disability_target_primary|floatformat:0|intcomma }} €</span>
+                    {% elif card.id == 'risk_tab_jobloss' %}
+                    <!-- Card 2: Jobverlust & ALG I -->
+                    <div class="col-md-6 col-xl-3 metric-card-col">
+                        <div class="card metric-card widget-expand-card h-100 p-3"
+                             style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
+                            <div class="card-glass-glow"></div>
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">{% trans "Jobverlust-Puffer (ALG I)" %}</span>
+                                    <h3 class="fw-bold mb-0 mt-1 font-monospace">{{ protection_audit.alg1_estimated|floatformat:0|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}/Mt.</span></h3>
+                                    <span class="small opacity-85" style="font-size: 0.75rem;">
+                                        {% if protection_audit.job_loss_runway_months is not None %}
+                                            {% trans "Reichweite" %}: {{ protection_audit.job_loss_runway_months }} {% trans "Monate" %}
+                                        {% else %}
+                                            {% trans "Kein monatliches Defizit" %}
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                <div class="ms-2"><i class="bi {{ card.icon|default:'bi-briefcase' }} fs-5"></i></div>
+                            </div>
+                            <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
+                                <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
+                                    <span>{% trans "Erwerbseinkommen (Primary)" %}:</span>
+                                    <span class="font-monospace fw-bold">{{ protection_audit.primary_earned_monthly|floatformat:0|intcomma }} €</span>
+                                </div>
+                                <div class="d-flex justify-content-between py-1">
+                                    <span>{% trans "Defizit bei Jobverlust" %}:</span>
+                                    <span class="font-monospace fw-bold">-{{ protection_audit.job_loss_monthly_deficit|floatformat:0|intcomma }} € / Mt.</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <!-- Card 4: Todesfallschutz -->
-            <div class="col-md-6 col-xl-3 metric-card-col">
-                <div class="card metric-card widget-expand-card h-100 p-3"
-                     style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {% if protection_audit.term_life_gap > 0 %}#fd7e14{% else %}#6f42c1{% endif %}; color: #ffffff; border: none;">
-                    <div class="card-glass-glow"></div>
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">{% trans "Hinterbliebenenschutz" %}</span>
-                            <h3 class="fw-bold mb-0 mt-1 font-monospace">{{ protection_audit.term_life_covered|floatformat:0|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span></h3>
-                            <span class="small opacity-85" style="font-size: 0.75rem;">
-                                {% if protection_audit.term_life_gap > 0 %}
-                                    {% trans "Lücke" %}: -{{ protection_audit.term_life_gap|floatformat:0|intcomma }} €
-                                {% else %}
-                                    {% trans "Ausreichend abgesichert" %}
-                                {% endif %}
-                            </span>
+                    {% elif card.id == 'risk_tab_disability' %}
+                    <!-- Card 3: Berufsunfähigkeit -->
+                    <div class="col-md-6 col-xl-3 metric-card-col">
+                        <div class="card metric-card widget-expand-card h-100 p-3"
+                             style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
+                            <div class="card-glass-glow"></div>
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">{% trans "Berufsunfähigkeit (BU)" %}</span>
+                                    <h3 class="fw-bold mb-0 mt-1 font-monospace">{{ protection_audit.disability_covered_primary|floatformat:0|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}/Mt.</span></h3>
+                                    <span class="small opacity-85" style="font-size: 0.75rem;">
+                                        {% if protection_audit.disability_gap_primary > 0 %}
+                                            {% trans "Lücke" %}: -{{ protection_audit.disability_gap_primary|floatformat:0|intcomma }} €/Mt.
+                                        {% else %}
+                                            {% trans "Bedarf vollständig gedeckt" %}
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                <div class="ms-2"><i class="bi {{ card.icon|default:'bi-heart-pulse' }} fs-5"></i></div>
+                            </div>
+                            <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
+                                <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
+                                    <span>{% trans "DRV EM-Rente" %}:</span>
+                                    <span class="font-monospace fw-bold">{{ protection_audit.drv_disability_primary|floatformat:0|intcomma }} €</span>
+                                </div>
+                                <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
+                                    <span>{% trans "Private BU" %}:</span>
+                                    <span class="font-monospace fw-bold">{{ protection_audit.bu_monthly_primary|floatformat:0|intcomma }} €</span>
+                                </div>
+                                <div class="d-flex justify-content-between py-1">
+                                    <span>{% trans "Bedarf (80% Netto / Ausg.)" %}:</span>
+                                    <span class="font-monospace fw-bold">{{ protection_audit.disability_target_primary|floatformat:0|intcomma }} €</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="ms-2"><i class="bi bi-people fs-5"></i></div>
                     </div>
-                    <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {% if protection_audit.term_life_gap > 0 %}#fd7e14{% else %}#6f42c1{% endif %}; color: #ffffff;">
-                        <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
-                            <span>{% trans "Empfohlene Deckung (3×)" %}:</span>
-                            <span class="font-monospace fw-bold">{{ protection_audit.recommended_term_life|floatformat:0|intcomma }} €</span>
-                        </div>
-                        <div class="py-1 opacity-85">
-                            {% if protection_audit.has_partner or protection_audit.has_children %}
-                                {% trans "Partner / Kinder erkannt – Schutz empfohlen." %}
-                            {% else %}
-                                {% trans "Ohne Unterhaltspflichten nachrangig." %}
-                            {% endif %}
+                    {% elif card.id == 'risk_tab_survivor' %}
+                    <!-- Card 4: Todesfallschutz -->
+                    <div class="col-md-6 col-xl-3 metric-card-col">
+                        <div class="card metric-card widget-expand-card h-100 p-3"
+                             style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
+                            <div class="card-glass-glow"></div>
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">{% trans "Hinterbliebenenschutz" %}</span>
+                                    <h3 class="fw-bold mb-0 mt-1 font-monospace">{{ protection_audit.term_life_covered|floatformat:0|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span></h3>
+                                    <span class="small opacity-85" style="font-size: 0.75rem;">
+                                        {% if protection_audit.term_life_gap > 0 %}
+                                            {% trans "Lücke" %}: -{{ protection_audit.term_life_gap|floatformat:0|intcomma }} €
+                                        {% else %}
+                                            {% trans "Ausreichend abgesichert" %}
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                <div class="ms-2"><i class="bi {{ card.icon|default:'bi-people' }} fs-5"></i></div>
+                            </div>
+                            <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
+                                <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
+                                    <span>{% trans "Empfohlene Deckung (3×)" %}:</span>
+                                    <span class="font-monospace fw-bold">{{ protection_audit.recommended_term_life|floatformat:0|intcomma }} €</span>
+                                </div>
+                                <div class="py-1 opacity-85">
+                                    {% if protection_audit.has_partner or protection_audit.has_children %}
+                                        {% trans "Partner / Kinder erkannt – Schutz empfohlen." %}
+                                    {% else %}
+                                        {% trans "Ohne Unterhaltspflichten nachrangig." %}
+                                    {% endif %}
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
         </div>
 
         <!-- Optimization & Stresstest CTA -->

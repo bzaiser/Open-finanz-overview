@@ -907,6 +907,10 @@
     })();
     </script>
 
+    {% if user.is_authenticated %}
+        {% include "finance/includes/card_config_modal.html" %}
+    {% endif %}
+
     <script>document.body.addEventListener('htmx:configRequest', (e) => { e.detail.headers['X-CSRFToken'] = '{{csrf_token}}'; });</script>
     {% block extra_js %}{% endblock %}
 </body>

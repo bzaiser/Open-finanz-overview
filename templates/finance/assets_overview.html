@@ -42,6 +42,11 @@
             </p>
         </div>
         <div class="d-flex flex-wrap align-items-center gap-2">
+            <button type="button" class="btn btn-outline-secondary btn-sm rounded-circle d-inline-flex align-items-center justify-content-center shadow-sm"
+                    data-bs-toggle="modal" data-bs-target="#configModal" data-initial-tab="assets"
+                    title="{% trans 'Layout & Farben anpassen' %}" style="width: 38px; height: 38px;">
+                <i class="bi bi-sliders"></i>
+            </button>
             <button type="button" class="btn btn-primary app-action-btn shadow-sm" style="background: var(--app-gradient); border: none;" @click="openAddAssetModal()">
                 <i class="bi bi-plus-lg"></i>
                 <span>{% trans "New Account/Depot" %}</span>
@@ -57,157 +62,163 @@
         </div>
     </div>
 
-    <!-- Top KPI Summary Bar (Theme Aware) -->
+    <!-- Top KPI Summary Bar (Theme Aware & Configurable) -->
     <div class="row g-3 mb-4">
-        <!-- 1. Total Wealth (Net Worth in Liquid & Tangible Assets) -->
-        <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
-            <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card_colors.total_bg }}; color: {{ card_colors.total_text }}; border: none;">
-                <div class="card-glass-glow"></div>
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em; color: inherit;">
-                            {% trans "Total Asset Wealth" %}
-                        </span>
-                        <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
-                            {{ total_wealth|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ profile.currency|default:"EUR" }}</span>
-                        </h3>
-                        <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
-                            {% trans "Accounts, Depots, Crypto & Physical" %}
-                        </span>
-                    </div>
-                    <div class="ms-2"><i class="bi bi-pie-chart fs-5"></i></div>
-                </div>
-
-                <!-- Hover Details -->
-                <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card_colors.total_bg }}; color: {{ card_colors.total_text }};">
-                    <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Asset Class Allocation" %}:</span>
-                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
-                        <span>{% trans "Cash & Overnight" %}</span>
-                        <span class="font-monospace fw-bold">{{ total_cash|floatformat:2|intcomma }} {{ profile.currency|default:"EUR" }}</span>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
-                        <span>{% trans "Depots & Securities" %}</span>
-                        <span class="font-monospace fw-bold">{{ total_depot|floatformat:2|intcomma }} {{ profile.currency|default:"EUR" }}</span>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
-                        <span>{% trans "Crypto & Precious Metals" %}</span>
-                        <span class="font-monospace fw-bold">{{ total_crypto|add:total_metals|floatformat:2|intcomma }} {{ profile.currency|default:"EUR" }}</span>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
-                        <span>{% trans "Physical Assets & Valuables" %}</span>
-                        <span class="font-monospace fw-bold">{{ total_physical|floatformat:2|intcomma }} {{ profile.currency|default:"EUR" }}</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 2. Liquidity & Emergency Fund -->
-        <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
-            <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card_colors.cash_bg }}; color: {{ card_colors.cash_text }}; border: none;">
-                <div class="card-glass-glow"></div>
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em; color: inherit;">
-                            {% trans "Liquid Assets & Notgroschen" %}
-                        </span>
-                        <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
-                            {{ total_cash|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ profile.currency|default:"EUR" }}</span>
-                        </h3>
-                        <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
-                            {% trans "Designated Reserve" %}: {{ emergency_fund_actual|floatformat:2|intcomma }} {{ profile.currency|default:"EUR" }}
-                        </span>
-                    </div>
-                    <div class="ms-2"><i class="bi bi-wallet2 fs-5"></i></div>
-                </div>
-
-                <!-- Hover Details -->
-                <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card_colors.cash_bg }}; color: {{ card_colors.cash_text }};">
-                    <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Liquidity Health Check" %}:</span>
-                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
-                        <span>{% trans "Monthly Outflow / Fix" %}</span>
-                        <span class="font-monospace fw-bold">{{ monthly_expenses|floatformat:2|intcomma }} {{ profile.currency|default:"EUR" }}</span>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
-                        <span>{% trans "3-Month Target" %}</span>
-                        <span class="font-monospace fw-bold">{{ emergency_target|floatformat:2|intcomma }} {{ profile.currency|default:"EUR" }}</span>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
-                        <span>{% trans "Coverage Quotient" %}</span>
-                        <span class="font-monospace fw-bold" :class="emergencyMonthsCovered >= 3 ? 'text-success' : 'text-warning'" x-text="emergencyMonthsCovered + ' {% trans 'Months' %}'"></span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 3. ETF Depots & Capital Market -->
-        <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
-            <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card_colors.depot_bg }}; color: {{ card_colors.depot_text }}; border: none;">
-                <div class="card-glass-glow"></div>
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em; color: inherit;">
-                            {% trans "ETF & Securities Depots" %}
-                        </span>
-                        <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
-                            {{ total_depot|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ profile.currency|default:"EUR" }}</span>
-                        </h3>
-                        <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
-                            {% trans "Monthly Inflow" %}: +{{ total_monthly_savings|floatformat:2|intcomma }} {{ profile.currency|default:"EUR" }}
-                        </span>
-                    </div>
-                    <div class="ms-2"><i class="bi bi-graph-up-arrow fs-5"></i></div>
-                </div>
-
-                <!-- Hover Details -->
-                <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card_colors.depot_bg }}; color: {{ card_colors.depot_text }};">
-                    <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Depots Breakdown" %}:</span>
-                    <template x-for="a in assets.filter(item => item.asset_type === 'depot')" :key="a.id">
-                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
-                            <span class="text-truncate flex-grow-1" x-text="a.name"></span>
-                            <span class="font-monospace fw-bold text-end" x-text="formatEuro(a.value) + ' €'"></span>
+        {% for card in card_config_user_groups.assets_top %}
+            {% if card.visible %}
+                {% if card.id == 'assets_top_total' %}
+                <!-- Total Wealth -->
+                <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
+                    <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
+                        <div class="card-glass-glow"></div>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em; color: inherit;">
+                                    {% trans "Total Asset Wealth" %}
+                                </span>
+                                <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
+                                    {{ total_wealth|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ profile.currency|default:"EUR" }}</span>
+                                </h3>
+                                <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                                    {% trans "Accounts, Depots, Crypto & Physical" %}
+                                </span>
+                            </div>
+                            <div class="ms-2"><i class="bi {{ card.icon|default:'bi-pie-chart' }} fs-5"></i></div>
                         </div>
-                    </template>
-                </div>
-            </div>
-        </div>
 
-        <!-- 4. Crypto, Metals & Physical -->
-        <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
-            <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card_colors.physical_bg }}; color: {{ card_colors.physical_text }}; border: none;">
-                <div class="card-glass-glow"></div>
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em; color: inherit;">
-                            {% trans "Alternative & Physical Assets" %}
-                        </span>
-                        <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
-                            {{ total_crypto|add:total_metals|add:total_physical|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ profile.currency|default:"EUR" }}</span>
-                        </h3>
-                        <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
-                            {% trans "Bitcoin, Gold, Tangibles & Collectibles" %}
-                        </span>
+                        <!-- Hover Details -->
+                        <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
+                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Asset Class Allocation" %}:</span>
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                                <span>{% trans "Cash & Overnight" %}</span>
+                                <span class="font-monospace fw-bold">{{ total_cash|floatformat:2|intcomma }} {{ profile.currency|default:"EUR" }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                                <span>{% trans "Depots & Securities" %}</span>
+                                <span class="font-monospace fw-bold">{{ total_depot|floatformat:2|intcomma }} {{ profile.currency|default:"EUR" }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                                <span>{% trans "Crypto & Precious Metals" %}</span>
+                                <span class="font-monospace fw-bold">{{ total_crypto|add:total_metals|floatformat:2|intcomma }} {{ profile.currency|default:"EUR" }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                                <span>{% trans "Physical Assets & Valuables" %}</span>
+                                <span class="font-monospace fw-bold">{{ total_physical|floatformat:2|intcomma }} {{ profile.currency|default:"EUR" }}</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="ms-2"><i class="bi bi-gem fs-5"></i></div>
                 </div>
+                {% elif card.id == 'assets_top_cash' %}
+                <!-- Liquidity & Emergency Fund -->
+                <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
+                    <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
+                        <div class="card-glass-glow"></div>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em; color: inherit;">
+                                    {% trans "Liquid Assets & Notgroschen" %}
+                                </span>
+                                <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
+                                    {{ total_cash|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ profile.currency|default:"EUR" }}</span>
+                                </h3>
+                                <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                                    {% trans "Designated Reserve" %}: {{ emergency_fund_actual|floatformat:2|intcomma }} {{ profile.currency|default:"EUR" }}
+                                </span>
+                            </div>
+                            <div class="ms-2"><i class="bi {{ card.icon|default:'bi-wallet2' }} fs-5"></i></div>
+                        </div>
 
-                <!-- Hover Details -->
-                <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card_colors.physical_bg }}; color: {{ card_colors.physical_text }};">
-                    <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Alternative Breakdown" %}:</span>
-                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
-                        <span>{% trans "Cryptocurrencies" %}</span>
-                        <span class="font-monospace fw-bold">{{ total_crypto|floatformat:2|intcomma }} €</span>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
-                        <span>{% trans "Precious Metals" %}</span>
-                        <span class="font-monospace fw-bold">{{ total_metals|floatformat:2|intcomma }} €</span>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
-                        <span>{% trans "Physical Tangibles" %}</span>
-                        <span class="font-monospace fw-bold">{{ total_physical|floatformat:2|intcomma }} €</span>
+                        <!-- Hover Details -->
+                        <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
+                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Liquidity Health Check" %}:</span>
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                                <span>{% trans "Monthly Outflow / Fix" %}</span>
+                                <span class="font-monospace fw-bold">{{ monthly_expenses|floatformat:2|intcomma }} {{ profile.currency|default:"EUR" }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                                <span>{% trans "3-Month Target" %}</span>
+                                <span class="font-monospace fw-bold">{{ emergency_target|floatformat:2|intcomma }} {{ profile.currency|default:"EUR" }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                                <span>{% trans "Coverage Quotient" %}</span>
+                                <span class="font-monospace fw-bold" :class="emergencyMonthsCovered >= 3 ? 'text-success' : 'text-warning'" x-text="emergencyMonthsCovered + ' {% trans 'Months' %}'"></span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
+                {% elif card.id == 'assets_top_depot' %}
+                <!-- ETF Depots & Capital Market -->
+                <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
+                    <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
+                        <div class="card-glass-glow"></div>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em; color: inherit;">
+                                    {% trans "ETF & Securities Depots" %}
+                                </span>
+                                <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
+                                    {{ total_depot|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ profile.currency|default:"EUR" }}</span>
+                                </h3>
+                                <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                                    {% trans "Monthly Inflow" %}: +{{ total_monthly_savings|floatformat:2|intcomma }} {{ profile.currency|default:"EUR" }}
+                                </span>
+                            </div>
+                            <div class="ms-2"><i class="bi {{ card.icon|default:'bi-graph-up-arrow' }} fs-5"></i></div>
+                        </div>
+
+                        <!-- Hover Details -->
+                        <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
+                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Depots Breakdown" %}:</span>
+                            <template x-for="a in assets.filter(item => item.asset_type === 'depot')" :key="a.id">
+                                <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                                    <span class="text-truncate flex-grow-1" x-text="a.name"></span>
+                                    <span class="font-monospace fw-bold text-end" x-text="formatEuro(a.value) + ' €'"></span>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+                {% elif card.id == 'assets_top_physical' %}
+                <!-- Crypto, Metals & Physical -->
+                <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
+                    <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
+                        <div class="card-glass-glow"></div>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em; color: inherit;">
+                                    {% trans "Alternative & Physical Assets" %}
+                                </span>
+                                <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
+                                    {{ total_crypto|add:total_metals|add:total_physical|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ profile.currency|default:"EUR" }}</span>
+                                </h3>
+                                <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                                    {% trans "Bitcoin, Gold, Tangibles & Collectibles" %}
+                                </span>
+                            </div>
+                            <div class="ms-2"><i class="bi {{ card.icon|default:'bi-gem' }} fs-5"></i></div>
+                        </div>
+
+                        <!-- Hover Details -->
+                        <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
+                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Alternative Breakdown" %}:</span>
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                                <span>{% trans "Cryptocurrencies" %}</span>
+                                <span class="font-monospace fw-bold">{{ total_crypto|floatformat:2|intcomma }} €</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                                <span>{% trans "Precious Metals" %}</span>
+                                <span class="font-monospace fw-bold">{{ total_metals|floatformat:2|intcomma }} €</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                                <span>{% trans "Physical Tangibles" %}</span>
+                                <span class="font-monospace fw-bold">{{ total_physical|floatformat:2|intcomma }} €</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
     </div>
 
     <!-- Folder-Style Tab Navigation (Directly below KPI bar) -->

@@ -181,6 +181,41 @@ DEFAULT_LAYOUT = _default_cfg['layout']
 DEFAULT_SUMMARY_LAYOUT = _default_cfg['summary_layout']
 
 @login_required
+def save_card_config_view(request):
+    """
+    Saves dashboard and module card configurations for the user profile.
+    Accepts both AJAX and standard POST form submissions.
+    """
+    if request.method != 'POST':
+        return redirect('finance:dashboard')
+
+    profile = request.user.profile
+    dashboard_config = profile.dashboard_config or {}
+
+    try:
+        if request.POST.get('layout_json'):
+            dashboard_config['layout'] = json.loads(request.POST.get('layout_json'))
+        if request.POST.get('summary_layout_json'):
+            dashboard_config['summary_layout'] = json.loads(request.POST.get('summary_layout_json'))
+        if request.POST.get('simulation_panel_json'):
+            dashboard_config['simulation_panel'] = json.loads(request.POST.get('simulation_panel_json'))
+        if request.POST.get('card_groups_json'):
+            dashboard_config['card_groups'] = json.loads(request.POST.get('card_groups_json'))
+
+        profile.dashboard_config = dashboard_config
+        profile.save()
+    except Exception as e:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest' or 'application/json' in request.content_type:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest' or 'application/json' in request.content_type:
+        return JsonResponse({'status': 'success'})
+
+    next_url = request.POST.get('next') or request.META.get('HTTP_REFERER') or reverse('finance:dashboard')
+    return redirect(next_url)
+
+
+@login_required
 def dashboard_view(request):
     user = request.user
     profile, created = UserProfile.objects.get_or_create(user=user)
@@ -214,6 +249,8 @@ def dashboard_view(request):
                 dashboard_config['summary_layout'] = json.loads(request.POST.get('summary_layout_json'))
             if request.POST.get('simulation_panel_json'):
                 dashboard_config['simulation_panel'] = json.loads(request.POST.get('simulation_panel_json'))
+            if request.POST.get('card_groups_json'):
+                dashboard_config['card_groups'] = json.loads(request.POST.get('card_groups_json'))
             
             profile.dashboard_config = dashboard_config
             profile.save()

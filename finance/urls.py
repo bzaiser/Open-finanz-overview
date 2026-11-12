@@ -5,6 +5,7 @@ app_name = 'finance'
 
 urlpatterns = [
     path('dashboard/', views.dashboard_view, name='dashboard'),
+    path('save-card-config/', views.save_card_config_view, name='save_card_config'),
     path('import/', views.upload_bank_transactions, name='import_transactions'),
     path('import/review/<int:batch_id>/', views.review_bank_transactions, name='review_transactions'),
     path('import/confirm/<int:transaction_id>/', views.confirm_bank_transaction, name='confirm_transaction'),

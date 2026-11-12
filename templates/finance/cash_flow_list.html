@@ -13,7 +13,12 @@
             </h2>
             <p class="text-muted small mb-0">{% trans "Overview of all cash flows (manual entries, pensions, rental income, asset withdrawals, and loan payments)." %}</p>
         </div>
-        <div class="d-flex flex-wrap gap-2">
+        <div class="d-flex flex-wrap align-items-center gap-2">
+            <button type="button" class="btn btn-outline-secondary btn-sm rounded-circle d-inline-flex align-items-center justify-content-center shadow-sm"
+                    data-bs-toggle="modal" data-bs-target="#configModal" data-initial-tab="cashflow"
+                    title="{% trans 'Layout & Farben anpassen' %}" style="width: 38px; height: 38px;">
+                <i class="bi bi-sliders"></i>
+            </button>
             <button class="btn btn-primary app-action-btn shadow-sm"
                     style="background: var(--app-gradient); border: none;"
                     data-bs-toggle="modal" data-bs-target="#annualAdjustmentWizardModal">
@@ -31,71 +36,77 @@
 
     <!-- Summary Metric Cards -->
     <div class="row g-3 mb-4">
-        <div class="col-12 col-md-4 metric-card-col">
-            <div class="card metric-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ income_card_bg }}; color: {{ income_card_text }}; border: none;">
-                <div class="card-glass-glow"></div>
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.7rem; letter-spacing: 0.05em; color: inherit;">
-                            {% trans "Monthly Income" %}
-                        </span>
-                        <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
-                            +{{ monthly_income_sum|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span>
-                        </h3>
-                        <span class="small opacity-75" style="font-size: 0.75rem; color: inherit;">
-                            {{ yearly_income_sum|floatformat:2|intcomma }} {{ user.profile.currency }} / {% trans "year" %}
-                        </span>
-                    </div>
-                    <div class="ms-2">
-                        <i class="bi {{ income_card_icon|default:'bi-graph-up-arrow' }} fs-5"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-12 col-md-4 metric-card-col">
-            <div class="card metric-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ expense_card_bg }}; color: {{ expense_card_text }}; border: none;">
-                <div class="card-glass-glow"></div>
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.7rem; letter-spacing: 0.05em; color: inherit;">
-                            {% trans "Monthly Expenses" %}
-                        </span>
-                        <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
-                            -{{ monthly_expense_sum|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span>
-                        </h3>
-                        <span class="small opacity-75" style="font-size: 0.75rem; color: inherit;">
-                            {{ yearly_expense_sum|floatformat:2|intcomma }} {{ user.profile.currency }} / {% trans "year" %}
-                        </span>
-                    </div>
-                    <div class="ms-2">
-                        <i class="bi {{ expense_card_icon|default:'bi-graph-down-arrow' }} fs-5"></i>
+        {% for card in card_config_user_groups.cash_flow %}
+            {% if card.visible %}
+                {% if card.id == 'monthly_income' %}
+                <div class="col-12 col-md-4 metric-card-col">
+                    <div class="card metric-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
+                        <div class="card-glass-glow"></div>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.7rem; letter-spacing: 0.05em; color: inherit;">
+                                    {% trans "Monthly Income" %}
+                                </span>
+                                <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
+                                    +{{ monthly_income_sum|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span>
+                                </h3>
+                                <span class="small opacity-75" style="font-size: 0.75rem; color: inherit;">
+                                    {{ yearly_income_sum|floatformat:2|intcomma }} {{ user.profile.currency }} / {% trans "year" %}
+                                </span>
+                            </div>
+                            <div class="ms-2">
+                                <i class="bi {{ card.icon|default:'bi-graph-up-arrow' }} fs-5"></i>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <div class="col-12 col-md-4 metric-card-col">
-            <div class="card metric-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), var(--app-primary); color: #ffffff; border: none;">
-                <div class="card-glass-glow"></div>
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.7rem; letter-spacing: 0.05em; color: inherit;">
-                            {% trans "Net Monthly Surplus" %}
-                        </span>
-                        <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
-                            {% if monthly_net_surplus >= 0 %}+{% endif %}{{ monthly_net_surplus|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span>
-                        </h3>
-                        <span class="small opacity-75" style="font-size: 0.75rem; color: inherit;">
-                            {{ yearly_net_surplus|floatformat:2|intcomma }} {{ user.profile.currency }} / {% trans "year" %}
-                        </span>
-                    </div>
-                    <div class="ms-2">
-                        <i class="bi {{ surplus_card_icon|default:'bi-piggy-bank' }} fs-5"></i>
+                {% elif card.id == 'monthly_expenses' %}
+                <div class="col-12 col-md-4 metric-card-col">
+                    <div class="card metric-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
+                        <div class="card-glass-glow"></div>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.7rem; letter-spacing: 0.05em; color: inherit;">
+                                    {% trans "Monthly Expenses" %}
+                                </span>
+                                <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
+                                    -{{ monthly_expense_sum|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span>
+                                </h3>
+                                <span class="small opacity-75" style="font-size: 0.75rem; color: inherit;">
+                                    {{ yearly_expense_sum|floatformat:2|intcomma }} {{ user.profile.currency }} / {% trans "year" %}
+                                </span>
+                            </div>
+                            <div class="ms-2">
+                                <i class="bi {{ card.icon|default:'bi-graph-down-arrow' }} fs-5"></i>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
+                {% elif card.id == 'monthly_surplus' %}
+                <div class="col-12 col-md-4 metric-card-col">
+                    <div class="card metric-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
+                        <div class="card-glass-glow"></div>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.7rem; letter-spacing: 0.05em; color: inherit;">
+                                    {% trans "Net Monthly Surplus" %}
+                                </span>
+                                <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
+                                    {% if monthly_net_surplus >= 0 %}+{% endif %}{{ monthly_net_surplus|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span>
+                                </h3>
+                                <span class="small opacity-75" style="font-size: 0.75rem; color: inherit;">
+                                    {{ yearly_net_surplus|floatformat:2|intcomma }} {{ user.profile.currency }} / {% trans "year" %}
+                                </span>
+                            </div>
+                            <div class="ms-2">
+                                <i class="bi {{ card.icon|default:'bi-piggy-bank' }} fs-5"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
     </div>
 
     <!-- Filter Bar & Controls (Streamlined with integrated grouping controls) -->
