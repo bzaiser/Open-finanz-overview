@@ -3819,7 +3819,8 @@ def pension_save(request, pk=None):
             messages.success(request, _('Pension entry saved successfully.'))
         else:
             messages.error(request, _('Error saving pension entry. Please check your inputs.'))
-    return redirect('finance:pension_plan')
+    tab = request.POST.get('current_tab') or request.GET.get('tab') or 'pensions'
+    return redirect(f"{reverse('finance:pension_plan')}?tab={tab}")
 
 
 @login_required
@@ -3829,7 +3830,8 @@ def pension_delete(request, pk):
     if request.method == 'POST':
         pension.delete()
         messages.success(request, _('Pension entry deleted.'))
-    return redirect('finance:pension_plan')
+    tab = request.POST.get('current_tab') or request.GET.get('tab') or 'pensions'
+    return redirect(f"{reverse('finance:pension_plan')}?tab={tab}")
 
 
 @login_required
@@ -3900,7 +3902,8 @@ def insurance_save(request, pk=None):
             for field, errors in form.errors.items():
                 for err in errors:
                     messages.error(request, f"{field}: {err}")
-    return redirect(f"{reverse('finance:pension_plan')}?tab=insurances")
+    tab = request.POST.get('current_tab') or request.GET.get('tab') or 'insurances'
+    return redirect(f"{reverse('finance:pension_plan')}?tab={tab}")
 
 
 @login_required
@@ -3909,7 +3912,8 @@ def insurance_delete(request, pk):
     if request.method == 'POST':
         policy.delete()
         messages.success(request, _('Versicherungspolice gelöscht.'))
-    return redirect(f"{reverse('finance:pension_plan')}?tab=insurances")
+    tab = request.POST.get('current_tab') or request.GET.get('tab') or 'insurances'
+    return redirect(f"{reverse('finance:pension_plan')}?tab={tab}")
 
 
 # ==============================================================================
@@ -4118,7 +4122,8 @@ def real_estate_save(request, pk=None):
         else:
             messages.error(request, f"{_('Error saving')}: {form.errors.as_text()}")
             
-    return redirect(f"{reverse('finance:real_estate_loans')}?tab=properties")
+    tab = request.POST.get('current_tab') or request.GET.get('tab') or 'properties'
+    return redirect(f"{reverse('finance:real_estate_loans')}?tab={tab}")
 
 
 @login_required
@@ -4127,7 +4132,8 @@ def real_estate_delete(request, pk):
     name = obj.name
     obj.delete()
     messages.success(request, f"{_('Real estate')} '{name}' {_('was deleted.')}")
-    return redirect(f"{reverse('finance:real_estate_loans')}?tab=properties")
+    tab = request.POST.get('current_tab') or request.GET.get('tab') or 'properties'
+    return redirect(f"{reverse('finance:real_estate_loans')}?tab={tab}")
 
 
 @login_required
@@ -4145,7 +4151,8 @@ def loan_save(request, pk=None):
         else:
             messages.error(request, f"{_('Error saving')}: {form.errors.as_text()}")
             
-    return redirect(f"{reverse('finance:real_estate_loans')}?tab=loans")
+    tab = request.POST.get('current_tab') or request.GET.get('tab') or 'loans'
+    return redirect(f"{reverse('finance:real_estate_loans')}?tab={tab}")
 
 
 @login_required
@@ -4154,7 +4161,8 @@ def loan_delete(request, pk):
     name = obj.name
     obj.delete()
     messages.success(request, f"{_('Loan')} '{name}' {_('was deleted.')}")
-    return redirect(f"{reverse('finance:real_estate_loans')}?tab=loans")
+    tab = request.POST.get('current_tab') or request.GET.get('tab') or 'loans'
+    return redirect(f"{reverse('finance:real_estate_loans')}?tab={tab}")
 
 
 @login_required
@@ -4168,7 +4176,8 @@ def loan_extra_repayment_save(request):
         else:
             messages.error(request, f"{_('Error saving')}: {form.errors.as_text()}")
             
-    return redirect(f"{reverse('finance:real_estate_loans')}?tab=loans")
+    tab = request.POST.get('current_tab') or request.GET.get('tab') or 'loans'
+    return redirect(f"{reverse('finance:real_estate_loans')}?tab={tab}")
 
 
 @login_required
@@ -4176,7 +4185,8 @@ def loan_extra_repayment_delete(request, pk):
     repayment = get_object_or_404(LoanExtraRepayment, pk=pk, loan__user=request.user)
     repayment.delete()
     messages.success(request, _('Extra repayment deleted successfully.'))
-    return redirect('finance:real_estate_loans')
+    tab = request.POST.get('current_tab') or request.GET.get('tab') or 'loans'
+    return redirect(f"{reverse('finance:real_estate_loans')}?tab={tab}")
 
 
 from django.http import JsonResponse
@@ -4246,7 +4256,8 @@ def property_component_save(request, pk=None):
         else:
             messages.error(request, f"{_('Error saving')}: {form.errors.as_text()}")
             
-    return redirect(f"{reverse('finance:real_estate_loans')}?tab=renovation")
+    tab = request.POST.get('current_tab') or request.GET.get('tab') or 'renovation'
+    return redirect(f"{reverse('finance:real_estate_loans')}?tab={tab}")
 
 
 @login_required
@@ -4255,7 +4266,8 @@ def property_component_delete(request, pk):
     name = comp.name
     comp.delete()
     messages.success(request, f"{_('Property component')} '{name}' {_('was deleted.')}")
-    return redirect(f"{reverse('finance:real_estate_loans')}?tab=renovation")
+    tab = request.POST.get('current_tab') or request.GET.get('tab') or 'renovation'
+    return redirect(f"{reverse('finance:real_estate_loans')}?tab={tab}")
 
 
 def _safe_next_url(request, fallback):
@@ -4743,7 +4755,8 @@ def physical_asset_save(request, pk=None):
         else:
             messages.error(request, f"{_('Error saving physical asset')}: {form.errors.as_text()}")
 
-    return redirect(f"{reverse('finance:assets_overview')}?tab=physical")
+    tab = request.POST.get('current_tab') or request.GET.get('tab') or 'physical'
+    return redirect(f"{reverse('finance:assets_overview')}?tab={tab}")
 
 
 @login_required
@@ -4756,7 +4769,8 @@ def physical_asset_delete(request, pk):
     
     pa_obj.delete()
     messages.success(request, f"{_('Physical asset')} '{name}' {_('was deleted.')}")
-    return redirect(f"{reverse('finance:assets_overview')}?tab=physical")
+    tab = request.POST.get('current_tab') or request.GET.get('tab') or 'physical'
+    return redirect(f"{reverse('finance:assets_overview')}?tab={tab}")
 
 
 @login_required

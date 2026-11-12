@@ -106,7 +106,10 @@ function unifiedDocumentModalApp() {
             this.domain = d.domain || 'real_estate';
             this.title = '';
             this.dateValue = new Date().toISOString().split('T')[0];
-            this.nextUrl = d.nextUrl || (window.location.pathname + window.location.search);
+            const currentTab = (typeof this.activeTab !== 'undefined' ? this.activeTab : (new URLSearchParams(window.location.search).get('tab') || ''));
+            let u = new URL(window.location.href);
+            if (currentTab) u.searchParams.set('tab', currentTab);
+            this.nextUrl = d.nextUrl || (u.pathname + u.search);
             const cats = this.domainCategories[this.domain] || [];
             const targetCat = d.category || (cats.length ? cats[0].value : 'other');
             const targetObj = d.objectId ? String(d.objectId) : '';

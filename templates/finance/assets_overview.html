@@ -468,7 +468,7 @@
                                         <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill p-1 px-2 me-1" @click="openEditPhysicalModal(pa)" title="{% trans 'Edit' %}">
                                             <i class="bi bi-pencil"></i>
                                         </button>
-                                        <a :href="'/finance/assets/physical/delete/' + pa.id + '/'" class="btn btn-sm btn-outline-danger rounded-pill p-1 px-2" onclick="return confirm('{% trans 'Delete physical asset?' %}')" title="{% trans 'Delete' %}">
+                                        <a :href="'/finance/assets/physical/delete/' + pa.id + '/?tab=' + activeTab" class="btn btn-sm btn-outline-danger rounded-pill p-1 px-2" onclick="return confirm('{% trans 'Delete physical asset?' %}')" title="{% trans 'Delete' %}">
                                             <i class="bi bi-trash"></i>
                                         </a>
                                     </td>
@@ -643,6 +643,7 @@
             <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
                 <form :action="editPhysicalId ? '/finance/assets/physical/save/' + editPhysicalId + '/' : '/finance/assets/physical/save/'" method="post">
                     {% csrf_token %}
+                    <input type="hidden" name="current_tab" :value="activeTab">
                     <div class="modal-header border-0 pb-0">
                         <h5 class="modal-title fw-bold" x-text="editPhysicalId ? '{% trans 'Edit Physical Asset' %}' : '{% trans 'Add Physical Asset / Valuables' %}'"></h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>

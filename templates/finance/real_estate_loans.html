@@ -304,7 +304,7 @@
                                         </li>
                                         <li><hr class="dropdown-divider"></li>
                                         <li>
-                                            <a class="dropdown-item small text-danger" href="{% url 'finance:real_estate_delete' p.real_estate.id %}" onclick="return confirm('{% trans "Are you sure you want to delete this property?" %}');">
+                                            <a class="dropdown-item small text-danger" :href="'/finance/real-estate/delete/{{ p.real_estate.id }}/?tab=' + activeTab" onclick="return confirm('{% trans "Are you sure you want to delete this property?" %}');">
                                                 <i class="bi bi-trash me-2"></i>{% trans "Delete" %}
                                             </a>
                                         </li>
@@ -628,32 +628,32 @@
                                                 <span class="opacity-50">-</span>
                                             </template>
                                         </td>
-                                        <td class="py-3 px-3 text-end text-nowrap">
-                                            <div class="btn-group btn-group-sm">
+                                        <td class="py-2 px-3 text-end text-nowrap">
+                                            <div class="d-inline-flex align-items-center gap-1 justify-content-end">
                                                 <!-- Amortization Schedule Modal Trigger -->
-                                                <button type="button" class="btn btn-outline-secondary border-0 px-2 py-1" title="{% trans 'Full Amortization Schedule' %}" @click="openScheduleModal(item.id, item.name)">
+                                                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-2" title="{% trans 'Full Amortization Schedule' %}" @click="openScheduleModal(item.id, item.name)">
                                                     <i class="bi bi-calendar2-range"></i>
                                                 </button>
                                                 <!-- What-If Prepayment Simulator -->
-                                                <button type="button" class="btn btn-outline-secondary border-0 px-2 py-1" title="{% trans 'Simulate What-If Prepayment' %}" @click="openWhatIfModal(item.id, item.name, item.total_interest_projected, item.payoff_date)">
+                                                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-2" title="{% trans 'Simulate What-If Prepayment' %}" @click="openWhatIfModal(item.id, item.name, item.total_interest_projected, item.payoff_date)">
                                                     <i class="bi bi-calculator"></i>
                                                 </button>
                                                 <!-- Refinancing Stress Test Modal Trigger -->
                                                 <template x-if="item.interest_lock_end">
-                                                    <button type="button" class="btn btn-outline-warning border-0 px-2 py-1" title="{% trans 'Refinancing Stress Test' %}" @click="openStressTestModal(item.id, item.name, item.balance_at_lock_end, item.interest_lock_end_display, item.interest_rate, item.monthly_installment)">
+                                                    <button type="button" class="btn btn-sm btn-outline-warning rounded-pill px-2" title="{% trans 'Refinancing Stress Test' %}" @click="openStressTestModal(item.id, item.name, item.balance_at_lock_end, item.interest_lock_end_display, item.interest_rate, item.monthly_installment)">
                                                         <i class="bi bi-graph-up-arrow"></i>
                                                     </button>
                                                 </template>
                                                 <!-- Prepayment Add -->
-                                                <button type="button" class="btn btn-outline-secondary border-0 px-2 py-1" title="{% trans 'Record Prepayment' %}" @click="openExtraRepaymentForLoanModal(item.id)">
+                                                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-2" title="{% trans 'Record Prepayment' %}" @click="openExtraRepaymentForLoanModal(item.id)">
                                                     <i class="bi bi-cash-stack"></i>
                                                 </button>
                                                 <!-- Edit -->
-                                                <button type="button" class="btn btn-outline-secondary border-0 px-2 py-1" title="{% trans 'Edit' %}" @click="openEditLoanModal(item.id, item.name, item.provider, item.account_number, item.nominal_amount, item.interest_rate, item.effective_interest_rate || '', item.initial_repayment_rate || '', item.special_repayment_rate, item.monthly_installment, item.start_date, item.end_date, item.interest_lock_end, item.real_estate_id || '', item.allows_extra_repayment, item.notes, item.loan_type)">
+                                                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-2" title="{% trans 'Edit' %}" @click="openEditLoanModal(item.id, item.name, item.provider, item.account_number, item.nominal_amount, item.interest_rate, item.effective_interest_rate || '', item.initial_repayment_rate || '', item.special_repayment_rate, item.monthly_installment, item.start_date, item.end_date, item.interest_lock_end, item.real_estate_id || '', item.allows_extra_repayment, item.notes, item.loan_type)">
                                                     <i class="bi bi-pencil"></i>
                                                 </button>
                                                 <!-- Delete -->
-                                                <a :href="'/finance/loans/delete/' + item.id + '/'" class="btn btn-outline-danger border-0 px-2 py-1" title="{% trans 'Delete' %}" onclick="return confirm('{% trans "Are you sure you want to delete this loan?" %}');">
+                                                <a :href="'/finance/loans/delete/' + item.id + '/?tab=' + activeTab" class="btn btn-sm btn-outline-danger rounded-pill px-2" title="{% trans 'Delete' %}" onclick="return confirm('{% trans "Are you sure you want to delete this loan?" %}');">
                                                     <i class="bi bi-trash"></i>
                                                 </a>
                                             </div>
@@ -960,12 +960,12 @@
                                                 <span class="badge rounded-pill bg-danger border border-danger border-opacity-25 px-2 py-1">{% trans "Critical" %}</span>
                                             </template>
                                         </td>
-                                        <td class="py-3 px-3 text-end text-nowrap">
-                                            <div class="btn-group btn-group-sm">
-                                                <button type="button" class="btn btn-outline-secondary border-0 px-2 py-1" @click="openEditComponentModal(c.id, c.real_estate_id, c.component_type, c.name, c.installation_year, c.expected_lifespan, c.estimated_cost, c.condition, c.notes)" title="{% trans 'Edit' %}">
+                                        <td class="py-2 px-3 text-end text-nowrap">
+                                            <div class="d-inline-flex align-items-center gap-1 justify-content-end">
+                                                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-2" @click="openEditComponentModal(c.id, c.real_estate_id, c.component_type, c.name, c.installation_year, c.expected_lifespan, c.estimated_cost, c.condition, c.notes)" title="{% trans 'Edit' %}">
                                                     <i class="bi bi-pencil"></i>
                                                 </button>
-                                                <a :href="'/finance/property-components/delete/' + c.id + '/'" class="btn btn-outline-danger border-0 px-2 py-1" onclick="return confirm('{% trans "Are you sure you want to delete this component?" %}');" title="{% trans 'Delete' %}">
+                                                <a :href="'/finance/real-estate/components/delete/' + c.id + '/?tab=' + activeTab" class="btn btn-sm btn-outline-danger rounded-pill px-2" onclick="return confirm('{% trans "Are you sure you want to delete this component?" %}');" title="{% trans 'Delete' %}">
                                                     <i class="bi bi-trash"></i>
                                                 </a>
                                             </div>
@@ -1723,15 +1723,15 @@
                                             </template>
                                         </td>
                                         <td class="py-3 px-3 font-monospace small opacity-75" x-text="doc.file_size"></td>
-                                        <td class="py-3 px-3 text-end text-nowrap">
-                                            <div class="btn-group btn-group-sm">
-                                                <button type="button" @click="window.dispatchEvent(new CustomEvent('open-document-viewer', { detail: { id: doc.id } }))" class="btn btn-outline-secondary border-0 px-2 py-1" title="{% trans 'Open' %}">
+                                        <td class="py-2 px-3 text-end text-nowrap">
+                                            <div class="d-inline-flex align-items-center gap-1 justify-content-end">
+                                                <button type="button" @click="window.dispatchEvent(new CustomEvent('open-document-viewer', { detail: { id: doc.id } }))" class="btn btn-sm btn-outline-secondary rounded-pill px-2" title="{% trans 'Open' %}">
                                                     <i class="bi bi-eye"></i>
                                                 </button>
-                                                <a :href="doc.download_url + '?download=1'" class="btn btn-outline-secondary border-0 px-2 py-1" title="{% trans 'Download' %}">
+                                                <a :href="doc.download_url + '?download=1'" class="btn btn-sm btn-outline-secondary rounded-pill px-2" title="{% trans 'Download' %}">
                                                     <i class="bi bi-download"></i>
                                                 </a>
-                                                <a :href="doc.delete_url + '?next=' + encodeURIComponent('{% url 'finance:real_estate_loans' %}?tab=tax-docs')" class="btn btn-outline-danger border-0 px-2 py-1" onclick="return confirm('{% trans "Are you sure you want to delete this document?" %}');" title="{% trans 'Delete' %}">
+                                                <a :href="doc.delete_url + '?next=' + encodeURIComponent('{% url 'finance:real_estate_loans' %}?tab=tax-docs')" class="btn btn-sm btn-outline-danger rounded-pill px-2" onclick="return confirm('{% trans "Are you sure you want to delete this document?" %}');" title="{% trans 'Delete' %}">
                                                     <i class="bi bi-trash"></i>
                                                 </a>
                                             </div>
@@ -1765,6 +1765,7 @@
                 </div>
                 <form method="post" :action="propertyForm.id ? '/finance/real-estate/save/' + propertyForm.id + '/' : '{% url "finance:real_estate_add" %}'">
                     {% csrf_token %}
+                    <input type="hidden" name="current_tab" :value="activeTab">
                     <div class="modal-body pt-3">
                         <div class="row g-3 mb-3">
                             <div class="col-md-5">
@@ -1886,6 +1887,7 @@
                 </div>
                 <form method="post" :action="loanForm.id ? '/finance/loans/save/' + loanForm.id + '/' : '{% url "finance:loan_add" %}'">
                     {% csrf_token %}
+                    <input type="hidden" name="current_tab" :value="activeTab">
                     <div class="modal-body pt-3">
                         <div class="row g-3 mb-3">
                             <div class="col-md-5">
@@ -2001,6 +2003,7 @@
                 </div>
                 <form method="post" action="{% url 'finance:loan_extra_repayment_save' %}">
                     {% csrf_token %}
+                    <input type="hidden" name="current_tab" :value="activeTab">
                     <div class="modal-body pt-3">
                         <div class="mb-3">
                             <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Select Loan" %}</label>
@@ -2220,6 +2223,7 @@
                 </div>
                 <form method="post" :action="componentForm.id ? '/finance/real-estate/components/save/' + componentForm.id + '/' : '{% url "finance:property_component_add" %}'">
                     {% csrf_token %}
+                    <input type="hidden" name="current_tab" :value="activeTab">
                     <div class="modal-body pt-3">
                         <div class="mb-3">
                             <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Real Estate Property" %}</label>
@@ -2478,6 +2482,7 @@
 <script>
 function realEstateLoansApp() {
     return {
+        activeTab: (new URLSearchParams(window.location.search).get('tab') || 'properties'),
         propertyForm: {
             id: null,
             name: '',
@@ -3162,6 +3167,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 const newUrl = new URL(window.location);
                 newUrl.searchParams.set('tab', paneId);
                 window.history.replaceState({}, '', newUrl);
+                const alpineRoot = document.querySelector('[x-data]');
+                if (alpineRoot && alpineRoot._x_dataStack && alpineRoot._x_dataStack[0]) {
+                    alpineRoot._x_dataStack[0].activeTab = paneId;
+                }
             }
         });
     });

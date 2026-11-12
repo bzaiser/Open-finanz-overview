@@ -613,14 +613,15 @@
                                 <td class="py-3 px-3 text-end font-monospace d-none d-lg-table-cell" x-text="p.gross_payout_amount !== null ? formatEuro(p.gross_payout_amount) + ' €' : '-'"></td>
                                 <td class="py-3 px-3 text-end font-monospace fw-bold text-success" x-text="p.expected_payout_at_retirement !== null ? formatEuro(p.expected_payout_at_retirement) + ' €' : '-'"></td>
                                 <td class="py-3 px-3 text-end font-monospace text-danger d-none d-md-table-cell" x-text="p.monthly_contribution > 0 ? '-' + formatEuro(p.monthly_contribution) + ' €' : '-'"></td>
-                                <td class="py-3 px-3 text-end text-nowrap">
-                                    <div class="btn-group btn-group-sm">
-                                        <button type="button" class="btn btn-outline-secondary border-0 px-2 py-1" @click="openEditModal(p)" title="{% trans 'Edit' %}">
+                                <td class="py-2 px-3 text-end text-nowrap">
+                                    <div class="d-inline-flex align-items-center gap-1 justify-content-end">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-2" @click="openEditModal(p)" title="{% trans 'Edit' %}">
                                             <i class="bi bi-pencil"></i>
                                         </button>
-                                        <form method="post" :action="'/finance/pensions/delete/' + p.id + '/'" class="d-inline" onsubmit="return confirm('{% trans 'Are you sure you want to delete this pension entry?' %}');">
+                                        <form method="post" :action="'/finance/pensions/delete/' + p.id + '/?tab=' + activeTab" class="d-inline" onsubmit="return confirm('{% trans 'Are you sure you want to delete this pension entry?' %}');">
                                             {% csrf_token %}
-                                            <button type="submit" class="btn btn-outline-danger border-0 px-2 py-1" title="{% trans 'Delete' %}">
+                                            <input type="hidden" name="current_tab" :value="activeTab">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-2" title="{% trans 'Delete' %}">
                                                 <i class="bi bi-trash"></i>
                                             </button>
                                         </form>
@@ -848,11 +849,12 @@
                                     </td>
                                     <td class="text-end pe-3">
                                         <div class="d-flex justify-content-end gap-1">
-                                            <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-2" @click="openEditInsuranceModal(ins)" title="{% trans 'Bearbeiten' %}">
+                                            <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-2" @click="openEditInsuranceModal(ins)" title="{% trans 'Bearbeiten' %}">
                                                 <i class="bi bi-pencil"></i>
                                             </button>
-                                            <form method="post" :action="'/finance/insurances/delete/' + ins.id + '/'" onsubmit="return confirm('{% trans "Versicherungspolice wirklich löschen?" %}');">
+                                            <form method="post" :action="'/finance/insurances/delete/' + ins.id + '/?tab=' + activeTab" onsubmit="return confirm('{% trans "Versicherungspolice wirklich löschen?" %}');">
                                                 {% csrf_token %}
+                                                <input type="hidden" name="current_tab" :value="activeTab">
                                                 <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-2" title="{% trans 'Löschen' %}">
                                                     <i class="bi bi-trash"></i>
                                                 </button>
@@ -1058,6 +1060,7 @@
                 </div>
                 <form method="post" :action="editId ? '/finance/pensions/save/' + editId + '/' : '{% url "finance:pension_add" %}'">
                     {% csrf_token %}
+                    <input type="hidden" name="current_tab" :value="activeTab">
                     <input type="hidden" name="edit_snapshot_id" x-model="form.edit_snapshot_id">
                     <div class="modal-body pt-3">
                         <div class="row g-3 mb-3">
@@ -1356,6 +1359,7 @@
                 </div>
                 <form method="post" :action="editInsuranceId ? '/finance/insurances/save/' + editInsuranceId + '/' : '{% url "finance:insurance_add" %}'">
                     {% csrf_token %}
+                    <input type="hidden" name="current_tab" :value="activeTab">
                     <div class="modal-body pt-3">
                         <div class="row g-3 mb-3">
                             <div class="col-md-5">
@@ -1585,7 +1589,7 @@
             init() {
                 const urlParams = new URLSearchParams(window.location.search);
                 const tabParam = urlParams.get('tab');
-                if (tabParam && ['pensions', 'insurances', 'risk_check'].includes(tabParam)) {
+                if (tabParam && ['pensions', 'insurances', 'risk_check', 'documents'].includes(tabParam)) {
                     this.activeTab = tabParam;
                 }
                 const editPensionId = urlParams.get('edit_pension_id');
