@@ -209,7 +209,7 @@ def calculate_protection_audit(user):
 
     # 6. Prioritized Insurance Checklist by Target Group
     existing_types = {ins.insurance_type for ins in insurances}
-    # Also check CashFlowSource template_ids in case user entered insurances only as CashFlows
+    # Also check CashFlowSource template_ids and names in case user entered insurances only as CashFlows
     cf_tpls = {cf.template_id for cf in cash_flows if cf.template_id}
     tpl_to_type = {
         'exp_haftpflicht': 'liability',
@@ -226,20 +226,44 @@ def calculate_protection_audit(user):
         if tpl_id in cf_tpls:
             existing_types.add(ins_type)
 
+    cf_name_keywords = {
+        'liability': ('haftpflicht',),
+        'disability': ('berufsunfähigkeit', 'berufsunfaehigkeit', 'bu-versicherung', 'erwerbsunfähigkeit'),
+        'term_life': ('risikoleben', 'todesfallschutz'),
+        'sick_pay': ('krankentagegeld',),
+        'household': ('hausrat',),
+        'building': ('wohngebäude', 'wohngebaeude', 'gebäudeversicherung'),
+    }
+    for cf in cash_flows:
+        if not cf.is_income:
+            cname = (cf.name or '').lower()
+            for ins_type, kws in cf_name_keywords.items():
+                if any(kw in cname for kw in kws):
+                    existing_types.add(ins_type)
+
     checklist = []
 
     def add_check(ins_type, title, priority, needed, reason, covered_hint=""):
         is_covered = ins_type in existing_types
         if not needed and not is_covered:
             return
-        status = 'covered' if is_covered else ('critical' if priority == 'essential' else 'recommended')
+        norm_priority = 'high' if priority in ('essential', 'high') else ('medium' if priority in ('recommended', 'medium') else 'low')
+        if is_covered:
+            status = 'ok'
+            hint = covered_hint or str(_('Policen-Schutz aktiv'))
+        elif norm_priority == 'low':
+            status = 'optional'
+            hint = covered_hint or ''
+        else:
+            status = 'gap'
+            hint = covered_hint or ''
         checklist.append({
             'type': ins_type,
             'title': str(title),
-            'priority': priority,
+            'priority': norm_priority,
             'status': status,
             'reason': str(reason),
-            'covered_hint': str(covered_hint),
+            'covered_hint': str(hint),
         })
 
     add_check(
@@ -252,41 +276,51 @@ def calculate_protection_audit(user):
     )
 
     need_bu = situation in {'standard', 'low_income', 'single_parent'} and primary_earned > 0
+    if 'disability' in existing_types:
+        bu_hint = f"{_('Policen-Schutz aktiv')} ({_('Bedarf gedeckt')})" if disability_gap_primary <= 0 else f"{_('Policen-Schutz aktiv')} ({_('Restlücke')}: {disability_gap_primary:,.0f} €/mtl.)"
+    else:
+        bu_hint = f"{_('Lücke')}: {disability_gap_primary:,.0f} €/mtl." if disability_gap_primary > 0 else _('Bedarf gedeckt')
     add_check(
         'disability',
         _('Berufsunfähigkeits- / Erwerbsunfähigkeitsschutz'),
         'essential' if (situation == 'single_parent' or primary_earned > 0) else 'optional',
         need_bu,
         _('Schließt die Lücke zwischen Nettoeinkommen und gesetzlicher Erwerbsminderungsrente.'),
-        f"{_('Lücke')}: {disability_gap_primary:,.0f} €/mtl." if disability_gap_primary > 0 else _('Bedarf gedeckt'),
+        bu_hint,
     )
 
     need_term_life = has_partner or has_children or total_loan_debt > Decimal('10000')
+    if 'term_life' in existing_types:
+        rlv_hint = f"{_('Policen-Schutz aktiv')} ({_('Abgesichert')})" if term_life_gap <= 0 else f"{_('Policen-Schutz aktiv')} ({_('Restlücke')}: ca. {term_life_gap:,.0f} €)"
+    else:
+        rlv_hint = f"{_('Empfehlung')}: ca. {recommended_term_life:,.0f} €" if term_life_gap > 0 else _('Abgesichert')
     add_check(
         'term_life',
         _('Risikolebensversicherung'),
         'essential' if (has_children or total_loan_debt > Decimal('30000')) else 'recommended',
         need_term_life,
         _('Sichert Hinterbliebene & laufende Kredite bei Tod eines Partners / Elternteils ab.'),
-        f"{_('Empfehlung')}: ca. {recommended_term_life:,.0f} €" if term_life_gap > 0 else _('Abgesichert'),
+        rlv_hint,
     )
 
-    if primary_earned > Decimal('1200') and situation not in {'student', 'unemployed', 'early_retiree'}:
+    if (primary_earned > Decimal('1200') and situation not in {'student', 'unemployed', 'early_retiree'}) or 'sick_pay' in existing_types:
         add_check(
             'sick_pay',
             _('Krankentagegeldversicherung'),
             'recommended',
             True,
             _('Überbrückt ab Woche 7 die Differenz zwischen Krankengeld (~70 % Netto) und Gehalt.'),
+            _('Policen-Schutz aktiv') if 'sick_pay' in existing_types else '',
         )
 
-    if real_estates:
+    if real_estates or 'building' in existing_types:
         add_check(
             'building',
             _('Wohngebäudeversicherung'),
             'essential',
             True,
             _('Pflichtschutz bei Immobilienbesitz gegen Feuer-, Sturm- und Leitungswasserschäden.'),
+            _('Policen-Schutz aktiv') if 'building' in existing_types else _('Fehlt – Pflichtschutz bei Eigentum!'),
         )
 
     add_check(
@@ -295,6 +329,7 @@ def calculate_protection_audit(user):
         'optional' if situation in {'student', 'unemployed'} else 'recommended',
         situation not in {'student'} or 'household' in existing_types,
         _('Sinnvoll, wenn der Wiederbeschaffungswert des Hausrats die eigenen Rücklagen übersteigt.'),
+        _('Policen-Schutz aktiv') if 'household' in existing_types else '',
     )
 
     # Optimization / Savings Hints for low-income / unemployed / student
@@ -307,8 +342,12 @@ def calculate_protection_audit(user):
         if situation == 'unemployed':
             optimization_hints.append(str(_('Bei Bürgergeld-Bezug: Angemessene Pflicht-/Privathaftpflicht & KFZ-Haftpflicht können einkommensmindernd berücksichtigt werden.')))
 
+    from core.models import UserProfile
+    situation_label = dict(UserProfile.HOUSEHOLD_SITUATION_CHOICES).get(situation, situation)
+
     return {
         'situation': situation,
+        'situation_label': str(situation_label),
         'has_partner': has_partner,
         'has_children': has_children,
         'primary_earned_monthly': float(primary_earned),
