@@ -43,7 +43,7 @@ sudo chmod -R 777 ./data
 
 # Install requirements
 echo "Syncing requirements..."
-docker compose --env-file .env exec web pip install -q --no-cache-dir -r requirements.txt
+docker compose --env-file .env exec -u root web pip install -q --no-cache-dir -r requirements.txt
 
 # Database migrations
 echo "Database migrations..."
