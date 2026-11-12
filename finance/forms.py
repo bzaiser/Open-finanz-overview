@@ -85,7 +85,7 @@ class PensionForm(forms.ModelForm):
         return self.cleaned_data.get('owner_role') or 'primary'
 
 
-from .models import RealEstate, Loan, LoanExtraRepayment, PropertyComponent, PropertyDocument
+from .models import RealEstate, Loan, LoanExtraRepayment, PropertyComponent, Document, Pension, InsurancePolicy, Asset, PhysicalAsset
 
 class RealEstateForm(forms.ModelForm):
     class Meta:
@@ -235,15 +235,36 @@ class PropertyComponentForm(forms.ModelForm):
         self.fields['real_estate'].empty_label = _('-- Select Real Estate --')
 
 
-class PropertyDocumentForm(forms.ModelForm):
+DOMAIN_CATEGORY_MAP = {
+    'real_estate': [
+        'contract', 'land_register', 'energy_cert', 'lease',
+        'maintenance_invoice', 'tax_statement', 'insurance', 'other',
+    ],
+    'loan': ['loan_agreement', 'interest_cert', 'repayment_plan', 'other'],
+    'insurance': ['insurance', 'premium_invoice', 'policy_amendment', 'claim_correspondence', 'other'],
+    'pension': ['pension_info', 'pension_notice', 'tax_cert', 'other'],
+    'asset': ['bank_statement', 'depot_statement', 'tax_cert', 'exemption_order', 'other'],
+    'physical_asset': ['contract', 'valuation', 'insurance', 'other'],
+    'general': ['tax_statement', 'tax_cert', 'contract', 'other'],
+}
+
+
+class DocumentForm(forms.ModelForm):
     class Meta:
-        model = PropertyDocument
+        model = Document
         fields = [
-            'real_estate', 'title', 'category', 'file', 'date', 'amount', 'notes'
+            'domain', 'real_estate', 'loan', 'insurance_policy', 'pension', 'asset', 'physical_asset',
+            'title', 'category', 'file', 'date', 'amount', 'notes',
         ]
         widgets = {
+            'domain': forms.Select(attrs={'class': 'form-select'}),
             'real_estate': forms.Select(attrs={'class': 'form-select'}),
-            'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('e.g. Purchase Contract, Heating Invoice 2024')}),
+            'loan': forms.Select(attrs={'class': 'form-select'}),
+            'insurance_policy': forms.Select(attrs={'class': 'form-select'}),
+            'pension': forms.Select(attrs={'class': 'form-select'}),
+            'asset': forms.Select(attrs={'class': 'form-select'}),
+            'physical_asset': forms.Select(attrs={'class': 'form-select'}),
+            'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': _('e.g. Purchase Contract, Policy, Annual Statement')}),
             'category': forms.Select(attrs={'class': 'form-select'}),
             'file': forms.FileInput(attrs={'class': 'form-control'}),
             'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
@@ -254,9 +275,34 @@ class PropertyDocumentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
+        self.user = user
         if user:
             self.fields['real_estate'].queryset = RealEstate.objects.filter(user=user).order_by('name')
-        self.fields['real_estate'].empty_label = _('-- Select Real Estate --')
+            self.fields['loan'].queryset = Loan.objects.filter(user=user).order_by('name')
+            self.fields['insurance_policy'].queryset = InsurancePolicy.objects.filter(user=user).order_by('name')
+            self.fields['pension'].queryset = Pension.objects.filter(user=user).order_by('provider')
+            self.fields['asset'].queryset = Asset.objects.filter(user=user).order_by('name')
+            self.fields['physical_asset'].queryset = PhysicalAsset.objects.filter(user=user).order_by('name')
+        for fk_field in ('real_estate', 'loan', 'insurance_policy', 'pension', 'asset', 'physical_asset'):
+            self.fields[fk_field].required = False
+            self.fields[fk_field].empty_label = _('-- Optional / None --')
+
+    def clean(self):
+        cleaned = super().clean()
+        domain = cleaned.get('domain') or 'real_estate'
+        domain_fk_map = {
+            'real_estate': 'real_estate',
+            'loan': 'loan',
+            'insurance': 'insurance_policy',
+            'pension': 'pension',
+            'asset': 'asset',
+            'physical_asset': 'physical_asset',
+        }
+        active_fk = domain_fk_map.get(domain)
+        for fk_field in ('real_estate', 'loan', 'insurance_policy', 'pension', 'asset', 'physical_asset'):
+            if fk_field != active_fk:
+                cleaned[fk_field] = None
+        return cleaned
 
 
 from .models import Asset, PhysicalAsset, AssetSnapshot, InsurancePolicy

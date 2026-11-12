@@ -12,7 +12,7 @@ BENUTZER_CRUD_MODELS = [
     ('finance', 'cashflowsource'),
     ('finance', 'realestate'),
     ('finance', 'propertycomponent'),
-    ('finance', 'propertydocument'),
+    ('finance', 'document'),
     ('finance', 'loan'),
     ('finance', 'loanextrarepayment'),
     ('finance', 'pension'),

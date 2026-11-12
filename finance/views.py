@@ -3675,6 +3675,9 @@ def pension_plan_view(request):
         'audit_overview': audit_overview,
         'insurance_form': InsurancePolicyForm(user=request.user),
         'life_stage': life_stage,
+        **get_document_modal_context(request.user),
+        'domain_documents': get_documents_data(request.user, domains=['insurance', 'pension']),
+        'domain_documents_json': json.dumps(get_documents_data(request.user, domains=['insurance', 'pension'])['serialized_documents']),
         'user_current_age': user_current_age,
         'total_statutory_points': total_statutory_points,
         'statutory_monthly_net': statutory_monthly_net,
@@ -3912,9 +3915,16 @@ def insurance_delete(request, pk):
 # ==============================================================================
 # REAL ESTATE & LOANS (IMMOBILIEN & KREDITE) MODULE
 # ==============================================================================
-from .models import RealEstate, Loan, LoanExtraRepayment, PropertyComponent, PropertyDocument
-from .forms import RealEstateForm, LoanForm, LoanExtraRepaymentForm, PropertyComponentForm, PropertyDocumentForm
+from .models import RealEstate, Loan, LoanExtraRepayment, PropertyComponent, Document
+from .forms import RealEstateForm, LoanForm, LoanExtraRepaymentForm, PropertyComponentForm, DocumentForm
 from .services_realestate import get_real_estate_overview, calculate_loan_schedule
+from .services_documents import (
+    extract_pdf_text,
+    get_document_modal_context,
+    get_documents_data,
+    search_all_user_data,
+    serialize_document,
+)
 
 @login_required
 def real_estate_loans_view(request):
@@ -3950,7 +3960,7 @@ def real_estate_loans_view(request):
     loan_form = LoanForm(user=user)
     extra_repayment_form = LoanExtraRepaymentForm(user=user)
     component_form = PropertyComponentForm(user=user)
-    document_form = PropertyDocumentForm(user=user)
+    document_form = DocumentForm(user=user)
     
     import json
     calendar_chart_json = json.dumps({
@@ -4069,22 +4079,9 @@ def real_estate_loans_view(request):
         })
 
     # 5. Documents Table JSON
-    documents_table_data = []
-    for doc in overview['documents_data']['documents']:
-        documents_table_data.append({
-            'id': doc.id,
-            'title': doc.title or '',
-            'real_estate_id': doc.real_estate_id,
-            'real_estate_name': doc.real_estate.name if doc.real_estate else '',
-            'category': doc.category,
-            'category_display': str(doc.get_category_display()),
-            'date': doc.date.strftime('%Y-%m-%d') if doc.date else '',
-            'date_display': doc.date.strftime('%d.%m.%Y') if doc.date else '',
-            'amount': float(doc.amount) if doc.amount is not None else None,
-            'file_size_display': doc.file_size_display,
-            'file_url': doc.file.url if doc.file else '',
-            'notes': doc.notes or '',
-        })
+    documents_table_data = [
+        serialize_document(doc) for doc in overview['documents_data']['documents']
+    ]
 
     context = {
         'overview': overview,
@@ -4099,7 +4096,7 @@ def real_estate_loans_view(request):
         'loan_form': loan_form,
         'extra_repayment_form': extra_repayment_form,
         'component_form': component_form,
-        'document_form': document_form,
+        **get_document_modal_context(user),
     }
     return render(request, 'finance/real_estate_loans.html', context)
 
@@ -4259,30 +4256,103 @@ def property_component_delete(request, pk):
     return redirect(f"{reverse('finance:real_estate_loans')}?tab=renovation")
 
 
+def _safe_next_url(request, fallback):
+    from django.utils.http import url_has_allowed_host_and_scheme
+    next_url = request.POST.get('next') or request.GET.get('next') or ''
+    if next_url and url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}):
+        return next_url
+    return fallback
+
+
 @login_required
-def property_document_upload(request):
+def documents_vault_view(request):
     user = request.user
+    docs_data = get_documents_data(user)
+    context = {
+        'docs_data': docs_data,
+        'documents_json': json.dumps(docs_data['serialized_documents']),
+        'initial_domain': request.GET.get('domain', ''),
+        **get_document_modal_context(user),
+    }
+    return render(request, 'finance/documents_vault.html', context)
+
+
+@login_required
+def global_search_view(request):
+    user = request.user
+    query = request.GET.get('q', '')
+    scope = request.GET.get('scope', 'all')
+    if scope not in {'all', 'documents', 'real_estate_loans', 'insurance_pensions', 'assets', 'cashflows'}:
+        scope = 'all'
+    search_data = search_all_user_data(user, query=query, scope=scope)
+    context = {
+        'search_data': search_data,
+        'query': search_data['query'],
+        'scope': scope,
+        **get_document_modal_context(user),
+    }
+    return render(request, 'finance/global_search.html', context)
+
+
+@login_required
+def document_upload(request):
+    user = request.user
+    fallback = reverse('finance:documents_vault')
     if request.method == 'POST':
-        form = PropertyDocumentForm(request.POST, request.FILES, user=user)
+        form = DocumentForm(request.POST, request.FILES, user=user)
         if form.is_valid():
-            doc = form.save()
+            doc = form.save(commit=False)
+            doc.user = user
+            if doc.file:
+                doc.extracted_text = extract_pdf_text(doc.file)
+            doc.save()
             messages.success(request, _('Document uploaded successfully.'))
         else:
             messages.error(request, f"{_('Error uploading document')}: {form.errors.as_text()}")
-            
-    return redirect(f"{reverse('finance:real_estate_loans')}?tab=tax-docs")
+    return redirect(_safe_next_url(request, fallback))
 
 
 @login_required
-def property_document_delete(request, pk):
-    doc = get_object_or_404(PropertyDocument, pk=pk, real_estate__user=request.user)
+def document_download(request, pk):
+    import mimetypes
+    from django.http import FileResponse, Http404
+    doc = get_object_or_404(Document, pk=pk, user=request.user)
+    if not doc.file:
+        raise Http404()
+    try:
+        fh = doc.file.open('rb')
+    except FileNotFoundError:
+        raise Http404()
+    content_type, _enc = mimetypes.guess_type(doc.filename)
+    as_attachment = request.GET.get('download') == '1'
+    return FileResponse(fh, as_attachment=as_attachment, filename=doc.filename, content_type=content_type or 'application/octet-stream')
+
+
+@login_required
+def document_delete(request, pk):
+    doc = get_object_or_404(Document, pk=pk, user=request.user)
     title = doc.title
-    # Delete physical file from storage as well
     if doc.file:
         doc.file.delete(save=False)
     doc.delete()
     messages.success(request, f"{_('Document')} '{title}' {_('was deleted.')}")
-    return redirect(f"{reverse('finance:real_estate_loans')}?tab=tax-docs")
+    return redirect(_safe_next_url(request, reverse('finance:documents_vault')))
+
+
+@login_required
+def property_document_upload(request):
+    if not request.POST.get('next'):
+        request.POST = request.POST.copy()
+        request.POST['next'] = f"{reverse('finance:real_estate_loans')}?tab=tax-docs"
+    return document_upload(request)
+
+
+@login_required
+def property_document_delete(request, pk):
+    if not request.GET.get('next') and not request.POST.get('next'):
+        request.GET = request.GET.copy()
+        request.GET['next'] = f"{reverse('finance:real_estate_loans')}?tab=tax-docs"
+    return document_delete(request, pk)
 
 
 # ==============================================================================
@@ -4541,6 +4611,9 @@ def assets_overview_view(request):
         'today': today,
         'card_colors': card_colors,
         'total_wealth': total_wealth,
+        **get_document_modal_context(user),
+        'domain_documents': get_documents_data(user, domains=['asset', 'physical_asset']),
+        'domain_documents_json': json.dumps(get_documents_data(user, domains=['asset', 'physical_asset'])['serialized_documents']),
         'total_cash': total_cash,
         'total_depot': total_depot,
         'total_crypto': total_crypto,

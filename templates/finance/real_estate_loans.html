@@ -1708,7 +1708,7 @@
                                             </template>
                                         </td>
                                         <td class="py-3 px-3">
-                                            <span class="badge rounded-pill bg-body-tertiary text-body border border-secondary border-opacity-20 px-2 py-1" x-text="doc.real_estate_name"></span>
+                                            <span class="badge rounded-pill bg-body-tertiary text-body border border-secondary border-opacity-20 px-2 py-1" x-text="doc.related_object_label || '—'"></span>
                                         </td>
                                         <td class="py-3 px-3">
                                             <span class="badge rounded-pill bg-info-subtle text-info border border-info border-opacity-25 px-2 py-1" x-text="doc.category_display"></span>
@@ -1722,15 +1722,15 @@
                                                 <span class="text-muted">-</span>
                                             </template>
                                         </td>
-                                        <td class="py-3 px-3 font-monospace small opacity-75" x-text="doc.file_size_display"></td>
+                                        <td class="py-3 px-3 font-monospace small opacity-75" x-text="doc.file_size"></td>
                                         <td class="py-3 px-3 text-end text-nowrap">
                                             <div class="btn-group btn-group-sm">
-                                                <template x-if="doc.file_url">
-                                                    <a :href="doc.file_url" target="_blank" class="btn btn-outline-secondary border-0 px-2 py-1" title="{% trans 'Open' %}">
+                                                <template x-if="doc.download_url">
+                                                    <a :href="doc.download_url" target="_blank" class="btn btn-outline-secondary border-0 px-2 py-1" title="{% trans 'Open' %}">
                                                         <i class="bi bi-box-arrow-up-right"></i>
                                                     </a>
                                                 </template>
-                                                <a :href="'/finance/property-documents/delete/' + doc.id + '/'" class="btn btn-outline-danger border-0 px-2 py-1" onclick="return confirm('{% trans "Are you sure you want to delete this document?" %}');" title="{% trans 'Delete' %}">
+                                                <a :href="doc.delete_url + '?next=' + encodeURIComponent('{% url 'finance:real_estate_loans' %}?tab=tax-docs')" class="btn btn-outline-danger border-0 px-2 py-1" onclick="return confirm('{% trans "Are you sure you want to delete this document?" %}');" title="{% trans 'Delete' %}">
                                                     <i class="bi bi-trash"></i>
                                                 </a>
                                             </div>
@@ -2298,6 +2298,8 @@
                 </div>
                 <form method="post" action="{% url 'finance:property_document_upload' %}" enctype="multipart/form-data">
                     {% csrf_token %}
+                    <input type="hidden" name="domain" value="real_estate">
+                    <input type="hidden" name="next" value="{% url 'finance:real_estate_loans' %}?tab=tax-docs">
                     <div class="modal-body pt-3">
                         <div class="mb-3">
                             <label class="form-label small fw-bold text-uppercase opacity-75">{% trans "Real Estate Property" %}</label>
@@ -2758,7 +2760,7 @@ function realEstateLoansApp() {
                 const ft = (this.docFilters.title || '').toLowerCase();
                 if (ft && !t.includes(ft)) return false;
 
-                const r = (d.real_estate_name || '').toLowerCase();
+                const r = (d.related_object_label || '').toLowerCase();
                 const fr = (this.docFilters.real_estate || '').toLowerCase();
                 if (fr && !r.includes(fr)) return false;
 

@@ -242,6 +242,12 @@
                 <i class="bi bi-shield-exclamation me-2 text-warning"></i>{% trans "Risiko- & Notfall-Check" %}
             </button>
         </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" :class="activeTab === 'documents' ? 'active' : ''" @click="setTab('documents')" type="button" role="tab">
+                <i class="bi bi-folder2-open me-2 text-info"></i>{% trans "Dokumente" %}
+                <span class="badge bg-secondary-subtle text-body ms-1" style="font-size: 0.7rem;">{{ domain_documents.total_count }}</span>
+            </button>
+        </li>
     </ul>
 
     <!-- TAB 1: Altersvorsorge & Renten -->
@@ -1030,6 +1036,13 @@
             </div>
         </div>
     </div><!-- /TAB 3: risk_check -->
+
+    <!-- TAB 4: Documents -->
+    <div x-show="activeTab === 'documents'" x-cloak class="mb-4">
+        {% include 'finance/partials/domain_documents_panel.html' with default_domain='insurance' next_url='/finance/pensions/?tab=documents' %}
+    </div>
+
+    {% include 'finance/partials/document_modal.html' %}
 
     <!-- Create / Edit Pension Modal -->
     <div class="modal fade" id="pensionModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">

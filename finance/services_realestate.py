@@ -3,7 +3,7 @@ from decimal import Decimal
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 from django.utils.translation import gettext as _
-from .models import PropertyComponent, PropertyDocument
+from .models import PropertyComponent, Document
 
 def calculate_loan_schedule(loan, as_of_date=None, extra_one_time=Decimal('0.00'), extra_one_time_date=None, extra_annual=Decimal('0.00')):
     """
@@ -491,7 +491,7 @@ def get_real_estate_overview(user):
         linked_l = [item['loan'] for item in p['linked_loans']]
         tax_met = calculate_property_tax_metrics(re_obj, linked_l)
         p['tax_metrics'] = tax_met
-        p['documents'] = PropertyDocument.objects.filter(real_estate=re_obj).order_by('-date')
+        p['documents'] = Document.objects.filter(real_estate=re_obj).order_by('-date')
 
         if tax_met['is_rental']:
             total_gross_rent_annual += tax_met['annual_rental_income']
@@ -930,7 +930,7 @@ def calculate_property_tax_metrics(re, linked_loans, year=None):
     annual_regular_costs = ((maint_monthly + anc_monthly) * Decimal('12.0')).quantize(Decimal('0.01'))
 
     # 5. Direct maintenance invoices uploaded for this property
-    doc_invoices = PropertyDocument.objects.filter(
+    doc_invoices = Document.objects.filter(
         real_estate=re,
         category='maintenance_invoice',
         date__year=year
@@ -963,9 +963,13 @@ def calculate_property_tax_metrics(re, linked_loans, year=None):
 
 def get_property_documents_data(user):
     """
-    Retrieves all property documents for the user, grouped by property.
+    Retrieves all real estate & loan documents for the user.
     """
-    docs = PropertyDocument.objects.filter(real_estate__user=user).select_related('real_estate').order_by('-date')
+    docs = (
+        Document.objects.filter(user=user, domain__in=['real_estate', 'loan'])
+        .select_related('real_estate', 'loan')
+        .order_by('-date', '-uploaded_at')
+    )
     total_invoices_amount = sum((Decimal(str(d.amount or '0.00')) for d in docs if d.amount), Decimal('0.00'))
     
     return {

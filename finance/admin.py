@@ -4,7 +4,7 @@ from django import forms
 from django.db.models import Q
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
-from .models import Category, CashFlowSource, Asset, OneTimeEvent, Pension, FinancialStatusProxy, PhysicalAsset, RealEstate, Loan, LoanExtraRepayment, AssetSnapshot, PropertyComponent, PropertyDocument, InsurancePolicy, ImportFilter, ImportBatch
+from .models import Category, CashFlowSource, Asset, OneTimeEvent, Pension, FinancialStatusProxy, PhysicalAsset, RealEstate, Loan, LoanExtraRepayment, AssetSnapshot, PropertyComponent, Document, InsurancePolicy, ImportFilter, ImportBatch
 from django.contrib.contenttypes.admin import GenericTabularInline
 from django.contrib.contenttypes.models import ContentType
 from django.utils import timezone
@@ -576,8 +576,8 @@ class PropertyComponentInline(admin.TabularInline):
     extra = 1
     fields = ('component_type', 'name', 'installation_year', 'expected_lifespan', 'estimated_cost', 'condition')
 
-class PropertyDocumentInline(admin.TabularInline):
-    model = PropertyDocument
+class DocumentInline(admin.TabularInline):
+    model = Document
     extra = 1
     fields = ('title', 'category', 'date', 'amount', 'file')
 
@@ -588,7 +588,7 @@ class RealEstateAdmin(BaseOwnedModelAdmin):
     list_select_related = ('user',)
     search_fields = ('name', 'location')
     list_editable = ('property_value', 'appreciation_rate', 'rental_income_monthly', 'acquisition_date', 'sale_date', 'is_sold')
-    inlines = [AssetSnapshotInline, PropertyComponentInline, PropertyDocumentInline]
+    inlines = [AssetSnapshotInline, PropertyComponentInline, DocumentInline]
     snapshot_value_field = 'property_value'
 
 @admin.register(PropertyComponent)
@@ -598,12 +598,11 @@ class PropertyComponentAdmin(CurrentUserFilterMixin, admin.ModelAdmin):
     list_filter = ('component_type', 'condition', 'real_estate__user')
     search_fields = ('name', 'real_estate__name')
 
-@admin.register(PropertyDocument)
-class PropertyDocumentAdmin(CurrentUserFilterMixin, admin.ModelAdmin):
-    user_filter_field = 'real_estate__user'
-    list_display = ('title', 'real_estate', 'category', 'date', 'amount', 'uploaded_at')
-    list_filter = ('category', 'real_estate__user')
-    search_fields = ('title', 'real_estate__name')
+@admin.register(Document)
+class DocumentAdmin(BaseOwnedModelAdmin):
+    list_display = ('title', 'user', 'domain', 'category', 'date', 'amount', 'uploaded_at')
+    list_filter = ('domain', 'category', 'user')
+    search_fields = ('title', 'notes', 'extracted_text')
 
 class LoanExtraRepaymentInline(admin.TabularInline):
     model = LoanExtraRepayment

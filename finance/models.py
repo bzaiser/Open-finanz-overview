@@ -399,32 +399,77 @@ class PropertyComponent(models.Model):
         return f"{self.name} ({self.get_component_type_display()}) - {self.real_estate.name}"
 
 
-class PropertyDocument(models.Model):
+class Document(models.Model):
+    DOMAIN_CHOICES = [
+        ('real_estate', _('Real Estate')),
+        ('loan', _('Loans & Financing')),
+        ('insurance', _('Insurance Policies')),
+        ('pension', _('Pensions & Retirement')),
+        ('asset', _('Bank Accounts & Securities')),
+        ('physical_asset', _('Physical Assets')),
+        ('general', _('Taxes & General')),
+    ]
+
     CATEGORY_CHOICES = [
+        # Real Estate
         ('contract', _('Purchase / Notary Contract')),
-        ('loan_agreement', _('Loan / Financing Agreement')),
         ('land_register', _('Land Register Excerpt')),
         ('energy_cert', _('Energy Performance Certificate')),
         ('lease', _('Tenancy / Lease Agreement')),
         ('maintenance_invoice', _('Renovation / Craftsman Invoice')),
+        # Loans
+        ('loan_agreement', _('Loan / Financing Agreement')),
+        ('interest_cert', _('Interest Certificate / Annual Statement')),
+        ('repayment_plan', _('Repayment Plan / Extra Repayment Receipt')),
+        # Insurance
+        ('insurance', _('Insurance Policy / Certificate')),
+        ('premium_invoice', _('Premium Invoice / Contribution Notice')),
+        ('policy_amendment', _('Policy Amendment / Addendum')),
+        ('claim_correspondence', _('Claim / Correspondence')),
+        # Pensions
+        ('pension_info', _('Annual Pension Information')),
+        ('pension_notice', _('Pension Decision / Contract')),
+        # Bank Accounts & Securities
+        ('bank_statement', _('Account Opening / Bank Statement')),
+        ('depot_statement', _('Securities / Depot Statement')),
+        ('tax_cert', _('Annual Tax Certificate')),
+        ('exemption_order', _('Tax Exemption Order')),
+        # Physical Assets & General
+        ('valuation', _('Appraisal / Valuation')),
         ('tax_statement', _('Property Tax / Tax Assessment')),
-        ('insurance', _('Building Insurance Policy')),
         ('other', _('Other Document')),
     ]
 
-    real_estate = models.ForeignKey(RealEstate, on_delete=models.CASCADE, related_name='documents', verbose_name=_("Real Estate"))
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='documents', verbose_name=_("User"))
+    domain = models.CharField(_("Domain"), max_length=25, choices=DOMAIN_CHOICES, default='real_estate')
+    real_estate = models.ForeignKey('RealEstate', on_delete=models.SET_NULL, null=True, blank=True, related_name='documents', verbose_name=_("Real Estate"))
+    loan = models.ForeignKey('Loan', on_delete=models.SET_NULL, null=True, blank=True, related_name='documents', verbose_name=_("Loan"))
+    insurance_policy = models.ForeignKey('InsurancePolicy', on_delete=models.SET_NULL, null=True, blank=True, related_name='documents', verbose_name=_("Insurance Policy"))
+    pension = models.ForeignKey('Pension', on_delete=models.SET_NULL, null=True, blank=True, related_name='documents', verbose_name=_("Pension"))
+    asset = models.ForeignKey('Asset', on_delete=models.SET_NULL, null=True, blank=True, related_name='documents', verbose_name=_("Account / Asset"))
+    physical_asset = models.ForeignKey('PhysicalAsset', on_delete=models.SET_NULL, null=True, blank=True, related_name='documents', verbose_name=_("Physical Asset"))
+
     title = models.CharField(_("Document Title"), max_length=200)
     category = models.CharField(_("Category"), max_length=30, choices=CATEGORY_CHOICES, default='other')
-    file = models.FileField(_("File"), upload_to='property_documents/')
+    file = models.FileField(_("File"), upload_to='documents/%Y/%m/')
     date = models.DateField(_("Document / Invoice Date"), default=timezone.now)
-    amount = models.DecimalField(_("Invoice Amount (€)"), max_digits=12, decimal_places=2, null=True, blank=True, help_text=_("Optional: Invoice amount for tax deduction"))
+    amount = models.DecimalField(_("Amount (€)"), max_digits=12, decimal_places=2, null=True, blank=True, help_text=_("Optional: Invoice or contract amount"))
     notes = models.TextField(_("Notes"), blank=True)
+    extracted_text = models.TextField(_("Extracted Text"), blank=True)
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        verbose_name = _("Property Document")
-        verbose_name_plural = _("Property Documents")
+        verbose_name = _("Document")
+        verbose_name_plural = _("Documents")
         ordering = ['-date', '-uploaded_at']
+
+    @property
+    def filename(self):
+        import os
+        try:
+            return os.path.basename(self.file.name)
+        except Exception:
+            return ""
 
     @property
     def file_size_display(self):
@@ -436,8 +481,28 @@ class PropertyDocument(models.Model):
         except Exception:
             return "N/A"
 
+    @property
+    def related_object(self):
+        return (
+            self.real_estate
+            or self.loan
+            or self.insurance_policy
+            or self.pension
+            or self.asset
+            or self.physical_asset
+        )
+
+    @property
+    def related_object_label(self):
+        obj = self.related_object
+        if obj is not None:
+            return getattr(obj, 'name', None) or getattr(obj, 'provider', None) or str(obj)
+        return ""
+
     def __str__(self):
-        return f"{self.title} ({self.get_category_display()}) - {self.real_estate.name}"
+        obj_label = self.related_object_label
+        suffix = f" - {obj_label}" if obj_label else ""
+        return f"{self.title} ({self.get_category_display()}){suffix}"
 
 
 class FinancialStatusProxy(CustomUser):

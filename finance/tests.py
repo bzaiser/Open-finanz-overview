@@ -725,7 +725,7 @@ class AssetModalSaveTests(TestCase):
             "finance.change_insurancepolicy",
             "finance.view_insurancepolicy",
             "finance.add_propertycomponent",
-            "finance.add_propertydocument",
+            "finance.add_document",
             "finance.add_loanextrarepayment",
             "finance.add_importfilter",
             "finance.view_financialstatusproxy",
@@ -819,3 +819,78 @@ class AssetModalSaveTests(TestCase):
         )
         audit_with_house = calculate_protection_audit(land_user)
         self.assertIn("building", [c["type"] for c in audit_with_house["checklist"]])
+
+    def test_unified_documents_vault_secure_download_and_global_search(self):
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        from finance.models import Document, RealEstate
+
+        owner = CustomUser.objects.create_user(username="doc_owner", password="DocPassword123!")
+        intruder = CustomUser.objects.create_user(username="doc_intruder", password="IntPassword123!")
+
+        re_obj = RealEstate.objects.create(user=owner, name="Mietwohnung Mitte", property_value=Decimal("250000.00"))
+        ins_obj = InsurancePolicy.objects.create(user=owner, name="Allianz Haftpflicht", premium_amount=Decimal("8.50"))
+        foreign_ins = InsurancePolicy.objects.create(user=intruder, name="Geheime Fremdpolice", premium_amount=Decimal("99.00"))
+
+        self.client.force_login(owner)
+        upload_resp = self.client.post(
+            reverse("finance:document_upload"),
+            {
+                "domain": "insurance",
+                "insurance_policy": ins_obj.id,
+                "title": "Haftpflicht Police 2026",
+                "category": "insurance",
+                "date": "2026-01-15",
+                "amount": "102.00",
+                "notes": "Policennummer XYZ-9988",
+                "file": SimpleUploadedFile("police.txt", b"Police Inhalt", content_type="text/plain"),
+                "next": "/finance/pensions/?tab=documents",
+            },
+        )
+        self.assertEqual(upload_resp.status_code, 302)
+        doc = Document.objects.get(user=owner, title="Haftpflicht Police 2026")
+        self.assertEqual(doc.domain, "insurance")
+        self.assertEqual(doc.insurance_policy_id, ins_obj.id)
+
+        # Also create a PDF-text-indexed doc & real estate invoice
+        Document.objects.create(
+            user=owner,
+            domain="real_estate",
+            real_estate=re_obj,
+            title="Heizungsrechnung 2026",
+            category="maintenance_invoice",
+            file=SimpleUploadedFile("heizung.txt", b"Rechnung", content_type="text/plain"),
+            amount=Decimal("450.00"),
+            extracted_text="Rechnungsnummer RE-2026-777 Brennerwartung",
+        )
+
+        # Vault & contextual views render HTTP 200
+        self.assertEqual(self.client.get(reverse("finance:documents_vault")).status_code, 200)
+        self.assertEqual(self.client.get(reverse("finance:pension_plan")).status_code, 200)
+        self.assertEqual(self.client.get(reverse("finance:assets_overview")).status_code, 200)
+        self.assertEqual(self.client.get(reverse("finance:real_estate_loans")).status_code, 200)
+
+        # Global search finds PDF extracted_text & insurance policy, never foreign data
+        search_resp = self.client.get(reverse("finance:global_search"), {"q": "RE-2026-777"})
+        self.assertEqual(search_resp.status_code, 200)
+        self.assertContains(search_resp, "Heizungsrechnung 2026")
+        self.assertNotContains(search_resp, foreign_ins.name)
+
+        search_all_resp = self.client.get(reverse("finance:global_search"))
+        self.assertEqual(search_all_resp.status_code, 200)
+        self.assertContains(search_all_resp, "Allianz Haftpflicht")
+        self.assertNotContains(search_all_resp, foreign_ins.name)
+
+        # Owner can download; intruder gets 404 on download and delete
+        dl_owner = self.client.get(reverse("finance:document_download", args=[doc.id]))
+        self.assertEqual(dl_owner.status_code, 200)
+        dl_owner.close()
+
+        self.client.force_login(intruder)
+        self.assertEqual(self.client.get(reverse("finance:document_download", args=[doc.id])).status_code, 404)
+        self.assertEqual(self.client.get(reverse("finance:document_delete", args=[doc.id])).status_code, 404)
+        self.assertTrue(Document.objects.filter(pk=doc.id).exists())
+
+        # Cleanup uploaded files
+        for d in Document.objects.filter(user=owner):
+            if d.file:
+                d.file.delete(save=False)

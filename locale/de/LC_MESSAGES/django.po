@@ -5405,3 +5405,121 @@ msgstr "Für unbebaute Grundstücke / Liegenschaften ist keine Gebäude-Instandh
 
 msgid "For unbuilt land / plots, tax depreciation (AfA = 0 %) and building maintenance reserves are automatically disabled."
 msgstr "Bei unbebauten Grundstücken / Liegenschaften werden AfA (0 %) und Gebäude-Instandhaltungsrücklagen automatisch deaktiviert."
+
+
+msgid "Document Vault"
+msgstr "Dokumenten-Tresor"
+
+msgid "Global Search"
+msgstr "Globale Suche"
+
+msgid "Domain"
+msgstr "Bereich"
+
+msgid "Assigned Object / Contract"
+msgstr "Zugeordnetes Objekt / Vertrag"
+
+msgid "Assigned Object"
+msgstr "Zugeordnetes Objekt"
+
+msgid "Loans & Financing"
+msgstr "Darlehen & Finanzierung"
+
+msgid "Pensions & Retirement"
+msgstr "Altersvorsorge & Renten"
+
+msgid "Bank Accounts & Securities"
+msgstr "Bankkonten & Depots"
+
+msgid "Taxes & General"
+msgstr "Steuern & Allgemein"
+
+msgid "Interest Certificate / Annual Statement"
+msgstr "Zinsbescheinigung / Jahreskontoauszug"
+
+msgid "Repayment Plan / Extra Repayment Receipt"
+msgstr "Tilgungsplan / Sondertilgungsbeleg"
+
+msgid "Insurance Policy / Certificate"
+msgstr "Versicherungsschein / Police"
+
+msgid "Premium Invoice / Contribution Notice"
+msgstr "Beitragsrechnung / Beitragsbescheid"
+
+msgid "Policy Amendment / Addendum"
+msgstr "Nachtrag / Vertragsänderung"
+
+msgid "Claim / Correspondence"
+msgstr "Schadenmeldung / Schriftverkehr"
+
+msgid "Annual Pension Information"
+msgstr "Jährliche Renteninformation"
+
+msgid "Pension Decision / Contract"
+msgstr "Rentenbescheid / Vertrag"
+
+msgid "Account Opening / Bank Statement"
+msgstr "Kontoeröffnung / Kontoauszug"
+
+msgid "Securities / Depot Statement"
+msgstr "Depotauszug / Wertpapierabrechnung"
+
+msgid "Annual Tax Certificate"
+msgstr "Jahressteuerbescheinigung"
+
+msgid "Tax Exemption Order"
+msgstr "Freistellungsauftrag"
+
+msgid "Appraisal / Valuation"
+msgstr "Gutachten / Bewertung"
+
+msgid "Central storage for all documents across real estate, loans, insurance, pensions, and accounts."
+msgstr "Zentraler Speicher für alle Dokumente aus Immobilien, Darlehen, Versicherungen, Renten und Konten."
+
+msgid "Search across documents (including PDF text), real estate, loans, insurance policies, pensions, accounts, and cash flows."
+msgstr "Suche in Dokumenten (inkl. PDF-Volltext), Immobilien, Darlehen, Versicherungen, Renten, Konten und Cashflows."
+
+msgid "Search anything: contract, invoice, policy number, bank, ISIN, tenant, PDF content..."
+msgstr "Alles durchsuchen: Vertrag, Rechnung, Policen-Nr., Bank, ISIN, Mieter, PDF-Inhalt..."
+
+msgid "No search filter active — showing recent entries across all areas. Enter a keyword above to search everything."
+msgstr "Kein Suchfilter aktiv — aktuelle Einträge aus allen Bereichen werden angezeigt. Oben Suchbegriff eingeben, um alles zu durchsuchen."
+
+msgid "Open Document Vault"
+msgstr "Dokumenten-Tresor öffnen"
+
+msgid "All Categories"
+msgstr "Alle Kategorien"
+
+msgid "All Years"
+msgstr "Alle Jahre"
+
+msgid "View / Open"
+msgstr "Ansehen / Öffnen"
+
+msgid "No documents match the current filters."
+msgstr "Keine Dokumente entsprechen den aktuellen Filtern."
+
+msgid "No documents recorded for this area yet."
+msgstr "Für diesen Bereich wurden noch keine Dokumente erfasst."
+
+msgid "All Documents"
+msgstr "Alle Dokumente"
+
+msgid "Real Estate & Loans"
+msgstr "Immobilien & Darlehen"
+
+msgid "Insurance & Pensions"
+msgstr "Versicherungen & Rente"
+
+msgid "Accounts & Assets"
+msgstr "Konten & Vermögen"
+
+msgid "Cash Flows & Events"
+msgstr "Cashflows & Ereignisse"
+
+msgid "No results found"
+msgstr "Keine Treffer gefunden"
+
+msgid "Try another keyword or switch the scope filter above."
+msgstr "Anderen Suchbegriff testen oder den Bereichsfilter oben wechseln."

@@ -641,6 +641,23 @@
                 </ul>
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center flex-row gap-3">
                     {% if user.is_authenticated %}
+                    <!-- Documents Vault & Global Search Icons -->
+                    <li class="nav-item d-flex align-items-center">
+                        <a class="nav-link d-flex align-items-center p-0 {% if request.resolver_match.url_name == 'documents_vault' %}text-primary{% endif %}"
+                           href="{% url 'finance:documents_vault' %}"
+                           title="{% trans 'Documents' %}"
+                           aria-label="{% trans 'Documents' %}">
+                            <i class="bi bi-folder2-open fs-5"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item d-flex align-items-center">
+                        <a class="nav-link d-flex align-items-center p-0 {% if request.resolver_match.url_name == 'global_search' %}text-primary{% endif %}"
+                           href="{% url 'finance:global_search' %}"
+                           title="{% trans 'Global Search' %}"
+                           aria-label="{% trans 'Global Search' %}">
+                            <i class="bi bi-search fs-5"></i>
+                        </a>
+                    </li>
                     <!-- Global Night Toggle -->
                     <li class="nav-item d-flex align-items-center">
                         <a href="{% url 'toggle_night_mode' %}" class="nav-link d-flex align-items-center gap-2 p-0" title="{% trans 'Toggle Night Mode' %}">
