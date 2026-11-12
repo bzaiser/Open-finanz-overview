@@ -160,7 +160,7 @@ function documentsVaultApp() {
                 if (this.filters.category && d.category !== this.filters.category) return false;
                 if (this.filters.year && (!d.date || !d.date.startsWith(this.filters.year))) return false;
                 if (q) {
-                    const hay = `${d.title} ${d.domain_display} ${d.category_display} ${d.related_object_label} ${d.notes} ${d.filename}`.toLowerCase();
+                    const hay = `${d.title} ${d.domain_display} ${d.category_display} ${d.related_object_label} ${d.notes} ${d.filename} ${d.extracted_text || ''}`.toLowerCase();
                     if (!hay.includes(q)) return false;
                 }
                 return true;

@@ -4303,9 +4303,18 @@ def document_upload(request):
         if form.is_valid():
             doc = form.save(commit=False)
             doc.user = user
-            if doc.file:
-                doc.extracted_text = extract_pdf_text(doc.file)
+            uploaded = request.FILES.get('file')
+            if uploaded:
+                doc.extracted_text = extract_pdf_text(uploaded, filename=getattr(uploaded, 'name', ''))
             doc.save()
+            if not doc.extracted_text and doc.file:
+                try:
+                    with doc.file.open('rb') as fh:
+                        doc.extracted_text = extract_pdf_text(fh, filename=doc.filename)
+                    if doc.extracted_text:
+                        doc.save(update_fields=['extracted_text'])
+                except Exception:
+                    pass
             messages.success(request, _('Document uploaded successfully.'))
         else:
             messages.error(request, f"{_('Error uploading document')}: {form.errors.as_text()}")

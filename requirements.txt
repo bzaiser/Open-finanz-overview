@@ -45,3 +45,5 @@ urllib3==2.6.3
 whitenoise==6.6.0
 django-admin-interface==0.32.0
 django-colorfield==0.11.0
+
+pypdf

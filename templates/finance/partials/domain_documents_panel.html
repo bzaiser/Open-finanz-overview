@@ -78,7 +78,7 @@ function domainDocumentsPanelApp() {
             const q = this.search.trim().toLowerCase();
             if (!q) return this.docs;
             return this.docs.filter(d =>
-                `${d.title} ${d.category_display} ${d.related_object_label} ${d.notes} ${d.filename}`.toLowerCase().includes(q)
+                `${d.title} ${d.category_display} ${d.related_object_label} ${d.notes} ${d.filename} ${d.extracted_text || ''}`.toLowerCase().includes(q)
             );
         }
     };

@@ -19,21 +19,39 @@ from .models import (
 )
 
 
-def extract_pdf_text(file_obj, max_chars=25000):
+def extract_pdf_text(file_obj, filename=None, max_chars=25000):
     """
-    Extracts plain text from an uploaded PDF using pypdf (graceful fallback on errors).
+    Extracts plain text from an uploaded PDF (via pypdf) or plain-text file.
     Always resets file pointer to 0 afterwards so FileField can persist the file.
     """
     if not file_obj:
         return ""
-    name = getattr(file_obj, 'name', '') or ''
-    if not name.lower().endswith('.pdf'):
+    name = (filename or getattr(file_obj, 'name', '') or '').lower()
+    stream = getattr(file_obj, 'file', file_obj)
+
+    if name.endswith(('.txt', '.csv', '.md')):
+        try:
+            pos = stream.tell() if hasattr(stream, 'tell') else 0
+            stream.seek(0)
+            raw = stream.read(max_chars * 2)
+            stream.seek(pos)
+            if isinstance(raw, bytes):
+                return raw.decode('utf-8', errors='ignore')[:max_chars]
+            return str(raw)[:max_chars]
+        except Exception:
+            try:
+                stream.seek(0)
+            except Exception:
+                pass
+            return ""
+
+    if not name.endswith('.pdf'):
         return ""
     try:
         from pypdf import PdfReader
-        pos = file_obj.tell() if hasattr(file_obj, 'tell') else 0
-        file_obj.seek(0)
-        reader = PdfReader(file_obj)
+        pos = stream.tell() if hasattr(stream, 'tell') else 0
+        stream.seek(0)
+        reader = PdfReader(stream)
         chunks = []
         total_len = 0
         for page in reader.pages[:30]:
@@ -43,14 +61,31 @@ def extract_pdf_text(file_obj, max_chars=25000):
                 total_len += len(text)
                 if total_len >= max_chars:
                     break
-        file_obj.seek(pos)
+        stream.seek(pos)
         return "\n".join(chunks)[:max_chars]
     except Exception:
         try:
-            file_obj.seek(0)
+            stream.seek(0)
         except Exception:
             pass
         return ""
+
+
+def ensure_document_text_indexed(user):
+    """Lazily indexes existing PDF/TXT documents that were saved without extracted_text."""
+    pending = Document.objects.filter(user=user, extracted_text='').exclude(file='')
+    for doc in pending:
+        name = (doc.file.name or '').lower()
+        if not name.endswith(('.pdf', '.txt', '.csv', '.md')):
+            continue
+        try:
+            with doc.file.open('rb') as fh:
+                txt = extract_pdf_text(fh, filename=name)
+            if txt:
+                doc.extracted_text = txt
+                doc.save(update_fields=['extracted_text'])
+        except Exception:
+            continue
 
 
 def serialize_document(doc):
@@ -76,6 +111,7 @@ def serialize_document(doc):
         'notes': doc.notes or '',
         'filename': doc.filename,
         'file_size': doc.file_size_display,
+        'extracted_text': (doc.extracted_text or '')[:10000],
         'is_pdf': ext == 'pdf',
         'is_image': ext in {'png', 'jpg', 'jpeg', 'gif', 'webp'},
         'download_url': reverse('finance:document_download', args=[doc.id]),
@@ -85,6 +121,7 @@ def serialize_document(doc):
 
 def get_documents_data(user, domains=None):
     """Returns documents and summary metrics for the user, optionally filtered by domains."""
+    ensure_document_text_indexed(user)
     qs = Document.objects.filter(user=user).select_related(
         'real_estate', 'loan', 'insurance_policy', 'pension', 'asset', 'physical_asset'
     ).order_by('-date', '-uploaded_at')
@@ -143,6 +180,8 @@ def search_all_user_data(user, query='', scope='all'):
     - cashflows (CashFlowSource, OneTimeEvent)
     """
     q = (query or '').strip()
+    if q:
+        ensure_document_text_indexed(user)
 
     def matches_scope(target):
         return scope in ('all', target)
