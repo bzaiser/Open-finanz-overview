@@ -34,7 +34,7 @@ chmod -R 777 "$ROOT_DIR/data"
 
 # Install potential new requirements (FAST update)
 echo "Syncing requirements..."
-docker compose --env-file .env exec -u root web pip install -q --no-cache-dir -r requirements.txt
+docker compose --env-file .env exec -u root web pip install -q --no-cache-dir --root-user-action=ignore -r requirements.txt
 
 # Run database migrations
 echo "Ensuring database migrations are up to date..."
