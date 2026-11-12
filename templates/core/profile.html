@@ -326,11 +326,11 @@
                     gradient_start: d.start, gradient_end: d.end,
                     primary_color: d.primary || d.start, background_color: d.bg || '#ffffff',
                     sidebar_bg_color: d.sidebar || d.bg, text_color: d.text || '#212529',
-                    table_header_bg_color: d.primary || d.start,
-                    table_header_text_color: '#ffffff',
-                    table_body_bg_color: d.bg || '#ffffff',
-                    table_body_text_color: d.text || '#212529',
-                    table_border_color: (d.bg === '#121212' || d.bg === '#0d1117') ? '#333333' : '#dee2e6'
+                    table_header_bg_color: d.thBg || d.primary || d.start,
+                    table_header_text_color: d.thText || '#ffffff',
+                    table_body_bg_color: d.tbBg || d.bg || '#ffffff',
+                    table_body_text_color: d.tbText || d.text || '#212529',
+                    table_border_color: d.border || ((d.bg === '#121212' || d.bg === '#0d1117') ? '#333333' : '#dee2e6')
                 };
                 Object.keys(updateList).forEach(key => setAllValues(key, updateList[key], true));
                 applyLiveTheme(false);

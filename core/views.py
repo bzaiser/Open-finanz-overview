@@ -10,7 +10,7 @@ from django.utils.html import format_html, format_html_join
 from django.utils.translation import gettext as _
 from django.utils import translation
 from .forms import CustomUserCreationForm, UserProfileForm, AppAuthenticationForm
-from .models import UserProfile, CustomUser
+from .models import UserProfile, CustomUser, DesignHarmony
 
 class AppLoginView(LoginView):
     template_name = 'core/login.html'
@@ -106,8 +106,10 @@ def profile_view(request):
             return redirect('finance:dashboard')
     else:
         form = UserProfileForm(instance=profile)
+    harmonies = DesignHarmony.objects.filter(is_active=True).order_by('order', 'id')
     return render(request, 'core/profile.html', {
-        'form': form
+        'form': form,
+        'harmonies': harmonies,
     })
 
 import json

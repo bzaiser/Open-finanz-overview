@@ -50,10 +50,43 @@ class UserProfileAdmin(BaseOwnedModelAdmin):
     )
 
 
-from .models import EditablePageContent
+from .models import EditablePageContent, DesignHarmony
 
 @admin.register(EditablePageContent)
 class EditablePageContentAdmin(admin.ModelAdmin):
     list_display = ('page', 'section_key', 'language', 'updated_at')
     list_filter = ('page', 'language')
     search_fields = ('section_key', 'content')
+
+
+@admin.register(DesignHarmony)
+class DesignHarmonyAdmin(admin.ModelAdmin):
+    list_display = ('name', 'preview_badge', 'order', 'primary_color', 'background_color', 'text_color', 'is_active')
+    list_editable = ('order', 'is_active')
+    list_filter = ('is_active',)
+    search_fields = ('name',)
+    fieldsets = (
+        (None, {'fields': ('name', 'order', 'is_active')}),
+        (_('Colors & Gradient'), {
+            'fields': (
+                'primary_color', 'gradient_start', 'gradient_end',
+                'background_color', 'sidebar_bg_color', 'text_color'
+            )
+        }),
+        (_('Table Styling (Optional Overrides)'), {
+            'classes': ('collapse',),
+            'fields': (
+                'table_header_bg_color', 'table_header_text_color',
+                'table_body_bg_color', 'table_body_text_color',
+                'table_border_color'
+            )
+        }),
+    )
+
+    def preview_badge(self, obj):
+        from django.utils.html import format_html
+        return format_html(
+            '<div style="width: 50px; height: 22px; border-radius: 12px; background: linear-gradient(135deg, {} 0%, {} 100%); border: 1px solid rgba(0,0,0,0.15);" title="{}"></div>',
+            obj.gradient_start, obj.gradient_end, obj.name
+        )
+    preview_badge.short_description = _("Preview")

@@ -206,3 +206,29 @@ class EditablePageContent(models.Model):
 
     def __str__(self):
         return f"[{self.language}] {self.page} - {self.section_key}"
+
+
+class DesignHarmony(models.Model):
+    name = models.CharField(_("Name"), max_length=100)
+    primary_color = models.CharField(_("Primary Color"), max_length=20, default="#0d6efd")
+    gradient_start = models.CharField(_("Gradient Start"), max_length=20, default="#6610f2")
+    gradient_end = models.CharField(_("Gradient End"), max_length=20, default="#0d6efd")
+    background_color = models.CharField(_("Background Color"), max_length=20, default="#ffffff")
+    sidebar_bg_color = models.CharField(_("Sidebar Background"), max_length=20, default="#f8f9fa")
+    text_color = models.CharField(_("Text Color"), max_length=20, default="#212529")
+    table_header_bg_color = models.CharField(_("Table Header BG"), max_length=20, blank=True, null=True, help_text=_("Empty = fallback to Primary Color"))
+    table_header_text_color = models.CharField(_("Table Header Text"), max_length=20, default="#ffffff")
+    table_body_bg_color = models.CharField(_("Table Body BG"), max_length=20, blank=True, null=True, help_text=_("Empty = fallback to Background Color"))
+    table_body_text_color = models.CharField(_("Table Body Text"), max_length=20, blank=True, null=True, help_text=_("Empty = fallback to Text Color"))
+    table_border_color = models.CharField(_("Table Border Color"), max_length=20, default="#dee2e6")
+    order = models.PositiveIntegerField(_("Display Order"), default=0)
+    is_active = models.BooleanField(_("Active"), default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = _("Design Harmony")
+        verbose_name_plural = _("Design Harmonies")
+        ordering = ['order', 'id']
+
+    def __str__(self):
+        return self.name
