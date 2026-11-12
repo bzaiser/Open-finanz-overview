@@ -3919,9 +3919,11 @@ from .models import RealEstate, Loan, LoanExtraRepayment, PropertyComponent, Doc
 from .forms import RealEstateForm, LoanForm, LoanExtraRepaymentForm, PropertyComponentForm, DocumentForm
 from .services_realestate import get_real_estate_overview, calculate_loan_schedule
 from .services_documents import (
+    extract_document_text,
     extract_pdf_text,
     get_document_modal_context,
     get_documents_data,
+    render_document_preview_data,
     search_all_user_data,
     serialize_document,
 )
@@ -4305,12 +4307,12 @@ def document_upload(request):
             doc.user = user
             uploaded = request.FILES.get('file')
             if uploaded:
-                doc.extracted_text = extract_pdf_text(uploaded, filename=getattr(uploaded, 'name', ''))
+                doc.extracted_text = extract_document_text(uploaded, filename=getattr(uploaded, 'name', ''))
             doc.save()
             if not doc.extracted_text and doc.file:
                 try:
                     with doc.file.open('rb') as fh:
-                        doc.extracted_text = extract_pdf_text(fh, filename=doc.filename)
+                        doc.extracted_text = extract_document_text(fh, filename=doc.filename)
                     if doc.extracted_text:
                         doc.save(update_fields=['extracted_text'])
                 except Exception:
@@ -4335,6 +4337,14 @@ def document_download(request, pk):
     content_type, _enc = mimetypes.guess_type(doc.filename)
     as_attachment = request.GET.get('download') == '1'
     return FileResponse(fh, as_attachment=as_attachment, filename=doc.filename, content_type=content_type or 'application/octet-stream')
+
+
+@login_required
+def document_preview_api(request, pk):
+    from django.http import JsonResponse
+    doc = get_object_or_404(Document, pk=pk, user=request.user)
+    data = render_document_preview_data(doc)
+    return JsonResponse(data)
 
 
 @login_required

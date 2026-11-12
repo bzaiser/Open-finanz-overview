@@ -46,9 +46,9 @@
                         <td class="small" x-text="doc.related_object_label || '—'"></td>
                         <td class="text-end font-monospace small" x-text="doc.amount !== null ? doc.amount.toLocaleString('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' €' : '—'"></td>
                         <td class="text-end text-nowrap">
-                            <a :href="doc.download_url" target="_blank" class="btn btn-sm btn-outline-secondary rounded-pill px-2" title="{% trans 'View / Open' %}">
+                            <button type="button" @click="openViewer(doc.id)" class="btn btn-sm btn-outline-secondary rounded-pill px-2" title="{% trans 'View / Open' %}">
                                 <i class="bi bi-eye"></i>
-                            </a>
+                            </button>
                             <a :href="doc.download_url + '?download=1'" class="btn btn-sm btn-outline-secondary rounded-pill px-2" title="{% trans 'Download' %}">
                                 <i class="bi bi-download"></i>
                             </a>
@@ -80,6 +80,9 @@ function domainDocumentsPanelApp() {
             return this.docs.filter(d =>
                 `${d.title} ${d.category_display} ${d.related_object_label} ${d.notes} ${d.filename} ${d.extracted_text || ''}`.toLowerCase().includes(q)
             );
+        },
+        openViewer(id) {
+            window.dispatchEvent(new CustomEvent('open-document-viewer', { detail: { id: id } }));
         }
     };
 }

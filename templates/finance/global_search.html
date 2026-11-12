@@ -100,7 +100,9 @@
                         <td class="small">{{ doc.category_display }}</td>
                         <td class="small">{{ doc.related_object_label|default:"—" }}</td>
                         <td class="text-end text-nowrap">
-                            <a href="{{ doc.download_url }}" target="_blank" class="btn btn-sm btn-outline-secondary rounded-pill px-2"><i class="bi bi-eye"></i></a>
+                            <button type="button" @click="window.dispatchEvent(new CustomEvent('open-document-viewer', { detail: { id: {{ doc.id }} } }))" class="btn btn-sm btn-outline-secondary rounded-pill px-2" title="{% trans 'View / Open' %}">
+                                <i class="bi bi-eye"></i>
+                            </button>
                             <a href="{{ doc.download_url }}?download=1" class="btn btn-sm btn-outline-secondary rounded-pill px-2"><i class="bi bi-download"></i></a>
                         </td>
                     </tr>
@@ -205,4 +207,5 @@
 </div>
 
 {% include 'finance/partials/document_modal.html' %}
+{% include 'finance/partials/document_viewer_modal.html' %}
 {% endblock %}

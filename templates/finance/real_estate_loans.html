@@ -1725,11 +1725,12 @@
                                         <td class="py-3 px-3 font-monospace small opacity-75" x-text="doc.file_size"></td>
                                         <td class="py-3 px-3 text-end text-nowrap">
                                             <div class="btn-group btn-group-sm">
-                                                <template x-if="doc.download_url">
-                                                    <a :href="doc.download_url" target="_blank" class="btn btn-outline-secondary border-0 px-2 py-1" title="{% trans 'Open' %}">
-                                                        <i class="bi bi-box-arrow-up-right"></i>
-                                                    </a>
-                                                </template>
+                                                <button type="button" @click="window.dispatchEvent(new CustomEvent('open-document-viewer', { detail: { id: doc.id } }))" class="btn btn-outline-secondary border-0 px-2 py-1" title="{% trans 'Open' %}">
+                                                    <i class="bi bi-eye"></i>
+                                                </button>
+                                                <a :href="doc.download_url + '?download=1'" class="btn btn-outline-secondary border-0 px-2 py-1" title="{% trans 'Download' %}">
+                                                    <i class="bi bi-download"></i>
+                                                </a>
                                                 <a :href="doc.delete_url + '?next=' + encodeURIComponent('{% url 'finance:real_estate_loans' %}?tab=tax-docs')" class="btn btn-outline-danger border-0 px-2 py-1" onclick="return confirm('{% trans "Are you sure you want to delete this document?" %}');" title="{% trans 'Delete' %}">
                                                     <i class="bi bi-trash"></i>
                                                 </a>
@@ -2289,6 +2290,7 @@
     <!-- ========================================== -->
     <!-- MODAL 7: PROPERTY DOCUMENT UPLOAD MODAL    -->
     <!-- ========================================== -->
+    {% include 'finance/partials/document_viewer_modal.html' %}
     <div class="modal fade" id="documentModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg rounded-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">

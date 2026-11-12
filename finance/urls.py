@@ -57,6 +57,7 @@ urlpatterns = [
     path('documents/', views.documents_vault_view, name='documents_vault'),
     path('documents/upload/', views.document_upload, name='document_upload'),
     path('documents/download/<int:pk>/', views.document_download, name='document_download'),
+    path('documents/preview/<int:pk>/', views.document_preview_api, name='document_preview_api'),
     path('documents/delete/<int:pk>/', views.document_delete, name='document_delete'),
     path('search/', views.global_search_view, name='global_search'),
     path('loans/save/', views.loan_save, name='loan_add'),

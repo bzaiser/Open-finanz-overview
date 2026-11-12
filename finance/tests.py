@@ -894,3 +894,85 @@ class AssetModalSaveTests(TestCase):
         for d in Document.objects.filter(user=owner):
             if d.file:
                 d.file.delete(save=False)
+
+    def test_multi_format_document_extraction_and_preview_api(self):
+        import io, zipfile, openpyxl
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        from finance.models import Document
+        from finance.services_documents import extract_document_text
+
+        owner = CustomUser.objects.create_user(username="viewer_owner", password="ViewerPassword123!")
+        intruder = CustomUser.objects.create_user(username="viewer_intruder", password="ViewerIntruder123!")
+
+        # 1. Test DOCX generation & extraction
+        docx_buf = io.BytesIO()
+        with zipfile.ZipFile(docx_buf, 'w') as z:
+            xml_content = (
+                b'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+                b'<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">'
+                b'<w:body><w:p><w:r><w:t>Kaufvertrag Villa Sonnenschein</w:t></w:r></w:p></w:body></w:document>'
+            )
+            z.writestr('word/document.xml', xml_content)
+        docx_buf.seek(0)
+        docx_txt = extract_document_text(docx_buf, filename="kaufvertrag.docx")
+        self.assertIn("Kaufvertrag Villa Sonnenschein", docx_txt)
+
+        # 2. Test XLSX generation & extraction
+        xlsx_buf = io.BytesIO()
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.title = "Kosten"
+        ws["A1"] = "Dachreparatur"
+        ws["B1"] = 12500
+        wb.save(xlsx_buf)
+        xlsx_buf.seek(0)
+        xlsx_txt = extract_document_text(xlsx_buf, filename="kosten.xlsx")
+        self.assertIn("Dachreparatur", xlsx_txt)
+        self.assertIn("12500", xlsx_txt)
+
+        # 3. Create document models and test preview API
+        docx_buf.seek(0)
+        docx_file = SimpleUploadedFile("vertrag.docx", docx_buf.read(), content_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+        doc_word = Document.objects.create(
+            user=owner,
+            title="Word Vertrag",
+            domain="general",
+            file=docx_file,
+            extracted_text=docx_txt,
+        )
+
+        xlsx_buf.seek(0)
+        xlsx_file = SimpleUploadedFile("kalkulation.xlsx", xlsx_buf.read(), content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        doc_excel = Document.objects.create(
+            user=owner,
+            title="Excel Kosten",
+            domain="general",
+            file=xlsx_file,
+            extracted_text=xlsx_txt,
+        )
+
+        self.client.force_login(owner)
+        resp_word = self.client.get(reverse("finance:document_preview_api", args=[doc_word.id]))
+        self.assertEqual(resp_word.status_code, 200)
+        self.assertEqual(resp_word.json()["type"], "docx")
+
+        resp_excel = self.client.get(reverse("finance:document_preview_api", args=[doc_excel.id]))
+        self.assertEqual(resp_excel.status_code, 200)
+        self.assertEqual(resp_excel.json()["type"], "spreadsheet")
+        self.assertIn("Kosten", resp_excel.json()["sheets"])
+
+        # Search finds word & excel text
+        search_w = self.client.get(reverse("finance:global_search"), {"q": "Sonnenschein"})
+        self.assertContains(search_w, "Word Vertrag")
+
+        search_e = self.client.get(reverse("finance:global_search"), {"q": "Dachreparatur"})
+        self.assertContains(search_e, "Excel Kosten")
+
+        # Intruder blocked with 404
+        self.client.force_login(intruder)
+        self.assertEqual(self.client.get(reverse("finance:document_preview_api", args=[doc_word.id])).status_code, 404)
+
+        # Cleanup
+        for d in (doc_word, doc_excel):
+            if d.file:
+                d.file.delete(save=False)

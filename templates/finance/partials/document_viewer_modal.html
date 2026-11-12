@@ -1,0 +1,165 @@
+{% load i18n %}
+<div class="modal fade" id="unifiedDocumentViewerModal" tabindex="-1" aria-hidden="true"
+     x-data="unifiedDocumentViewerModalApp()"
+     @open-document-viewer.window="openViewer($event.detail.id)">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content border-0 shadow-lg rounded-4" style="background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color) !important; min-height: 70vh;">
+            <div class="modal-header border-0 py-3 px-4 d-flex justify-content-between align-items-center" style="background: var(--app-gradient); color: #fff;">
+                <div class="d-flex align-items-center gap-2 overflow-hidden me-3">
+                    <i class="bi bi-file-earmark-text fs-4 flex-shrink-0"></i>
+                    <div class="text-truncate">
+                        <h5 class="modal-title fw-bold mb-0 text-truncate" x-text="doc.title || '{% trans 'Document Preview' %}'"></h5>
+                        <div class="small opacity-85 text-truncate" x-text="(doc.domain_display || '') + ' · ' + (doc.category_display || '') + ' · ' + (doc.filename || '')"></div>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                    <template x-if="doc.download_url">
+                        <a :href="doc.download_url + '?download=1'" class="btn btn-sm bg-white bg-opacity-25 text-white border border-white border-opacity-25 rounded-pill px-3" title="{% trans 'Download Original' %}">
+                            <i class="bi bi-download me-1"></i>{% trans "Download" %}
+                        </a>
+                    </template>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+            </div>
+
+            <div class="modal-body p-0 d-flex flex-column" style="min-height: 60vh;">
+                <!-- Loading State -->
+                <div x-show="loading" class="text-center py-5 my-auto">
+                    <div class="spinner-border text-primary mb-3" role="status"></div>
+                    <div class="small text-muted">{% trans "Loading document preview..." %}</div>
+                </div>
+
+                <!-- Error State -->
+                <div x-show="!loading && error" class="alert alert-danger m-4">
+                    <i class="bi bi-exclamation-triangle me-2"></i><span x-text="error"></span>
+                </div>
+
+                <!-- PDF Preview -->
+                <template x-if="!loading && !error && doc.type === 'pdf'">
+                    <iframe :src="doc.stream_url" class="w-100 flex-grow-1 border-0" style="min-height: 70vh;"></iframe>
+                </template>
+
+                <!-- Image Preview -->
+                <template x-if="!loading && !error && doc.type === 'image'">
+                    <div class="p-4 text-center my-auto">
+                        <img :src="doc.stream_url" :alt="doc.title" class="img-fluid rounded-3 shadow-sm" style="max-height: 70vh; object-fit: contain;">
+                    </div>
+                </template>
+
+                <!-- Word Document (.docx) Preview -->
+                <template x-if="!loading && !error && doc.type === 'docx'">
+                    <div class="p-4 overflow-auto" style="max-height: 72vh;">
+                        <div class="card border-0 shadow-sm p-4 mx-auto" style="max-width: 850px; background-color: var(--app-table-header-bg, #ffffff); color: var(--app-card-color);">
+                            <template x-for="(para, pIdx) in (doc.paragraphs || [])" :key="pIdx">
+                                <p class="mb-2" style="line-height: 1.6;">
+                                    <template x-for="(run, rIdx) in para" :key="rIdx">
+                                        <span :class="{'fw-bold': run.bold, 'fst-italic': run.italic}" x-text="run.text"></span>
+                                    </template>
+                                </p>
+                            </template>
+                            <template x-if="!doc.paragraphs || doc.paragraphs.length === 0">
+                                <p class="text-muted small mb-0">{% trans "No text paragraphs found in Word document." %}</p>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Spreadsheet (.xlsx) Preview -->
+                <template x-if="!loading && !error && doc.type === 'spreadsheet'">
+                    <div class="d-flex flex-column h-100 flex-grow-1 p-3">
+                        <!-- Sheet Tabs -->
+                        <div class="d-flex flex-wrap gap-2 mb-3">
+                            <template x-for="(rows, sheetName) in (doc.sheets || {})" :key="sheetName">
+                                <button type="button" class="btn btn-sm rounded-pill px-3 fw-semibold"
+                                        :style="activeSheet === sheetName ? 'background: var(--app-gradient); color: #fff; border: none;' : 'background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color);'"
+                                        @click="activeSheet = sheetName">
+                                    <i class="bi bi-table me-1"></i><span x-text="sheetName"></span>
+                                    <span class="badge bg-secondary-subtle text-body ms-1 small" x-text="rows.length"></span>
+                                </button>
+                            </template>
+                        </div>
+                        <!-- Sheet Table -->
+                        <div class="table-responsive flex-grow-1 border rounded-3 overflow-auto" style="max-height: 62vh;">
+                            <table class="table table-sm table-striped table-hover font-monospace mb-0" style="font-size: 0.85rem;">
+                                <tbody>
+                                    <template x-for="(row, rIdx) in currentSheetRows" :key="rIdx">
+                                        <tr :class="rIdx === 0 ? 'table-secondary fw-bold' : ''">
+                                            <td class="text-muted small text-end pe-2 user-select-none" style="width: 40px;" x-text="rIdx + 1"></td>
+                                            <template x-for="(cell, cIdx) in row" :key="cIdx">
+                                                <td class="text-nowrap" x-text="cell"></td>
+                                            </template>
+                                        </tr>
+                                    </template>
+                                    <tr x-show="currentSheetRows.length === 0">
+                                        <td class="text-center py-4 text-muted">{% trans "Sheet is empty." %}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Plain Text / CSV Preview -->
+                <template x-if="!loading && !error && doc.type === 'text'">
+                    <div class="p-3 flex-grow-1 overflow-auto" style="max-height: 72vh;">
+                        <pre class="p-3 rounded-3 font-monospace small mb-0" style="background-color: var(--app-input-bg, #000); color: var(--app-input-color, #cbd5e1); white-space: pre-wrap; word-break: break-word;" x-text="doc.content"></pre>
+                    </div>
+                </template>
+
+                <!-- Unsupported Format Fallback -->
+                <template x-if="!loading && !error && doc.type === 'unsupported'">
+                    <div class="text-center py-5 my-auto">
+                        <i class="bi bi-file-earmark-arrow-down display-4 opacity-50 mb-3 d-block"></i>
+                        <h5>{% trans "No inline preview available for this file type" %}</h5>
+                        <p class="text-muted small mb-3">{% trans "You can download the original file to view it in an external application." %}</p>
+                        <a :href="doc.download_url + '?download=1'" class="btn btn-primary rounded-pill px-4" style="background: var(--app-gradient); border: none;">
+                            <i class="bi bi-download me-1"></i>{% trans "Download File" %}
+                        </a>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function unifiedDocumentViewerModalApp() {
+    return {
+        doc: {},
+        loading: false,
+        error: '',
+        activeSheet: '',
+        get currentSheetRows() {
+            if (!this.doc.sheets || !this.activeSheet) return [];
+            return this.doc.sheets[this.activeSheet] || [];
+        },
+        openViewer(id) {
+            if (!id) return;
+            this.loading = true;
+            this.error = '';
+            this.doc = {};
+            this.activeSheet = '';
+            const modalEl = document.getElementById('unifiedDocumentViewerModal');
+            bootstrap.Modal.getOrCreateInstance(modalEl).show();
+
+            fetch('/finance/documents/preview/' + id + '/')
+                .then(r => {
+                    if (!r.ok) throw new Error('{% trans "Failed to load document preview." %}');
+                    return r.json();
+                })
+                .then(data => {
+                    this.doc = data;
+                    if (data.type === 'spreadsheet' && data.sheets) {
+                        const keys = Object.keys(data.sheets);
+                        this.activeSheet = keys.length ? keys[0] : '';
+                    }
+                    this.loading = false;
+                })
+                .catch(err => {
+                    this.error = err.message || '{% trans "Error loading document." %}';
+                    this.loading = false;
+                });
+        }
+    };
+}
+</script>

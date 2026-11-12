@@ -5514,3 +5514,34 @@ msgstr "Keine Treffer gefunden"
 
 msgid "Try another keyword or switch the scope filter above."
 msgstr "Anderen Suchbegriff testen oder den Bereichsfilter oben wechseln."
+
+
+msgid "Document Preview"
+msgstr "Dokumentenvorschau"
+
+msgid "Download Original"
+msgstr "Original herunterladen"
+
+msgid "Loading document preview..."
+msgstr "Dokumentenvorschau wird geladen..."
+
+msgid "No text paragraphs found in Word document."
+msgstr "Keine Textabsätze im Word-Dokument gefunden."
+
+msgid "Sheet is empty."
+msgstr "Tabellenblatt ist leer."
+
+msgid "No inline preview available for this file type"
+msgstr "Keine direkte Vorschau für diesen Dateityp verfügbar"
+
+msgid "You can download the original file to view it in an external application."
+msgstr "Du kannst die Originaldatei herunterladen, um sie in einem externen Programm zu öffnen."
+
+msgid "Download File"
+msgstr "Datei herunterladen"
+
+msgid "Failed to load document preview."
+msgstr "Vorschau konnte nicht geladen werden."
+
+msgid "Error loading document."
+msgstr "Fehler beim Laden des Dokuments."

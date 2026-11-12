@@ -19,17 +19,18 @@ from .models import (
 )
 
 
-def extract_pdf_text(file_obj, filename=None, max_chars=25000):
+def extract_document_text(file_obj, filename=None, max_chars=30000):
     """
-    Extracts plain text from an uploaded PDF (via pypdf) or plain-text file.
-    Always resets file pointer to 0 afterwards so FileField can persist the file.
+    Extracts plain text across formats: PDF, Word (.docx), Excel (.xlsx), CSV, TXT, MD.
+    Always resets stream position afterwards.
     """
     if not file_obj:
         return ""
     name = (filename or getattr(file_obj, 'name', '') or '').lower()
     stream = getattr(file_obj, 'file', file_obj)
 
-    if name.endswith(('.txt', '.csv', '.md')):
+    # 1. Plain text / CSV / Markdown
+    if name.endswith(('.txt', '.csv', '.tsv', '.md', '.rtf')):
         try:
             pos = stream.tell() if hasattr(stream, 'tell') else 0
             stream.seek(0)
@@ -39,48 +40,215 @@ def extract_pdf_text(file_obj, filename=None, max_chars=25000):
                 return raw.decode('utf-8', errors='ignore')[:max_chars]
             return str(raw)[:max_chars]
         except Exception:
-            try:
-                stream.seek(0)
-            except Exception:
-                pass
+            try: stream.seek(0)
+            except Exception: pass
             return ""
 
-    if not name.endswith('.pdf'):
-        return ""
-    try:
-        from pypdf import PdfReader
-        pos = stream.tell() if hasattr(stream, 'tell') else 0
-        stream.seek(0)
-        reader = PdfReader(stream)
-        chunks = []
-        total_len = 0
-        for page in reader.pages[:30]:
-            text = (page.extract_text() or '').strip()
-            if text:
-                chunks.append(text)
-                total_len += len(text)
+    # 2. PDF (pypdf)
+    if name.endswith('.pdf'):
+        try:
+            from pypdf import PdfReader
+            pos = stream.tell() if hasattr(stream, 'tell') else 0
+            stream.seek(0)
+            reader = PdfReader(stream)
+            chunks = []
+            total_len = 0
+            for page in reader.pages[:40]:
+                text = (page.extract_text() or '').strip()
+                if text:
+                    chunks.append(text)
+                    total_len += len(text)
+                    if total_len >= max_chars:
+                        break
+            stream.seek(pos)
+            return "\n".join(chunks)[:max_chars]
+        except Exception:
+            try: stream.seek(0)
+            except Exception: pass
+            return ""
+
+    # 3. Word (.docx) via builtin zipfile + XML
+    if name.endswith('.docx'):
+        try:
+            import io, zipfile, xml.etree.ElementTree as ET
+            pos = stream.tell() if hasattr(stream, 'tell') else 0
+            stream.seek(0)
+            data = stream.read()
+            stream.seek(pos)
+            with zipfile.ZipFile(io.BytesIO(data)) as z:
+                tree = ET.fromstring(z.read('word/document.xml'))
+                ns = {'w': 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'}
+                paragraphs = []
+                total_len = 0
+                for p in tree.iterfind('.//w:p', ns):
+                    texts = [t.text for t in p.iterfind('.//w:t', ns) if t.text]
+                    if texts:
+                        line = ''.join(texts).strip()
+                        if line:
+                            paragraphs.append(line)
+                            total_len += len(line)
+                            if total_len >= max_chars:
+                                break
+                return "\n".join(paragraphs)[:max_chars]
+        except Exception:
+            try: stream.seek(0)
+            except Exception: pass
+            return ""
+
+    # 4. Excel (.xlsx) via openpyxl
+    if name.endswith('.xlsx'):
+        try:
+            import io, openpyxl
+            pos = stream.tell() if hasattr(stream, 'tell') else 0
+            stream.seek(0)
+            data = stream.read()
+            stream.seek(pos)
+            wb = openpyxl.load_workbook(io.BytesIO(data), data_only=True, read_only=True)
+            chunks = []
+            total_len = 0
+            for sname in wb.sheetnames[:10]:
+                sheet = wb[sname]
+                chunks.append(f"[{sname}]")
+                for row in sheet.iter_rows(values_only=True):
+                    row_strs = [str(v).strip() for v in row if v is not None and str(v).strip()]
+                    if row_strs:
+                        line = " | ".join(row_strs)
+                        chunks.append(line)
+                        total_len += len(line)
+                        if total_len >= max_chars:
+                            break
                 if total_len >= max_chars:
                     break
-        stream.seek(pos)
-        return "\n".join(chunks)[:max_chars]
-    except Exception:
-        try:
-            stream.seek(0)
+            return "\n".join(chunks)[:max_chars]
         except Exception:
-            pass
-        return ""
+            try: stream.seek(0)
+            except Exception: pass
+            return ""
+
+    return ""
+
+
+def extract_pdf_text(file_obj, filename=None, max_chars=25000):
+    """Backward compatibility wrapper."""
+    return extract_document_text(file_obj, filename=filename, max_chars=max_chars)
+
+
+def render_document_preview_data(doc):
+    """
+    Renders structured preview data for the in-app document viewer:
+    - type: 'pdf' | 'image' | 'docx' | 'spreadsheet' | 'text' | 'unsupported'
+    - docx: list of paragraph HTML/strings and tables
+    - spreadsheet: dict of sheet tables {sheet_name: [rows]}
+    - text: raw text content
+    """
+    ext = (doc.filename.rsplit('.', 1)[-1].lower() if '.' in doc.filename else '')
+    result = {
+        'id': doc.id,
+        'title': doc.title,
+        'filename': doc.filename,
+        'file_size': doc.file_size_display,
+        'domain_display': doc.get_domain_display(),
+        'category_display': doc.get_category_display(),
+        'date_display': doc.date.strftime('%d.%m.%Y') if doc.date else '',
+        'amount': float(doc.amount) if doc.amount is not None else None,
+        'notes': doc.notes or '',
+        'download_url': reverse('finance:document_download', args=[doc.id]),
+        'type': 'unsupported',
+    }
+
+    if not doc.file:
+        return result
+
+    if ext == 'pdf':
+        result['type'] = 'pdf'
+        result['stream_url'] = reverse('finance:document_download', args=[doc.id])
+        return result
+
+    if ext in {'png', 'jpg', 'jpeg', 'webp', 'gif', 'svg'}:
+        result['type'] = 'image'
+        result['stream_url'] = reverse('finance:document_download', args=[doc.id])
+        return result
+
+    if ext in {'txt', 'csv', 'tsv', 'md', 'log'}:
+        result['type'] = 'text'
+        try:
+            with doc.file.open('rb') as fh:
+                raw = fh.read(60000)
+            try:
+                result['content'] = raw.decode('utf-8')
+            except UnicodeDecodeError:
+                result['content'] = raw.decode('latin-1', errors='ignore')
+        except Exception as e:
+            result['content'] = f"Error reading file: {e}"
+        return result
+
+    if ext == 'docx':
+        result['type'] = 'docx'
+        try:
+            import io, zipfile, xml.etree.ElementTree as ET
+            with doc.file.open('rb') as fh:
+                data = fh.read()
+            with zipfile.ZipFile(io.BytesIO(data)) as z:
+                tree = ET.fromstring(z.read('word/document.xml'))
+                ns = {'w': 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'}
+                paragraphs = []
+                for p in tree.iterfind('.//w:p', ns):
+                    runs = []
+                    for r in p.iterfind('.//w:r', ns):
+                        t = ''.join([elem.text for elem in r.iterfind('.//w:t', ns) if elem.text])
+                        if t:
+                            is_bold = r.find('.//w:b', ns) is not None
+                            is_italic = r.find('.//w:i', ns) is not None
+                            runs.append({'text': t, 'bold': is_bold, 'italic': is_italic})
+                    if runs:
+                        paragraphs.append(runs)
+                result['paragraphs'] = paragraphs
+        except Exception as e:
+            result['type'] = 'text'
+            result['content'] = doc.extracted_text or f"Vorschau konnte nicht geladen werden: {e}"
+        return result
+
+    if ext == 'xlsx':
+        result['type'] = 'spreadsheet'
+        try:
+            import io, openpyxl
+            with doc.file.open('rb') as fh:
+                data = fh.read()
+            wb = openpyxl.load_workbook(io.BytesIO(data), data_only=True, read_only=True)
+            sheets = {}
+            for sname in wb.sheetnames[:8]:
+                sheet = wb[sname]
+                rows = []
+                for row in sheet.iter_rows(values_only=True):
+                    if any(v is not None for v in row):
+                        rows.append([str(v) if v is not None else '' for v in row[:25]])
+                    if len(rows) >= 200:
+                        break
+                sheets[sname] = rows
+            result['sheets'] = sheets
+        except Exception as e:
+            result['type'] = 'text'
+            result['content'] = doc.extracted_text or f"Vorschau konnte nicht geladen werden: {e}"
+        return result
+
+    # Fallback to extracted text if available
+    if doc.extracted_text:
+        result['type'] = 'text'
+        result['content'] = doc.extracted_text
+
+    return result
 
 
 def ensure_document_text_indexed(user):
-    """Lazily indexes existing PDF/TXT documents that were saved without extracted_text."""
+    """Lazily indexes existing PDF, Word, Excel, TXT documents that were saved without extracted_text."""
     pending = Document.objects.filter(user=user, extracted_text='').exclude(file='')
     for doc in pending:
         name = (doc.file.name or '').lower()
-        if not name.endswith(('.pdf', '.txt', '.csv', '.md')):
+        if not name.endswith(('.pdf', '.docx', '.xlsx', '.txt', '.csv', '.tsv', '.md', '.rtf')):
             continue
         try:
             with doc.file.open('rb') as fh:
-                txt = extract_pdf_text(fh, filename=name)
+                txt = extract_document_text(fh, filename=name)
             if txt:
                 doc.extracted_text = txt
                 doc.save(update_fields=['extracted_text'])

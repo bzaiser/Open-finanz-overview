@@ -276,6 +276,7 @@ class DocumentForm(forms.ModelForm):
         user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
         self.user = user
+        self.fields['title'].required = False
         if user:
             self.fields['real_estate'].queryset = RealEstate.objects.filter(user=user).order_by('name')
             self.fields['loan'].queryset = Loan.objects.filter(user=user).order_by('name')
@@ -302,6 +303,15 @@ class DocumentForm(forms.ModelForm):
         for fk_field in ('real_estate', 'loan', 'insurance_policy', 'pension', 'asset', 'physical_asset'):
             if fk_field != active_fk:
                 cleaned[fk_field] = None
+
+        if not cleaned.get('title'):
+            uploaded = cleaned.get('file')
+            if uploaded and getattr(uploaded, 'name', None):
+                import os
+                raw_name = os.path.splitext(uploaded.name)[0].replace('_', ' ').replace('-', ' ').strip()
+                cleaned['title'] = raw_name.title() if raw_name else 'Dokument'
+            else:
+                cleaned['title'] = 'Dokument'
         return cleaned
 
 
