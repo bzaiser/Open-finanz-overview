@@ -4,7 +4,7 @@ from django import forms
 from django.db.models import Q
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
-from .models import Category, CashFlowSource, Asset, OneTimeEvent, Pension, FinancialStatusProxy, PhysicalAsset, RealEstate, Loan, LoanExtraRepayment, AssetSnapshot, PropertyComponent, PropertyDocument, InsurancePolicy
+from .models import Category, CashFlowSource, Asset, OneTimeEvent, Pension, FinancialStatusProxy, PhysicalAsset, RealEstate, Loan, LoanExtraRepayment, AssetSnapshot, PropertyComponent, PropertyDocument, InsurancePolicy, ImportFilter, ImportBatch
 from django.contrib.contenttypes.admin import GenericTabularInline
 from django.contrib.contenttypes.models import ContentType
 from django.utils import timezone
@@ -65,6 +65,21 @@ class CurrentUserFilterMixin:
             return qs.filter(**{self.user_filter_field: request.user})
         return qs
 
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if not request.user.is_superuser and request.user.is_authenticated:
+            rel_model = getattr(db_field, 'related_model', None)
+            if rel_model is RealEstate:
+                kwargs['queryset'] = RealEstate.objects.filter(user=request.user)
+            elif rel_model is Loan:
+                kwargs['queryset'] = Loan.objects.filter(user=request.user)
+            elif rel_model is CashFlowSource:
+                kwargs['queryset'] = CashFlowSource.objects.filter(user=request.user)
+            elif rel_model is ImportBatch:
+                kwargs['queryset'] = ImportBatch.objects.filter(user=request.user)
+            elif db_field.name == 'user' and rel_model is not None:
+                kwargs['queryset'] = rel_model.objects.filter(pk=request.user.pk)
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
     def get_list_filter(self, request):
         """Apply CurrentUserDefaultFilter for superusers and hide user filters for standard users."""
         filters = super().get_list_filter(request) or ()
@@ -122,8 +137,8 @@ class BaseOwnedModelAdmin(CurrentUserFilterMixin, admin.ModelAdmin):
         return fieldsets
 
     def save_model(self, request, obj, form, change):
-        # Auto-assign user only for regular users (who don't see the field)
-        if not request.user.is_superuser and getattr(obj, 'user', None) is None:
+        # Always enforce request.user ownership for non-superusers
+        if not request.user.is_superuser:
             obj.user = request.user
         
         # Save snapshot if value changed
@@ -594,6 +609,19 @@ class LoanExtraRepaymentInline(admin.TabularInline):
     model = LoanExtraRepayment
     extra = 1
 
+@admin.register(LoanExtraRepayment)
+class LoanExtraRepaymentAdmin(CurrentUserFilterMixin, admin.ModelAdmin):
+    user_filter_field = 'loan__user'
+    list_display = ('loan', 'date', 'amount')
+    list_filter = ('date', 'loan__user')
+    search_fields = ('loan__name', 'loan__provider')
+
+@admin.register(ImportFilter)
+class ImportFilterAdmin(BaseOwnedModelAdmin):
+    list_display = ('target_name', 'search_query', 'category', 'is_income', 'linked_cash_flow', 'is_active', 'user')
+    list_filter = ('is_income', 'is_active', 'category', 'user')
+    search_fields = ('target_name', 'search_query')
+
 @admin.register(Loan)
 class LoanAdmin(BaseOwnedModelAdmin):
     list_display = ('name', 'user', 'provider', 'nominal_amount', 'interest_rate', 'monthly_installment', 'start_date', 'end_date')
@@ -697,11 +725,13 @@ class AssetSnapshotForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
         asset_choice = cleaned_data.get('asset_choice')
-        
+        req_user = getattr(getattr(self, 'request', None), 'user', None)
+        is_super = bool(req_user and req_user.is_superuser)
+
         if asset_choice:
             prefix, obj_id = asset_choice.split('-')
             obj_id = int(obj_id)
-            
+
             model_map = {
                 'asset': Asset,
                 'pa': PhysicalAsset,
@@ -709,12 +739,21 @@ class AssetSnapshotForm(forms.ModelForm):
                 'pen': Pension,
                 'loan': Loan,
             }
-            
+
             model_class = model_map.get(prefix)
             if model_class:
+                if req_user and not is_super and not model_class.objects.filter(pk=obj_id, user=req_user).exists():
+                    raise forms.ValidationError(_("Unzulässige Objekt-Zuordnung."))
                 cleaned_data['content_type'] = ContentType.objects.get_for_model(model_class)
                 cleaned_data['object_id'] = obj_id
-                
+        elif req_user and not is_super:
+            ct = cleaned_data.get('content_type')
+            oid = cleaned_data.get('object_id')
+            if ct and oid:
+                model_class = ct.model_class()
+                if model_class and hasattr(model_class, 'user') and not model_class.objects.filter(pk=oid, user=req_user).exists():
+                    raise forms.ValidationError(_("Unzulässige Objekt-Zuordnung."))
+
         return cleaned_data
 
 @admin.register(AssetSnapshot)
@@ -726,7 +765,10 @@ class AssetSnapshotAdmin(BaseOwnedModelAdmin):
 
     @admin.display(description=_("Asset/Object"))
     def display_content_object(self, obj):
-        return obj.content_object
+        target = obj.content_object
+        if target is not None and hasattr(target, 'user_id') and target.user_id != obj.user_id:
+            return "-"
+        return target
     
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)
@@ -770,6 +812,8 @@ class InsurancePolicyAdminForm(forms.ModelForm):
             selected_user_id = self.request.user.pk
 
         already_linked_qs = InsurancePolicy.objects.filter(linked_cash_flow__isnull=False)
+        if selected_user_id and not (self.request and self.request.user.is_superuser):
+            already_linked_qs = already_linked_qs.filter(user_id=selected_user_id)
         if self.instance and self.instance.pk:
             already_linked_qs = already_linked_qs.exclude(pk=self.instance.pk)
         linked_by_other = {

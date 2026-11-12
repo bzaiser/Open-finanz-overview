@@ -10,10 +10,6 @@ datas = [
     ('finance/wizard_templates.json', 'finance'),
 ]
 
-import os
-if os.path.exists('.env'):
-    datas.append(('.env', '.'))
-
 datas += collect_data_files('core')
 datas += collect_data_files('finance')
 datas += collect_data_files('admin_interface')

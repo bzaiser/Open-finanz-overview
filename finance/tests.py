@@ -711,3 +711,39 @@ class AssetModalSaveTests(TestCase):
         self.asset.refresh_from_db()
         self.assertEqual(self.asset.institution, "DKB")
         self.assertFalse(self.asset.is_emergency_fund)
+
+    def test_benutzer_group_permissions_and_admin_tenant_isolation(self):
+        from finance.models import RealEstate
+        new_user = CustomUser.objects.create_user(username="std_user", password="StdPassword123!")
+        other_user = CustomUser.objects.create_user(username="other_std", password="OtherPassword123!")
+        self.assertTrue(new_user.is_staff)
+        self.assertFalse(new_user.is_superuser)
+        self.assertTrue(new_user.groups.filter(name="Benutzer").exists())
+
+        for perm_code in (
+            "finance.add_insurancepolicy",
+            "finance.change_insurancepolicy",
+            "finance.view_insurancepolicy",
+            "finance.add_propertycomponent",
+            "finance.add_propertydocument",
+            "finance.add_loanextrarepayment",
+            "finance.add_importfilter",
+            "finance.view_financialstatusproxy",
+            "core.view_customuser",
+            "core.change_customuser",
+        ):
+            self.assertTrue(new_user.has_perm(perm_code), f"Missing permission: {perm_code}")
+
+        own_re = RealEstate.objects.create(user=new_user, name="Eigenes Haus", property_value=Decimal("400000"))
+        foreign_re = RealEstate.objects.create(user=other_user, name="Fremdes Geheimhaus", property_value=Decimal("900000"))
+
+        self.client.force_login(new_user)
+        comp_add_resp = self.client.get(reverse("admin:finance_propertycomponent_add"))
+        self.assertEqual(comp_add_resp.status_code, 200)
+        self.assertContains(comp_add_resp, own_re.name)
+        self.assertNotContains(comp_add_resp, foreign_re.name)
+
+        loan_add_resp = self.client.get(reverse("admin:finance_loan_add"))
+        self.assertEqual(loan_add_resp.status_code, 200)
+        self.assertContains(loan_add_resp, own_re.name)
+        self.assertNotContains(loan_add_resp, foreign_re.name)

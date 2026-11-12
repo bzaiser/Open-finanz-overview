@@ -132,7 +132,22 @@ if __name__ == '__main__':
             call_command('seed_demo_family')
             sys.exit(0)
         elif arg == '--manage' and len(sys.argv) > 2:
-            cmd_name = sys.argv[2]
+            allowed_commands = {
+                'migrate',
+                'createcachetable',
+                'clearsessions',
+                'seed_demo_data',
+                'seed_demo_family',
+                'seed_target_groups',
+                'seed_low_income',
+                'seed_single_parent',
+                'seed_student',
+                'seed_early_retiree',
+            }
+            cmd_name = sys.argv[2].strip()
+            if cmd_name not in allowed_commands:
+                sys.stderr.write(f"Command '{cmd_name}' is not permitted in packaged desktop mode.\n")
+                sys.exit(2)
             cmd_args = sys.argv[3:]
             call_command(cmd_name, *cmd_args)
             sys.exit(0)

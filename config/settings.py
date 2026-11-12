@@ -41,13 +41,35 @@ if env_file.exists():
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# Use environment variable; raise error if not found in production context.
-SECRET_KEY = os.getenv('SECRET_KEY', 'insecure-placeholder-for-dev-only-replace-this')
+# Use environment variable; in packaged desktop mode, generate and persist a per-installation secret key.
+def _load_or_create_secret_key():
+    env_key = os.getenv('SECRET_KEY')
+    if env_key:
+        return env_key
+    if getattr(sys, 'frozen', False):
+        import secrets
+        secret_dir = Path(os.getenv('LOCALAPPDATA', str(BASE_DIR))) / 'Finanzplan Desktop'
+        secret_file = secret_dir / '.secret_key'
+        try:
+            if secret_file.exists():
+                val = secret_file.read_text(encoding='utf-8').strip()
+                if len(val) >= 32:
+                    return val
+            secret_dir.mkdir(parents=True, exist_ok=True)
+            new_key = secrets.token_urlsafe(48)
+            secret_file.write_text(new_key, encoding='utf-8')
+            return new_key
+        except Exception:
+            return secrets.token_urlsafe(48)
+    return 'insecure-placeholder-for-dev-only-replace-this'
+
+SECRET_KEY = _load_or_create_secret_key()
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
+default_hosts = '127.0.0.1,localhost' if getattr(sys, 'frozen', False) else '*'
+ALLOWED_HOSTS = [h.strip() for h in os.getenv('ALLOWED_HOSTS', default_hosts).split(',') if h.strip()]
 
 # Domains allowed to perform POST requests (fixes CSRF Verification failed)
 csrf_env = os.getenv('CSRF_TRUSTED_ORIGINS', 'http://localhost:8000,http://127.0.0.1:8000')

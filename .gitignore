@@ -1,8 +1,13 @@
 # Django / Python standard ignore
 db.sqlite3
 db.sqlite3.bak
+*.sqlite3-shm
+*.sqlite3-wal
+*.sqlite3-journal
 venv/
 .env
+.env.*
+!.env.example
 data/
 server.log
 __pycache__/
@@ -16,11 +21,17 @@ instance/
 .coverage
 htmlcov/
 
-# Local settings
+# Local settings & Certificates
 local_settings.py
+*.pem
+*.key
+*.crt
+*.pfx
 
 # Media and Static
+media/
 media/avatars/
+media/property_documents/
 staticfiles/
 
 # Logs & Backups

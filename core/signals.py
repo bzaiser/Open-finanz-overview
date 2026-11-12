@@ -1,4 +1,4 @@
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_migrate
 from django.dispatch import receiver
 from django.conf import settings
 from django.apps import apps
@@ -6,58 +6,97 @@ from django.contrib.auth.models import Group, Permission
 from .models import UserProfile
 
 
+BENUTZER_CRUD_MODELS = [
+    ('core', 'userprofile'),
+    ('finance', 'asset'),
+    ('finance', 'cashflowsource'),
+    ('finance', 'realestate'),
+    ('finance', 'propertycomponent'),
+    ('finance', 'propertydocument'),
+    ('finance', 'loan'),
+    ('finance', 'loanextrarepayment'),
+    ('finance', 'pension'),
+    ('finance', 'insurancepolicy'),
+    ('finance', 'onetimeevent'),
+    ('finance', 'physicalasset'),
+    ('finance', 'assetsnapshot'),
+    ('finance', 'importbatch'),
+    ('finance', 'pendingtransaction'),
+    ('finance', 'processedtransactionhash'),
+    ('finance', 'importfilter'),
+    ('finance', 'categorizationmemory'),
+    ('finance', 'category'),
+]
+
+BENUTZER_VIEW_CHANGE_MODELS = [
+    ('core', 'customuser'),
+    ('finance', 'financialstatusproxy'),
+]
+
+BENUTZER_VIEW_MODELS = [
+    ('admin_interface', 'theme'),
+    ('core', 'editablepagecontent'),
+]
+
+
 def ensure_default_user_group():
     group, _ = Group.objects.get_or_create(name='Benutzer')
-    
-    crud_models = [
-        ('core', 'userprofile'),
-        ('finance', 'asset'),
-        ('finance', 'cashflowsource'),
-        ('finance', 'realestate'),
-        ('finance', 'loan'),
-        ('finance', 'pension'),
-        ('finance', 'onetimeevent'),
-        ('finance', 'physicalasset'),
-        ('finance', 'assetsnapshot'),
-        ('finance', 'importbatch'),
-        ('finance', 'pendingtransaction'),
-        ('finance', 'category'),
-    ]
-    view_models = [
-        ('admin_interface', 'theme'),
-    ]
-    
+
     perms = []
-    for app_label, model_name in crud_models:
+    for app_label, model_name in BENUTZER_CRUD_MODELS:
         perms.extend(list(Permission.objects.filter(
             content_type__app_label=app_label,
             content_type__model=model_name
         )))
-    for app_label, model_name in view_models:
+    for app_label, model_name in BENUTZER_VIEW_CHANGE_MODELS:
+        perms.extend(list(Permission.objects.filter(
+            content_type__app_label=app_label,
+            content_type__model=model_name,
+            codename__regex=r'^(view|change)_'
+        )))
+    for app_label, model_name in BENUTZER_VIEW_MODELS:
         perms.extend(list(Permission.objects.filter(
             content_type__app_label=app_label,
             content_type__model=model_name,
             codename__startswith='view_'
         )))
-    
-    group.permissions.set(perms)
+
+    if perms:
+        group.permissions.set(perms)
     return group
+
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def setup_new_user_access(sender, instance, created, **kwargs):
-    if created:
-        # Every new user gets staff access for the admin UI scoped to their own data
+    if created or not instance.is_superuser:
+        # Every user gets staff access for the admin UI scoped to their own data
         if not instance.is_staff:
             instance.is_staff = True
-            instance.save(update_fields=['is_staff'])
-        
+            sender.objects.filter(pk=instance.pk).update(is_staff=True)
+
         # Superuser keeps all permissions; standard users get assigned to 'Benutzer' group
         if not instance.is_superuser:
             try:
                 group = ensure_default_user_group()
-                instance.groups.add(group)
+                if not instance.groups.filter(pk=group.pk).exists():
+                    instance.groups.add(group)
             except Exception:
                 pass
+
+
+@receiver(post_migrate)
+def sync_benutzer_group_on_migrate(sender, **kwargs):
+    if getattr(sender, 'name', None) in ('core', 'finance'):
+        try:
+            group = ensure_default_user_group()
+            UserModel = apps.get_model(settings.AUTH_USER_MODEL)
+            for user in UserModel.objects.filter(is_superuser=False):
+                if not user.is_staff:
+                    UserModel.objects.filter(pk=user.pk).update(is_staff=True)
+                if not user.groups.filter(pk=group.pk).exists():
+                    user.groups.add(group)
+        except Exception:
+            pass
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
