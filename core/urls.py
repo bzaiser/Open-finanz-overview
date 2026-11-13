@@ -12,6 +12,7 @@ urlpatterns = [
     path('profile/toggle-night/', views.toggle_night_mode, name='toggle_night_mode'),
     path('profile/backup/create/', views.create_backup_view, name='create_backup'),
     path('profile/backup/progress/<str:job_id>/', views.backup_progress_view, name='backup_progress'),
+    path('profile/backup/download/<str:job_id>/', views.download_backup_file_view, name='download_backup_file'),
     path('profile/backup/dismiss/', views.dismiss_backup_warning_view, name='dismiss_backup_warning'),
     path('help/', views.help_view, name='help'),
     path('about/', views.about_view, name='about'),

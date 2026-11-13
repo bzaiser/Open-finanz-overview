@@ -200,10 +200,34 @@
                                 </small>
                             </div>
                             <div class="col-12 mb-3">
-                                <label class="form-label fw-bold d-block mb-0" style="font-size: 0.7rem;">{{ form.backup_path.label }}</label>
-                                {{ form.backup_path }}
-                                <small class="text-muted d-block mt-0.5" style="font-size: 0.65rem;">
-                                    {% trans "Optional: Lokaler Ordnerpfad oder NAS-Netzlaufwerk (z. B. D:\\Backups\\Finanzplan). Wenn angegeben, sichert das System vollautomatisch im Hintergrund." %}
+                                <label class="form-label fw-bold d-block mb-1" style="font-size: 0.75rem;">
+                                    {{ form.backup_path.label }}
+                                </label>
+                                <div class="input-group input-group-sm mb-1">
+                                    {{ form.backup_path }}
+                                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="{% trans 'Typische Pfade auswählen' %}">
+                                        <i class="bi bi-folder2-open me-1"></i>{% trans "Vorschläge" %}
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="font-size: 0.75rem; max-width: 320px;">
+                                        <li><h6 class="dropdown-header py-1" style="font-size: 0.7rem;">{% trans "System- & NAS-Pfade" %}</h6></li>
+                                        {% for s in suggested_paths %}
+                                        <li>
+                                            <a class="dropdown-item py-1 text-wrap" href="javascript:void(0);" onclick="setBackupPath('{{ s.path|escapejs }}')">
+                                                <strong>{{ s.label }}</strong><br>
+                                                <code class="text-muted" style="font-size: 0.65rem;">{{ s.path }}</code>
+                                            </a>
+                                        </li>
+                                        {% endfor %}
+                                        <li><hr class="dropdown-divider my-1"></li>
+                                        <li>
+                                            <a class="dropdown-item py-1 text-danger" href="javascript:void(0);" onclick="setBackupPath('')">
+                                                <i class="bi bi-arrow-counterclockwise me-1"></i>{% trans "Zurücksetzen auf Standard" %}
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <small class="text-muted d-block" style="font-size: 0.65rem;">
+                                    {% trans "Leer lassen für Standard (" %}<code>{{ default_backup_dir }}</code>{% trans "). Wichtig: Der Pfad muss für den Server/NAS beschreibbar sein, auf dem die App läuft." %}
                                 </small>
                             </div>
                             <div class="col-12 mb-2">
@@ -287,6 +311,16 @@
         </form>
     </div>
 </div>
+
+<script>
+    function setBackupPath(path) {
+        const input = document.getElementById('id_backup_path');
+        if (input) {
+            input.value = path;
+            input.focus();
+        }
+    }
+</script>
 
 <script>
     (function() {

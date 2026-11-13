@@ -19,6 +19,52 @@ def get_default_backup_dir():
     os.makedirs(path, exist_ok=True)
     return os.path.abspath(path)
 
+def get_suggested_backup_paths():
+    """
+    Returns list of suggested valid backup directories depending on OS / environment.
+    """
+    suggestions = [
+        {
+            'label': _("Standard App-Verzeichnis (Empfohlen)"),
+            'path': get_default_backup_dir(),
+            'desc': _("Liegt direkt im Datenordner der Anwendung (Server/Desktop).")
+        }
+    ]
+
+    # Windows Desktop candidates
+    if os.name == 'nt':
+        user_profile = os.environ.get('USERPROFILE', '')
+        if user_profile:
+            docs_backup = os.path.join(user_profile, 'Documents', 'Finanzplan_Backups')
+            suggestions.append({
+                'label': _("Windows Eigene Dokumente"),
+                'path': docs_backup,
+                'desc': _("Lokaler Dokumentenordner auf diesem PC.")
+            })
+        for drive in ['D:\\', 'E:\\', 'F:\\']:
+            if os.path.exists(drive):
+                suggestions.append({
+                    'label': f"{drive} { _('Laufwerk') }",
+                    'path': os.path.join(drive, 'Backups', 'Finanzplan'),
+                    'desc': _("Externes / Zweites Laufwerk auf dem Host.")
+                })
+    else:
+        # Linux / NAS candidates (Synology / QNAP / Docker / Generic Linux)
+        nas_candidates = [
+            ('/volume1/backups/finanzplan', 'Synology NAS (Volume 1)'),
+            ('/share/Backups/finanzplan', 'QNAP NAS (Share)'),
+            ('/var/backups/finanzplan', 'Linux Server (/var/backups)'),
+            ('/backup', 'Docker Backup Mount (/backup)'),
+        ]
+        for c_path, c_label in nas_candidates:
+            suggestions.append({
+                'label': c_label,
+                'path': c_path,
+                'desc': _("Verzeichnis auf dem Server/NAS.")
+            })
+
+    return suggestions
+
 def get_job_status(job_id):
     with _jobs_lock:
         return BACKUP_JOBS.get(job_id, None)

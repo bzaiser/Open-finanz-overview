@@ -1165,7 +1165,13 @@
                             profileStep.innerHTML = '<i class="bi bi-check-circle-fill text-success me-1"></i> ' + label;
                         }
                         if (profileTargetMsg && job.target_file) {
-                            profileTargetMsg.innerHTML = '<i class="bi bi-folder-check text-success me-1"></i><strong>{% trans "Gespeichert in:" %}</strong> <span class="text-break">' + job.target_file + '</span>';
+                            let msgHtml = '<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mt-2">';
+                            msgHtml += '<div><i class="bi bi-folder-check text-success me-1"></i><strong>{% trans "Gespeichert in:" %}</strong> <span class="text-break">' + job.target_file + '</span></div>';
+                            if (job.download_url) {
+                                msgHtml += '<a href="' + job.download_url + '" class="btn btn-sm btn-outline-primary rounded-pill px-3 shadow-sm"><i class="bi bi-download me-1"></i>{% trans "ZIP herunterladen" %}</a>';
+                            }
+                            msgHtml += '</div>';
+                            profileTargetMsg.innerHTML = msgHtml;
                         }
 
                         if (globalBanner) {

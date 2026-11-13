@@ -108,16 +108,19 @@ def profile_view(request):
     else:
         form = UserProfileForm(instance=profile)
     harmonies = DesignHarmony.objects.filter(is_active=True).order_by('order', 'id')
+    suggested_paths = get_suggested_backup_paths()
     return render(request, 'core/profile.html', {
         'form': form,
         'harmonies': harmonies,
+        'suggested_paths': suggested_paths,
+        'default_backup_dir': get_default_backup_dir(),
     })
 
 import json
 from django.http import JsonResponse, FileResponse
 from django.views.decorators.http import require_POST
 from .models import EditablePageContent
-from .backup_service import start_background_backup, get_job_status
+from .backup_service import start_background_backup, get_job_status, get_suggested_backup_paths, get_default_backup_dir
 
 @login_required
 def create_backup_view(request):
@@ -160,8 +163,27 @@ def backup_progress_view(request, job_id):
         'target_file': job.get('target_file', ''),
         'filename': job.get('filename', ''),
         'file_size_mb': job.get('file_size_mb', 0),
+        'download_url': f"/profile/backup/download/{job['id']}/" if job.get('status') == 'completed' else None,
         'error': job.get('error', None)
     })
+
+@login_required
+def download_backup_file_view(request, job_id):
+    """
+    Direct browser download of completed backup zip file.
+    """
+    job = get_job_status(job_id)
+    if not job or job.get('status') != 'completed' or not job.get('target_file'):
+        messages.error(request, _("Backup-Datei nicht gefunden oder noch nicht fertig."))
+        return redirect('profile')
+
+    target_file = job['target_file']
+    if not os.path.exists(target_file):
+        messages.error(request, _("Datei auf dem Server nicht mehr vorhanden."))
+        return redirect('profile')
+
+    filename = job.get('filename') or os.path.basename(target_file)
+    return FileResponse(open(target_file, 'rb'), as_attachment=True, filename=filename)
 
 @login_required
 @require_POST
