@@ -179,6 +179,43 @@ class UserProfile(models.Model):
     table_body_text_color = models.CharField(_("Table Body Text"), max_length=7, default="#212529")
     table_border_color = models.CharField(_("Table Border Color"), max_length=7, default="#dee2e6")
 
+    # Data Backup & Recovery Configuration
+    BACKUP_FREQUENCY_CHOICES = [
+        ('never', _('Nie sichern (ich sichere bereits extern, z. B. am NAS)')),
+        ('daily', _('Täglich')),
+        ('weekly', _('Einmal pro Woche')),
+        ('monthly', _('Einmal pro Monat')),
+    ]
+    backup_frequency = models.CharField(
+        _("Sicherungs-Häufigkeit"),
+        max_length=20,
+        choices=BACKUP_FREQUENCY_CHOICES,
+        default='weekly',
+        help_text=_("Regelmäßigkeit der Erinnerung bzw. automatischen Sicherung.")
+    )
+    backup_path = models.CharField(
+        _("Sicherungs-Ordnerpfad"),
+        max_length=255,
+        blank=True,
+        null=True,
+        help_text=_("Optionaler Zielordner für automatische Backups (z. B. D:\\Backups oder Netzlaufwerk).")
+    )
+    backup_last_run = models.DateTimeField(
+        _("Letzte Sicherung"),
+        blank=True,
+        null=True
+    )
+    backup_max_keep = models.PositiveIntegerField(
+        _("Max. Sicherungen aufbewahren"),
+        default=5,
+        help_text=_("Ältere Backups im Zielordner werden automatisch bereinigt.")
+    )
+    backup_dismissed_until = models.DateField(
+        _("Erinnerung stummgeschaltet bis"),
+        blank=True,
+        null=True
+    )
+
 
     class Meta:
         verbose_name = _("User Profile")

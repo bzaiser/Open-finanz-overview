@@ -911,3 +911,90 @@ msgstr "Switch to light mode"
 
 msgid "Nachtmodus aktivieren"
 msgstr "Switch to dark mode"
+
+msgid "Simulation"
+msgstr "Simulation"
+
+msgid "Update Simulation"
+msgstr "Update Simulation"
+
+msgid "Simulation Parameters"
+msgstr "Simulation Parameters"
+
+msgid "Simulations & Calculators"
+msgstr "Simulations & Calculators"
+
+msgid "Simulate What-If Prepayment"
+msgstr "Simulate What-If Prepayment"
+
+msgid "What-If Prepayment Simulator"
+msgstr "What-If Prepayment Simulator"
+
+msgid "Extra Prepayment"
+msgstr "Extra Prepayment"
+
+msgid "Record Prepayment"
+msgstr "Record Prepayment"
+
+msgid "One-time Prepayment (€)"
+msgstr "One-time Prepayment (€)"
+
+msgid "Annual Prepayment (€ p.a.)"
+msgstr "Annual Prepayment (€ p.a.)"
+
+msgid "Annual Prepayment Limit (% p.a.)"
+msgstr "Annual Prepayment Limit (% p.a.)"
+
+msgid "Prepayment Date"
+msgstr "Prepayment Date"
+
+msgid "Prepayment contractually agreed"
+msgstr "Prepayment contractually agreed"
+
+msgid "Calculate in real time how much interest and how many years of loan term you save with extra prepayments."
+msgstr "Calculate in real time how much interest and how many years of loan term you save with extra prepayments."
+
+msgid "Sicherungs-Häufigkeit"
+msgstr "Backup Frequency"
+
+msgid "Sicherungs-Ordnerpfad"
+msgstr "Backup Directory Path"
+
+msgid "Letzte Sicherung"
+msgstr "Last Backup"
+
+msgid "Max. Sicherungen aufbewahren"
+msgstr "Keep Max Backups"
+
+msgid "Nie sichern (ich sichere bereits extern, z. B. am NAS)"
+msgstr "Never (already backed up externally, e.g. NAS)"
+
+msgid "Täglich"
+msgstr "Daily"
+
+msgid "Einmal pro Woche"
+msgstr "Once a week"
+
+msgid "Einmal pro Monat"
+msgstr "Once a month"
+
+msgid "Datensicherung empfohlen!"
+msgstr "Backup recommended!"
+
+msgid "Jetzt sichern (Download)"
+msgstr "Backup now (Download)"
+
+msgid "Einstellungen / NAS"
+msgstr "Settings / NAS"
+
+msgid "7 Tage ausblenden"
+msgstr "Hide for 7 days"
+
+msgid "Datensicherung & Backup (Desktop & Server)"
+msgstr "Data Backup (Desktop & Server)"
+
+msgid "Sicherung jetzt als ZIP herunterladen"
+msgstr "Download backup ZIP now"
+
+msgid "Jetzt in Sicherungsordner schreiben"
+msgstr "Save to backup folder now"

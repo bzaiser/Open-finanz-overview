@@ -5563,3 +5563,48 @@ msgstr "Tagmodus aktivieren"
 
 msgid "Nachtmodus aktivieren"
 msgstr "Nachtmodus aktivieren"
+
+msgid "Sicherungs-Häufigkeit"
+msgstr "Sicherungs-Häufigkeit"
+
+msgid "Sicherungs-Ordnerpfad"
+msgstr "Sicherungs-Ordnerpfad"
+
+msgid "Letzte Sicherung"
+msgstr "Letzte Sicherung"
+
+msgid "Max. Sicherungen aufbewahren"
+msgstr "Max. Sicherungen aufbewahren"
+
+msgid "Nie sichern (ich sichere bereits extern, z. B. am NAS)"
+msgstr "Nie sichern (ich sichere bereits extern, z. B. am NAS)"
+
+msgid "Täglich"
+msgstr "Täglich"
+
+msgid "Einmal pro Woche"
+msgstr "Einmal pro Woche"
+
+msgid "Einmal pro Monat"
+msgstr "Einmal pro Monat"
+
+msgid "Datensicherung empfohlen!"
+msgstr "Datensicherung empfohlen!"
+
+msgid "Jetzt sichern (Download)"
+msgstr "Jetzt sichern (Download)"
+
+msgid "Einstellungen / NAS"
+msgstr "Einstellungen / NAS"
+
+msgid "7 Tage ausblenden"
+msgstr "7 Tage ausblenden"
+
+msgid "Datensicherung & Backup (Desktop & Server)"
+msgstr "Datensicherung & Backup (Desktop & Server)"
+
+msgid "Sicherung jetzt als ZIP herunterladen"
+msgstr "Sicherung jetzt als ZIP herunterladen"
+
+msgid "Jetzt in Sicherungsordner schreiben"
+msgstr "Jetzt in Sicherungsordner schreiben"

@@ -2593,3 +2593,87 @@ msgstr "Activar modo claro"
 
 msgid "Nachtmodus aktivieren"
 msgstr "Activar modo oscuro"
+
+msgid "Simulation"
+msgstr "Simulación"
+
+msgid "Update Simulation"
+msgstr "Actualizar simulación"
+
+msgid "Simulation Parameters"
+msgstr "Parámetros de simulación"
+
+msgid "Simulations & Calculators"
+msgstr "Simulaciones y calculadoras"
+
+msgid "Simulate What-If Prepayment"
+msgstr "Simular amortización anticipada"
+
+msgid "What-If Prepayment Simulator"
+msgstr "Simulador de amortización anticipada"
+
+msgid "Extra Prepayment"
+msgstr "Amortización anticipada"
+
+msgid "One-time Prepayment (€)"
+msgstr "Amortización puntual (€)"
+
+msgid "Annual Prepayment (€ p.a.)"
+msgstr "Amortización anual (€ p.a.)"
+
+msgid "Annual Prepayment Limit (% p.a.)"
+msgstr "Límite de amortización (% p.a.)"
+
+msgid "Prepayment Date"
+msgstr "Fecha de amortización"
+
+msgid "Prepayment contractually agreed"
+msgstr "Amortización pactada por contrato"
+
+msgid "Calculate in real time how much interest and how many years of loan term you save with extra prepayments."
+msgstr "Calcula en tiempo real cuánto interés y cuántos años de plazo ahorras con amortizaciones anticipadas."
+
+msgid "Sicherungs-Häufigkeit"
+msgstr "Frecuencia de copia de seguridad"
+
+msgid "Sicherungs-Ordnerpfad"
+msgstr "Ruta de copia de seguridad"
+
+msgid "Letzte Sicherung"
+msgstr "Última copia"
+
+msgid "Max. Sicherungen aufbewahren"
+msgstr "Conservar máximo de copias"
+
+msgid "Nie sichern (ich sichere bereits extern, z. B. am NAS)"
+msgstr "Nunca (ya se respalda externamente, ej. NAS)"
+
+msgid "Täglich"
+msgstr "Diariamente"
+
+msgid "Einmal pro Woche"
+msgstr "Semanalmente"
+
+msgid "Einmal pro Monat"
+msgstr "Mensualmente"
+
+msgid "Datensicherung empfohlen!"
+msgstr "¡Copia de seguridad recomendada!"
+
+msgid "Jetzt sichern (Download)"
+msgstr "Respaldar ahora (Descargar)"
+
+msgid "Einstellungen / NAS"
+msgstr "Configuración / NAS"
+
+msgid "7 Tage ausblenden"
+msgstr "Ocultar por 7 días"
+
+msgid "Datensicherung & Backup (Desktop & Server)"
+msgstr "Copia de seguridad (Escritorio y Servidor)"
+
+msgid "Sicherung jetzt als ZIP herunterladen"
+msgstr "Descargar ZIP de copia ahora"
+
+msgid "Jetzt in Sicherungsordner schreiben"
+msgstr "Guardar ahora en carpeta de respaldo"

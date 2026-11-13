@@ -2613,3 +2613,87 @@ msgstr "Activer le mode clair"
 
 msgid "Nachtmodus aktivieren"
 msgstr "Activer le mode sombre"
+
+msgid "Simulation"
+msgstr "Simulation"
+
+msgid "Update Simulation"
+msgstr "Mettre à jour la simulation"
+
+msgid "Simulation Parameters"
+msgstr "Paramètres de simulation"
+
+msgid "Simulations & Calculators"
+msgstr "Simulations et calculateurs"
+
+msgid "Simulate What-If Prepayment"
+msgstr "Simuler un remboursement anticipé"
+
+msgid "What-If Prepayment Simulator"
+msgstr "Simulateur de remboursement anticipé"
+
+msgid "Extra Prepayment"
+msgstr "Remboursement anticipé"
+
+msgid "One-time Prepayment (€)"
+msgstr "Remboursement exceptionnel (€)"
+
+msgid "Annual Prepayment (€ p.a.)"
+msgstr "Remboursement annuel (€ p.a.)"
+
+msgid "Annual Prepayment Limit (% p.a.)"
+msgstr "Plafond de remboursement (% p.a.)"
+
+msgid "Prepayment Date"
+msgstr "Date de remboursement"
+
+msgid "Prepayment contractually agreed"
+msgstr "Remboursement anticipé convenu"
+
+msgid "Calculate in real time how much interest and how many years of loan term you save with extra prepayments."
+msgstr "Calculez en temps réel le montant des intérêts et les années de prêt économisés grâce aux remboursements anticipés."
+
+msgid "Sicherungs-Häufigkeit"
+msgstr "Fréquence de sauvegarde"
+
+msgid "Sicherungs-Ordnerpfad"
+msgstr "Dossier de sauvegarde"
+
+msgid "Letzte Sicherung"
+msgstr "Dernière sauvegarde"
+
+msgid "Max. Sicherungen aufbewahren"
+msgstr "Nombre max de sauvegardes"
+
+msgid "Nie sichern (ich sichere bereits extern, z. B. am NAS)"
+msgstr "Jamais (déjà sauvegardé ailleurs, ex. NAS)"
+
+msgid "Täglich"
+msgstr "Quotidien"
+
+msgid "Einmal pro Woche"
+msgstr "Hebdomadaire"
+
+msgid "Einmal pro Monat"
+msgstr "Mensuel"
+
+msgid "Datensicherung empfohlen!"
+msgstr "Sauvegarde recommandée !"
+
+msgid "Jetzt sichern (Download)"
+msgstr "Sauvegarder (Télécharger)"
+
+msgid "Einstellungen / NAS"
+msgstr "Paramètres / NAS"
+
+msgid "7 Tage ausblenden"
+msgstr "Masquer pendant 7 jours"
+
+msgid "Datensicherung & Backup (Desktop & Server)"
+msgstr "Sauvegarde des données (Bureau et Serveur)"
+
+msgid "Sicherung jetzt als ZIP herunterladen"
+msgstr "Télécharger la sauvegarde ZIP"
+
+msgid "Jetzt in Sicherungsordner schreiben"
+msgstr "Écrire dans le dossier de sauvegarde"

@@ -2599,3 +2599,87 @@ msgstr "Attiva modalità giorno"
 
 msgid "Nachtmodus aktivieren"
 msgstr "Attiva modalità notte"
+
+msgid "Simulation"
+msgstr "Simulazione"
+
+msgid "Update Simulation"
+msgstr "Aggiorna simulazione"
+
+msgid "Simulation Parameters"
+msgstr "Parametri di simulazione"
+
+msgid "Simulations & Calculators"
+msgstr "Simulazioni e calcolatori"
+
+msgid "Simulate What-If Prepayment"
+msgstr "Simula rimborso anticipato"
+
+msgid "What-If Prepayment Simulator"
+msgstr "Simulatore rimborso anticipato"
+
+msgid "Extra Prepayment"
+msgstr "Rimborso anticipato"
+
+msgid "One-time Prepayment (€)"
+msgstr "Rimborso una tantum (€)"
+
+msgid "Annual Prepayment (€ p.a.)"
+msgstr "Rimborso annuale (€ p.a.)"
+
+msgid "Annual Prepayment Limit (% p.a.)"
+msgstr "Limite rimborso anticipato (% p.a.)"
+
+msgid "Prepayment Date"
+msgstr "Data di rimborso"
+
+msgid "Prepayment contractually agreed"
+msgstr "Rimborso anticipato concordato"
+
+msgid "Calculate in real time how much interest and how many years of loan term you save with extra prepayments."
+msgstr "Calcola in tempo reale quanti interessi e quanti anni di mutuo risparmi con i rimborsi anticipati."
+
+msgid "Sicherungs-Häufigkeit"
+msgstr "Frequenza di backup"
+
+msgid "Sicherungs-Ordnerpfad"
+msgstr "Percorso cartella di backup"
+
+msgid "Letzte Sicherung"
+msgstr "Ultimo backup"
+
+msgid "Max. Sicherungen aufbewahren"
+msgstr "Numero max backup da conservare"
+
+msgid "Nie sichern (ich sichere bereits extern, z. B. am NAS)"
+msgstr "Mai (già salvato esternamente, es. NAS)"
+
+msgid "Täglich"
+msgstr "Giornaliero"
+
+msgid "Einmal pro Woche"
+msgstr "Settimanale"
+
+msgid "Einmal pro Monat"
+msgstr "Mensile"
+
+msgid "Datensicherung empfohlen!"
+msgstr "Backup consigliato!"
+
+msgid "Jetzt sichern (Download)"
+msgstr "Esegui backup (Scarica)"
+
+msgid "Einstellungen / NAS"
+msgstr "Impostazioni / NAS"
+
+msgid "7 Tage ausblenden"
+msgstr "Nascondi per 7 giorni"
+
+msgid "Datensicherung & Backup (Desktop & Server)"
+msgstr "Salvataggio e backup (Desktop e Server)"
+
+msgid "Sicherung jetzt als ZIP herunterladen"
+msgstr "Scarica backup ZIP ora"
+
+msgid "Jetzt in Sicherungsordner schreiben"
+msgstr "Salva ora nella cartella di backup"

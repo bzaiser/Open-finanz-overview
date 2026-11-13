@@ -151,11 +151,15 @@ class UserProfileForm(forms.ModelForm):
             'gradient_start', 'gradient_end', 'primary_color', 'secondary_color',
             'background_color', 'text_color', 'sidebar_bg_color',
             'table_header_bg_color', 'table_header_text_color', 'table_filter_bg_color',
-            'table_body_bg_color', 'table_body_text_color', 'table_border_color'
+            'table_body_bg_color', 'table_body_text_color', 'table_border_color',
+            'backup_frequency', 'backup_path', 'backup_max_keep'
         ]
         widgets = {
             'avatar': forms.FileInput(attrs={'class': 'form-control form-control-sm'}),
             'dark_mode_config': forms.HiddenInput(),
+            'backup_frequency': forms.Select(attrs={'class': 'form-select'}),
+            'backup_path': forms.TextInput(attrs={'class': 'form-control', 'placeholder': r'D:\Backups\Finanzplan'}),
+            'backup_max_keep': forms.NumberInput(attrs={'class': 'form-control', 'min': 1, 'max': 50}),
         }
 
 

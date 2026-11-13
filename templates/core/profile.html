@@ -164,6 +164,60 @@
                                 <label class="form-label fw-bold d-block mb-0" style="font-size: 0.7rem;">{{ form.real_estate_growth_rate.label }}</label>
                                 {{ form.real_estate_growth_rate }}
                             </div>
+
+                            <!-- Data Backup Section -->
+                            <div class="col-12 my-2 pt-2 border-top border-secondary border-opacity-25" id="backup-section">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="fw-bold text-success small d-block">
+                                        <i class="bi bi-shield-check me-1"></i>{% trans "Datensicherung & Backup (Desktop & Server)" %}
+                                    </span>
+                                    {% if user.profile.backup_last_run %}
+                                    <span class="badge bg-success-subtle text-success border border-success border-opacity-25" style="font-size: 0.7rem;">
+                                        {% trans "Letztes Backup:" %} {{ user.profile.backup_last_run|date:"SHORT_DATETIME_FORMAT" }}
+                                    </span>
+                                    {% else %}
+                                    <span class="badge bg-warning-subtle text-warning border border-warning border-opacity-25" style="font-size: 0.7rem;">
+                                        {% trans "Noch kein Backup erstellt" %}
+                                    </span>
+                                    {% endif %}
+                                </div>
+                                <p class="text-muted small mb-3" style="font-size: 0.75rem;">
+                                    {% trans "Sichert die gesamte SQLite-Datenbank (inkl. Verträge, Konten, Immobilien) sowie alle hochgeladenen Dokumente/Belege in ein ZIP-Archiv." %}
+                                </p>
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <label class="form-label fw-bold d-block mb-0" style="font-size: 0.7rem;">{{ form.backup_frequency.label }}</label>
+                                {{ form.backup_frequency }}
+                                <small class="text-muted d-block mt-0.5" style="font-size: 0.65rem;">
+                                    {% trans "Bei externer Sicherung (NAS/Cloud) 'Nie sichern' wählen." %}
+                                </small>
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <label class="form-label fw-bold d-block mb-0" style="font-size: 0.7rem;">{{ form.backup_max_keep.label }}</label>
+                                {{ form.backup_max_keep }}
+                                <small class="text-muted d-block mt-0.5" style="font-size: 0.65rem;">
+                                    {% trans "Automatische Bereinigung alter Backups im Ordner." %}
+                                </small>
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label class="form-label fw-bold d-block mb-0" style="font-size: 0.7rem;">{{ form.backup_path.label }}</label>
+                                {{ form.backup_path }}
+                                <small class="text-muted d-block mt-0.5" style="font-size: 0.65rem;">
+                                    {% trans "Optional: Lokaler Ordnerpfad oder NAS-Netzlaufwerk (z. B. D:\\Backups\\Finanzplan). Wenn angegeben, sichert das System vollautomatisch im Hintergrund." %}
+                                </small>
+                            </div>
+                            <div class="col-12 mb-2">
+                                <div class="d-flex flex-wrap gap-2">
+                                    <a href="{% url 'create_backup' %}?download=1" class="btn btn-outline-success btn-sm rounded-pill px-3 shadow-sm">
+                                        <i class="bi bi-download me-1"></i>{% trans "Sicherung jetzt als ZIP herunterladen" %}
+                                    </a>
+                                    {% if user.profile.backup_path %}
+                                    <a href="{% url 'create_backup' %}" class="btn btn-success btn-sm rounded-pill px-3 shadow-sm">
+                                        <i class="bi bi-folder-check me-1"></i>{% trans "Jetzt in Sicherungsordner schreiben" %}
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

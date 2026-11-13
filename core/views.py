@@ -8,7 +8,8 @@ from django.core.management import call_command
 from django.views.decorators.http import require_POST
 from django.utils.html import format_html, format_html_join
 from django.utils.translation import gettext as _
-from django.utils import translation
+import datetime
+from django.utils import translation, timezone
 from .forms import CustomUserCreationForm, UserProfileForm, AppAuthenticationForm
 from .models import UserProfile, CustomUser, DesignHarmony
 
@@ -113,9 +114,57 @@ def profile_view(request):
     })
 
 import json
-from django.http import JsonResponse
+from django.http import JsonResponse, FileResponse
 from django.views.decorators.http import require_POST
 from .models import EditablePageContent
+from .backup_service import generate_backup_archive, save_backup_to_directory
+
+@login_required
+def create_backup_view(request):
+    """
+    Creates a full backup (SQLite DB + Media files).
+    If requested as download, returns the ZIP as attachment.
+    If profile has a backup_path, writes the file there as well.
+    """
+    profile = request.user.profile
+    download_requested = request.GET.get('download') == '1'
+
+    saved_locally = False
+    local_msg = ""
+    if profile.backup_path:
+        success, path, msg = save_backup_to_directory(profile.backup_path, max_keep=profile.backup_max_keep)
+        saved_locally = success
+        local_msg = msg
+
+    # Update profile last run timestamp
+    profile.backup_last_run = timezone.now()
+    profile.backup_dismissed_until = None
+    profile.save(update_fields=['backup_last_run', 'backup_dismissed_until'])
+
+    if download_requested:
+        buffer, filename, stats = generate_backup_archive()
+        response = FileResponse(buffer, as_attachment=True, filename=filename)
+        response['Content-Type'] = 'application/zip'
+        return response
+
+    if saved_locally:
+        messages.success(request, _(f"Sicherung erfolgreich erstellt und gespeichert unter: {local_msg}"))
+    else:
+        messages.success(request, _("Sicherung wurde erfolgreich generiert."))
+
+    return redirect(request.META.get('HTTP_REFERER', 'profile'))
+
+@login_required
+@require_POST
+def dismiss_backup_warning_view(request):
+    """
+    Snoozes backup reminder for 7 days.
+    """
+    profile = request.user.profile
+    profile.backup_dismissed_until = timezone.localdate() + datetime.timedelta(days=7)
+    profile.save(update_fields=['backup_dismissed_until'])
+    messages.info(request, _("Erinnerung an Datensicherung für 7 Tage stummgeschaltet."))
+    return redirect(request.META.get('HTTP_REFERER', 'finance:dashboard'))
 
 def get_page_content_map(page_name, lang='de'):
     qs = EditablePageContent.objects.filter(page=page_name, language=lang)
