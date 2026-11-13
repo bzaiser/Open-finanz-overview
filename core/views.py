@@ -122,18 +122,10 @@ from .backup_service import start_background_backup, get_job_status
 @login_required
 def create_backup_view(request):
     """
-    Starts asynchronous backup task writing directly to user's configured backup_path.
+    Starts asynchronous backup task writing directly to user's configured backup_path (or default data/backups).
     If called via AJAX / POST, returns JSON with job_id for progress monitoring.
     """
     profile = request.user.profile
-    if not profile.backup_path:
-        if request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.method == 'POST':
-            return JsonResponse({
-                'status': 'error',
-                'message': _("Bitte hinterlege zuerst einen Sicherungs-Ordnerpfad in deinem Profil.")
-            }, status=400)
-        messages.warning(request, _("Bitte hinterlege zuerst einen Sicherungs-Ordnerpfad in deinem Profil."))
-        return redirect('profile')
 
     try:
         job_id, target_dir = start_background_backup(profile)

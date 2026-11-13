@@ -13,6 +13,12 @@ from django.utils.translation import gettext as _
 BACKUP_JOBS = {}
 _jobs_lock = threading.Lock()
 
+def get_default_backup_dir():
+    """Returns the default backups directory inside data/backups."""
+    path = os.path.join(settings.BASE_DIR, 'data', 'backups')
+    os.makedirs(path, exist_ok=True)
+    return os.path.abspath(path)
+
 def get_job_status(job_id):
     with _jobs_lock:
         return BACKUP_JOBS.get(job_id, None)
@@ -38,7 +44,10 @@ def _backup_worker_task(job_id, profile_id, target_directory, max_keep):
         media_dir = getattr(settings, 'MEDIA_ROOT', os.path.join(settings.BASE_DIR, 'data', 'media'))
 
         # Prepare target folder
-        norm_target_dir = os.path.normpath(target_directory.strip())
+        if not target_directory or not target_directory.strip():
+            norm_target_dir = get_default_backup_dir()
+        else:
+            norm_target_dir = os.path.abspath(os.path.expanduser(target_directory.strip()))
         os.makedirs(norm_target_dir, exist_ok=True)
 
         timestamp_str = timezone.now().strftime('%Y%m%d_%H%M%S')
@@ -53,8 +62,6 @@ def _backup_worker_task(job_id, profile_id, target_directory, max_keep):
                     full_p = os.path.join(root, file)
                     rel_p = os.path.relpath(full_p, media_dir)
                     media_files.append((full_p, os.path.join('media', rel_p)))
-
-        total_items = 1 + len(media_files)
 
         update_job_status(
             job_id,
@@ -90,18 +97,19 @@ def _backup_worker_task(job_id, profile_id, target_directory, max_keep):
             )
 
             # 2. Add media files with progress reporting
+            total_media = len(media_files)
             for idx, (full_p, zip_p) in enumerate(media_files, start=1):
                 try:
                     zip_file.write(full_p, zip_p)
                 except Exception:
                     pass
 
-                current_progress = 25 + int((idx / max(len(media_files), 1)) * 65)
-                if idx % 5 == 0 or idx == len(media_files):
+                current_progress = 25 + int((idx / max(total_media, 1)) * 65)
+                if idx % 5 == 0 or idx == total_media:
                     update_job_status(
                         job_id,
                         progress=min(current_progress, 90),
-                        step_label=_(f"Komprimiere Dokumente ({idx} / {len(media_files)})...")
+                        step_label=_(f"Komprimiere Dokumente ({idx} / {total_media})...")
                     )
 
         # 3. Finalize & Rotate
@@ -138,6 +146,7 @@ def _backup_worker_task(job_id, profile_id, target_directory, max_keep):
             step_label=_(f"Sicherung erfolgreich erstellt ({file_size_mb:.2f} MB)!"),
             target_file=target_filepath,
             filename=target_filename,
+            target_directory=norm_target_dir,
             file_size_mb=file_size_mb
         )
 
@@ -151,11 +160,14 @@ def _backup_worker_task(job_id, profile_id, target_directory, max_keep):
 
 def start_background_backup(profile):
     """
-    Spawns a background thread to generate and save backup into profile.backup_path.
+    Spawns a background thread to generate and save backup into profile.backup_path or default folder.
     Returns (job_id, target_directory).
     """
-    if not profile or not profile.backup_path:
-        raise ValueError(_("Kein Sicherungspfad im Profil hinterlegt."))
+    target_path = (profile.backup_path if profile and profile.backup_path else '').strip()
+    if not target_path:
+        target_path = get_default_backup_dir()
+    else:
+        target_path = os.path.abspath(os.path.expanduser(target_path))
 
     job_id = str(uuid.uuid4())
     with _jobs_lock:
@@ -165,17 +177,21 @@ def start_background_backup(profile):
             'progress': 0,
             'step_label': _("Initialisiere Datensicherung..."),
             'target_file': None,
+            'target_directory': target_path,
             'error': None,
             'created_at': timezone.now()
         }
 
+    max_keep = profile.backup_max_keep if profile else 5
+    profile_id = profile.id if profile else None
+
     thread = threading.Thread(
         target=_backup_worker_task,
-        args=(job_id, profile.id, profile.backup_path, profile.backup_max_keep),
+        args=(job_id, profile_id, target_path, max_keep),
         daemon=True
     )
     thread.start()
-    return job_id, profile.backup_path
+    return job_id, target_path
 
 def is_backup_due(profile):
     """

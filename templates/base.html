@@ -841,15 +841,9 @@
                     </div>
                 </div>
                 <div class="d-flex align-items-center gap-2">
-                    {% if user.profile.backup_path %}
-                    <button type="button" class="btn btn-warning btn-sm rounded-pill px-3 fw-bold text-dark shadow-sm" onclick="triggerAsyncBackup('banner')">
+                    <button type="button" class="btn btn-warning btn-sm rounded-pill px-3 fw-bold text-dark shadow-sm" id="btn-banner-start-backup" onclick="triggerAsyncBackup('banner')">
                         <i class="bi bi-play-circle me-1"></i>{% trans "Sicherung jetzt starten" %}
                     </button>
-                    {% else %}
-                    <a href="{% url 'profile' %}#backup-section" class="btn btn-warning btn-sm rounded-pill px-3 fw-bold text-dark shadow-sm">
-                        <i class="bi bi-folder-plus me-1"></i>{% trans "Pfad hinterlegen" %}
-                    </a>
-                    {% endif %}
                     <a href="{% url 'profile' %}#backup-section" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
                         <i class="bi bi-gear me-1"></i>{% trans "Einstellungen / NAS" %}
                     </a>
@@ -1020,12 +1014,23 @@
         
         <!-- Global Async Backup Runner Script -->
         <script>
+        let isBackupRunning = false;
+        let backupPollInterval = null;
+        let maxObservedProgress = 0;
+
         function triggerAsyncBackup(source) {
+            if (isBackupRunning) {
+                return;
+            }
+            isBackupRunning = true;
+            maxObservedProgress = 0;
+
             const isBanner = source === 'banner';
             const isProfile = source === 'profile';
 
             const bannerPrompt = document.getElementById('backup-banner-prompt');
             const bannerProgress = document.getElementById('backup-banner-progress');
+            const bannerBtn = document.getElementById('btn-banner-start-backup');
             const bannerStep = document.getElementById('backup-banner-step');
             const bannerBar = document.getElementById('backup-banner-bar');
             const bannerPercent = document.getElementById('backup-banner-percent');
@@ -1037,12 +1042,14 @@
             const profilePercent = document.getElementById('backup-profile-percent');
             const profileTargetMsg = document.getElementById('backup-profile-target-msg');
 
-            if (isBanner && bannerPrompt && bannerProgress) {
+            if (bannerBtn) bannerBtn.disabled = true;
+            if (profileBtn) profileBtn.disabled = true;
+
+            if (bannerPrompt && bannerProgress) {
                 bannerPrompt.style.display = 'none';
                 bannerProgress.style.display = 'block';
             }
-            if (isProfile && profileBtn && profileProgress) {
-                profileBtn.disabled = true;
+            if (isProfile && profileProgress) {
                 profileProgress.style.display = 'block';
             }
 
@@ -1060,19 +1067,30 @@
                 } else {
                     const err = data.message || '{% trans "Konnte Sicherung nicht starten." %}';
                     alert(err);
-                    if (isBanner && bannerPrompt) bannerPrompt.style.display = 'flex';
-                    if (isBanner && bannerProgress) bannerProgress.style.display = 'none';
-                    if (isProfile && profileBtn) profileBtn.disabled = false;
-                    if (isProfile && profileProgress) profileProgress.style.display = 'none';
+                    resetBackupUiState();
                 }
             })
             .catch(err => {
                 alert('{% trans "Netzwerkfehler beim Starten der Sicherung." %}');
-                if (isBanner && bannerPrompt) bannerPrompt.style.display = 'flex';
-                if (isBanner && bannerProgress) bannerProgress.style.display = 'none';
-                if (isProfile && profileBtn) profileBtn.disabled = false;
-                if (isProfile && profileProgress) profileProgress.style.display = 'none';
+                resetBackupUiState();
             });
+        }
+
+        function resetBackupUiState() {
+            isBackupRunning = false;
+            if (backupPollInterval) {
+                clearInterval(backupPollInterval);
+                backupPollInterval = null;
+            }
+            const bannerPrompt = document.getElementById('backup-banner-prompt');
+            const bannerProgress = document.getElementById('backup-banner-progress');
+            const bannerBtn = document.getElementById('btn-banner-start-backup');
+            const profileBtn = document.getElementById('btn-profile-start-backup');
+
+            if (bannerBtn) bannerBtn.disabled = false;
+            if (profileBtn) profileBtn.disabled = false;
+            if (bannerPrompt) bannerPrompt.style.display = 'flex';
+            if (bannerProgress) bannerProgress.style.display = 'none';
         }
 
         function pollBackupJob(jobId, source) {
@@ -1082,6 +1100,7 @@
             const bannerStep = document.getElementById('backup-banner-step');
             const bannerBar = document.getElementById('backup-banner-bar');
             const bannerPercent = document.getElementById('backup-banner-percent');
+            const bannerBtn = document.getElementById('btn-banner-start-backup');
             const globalBanner = document.getElementById('global-backup-banner');
 
             const profileStep = document.getElementById('backup-profile-step');
@@ -1090,66 +1109,97 @@
             const profileTargetMsg = document.getElementById('backup-profile-target-msg');
             const profileBtn = document.getElementById('btn-profile-start-backup');
 
-            const pollInterval = setInterval(() => {
+            if (backupPollInterval) {
+                clearInterval(backupPollInterval);
+            }
+
+            backupPollInterval = setInterval(() => {
                 fetch("/profile/backup/progress/" + jobId + "/", {
                     headers: { 'X-Requested-With': 'XMLHttpRequest' }
                 })
                 .then(r => r.json())
                 .then(job => {
-                    const pct = (job.progress || 0) + '%';
+                    // Prevent progress bar from jumping backwards
+                    const rawProgress = job.progress || 0;
+                    if (rawProgress > maxObservedProgress) {
+                        maxObservedProgress = rawProgress;
+                    }
+                    const pct = maxObservedProgress + '%';
                     const label = job.step_label || '';
 
-                    if (isBanner && bannerBar) {
+                    if (bannerBar) {
                         bannerBar.style.width = pct;
                         if (bannerPercent) bannerPercent.innerText = pct;
                         if (bannerStep) bannerStep.innerText = label;
                     }
 
-                    if (isProfile && profileBar) {
+                    if (profileBar) {
                         profileBar.style.width = pct;
                         if (profilePercent) profilePercent.innerText = pct;
                         if (profileStep) profileStep.innerText = label;
                     }
 
                     if (job.status === 'completed') {
-                        clearInterval(pollInterval);
+                        clearInterval(backupPollInterval);
+                        backupPollInterval = null;
+                        isBackupRunning = false;
 
-                        if (isBanner && globalBanner) {
-                            if (bannerBar) {
-                                bannerBar.classList.remove('bg-warning');
-                                bannerBar.classList.add('bg-success');
-                            }
-                            if (bannerStep) bannerStep.innerHTML = '<i class="bi bi-check-circle-fill text-success me-1"></i> ' + label;
+                        if (bannerBtn) bannerBtn.disabled = false;
+                        if (profileBtn) profileBtn.disabled = false;
+
+                        if (bannerBar) {
+                            bannerBar.classList.remove('bg-warning');
+                            bannerBar.classList.add('bg-success');
+                            bannerBar.style.width = '100%';
+                        }
+                        if (bannerPercent) bannerPercent.innerText = '100 %';
+                        if (bannerStep) {
+                            bannerStep.innerHTML = '<i class="bi bi-check-circle-fill text-success me-1"></i> ' + label + (job.target_file ? ' <br><small class="text-white-50 font-monospace" style="font-size:0.75rem;">' + job.target_file + '</small>' : '');
+                        }
+
+                        if (profileBar) {
+                            profileBar.style.width = '100%';
+                        }
+                        if (profilePercent) profilePercent.innerText = '100 %';
+                        if (profileStep) {
+                            profileStep.innerHTML = '<i class="bi bi-check-circle-fill text-success me-1"></i> ' + label;
+                        }
+                        if (profileTargetMsg && job.target_file) {
+                            profileTargetMsg.innerHTML = '<i class="bi bi-folder-check text-success me-1"></i><strong>{% trans "Gespeichert in:" %}</strong> <span class="text-break">' + job.target_file + '</span>';
+                        }
+
+                        if (globalBanner) {
                             setTimeout(() => {
                                 globalBanner.style.transition = 'opacity 0.8s ease';
                                 globalBanner.style.opacity = '0';
                                 setTimeout(() => globalBanner.remove(), 800);
-                            }, 4000);
-                        }
-
-                        if (isProfile) {
-                            if (profileBtn) profileBtn.disabled = false;
-                            if (profileStep) profileStep.innerHTML = '<i class="bi bi-check-circle-fill text-success me-1"></i> ' + label;
-                            if (profileTargetMsg && job.target_file) {
-                                profileTargetMsg.innerText = '{% trans "Datei:" %} ' + job.target_file;
-                            }
+                            }, 5000);
                         }
                     } else if (job.status === 'failed') {
-                        clearInterval(pollInterval);
+                        clearInterval(backupPollInterval);
+                        backupPollInterval = null;
+                        isBackupRunning = false;
+
+                        if (bannerBtn) bannerBtn.disabled = false;
+                        if (profileBtn) profileBtn.disabled = false;
+
                         const errMsg = job.error || '{% trans "Sicherung fehlgeschlagen." %}';
-                        if (isBanner && bannerStep) {
+                        if (bannerStep) {
                             bannerStep.innerHTML = '<i class="bi bi-exclamation-triangle-fill text-danger me-1"></i> ' + errMsg;
                         }
-                        if (isProfile) {
-                            if (profileBtn) profileBtn.disabled = false;
-                            if (profileStep) profileStep.innerHTML = '<i class="bi bi-exclamation-triangle-fill text-danger me-1"></i> ' + errMsg;
+                        if (profileStep) {
+                            profileStep.innerHTML = '<i class="bi bi-exclamation-triangle-fill text-danger me-1"></i> ' + errMsg;
                         }
                     }
                 })
                 .catch(() => {
-                    clearInterval(pollInterval);
+                    clearInterval(backupPollInterval);
+                    backupPollInterval = null;
+                    isBackupRunning = false;
+                    if (bannerBtn) bannerBtn.disabled = false;
+                    if (profileBtn) profileBtn.disabled = false;
                 });
-            }, 500);
+            }, 600);
         }
         </script>
     {% endif %}
