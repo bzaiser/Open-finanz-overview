@@ -5545,3 +5545,21 @@ msgstr "Vorschau konnte nicht geladen werden."
 
 msgid "Error loading document."
 msgstr "Fehler beim Laden des Dokuments."
+
+msgid "Transactions"
+msgstr "Umsätze"
+
+msgid "Portfolio"
+msgstr "Portfolio"
+
+msgid "Tagmodus"
+msgstr "Tagmodus"
+
+msgid "Nachtmodus"
+msgstr "Nachtmodus"
+
+msgid "Tagmodus aktivieren"
+msgstr "Tagmodus aktivieren"
+
+msgid "Nachtmodus aktivieren"
+msgstr "Nachtmodus aktivieren"

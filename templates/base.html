@@ -691,9 +691,9 @@
             <div class="collapse navbar-collapse" id="navbarContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'finance:cash_flow_list' %}">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'cash_flow_list' %}active{% endif %}" href="{% url 'finance:cash_flow_list' %}">
                            <i class="bi bi-arrow-down-up me-1"></i>
-                           {% trans 'Income & Expenses' %}
+                           {% trans 'Transactions' %}
                         </a>
                     </li>
                     <li class="nav-item">
@@ -710,8 +710,8 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {% if request.resolver_match.url_name == 'assets_overview' %}active{% endif %}" href="{% url 'finance:assets_overview' %}">
-                           <i class="bi bi-cash-coin me-1"></i>
-                           {% trans 'Assets & Accounts' %}
+                           <i class="bi bi-pie-chart me-1"></i>
+                           {% trans 'Portfolio' %}
                         </a>
                     </li>
                     {# Bank Import disabled for now #}
@@ -722,11 +722,11 @@
                     {#     </a> #}
                     {# </li> #}
                 </ul>
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center flex-column flex-lg-row gap-lg-3 gap-1 pt-2 pt-lg-0 border-top border-lg-0 border-white border-opacity-10">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center flex-column flex-lg-row gap-lg-1 gap-1 pt-2 pt-lg-0 border-top border-lg-0 border-white border-opacity-10">
                     {% if user.is_authenticated %}
                     <!-- 1. Global Search -->
                     <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center p-lg-0 py-2 px-3 {% if request.resolver_match.url_name == 'global_search' %}text-primary{% endif %}"
+                        <a class="nav-link d-flex align-items-center px-2 py-2 py-lg-1 {% if request.resolver_match.url_name == 'global_search' %}text-primary{% endif %}"
                            href="{% url 'finance:global_search' %}"
                            title="{% trans 'Global Search' %}"
                            aria-label="{% trans 'Global Search' %}">
@@ -736,7 +736,7 @@
                     </li>
                     <!-- 2. Documents -->
                     <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center p-lg-0 py-2 px-3 {% if request.resolver_match.url_name == 'documents_vault' %}text-primary{% endif %}"
+                        <a class="nav-link d-flex align-items-center px-2 py-2 py-lg-1 {% if request.resolver_match.url_name == 'documents_vault' %}text-primary{% endif %}"
                            href="{% url 'finance:documents_vault' %}"
                            title="{% trans 'Documents' %}"
                            aria-label="{% trans 'Documents' %}">
@@ -746,7 +746,7 @@
                     </li>
                     <!-- 3. Settings -->
                     <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center p-lg-0 py-2 px-3 {% if request.resolver_match.url_name == 'profile' %}text-primary{% endif %}"
+                        <a class="nav-link d-flex align-items-center px-2 py-2 py-lg-1 {% if request.resolver_match.url_name == 'profile' %}text-primary{% endif %}"
                            href="{% url 'profile' %}"
                            title="{% trans 'Settings' %}"
                            aria-label="{% trans 'Settings' %}">
@@ -757,7 +757,7 @@
                     <!-- 4. Administration (Staff only) -->
                     {% if user.is_staff %}
                     <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center p-lg-0 py-2 px-3"
+                        <a class="nav-link d-flex align-items-center px-2 py-2 py-lg-1"
                            href="{% url 'admin:index' %}"
                            title="{% trans 'Administration' %}"
                            aria-label="{% trans 'Administration' %}">
@@ -766,20 +766,23 @@
                         </a>
                     </li>
                     {% endif %}
-                    <!-- Night Mode Toggle -->
+                    <!-- Night Mode Toggle (Direct Icon Toggle: Moon / Sun) -->
                     <li class="nav-item">
-                        <a href="{% url 'toggle_night_mode' %}" class="nav-link d-flex align-items-center justify-content-between justify-content-lg-start gap-2 p-lg-0 py-2 px-3" title="{% trans 'Toggle Night Mode' %}">
-                            <div class="d-flex align-items-center gap-2">
-                                <i class="bi bi-moon-stars{% if user.profile.auto_night_mode %}-fill text-warning{% endif %} fs-5"></i>
-                                <span class="d-lg-none">{% trans "Night Mode" %}</span>
-                            </div>
-                            <div class="form-check form-switch m-0">
-                                <input class="form-check-input" type="checkbox" role="switch" {% if user.profile.auto_night_mode %}checked{% endif %} style="cursor: pointer; pointer-events: none;">
-                            </div>
+                        <a href="{% url 'toggle_night_mode' %}"
+                           class="nav-link d-flex align-items-center px-2 py-2 py-lg-1"
+                           title="{% if user.profile.auto_night_mode %}{% trans 'Tagmodus aktivieren' %}{% else %}{% trans 'Nachtmodus aktivieren' %}{% endif %}"
+                           aria-label="{% trans 'Toggle Night Mode' %}">
+                            {% if user.profile.auto_night_mode %}
+                                <i class="bi bi-sun-fill text-warning fs-5"></i>
+                                <span class="d-lg-none ms-2">{% trans "Tagmodus" %}</span>
+                            {% else %}
+                                <i class="bi bi-moon-stars fs-5"></i>
+                                <span class="d-lg-none ms-2">{% trans "Nachtmodus" %}</span>
+                            {% endif %}
                         </a>
                     </li>
                     <!-- 5. User Account Dropdown (Dedicated Row in Burger Menu) -->
-                    <li class="nav-item dropdown pt-1 pt-lg-0 border-top border-lg-0 border-white border-opacity-10">
+                    <li class="nav-item dropdown pt-1 pt-lg-0 border-top border-lg-0 border-white border-opacity-10 ps-lg-1">
                         <a class="nav-link dropdown-toggle d-flex align-items-center py-2 px-3 p-lg-0" href="#" id="navbarDropdown" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false" title="{{ user.best_name }}">
                             {% if user.profile.avatar %}<img src="{{ user.profile.avatar.url }}" class="rounded-circle me-1"

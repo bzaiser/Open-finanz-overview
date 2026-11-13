@@ -893,3 +893,21 @@ msgstr "Tax Estimation Basis"
 
 msgid "Property"
 msgstr "Property"
+
+msgid "Transactions"
+msgstr "Transactions"
+
+msgid "Portfolio"
+msgstr "Portfolio"
+
+msgid "Tagmodus"
+msgstr "Light Mode"
+
+msgid "Nachtmodus"
+msgstr "Dark Mode"
+
+msgid "Tagmodus aktivieren"
+msgstr "Switch to light mode"
+
+msgid "Nachtmodus aktivieren"
+msgstr "Switch to dark mode"

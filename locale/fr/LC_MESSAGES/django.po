@@ -2595,3 +2595,21 @@ msgstr "Base d'Estimation Fiscale"
 
 msgid "Property"
 msgstr "Bien Immobilier"
+
+msgid "Transactions"
+msgstr "Opérations"
+
+msgid "Portfolio"
+msgstr "Portefeuille"
+
+msgid "Tagmodus"
+msgstr "Mode clair"
+
+msgid "Nachtmodus"
+msgstr "Mode sombre"
+
+msgid "Tagmodus aktivieren"
+msgstr "Activer le mode clair"
+
+msgid "Nachtmodus aktivieren"
+msgstr "Activer le mode sombre"
