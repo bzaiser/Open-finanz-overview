@@ -123,6 +123,7 @@ def profile_view(request):
         'default_backup_dir': get_default_backup_dir(),
     })
 
+import os
 import json
 from django.http import JsonResponse, FileResponse
 from django.views.decorators.http import require_POST
@@ -141,9 +142,24 @@ from .backup_service import (
 def create_backup_view(request):
     """
     Starts asynchronous backup task writing directly to user's configured backup_path (or default data/backups).
+    If custom_path is passed in POST, saves it immediately to the profile.
     If called via AJAX / POST, returns JSON with job_id for progress monitoring.
     """
     profile = request.user.profile
+
+    # If the user changed the backup path in the input field before clicking 'execute', apply and save it immediately
+    if request.method == 'POST':
+        custom_path = request.POST.get('custom_path')
+        if custom_path is not None:
+            clean_p = custom_path.strip() or None
+            if clean_p:
+                if not os.path.isabs(clean_p):
+                    return JsonResponse({'status': 'error', 'message': _("Bitte einen absoluten Pfad angeben.")}, status=400)
+                writable, err_msg = test_directory_writable(clean_p)
+                if not writable:
+                    return JsonResponse({'status': 'error', 'message': _(f"Keine Schreibrechte im Pfad: {err_msg}")}, status=400)
+            profile.backup_path = clean_p
+            profile.save(update_fields=['backup_path'])
 
     try:
         job_id, target_dir = start_background_backup(profile)

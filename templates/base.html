@@ -1053,12 +1053,21 @@
                 profileProgress.style.display = 'block';
             }
 
+            let postData = new FormData();
+            if (isProfile) {
+                const pathInput = document.getElementById('id_backup_path');
+                if (pathInput) {
+                    postData.append('custom_path', pathInput.value);
+                }
+            }
+
             fetch("{% url 'create_backup' %}", {
                 method: 'POST',
                 headers: {
                     'X-CSRFToken': '{{ csrf_token }}',
                     'X-Requested-With': 'XMLHttpRequest'
-                }
+                },
+                body: postData
             })
             .then(res => res.json())
             .then(data => {
