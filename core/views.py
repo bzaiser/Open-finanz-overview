@@ -110,11 +110,16 @@ def profile_view(request):
     harmonies = DesignHarmony.objects.filter(is_active=True).order_by('order', 'id')
     available_shares = get_real_accessible_shares()
     is_same_vol = is_same_volume_as_app(profile.backup_path)
+    in_docker = is_running_in_docker()
+    has_external_mount = any(s.get('is_other_volume') for s in available_shares)
+
     return render(request, 'core/profile.html', {
         'form': form,
         'harmonies': harmonies,
         'available_shares': available_shares,
         'is_same_volume': is_same_vol,
+        'is_in_docker': in_docker,
+        'has_external_mount': has_external_mount,
         'default_backup_dir': get_default_backup_dir(),
     })
 
@@ -128,7 +133,8 @@ from .backup_service import (
     get_real_accessible_shares,
     get_default_backup_dir,
     is_same_volume_as_app,
-    test_directory_writable
+    test_directory_writable,
+    is_running_in_docker
 )
 
 @login_required

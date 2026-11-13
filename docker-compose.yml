@@ -14,6 +14,7 @@ services:
       - ./data:/app/data
       - ./:/app
       - static_volume:/app/staticfiles
+      - ${BACKUP_DIR:-./data/backups}:/backups
     env_file:
       - ./.env
     environment:

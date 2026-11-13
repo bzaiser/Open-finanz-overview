@@ -228,7 +228,22 @@
                                         </li>
                                     </ul>
                                 </div>
-                                {% if is_same_volume and user.profile.backup_path %}
+                                {% if is_in_docker and not has_external_mount %}
+                                <div class="alert alert-info py-2 px-3 my-2 border-0 rounded-3" style="font-size: 0.72rem;">
+                                    <div class="d-flex align-items-start gap-2">
+                                        <i class="bi bi-info-circle-fill text-info fs-6 mt-0.5"></i>
+                                        <div>
+                                            <strong>{% trans "Kein getrenntes Backup-Laufwerk gemountet" %}</strong>
+                                            <p class="mb-1 text-muted">
+                                                {% trans "Die App läuft isoliert im Docker-Container. Auf dem gleichen Volume zu sichern ist nicht datensicher. Bitte sichere die Finanzdaten direkt über das NAS (z. B. Synology HyperBackup / Snapshot Replication des 'data'-Ordners) oder binde in der .env-Datei 'BACKUP_DIR' ein anderes Share ein." %}
+                                            </p>
+                                            <div class="text-body-secondary small">
+                                                {% trans "Tipp: Du kannst jederzeit ein manuelles ZIP über 'ZIP herunterladen' direkt auf deinen Rechner ziehen oder im Intervall 'Nie sichern' wählen." %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% elif is_same_volume and user.profile.backup_path %}
                                 <div class="alert alert-warning py-1 px-2 my-1 d-flex align-items-center gap-1" style="font-size: 0.68rem;">
                                     <i class="bi bi-exclamation-triangle-fill text-warning flex-shrink-0"></i>
                                     <span>{% trans "Hinweis: Dieser Pfad liegt auf demselben Laufwerk/Volume wie die Anwendung. Für echte Datensicherheit empfiehlt sich ein anderes Volume/USB/NAS-Share." %}</span>

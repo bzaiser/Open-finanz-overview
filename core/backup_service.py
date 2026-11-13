@@ -62,15 +62,40 @@ def test_directory_writable(path):
     except Exception as e:
         return False, str(e)
 
+def is_running_in_docker():
+    """Detects if app is running inside a Docker container."""
+    return os.environ.get('RUNNING_IN_DOCKER') == '1' or os.path.exists('/.dockerenv')
+
 def get_real_accessible_shares():
     """
     Scans the actual filesystem of the host/server/NAS for genuinely existing,
-    writable directories and mounted shares. Does NOT return non-existent dummy paths.
+    writable directories and mounted shares.
     """
     shares = []
-    app_drive = os.path.splitdrive(os.path.abspath(settings.BASE_DIR))[0].upper()
+    in_docker = is_running_in_docker()
 
-    if os.name == 'nt':
+    if in_docker:
+        # Check if an external /backups mount is present and different from /app
+        if os.path.exists('/backups') and os.path.isdir('/backups'):
+            writable, _err = test_directory_writable('/backups')
+            if writable:
+                # Check if /backups is really separate or just a symlink/mount of /app/data/backups
+                is_separate = True
+                try:
+                    if os.stat('/backups').st_dev == os.stat('/app/data').st_dev and os.path.abspath('/backups') == os.path.abspath('/app/data/backups'):
+                        is_separate = False
+                except Exception:
+                    pass
+
+                if is_separate:
+                    shares.append({
+                        'label': _("Externer NAS-Backup-Mount (/backups)"),
+                        'path': '/backups',
+                        'is_other_volume': True,
+                        'is_writable': True
+                    })
+    elif os.name == 'nt':
+        app_drive = os.path.splitdrive(os.path.abspath(settings.BASE_DIR))[0].upper()
         import string
         for letter in string.ascii_uppercase:
             drive_path = f"{letter}:\\"
@@ -86,16 +111,14 @@ def get_real_accessible_shares():
                         'is_writable': True
                     })
     else:
-        # Scan real mount points on Linux / NAS
+        # Generic Linux outside Docker
         candidate_bases = [
             '/volume1', '/volume2', '/volume3', '/volume4',
             '/volumeUSB1', '/volumeUSB2', '/share',
             '/mnt', '/media', '/backup', '/backups'
         ]
-        found_bases = set()
         for base in candidate_bases:
             if os.path.exists(base) and os.path.isdir(base):
-                # Check top-level or immediate sub-shares
                 try:
                     entries = os.listdir(base)
                     for entry in entries:
@@ -113,7 +136,6 @@ def get_real_accessible_shares():
                 except Exception:
                     pass
 
-                # Also test the base itself
                 writable, _err = test_directory_writable(base)
                 if writable:
                     shares.append({
@@ -123,14 +145,16 @@ def get_real_accessible_shares():
                         'is_writable': True
                     })
 
-    # Always provide default internal app directory as fallback option
-    default_dir = get_default_backup_dir()
-    shares.append({
-        'label': _("Standard App-Verzeichnis (data/backups)"),
-        'path': default_dir,
-        'is_other_volume': False,
-        'is_writable': True
-    })
+    # Note: We do NOT add /app/data/backups to the dropdown list if running in Docker,
+    # so users aren't offered the internal same-volume folder as a fake target!
+    if not in_docker:
+        default_dir = get_default_backup_dir()
+        shares.append({
+            'label': _("Standard App-Verzeichnis (data/backups)"),
+            'path': default_dir,
+            'is_other_volume': False,
+            'is_writable': True
+        })
 
     return shares
 
