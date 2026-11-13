@@ -139,6 +139,21 @@ class UserProfileForm(forms.ModelForm):
         label=_("Partner Birth Date")
     )
 
+    def clean_backup_path(self):
+        path = self.cleaned_data.get('backup_path')
+        if not path or not path.strip():
+            return None
+        clean = path.strip()
+        import os
+        from .backup_service import test_directory_writable
+        if not os.path.isabs(clean):
+            raise forms.ValidationError(_("Bitte einen absoluten Pfad eingeben (z. B. D:\\Backups oder /volume2/backup)."))
+        
+        writable, err_msg = test_directory_writable(clean)
+        if not writable:
+            raise forms.ValidationError(_(f"Keine Schreibrechte auf dem Server für diesen Pfad: {err_msg}"))
+        return clean
+
     class Meta:
         model = UserProfile
         fields = [

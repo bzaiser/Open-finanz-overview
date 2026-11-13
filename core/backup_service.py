@@ -39,64 +39,100 @@ def is_same_volume_as_app(target_directory):
     except Exception:
         return False
 
-def get_suggested_backup_paths():
+def test_directory_writable(path):
     """
-    Returns list of suggested valid backup directories depending on OS / environment.
-    Highlights external drives and second volumes.
+    Checks if a directory actually exists (or can be created) and has write permissions.
+    Returns (is_writable, error_message).
     """
-    suggestions = []
+    if not path or not path.strip():
+        return False, _("Kein Pfad angegeben.")
 
-    # Windows Desktop candidates: find other drives first
+    clean_path = path.strip()
+    # Reject relative paths that don't start with / or drive letter
+    if not os.path.isabs(clean_path):
+        return False, _("Bitte einen absoluten Pfad angeben (z. B. D:\\Backups oder /volume2/backup).")
+
+    try:
+        os.makedirs(clean_path, exist_ok=True)
+        test_file = os.path.join(clean_path, f".perm_test_{uuid.uuid4().hex[:6]}")
+        with open(test_file, 'w') as f:
+            f.write('write_check')
+        os.remove(test_file)
+        return True, ""
+    except Exception as e:
+        return False, str(e)
+
+def get_real_accessible_shares():
+    """
+    Scans the actual filesystem of the host/server/NAS for genuinely existing,
+    writable directories and mounted shares. Does NOT return non-existent dummy paths.
+    """
+    shares = []
+    app_drive = os.path.splitdrive(os.path.abspath(settings.BASE_DIR))[0].upper()
+
     if os.name == 'nt':
-        app_drive = os.path.splitdrive(os.path.abspath(settings.BASE_DIR))[0].upper()
-        
-        # Check other drives (C:, D:, E:, F:, Z: etc.)
-        for letter in ['C', 'D', 'E', 'F', 'G', 'Z']:
+        import string
+        for letter in string.ascii_uppercase:
             drive_path = f"{letter}:\\"
             if os.path.exists(drive_path):
-                is_other_volume = (drive_path[:2].upper() != app_drive)
-                suggestions.append({
-                    'label': f"{letter}: Laufwerk ({_('Separates Volume') if is_other_volume else _('Gleiches App-Volume')})",
-                    'path': os.path.join(drive_path, 'Backups', 'Finanzplan'),
-                    'desc': _("Externes / Zweites Laufwerk für echte Datensicherheit.") if is_other_volume else _("Gleiches Laufwerk wie App."),
-                    'is_other_volume': is_other_volume
-                })
-        
-        user_profile = os.environ.get('USERPROFILE', '')
-        if user_profile:
-            docs_backup = os.path.join(user_profile, 'Documents', 'Finanzplan_Backups')
-            suggestions.append({
-                'label': _("Windows Eigene Dokumente"),
-                'path': docs_backup,
-                'desc': _("Lokaler Dokumentenordner."),
-                'is_other_volume': os.path.splitdrive(docs_backup)[0].upper() != app_drive
-            })
+                writable, _ = test_directory_writable(drive_path)
+                if writable:
+                    is_other = (letter != app_drive.rstrip(':'))
+                    target_dir = os.path.join(drive_path, 'Backups', 'Finanzplan')
+                    shares.append({
+                        'label': f"{letter}: Laufwerk ({_('Getrenntes Volume') if is_other else _('App-Laufwerk')})",
+                        'path': target_dir,
+                        'is_other_volume': is_other,
+                        'is_writable': True
+                    })
     else:
-        # Linux / NAS candidates (Synology / QNAP / Docker / Generic Linux)
-        nas_candidates = [
-            ('/volume2/backups/finanzplan', 'Synology NAS (Separates Volume 2)', True),
-            ('/volumeUSB1/usbshare/backups', 'Synology NAS (Externe USB-Festplatte)', True),
-            ('/share/external/backups', 'QNAP NAS (Externes Backup-Share)', True),
-            ('/backup', 'Docker Mount / Externer Speicher (/backup)', True),
-            ('/volume1/backups/finanzplan', 'Synology NAS (Volume 1)', False),
+        # Scan real mount points on Linux / NAS
+        candidate_bases = [
+            '/volume1', '/volume2', '/volume3', '/volume4',
+            '/volumeUSB1', '/volumeUSB2', '/share',
+            '/mnt', '/media', '/backup', '/backups'
         ]
-        for c_path, c_label, is_ext in nas_candidates:
-            suggestions.append({
-                'label': c_label,
-                'path': c_path,
-                'desc': _("Separater Speicherort / USB-Platte.") if is_ext else _("Standard-Speicher."),
-                'is_other_volume': is_ext
-            })
+        found_bases = set()
+        for base in candidate_bases:
+            if os.path.exists(base) and os.path.isdir(base):
+                # Check top-level or immediate sub-shares
+                try:
+                    entries = os.listdir(base)
+                    for entry in entries:
+                        p = os.path.join(base, entry)
+                        if os.path.isdir(p):
+                            writable, _ = test_directory_writable(p)
+                            if writable:
+                                backup_subdir = os.path.join(p, 'finanzplan_backup')
+                                shares.append({
+                                    'label': f"{base}/{entry} ({_('Verfügbares Share')})",
+                                    'path': backup_subdir,
+                                    'is_other_volume': True,
+                                    'is_writable': True
+                                })
+                except Exception:
+                    pass
 
-    # Default fallback
-    suggestions.append({
-        'label': _("Standard App-Ordner (Nur temporär / Nicht getrennt)"),
-        'path': get_default_backup_dir(),
-        'desc': _("Achtung: Liegt auf dem gleichen Volume wie die Anwendung."),
-        'is_other_volume': False
+                # Also test the base itself
+                writable, _ = test_directory_writable(base)
+                if writable:
+                    shares.append({
+                        'label': f"{base} ({_('Mountpoint')})",
+                        'path': os.path.join(base, 'finanzplan_backup'),
+                        'is_other_volume': True,
+                        'is_writable': True
+                    })
+
+    # Always provide default internal app directory as fallback option
+    default_dir = get_default_backup_dir()
+    shares.append({
+        'label': _("Standard App-Verzeichnis (data/backups)"),
+        'path': default_dir,
+        'is_other_volume': False,
+        'is_writable': True
     })
 
-    return suggestions
+    return shares
 
 def get_job_status(job_id):
     with _jobs_lock:
@@ -126,8 +162,14 @@ def _backup_worker_task(job_id, profile_id, target_directory, max_keep):
         if not target_directory or not target_directory.strip():
             norm_target_dir = get_default_backup_dir()
         else:
-            norm_target_dir = os.path.abspath(os.path.expanduser(target_directory.strip()))
-        os.makedirs(norm_target_dir, exist_ok=True)
+            clean = target_directory.strip()
+            if not os.path.isabs(clean):
+                raise ValueError(_(f"Der Pfad '{clean}' ist kein absoluter Pfad."))
+            norm_target_dir = os.path.abspath(os.path.expanduser(clean))
+
+        writable, err_msg = test_directory_writable(norm_target_dir)
+        if not writable:
+            raise PermissionError(_(f"Keine Schreibrechte im Ordner '{norm_target_dir}': {err_msg}"))
 
         timestamp_str = timezone.now().strftime('%Y%m%d_%H%M%S')
         target_filename = f"finanzplan_backup_{timestamp_str}.zip"
@@ -242,11 +284,17 @@ def start_background_backup(profile):
     Spawns a background thread to generate and save backup into profile.backup_path or default folder.
     Returns (job_id, target_directory).
     """
-    target_path = (profile.backup_path if profile and profile.backup_path else '').strip()
-    if not target_path:
+    raw_path = (profile.backup_path if profile and profile.backup_path else '').strip()
+    if not raw_path:
         target_path = get_default_backup_dir()
     else:
-        target_path = os.path.abspath(os.path.expanduser(target_path))
+        if not os.path.isabs(raw_path):
+            raise ValueError(_(f"Der konfigurierte Sicherungspfad '{raw_path}' ist ungültig (kein absoluter Pfad)."))
+        target_path = os.path.abspath(os.path.expanduser(raw_path))
+
+    writable, err_msg = test_directory_writable(target_path)
+    if not writable:
+        raise PermissionError(_(f"Keine Schreibrechte im Zielordner '{target_path}': {err_msg}"))
 
     job_id = str(uuid.uuid4())
     with _jobs_lock:
