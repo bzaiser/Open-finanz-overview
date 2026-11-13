@@ -55,24 +55,12 @@ def card_config_context(request):
     # 3. Card groups for all modules
     user_card_groups = get_user_card_groups(user)
 
-    # 4. Backup Due Evaluation & Auto-Backup
+    # 4. Backup Due Evaluation
     backup_due = False
-    backup_auto_success = False
     if profile:
-        from core.backup_service import is_backup_due, save_backup_to_directory
+        from core.backup_service import is_backup_due
         if is_backup_due(profile):
-            if profile.backup_path:
-                # Automatic silent background backup to configured path
-                success, path, msg = save_backup_to_directory(profile.backup_path, max_keep=profile.backup_max_keep)
-                if success:
-                    from django.utils import timezone
-                    profile.backup_last_run = timezone.now()
-                    profile.save(update_fields=['backup_last_run'])
-                    backup_auto_success = True
-                else:
-                    backup_due = True
-            else:
-                backup_due = True
+            backup_due = True
 
     return {
         'card_config_user_groups': user_card_groups,
@@ -83,5 +71,4 @@ def card_config_context(request):
         'card_config_summary_layout': resolved_summary_layout,
         'card_config_layout': resolved_layout,
         'backup_due': backup_due,
-        'backup_auto_success': backup_auto_success,
     }

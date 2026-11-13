@@ -117,42 +117,59 @@ import json
 from django.http import JsonResponse, FileResponse
 from django.views.decorators.http import require_POST
 from .models import EditablePageContent
-from .backup_service import generate_backup_archive, save_backup_to_directory
+from .backup_service import start_background_backup, get_job_status
 
 @login_required
 def create_backup_view(request):
     """
-    Creates a full backup (SQLite DB + Media files).
-    If requested as download, returns the ZIP as attachment.
-    If profile has a backup_path, writes the file there as well.
+    Starts asynchronous backup task writing directly to user's configured backup_path.
+    If called via AJAX / POST, returns JSON with job_id for progress monitoring.
     """
     profile = request.user.profile
-    download_requested = request.GET.get('download') == '1'
+    if not profile.backup_path:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.method == 'POST':
+            return JsonResponse({
+                'status': 'error',
+                'message': _("Bitte hinterlege zuerst einen Sicherungs-Ordnerpfad in deinem Profil.")
+            }, status=400)
+        messages.warning(request, _("Bitte hinterlege zuerst einen Sicherungs-Ordnerpfad in deinem Profil."))
+        return redirect('profile')
 
-    saved_locally = False
-    local_msg = ""
-    if profile.backup_path:
-        success, path, msg = save_backup_to_directory(profile.backup_path, max_keep=profile.backup_max_keep)
-        saved_locally = success
-        local_msg = msg
+    try:
+        job_id, target_dir = start_background_backup(profile)
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.method == 'POST':
+            return JsonResponse({
+                'status': 'started',
+                'job_id': job_id,
+                'target_directory': target_dir
+            })
+        messages.info(request, _("Datensicherung im Hintergrund gestartet."))
+        return redirect(request.META.get('HTTP_REFERER', 'profile'))
+    except Exception as e:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.method == 'POST':
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+        messages.error(request, _(f"Fehler beim Starten der Sicherung: {e}"))
+        return redirect(request.META.get('HTTP_REFERER', 'profile'))
 
-    # Update profile last run timestamp
-    profile.backup_last_run = timezone.now()
-    profile.backup_dismissed_until = None
-    profile.save(update_fields=['backup_last_run', 'backup_dismissed_until'])
+@login_required
+def backup_progress_view(request, job_id):
+    """
+    Returns JSON progress of running backup job.
+    """
+    job = get_job_status(job_id)
+    if not job:
+        return JsonResponse({'status': 'not_found', 'message': _("Job nicht gefunden.")}, status=404)
 
-    if download_requested:
-        buffer, filename, stats = generate_backup_archive()
-        response = FileResponse(buffer, as_attachment=True, filename=filename)
-        response['Content-Type'] = 'application/zip'
-        return response
-
-    if saved_locally:
-        messages.success(request, _(f"Sicherung erfolgreich erstellt und gespeichert unter: {local_msg}"))
-    else:
-        messages.success(request, _("Sicherung wurde erfolgreich generiert."))
-
-    return redirect(request.META.get('HTTP_REFERER', 'profile'))
+    return JsonResponse({
+        'job_id': job['id'],
+        'status': job['status'],
+        'progress': job['progress'],
+        'step_label': job.get('step_label', ''),
+        'target_file': job.get('target_file', ''),
+        'filename': job.get('filename', ''),
+        'file_size_mb': job.get('file_size_mb', 0),
+        'error': job.get('error', None)
+    })
 
 @login_required
 @require_POST

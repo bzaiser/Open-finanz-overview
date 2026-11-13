@@ -1,111 +1,181 @@
 import os
 import io
 import glob
+import uuid
 import zipfile
 import sqlite3
-import datetime
+import threading
 from django.conf import settings
 from django.utils import timezone
+from django.utils.translation import gettext as _
 
-def generate_backup_archive():
-    """
-    Creates a ZIP archive in memory containing:
-    1. A consistent live backup of SQLite database (via sqlite3 backup API)
-    2. All uploaded media files (documents, contracts, images)
-    Returns a tuple of (BytesIO buffer, filename, stats_dict).
-    """
-    buffer = io.BytesIO()
-    db_path = settings.DATABASES['default']['NAME']
-    media_dir = getattr(settings, 'MEDIA_ROOT', os.path.join(settings.BASE_DIR, 'data', 'media'))
+# Thread-safe in-memory job storage
+BACKUP_JOBS = {}
+_jobs_lock = threading.Lock()
 
-    db_backed_up = False
-    media_count = 0
+def get_job_status(job_id):
+    with _jobs_lock:
+        return BACKUP_JOBS.get(job_id, None)
 
-    with zipfile.ZipFile(buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
-        # 1. SQLite Live Backup
-        if os.path.exists(db_path):
-            try:
-                src_conn = sqlite3.connect(db_path)
-                mem_conn = sqlite3.connect(':memory:')
-                src_conn.backup(mem_conn)
-                src_conn.close()
+def update_job_status(job_id, **kwargs):
+    with _jobs_lock:
+        if job_id in BACKUP_JOBS:
+            BACKUP_JOBS[job_id].update(kwargs)
 
-                if hasattr(mem_conn, 'serialize'):
-                    dump = mem_conn.serialize()
-                else:
-                    with open(db_path, 'rb') as f:
-                        dump = f.read()
-                mem_conn.close()
+def _backup_worker_task(job_id, profile_id, target_directory, max_keep):
+    try:
+        from core.models import UserProfile
+        profile = UserProfile.objects.filter(id=profile_id).first()
 
-                zip_file.writestr('database/db.sqlite3', dump)
-                db_backed_up = True
-            except Exception as e:
-                # Fallback to direct read
-                with open(db_path, 'rb') as f:
-                    zip_file.writestr('database/db.sqlite3', f.read())
-                db_backed_up = True
+        update_job_status(
+            job_id,
+            status='running',
+            progress=5,
+            step_label=_("Berechne Dateien für Datensicherung...")
+        )
 
-        # 2. Media Directory
+        db_path = settings.DATABASES['default']['NAME']
+        media_dir = getattr(settings, 'MEDIA_ROOT', os.path.join(settings.BASE_DIR, 'data', 'media'))
+
+        # Prepare target folder
+        norm_target_dir = os.path.normpath(target_directory.strip())
+        os.makedirs(norm_target_dir, exist_ok=True)
+
+        timestamp_str = timezone.now().strftime('%Y%m%d_%H%M%S')
+        target_filename = f"finanzplan_backup_{timestamp_str}.zip"
+        target_filepath = os.path.join(norm_target_dir, target_filename)
+
+        # Collect media files
+        media_files = []
         if os.path.exists(media_dir):
             for root, dirs, files in os.walk(media_dir):
                 for file in files:
                     full_p = os.path.join(root, file)
                     rel_p = os.path.relpath(full_p, media_dir)
-                    zip_file.write(full_p, os.path.join('media', rel_p))
-                    media_count += 1
+                    media_files.append((full_p, os.path.join('media', rel_p)))
 
-    buffer.seek(0)
-    timestamp_str = timezone.now().strftime('%Y%m%d_%H%M%S')
-    filename = f"finanzplan_backup_{timestamp_str}.zip"
+        total_items = 1 + len(media_files)
 
-    stats = {
-        'db_backed_up': db_backed_up,
-        'media_count': media_count,
-        'size_bytes': buffer.getbuffer().nbytes,
-        'timestamp': timezone.now()
-    }
-    return buffer, filename, stats
+        update_job_status(
+            job_id,
+            progress=15,
+            step_label=_("Erstelle konsistentes Datenbank-Abbild (SQLite)...")
+        )
 
-
-def save_backup_to_directory(target_directory, max_keep=5):
-    """
-    Writes a new backup archive to target_directory and rotates old backups.
-    Returns (success: bool, filepath: str, message: str)
-    """
-    if not target_directory:
-        return False, None, "No target directory specified."
-
-    target_directory = os.path.normpath(target_directory.strip())
-    if not os.path.exists(target_directory):
-        try:
-            os.makedirs(target_directory, exist_ok=True)
-        except Exception as e:
-            return False, None, f"Could not create directory {target_directory}: {e}"
-
-    buffer, filename, stats = generate_backup_archive()
-    target_path = os.path.join(target_directory, filename)
-
-    try:
-        with open(target_path, 'wb') as f:
-            f.write(buffer.getvalue())
-    except Exception as e:
-        return False, None, f"Failed to write backup to {target_path}: {e}"
-
-    # Rotate old backups
-    try:
-        pattern = os.path.join(target_directory, "finanzplan_backup_*.zip")
-        existing_backups = sorted(glob.glob(pattern), key=os.path.getmtime, reverse=True)
-        if len(existing_backups) > max_keep:
-            for old_file in existing_backups[max_keep:]:
+        with zipfile.ZipFile(target_filepath, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+            # 1. SQLite Live Backup
+            if os.path.exists(db_path):
                 try:
-                    os.remove(old_file)
+                    src_conn = sqlite3.connect(db_path)
+                    mem_conn = sqlite3.connect(':memory:')
+                    src_conn.backup(mem_conn)
+                    src_conn.close()
+
+                    if hasattr(mem_conn, 'serialize'):
+                        dump = mem_conn.serialize()
+                    else:
+                        with open(db_path, 'rb') as f:
+                            dump = f.read()
+                    mem_conn.close()
+
+                    zip_file.writestr('database/db.sqlite3', dump)
+                except Exception:
+                    with open(db_path, 'rb') as f:
+                        zip_file.writestr('database/db.sqlite3', f.read())
+
+            update_job_status(
+                job_id,
+                progress=25,
+                step_label=_("Datenbank gesichert. Komprimiere Dokumente & Belege...")
+            )
+
+            # 2. Add media files with progress reporting
+            for idx, (full_p, zip_p) in enumerate(media_files, start=1):
+                try:
+                    zip_file.write(full_p, zip_p)
                 except Exception:
                     pass
-    except Exception:
-        pass
 
-    return True, target_path, f"Backup successfully saved ({stats['size_bytes'] / (1024*1024):.2f} MB)."
+                current_progress = 25 + int((idx / max(len(media_files), 1)) * 65)
+                if idx % 5 == 0 or idx == len(media_files):
+                    update_job_status(
+                        job_id,
+                        progress=min(current_progress, 90),
+                        step_label=_(f"Komprimiere Dokumente ({idx} / {len(media_files)})...")
+                    )
 
+        # 3. Finalize & Rotate
+        update_job_status(
+            job_id,
+            progress=95,
+            step_label=_("Bereinige ältere Sicherungen...")
+        )
+
+        # Retention rotation
+        try:
+            pattern = os.path.join(norm_target_dir, "finanzplan_backup_*.zip")
+            existing_backups = sorted(glob.glob(pattern), key=os.path.getmtime, reverse=True)
+            if len(existing_backups) > max_keep:
+                for old_file in existing_backups[max_keep:]:
+                    try:
+                        os.remove(old_file)
+                    except Exception:
+                        pass
+        except Exception:
+            pass
+
+        file_size_mb = os.path.getsize(target_filepath) / (1024 * 1024)
+
+        if profile:
+            profile.backup_last_run = timezone.now()
+            profile.backup_dismissed_until = None
+            profile.save(update_fields=['backup_last_run', 'backup_dismissed_until'])
+
+        update_job_status(
+            job_id,
+            status='completed',
+            progress=100,
+            step_label=_(f"Sicherung erfolgreich erstellt ({file_size_mb:.2f} MB)!"),
+            target_file=target_filepath,
+            filename=target_filename,
+            file_size_mb=file_size_mb
+        )
+
+    except Exception as e:
+        update_job_status(
+            job_id,
+            status='failed',
+            error=str(e),
+            step_label=_(f"Fehler bei Sicherung: {e}")
+        )
+
+def start_background_backup(profile):
+    """
+    Spawns a background thread to generate and save backup into profile.backup_path.
+    Returns (job_id, target_directory).
+    """
+    if not profile or not profile.backup_path:
+        raise ValueError(_("Kein Sicherungspfad im Profil hinterlegt."))
+
+    job_id = str(uuid.uuid4())
+    with _jobs_lock:
+        BACKUP_JOBS[job_id] = {
+            'id': job_id,
+            'status': 'pending',
+            'progress': 0,
+            'step_label': _("Initialisiere Datensicherung..."),
+            'target_file': None,
+            'error': None,
+            'created_at': timezone.now()
+        }
+
+    thread = threading.Thread(
+        target=_backup_worker_task,
+        args=(job_id, profile.id, profile.backup_path, profile.backup_max_keep),
+        daemon=True
+    )
+    thread.start()
+    return job_id, profile.backup_path
 
 def is_backup_due(profile):
     """

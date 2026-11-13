@@ -819,35 +819,61 @@
     </nav>
     <main class="container-fluid">
         {% if user.is_authenticated and backup_due %}
-        <!-- Backup Due Notification Banner -->
-        <div class="alert alert-warning alert-dismissible fade show d-flex flex-wrap align-items-center justify-content-between gap-2 shadow-sm rounded-4 border-0 mb-4" role="alert" style="background-color: color-mix(in srgb, #fd7e14 15%, var(--app-card-bg, #ffffff)); color: var(--app-card-color, #212529); border-left: 5px solid #fd7e14 !important;">
-            <div class="d-flex align-items-center gap-2">
-                <i class="bi bi-shield-exclamation fs-4 text-warning"></i>
-                <div>
-                    <strong>{% trans "Datensicherung empfohlen!" %}</strong>
-                    <span class="d-block d-md-inline small opacity-85 ms-md-1">
-                        {% if user.profile.backup_last_run %}
-                            {% trans "Deine letzte Sicherung liegt länger zurück" %} ({{ user.profile.backup_last_run|date:"SHORT_DATE_FORMAT" }}).
-                        {% else %}
-                            {% trans "Es wurde bisher noch keine Sicherung deiner Datenbank und Dokumente erstellt." %}
-                        {% endif %}
-                        {% trans "Sichere deine Daten regelmäßig gegen Datenverlust." %}
-                    </span>
+        <!-- Backup Due Notification Banner with Live Progress -->
+        <div id="global-backup-banner" class="alert alert-warning alert-dismissible fade show shadow-sm rounded-4 border-0 mb-4" role="alert" style="background-color: color-mix(in srgb, #fd7e14 15%, var(--app-card-bg, #ffffff)); color: var(--app-card-color, #212529); border-left: 5px solid #fd7e14 !important;">
+            <div id="backup-banner-prompt" class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-shield-exclamation fs-4 text-warning"></i>
+                    <div>
+                        <strong>{% trans "Datensicherung empfohlen!" %}</strong>
+                        <span class="d-block d-md-inline small opacity-85 ms-md-1">
+                            {% if user.profile.backup_last_run %}
+                                {% trans "Deine letzte Sicherung liegt länger zurück" %} ({{ user.profile.backup_last_run|date:"SHORT_DATE_FORMAT" }}).
+                            {% else %}
+                                {% trans "Es wurde bisher noch keine Sicherung deiner Datenbank und Dokumente erstellt." %}
+                            {% endif %}
+                            {% if user.profile.backup_path %}
+                                {% trans "Zielordner:" %} <code class="text-body">{{ user.profile.backup_path }}</code>
+                            {% else %}
+                                {% trans "Bitte hinterlege im Profil einen Sicherungsordner." %}
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    {% if user.profile.backup_path %}
+                    <button type="button" class="btn btn-warning btn-sm rounded-pill px-3 fw-bold text-dark shadow-sm" onclick="triggerAsyncBackup('banner')">
+                        <i class="bi bi-play-circle me-1"></i>{% trans "Sicherung jetzt starten" %}
+                    </button>
+                    {% else %}
+                    <a href="{% url 'profile' %}#backup-section" class="btn btn-warning btn-sm rounded-pill px-3 fw-bold text-dark shadow-sm">
+                        <i class="bi bi-folder-plus me-1"></i>{% trans "Pfad hinterlegen" %}
+                    </a>
+                    {% endif %}
+                    <a href="{% url 'profile' %}#backup-section" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+                        <i class="bi bi-gear me-1"></i>{% trans "Einstellungen / NAS" %}
+                    </a>
+                    <form method="post" action="{% url 'dismiss_backup_warning' %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-link text-muted text-decoration-none" title="{% trans 'Erinnerung für 7 Tage stummschalten' %}">
+                            <i class="bi bi-x-circle me-1"></i>{% trans "7 Tage ausblenden" %}
+                        </button>
+                    </form>
                 </div>
             </div>
-            <div class="d-flex align-items-center gap-2">
-                <a href="{% url 'create_backup' %}?download=1" class="btn btn-warning btn-sm rounded-pill px-3 fw-bold text-dark shadow-sm">
-                    <i class="bi bi-download me-1"></i>{% trans "Jetzt sichern (Download)" %}
-                </a>
-                <a href="{% url 'profile' %}#backup-section" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
-                    <i class="bi bi-gear me-1"></i>{% trans "Einstellungen / NAS" %}
-                </a>
-                <form method="post" action="{% url 'dismiss_backup_warning' %}" class="d-inline">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-sm btn-link text-muted text-decoration-none" title="{% trans 'Erinnerung für 7 Tage stummschalten' %}">
-                        <i class="bi bi-x-circle me-1"></i>{% trans "7 Tage ausblenden" %}
-                    </button>
-                </form>
+
+            <!-- Banner Live Progress Area (hidden by default) -->
+            <div id="backup-banner-progress" style="display: none;">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="fw-bold small d-flex align-items-center gap-2" id="backup-banner-step">
+                        <span class="spinner-border spinner-border-sm text-warning" role="status"></span>
+                        <span>{% trans "Datensicherung läuft im Hintergrund..." %}</span>
+                    </span>
+                    <span class="fw-bold font-monospace small" id="backup-banner-percent">0 %</span>
+                </div>
+                <div class="progress rounded-pill bg-body-tertiary" style="height: 10px;">
+                    <div id="backup-banner-bar" class="progress-bar progress-bar-striped progress-bar-animated bg-warning" role="progressbar" style="width: 0%;"></div>
+                </div>
             </div>
         </div>
         {% endif %}
@@ -991,6 +1017,141 @@
 
     {% if user.is_authenticated %}
         {% include "finance/includes/card_config_modal.html" %}
+        
+        <!-- Global Async Backup Runner Script -->
+        <script>
+        function triggerAsyncBackup(source) {
+            const isBanner = source === 'banner';
+            const isProfile = source === 'profile';
+
+            const bannerPrompt = document.getElementById('backup-banner-prompt');
+            const bannerProgress = document.getElementById('backup-banner-progress');
+            const bannerStep = document.getElementById('backup-banner-step');
+            const bannerBar = document.getElementById('backup-banner-bar');
+            const bannerPercent = document.getElementById('backup-banner-percent');
+
+            const profileBtn = document.getElementById('btn-profile-start-backup');
+            const profileProgress = document.getElementById('backup-profile-progress-container');
+            const profileStep = document.getElementById('backup-profile-step');
+            const profileBar = document.getElementById('backup-profile-bar');
+            const profilePercent = document.getElementById('backup-profile-percent');
+            const profileTargetMsg = document.getElementById('backup-profile-target-msg');
+
+            if (isBanner && bannerPrompt && bannerProgress) {
+                bannerPrompt.style.display = 'none';
+                bannerProgress.style.display = 'block';
+            }
+            if (isProfile && profileBtn && profileProgress) {
+                profileBtn.disabled = true;
+                profileProgress.style.display = 'block';
+            }
+
+            fetch("{% url 'create_backup' %}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'started' && data.job_id) {
+                    pollBackupJob(data.job_id, source);
+                } else {
+                    const err = data.message || '{% trans "Konnte Sicherung nicht starten." %}';
+                    alert(err);
+                    if (isBanner && bannerPrompt) bannerPrompt.style.display = 'flex';
+                    if (isBanner && bannerProgress) bannerProgress.style.display = 'none';
+                    if (isProfile && profileBtn) profileBtn.disabled = false;
+                    if (isProfile && profileProgress) profileProgress.style.display = 'none';
+                }
+            })
+            .catch(err => {
+                alert('{% trans "Netzwerkfehler beim Starten der Sicherung." %}');
+                if (isBanner && bannerPrompt) bannerPrompt.style.display = 'flex';
+                if (isBanner && bannerProgress) bannerProgress.style.display = 'none';
+                if (isProfile && profileBtn) profileBtn.disabled = false;
+                if (isProfile && profileProgress) profileProgress.style.display = 'none';
+            });
+        }
+
+        function pollBackupJob(jobId, source) {
+            const isBanner = source === 'banner';
+            const isProfile = source === 'profile';
+
+            const bannerStep = document.getElementById('backup-banner-step');
+            const bannerBar = document.getElementById('backup-banner-bar');
+            const bannerPercent = document.getElementById('backup-banner-percent');
+            const globalBanner = document.getElementById('global-backup-banner');
+
+            const profileStep = document.getElementById('backup-profile-step');
+            const profileBar = document.getElementById('backup-profile-bar');
+            const profilePercent = document.getElementById('backup-profile-percent');
+            const profileTargetMsg = document.getElementById('backup-profile-target-msg');
+            const profileBtn = document.getElementById('btn-profile-start-backup');
+
+            const pollInterval = setInterval(() => {
+                fetch("/profile/backup/progress/" + jobId + "/", {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(r => r.json())
+                .then(job => {
+                    const pct = (job.progress || 0) + '%';
+                    const label = job.step_label || '';
+
+                    if (isBanner && bannerBar) {
+                        bannerBar.style.width = pct;
+                        if (bannerPercent) bannerPercent.innerText = pct;
+                        if (bannerStep) bannerStep.innerText = label;
+                    }
+
+                    if (isProfile && profileBar) {
+                        profileBar.style.width = pct;
+                        if (profilePercent) profilePercent.innerText = pct;
+                        if (profileStep) profileStep.innerText = label;
+                    }
+
+                    if (job.status === 'completed') {
+                        clearInterval(pollInterval);
+
+                        if (isBanner && globalBanner) {
+                            if (bannerBar) {
+                                bannerBar.classList.remove('bg-warning');
+                                bannerBar.classList.add('bg-success');
+                            }
+                            if (bannerStep) bannerStep.innerHTML = '<i class="bi bi-check-circle-fill text-success me-1"></i> ' + label;
+                            setTimeout(() => {
+                                globalBanner.style.transition = 'opacity 0.8s ease';
+                                globalBanner.style.opacity = '0';
+                                setTimeout(() => globalBanner.remove(), 800);
+                            }, 4000);
+                        }
+
+                        if (isProfile) {
+                            if (profileBtn) profileBtn.disabled = false;
+                            if (profileStep) profileStep.innerHTML = '<i class="bi bi-check-circle-fill text-success me-1"></i> ' + label;
+                            if (profileTargetMsg && job.target_file) {
+                                profileTargetMsg.innerText = '{% trans "Datei:" %} ' + job.target_file;
+                            }
+                        }
+                    } else if (job.status === 'failed') {
+                        clearInterval(pollInterval);
+                        const errMsg = job.error || '{% trans "Sicherung fehlgeschlagen." %}';
+                        if (isBanner && bannerStep) {
+                            bannerStep.innerHTML = '<i class="bi bi-exclamation-triangle-fill text-danger me-1"></i> ' + errMsg;
+                        }
+                        if (isProfile) {
+                            if (profileBtn) profileBtn.disabled = false;
+                            if (profileStep) profileStep.innerHTML = '<i class="bi bi-exclamation-triangle-fill text-danger me-1"></i> ' + errMsg;
+                        }
+                    }
+                })
+                .catch(() => {
+                    clearInterval(pollInterval);
+                });
+            }, 500);
+        }
+        </script>
     {% endif %}
 
     <script>document.body.addEventListener('htmx:configRequest', (e) => { e.detail.headers['X-CSRFToken'] = '{{csrf_token}}'; });</script>
