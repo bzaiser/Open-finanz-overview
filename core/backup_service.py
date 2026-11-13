@@ -30,8 +30,8 @@ def is_same_volume_as_app(target_directory):
         norm_app = os.path.abspath(settings.BASE_DIR)
 
         if os.name == 'nt':
-            drive_target, _ = os.path.splitdrive(norm_target)
-            drive_app, _ = os.path.splitdrive(norm_app)
+            drive_target, _rest1 = os.path.splitdrive(norm_target)
+            drive_app, _rest2 = os.path.splitdrive(norm_app)
             return drive_target.upper() == drive_app.upper()
         else:
             # Check mount points on Linux/Unix
@@ -75,7 +75,7 @@ def get_real_accessible_shares():
         for letter in string.ascii_uppercase:
             drive_path = f"{letter}:\\"
             if os.path.exists(drive_path):
-                writable, _ = test_directory_writable(drive_path)
+                writable, _err = test_directory_writable(drive_path)
                 if writable:
                     is_other = (letter != app_drive.rstrip(':'))
                     target_dir = os.path.join(drive_path, 'Backups', 'Finanzplan')
@@ -101,7 +101,7 @@ def get_real_accessible_shares():
                     for entry in entries:
                         p = os.path.join(base, entry)
                         if os.path.isdir(p):
-                            writable, _ = test_directory_writable(p)
+                            writable, _err = test_directory_writable(p)
                             if writable:
                                 backup_subdir = os.path.join(p, 'finanzplan_backup')
                                 shares.append({
@@ -114,7 +114,7 @@ def get_real_accessible_shares():
                     pass
 
                 # Also test the base itself
-                writable, _ = test_directory_writable(base)
+                writable, _err = test_directory_writable(base)
                 if writable:
                     shares.append({
                         'label': f"{base} ({_('Mountpoint')})",
