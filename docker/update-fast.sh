@@ -27,9 +27,10 @@ echo "Ensuring project-wide permissions..."
 chmod -R a+rwX .
 chmod +x manage.py
 
-# Ensure data and ollama directories exist
+# Ensure data, backup and ollama directories exist
 echo "Preparing data directories..."
 mkdir -p "$ROOT_DIR/data/ollama"
+mkdir -p "$ROOT_DIR/data/backups"
 chmod -R 777 "$ROOT_DIR/data"
 
 # Install potential new requirements (FAST update)

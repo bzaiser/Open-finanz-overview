@@ -27,6 +27,7 @@ chmod +x manage.py
 
 # Ensure data directory is writeable
 echo "Preparing data directories..."
+mkdir -p "$ROOT_DIR/data/backups"
 chmod -R 777 "$ROOT_DIR/data"
 
 # Rebuild the docker image (fast since it uses cache)
