@@ -208,24 +208,38 @@
                                     <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="{% trans 'Typische Pfade auswählen' %}">
                                         <i class="bi bi-folder2-open me-1"></i>{% trans "Vorschläge" %}
                                     </button>
-                                    <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="font-size: 0.75rem; max-width: 320px;">
-                                        <li><h6 class="dropdown-header py-1" style="font-size: 0.7rem;">{% trans "System- & NAS-Pfade" %}</h6></li>
+                                    <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="font-size: 0.75rem; max-width: 340px;">
+                                        <li><h6 class="dropdown-header py-1 text-success fw-bold" style="font-size: 0.7rem;"><i class="bi bi-hdd-network me-1"></i>{% trans "Getrennte Speicherorte (Empfohlen)" %}</h6></li>
                                         {% for s in suggested_paths %}
+                                        {% if s.is_other_volume %}
                                         <li>
                                             <a class="dropdown-item py-1 text-wrap" href="javascript:void(0);" onclick="setBackupPath('{{ s.path|escapejs }}')">
-                                                <strong>{{ s.label }}</strong><br>
+                                                <strong class="text-success">{{ s.label }}</strong><br>
                                                 <code class="text-muted" style="font-size: 0.65rem;">{{ s.path }}</code>
                                             </a>
                                         </li>
+                                        {% endif %}
                                         {% endfor %}
                                         <li><hr class="dropdown-divider my-1"></li>
+                                        <li><h6 class="dropdown-header py-1 text-muted" style="font-size: 0.7rem;">{% trans "Gleiches Laufwerk / App-Ordner" %}</h6></li>
+                                        {% for s in suggested_paths %}
+                                        {% if not s.is_other_volume %}
                                         <li>
-                                            <a class="dropdown-item py-1 text-danger" href="javascript:void(0);" onclick="setBackupPath('')">
-                                                <i class="bi bi-arrow-counterclockwise me-1"></i>{% trans "Zurücksetzen auf Standard" %}
+                                            <a class="dropdown-item py-1 text-wrap text-muted" href="javascript:void(0);" onclick="setBackupPath('{{ s.path|escapejs }}')">
+                                                <span>{{ s.label }}</span><br>
+                                                <code class="text-muted" style="font-size: 0.65rem;">{{ s.path }}</code>
                                             </a>
                                         </li>
+                                        {% endif %}
+                                        {% endfor %}
                                     </ul>
                                 </div>
+                                {% if is_same_volume and user.profile.backup_path %}
+                                <div class="alert alert-warning py-1 px-2 my-1 d-flex align-items-center gap-1" style="font-size: 0.68rem;">
+                                    <i class="bi bi-exclamation-triangle-fill text-warning flex-shrink-0"></i>
+                                    <span>{% trans "Hinweis: Dieser Pfad liegt auf demselben Laufwerk/Volume wie die Anwendung. Für echte Datensicherheit empfiehlt sich ein anderes Volume/USB/NAS-Share." %}</span>
+                                </div>
+                                {% endif %}
                                 <small class="text-muted d-block" style="font-size: 0.65rem;">
                                     {% trans "Leer lassen für Standard (" %}<code>{{ default_backup_dir }}</code>{% trans "). Wichtig: Der Pfad muss für den Server/NAS beschreibbar sein, auf dem die App läuft." %}
                                 </small>

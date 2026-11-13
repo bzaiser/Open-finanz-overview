@@ -109,10 +109,12 @@ def profile_view(request):
         form = UserProfileForm(instance=profile)
     harmonies = DesignHarmony.objects.filter(is_active=True).order_by('order', 'id')
     suggested_paths = get_suggested_backup_paths()
+    is_same_vol = is_same_volume_as_app(profile.backup_path)
     return render(request, 'core/profile.html', {
         'form': form,
         'harmonies': harmonies,
         'suggested_paths': suggested_paths,
+        'is_same_volume': is_same_vol,
         'default_backup_dir': get_default_backup_dir(),
     })
 
@@ -120,7 +122,13 @@ import json
 from django.http import JsonResponse, FileResponse
 from django.views.decorators.http import require_POST
 from .models import EditablePageContent
-from .backup_service import start_background_backup, get_job_status, get_suggested_backup_paths, get_default_backup_dir
+from .backup_service import (
+    start_background_backup,
+    get_job_status,
+    get_suggested_backup_paths,
+    get_default_backup_dir,
+    is_same_volume_as_app
+)
 
 @login_required
 def create_backup_view(request):

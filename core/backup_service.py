@@ -19,49 +19,82 @@ def get_default_backup_dir():
     os.makedirs(path, exist_ok=True)
     return os.path.abspath(path)
 
+def is_same_volume_as_app(target_directory):
+    """
+    Checks if the target backup directory is on the exact same drive / mount volume as the app.
+    """
+    if not target_directory:
+        return True
+    try:
+        norm_target = os.path.abspath(os.path.expanduser(target_directory))
+        norm_app = os.path.abspath(settings.BASE_DIR)
+
+        if os.name == 'nt':
+            drive_target, _ = os.path.splitdrive(norm_target)
+            drive_app, _ = os.path.splitdrive(norm_app)
+            return drive_target.upper() == drive_app.upper()
+        else:
+            # Check mount points on Linux/Unix
+            return os.stat(norm_target).st_dev == os.stat(norm_app).st_dev
+    except Exception:
+        return False
+
 def get_suggested_backup_paths():
     """
     Returns list of suggested valid backup directories depending on OS / environment.
+    Highlights external drives and second volumes.
     """
-    suggestions = [
-        {
-            'label': _("Standard App-Verzeichnis (Empfohlen)"),
-            'path': get_default_backup_dir(),
-            'desc': _("Liegt direkt im Datenordner der Anwendung (Server/Desktop).")
-        }
-    ]
+    suggestions = []
 
-    # Windows Desktop candidates
+    # Windows Desktop candidates: find other drives first
     if os.name == 'nt':
+        app_drive = os.path.splitdrive(os.path.abspath(settings.BASE_DIR))[0].upper()
+        
+        # Check other drives (C:, D:, E:, F:, Z: etc.)
+        for letter in ['C', 'D', 'E', 'F', 'G', 'Z']:
+            drive_path = f"{letter}:\\"
+            if os.path.exists(drive_path):
+                is_other_volume = (drive_path[:2].upper() != app_drive)
+                suggestions.append({
+                    'label': f"{letter}: Laufwerk ({_('Separates Volume') if is_other_volume else _('Gleiches App-Volume')})",
+                    'path': os.path.join(drive_path, 'Backups', 'Finanzplan'),
+                    'desc': _("Externes / Zweites Laufwerk für echte Datensicherheit.") if is_other_volume else _("Gleiches Laufwerk wie App."),
+                    'is_other_volume': is_other_volume
+                })
+        
         user_profile = os.environ.get('USERPROFILE', '')
         if user_profile:
             docs_backup = os.path.join(user_profile, 'Documents', 'Finanzplan_Backups')
             suggestions.append({
                 'label': _("Windows Eigene Dokumente"),
                 'path': docs_backup,
-                'desc': _("Lokaler Dokumentenordner auf diesem PC.")
+                'desc': _("Lokaler Dokumentenordner."),
+                'is_other_volume': os.path.splitdrive(docs_backup)[0].upper() != app_drive
             })
-        for drive in ['D:\\', 'E:\\', 'F:\\']:
-            if os.path.exists(drive):
-                suggestions.append({
-                    'label': f"{drive} { _('Laufwerk') }",
-                    'path': os.path.join(drive, 'Backups', 'Finanzplan'),
-                    'desc': _("Externes / Zweites Laufwerk auf dem Host.")
-                })
     else:
         # Linux / NAS candidates (Synology / QNAP / Docker / Generic Linux)
         nas_candidates = [
-            ('/volume1/backups/finanzplan', 'Synology NAS (Volume 1)'),
-            ('/share/Backups/finanzplan', 'QNAP NAS (Share)'),
-            ('/var/backups/finanzplan', 'Linux Server (/var/backups)'),
-            ('/backup', 'Docker Backup Mount (/backup)'),
+            ('/volume2/backups/finanzplan', 'Synology NAS (Separates Volume 2)', True),
+            ('/volumeUSB1/usbshare/backups', 'Synology NAS (Externe USB-Festplatte)', True),
+            ('/share/external/backups', 'QNAP NAS (Externes Backup-Share)', True),
+            ('/backup', 'Docker Mount / Externer Speicher (/backup)', True),
+            ('/volume1/backups/finanzplan', 'Synology NAS (Volume 1)', False),
         ]
-        for c_path, c_label in nas_candidates:
+        for c_path, c_label, is_ext in nas_candidates:
             suggestions.append({
                 'label': c_label,
                 'path': c_path,
-                'desc': _("Verzeichnis auf dem Server/NAS.")
+                'desc': _("Separater Speicherort / USB-Platte.") if is_ext else _("Standard-Speicher."),
+                'is_other_volume': is_ext
             })
+
+    # Default fallback
+    suggestions.append({
+        'label': _("Standard App-Ordner (Nur temporär / Nicht getrennt)"),
+        'path': get_default_backup_dir(),
+        'desc': _("Achtung: Liegt auf dem gleichen Volume wie die Anwendung."),
+        'is_other_volume': False
+    })
 
     return suggestions
 
