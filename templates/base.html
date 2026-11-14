@@ -571,6 +571,35 @@
             line-height: 1.25;
             text-align: center;
         }
+        .app-action-btn-circle {
+            background: var(--app-gradient) !important;
+            border: none !important;
+            color: #ffffff !important;
+            width: 38px !important;
+            height: 38px !important;
+            min-width: 38px !important;
+            min-height: 38px !important;
+            border-radius: 50% !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 0 !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12) !important;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
+        .app-action-btn-circle:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2) !important;
+            color: #ffffff !important;
+            filter: brightness(1.1);
+        }
+        .app-action-btn-circle:active {
+            transform: translateY(0) scale(0.98);
+        }
+        .app-action-btn-circle i {
+            font-size: 1rem !important;
+            line-height: 1 !important;
+        }
         .table th, .table td {
             vertical-align: middle;
         }
