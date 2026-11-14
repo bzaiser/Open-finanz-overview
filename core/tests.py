@@ -45,3 +45,13 @@ class ProfileThemeStudioTests(TestCase):
         self.assertIn("summary_layout", dc)
         self.assertIn("card_groups", dc)
 
+    def test_get_contrast_text_uses_perceptual_luminance(self):
+        from .theme_engine import get_contrast_text
+        self.assertEqual(get_contrast_text("#0d6efd"), "#ffffff")
+        self.assertEqual(get_contrast_text("#198754"), "#ffffff")
+        self.assertEqual(get_contrast_text("#dc3545"), "#ffffff")
+        self.assertEqual(get_contrast_text("#ffc107"), "#1e293b")
+        self.assertEqual(get_contrast_text("#A5D5C1"), "#1e293b")
+        self.assertEqual(get_contrast_text("#ffffff"), "#1e293b")
+
+

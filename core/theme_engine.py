@@ -80,8 +80,21 @@ def hsl_to_hex(h, s, l):
 
 
 def get_contrast_text(hex_str):
-    hsl = hex_to_hsl(hex_str)
-    return "#1e293b" if hsl["l"] >= 66 else "#ffffff"
+    if not hex_str or not isinstance(hex_str, str):
+        return "#ffffff"
+    clean = hex_str.strip().lstrip("#")
+    if len(clean) == 3:
+        clean = "".join(c * 2 for c in clean)
+    if len(clean) != 6:
+        return "#ffffff"
+    try:
+        r = int(clean[0:2], 16)
+        g = int(clean[2:4], 16)
+        b = int(clean[4:6], 16)
+    except ValueError:
+        return "#ffffff"
+    yiq = (r * 299 + g * 587 + b * 114) / 1000.0
+    return "#1e293b" if yiq >= 175 else "#ffffff"
 
 
 def _compute_single_state(st_h, st_side, idx, base1, base2, mood_key, m, is_dark):
