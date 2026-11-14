@@ -48,15 +48,15 @@
                             </div>
                             
                             <div class="col-12 mb-2">
-                                <div class="bg-light bg-opacity-5 rounded-2 p-1 px-2 border border-white border-opacity-10 d-flex justify-content-between align-items-center" style="background: rgba(255,255,255,0.03);">
-                                    <span class="text-muted" style="font-size: 0.65rem;">{% trans "Username (Login)" %}</span>
+                                <div class="rounded-2 p-1 px-2 border d-flex justify-content-between align-items-center" style="background-color: var(--app-input-bg); color: var(--app-input-color); border-color: var(--app-input-border) !important;">
+                                    <span class="opacity-75" style="font-size: 0.65rem;">{% trans "Username (Login)" %}</span>
                                     <span class="fw-bold" style="font-size: 0.75rem;">{{ user.username }}</span>
                                 </div>
                             </div>
 
                             <!-- Avatar Section (Compact) -->
                             <div class="col-12 mb-2">
-                                <div class="d-flex align-items-center gap-2 p-2 rounded-3 border border-dashed bg-light bg-opacity-5">
+                                <div class="d-flex align-items-center gap-2 p-2 rounded-3 border border-dashed" style="background-color: var(--app-input-bg); color: var(--app-input-color); border-color: var(--app-input-border) !important;">
                                     <div class="flex-shrink-0">
                                         {% if user.profile.avatar %}
                                             <img src="{{ user.profile.avatar.url }}" class="rounded-circle shadow-sm border border-1 border-white" width="40" height="40" style="object-fit: cover;">
