@@ -137,6 +137,18 @@ def profile_view(request):
                 bg_custom=bg_custom,
             )
 
+            manual_precision = request.POST.get('theme_manual_precision') == '1'
+            if sync_cards and not manual_precision:
+                prof.primary_color = palette['primary_color']
+                prof.background_color = palette['background_color']
+                prof.text_color = palette['text_color']
+                prof.sidebar_bg_color = palette['sidebar_bg_color']
+                prof.table_header_bg_color = palette['table_header_bg_color']
+                prof.table_header_text_color = palette['table_header_text_color']
+                prof.table_body_bg_color = palette['table_body_bg_color']
+                prof.table_body_text_color = palette['table_body_text_color']
+                prof.table_border_color = palette['table_border_color']
+
             if sync_cards:
                 dc = apply_theme_palette_to_cards(dc, palette)
 

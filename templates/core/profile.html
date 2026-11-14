@@ -233,6 +233,7 @@
                             </div>
 
                             <div class="form-check form-switch mt-3 pt-2 border-top border-secondary border-opacity-25">
+                                <input type="hidden" id="studioPrecisionManual" name="theme_manual_precision" value="0">
                                 <input class="form-check-input" type="checkbox" role="switch" id="studioSyncCards" name="theme_sync_cards" {% if theme_studio.sync_cards_and_charts %}checked{% endif %}>
                                 <label class="form-check-label small fw-semibold" for="studioSyncCards" style="font-size: 0.75rem;">
                                     {% trans "KPI-Karten, Kategorien & Diagramme automatisch an Design-Stimmung anpassen" %}
@@ -428,6 +429,8 @@
         const studioBgMode = document.getElementById('studioBgMode');
         const studioBgCustom = document.getElementById('studioBgCustom');
         const studioSwatchGrid = document.getElementById('studioSwatchGrid');
+        const studioSyncCards = document.getElementById('studioSyncCards');
+        const studioPrecisionManual = document.getElementById('studioPrecisionManual');
 
         const STUDIO_STATES = [
             { n: "{% trans '1. OK / Ampel Grün'|escapejs %}", h: 142, t: "{% trans '✓ Stabil'|escapejs %}", side: 1 },
@@ -641,6 +644,7 @@
             }).join('');
 
             if (updatePrecisionFields) {
+                if (studioPrecisionManual) studioPrecisionManual.value = '0';
                 const textColor = isDark ? '#f8fafc' : '#1e293b';
                 const sidebarBg = hslToHex(base1.h, Math.min(25, m.s), isDark ? 12 : 96);
                 const thBg = hslToHex(base1.h, m.s, isDark ? 28 : Math.max(32, Math.min(52, m.l)));
@@ -677,10 +681,16 @@
                 el.addEventListener('change', () => runThemeStudio(true));
             }
         });
+        if (studioSyncCards) {
+            studioSyncCards.addEventListener('change', () => {
+                if (studioSyncCards.checked) runThemeStudio(true);
+            });
+        }
 
         document.addEventListener('click', (e) => {
             const preset = e.target.closest('.gradient-preset');
             if (preset) {
+                if (studioPrecisionManual) studioPrecisionManual.value = '1';
                 const d = preset.dataset;
                 if (studioC1 && d.start) studioC1.value = d.start;
                 if (studioC2 && d.end) studioC2.value = d.end;
@@ -709,6 +719,7 @@
                 if (target.matches('[type="color"]') || target.classList.contains('form-control-color')) {
                     const name = target.getAttribute('name');
                     if (name) {
+                        if (studioPrecisionManual) studioPrecisionManual.value = '1';
                         setAllValues(name, target.value);
                         if (name === 'gradient_start' && studioC1) studioC1.value = target.value;
                         if (name === 'gradient_end' && studioC2) studioC2.value = target.value;
