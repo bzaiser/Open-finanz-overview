@@ -110,6 +110,26 @@
             color: var(--bs-body-color, #212529);
         }
 
+        /* Theme Primary Color Harmonization (overrides hardcoded Bootstrap --bs-primary-rgb) */
+        .text-primary {
+            color: var(--app-primary, #0d6efd) !important;
+        }
+        .border-primary {
+            border-color: var(--app-primary, #0d6efd) !important;
+        }
+        .bg-primary {
+            background-color: var(--app-primary, #0d6efd) !important;
+        }
+        .bg-primary.bg-opacity-10 {
+            background-color: color-mix(in srgb, var(--app-primary, #0d6efd) 10%, transparent) !important;
+        }
+        .bg-primary.bg-opacity-20 {
+            background-color: color-mix(in srgb, var(--app-primary, #0d6efd) 20%, transparent) !important;
+        }
+        .bg-primary.bg-opacity-25 {
+            background-color: color-mix(in srgb, var(--app-primary, #0d6efd) 25%, transparent) !important;
+        }
+
         /* Global Form Control Harmonization */
         .form-control, .form-select {
             background-color: var(--app-input-bg) !important;
