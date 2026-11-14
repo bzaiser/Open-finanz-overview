@@ -419,9 +419,52 @@ CARD_REGISTRY = {
             },
             {
                 'id': 'assets_top_physical',
-                'title': _("Sachwerte & Edelmetalle"),
+                'title': _("Physische Sachwerte"),
                 'icon': 'bi-gem',
                 'bg_color': '#8a2be2',
+                'text_color': '#ffffff',
+                'order': 4,
+                'visible': True,
+            },
+        ]
+    },
+    'assets_tab_performance': {
+        'title': _("Tab: Verlauf & Performance"),
+        'module': 'assets',
+        'section': 'tab_performance',
+        'cards': [
+            {
+                'id': 'assets_perf_total',
+                'title': _("Gesamtwert aktuell"),
+                'icon': 'bi-wallet-fill',
+                'bg_color': '#0d6efd',
+                'text_color': '#ffffff',
+                'order': 1,
+                'visible': True,
+            },
+            {
+                'id': 'assets_perf_change',
+                'title': _("Wertentwicklung"),
+                'icon': 'bi-graph-up-arrow',
+                'bg_color': '#198754',
+                'text_color': '#ffffff',
+                'order': 2,
+                'visible': True,
+            },
+            {
+                'id': 'assets_perf_best',
+                'title': _("Best-Performer"),
+                'icon': 'bi-trophy-fill',
+                'bg_color': '#6610f2',
+                'text_color': '#ffffff',
+                'order': 3,
+                'visible': True,
+            },
+            {
+                'id': 'assets_perf_largest',
+                'title': _("Größte Position"),
+                'icon': 'bi-pie-chart-fill',
+                'bg_color': '#fd7e14',
                 'text_color': '#ffffff',
                 'order': 4,
                 'visible': True,
@@ -434,7 +477,7 @@ MODULE_GROUPS = {
     'cashflow': ['cash_flow'],
     'pension': ['pension_top', 'pension_tab_pensions', 'pension_tab_insurances', 'pension_tab_risk'],
     'real_estate': ['real_estate_top', 'real_estate_tab_renovation', 'real_estate_tab_calendar', 'real_estate_tab_taxdocs'],
-    'assets': ['assets_top'],
+    'assets': ['assets_top', 'assets_tab_performance'],
 }
 
 

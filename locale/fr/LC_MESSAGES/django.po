@@ -2709,3 +2709,81 @@ msgstr "Prévu auparavant :"
 
 msgid "to"
 msgstr "à"
+
+msgid "Crypto & ETCs"
+msgstr "Crypto & ETC"
+
+msgid "Precious Metals (ETC / Account)"
+msgstr "Métaux Précieux (ETC / Compte)"
+
+msgid "Physical gold bars/coins, vehicles, art, watches & collectibles"
+msgstr "Lingots/pièces d’or physique, véhicules, art, montres et objets de collection"
+
+msgid "Current Total Wealth"
+msgstr "Patrimoine Total Actuel"
+
+msgid "Across all asset classes"
+msgstr "Toutes classes d’actifs confondues"
+
+msgid "Total Performance"
+msgstr "Performance Totale"
+
+msgid "since first record"
+msgstr "depuis le premier relevé"
+
+msgid "Best Performer"
+msgstr "Meilleure Performance"
+
+msgid "No positions yet"
+msgstr "Aucune position pour l’instant"
+
+msgid "Largest Position"
+msgstr "Position la plus importante"
+
+msgid "Only one data point is available so far. Record historical key dates (snapshots) to visualize wealth growth over time."
+msgstr "Un seul point de données est disponible pour le moment. Enregistrez des dates clés historiques pour visualiser l’évolution."
+
+msgid "Record Key Date"
+msgstr "Enregistrer une date clé"
+
+msgid "Current share by asset class"
+msgstr "Répartition actuelle par classe d’actifs"
+
+msgid "Position Performance Overview"
+msgstr "Aperçu des Performances par Position"
+
+msgid "Position"
+msgstr "Position"
+
+msgid "Initial Value"
+msgstr "Valeur Initiale"
+
+msgid "Change"
+msgstr "Variation"
+
+msgid "No snapshots yet"
+msgstr "Aucun relevé pour l’instant"
+
+msgid "No assets recorded yet."
+msgstr "Aucun actif enregistré pour le moment."
+
+msgid "Tab: Verlauf & Performance"
+msgstr "Onglet : Évolution & Performance"
+
+msgid "Tab: Verlauf & Performance (KPI-Karten)"
+msgstr "Onglet : Évolution & Performance (Cartes KPI)"
+
+msgid "Gesamtwert aktuell"
+msgstr "Patrimoine Total Actuel"
+
+msgid "Wertentwicklung"
+msgstr "Performance"
+
+msgid "Best-Performer"
+msgstr "Meilleure Performance"
+
+msgid "Größte Position"
+msgstr "Position la plus importante"
+
+msgid "Physische Sachwerte"
+msgstr "Actifs Physiques"

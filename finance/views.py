@@ -4631,16 +4631,21 @@ def assets_overview_view(request):
     chart_total_series = []
 
     for d in sorted_dates:
-        # Sum value for that date (or latest prior snapshot)
+        # Sum value for that date (or latest prior snapshot; for today fallback to live value)
+        d_str = d.strftime('%Y-%m-%d')
         d_cash = 0.0
         d_depot = 0.0
         d_crypto = 0.0
         d_phys = 0.0
-        
+
         for a in assets_json:
-            # find latest snapshot <= d
-            valid_snaps = [sn for sn in a['snapshots'] if sn['date'] <= d.strftime('%Y-%m-%d')]
-            val = valid_snaps[0]['value'] if valid_snaps else a['value']
+            valid_snaps = [sn for sn in a['snapshots'] if sn['date'] <= d_str]
+            if valid_snaps:
+                val = valid_snaps[0]['value']
+            elif d == today or not a['snapshots']:
+                val = a['value']
+            else:
+                val = a['snapshots'][-1]['value']
             if a['asset_type'] in ['cash', 'overnight']:
                 d_cash += val
             elif a['asset_type'] == 'depot':
@@ -4651,8 +4656,13 @@ def assets_overview_view(request):
                 d_cash += val
 
         for pa in physical_json:
-            valid_snaps = [sn for sn in pa['snapshots'] if sn['date'] <= d.strftime('%Y-%m-%d')]
-            val = valid_snaps[0]['value'] if valid_snaps else pa['value']
+            valid_snaps = [sn for sn in pa['snapshots'] if sn['date'] <= d_str]
+            if valid_snaps:
+                val = valid_snaps[0]['value']
+            elif d == today or not pa['snapshots']:
+                val = pa['value']
+            else:
+                val = pa['snapshots'][-1]['value']
             d_phys += val
 
         chart_cash_series.append(round(d_cash, 2))
@@ -4661,13 +4671,64 @@ def assets_overview_view(request):
         chart_physical_series.append(round(d_phys, 2))
         chart_total_series.append(round(d_cash + d_depot + d_crypto + d_phys, 2))
 
+    # Performance KPIs across all recorded assets & physical assets
+    perf_change_abs = 0.0
+    perf_change_pct = 0.0
+    if len(chart_total_series) >= 2 and chart_total_series[0] > 0:
+        perf_change_abs = round(chart_total_series[-1] - chart_total_series[0], 2)
+        perf_change_pct = round((perf_change_abs / chart_total_series[0]) * 100.0, 2)
+
+    all_perf_items = []
+    for a in assets_json:
+        start_val = a['snapshots'][-1]['value'] if a['snapshots'] else a['value']
+        all_perf_items.append({
+            'id': a['id'],
+            'type': 'asset',
+            'name': a['name'],
+            'category': a['asset_type_display'],
+            'start_value': start_val,
+            'value': a['value'],
+            'change_abs': round(a['change_abs'], 2),
+            'change_pct': a['change_pct'],
+            'has_history': len(a['snapshots']) > 0,
+        })
+    for pa in physical_json:
+        if not pa.get('is_sold'):
+            start_val = pa['snapshots'][-1]['value'] if pa['snapshots'] else pa['value']
+            all_perf_items.append({
+                'id': pa['id'],
+                'type': 'physical',
+                'name': pa['name'],
+                'category': str(_("Physische Sachwerte")),
+                'start_value': start_val,
+                'value': pa['value'],
+                'change_abs': round(pa['change_abs'], 2),
+                'change_pct': pa['change_pct'],
+                'has_history': len(pa['snapshots']) > 0,
+            })
+
+    best_performer = max(all_perf_items, key=lambda x: x['change_pct'], default=None)
+    largest_position = max(all_perf_items, key=lambda x: x['value'], default=None)
+    if largest_position and float(total_wealth) > 0:
+        largest_position = {
+            **largest_position,
+            'share_pct': round((largest_position['value'] / float(total_wealth)) * 100.0, 1)
+        }
+
     history_chart_json = json.dumps({
         'labels': chart_labels,
         'cash': chart_cash_series,
         'depot': chart_depot_series,
         'crypto_metals': chart_crypto_series,
         'physical': chart_physical_series,
-        'total': chart_total_series
+        'total': chart_total_series,
+        'allocation': {
+            'cash': float(total_cash),
+            'depot': float(total_depot),
+            'crypto_metals': float(total_crypto + total_metals),
+            'physical': float(total_physical),
+            'other': float(total_other),
+        }
     })
 
     # Forms
@@ -4696,6 +4757,11 @@ def assets_overview_view(request):
         'assets_json': json.dumps(assets_json),
         'physical_json': json.dumps(physical_json),
         'history_chart_json': history_chart_json,
+        'perf_change_abs': perf_change_abs,
+        'perf_change_pct': perf_change_pct,
+        'best_performer': best_performer,
+        'largest_position': largest_position,
+        'performance_items': sorted(all_perf_items, key=lambda x: x['value'], reverse=True),
         'asset_form': asset_form,
         'pa_form': pa_form,
     }

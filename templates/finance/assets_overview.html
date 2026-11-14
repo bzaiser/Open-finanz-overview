@@ -237,13 +237,13 @@
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" :class="activeTab === 'crypto-metals' ? 'active' : ''" @click="setTab('crypto-metals')" type="button">
-                <i class="bi bi-currency-bitcoin me-1"></i>{% trans "Crypto & Precious Metals" %}
+                <i class="bi bi-currency-bitcoin me-1"></i>{% trans "Crypto & ETCs" %}
                 <span class="badge rounded-pill bg-body-tertiary text-body ms-1 small" x-text="assets.filter(a => a.asset_type === 'crypto' || a.asset_type === 'precious_metal').length"></span>
             </button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" :class="activeTab === 'physical' ? 'active' : ''" @click="setTab('physical')" type="button">
-                <i class="bi bi-gem me-1"></i>{% trans "Physical Assets (Gold/Cars)" %}
+                <i class="bi bi-gem me-1"></i>{% trans "Physical Assets" %}
                 <span class="badge rounded-pill bg-body-tertiary text-body ms-1 small" x-text="physicalAssets.length"></span>
             </button>
         </li>
@@ -265,24 +265,187 @@
         </li>
     </ul>
 
-    <!-- Historical Progression Chart (Stacked Asset Classes) -->
+    <!-- Historical Progression & Performance Tab -->
     <div x-show="activeTab === 'chart'" class="mb-4">
-        <div class="card border-0 shadow-sm rounded-4 p-3 mb-4" style="background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color);">
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2 mb-2">
-                <div>
-                    <h6 class="fw-bold mb-0">
-                        <i class="bi bi-activity text-primary me-2"></i>{% trans "Historical Wealth Timeline & Performance" %}
-                    </h6>
-                    <span class="small opacity-75">{% trans "Progression across recorded key dates by asset category" %}</span>
-                </div>
+        <!-- Configurable Performance KPI Cards -->
+        <div class="row g-3 mb-4">
+            {% for card in card_config_user_groups.assets_tab_performance %}
+                {% if card.visible %}
+                    {% if card.id == 'assets_perf_total' %}
+                    <div class="col-md-6 col-xl-3 metric-card-col">
+                        <div class="card metric-card h-100 shadow-sm" style="background-color: {{ card.bg_color }} !important; color: {{ card.text_color }} !important;">
+                            <div class="card-glass-glow"></div>
+                            <div class="card-body position-relative">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="small fw-semibold opacity-75 text-uppercase">{% trans "Current Total Wealth" %}</span>
+                                    <i class="bi {{ card.icon }} fs-5 opacity-75"></i>
+                                </div>
+                                <div class="h3 fw-bold font-monospace mb-0">{{ total_wealth|floatformat:2 }} €</div>
+                                <small class="opacity-75">{% trans "Across all asset classes" %}</small>
+                            </div>
+                        </div>
+                    </div>
+                    {% elif card.id == 'assets_perf_change' %}
+                    <div class="col-md-6 col-xl-3 metric-card-col">
+                        <div class="card metric-card h-100 shadow-sm" style="background-color: {{ card.bg_color }} !important; color: {{ card.text_color }} !important;">
+                            <div class="card-glass-glow"></div>
+                            <div class="card-body position-relative">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="small fw-semibold opacity-75 text-uppercase">{% trans "Total Performance" %}</span>
+                                    <i class="bi {{ card.icon }} fs-5 opacity-75"></i>
+                                </div>
+                                <div class="h3 fw-bold font-monospace mb-0">
+                                    {% if perf_change_abs >= 0 %}+{% endif %}{{ perf_change_abs|floatformat:2 }} €
+                                </div>
+                                <small class="opacity-75">
+                                    {% if perf_change_pct >= 0 %}+{% endif %}{{ perf_change_pct|floatformat:2 }} % {% trans "since first record" %}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    {% elif card.id == 'assets_perf_best' %}
+                    <div class="col-md-6 col-xl-3 metric-card-col">
+                        <div class="card metric-card h-100 shadow-sm" style="background-color: {{ card.bg_color }} !important; color: {{ card.text_color }} !important;">
+                            <div class="card-glass-glow"></div>
+                            <div class="card-body position-relative">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="small fw-semibold opacity-75 text-uppercase">{% trans "Best Performer" %}</span>
+                                    <i class="bi {{ card.icon }} fs-5 opacity-75"></i>
+                                </div>
+                                {% if best_performer %}
+                                <div class="h4 fw-bold font-monospace mb-0 text-truncate" title="{{ best_performer.name }}">
+                                    {% if best_performer.change_pct >= 0 %}+{% endif %}{{ best_performer.change_pct|floatformat:2 }} %
+                                </div>
+                                <small class="opacity-75 text-truncate d-block">{{ best_performer.name }}</small>
+                                {% else %}
+                                <div class="h4 fw-bold mb-0">-</div>
+                                <small class="opacity-75">{% trans "No positions yet" %}</small>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% elif card.id == 'assets_perf_largest' %}
+                    <div class="col-md-6 col-xl-3 metric-card-col">
+                        <div class="card metric-card h-100 shadow-sm" style="background-color: {{ card.bg_color }} !important; color: {{ card.text_color }} !important;">
+                            <div class="card-glass-glow"></div>
+                            <div class="card-body position-relative">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="small fw-semibold opacity-75 text-uppercase">{% trans "Largest Position" %}</span>
+                                    <i class="bi {{ card.icon }} fs-5 opacity-75"></i>
+                                </div>
+                                {% if largest_position %}
+                                <div class="h4 fw-bold font-monospace mb-0">{{ largest_position.share_pct|floatformat:1 }} %</div>
+                                <small class="opacity-75 text-truncate d-block">{{ largest_position.name }} ({{ largest_position.value|floatformat:0 }} €)</small>
+                                {% else %}
+                                <div class="h4 fw-bold mb-0">-</div>
+                                <small class="opacity-75">{% trans "No positions yet" %}</small>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- Hint when fewer than 2 record dates exist -->
+        <template x-if="!historyChartData.labels || historyChartData.labels.length < 2">
+            <div class="alert alert-info border-0 shadow-sm rounded-4 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 mb-4">
                 <div class="d-flex align-items-center gap-2">
-                    <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2.5 py-1.5 rounded-pill small">
-                        <i class="bi bi-calendar-event me-1"></i><span x-text="historyChartData.labels ? historyChartData.labels.length + ' {% trans 'Record Dates' %}' : '0'"></span>
+                    <i class="bi bi-info-circle-fill fs-5"></i>
+                    <span class="small">
+                        {% trans "Only one data point is available so far. Record historical key dates (snapshots) to visualize wealth growth over time." %}
                     </span>
                 </div>
+                <button type="button" class="btn btn-sm btn-primary rounded-pill px-3 flex-shrink-0" style="background: var(--app-gradient); border: none;" @click="openQuickSnapshotModal()">
+                    <i class="bi bi-clock-history me-1"></i>{% trans "Record Key Date" %}
+                </button>
             </div>
-            <div style="position: relative; height: 320px; width: 100%;">
-                <canvas id="assetHistoryChart"></canvas>
+        </template>
+
+        <!-- Charts Row: Timeline + Allocation -->
+        <div class="row g-4 mb-4">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm rounded-4 p-3 h-100" style="background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color);">
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2 mb-2">
+                        <div>
+                            <h6 class="fw-bold mb-0">
+                                <i class="bi bi-activity text-primary me-2"></i>{% trans "Historical Wealth Timeline & Performance" %}
+                            </h6>
+                            <span class="small opacity-75">{% trans "Progression across recorded key dates by asset category" %}</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2.5 py-1.5 rounded-pill small">
+                                <i class="bi bi-calendar-event me-1"></i><span x-text="historyChartData.labels ? historyChartData.labels.length + ' {% trans 'Record Dates' %}' : '0'"></span>
+                            </span>
+                        </div>
+                    </div>
+                    <div style="position: relative; height: 320px; width: 100%;">
+                        <canvas id="assetHistoryChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm rounded-4 p-3 h-100" style="background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color);">
+                    <div class="mb-2">
+                        <h6 class="fw-bold mb-0">
+                            <i class="bi bi-pie-chart-fill text-primary me-2"></i>{% trans "Asset Allocation" %}
+                        </h6>
+                        <span class="small opacity-75">{% trans "Current share by asset class" %}</span>
+                    </div>
+                    <div style="position: relative; height: 320px; width: 100%;">
+                        <canvas id="assetAllocationChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Breakdown Table -->
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color);">
+            <div class="card-header border-0 d-flex justify-content-between align-items-center">
+                <span class="fw-bold"><i class="bi bi-bar-chart-line me-2 opacity-75"></i>{% trans "Position Performance Overview" %}</span>
+                <button type="button" class="btn btn-sm btn-light rounded-pill px-3" @click="openQuickSnapshotModal()">
+                    <i class="bi bi-plus-lg me-1"></i>{% trans "Record Key Date" %}
+                </button>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0 assets-table">
+                        <thead>
+                            <tr>
+                                <th class="py-2 px-3">{% trans "Position" %}</th>
+                                <th class="py-2 px-3">{% trans "Category" %}</th>
+                                <th class="py-2 px-3 text-end">{% trans "Initial Value" %}</th>
+                                <th class="py-2 px-3 text-end">{% trans "Current Value" %}</th>
+                                <th class="py-2 px-3 text-end">{% trans "Change" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in performance_items %}
+                            <tr>
+                                <td class="px-3 fw-bold">{{ item.name }}</td>
+                                <td class="px-3"><span class="badge bg-secondary-subtle text-body">{{ item.category }}</span></td>
+                                <td class="px-3 text-end font-monospace text-muted">{{ item.start_value|floatformat:2 }} €</td>
+                                <td class="px-3 text-end font-monospace fw-bold">{{ item.value|floatformat:2 }} €</td>
+                                <td class="px-3 text-end font-monospace">
+                                    {% if item.has_history %}
+                                    <span class="fw-bold {% if item.change_abs >= 0 %}text-success{% else %}text-danger{% endif %}">
+                                        {% if item.change_abs >= 0 %}+{% endif %}{{ item.change_abs|floatformat:2 }} €
+                                        ({% if item.change_pct >= 0 %}+{% endif %}{{ item.change_pct|floatformat:2 }} %)
+                                    </span>
+                                    {% else %}
+                                    <span class="text-muted small">{% trans "No snapshots yet" %}</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center py-4 text-muted">{% trans "No assets recorded yet." %}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -295,7 +458,7 @@
             <div class="card-header border-0 d-flex justify-content-between align-items-center">
                 <span class="fw-bold">
                     <i class="bi bi-list-task me-2 opacity-75"></i>
-                    <span x-text="activeTab === 'depots' ? '{% trans 'Securities & ETF Depots' %}' : (activeTab === 'crypto-metals' ? '{% trans 'Cryptocurrencies & Precious Metals' %}' : '{% trans 'All Financial Accounts & Assets' %}')"></span>
+                    <span x-text="activeTab === 'depots' ? '{% trans 'Securities & ETF Depots' %}' : (activeTab === 'crypto-metals' ? '{% trans 'Crypto & ETCs' %}' : '{% trans 'All Financial Accounts & Assets' %}')"></span>
                 </span>
                 <span class="badge rounded-pill bg-white bg-opacity-25 text-white" x-text="filteredAssets.length + ' / ' + assets.length"></span>
             </div>
@@ -354,7 +517,7 @@
                                         <option value="overnight">{% trans 'Overnight & Money Market' %}</option>
                                         <option value="depot">{% trans 'ETF & Stocks Depot' %}</option>
                                         <option value="crypto">{% trans 'Crypto' %}</option>
-                                        <option value="precious_metal">{% trans 'Precious Metals' %}</option>
+                                        <option value="precious_metal">{% trans 'Precious Metals (ETC / Account)' %}</option>
                                     </select>
                                 </td>
                                 <td class="p-1 px-3 border-0">
@@ -436,8 +599,11 @@
     <!-- ======================================================== -->
     <div x-show="activeTab === 'physical'" class="mb-4">
         <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color);">
-            <div class="card-header border-0 d-flex justify-content-between align-items-center">
-                <span class="fw-bold"><i class="bi bi-gem me-2 opacity-75"></i>{% trans "Physical Assets & Valuables" %}</span>
+            <div class="card-header border-0 d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-1">
+                <div>
+                    <span class="fw-bold"><i class="bi bi-gem me-2 opacity-75"></i>{% trans "Physical Assets & Valuables" %}</span>
+                    <span class="small opacity-75 d-block d-sm-inline ms-sm-2">{% trans "Physical gold bars/coins, vehicles, art, watches & collectibles" %}</span>
+                </div>
                 <span class="badge rounded-pill bg-white bg-opacity-25 text-white" x-text="physicalAssets.length + ' {% trans 'Items' %}'"></span>
             </div>
             <div class="card-body p-0">
@@ -609,7 +775,7 @@
                                     <option value="overnight">{% trans "Overnight & Money Market" %}</option>
                                     <option value="depot">{% trans "Securities & ETF Depot" %}</option>
                                     <option value="crypto">{% trans "Cryptocurrencies (Bitcoin & Co.)" %}</option>
-                                    <option value="precious_metal">{% trans "Precious Metals (Gold / Silver)" %}</option>
+                                    <option value="precious_metal">{% trans "Precious Metals (ETC / Account)" %}</option>
                                     <option value="other">{% trans "Other Financial Asset" %}</option>
                                 </select>
                             </div>
@@ -856,13 +1022,18 @@ function assetsOverviewApp() {
             years: 0
         },
 
+        historyChartInstance: null,
+        allocationChartInstance: null,
+
         init() {
             const urlParams = new URLSearchParams(window.location.search);
             const tab = urlParams.get('tab');
             if (tab) this.activeTab = tab;
-            this.$nextTick(() => {
-                this.renderChart();
-            });
+            if (this.activeTab === 'chart') {
+                this.$nextTick(() => {
+                    this.renderChart();
+                });
+            }
         },
 
         setTab(tab) {
@@ -1029,79 +1200,152 @@ function assetsOverviewApp() {
 
         renderChart() {
             const canvas = document.getElementById('assetHistoryChart');
-            if (!canvas) return;
-
+            const allocCanvas = document.getElementById('assetAllocationChart');
             const d = this.historyChartData;
-            if (!d.labels || d.labels.length === 0) return;
 
-            new Chart(canvas, {
-                type: 'line',
-                data: {
-                    labels: d.labels,
-                    datasets: [
-                        {
-                            label: '{% trans "Total Wealth" %}',
-                            data: d.total,
-                            borderColor: '#0d6efd',
-                            backgroundColor: 'rgba(13, 110, 253, 0.08)',
-                            fill: true,
-                            tension: 0.3,
-                            borderWidth: 3
-                        },
-                        {
-                            label: '{% trans "ETFs & Depots" %}',
-                            data: d.depot,
-                            borderColor: '#198754',
-                            borderDash: [5, 5],
-                            tension: 0.3,
-                            borderWidth: 2
-                        },
-                        {
-                            label: '{% trans "Liquidity & Emergency Fund" %}',
-                            data: d.cash,
-                            borderColor: '#0dcaf0',
-                            borderDash: [2, 2],
-                            tension: 0.3,
-                            borderWidth: 1.5
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    interaction: {
-                        mode: 'index',
-                        intersect: false
-                    },
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                            labels: {
-                                font: { size: 11, family: 'system-ui' },
-                                boxWidth: 12
-                            }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: (ctx) => `${ctx.dataset.label}: ${Number(ctx.raw).toLocaleString('de-DE', {minimumFractionDigits: 2})} €`
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            ticks: {
-                                callback: (v) => Number(v).toLocaleString('de-DE') + ' €'
+            if (canvas && d.labels && d.labels.length > 0) {
+                if (this.historyChartInstance) {
+                    this.historyChartInstance.destroy();
+                }
+                this.historyChartInstance = new Chart(canvas, {
+                    type: 'line',
+                    data: {
+                        labels: d.labels,
+                        datasets: [
+                            {
+                                label: '{% trans "Total Wealth" %}',
+                                data: d.total,
+                                borderColor: '#0d6efd',
+                                backgroundColor: 'rgba(13, 110, 253, 0.08)',
+                                fill: true,
+                                tension: 0.3,
+                                borderWidth: 3,
+                                pointRadius: d.labels.length < 3 ? 5 : 3
                             },
-                            grid: {
-                                color: 'rgba(150, 150, 150, 0.15)'
+                            {
+                                label: '{% trans "ETFs & Depots" %}',
+                                data: d.depot,
+                                borderColor: '#198754',
+                                borderDash: [5, 5],
+                                tension: 0.3,
+                                borderWidth: 2
+                            },
+                            {
+                                label: '{% trans "Liquidity & Emergency Fund" %}',
+                                data: d.cash,
+                                borderColor: '#0dcaf0',
+                                borderDash: [2, 2],
+                                tension: 0.3,
+                                borderWidth: 1.5
+                            },
+                            {
+                                label: '{% trans "Crypto & ETCs" %}',
+                                data: d.crypto_metals || [],
+                                borderColor: '#f59e0b',
+                                borderDash: [4, 3],
+                                tension: 0.3,
+                                borderWidth: 1.5
+                            },
+                            {
+                                label: '{% trans "Physical Assets" %}',
+                                data: d.physical || [],
+                                borderColor: '#8a2be2',
+                                borderDash: [3, 3],
+                                tension: 0.3,
+                                borderWidth: 1.5
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: {
+                            mode: 'index',
+                            intersect: false
+                        },
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    font: { size: 11, family: 'system-ui' },
+                                    boxWidth: 12
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: (ctx) => `${ctx.dataset.label}: ${Number(ctx.raw).toLocaleString('de-DE', {minimumFractionDigits: 2})} €`
+                                }
                             }
                         },
-                        x: {
-                            grid: { display: false }
+                        scales: {
+                            y: {
+                                ticks: {
+                                    callback: (v) => Number(v).toLocaleString('de-DE') + ' €'
+                                },
+                                grid: {
+                                    color: 'rgba(150, 150, 150, 0.15)'
+                                }
+                            },
+                            x: {
+                                grid: { display: false }
+                            }
                         }
                     }
+                });
+            }
+
+            if (allocCanvas && d.allocation) {
+                if (this.allocationChartInstance) {
+                    this.allocationChartInstance.destroy();
                 }
-            });
+                const allocValues = [
+                    d.allocation.cash || 0,
+                    d.allocation.depot || 0,
+                    d.allocation.crypto_metals || 0,
+                    d.allocation.physical || 0,
+                    d.allocation.other || 0
+                ];
+                this.allocationChartInstance = new Chart(allocCanvas, {
+                    type: 'doughnut',
+                    data: {
+                        labels: [
+                            '{% trans "Liquidity & Emergency Fund" %}',
+                            '{% trans "ETFs & Depots" %}',
+                            '{% trans "Crypto & ETCs" %}',
+                            '{% trans "Physical Assets" %}',
+                            '{% trans "Other" %}'
+                        ],
+                        datasets: [{
+                            data: allocValues,
+                            backgroundColor: ['#0dcaf0', '#198754', '#f59e0b', '#8a2be2', '#6c757d'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '62%',
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    font: { size: 11, family: 'system-ui' },
+                                    boxWidth: 12
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: (ctx) => {
+                                        const total = allocValues.reduce((a, b) => a + b, 0) || 1;
+                                        const pct = ((ctx.raw / total) * 100).toFixed(1);
+                                        return `${ctx.label}: ${Number(ctx.raw).toLocaleString('de-DE', {minimumFractionDigits: 2})} € (${pct} %)`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
         }
     }
 }

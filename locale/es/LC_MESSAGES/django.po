@@ -2689,3 +2689,81 @@ msgstr "Regular antes:"
 
 msgid "to"
 msgstr "a"
+
+msgid "Crypto & ETCs"
+msgstr "Cripto y ETCs"
+
+msgid "Precious Metals (ETC / Account)"
+msgstr "Metales Preciosos (ETC / Cuenta)"
+
+msgid "Physical gold bars/coins, vehicles, art, watches & collectibles"
+msgstr "Lingotes/monedas de oro físico, vehículos, arte, relojes y coleccionables"
+
+msgid "Current Total Wealth"
+msgstr "Patrimonio Total Actual"
+
+msgid "Across all asset classes"
+msgstr "En todas las clases de activos"
+
+msgid "Total Performance"
+msgstr "Rendimiento Total"
+
+msgid "since first record"
+msgstr "desde el primer registro"
+
+msgid "Best Performer"
+msgstr "Mejor Rendimiento"
+
+msgid "No positions yet"
+msgstr "Sin posiciones aún"
+
+msgid "Largest Position"
+msgstr "Mayor Posición"
+
+msgid "Only one data point is available so far. Record historical key dates (snapshots) to visualize wealth growth over time."
+msgstr "Solo hay un punto de datos disponible hasta ahora. Registra fechas clave históricas para visualizar el crecimiento patrimonial."
+
+msgid "Record Key Date"
+msgstr "Registrar Fecha Clave"
+
+msgid "Current share by asset class"
+msgstr "Participación actual por clase de activo"
+
+msgid "Position Performance Overview"
+msgstr "Resumen de Rendimiento por Posición"
+
+msgid "Position"
+msgstr "Posición"
+
+msgid "Initial Value"
+msgstr "Valor Inicial"
+
+msgid "Change"
+msgstr "Cambio"
+
+msgid "No snapshots yet"
+msgstr "Sin registros aún"
+
+msgid "No assets recorded yet."
+msgstr "Aún no hay activos registrados."
+
+msgid "Tab: Verlauf & Performance"
+msgstr "Pestaña: Evolución y Rendimiento"
+
+msgid "Tab: Verlauf & Performance (KPI-Karten)"
+msgstr "Pestaña: Evolución y Rendimiento (Tarjetas KPI)"
+
+msgid "Gesamtwert aktuell"
+msgstr "Patrimonio Total Actual"
+
+msgid "Wertentwicklung"
+msgstr "Rendimiento"
+
+msgid "Best-Performer"
+msgstr "Mejor Rendimiento"
+
+msgid "Größte Position"
+msgstr "Mayor Posición"
+
+msgid "Physische Sachwerte"
+msgstr "Activos Físicos"

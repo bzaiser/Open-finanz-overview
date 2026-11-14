@@ -5620,3 +5620,81 @@ msgstr "Regulär vorher:"
 
 msgid "to"
 msgstr "auf"
+
+msgid "Crypto & ETCs"
+msgstr "Krypto & ETCs"
+
+msgid "Precious Metals (ETC / Account)"
+msgstr "Edelmetalle (ETC / Konto)"
+
+msgid "Physical gold bars/coins, vehicles, art, watches & collectibles"
+msgstr "Physisches Gold (Barren/Münzen), Fahrzeuge, Kunst, Uhren & Sammlerstücke"
+
+msgid "Current Total Wealth"
+msgstr "Gesamtwert aktuell"
+
+msgid "Across all asset classes"
+msgstr "Über alle Anlageklassen"
+
+msgid "Total Performance"
+msgstr "Wertentwicklung"
+
+msgid "since first record"
+msgstr "seit erstem Stichtag"
+
+msgid "Best Performer"
+msgstr "Best-Performer"
+
+msgid "No positions yet"
+msgstr "Noch keine Positionen"
+
+msgid "Largest Position"
+msgstr "Größte Position"
+
+msgid "Only one data point is available so far. Record historical key dates (snapshots) to visualize wealth growth over time."
+msgstr "Bisher liegt nur ein Datenpunkt vor. Erfasse historische Stichtage (Snapshots), um den Vermögensverlauf über die Zeit darzustellen."
+
+msgid "Record Key Date"
+msgstr "Stichtag erfassen"
+
+msgid "Current share by asset class"
+msgstr "Aktuelle Anteile nach Anlageklasse"
+
+msgid "Position Performance Overview"
+msgstr "Performance-Übersicht je Position"
+
+msgid "Position"
+msgstr "Position"
+
+msgid "Initial Value"
+msgstr "Startwert"
+
+msgid "Change"
+msgstr "Veränderung"
+
+msgid "No snapshots yet"
+msgstr "Noch keine Stichtage"
+
+msgid "No assets recorded yet."
+msgstr "Noch keine Vermögenswerte erfasst."
+
+msgid "Tab: Verlauf & Performance"
+msgstr "Tab: Verlauf & Performance"
+
+msgid "Tab: Verlauf & Performance (KPI-Karten)"
+msgstr "Tab: Verlauf & Performance (KPI-Karten)"
+
+msgid "Gesamtwert aktuell"
+msgstr "Gesamtwert aktuell"
+
+msgid "Wertentwicklung"
+msgstr "Wertentwicklung"
+
+msgid "Best-Performer"
+msgstr "Best-Performer"
+
+msgid "Größte Position"
+msgstr "Größte Position"
+
+msgid "Physische Sachwerte"
+msgstr "Physische Sachwerte"

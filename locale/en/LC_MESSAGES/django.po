@@ -1010,3 +1010,90 @@ msgstr "Regular before:"
 
 msgid "to"
 msgstr "to"
+
+msgid "Crypto & ETCs"
+msgstr "Crypto & ETCs"
+
+msgid "Physical Assets"
+msgstr "Physical Assets"
+
+msgid "Precious Metals (ETC / Account)"
+msgstr "Precious Metals (ETC / Account)"
+
+msgid "Physical gold bars/coins, vehicles, art, watches & collectibles"
+msgstr "Physical gold bars/coins, vehicles, art, watches & collectibles"
+
+msgid "Current Total Wealth"
+msgstr "Current Total Wealth"
+
+msgid "Across all asset classes"
+msgstr "Across all asset classes"
+
+msgid "Total Performance"
+msgstr "Total Performance"
+
+msgid "since first record"
+msgstr "since first record"
+
+msgid "Best Performer"
+msgstr "Best Performer"
+
+msgid "No positions yet"
+msgstr "No positions yet"
+
+msgid "Largest Position"
+msgstr "Largest Position"
+
+msgid "Only one data point is available so far. Record historical key dates (snapshots) to visualize wealth growth over time."
+msgstr "Only one data point is available so far. Record historical key dates (snapshots) to visualize wealth growth over time."
+
+msgid "Record Key Date"
+msgstr "Record Key Date"
+
+msgid "Asset Allocation"
+msgstr "Asset Allocation"
+
+msgid "Current share by asset class"
+msgstr "Current share by asset class"
+
+msgid "Position Performance Overview"
+msgstr "Position Performance Overview"
+
+msgid "Position"
+msgstr "Position"
+
+msgid "Initial Value"
+msgstr "Initial Value"
+
+msgid "Current Value"
+msgstr "Current Value"
+
+msgid "Change"
+msgstr "Change"
+
+msgid "No snapshots yet"
+msgstr "No snapshots yet"
+
+msgid "No assets recorded yet."
+msgstr "No assets recorded yet."
+
+msgid "Tab: Verlauf & Performance"
+msgstr "Tab: Timeline & Performance"
+
+msgid "Tab: Verlauf & Performance (KPI-Karten)"
+msgstr "Tab: Timeline & Performance (KPI Cards)"
+
+msgid "Gesamtwert aktuell"
+msgstr "Current Total Wealth"
+
+msgid "Wertentwicklung"
+msgstr "Performance"
+
+msgid "Best-Performer"
+msgstr "Best Performer"
+
+msgid "Größte Position"
+msgstr "Largest Position"
+
+msgid "Physische Sachwerte"
+msgstr "Physical Assets"

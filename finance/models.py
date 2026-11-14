@@ -109,7 +109,7 @@ class Asset(models.Model):
         ('overnight', _('Overnight & Money Market')),
         ('depot', _('Securities & ETF Depot')),
         ('crypto', _('Cryptocurrencies (Bitcoin / Altcoins)')),
-        ('precious_metal', _('Precious Metals (Gold / Silver)')),
+        ('precious_metal', _('Precious Metals (ETC / Account)')),
         ('other', _('Other Financial Asset')),
     ]
 

@@ -687,6 +687,44 @@
                                     </tbody>
                                 </table>
                             </div>
+
+                            <div class="d-flex justify-content-between align-items-center mb-2 mt-4">
+                                <span class="fw-bold small text-uppercase text-muted">{% trans "Tab: Verlauf & Performance (KPI-Karten)" %}</span>
+                            </div>
+                            <div class="table-responsive border rounded-3 overflow-hidden">
+                                <table class="table table-hover table-sm align-middle mb-0">
+                                    <thead class="cfg-table-head">
+                                        <tr>
+                                            <th style="width: 40px;"></th>
+                                            <th>{% trans "Karte" %}</th>
+                                            <th style="width: 90px;" class="text-center">{% trans "Sichtbar" %}</th>
+                                            <th style="width: 140px;">{% trans "Farben (Bg / Text)" %}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="card-group-table-body" data-group="assets_tab_performance">
+                                        {% for card in card_config_user_groups.assets_tab_performance %}
+                                        <tr data-id="{{ card.id }}" data-group="assets_tab_performance">
+                                            <td class="text-center"><i class="bi bi-grip-vertical drag-handle text-muted" style="cursor: grab; font-size: 1.15rem;"></i></td>
+                                            <td>
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <i class="bi {{ card.icon }} text-muted"></i>
+                                                    <span class="fw-semibold">{{ card.title }}</span>
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                                <input type="checkbox" class="form-check-input group-card-visible" {% if card.visible %}checked{% endif %}>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex gap-1 align-items-center">
+                                                    <input type="color" class="form-control form-control-color form-control-sm group-card-bg" value="{{ card.bg_color }}">
+                                                    <input type="color" class="form-control form-control-color form-control-sm group-card-text" value="{{ card.text_color }}">
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
 
                     </div>
