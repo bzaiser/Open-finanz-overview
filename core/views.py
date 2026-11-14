@@ -98,11 +98,51 @@ def toggle_night_mode(request):
 
 @login_required
 def profile_view(request):
+    from .theme_engine import (
+        MOODS,
+        compute_theme_palette,
+        get_profile_theme_studio_settings,
+        get_profile_theme_palette,
+    )
+    from finance.card_registry import apply_theme_palette_to_cards
+
     profile, created = UserProfile.objects.get_or_create(user=request.user)
     if request.method == 'POST':
         form = UserProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
-            form.save()
+            prof = form.save(commit=False)
+
+            mood = request.POST.get('theme_mood', 'modern')
+            if mood not in MOODS:
+                mood = 'modern'
+            bg_mode = request.POST.get('theme_bg_mode', 'auto')
+            if bg_mode not in ('auto', 'light', 'dark', 'custom'):
+                bg_mode = 'auto'
+            bg_custom = request.POST.get('theme_bg_custom') or prof.background_color or '#ffffff'
+            sync_cards = request.POST.get('theme_sync_cards') == 'on'
+
+            dc = dict(prof.dashboard_config or {})
+            dc['theme_studio'] = {
+                'mood': mood,
+                'bg_mode': bg_mode,
+                'bg_custom': bg_custom,
+                'sync_cards_and_charts': sync_cards,
+            }
+
+            palette = compute_theme_palette(
+                c1=prof.gradient_start or '#6610f2',
+                c2=prof.gradient_end or '#0d6efd',
+                mood_key=mood,
+                bg_mode=bg_mode,
+                bg_custom=bg_custom,
+            )
+
+            if sync_cards:
+                dc = apply_theme_palette_to_cards(dc, palette)
+
+            prof.dashboard_config = dc
+            prof.save()
+            form.save_m2m()
             messages.success(request, _("Profile updated successfully!"))
             return redirect('finance:dashboard')
     else:
@@ -121,6 +161,8 @@ def profile_view(request):
         'is_in_docker': in_docker,
         'has_external_mount': has_external_mount,
         'default_backup_dir': get_default_backup_dir(),
+        'theme_studio': get_profile_theme_studio_settings(profile),
+        'theme_palette': get_profile_theme_palette(profile),
     })
 
 import os

@@ -62,6 +62,11 @@ def card_config_context(request):
         if is_backup_due(profile):
             backup_due = True
 
+    from core.theme_engine import get_profile_theme_palette, get_profile_theme_studio_settings
+    import json
+    theme_palette = get_profile_theme_palette(profile)
+    theme_studio = get_profile_theme_studio_settings(profile)
+
     return {
         'card_config_user_groups': user_card_groups,
         'card_config_registry': CARD_REGISTRY,
@@ -71,4 +76,14 @@ def card_config_context(request):
         'card_config_summary_layout': resolved_summary_layout,
         'card_config_layout': resolved_layout,
         'backup_due': backup_due,
+        'theme_palette': theme_palette,
+        'theme_studio': theme_studio,
+        'theme_palette_json': json.dumps({
+            'mood': theme_palette['mood'],
+            'is_dark': theme_palette['is_dark'],
+            'brutal': theme_palette['brutal'],
+            'glow': theme_palette['glow'],
+            'sync_cards_and_charts': theme_studio.get('sync_cards_and_charts', True),
+            'states': theme_palette['states'],
+        }),
     }

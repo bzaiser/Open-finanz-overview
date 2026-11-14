@@ -172,17 +172,83 @@
                 <!-- Rechts: Design Studio & Datensicherung -->
                 <div class="col-lg-6 d-flex flex-column gap-4">
                     <div class="glass-card shadow-lg p-4 border-primary border-opacity-25" style="border-width: 2px;">
-                        <h4 class="mb-4 fw-bold"><i class="bi bi-magic me-2 text-primary"></i>{% trans "Design Studio" %}</h4>
+                        <h4 class="mb-3 fw-bold"><i class="bi bi-magic me-2 text-primary"></i>{% trans "Design Studio" %}</h4>
                         
-                        <!-- Premium Preview Box -->
-                        <div id="harmonyPreview" class="rounded-4 p-4 text-white shadow-gradient d-flex flex-column justify-content-center text-center mb-4"
-                             style="background: var(--app-preview-gradient); min-height: 120px; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);">
-                            <div class="fs-3 fw-bold shadow-text">{% trans "Design Harmony" %}</div>
-                            <div class="small opacity-75">{% trans "Real-time Live Preview" %}</div>
+                        <!-- Design Studio 2.0 Control Bar -->
+                        <div class="p-3 rounded-4 border border-secondary border-opacity-25 mb-3" style="background: rgba(125,125,125,0.04);">
+                            <div class="row g-2 align-items-end">
+                                <div class="col-6 col-sm-3">
+                                    <label class="form-label fw-bold mb-1 d-block" style="font-size: 0.7rem;">{% trans "Grundfarbe" %}</label>
+                                    <input type="color" id="studioC1" class="form-control form-control-color w-100" value="{{ user.profile.gradient_start|default:'#3b82f6' }}" style="height: 38px;">
+                                </div>
+                                <div class="col-6 col-sm-3">
+                                    <label class="form-label fw-bold mb-1 d-block" style="font-size: 0.7rem;">{% trans "Verlauf / Dualtone 2" %}</label>
+                                    <input type="color" id="studioC2" class="form-control form-control-color w-100" value="{{ user.profile.gradient_end|default:'#f43f5e' }}" style="height: 38px;">
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <label class="form-label fw-bold mb-1 d-block" style="font-size: 0.7rem;">{% trans "Design-Stimmung" %}</label>
+                                    <select id="studioMood" name="theme_mood" class="form-select form-select-sm" style="height: 38px; font-size: 0.8rem;">
+                                        <optgroup label="{% trans 'Klassisch & Modern' %}">
+                                            <option value="modern" {% if theme_studio.mood == 'modern' %}selected{% endif %}>{% trans "Modern (Ausgewogen)" %}</option>
+                                            <option value="dualtone" {% if theme_studio.mood == 'dualtone' %}selected{% endif %}>{% trans "Dualtone (2-Farben-Harmonie)" %}</option>
+                                            <option value="serioes" {% if theme_studio.mood == 'serioes' %}selected{% endif %}>{% trans "Seriös (Business & Ruhig)" %}</option>
+                                            <option value="dunkel" {% if theme_studio.mood == 'dunkel' %}selected{% endif %}>{% trans "Dunkel (Dark UI)" %}</option>
+                                            <option value="brutalism" {% if theme_studio.mood == 'brutalism' %}selected{% endif %}>{% trans "Polished Brutalism (Kontrast)" %}</option>
+                                        </optgroup>
+                                        <optgroup label="{% trans 'Trend & Ästhetik' %}">
+                                            <option value="wellness" {% if theme_studio.mood == 'wellness' %}selected{% endif %}>{% trans "Digital Wellness (Soft Pastell)" %}</option>
+                                            <option value="ecofuture" {% if theme_studio.mood == 'ecofuture' %}selected{% endif %}>{% trans "Eco-Futurism (Natur + Neon)" %}</option>
+                                            <option value="moody" {% if theme_studio.mood == 'moody' %}selected{% endif %}>{% trans "Moody & Rich Tones" %}</option>
+                                            <option value="fancy" {% if theme_studio.mood == 'fancy' %}selected{% endif %}>{% trans "Fancy (Pastell & Leuchtend)" %}</option>
+                                            <option value="vintage" {% if theme_studio.mood == 'vintage' %}selected{% endif %}>{% trans "Vintage (Warm & Retro)" %}</option>
+                                        </optgroup>
+                                        <optgroup label="{% trans 'Extrem & Puristisch' %}">
+                                            <option value="knallbunt" {% if theme_studio.mood == 'knallbunt' %}selected{% endif %}>{% trans "Knallbunt (Lebhaft)" %}</option>
+                                            <option value="neon" {% if theme_studio.mood == 'neon' %}selected{% endif %}>{% trans "Neon (Leuchtend)" %}</option>
+                                            <option value="duester" {% if theme_studio.mood == 'duester' %}selected{% endif %}>{% trans "Düster (Gedeckt)" %}</option>
+                                            <option value="earth" {% if theme_studio.mood == 'earth' %}selected{% endif %}>{% trans "Warme Neutraltöne & Erde" %}</option>
+                                            <option value="monochrom" {% if theme_studio.mood == 'monochrom' %}selected{% endif %}>{% trans "Monochrom (Ton-in-Ton)" %}</option>
+                                            <option value="grayscale" {% if theme_studio.mood == 'grayscale' %}selected{% endif %}>{% trans "Graustufen (Achromatisch)" %}</option>
+                                        </optgroup>
+                                    </select>
+                                </div>
+                                <div class="col-12 col-sm-6 mt-2">
+                                    <label class="form-label fw-bold mb-1 d-block" style="font-size: 0.7rem;">{% trans "Hintergrund" %}</label>
+                                    <div class="d-flex gap-2 align-items-center">
+                                        <select id="studioBgMode" name="theme_bg_mode" class="form-select form-select-sm flex-grow-1" style="height: 38px; font-size: 0.8rem;">
+                                            <option value="auto" {% if theme_studio.bg_mode == 'auto' %}selected{% endif %}>{% trans "Auto (zur Stimmung)" %}</option>
+                                            <option value="light" {% if theme_studio.bg_mode == 'light' %}selected{% endif %}>{% trans "Immer Hell" %}</option>
+                                            <option value="dark" {% if theme_studio.bg_mode == 'dark' %}selected{% endif %}>{% trans "Immer Dunkel" %}</option>
+                                            <option value="custom" {% if theme_studio.bg_mode == 'custom' %}selected{% endif %}>{% trans "Eigene Farbe ➔" %}</option>
+                                        </select>
+                                        <input type="color" id="studioBgCustom" name="theme_bg_custom" class="form-control form-control-color" value="{{ theme_studio.bg_custom|default:'#e2e8f0' }}" style="width: 42px; height: 38px; display: {% if theme_studio.bg_mode == 'custom' %}block{% else %}none{% endif %};">
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6 mt-2">
+                                    <div id="harmonyPreview" class="rounded-3 px-3 text-white shadow-sm d-flex align-items-center justify-content-center text-center fw-bold"
+                                         style="background: var(--app-preview-gradient); height: 38px; font-size: 0.85rem; text-shadow: 0 1px 3px rgba(0,0,0,0.4);">
+                                        {% trans "Basisverlauf" %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-check form-switch mt-3 pt-2 border-top border-secondary border-opacity-25">
+                                <input class="form-check-input" type="checkbox" role="switch" id="studioSyncCards" name="theme_sync_cards" {% if theme_studio.sync_cards_and_charts %}checked{% endif %}>
+                                <label class="form-check-label small fw-semibold" for="studioSyncCards" style="font-size: 0.75rem;">
+                                    {% trans "KPI-Karten, Kategorien & Diagramme automatisch an Design-Stimmung anpassen" %}
+                                </label>
+                            </div>
                         </div>
 
-                        <label class="form-label small fw-bold mb-3">{% trans "Select a Color Harmony" %}</label>
-                        <div class="d-flex flex-wrap gap-3 mb-4">
+                        <!-- 8-State Semantic Harmony Grid -->
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="small fw-bold" style="font-size: 0.75rem;"><i class="bi bi-palette2 me-1 text-primary"></i>{% trans "Semantische Farbharmonie (8 Zustände für Karten, Kategorien & Charts)" %}</span>
+                            <small class="text-muted" style="font-size: 0.65rem;">{% trans "Klick auf Farbfeld kopiert HEX" %}</small>
+                        </div>
+                        <div class="studio-harmony-grid mb-3" id="studioSwatchGrid"></div>
+
+                        <label class="form-label small fw-bold mb-2" style="font-size: 0.75rem;">{% trans "Schnellvorlagen (Farbharmonien)" %}</label>
+                        <div class="d-flex flex-wrap gap-2 mb-3">
                             {% include "core/partials/harmony_presets.html" %}
                         </div>
 
@@ -356,6 +422,70 @@
         const html = document.documentElement;
         let isSyncing = false;
 
+        const studioC1 = document.getElementById('studioC1');
+        const studioC2 = document.getElementById('studioC2');
+        const studioMood = document.getElementById('studioMood');
+        const studioBgMode = document.getElementById('studioBgMode');
+        const studioBgCustom = document.getElementById('studioBgCustom');
+        const studioSwatchGrid = document.getElementById('studioSwatchGrid');
+
+        const STUDIO_STATES = [
+            { n: "{% trans '1. OK / Ampel Grün'|escapejs %}", h: 142, t: "{% trans '✓ Stabil'|escapejs %}", side: 1 },
+            { n: "{% trans '2. Positiv / Info'|escapejs %}", h: 185, t: "{% trans 'ℹ Info'|escapejs %}", side: 1 },
+            { n: "{% trans '3. Mittel / Achtung'|escapejs %}", h: 43, t: "{% trans '⚠ Achtung'|escapejs %}", side: 2 },
+            { n: "{% trans '4. Warnung'|escapejs %}", h: 26, t: "{% trans '⚡ Warnung'|escapejs %}", side: 2 },
+            { n: "{% trans '5. Schlecht / Negativ'|escapejs %}", h: 4, t: "{% trans '✕ Fehler'|escapejs %}", side: 2 },
+            { n: "{% trans '6. Gefahr / Kritisch'|escapejs %}", h: 338, t: "{% trans '🛑 Gefahr'|escapejs %}", side: 2 },
+            { n: "{% trans '7. Neutral / Inaktiv'|escapejs %}", h: null, t: "{% trans '• Inaktiv'|escapejs %}", side: 0 },
+            { n: "{% trans '8. Fokus / Highlight'|escapejs %}", h: 272, t: "{% trans '★ Fokus'|escapejs %}", side: 1 }
+        ];
+
+        const STUDIO_MOODS = {
+            modern:    { s: 70, l: 50, bg: "#f4f6f9", dark: false, shift: 0.06 },
+            dualtone:  { s: 78, l: 52, bg: "#f4f6f9", dark: false, shift: 0.00, dual: true },
+            serioes:   { s: 42, l: 45, bg: "#f1f5f9", dark: false, shift: 0.10 },
+            dunkel:    { s: 65, l: 52, bg: "#0f172a", dark: true,  shift: 0.08 },
+            brutalism: { s: 92, l: 56, bg: "#050505", dark: true,  shift: 0.00, brutal: true },
+            wellness:  { s: 36, l: 74, bg: "#f6f7f4", dark: false, shift: 0.18 },
+            ecofuture: { s: 88, l: 52, bg: "#141d18", dark: true,  shift: 0.05, eco: true },
+            moody:     { s: 58, l: 36, bg: "#16131c", dark: true,  shift: 0.12 },
+            fancy:     { s: 65, l: 68, bg: "#f8f5fc", dark: false, shift: 0.12 },
+            vintage:   { s: 48, l: 54, bg: "#f5f0e6", dark: false, shift: 0.25, warm: true },
+            knallbunt: { s: 95, l: 52, bg: "#f4f6f9", dark: false, shift: 0.02 },
+            neon:      { s: 100,l: 55, bg: "#090a0f", dark: true,  shift: 0.00, glow: true },
+            duester:   { s: 35, l: 38, bg: "#111317", dark: true,  shift: 0.15 },
+            earth:     { s: 32, l: 48, bg: "#ede6dc", dark: false, shift: 0.15, earth: true },
+            monochrom: { s: 55, l: 50, bg: "#f4f6f9", dark: false, shift: 0.88 },
+            grayscale: { s: 0,  l: 50, bg: "#efefef", dark: false, shift: 0.00 }
+        };
+
+        function hexToHsl(hex) {
+            if (!hex || typeof hex !== 'string' || hex.length < 7) return { h: 217, s: 91, l: 60 };
+            let r = parseInt(hex.slice(1,3),16)/255, g = parseInt(hex.slice(3,5),16)/255, b = parseInt(hex.slice(5,7),16)/255;
+            let max = Math.max(r,g,b), min = Math.min(r,g,b), h, s, l = (max+min)/2;
+            if (max === min) { h = s = 0; } else {
+                let d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                h = max === r ? (g - b) / d + (g < b ? 6 : 0) : max === g ? (b - r) / d + 2 : (r - g) / d + 4;
+                h *= 60;
+            }
+            return { h: Math.round(h), s: Math.round(s * 100), l: Math.round(l * 100) };
+        }
+
+        function hslToHex(h, s, l) {
+            h = ((h % 360) + 360) % 360;
+            s = Math.max(0, Math.min(100, s));
+            l = Math.max(0, Math.min(100, l));
+            let lNorm = l / 100;
+            const a = s * Math.min(lNorm, 1 - lNorm) / 100;
+            const f = n => {
+                const k = (n + h / 30) % 12;
+                const color = lNorm - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+                return Math.round(255 * color).toString(16).padStart(2, '0');
+            };
+            return `#${f(0)}${f(8)}${f(4)}`.toUpperCase();
+        }
+
         function getPrimaryValue(name) {
             const el = profileForm.querySelector(`input[name="${name}"][type="color"]`) || 
                        profileForm.querySelector(`[name="${name}"]`);
@@ -402,9 +532,7 @@
 
             if (preview) { preview.style.background = config['gradient']; }
 
-            // Apply GLOABLLY for instant feedback (even in Night Mode session)
             Object.entries(config).forEach(([key, value]) => {
-                // If in Night Mode, only override the surface with a TINTED version
                 if (isNight && !forceBackground) {
                     if (['card-bg', 'sidebar-bg', 'table-body-bg'].includes(key)) {
                         const tintedValue = `color-mix(in srgb, var(--app-primary), black 88%)`;
@@ -418,33 +546,145 @@
                 }
                 html.style.setProperty('--app-' + key, value);
             });
-            // Also sync the persistent preview gradient for the button & box
             html.style.setProperty('--app-preview-gradient', config['gradient']);
 
-            // Only override Bootstrap body globals if forced or NOT in night mode
             if (!isNight || forceBackground) {
                 html.style.setProperty('--bs-primary', config['primary']);
                 html.style.setProperty('--bs-body-bg', config['card-bg']);
                 html.style.setProperty('--bs-body-color', config['card-color']);
                 html.style.setProperty('--bs-tertiary-bg', config['card-bg']);
                 html.style.setProperty('--bs-card-bg', config['card-bg']);
-                
-                // If forced background in Night Mode, we technically "break out" of dark theme visually
                 if (isNight && forceBackground) {
                     html.removeAttribute('data-bs-theme');
                 }
             } else {
-                // Ensure Bootstrap globals also use the tint in night mode
                 html.style.setProperty('--bs-body-bg', 'color-mix(in srgb, var(--app-primary), black 95%)');
                 html.style.setProperty('--bs-tertiary-bg', 'color-mix(in srgb, var(--app-primary), black 88%)');
                 html.style.setProperty('--bs-card-bg', 'color-mix(in srgb, var(--app-primary), black 88%)');
             }
         }
 
+        function runThemeStudio(updatePrecisionFields = true) {
+            if (!studioC1 || !studioC2 || !studioMood || !studioBgMode || !studioSwatchGrid) return;
+            const c1 = studioC1.value || '#3b82f6';
+            const c2 = studioC2.value || '#f43f5e';
+            const moodKey = studioMood.value || 'modern';
+            const bgMode = studioBgMode.value || 'auto';
+            const m = STUDIO_MOODS[moodKey] || STUDIO_MOODS.modern;
+
+            if (studioBgCustom) {
+                studioBgCustom.style.display = bgMode === 'custom' ? 'block' : 'none';
+            }
+
+            let pageBg = m.bg;
+            let isDark = m.dark;
+            if (bgMode === 'light') { pageBg = '#f4f6f9'; isDark = false; }
+            else if (bgMode === 'dark') { pageBg = '#0f172a'; isDark = true; }
+            else if (bgMode === 'custom' && studioBgCustom) {
+                pageBg = studioBgCustom.value;
+                isDark = hexToHsl(pageBg).l < 50;
+            }
+
+            const base1 = hexToHsl(c1);
+            const base2 = hexToHsl(c2);
+
+            const gStart = moodKey === 'grayscale' ? '#333333' : c1;
+            const gEnd = moodKey === 'grayscale' ? '#888888' : c2;
+            const primaryHex = moodKey === 'grayscale' ? '#555555' : c1;
+
+            if (preview) {
+                preview.style.background = `linear-gradient(135deg, ${gStart}, ${gEnd})`;
+            }
+
+            studioSwatchGrid.innerHTML = STUDIO_STATES.map((st, idx) => {
+                let hue = st.h === null ? base1.h : Math.round(st.h + (base1.h - st.h) * m.shift);
+                let s = st.h === null ? (m.s === 0 ? 0 : 12) : m.s;
+                let l = m.l;
+
+                if (m.dual) {
+                    if (st.side === 1) { hue = base1.h; l = idx === 0 ? 46 : (idx === 1 ? 56 : 38); }
+                    else if (st.side === 2) { hue = base2.h; l = 38 + (idx - 2) * 7; }
+                    else { hue = Math.round((base1.h + base2.h) / 2); s = 14; l = 50; }
+                }
+
+                if (m.warm && st.h !== null) hue = Math.round(hue * 0.85 + 35 * 0.15);
+                if (m.earth) { hue = st.h === null ? 32 : Math.round(hue * 0.35 + 28 * 0.65); l = 35 + (idx * 4); }
+                if (m.eco && st.h !== null) {
+                    if (st.h === 142 || st.h === 185) { s = 48; l = 44; } else { s = 98; l = 56; }
+                }
+                if (moodKey === 'monochrom' || moodKey === 'grayscale') {
+                    l = 24 + (idx * 7);
+                } else if (!m.dual && st.h !== null && st.h >= 35 && st.h <= 55 && !isDark && moodKey !== 'wellness') {
+                    l = Math.max(48, l);
+                }
+
+                const hex = hslToHex(hue, s, l);
+                const bg = `hsla(${((hue % 360) + 360) % 360}, ${s}%, ${l}%, ${isDark ? 0.24 : 0.15})`;
+                const txt = isDark ? hslToHex(hue, s, Math.min(86, l + 24)) : hslToHex(hue, s, Math.max(22, l - 26));
+                const cardBg = isDark ? '#1e293b' : '#ffffff';
+                const cardTxt = isDark ? '#f8fafc' : '#1e293b';
+                const borderStyle = m.brutal ? `border: 2px solid ${hex}; box-shadow: 3px 3px 0 ${hex};` : `border: 1px solid rgba(125,125,125,0.2);`;
+                const glowStyle = (m.glow || (m.eco && s > 80)) ? `box-shadow: inset 0 0 18px ${hex}, 0 0 10px ${hex}44;` : '';
+
+                html.style.setProperty(`--theme-state-${idx + 1}`, hex);
+
+                return `
+                  <div class="studio-state-card" style="background:${cardBg}; color:${cardTxt}; ${borderStyle}">
+                    <div class="studio-state-swatch" style="background:${hex}; ${glowStyle}" onclick="navigator.clipboard.writeText('${hex}')" title="{% trans 'Klick zum Kopieren'|escapejs %}">
+                      <span>${hex}</span><small style="opacity:0.85">${((hue % 360) + 360) % 360}°</small>
+                    </div>
+                    <div class="studio-state-info">
+                      <div class="fw-bold text-truncate" style="font-size:0.72rem;" title="${st.n}">${st.n}</div>
+                      <span class="studio-state-badge" style="background:${bg}; color:${txt}; border:1px solid ${hex}44">${st.t}</span>
+                    </div>
+                  </div>`;
+            }).join('');
+
+            if (updatePrecisionFields) {
+                const textColor = isDark ? '#f8fafc' : '#1e293b';
+                const sidebarBg = hslToHex(base1.h, Math.min(25, m.s), isDark ? 12 : 96);
+                const thBg = hslToHex(base1.h, m.s, isDark ? 28 : Math.max(32, Math.min(52, m.l)));
+                const thText = hexToHsl(thBg).l >= 66 ? '#1e293b' : '#ffffff';
+                const tbBg = bgMode !== 'custom' ? hslToHex(base1.h, Math.min(18, m.s), isDark ? 11 : 99) : pageBg;
+                const borderCol = isDark ? '#334155' : '#dee2e6';
+
+                const updates = {
+                    primary_color: primaryHex,
+                    gradient_start: gStart,
+                    gradient_end: gEnd,
+                    background_color: pageBg,
+                    text_color: textColor,
+                    sidebar_bg_color: sidebarBg,
+                    table_header_bg_color: thBg,
+                    table_header_text_color: thText,
+                    table_body_bg_color: tbBg,
+                    table_body_text_color: textColor,
+                    table_border_color: borderCol
+                };
+                isSyncing = true;
+                try {
+                    Object.keys(updates).forEach(k => setAllValues(k, updates[k], true));
+                } finally {
+                    setTimeout(() => { isSyncing = false; }, 50);
+                }
+                applyLiveTheme(true);
+            }
+        }
+
+        [studioC1, studioC2, studioMood, studioBgMode, studioBgCustom].forEach(el => {
+            if (el) {
+                el.addEventListener('input', () => runThemeStudio(true));
+                el.addEventListener('change', () => runThemeStudio(true));
+            }
+        });
+
         document.addEventListener('click', (e) => {
             const preset = e.target.closest('.gradient-preset');
             if (preset) {
                 const d = preset.dataset;
+                if (studioC1 && d.start) studioC1.value = d.start;
+                if (studioC2 && d.end) studioC2.value = d.end;
+                if (studioBgCustom && d.bg) studioBgCustom.value = d.bg;
                 const updateList = {
                     gradient_start: d.start, gradient_end: d.end,
                     primary_color: d.primary || d.start, background_color: d.bg || '#ffffff',
@@ -456,7 +696,8 @@
                     table_border_color: d.border || ((d.bg === '#121212' || d.bg === '#0d1117') ? '#333333' : '#dee2e6')
                 };
                 Object.keys(updateList).forEach(key => setAllValues(key, updateList[key], true));
-                applyLiveTheme(false);
+                runThemeStudio(false);
+                applyLiveTheme(true);
             }
         });
 
@@ -464,16 +705,19 @@
             profileForm.addEventListener('input', (e) => {
                 if (isSyncing) return;
                 const target = e.target;
+                if (target.id && target.id.startsWith('studio')) return;
                 if (target.matches('[type="color"]') || target.classList.contains('form-control-color')) {
                     const name = target.getAttribute('name');
                     if (name) {
                         setAllValues(name, target.value);
+                        if (name === 'gradient_start' && studioC1) studioC1.value = target.value;
+                        if (name === 'gradient_end' && studioC2) studioC2.value = target.value;
+                        runThemeStudio(false);
                         applyLiveTheme(name === 'background_color');
                     }
                 }
             });
 
-            // Keydown listener: Focus save button on Enter instead of immediate submit
             profileForm.addEventListener('keydown', function(e) {
                 if (e.key === 'Enter' && e.target.tagName === 'INPUT') {
                     e.preventDefault();
@@ -486,10 +730,53 @@
                 }
             });
         }
+
+        // Initial render of the 8-state grid without overwriting existing saved precision fields
+        runThemeStudio(false);
     })();
 </script>
 
 <style>
+    .studio-harmony-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
+        gap: 10px;
+    }
+    .studio-state-card {
+        border-radius: 10px;
+        overflow: hidden;
+        transition: transform 0.15s ease;
+    }
+    .studio-state-card:hover {
+        transform: translateY(-2px);
+    }
+    .studio-state-swatch {
+        height: 48px;
+        padding: 6px 8px;
+        color: #ffffff;
+        font-family: monospace;
+        font-size: 0.72rem;
+        font-weight: bold;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        text-shadow: 0 1px 3px rgba(0,0,0,0.65);
+        cursor: pointer;
+    }
+    .studio-state-swatch:hover {
+        opacity: 0.92;
+    }
+    .studio-state-info {
+        padding: 7px 8px;
+    }
+    .studio-state-badge {
+        padding: 2px 7px;
+        border-radius: 5px;
+        font-size: 0.68rem;
+        font-weight: bold;
+        display: inline-block;
+        margin-top: 4px;
+    }
     .glass-card {
         background: var(--app-card-bg);
         background-color: color-mix(in srgb, var(--app-card-bg), transparent 30%);
@@ -498,10 +785,10 @@
         border-radius: 20px;
     }
     .preset-pill {
-        width: 42px; height: 42px; border-radius: 12px;
-        cursor: pointer; transition: all 0.3s; border: 3px solid white;
+        width: 38px; height: 38px; border-radius: 10px;
+        cursor: pointer; transition: all 0.3s; border: 2px solid white;
     }
-    .preset-pill:hover { transform: scale(1.15) translateY(-5px); }
+    .preset-pill:hover { transform: scale(1.12) translateY(-3px); }
     .shadow-gradient { box-shadow: 0 15px 45px -10px rgba(13, 110, 253, 0.4); }
     
     /* Accordion Refinement */

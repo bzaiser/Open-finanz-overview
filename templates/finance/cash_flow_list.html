@@ -307,7 +307,7 @@
                             </td>
                             <td class="py-3 px-3">
                                 <span class="badge rounded-pill me-1" :class="item.is_income ? 'bg-success-subtle text-success border border-success-subtle' : 'bg-danger-subtle text-danger border border-danger-subtle'" style="font-size: 0.7rem;" x-text="item.is_income ? '{% trans "Income" %}' : '{% trans "Expense" %}'"></span>
-                                <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary-subtle rounded-pill me-1" style="font-size: 0.7rem;" x-text="item.category_translated"></span>
+                                <span class="badge rounded-pill me-1" :style="'font-size: 0.7rem; background: ' + (item.category_badge_bg || 'rgba(108,117,125,0.15)') + '; color: ' + (item.category_badge_txt || '#6c757d') + '; border: 1px solid ' + (item.category_color_hex || '#6c757d') + '40;'" x-text="item.category_translated"></span>
                                 <span x-show="item.source_type !== 'manual'" class="badge bg-info bg-opacity-10 text-info border border-info-subtle rounded-pill" style="font-size: 0.7rem;" x-text="item.source_label"></span>
                             </td>
                             <td class="py-3 px-3 small font-monospace" x-text="item.period_formatted"></td>
@@ -386,7 +386,7 @@
                                 </td>
                                 <td class="py-3 px-3">
                                     <span class="badge rounded-pill me-1" :class="item.is_income ? 'bg-success-subtle text-success border border-success-subtle' : 'bg-danger-subtle text-danger border border-danger-subtle'" style="font-size: 0.7rem;" x-text="item.is_income ? '{% trans "Income" %}' : '{% trans "Expense" %}'"></span>
-                                    <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary-subtle rounded-pill me-1" style="font-size: 0.7rem;" x-text="item.category_translated"></span>
+                                    <span class="badge rounded-pill me-1" :style="'font-size: 0.7rem; background: ' + (item.category_badge_bg || 'rgba(108,117,125,0.15)') + '; color: ' + (item.category_badge_txt || '#6c757d') + '; border: 1px solid ' + (item.category_color_hex || '#6c757d') + '40;'" x-text="item.category_translated"></span>
                                     <span x-show="item.source_type !== 'manual'" class="badge bg-info bg-opacity-10 text-info border border-info-subtle rounded-pill" style="font-size: 0.7rem;" x-text="item.source_label"></span>
                                 </td>
                                 <td class="py-3 px-3 small font-monospace" x-text="item.period_formatted"></td>

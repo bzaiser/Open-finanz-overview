@@ -2773,3 +2773,150 @@ msgstr "Posizione Maggiore"
 
 msgid "Physische Sachwerte"
 msgstr "Beni Fisici"
+
+msgid "Grundfarbe"
+msgstr "Colore di base"
+
+msgid "Verlauf / Dualtone 2"
+msgstr "Gradiente / Dualtone 2"
+
+msgid "Design-Stimmung"
+msgstr "Stile di design"
+
+msgid "Klassisch & Modern"
+msgstr "Classico & Moderno"
+
+msgid "Modern (Ausgewogen)"
+msgstr "Moderno (Bilanciato)"
+
+msgid "Dualtone (2-Farben-Harmonie)"
+msgstr "Dualtone (Armonia a 2 colori)"
+
+msgid "Seriös (Business & Ruhig)"
+msgstr "Serio (Business & Calmo)"
+
+msgid "Dunkel (Dark UI)"
+msgstr "Scuro (Dark UI)"
+
+msgid "Polished Brutalism (Kontrast)"
+msgstr "Brutalismo raffinato (Contrasto)"
+
+msgid "Trend & Ästhetik"
+msgstr "Trend & Estetica"
+
+msgid "Digital Wellness (Soft Pastell)"
+msgstr "Digital Wellness (Pastello tenue)"
+
+msgid "Eco-Futurism (Natur + Neon)"
+msgstr "Eco-Futurismo (Natura + Neon)"
+
+msgid "Moody & Rich Tones"
+msgstr "Toni ricchi e profondi"
+
+msgid "Fancy (Pastell & Leuchtend)"
+msgstr "Fancy (Pastello & Brillante)"
+
+msgid "Vintage (Warm & Retro)"
+msgstr "Vintage (Caldo & Retrò)"
+
+msgid "Extrem & Puristisch"
+msgstr "Estremo & Purista"
+
+msgid "Knallbunt (Lebhaft)"
+msgstr "Vivace (Colorato)"
+
+msgid "Neon (Leuchtend)"
+msgstr "Neon (Luminoso)"
+
+msgid "Düster (Gedeckt)"
+msgstr "Cupo (Smorzato)"
+
+msgid "Warme Neutraltöne & Erde"
+msgstr "Neutri caldi & Terra"
+
+msgid "Monochrom (Ton-in-Ton)"
+msgstr "Monocromatico (Tono su tono)"
+
+msgid "Graustufen (Achromatisch)"
+msgstr "Scala di grigi (Acromatico)"
+
+msgid "Hintergrund"
+msgstr "Sfondo"
+
+msgid "Auto (zur Stimmung)"
+msgstr "Auto (secondo lo stile)"
+
+msgid "Immer Hell"
+msgstr "Sempre chiaro"
+
+msgid "Immer Dunkel"
+msgstr "Sempre scuro"
+
+msgid "Eigene Farbe ➔"
+msgstr "Colore personalizzato ➔"
+
+msgid "Basisverlauf"
+msgstr "Gradiente di base"
+
+msgid "KPI-Karten, Kategorien & Diagramme automatisch an Design-Stimmung anpassen"
+msgstr "Armonizza automaticamente schede KPI, categorie e grafici con lo stile di design"
+
+msgid "Semantische Farbharmonie (8 Zustände für Karten, Kategorien & Charts)"
+msgstr "Armonia cromatica semantica (8 stati per schede, categorie e grafici)"
+
+msgid "Klick auf Farbfeld kopiert HEX"
+msgstr "Clic sul colore per copiare HEX"
+
+msgid "Schnellvorlagen (Farbharmonien)"
+msgstr "Modelli rapidi (Armonie di colore)"
+
+msgid "1. OK / Ampel Grün"
+msgstr "1. OK / Verde semaforo"
+
+msgid "2. Positiv / Info"
+msgstr "2. Positivo / Info"
+
+msgid "3. Mittel / Achtung"
+msgstr "3. Medio / Attenzione"
+
+msgid "4. Warnung"
+msgstr "4. Avviso"
+
+msgid "5. Schlecht / Negativ"
+msgstr "5. Negativo / Critico"
+
+msgid "6. Gefahr / Kritisch"
+msgstr "6. Pericolo / Critico"
+
+msgid "7. Neutral / Inaktiv"
+msgstr "7. Neutro / Inattivo"
+
+msgid "8. Fokus / Highlight"
+msgstr "8. Focus / Evidenza"
+
+msgid "✓ Stabil"
+msgstr "✓ Stabile"
+
+msgid "ℹ Info"
+msgstr "ℹ Info"
+
+msgid "⚠ Achtung"
+msgstr "⚠ Attenzione"
+
+msgid "⚡ Warnung"
+msgstr "⚡ Avviso"
+
+msgid "✕ Fehler"
+msgstr "✕ Errore"
+
+msgid "🛑 Gefahr"
+msgstr "🛑 Pericolo"
+
+msgid "• Inaktiv"
+msgstr "• Inattivo"
+
+msgid "★ Fokus"
+msgstr "★ Focus"
+
+msgid "Klick zum Kopieren"
+msgstr "Clic per copiare"

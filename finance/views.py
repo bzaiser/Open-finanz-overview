@@ -652,8 +652,10 @@ def dashboard_view(request):
         income_categories.update(yearly_buckets[year]['income_category_breakdown'].keys())
         expense_categories.update(yearly_buckets[year]['category_breakdown'].keys())
     
-    category_color_map = {c.name: c.color for c in Category.objects.all()}
-    fallback_colors = ['#0d6efd', '#6610f2', '#6f42c1', '#d63384', '#dc3545', '#fd7e14', '#ffc107', '#198754', '#20c997', '#0dcaf0']
+    from core.theme_engine import get_harmonized_category_maps, get_profile_theme_palette
+    category_color_map, _unused_by_id = get_harmonized_category_maps(profile)
+    theme_states = get_profile_theme_palette(profile).get('states', [])
+    fallback_colors = [s['hex'] for s in theme_states if s.get('index') != 7] or ['#0d6efd', '#6610f2', '#6f42c1', '#d63384', '#dc3545', '#fd7e14', '#ffc107', '#198754', '#20c997', '#0dcaf0']
 
     income_evo_datasets = []
     for idx, cat in enumerate(sorted(list(income_categories))):
@@ -2934,8 +2936,12 @@ def cash_flow_list(request):
     
     filtered_items = [item for item in unified_items if item['is_active_in_selected_year']]
     
+    from core.theme_engine import get_harmonized_category_maps, harmonize_category_color, get_profile_theme_palette
+    _unused_by_name, cat_by_id = get_harmonized_category_maps(profile)
+    active_palette = get_profile_theme_palette(profile)
+
     items_json = []
-    for item in filtered_items:
+    for idx_item, item in enumerate(filtered_items):
         s_date_str = item['start_date'].strftime('%Y-%m-%d') if item['start_date'] else ''
         e_date_str = item['end_date'].strftime('%Y-%m-%d') if item['end_date'] else ''
         
@@ -2947,6 +2953,10 @@ def cash_flow_list(request):
             period_fmt = f"{_('until')} {item['end_date'].strftime('%m/%Y')}"
         else:
             period_fmt = str(_("Continuous"))
+
+        cat_style = cat_by_id.get(item['category_id'])
+        if not cat_style:
+            cat_style = harmonize_category_color(None, idx_item, profile=profile, is_income=item['is_income'], palette=active_palette)
 
         items_json.append({
             'id': item['id'],
@@ -2960,6 +2970,9 @@ def cash_flow_list(request):
             'category_id': item['category_id'],
             'category_name': item['category_name'],
             'category_translated': item['category_translated'],
+            'category_badge_bg': cat_style['bg'],
+            'category_badge_txt': cat_style['txt'],
+            'category_color_hex': cat_style['hex'],
             'start_date': s_date_str,
             'end_date': e_date_str,
             'period_formatted': period_fmt,

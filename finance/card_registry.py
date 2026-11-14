@@ -490,6 +490,12 @@ def get_user_card_groups(user):
     dashboard_config = (profile.dashboard_config or {}) if profile else {}
     saved_groups = dashboard_config.get('card_groups', {})
 
+    palette_states = {}
+    if profile:
+        from core.theme_engine import get_profile_theme_studio_settings, get_profile_theme_palette
+        if get_profile_theme_studio_settings(profile).get('sync_cards_and_charts', True):
+            palette_states = get_profile_theme_palette(profile).get('states_by_index', {})
+
     result = {}
     for group_key, group_def in CARD_REGISTRY.items():
         default_cards = {c['id']: dict(c) for c in group_def['cards']}
@@ -513,7 +519,14 @@ def get_user_card_groups(user):
         # Append any new/missing default cards
         for cid, def_card in default_cards.items():
             if cid not in seen_ids:
-                merged_cards.append(dict(def_card))
+                c = dict(def_card)
+                if palette_states:
+                    st_idx = CARD_SEMANTIC_STATE_MAP.get(cid, 2)
+                    st = palette_states.get(st_idx)
+                    if st:
+                        c['bg_color'] = st['hex']
+                        c['text_color'] = st['card_text']
+                merged_cards.append(c)
 
         # Sort by order
         merged_cards.sort(key=lambda x: x.get('order', 999))
@@ -528,3 +541,150 @@ def get_user_card_group(user, group_key):
     """
     groups = get_user_card_groups(user)
     return groups.get(group_key, [])
+
+
+# Mapping of all configurable KPI card IDs to the 8 semantic states of the Design Studio
+# 1: OK/Green, 2: Positive/Info, 3: Medium/Amber, 4: Warning/Orange,
+# 5: Negative/Red, 6: Critical/Rose, 7: Neutral/Gray, 8: Focus/Highlight
+CARD_SEMANTIC_STATE_MAP = {
+    # Dashboard summary_layout & Cashflow
+    'monthly_income': 1,
+    'monthly_expenses': 5,
+    'monthly_surplus': 2,
+    'current_assets': 2,
+    'total_pensions': 2,
+    'expected_payout': 8,
+    'current_pension_payout': 3,
+    'total_physical_assets': 8,
+    'total_real_estate': 1,
+    'total_combined_assets': 3,
+    'total_debts': 6,
+
+    # Pension module
+    'pension_top_total': 8,
+    'pension_top_check': 1,
+    'pension_top_insurances': 2,
+    'pension_top_risk': 3,
+    'pension_tab_statutory': 4,
+    'pension_tab_private': 2,
+    'pension_tab_total': 8,
+    'pension_tab_gap': 5,
+    'ins_tab_monthly': 2,
+    'ins_tab_bu': 4,
+    'ins_tab_life': 2,
+    'ins_tab_quote': 1,
+    'risk_tab_emergency': 1,
+    'risk_tab_jobloss': 2,
+    'risk_tab_disability': 5,
+    'risk_tab_survivor': 8,
+
+    # Real Estate module
+    're_top_property_value': 1,
+    're_top_debt': 6,
+    're_top_equity': 2,
+    're_top_cashflow': 1,
+    'renov_tab_open': 1,
+    'renov_tab_costs': 2,
+    'renov_tab_invested': 4,
+    'renov_tab_completed': 1,
+    'cal_tab_rent': 1,
+    'cal_tab_debt': 5,
+    'cal_tab_operating': 4,
+    'cal_tab_net': 2,
+    'tax_tab_rent': 1,
+    'tax_tab_deductions': 4,
+    'tax_tab_result': 2,
+    'tax_tab_impact': 8,
+
+    # Assets module
+    'assets_top_total': 3,
+    'assets_top_cash': 2,
+    'assets_top_depot': 1,
+    'assets_top_physical': 8,
+    'assets_perf_total': 2,
+    'assets_perf_change': 1,
+    'assets_perf_best': 8,
+    'assets_perf_largest': 4,
+}
+
+
+def apply_theme_palette_to_cards(dashboard_config, palette):
+    """
+    Harmonizes all configurable KPI cards in dashboard_config ('summary_layout' and 'card_groups')
+    using the 8 semantic states of the given theme palette, while preserving visibility & order.
+    """
+    if not isinstance(dashboard_config, dict):
+        dashboard_config = {}
+
+    states_by_idx = palette.get('states_by_index', {})
+    if not states_by_idx:
+        return dashboard_config
+
+    from .views import SUMMARY_WIDGETS, DEFAULT_SUMMARY_LAYOUT
+
+    # 1. Harmonize Dashboard summary_layout
+    raw_summary = dashboard_config.get('summary_layout') or list(DEFAULT_SUMMARY_LAYOUT)
+    new_summary = []
+    seen_summary_ids = set()
+    for item in raw_summary:
+        if isinstance(item, dict) and 'id' in item:
+            wid = item['id']
+            st_idx = CARD_SEMANTIC_STATE_MAP.get(wid, 2)
+            st = states_by_idx.get(st_idx, states_by_idx.get(2, {}))
+            updated = dict(item)
+            if st:
+                updated['bg_color'] = st['hex']
+                updated['text_color'] = st['card_text']
+            new_summary.append(updated)
+            seen_summary_ids.add(wid)
+
+    for wid, winfo in SUMMARY_WIDGETS.items():
+        if wid not in seen_summary_ids:
+            st_idx = CARD_SEMANTIC_STATE_MAP.get(wid, 2)
+            st = states_by_idx.get(st_idx, states_by_idx.get(2, {}))
+            new_summary.append({
+                'id': wid,
+                'visible': True,
+                'bg_color': st.get('hex', winfo.get('default_bg', '#0d6efd')),
+                'text_color': st.get('card_text', winfo.get('default_text', '#ffffff')),
+                'order': len(new_summary) + 1,
+            })
+    dashboard_config['summary_layout'] = new_summary
+
+    # 2. Harmonize all module card_groups in CARD_REGISTRY
+    saved_groups = dashboard_config.get('card_groups') or {}
+    new_groups = {}
+    for group_key, group_def in CARD_REGISTRY.items():
+        default_cards = {c['id']: dict(c) for c in group_def['cards']}
+        user_cards = saved_groups.get(group_key, [])
+        merged = []
+        seen_cids = set()
+
+        for uc in user_cards:
+            cid = uc.get('id')
+            if cid in default_cards:
+                st_idx = CARD_SEMANTIC_STATE_MAP.get(cid, 2)
+                st = states_by_idx.get(st_idx, states_by_idx.get(2, {}))
+                entry = dict(default_cards[cid])
+                entry['visible'] = bool(uc.get('visible', True))
+                entry['order'] = uc.get('order', len(merged) + 1)
+                entry['bg_color'] = st.get('hex', entry['bg_color'])
+                entry['text_color'] = st.get('card_text', entry['text_color'])
+                merged.append(entry)
+                seen_cids.add(cid)
+
+        for cid, def_card in default_cards.items():
+            if cid not in seen_cids:
+                st_idx = CARD_SEMANTIC_STATE_MAP.get(cid, 2)
+                st = states_by_idx.get(st_idx, states_by_idx.get(2, {}))
+                entry = dict(def_card)
+                entry['bg_color'] = st.get('hex', entry['bg_color'])
+                entry['text_color'] = st.get('card_text', entry['text_color'])
+                merged.append(entry)
+
+        merged.sort(key=lambda x: x.get('order', 999))
+        new_groups[group_key] = merged
+
+    dashboard_config['card_groups'] = new_groups
+    return dashboard_config
+

@@ -2787,3 +2787,150 @@ msgstr "Position la plus importante"
 
 msgid "Physische Sachwerte"
 msgstr "Actifs Physiques"
+
+msgid "Grundfarbe"
+msgstr "Couleur de base"
+
+msgid "Verlauf / Dualtone 2"
+msgstr "Dégradé / Dualtone 2"
+
+msgid "Design-Stimmung"
+msgstr "Ambiance de design"
+
+msgid "Klassisch & Modern"
+msgstr "Classique & Moderne"
+
+msgid "Modern (Ausgewogen)"
+msgstr "Moderne (Équilibré)"
+
+msgid "Dualtone (2-Farben-Harmonie)"
+msgstr "Dualtone (Harmonie à 2 couleurs)"
+
+msgid "Seriös (Business & Ruhig)"
+msgstr "Sérieux (Business & Calme)"
+
+msgid "Dunkel (Dark UI)"
+msgstr "Sombre (Dark UI)"
+
+msgid "Polished Brutalism (Kontrast)"
+msgstr "Brutalisme poli (Contraste)"
+
+msgid "Trend & Ästhetik"
+msgstr "Tendance & Esthétique"
+
+msgid "Digital Wellness (Soft Pastell)"
+msgstr "Bien-être numérique (Pastel doux)"
+
+msgid "Eco-Futurism (Natur + Neon)"
+msgstr "Éco-Futurisme (Nature + Néon)"
+
+msgid "Moody & Rich Tones"
+msgstr "Tons riches & profonds"
+
+msgid "Fancy (Pastell & Leuchtend)"
+msgstr "Fancy (Pastel & Lumineux)"
+
+msgid "Vintage (Warm & Retro)"
+msgstr "Vintage (Chaud & Rétro)"
+
+msgid "Extrem & Puristisch"
+msgstr "Extrême & Puriste"
+
+msgid "Knallbunt (Lebhaft)"
+msgstr "Vif (Coloré)"
+
+msgid "Neon (Leuchtend)"
+msgstr "Néon (Lumineux)"
+
+msgid "Düster (Gedeckt)"
+msgstr "Sombre (Tamisé)"
+
+msgid "Warme Neutraltöne & Erde"
+msgstr "Neutres chauds & Terre"
+
+msgid "Monochrom (Ton-in-Ton)"
+msgstr "Monochrome (Ton sur ton)"
+
+msgid "Graustufen (Achromatisch)"
+msgstr "Niveaux de gris (Achromatique)"
+
+msgid "Hintergrund"
+msgstr "Arrière-plan"
+
+msgid "Auto (zur Stimmung)"
+msgstr "Auto (selon l'ambiance)"
+
+msgid "Immer Hell"
+msgstr "Toujours clair"
+
+msgid "Immer Dunkel"
+msgstr "Toujours sombre"
+
+msgid "Eigene Farbe ➔"
+msgstr "Couleur personnalisée ➔"
+
+msgid "Basisverlauf"
+msgstr "Dégradé de base"
+
+msgid "KPI-Karten, Kategorien & Diagramme automatisch an Design-Stimmung anpassen"
+msgstr "Harmoniser automatiquement les cartes KPI, catégories et graphiques avec l'ambiance"
+
+msgid "Semantische Farbharmonie (8 Zustände für Karten, Kategorien & Charts)"
+msgstr "Harmonie chromatique sémantique (8 états pour cartes, catégories et graphiques)"
+
+msgid "Klick auf Farbfeld kopiert HEX"
+msgstr "Cliquer pour copier le HEX"
+
+msgid "Schnellvorlagen (Farbharmonien)"
+msgstr "Modèles rapides (Harmonies de couleurs)"
+
+msgid "1. OK / Ampel Grün"
+msgstr "1. OK / Vert feu"
+
+msgid "2. Positiv / Info"
+msgstr "2. Positif / Info"
+
+msgid "3. Mittel / Achtung"
+msgstr "3. Moyen / Attention"
+
+msgid "4. Warnung"
+msgstr "4. Avertissement"
+
+msgid "5. Schlecht / Negativ"
+msgstr "5. Mauvais / Négatif"
+
+msgid "6. Gefahr / Kritisch"
+msgstr "6. Danger / Critique"
+
+msgid "7. Neutral / Inaktiv"
+msgstr "7. Neutre / Inactif"
+
+msgid "8. Fokus / Highlight"
+msgstr "8. Focus / Mise en avant"
+
+msgid "✓ Stabil"
+msgstr "✓ Stable"
+
+msgid "ℹ Info"
+msgstr "ℹ Info"
+
+msgid "⚠ Achtung"
+msgstr "⚠ Attention"
+
+msgid "⚡ Warnung"
+msgstr "⚡ Alerte"
+
+msgid "✕ Fehler"
+msgstr "✕ Erreur"
+
+msgid "🛑 Gefahr"
+msgstr "🛑 Danger"
+
+msgid "• Inaktiv"
+msgstr "• Inactif"
+
+msgid "★ Fokus"
+msgstr "★ Focus"
+
+msgid "Klick zum Kopieren"
+msgstr "Cliquer pour copier"
