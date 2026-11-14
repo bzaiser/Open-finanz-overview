@@ -663,24 +663,29 @@ def apply_theme_palette_to_cards(dashboard_config, palette):
         for uc in user_cards:
             cid = uc.get('id')
             if cid in default_cards:
+                def_c = default_cards[cid]
                 st_idx = CARD_SEMANTIC_STATE_MAP.get(cid, 2)
                 st = states_by_idx.get(st_idx, states_by_idx.get(2, {}))
-                entry = dict(default_cards[cid])
-                entry['visible'] = bool(uc.get('visible', True))
-                entry['order'] = uc.get('order', len(merged) + 1)
-                entry['bg_color'] = st.get('hex', entry['bg_color'])
-                entry['text_color'] = st.get('card_text', entry['text_color'])
-                merged.append(entry)
+                merged.append({
+                    'id': cid,
+                    'visible': bool(uc.get('visible', True)),
+                    'order': int(uc.get('order', len(merged) + 1)),
+                    'bg_color': st.get('hex', def_c['bg_color']),
+                    'text_color': st.get('card_text', def_c['text_color']),
+                })
                 seen_cids.add(cid)
 
         for cid, def_card in default_cards.items():
             if cid not in seen_cids:
                 st_idx = CARD_SEMANTIC_STATE_MAP.get(cid, 2)
                 st = states_by_idx.get(st_idx, states_by_idx.get(2, {}))
-                entry = dict(def_card)
-                entry['bg_color'] = st.get('hex', entry['bg_color'])
-                entry['text_color'] = st.get('card_text', entry['text_color'])
-                merged.append(entry)
+                merged.append({
+                    'id': cid,
+                    'visible': bool(def_card.get('visible', True)),
+                    'order': int(def_card.get('order', len(merged) + 1)),
+                    'bg_color': st.get('hex', def_card['bg_color']),
+                    'text_color': st.get('card_text', def_card['text_color']),
+                })
 
         merged.sort(key=lambda x: x.get('order', 999))
         new_groups[group_key] = merged
