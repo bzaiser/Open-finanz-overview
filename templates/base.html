@@ -315,6 +315,48 @@
                     }
                     html.removeAttribute('style');
                 }
+
+                if (typeof Chart !== 'undefined') {
+                    const isDark = html.getAttribute('data-bs-theme') === 'dark';
+                    const chartText = isDark ? '#e2e8f0' : '#334155';
+                    const chartGrid = isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.1)';
+                    Chart.defaults.color = chartText;
+                    Chart.defaults.borderColor = chartGrid;
+                    if (Chart.defaults.plugins && Chart.defaults.plugins.legend && Chart.defaults.plugins.legend.labels) {
+                        Chart.defaults.plugins.legend.labels.color = chartText;
+                    }
+                    if (!window._themeChartContrastRegistered) {
+                        window._themeChartContrastRegistered = true;
+                        Chart.register({
+                            id: 'themeContrastAdapter',
+                            beforeUpdate(chart) {
+                                const dark = document.documentElement.getAttribute('data-bs-theme') === 'dark' ||
+                                    (window.APP_THEME_PALETTE && window.APP_THEME_PALETTE.is_dark);
+                                const txt = dark ? '#e2e8f0' : '#334155';
+                                const grd = dark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.1)';
+                                if (chart.options && chart.options.plugins && chart.options.plugins.legend) {
+                                    if (!chart.options.plugins.legend.labels) chart.options.plugins.legend.labels = {};
+                                    if (!chart.options.plugins.legend.labels.color || chart.options.plugins.legend.labels.color === '#666') {
+                                        chart.options.plugins.legend.labels.color = txt;
+                                    }
+                                }
+                                if (chart.options && chart.options.scales) {
+                                    Object.values(chart.options.scales).forEach(scale => {
+                                        if (!scale) return;
+                                        if (!scale.ticks) scale.ticks = {};
+                                        if (!scale.ticks.color || scale.ticks.color === '#666') {
+                                            scale.ticks.color = txt;
+                                        }
+                                        if (!scale.grid) scale.grid = {};
+                                        if (!scale.grid.color) {
+                                            scale.grid.color = grd;
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    }
+                }
             }
             document.addEventListener('DOMContentLoaded', applyTheme);
             applyTheme();
