@@ -778,6 +778,32 @@
             .widget-hover-details {
                 font-size: 0.72rem !important;
             }
+            #navbarContent {
+                border-top: 1px solid rgba(255, 255, 255, 0.16);
+                margin-top: 0.65rem;
+                padding-top: 0.65rem;
+            }
+            #navbarContent .navbar-nav {
+                gap: 0.3rem !important;
+            }
+            #navbarContent .navbar-nav.ms-auto {
+                margin-top: 0.5rem;
+                padding-top: 0.6rem;
+                border-top: 1px solid rgba(255, 255, 255, 0.22);
+            }
+            #navbarContent .nav-item {
+                background: rgba(255, 255, 255, 0.06);
+                border: 1px solid rgba(255, 255, 255, 0.12);
+                border-radius: 0.6rem;
+            }
+            #navbarContent .nav-item .nav-link {
+                padding: 0.6rem 0.9rem !important;
+                border-radius: 0.6rem;
+            }
+            #navbarContent .nav-item .nav-link:hover,
+            #navbarContent .nav-item .nav-link.active {
+                background: rgba(255, 255, 255, 0.14);
+            }
         }
         @media (max-width: 767.98px) {
             .widget-expand-card {
@@ -859,7 +885,7 @@
                     {#     </a> #}
                     {# </li> #}
                 </ul>
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center flex-column flex-lg-row gap-lg-1 gap-1 pt-2 pt-lg-0 border-top border-lg-0 border-white border-opacity-10">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center flex-column flex-lg-row gap-lg-1 gap-1 pt-2 pt-lg-0">
                     {% if user.is_authenticated %}
                     <!-- 1. Global Search -->
                     <li class="nav-item">
@@ -919,8 +945,8 @@
                         </a>
                     </li>
                     <!-- 5. User Account Dropdown (Dedicated Row in Burger Menu) -->
-                    <li class="nav-item dropdown pt-1 pt-lg-0 border-top border-lg-0 border-white border-opacity-10 ps-lg-1">
-                        <a class="nav-link dropdown-toggle d-flex align-items-center py-2 px-3 p-lg-0" href="#" id="navbarDropdown" role="button"
+                    <li class="nav-item dropdown ps-lg-1">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center py-2 px-2 p-lg-0" href="#" id="navbarDropdown" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false" title="{{ user.best_name }}">
                             {% if user.profile.avatar %}<img src="{{ user.profile.avatar.url }}" class="rounded-circle me-1"
                                 height="28" width="28">{% else %}<i class="bi bi-person-circle fs-5 me-1"></i>{% endif %}
