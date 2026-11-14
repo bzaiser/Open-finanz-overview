@@ -186,7 +186,13 @@ def compute_theme_palette(c1="#6610f2", c2="#0d6efd", mood_key="modern", bg_mode
 
     text_color = "#f8fafc" if is_dark else "#1e293b"
     sidebar_bg = hsl_to_hex(base1["h"], min(25, m["s"]), 12 if is_dark else 96)
-    table_header_bg = hsl_to_hex(base1["h"], m["s"], 28 if is_dark else max(32, min(52, m["l"])))
+    th_hue = base1["h"]
+    if m.get("warm"):
+        th_hue = round(th_hue * 0.85 + 35 * 0.15)
+    if m.get("earth"):
+        th_hue = round(th_hue * 0.35 + 28 * 0.65)
+    th_lightness = 30 if mood_key == "grayscale" else (28 if is_dark else max(32, min(52, m["l"])))
+    table_header_bg = hsl_to_hex(th_hue, m["s"], th_lightness)
     table_header_text = get_contrast_text(table_header_bg)
     table_body_bg = hsl_to_hex(base1["h"], min(18, m["s"]), 11 if is_dark else 99) if bg_mode != "custom" else page_bg
     table_body_text = text_color

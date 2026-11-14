@@ -508,8 +508,9 @@
             try {
                 const elements = profileForm.querySelectorAll(`[name="${name}"]`);
                 elements.forEach(el => {
-                    if (el.value !== value) {
-                        el.value = value;
+                    const normVal = (el.type === 'color' && typeof value === 'string') ? value.toLowerCase() : value;
+                    if (el.value !== normVal) {
+                        el.value = normVal;
                         el.dispatchEvent(new Event('input', { bubbles: true }));
                     }
                 });
@@ -656,7 +657,11 @@
                 if (studioPrecisionManual) studioPrecisionManual.value = '0';
                 const textColor = isDark ? '#f8fafc' : '#1e293b';
                 const sidebarBg = hslToHex(base1.h, Math.min(25, m.s), isDark ? 12 : 96);
-                const thBg = hslToHex(base1.h, m.s, isDark ? 28 : Math.max(32, Math.min(52, m.l)));
+                let thHue = base1.h;
+                if (m.warm) thHue = Math.round(thHue * 0.85 + 35 * 0.15);
+                if (m.earth) thHue = Math.round(thHue * 0.35 + 28 * 0.65);
+                const thLightness = moodKey === 'grayscale' ? 30 : (isDark ? 28 : Math.max(32, Math.min(52, m.l)));
+                const thBg = hslToHex(thHue, m.s, thLightness);
                 const thText = hexToHsl(thBg).l >= 66 ? '#1e293b' : '#ffffff';
                 const tbBg = bgMode !== 'custom' ? hslToHex(base1.h, Math.min(18, m.s), isDark ? 11 : 99) : pageBg;
                 const borderCol = isDark ? '#334155' : '#dee2e6';
