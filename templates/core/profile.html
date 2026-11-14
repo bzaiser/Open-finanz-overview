@@ -557,13 +557,22 @@
                 html.style.setProperty('--bs-body-color', config['card-color']);
                 html.style.setProperty('--bs-tertiary-bg', config['card-bg']);
                 html.style.setProperty('--bs-card-bg', config['card-bg']);
-                if (isNight && forceBackground) {
+                html.style.setProperty('--app-input-bg', config['table-body-bg'] || config['card-bg']);
+                html.style.setProperty('--app-input-color', config['table-body-text'] || config['card-color']);
+                html.style.setProperty('--app-input-border', config['table-border-color']);
+                const bgIsDark = hexToHsl(config['card-bg']).l < 50;
+                if (bgIsDark) {
+                    html.setAttribute('data-bs-theme', 'dark');
+                } else {
                     html.removeAttribute('data-bs-theme');
                 }
             } else {
                 html.style.setProperty('--bs-body-bg', 'color-mix(in srgb, var(--app-primary), black 95%)');
                 html.style.setProperty('--bs-tertiary-bg', 'color-mix(in srgb, var(--app-primary), black 88%)');
                 html.style.setProperty('--bs-card-bg', 'color-mix(in srgb, var(--app-primary), black 88%)');
+                html.style.setProperty('--app-input-bg', '#000000');
+                html.style.setProperty('--app-input-color', '#cbd5e1');
+                html.style.setProperty('--app-input-border', '#1e293b');
             }
         }
 
@@ -707,7 +716,7 @@
                 };
                 Object.keys(updateList).forEach(key => setAllValues(key, updateList[key], true));
                 runThemeStudio(false);
-                applyLiveTheme(true);
+                applyLiveTheme(false);
             }
         });
 
