@@ -2677,3 +2677,15 @@ msgstr "Descargar ZIP de copia ahora"
 
 msgid "Jetzt in Sicherungsordner schreiben"
 msgstr "Guardar ahora en carpeta de respaldo"
+
+msgid "Total interest drops from"
+msgstr "El interés total baja de"
+
+msgid "approx."
+msgstr "aprox."
+
+msgid "Regular before:"
+msgstr "Regular antes:"
+
+msgid "to"
+msgstr "a"

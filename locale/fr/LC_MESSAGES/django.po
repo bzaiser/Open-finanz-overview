@@ -2697,3 +2697,15 @@ msgstr "Télécharger la sauvegarde ZIP"
 
 msgid "Jetzt in Sicherungsordner schreiben"
 msgstr "Écrire dans le dossier de sauvegarde"
+
+msgid "Total interest drops from"
+msgstr "Les intérêts totaux passent de"
+
+msgid "approx."
+msgstr "env."
+
+msgid "Regular before:"
+msgstr "Prévu auparavant :"
+
+msgid "to"
+msgstr "à"

@@ -998,3 +998,15 @@ msgstr "Download backup ZIP now"
 
 msgid "Jetzt in Sicherungsordner schreiben"
 msgstr "Save to backup folder now"
+
+msgid "Total interest drops from"
+msgstr "Total interest drops from"
+
+msgid "approx."
+msgstr "approx."
+
+msgid "Regular before:"
+msgstr "Regular before:"
+
+msgid "to"
+msgstr "to"

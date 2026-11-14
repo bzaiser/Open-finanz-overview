@@ -5608,3 +5608,15 @@ msgstr "Sicherung jetzt als ZIP herunterladen"
 
 msgid "Jetzt in Sicherungsordner schreiben"
 msgstr "Jetzt in Sicherungsordner schreiben"
+
+msgid "Total interest drops from"
+msgstr "Gesamtzinsen sinken von"
+
+msgid "approx."
+msgstr "ca."
+
+msgid "Regular before:"
+msgstr "Regulär vorher:"
+
+msgid "to"
+msgstr "auf"

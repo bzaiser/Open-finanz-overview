@@ -2217,21 +2217,21 @@
                             <div class="p-3 rounded-4 border bg-body-tertiary h-100">
                                 <div class="small opacity-75 text-uppercase">{% trans "Interest Savings" %}</div>
                                 <div class="h3 fw-bold font-monospace text-success my-1" x-text="formatEuro(whatIfState.interestSaved) + ' €'"></div>
-                                <div class="small text-muted" x-text="'Total interest drops from ' + formatEuro(whatIfState.baselineInterest) + ' € to ' + formatEuro(whatIfState.simulatedInterest) + ' €'"></div>
+                                <div class="small text-muted" x-text="'{% trans "Total interest drops from" %} ' + formatEuro(whatIfState.baselineInterest) + ' € {% trans "to" %} ' + formatEuro(whatIfState.simulatedInterest) + ' €'"></div>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="p-3 rounded-4 border bg-body-tertiary h-100">
                                 <div class="small opacity-75 text-uppercase">{% trans "Term Reduction" %}</div>
                                 <div class="h3 fw-bold font-monospace text-primary my-1" x-text="whatIfState.monthsSaved + ' {% trans "Months" %}'"></div>
-                                <div class="small text-muted" x-text="'approx. ' + whatIfState.yearsSaved + ' {% trans "years earlier debt-free" %}'"></div>
+                                <div class="small text-muted" x-text="'{% trans "approx." %} ' + whatIfState.yearsSaved + ' {% trans "years earlier debt-free" %}'"></div>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="p-3 rounded-4 border bg-body-tertiary h-100">
                                 <div class="small opacity-75 text-uppercase">{% trans "New Payoff Date" %}</div>
                                 <div class="h3 fw-bold font-monospace text-success my-1" x-text="whatIfState.simulatedPayoff || '-'"></div>
-                                <div class="small text-muted" x-text="'Regular before: ' + (whatIfState.baselinePayoff || '-')"></div>
+                                <div class="small text-muted" x-text="'{% trans "Regular before:" %} ' + (whatIfState.baselinePayoff || '-')"></div>
                             </div>
                         </div>
                     </div>

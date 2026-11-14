@@ -639,6 +639,28 @@
                                     <label class="form-check-label small fw-semibold" for="isEmergencyCheck">{% trans "Designate as emergency fund reserve" %}</label>
                                 </div>
                             </div>
+                            <div class="col-12 mt-3 pt-2 border-top border-secondary border-opacity-25">
+                                <div class="small fw-bold text-primary mb-2"><i class="bi bi-percent me-1"></i>{% trans "Teaser Interest Rate (%)" %} &amp; {% trans "Monthly Withdrawal" %}</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">{% trans "Teaser Interest Rate (%)" %}</label>
+                                <input type="number" step="0.01" name="interest_teaser_rate" x-model="assetForm.interest_teaser_rate" class="form-control font-monospace" placeholder="z. B. 3.50">
+                                <div class="form-text small">{% trans "Higher promotional interest rate (e.g. for new customers)" %}</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">{% trans "Teaser Rate Expiry Date" %}</label>
+                                <input type="date" name="interest_teaser_until" x-model="assetForm.interest_teaser_until" class="form-control">
+                                <div class="form-text small">{% trans "Date when the teaser rate expires and falls back to the standard growth rate" %}</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">{% trans "Monthly Withdrawal" %} (€)</label>
+                                <input type="number" step="0.01" name="withdrawal_amount" x-model="assetForm.withdrawal_amount" class="form-control font-monospace" placeholder="0.00">
+                                <div class="form-text small">{% trans "Amount to take out of this asset each month" %}</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">{% trans "Withdrawal Start Date" %}</label>
+                                <input type="date" name="withdrawal_start_date" x-model="assetForm.withdrawal_start_date" class="form-control">
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer border-0">
@@ -810,7 +832,11 @@ function assetsOverviewApp() {
             value: '',
             growth_rate: '0.0',
             monthly_savings_amount: '0.0',
-            is_emergency_fund: false
+            is_emergency_fund: false,
+            interest_teaser_rate: '',
+            interest_teaser_until: '',
+            withdrawal_amount: '0.0',
+            withdrawal_start_date: ''
         },
         editPhysicalId: null,
         physicalForm: {
@@ -903,7 +929,11 @@ function assetsOverviewApp() {
                 value: '',
                 growth_rate: '0.0',
                 monthly_savings_amount: '0.0',
-                is_emergency_fund: false
+                is_emergency_fund: false,
+                interest_teaser_rate: '',
+                interest_teaser_until: '',
+                withdrawal_amount: '0.0',
+                withdrawal_start_date: ''
             };
             new bootstrap.Modal(document.getElementById('assetModal')).show();
         },
@@ -918,7 +948,11 @@ function assetsOverviewApp() {
                 value: a.value,
                 growth_rate: a.growth_rate,
                 monthly_savings_amount: a.monthly_savings_amount,
-                is_emergency_fund: a.is_emergency_fund
+                is_emergency_fund: a.is_emergency_fund,
+                interest_teaser_rate: a.interest_teaser_rate !== null && a.interest_teaser_rate !== undefined ? a.interest_teaser_rate : '',
+                interest_teaser_until: a.interest_teaser_until || '',
+                withdrawal_amount: a.withdrawal_amount !== null && a.withdrawal_amount !== undefined ? a.withdrawal_amount : '0.0',
+                withdrawal_start_date: a.withdrawal_start_date || ''
             };
             new bootstrap.Modal(document.getElementById('assetModal')).show();
         },

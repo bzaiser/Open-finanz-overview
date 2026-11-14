@@ -2683,3 +2683,15 @@ msgstr "Scarica backup ZIP ora"
 
 msgid "Jetzt in Sicherungsordner schreiben"
 msgstr "Salva ora nella cartella di backup"
+
+msgid "Total interest drops from"
+msgstr "Gli interessi totali scendono da"
+
+msgid "approx."
+msgstr "circa"
+
+msgid "Regular before:"
+msgstr "Regolare prima:"
+
+msgid "to"
+msgstr "a"
