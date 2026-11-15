@@ -129,10 +129,21 @@ def profile_view(request):
                     if isinstance(parsed_ov, dict):
                         for k, v in parsed_ov.items():
                             ks = str(k).strip()
-                            if ks in {'1', '2', '3', '4', '5', '6', '7', '8'} and isinstance(v, str):
-                                vs = v.strip().upper()
-                                if vs.startswith('#') and len(vs) in (4, 7):
-                                    clean_overrides[ks] = vs
+                            if ks in {'1', '2', '3', '4', '5', '6', '7', '8'}:
+                                if isinstance(v, str):
+                                    vs = v.strip().upper()
+                                    if vs.startswith('#') and len(vs) in (4, 7):
+                                        clean_overrides[ks] = vs
+                                elif isinstance(v, dict):
+                                    entry_ov = {}
+                                    bg_v = v.get('bg')
+                                    txt_v = v.get('text')
+                                    if isinstance(bg_v, str) and bg_v.strip().startswith('#') and len(bg_v.strip()) in (4, 7):
+                                        entry_ov['bg'] = bg_v.strip().upper()
+                                    if isinstance(txt_v, str) and txt_v.strip().startswith('#') and len(txt_v.strip()) in (4, 7):
+                                        entry_ov['text'] = txt_v.strip().upper()
+                                    if entry_ov:
+                                        clean_overrides[ks] = entry_ov
                 except Exception:
                     pass
 

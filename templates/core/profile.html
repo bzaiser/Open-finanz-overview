@@ -679,9 +679,12 @@
 
                 let hex = hslToHex(hue, s, l);
                 const stateKey = String(idx + 1);
-                const isOverridden = Boolean(stateOverrides[stateKey]);
-                if (isOverridden) {
-                    hex = String(stateOverrides[stateKey]).toUpperCase();
+                const rawOv = stateOverrides[stateKey];
+                const ovBg = typeof rawOv === 'string' ? rawOv : (rawOv && typeof rawOv === 'object' ? rawOv.bg : null);
+                const ovTxt = (rawOv && typeof rawOv === 'object') ? rawOv.text : null;
+                const isOverridden = Boolean(ovBg || ovTxt);
+                if (ovBg) {
+                    hex = String(ovBg).toUpperCase();
                     const ovHsl = hexToHsl(hex);
                     hue = ovHsl.h;
                     s = ovHsl.s;
@@ -689,8 +692,8 @@
                 }
                 const bg = `hsla(${((hue % 360) + 360) % 360}, ${s}%, ${l}%, ${isDark ? 0.24 : 0.15})`;
                 const txt = isDark ? hslToHex(hue, s, Math.min(86, l + 24)) : hslToHex(hue, s, Math.max(22, l - 26));
-                const swatchText = getContrastTextHex(hex);
-                const swatchShadow = swatchText === '#ffffff' ? 'text-shadow: 0 1px 3px rgba(0,0,0,0.65);' : 'text-shadow: none;';
+                const swatchText = ovTxt ? String(ovTxt).toUpperCase() : getContrastTextHex(hex);
+                const swatchShadow = swatchText.toUpperCase() === '#FFFFFF' ? 'text-shadow: 0 1px 3px rgba(0,0,0,0.65);' : 'text-shadow: none;';
                 const cardBg = isDark ? '#1e293b' : '#ffffff';
                 const cardTxt = isDark ? '#f8fafc' : '#1e293b';
                 const borderStyle = m.brutal ? `border: 2px solid ${hex}; box-shadow: 3px 3px 0 ${hex};` : `border: 1px solid rgba(125,125,125,0.2);`;
@@ -700,10 +703,14 @@
 
                 return `
                   <div class="studio-state-card" style="background:${cardBg}; color:${cardTxt}; ${borderStyle}">
-                    <div class="studio-state-swatch position-relative" data-state-key="${stateKey}" style="background:${hex}; color:${swatchText}; ${swatchShadow} ${glowStyle}" title="{% trans 'Klick ändert Farbe'|escapejs %}">
+                    <div class="studio-state-swatch position-relative" data-state-key="${stateKey}" style="background:${hex}; color:${swatchText}; ${swatchShadow} ${glowStyle}" title="{% trans 'Klick ändert Hintergrundfarbe'|escapejs %}">
                       <input type="color" class="studio-state-color-input position-absolute opacity-0" data-state-key="${stateKey}" value="${hex}" style="inset:0; width:100%; height:100%; cursor:pointer;" aria-label="${st.n}">
                       <span class="position-relative" style="pointer-events:none;">${hex}</span>
                       <div class="d-flex align-items-center gap-1 position-relative" style="z-index:2;">
+                        <label class="p-0 m-0 border-0 position-relative" style="color:${swatchText}; font-size:0.78rem; line-height:1; cursor:pointer;" title="{% trans 'Textfarbe ändern'|escapejs %}" onclick="event.stopPropagation()">
+                          <i class="bi bi-fonts"></i>
+                          <input type="color" class="studio-state-text-input position-absolute opacity-0" data-state-key="${stateKey}" value="${swatchText}" style="inset:0; width:100%; height:100%; cursor:pointer;">
+                        </label>
                         ${isOverridden ? `<button type="button" class="btn btn-link p-0 border-0 studio-state-reset" data-state-key="${stateKey}" style="color:${swatchText}; font-size:0.72rem; line-height:1;" title="{% trans 'Zurücksetzen'|escapejs %}"><i class="bi bi-arrow-counterclockwise"></i></button>` : ''}
                         <button type="button" class="btn btn-link p-0 border-0 studio-state-copy" data-hex="${hex}" style="color:${swatchText}; font-size:0.72rem; line-height:1;" title="{% trans 'HEX kopieren'|escapejs %}"><i class="bi bi-clipboard"></i></button>
                       </div>
@@ -718,18 +725,40 @@
             studioSwatchGrid.querySelectorAll('.studio-state-color-input').forEach(inp => {
                 inp.addEventListener('input', (e) => {
                     const key = e.target.dataset.stateKey;
-                    stateOverrides[key] = e.target.value.toUpperCase();
+                    const prev = stateOverrides[key];
+                    const prevObj = (prev && typeof prev === 'object') ? prev : (typeof prev === 'string' ? { bg: prev } : {});
+                    stateOverrides[key] = { ...prevObj, bg: e.target.value.toUpperCase() };
                     syncStateOverridesInput();
                     const swatch = e.target.closest('.studio-state-swatch');
                     if (swatch) {
-                        const newHex = stateOverrides[key];
-                        const newTxt = getContrastTextHex(newHex);
+                        const newHex = stateOverrides[key].bg;
+                        const newTxt = stateOverrides[key].text || getContrastTextHex(newHex);
                         swatch.style.background = newHex;
                         swatch.style.color = newTxt;
                         swatch.style.textShadow = newTxt === '#ffffff' ? '0 1px 3px rgba(0,0,0,0.65)' : 'none';
                         const span = swatch.querySelector('span');
                         if (span) span.textContent = newHex;
                         html.style.setProperty(`--theme-state-${key}`, newHex);
+                    }
+                });
+                inp.addEventListener('change', () => {
+                    runThemeStudio(false);
+                });
+            });
+            studioSwatchGrid.querySelectorAll('.studio-state-text-input').forEach(inp => {
+                inp.addEventListener('click', (e) => e.stopPropagation());
+                inp.addEventListener('input', (e) => {
+                    const key = e.target.dataset.stateKey;
+                    const prev = stateOverrides[key];
+                    const prevObj = (prev && typeof prev === 'object') ? prev : (typeof prev === 'string' ? { bg: prev } : {});
+                    const newTxt = e.target.value.toUpperCase();
+                    stateOverrides[key] = { ...prevObj, text: newTxt };
+                    syncStateOverridesInput();
+                    const swatch = e.target.closest('.studio-state-swatch');
+                    if (swatch) {
+                        swatch.style.color = newTxt;
+                        swatch.style.textShadow = newTxt === '#FFFFFF' ? '0 1px 3px rgba(0,0,0,0.65)' : 'none';
+                        swatch.querySelectorAll('label, button').forEach(el => { el.style.color = newTxt; });
                     }
                 });
                 inp.addEventListener('change', () => {

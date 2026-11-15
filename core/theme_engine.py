@@ -171,9 +171,17 @@ def compute_theme_palette(c1="#6610f2", c2="#0d6efd", mood_key="modern", bg_mode
     computed_states = []
     states_by_index = {}
     for idx, st in enumerate(STATES):
-        ov_hex = overrides.get(str(st["index"])) or overrides.get(st["index"])
-        if isinstance(ov_hex, str) and ov_hex.strip().startswith("#") and len(ov_hex.strip()) in (4, 7):
-            clean_ov = ov_hex.strip().upper()
+        ov_raw = overrides.get(str(st["index"])) or overrides.get(st["index"])
+        ov_bg = None
+        ov_txt = None
+        if isinstance(ov_raw, str):
+            ov_bg = ov_raw
+        elif isinstance(ov_raw, dict):
+            ov_bg = ov_raw.get("bg")
+            ov_txt = ov_raw.get("text")
+
+        if isinstance(ov_bg, str) and ov_bg.strip().startswith("#") and len(ov_bg.strip()) in (4, 7):
+            clean_ov = ov_bg.strip().upper()
             ov_hsl = hex_to_hsl(clean_ov)
             alpha = 0.24 if is_dark else 0.15
             res = {
@@ -187,6 +195,10 @@ def compute_theme_palette(c1="#6610f2", c2="#0d6efd", mood_key="modern", bg_mode
             }
         else:
             res = _compute_single_state(st["h"], st["side"], idx, base1, base2, mood_key, m, is_dark)
+
+        if isinstance(ov_txt, str) and ov_txt.strip().startswith("#") and len(ov_txt.strip()) in (4, 7):
+            res["card_text"] = ov_txt.strip().upper()
+
         entry = {
             "index": st["index"],
             "name": str(st["n"]),
