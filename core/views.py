@@ -121,12 +121,28 @@ def profile_view(request):
             bg_custom = request.POST.get('theme_bg_custom') or prof.background_color or '#ffffff'
             sync_cards = request.POST.get('theme_sync_cards') == 'on'
 
+            clean_overrides = {}
+            raw_ov_str = request.POST.get('theme_state_overrides', '').strip()
+            if raw_ov_str:
+                try:
+                    parsed_ov = json.loads(raw_ov_str)
+                    if isinstance(parsed_ov, dict):
+                        for k, v in parsed_ov.items():
+                            ks = str(k).strip()
+                            if ks in {'1', '2', '3', '4', '5', '6', '7', '8'} and isinstance(v, str):
+                                vs = v.strip().upper()
+                                if vs.startswith('#') and len(vs) in (4, 7):
+                                    clean_overrides[ks] = vs
+                except Exception:
+                    pass
+
             dc = dict(prof.dashboard_config or {})
             dc['theme_studio'] = {
                 'mood': mood,
                 'bg_mode': bg_mode,
                 'bg_custom': bg_custom,
                 'sync_cards_and_charts': sync_cards,
+                'state_overrides': clean_overrides,
             }
 
             palette = compute_theme_palette(
@@ -135,6 +151,7 @@ def profile_view(request):
                 mood_key=mood,
                 bg_mode=bg_mode,
                 bg_custom=bg_custom,
+                state_overrides=clean_overrides,
             )
 
             manual_precision = request.POST.get('theme_manual_precision') == '1'
@@ -219,6 +236,7 @@ def profile_view(request):
         for c in user_children
     ]
 
+    ts_settings = get_profile_theme_studio_settings(profile)
     return render(request, 'core/profile.html', {
         'form': form,
         'harmonies': harmonies,
@@ -227,7 +245,8 @@ def profile_view(request):
         'is_in_docker': in_docker,
         'has_external_mount': has_external_mount,
         'default_backup_dir': get_default_backup_dir(),
-        'theme_studio': get_profile_theme_studio_settings(profile),
+        'theme_studio': ts_settings,
+        'theme_state_overrides_json': json.dumps(ts_settings.get('state_overrides', {})),
         'theme_palette': get_profile_theme_palette(profile),
         'children': user_children,
         'children_json': json.dumps(children_initial),

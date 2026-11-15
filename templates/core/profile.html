@@ -259,8 +259,9 @@
                         <!-- 8-State Semantic Harmony Grid -->
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <span class="small fw-bold" style="font-size: 0.75rem;"><i class="bi bi-palette2 me-1 text-primary"></i>{% trans "Semantische Farbharmonie (8 Zustände für Karten, Kategorien & Charts)" %}</span>
-                            <small class="text-muted" style="font-size: 0.65rem;">{% trans "Klick auf Farbfeld kopiert HEX" %}</small>
+                            <small class="text-muted" style="font-size: 0.65rem;">{% trans "Klick auf Farbfeld ändert Farbe · Copy-Icon kopiert HEX" %}</small>
                         </div>
+                        <input type="hidden" name="theme_state_overrides" id="studioStateOverrides" value='{{ theme_state_overrides_json|default:"{}" }}'>
                         <div class="studio-harmony-grid mb-3" id="studioSwatchGrid"></div>
 
                         <label class="form-label small fw-bold mb-2" style="font-size: 0.75rem;">{% trans "Schnellvorlagen (Farbharmonien)" %}</label>
@@ -592,6 +593,36 @@
             }
         }
 
+        const studioOverridesInput = document.getElementById('studioStateOverrides');
+        let stateOverrides = {};
+        try {
+            const parsedOv = JSON.parse(studioOverridesInput ? (studioOverridesInput.value || '{}') : '{}');
+            if (parsedOv && typeof parsedOv === 'object' && !Array.isArray(parsedOv)) {
+                stateOverrides = parsedOv;
+            }
+        } catch (e) {
+            stateOverrides = {};
+        }
+
+        function syncStateOverridesInput() {
+            if (studioOverridesInput) {
+                studioOverridesInput.value = JSON.stringify(stateOverrides);
+            }
+        }
+
+        function getContrastTextHex(hexStr) {
+            if (!hexStr) return '#ffffff';
+            let clean = String(hexStr).trim().replace('#', '');
+            if (clean.length === 3) clean = clean.split('').map(c => c + c).join('');
+            if (clean.length !== 6) return '#ffffff';
+            const r = parseInt(clean.slice(0, 2), 16);
+            const g = parseInt(clean.slice(2, 4), 16);
+            const b = parseInt(clean.slice(4, 6), 16);
+            if (isNaN(r) || isNaN(g) || isNaN(b)) return '#ffffff';
+            const yiq = (r * 299 + g * 587 + b * 114) / 1000.0;
+            return yiq >= 175 ? '#1e293b' : '#ffffff';
+        }
+
         function runThemeStudio(updatePrecisionFields = true) {
             if (!studioC1 || !studioC2 || !studioMood || !studioBgMode || !studioSwatchGrid) return;
             const c1 = studioC1.value || '#3b82f6';
@@ -646,9 +677,20 @@
                     l = Math.max(48, l);
                 }
 
-                const hex = hslToHex(hue, s, l);
+                let hex = hslToHex(hue, s, l);
+                const stateKey = String(idx + 1);
+                const isOverridden = Boolean(stateOverrides[stateKey]);
+                if (isOverridden) {
+                    hex = String(stateOverrides[stateKey]).toUpperCase();
+                    const ovHsl = hexToHsl(hex);
+                    hue = ovHsl.h;
+                    s = ovHsl.s;
+                    l = ovHsl.l;
+                }
                 const bg = `hsla(${((hue % 360) + 360) % 360}, ${s}%, ${l}%, ${isDark ? 0.24 : 0.15})`;
                 const txt = isDark ? hslToHex(hue, s, Math.min(86, l + 24)) : hslToHex(hue, s, Math.max(22, l - 26));
+                const swatchText = getContrastTextHex(hex);
+                const swatchShadow = swatchText === '#ffffff' ? 'text-shadow: 0 1px 3px rgba(0,0,0,0.65);' : 'text-shadow: none;';
                 const cardBg = isDark ? '#1e293b' : '#ffffff';
                 const cardTxt = isDark ? '#f8fafc' : '#1e293b';
                 const borderStyle = m.brutal ? `border: 2px solid ${hex}; box-shadow: 3px 3px 0 ${hex};` : `border: 1px solid rgba(125,125,125,0.2);`;
@@ -658,8 +700,13 @@
 
                 return `
                   <div class="studio-state-card" style="background:${cardBg}; color:${cardTxt}; ${borderStyle}">
-                    <div class="studio-state-swatch" style="background:${hex}; ${glowStyle}" onclick="navigator.clipboard.writeText('${hex}')" title="{% trans 'Klick zum Kopieren'|escapejs %}">
-                      <span>${hex}</span><small style="opacity:0.85">${((hue % 360) + 360) % 360}°</small>
+                    <div class="studio-state-swatch position-relative" data-state-key="${stateKey}" style="background:${hex}; color:${swatchText}; ${swatchShadow} ${glowStyle}" title="{% trans 'Klick ändert Farbe'|escapejs %}">
+                      <input type="color" class="studio-state-color-input position-absolute opacity-0" data-state-key="${stateKey}" value="${hex}" style="inset:0; width:100%; height:100%; cursor:pointer;" aria-label="${st.n}">
+                      <span class="position-relative" style="pointer-events:none;">${hex}</span>
+                      <div class="d-flex align-items-center gap-1 position-relative" style="z-index:2;">
+                        ${isOverridden ? `<button type="button" class="btn btn-link p-0 border-0 studio-state-reset" data-state-key="${stateKey}" style="color:${swatchText}; font-size:0.72rem; line-height:1;" title="{% trans 'Zurücksetzen'|escapejs %}"><i class="bi bi-arrow-counterclockwise"></i></button>` : ''}
+                        <button type="button" class="btn btn-link p-0 border-0 studio-state-copy" data-hex="${hex}" style="color:${swatchText}; font-size:0.72rem; line-height:1;" title="{% trans 'HEX kopieren'|escapejs %}"><i class="bi bi-clipboard"></i></button>
+                      </div>
                     </div>
                     <div class="studio-state-info">
                       <div class="fw-bold text-truncate" style="font-size:0.72rem;" title="${st.n}">${st.n}</div>
@@ -667,6 +714,49 @@
                     </div>
                   </div>`;
             }).join('');
+
+            studioSwatchGrid.querySelectorAll('.studio-state-color-input').forEach(inp => {
+                inp.addEventListener('input', (e) => {
+                    const key = e.target.dataset.stateKey;
+                    stateOverrides[key] = e.target.value.toUpperCase();
+                    syncStateOverridesInput();
+                    const swatch = e.target.closest('.studio-state-swatch');
+                    if (swatch) {
+                        const newHex = stateOverrides[key];
+                        const newTxt = getContrastTextHex(newHex);
+                        swatch.style.background = newHex;
+                        swatch.style.color = newTxt;
+                        swatch.style.textShadow = newTxt === '#ffffff' ? '0 1px 3px rgba(0,0,0,0.65)' : 'none';
+                        const span = swatch.querySelector('span');
+                        if (span) span.textContent = newHex;
+                        html.style.setProperty(`--theme-state-${key}`, newHex);
+                    }
+                });
+                inp.addEventListener('change', () => {
+                    runThemeStudio(false);
+                });
+            });
+            studioSwatchGrid.querySelectorAll('.studio-state-copy').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    navigator.clipboard.writeText(btn.dataset.hex);
+                    const icon = btn.querySelector('i');
+                    if (icon) {
+                        icon.className = 'bi bi-check-lg';
+                        setTimeout(() => { icon.className = 'bi bi-clipboard'; }, 1200);
+                    }
+                });
+            });
+            studioSwatchGrid.querySelectorAll('.studio-state-reset').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    delete stateOverrides[btn.dataset.stateKey];
+                    syncStateOverridesInput();
+                    runThemeStudio(false);
+                });
+            });
 
             if (updatePrecisionFields) {
                 if (studioPrecisionManual) studioPrecisionManual.value = '0';
@@ -932,14 +1022,12 @@
     .studio-state-swatch {
         height: 48px;
         padding: 6px 8px;
-        color: #ffffff;
         font-family: monospace;
         font-size: 0.72rem;
         font-weight: bold;
         display: flex;
         align-items: flex-end;
         justify-content: space-between;
-        text-shadow: 0 1px 3px rgba(0,0,0,0.65);
         cursor: pointer;
     }
     .studio-state-swatch:hover {

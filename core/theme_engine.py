@@ -147,10 +147,11 @@ def _compute_single_state(st_h, st_side, idx, base1, base2, mood_key, m, is_dark
     }
 
 
-def compute_theme_palette(c1="#6610f2", c2="#0d6efd", mood_key="modern", bg_mode="auto", bg_custom="#e2e8f0"):
+def compute_theme_palette(c1="#6610f2", c2="#0d6efd", mood_key="modern", bg_mode="auto", bg_custom="#e2e8f0", state_overrides=None):
     if mood_key not in MOODS:
         mood_key = "modern"
     m = MOODS[mood_key]
+    overrides = state_overrides if isinstance(state_overrides, dict) else {}
 
     page_bg = m["bg"]
     is_dark = bool(m["dark"])
@@ -170,7 +171,22 @@ def compute_theme_palette(c1="#6610f2", c2="#0d6efd", mood_key="modern", bg_mode
     computed_states = []
     states_by_index = {}
     for idx, st in enumerate(STATES):
-        res = _compute_single_state(st["h"], st["side"], idx, base1, base2, mood_key, m, is_dark)
+        ov_hex = overrides.get(str(st["index"])) or overrides.get(st["index"])
+        if isinstance(ov_hex, str) and ov_hex.strip().startswith("#") and len(ov_hex.strip()) in (4, 7):
+            clean_ov = ov_hex.strip().upper()
+            ov_hsl = hex_to_hsl(clean_ov)
+            alpha = 0.24 if is_dark else 0.15
+            res = {
+                "hue": ov_hsl["h"],
+                "s": ov_hsl["s"],
+                "l": ov_hsl["l"],
+                "hex": clean_ov,
+                "bg": f"hsla({ov_hsl['h']}, {ov_hsl['s']}%, {ov_hsl['l']}%, {alpha})",
+                "txt": hsl_to_hex(ov_hsl["h"], ov_hsl["s"], min(86, ov_hsl["l"] + 24)) if is_dark else hsl_to_hex(ov_hsl["h"], ov_hsl["s"], max(22, ov_hsl["l"] - 26)),
+                "card_text": get_contrast_text(clean_ov),
+            }
+        else:
+            res = _compute_single_state(st["h"], st["side"], idx, base1, base2, mood_key, m, is_dark)
         entry = {
             "index": st["index"],
             "name": str(st["n"]),
@@ -230,9 +246,11 @@ def get_profile_theme_studio_settings(profile):
             "bg_mode": "auto",
             "bg_custom": "#ffffff",
             "sync_cards_and_charts": True,
+            "state_overrides": {},
         }
     dc = profile.dashboard_config or {}
     ts = dc.get("theme_studio", {})
+    raw_ov = ts.get("state_overrides", {})
     return {
         "c1": profile.gradient_start or "#6610f2",
         "c2": profile.gradient_end or "#0d6efd",
@@ -240,6 +258,7 @@ def get_profile_theme_studio_settings(profile):
         "bg_mode": ts.get("bg_mode", "auto"),
         "bg_custom": ts.get("bg_custom", profile.background_color or "#ffffff"),
         "sync_cards_and_charts": ts.get("sync_cards_and_charts", True),
+        "state_overrides": raw_ov if isinstance(raw_ov, dict) else {},
     }
 
 
@@ -251,6 +270,7 @@ def get_profile_theme_palette(profile):
         mood_key=s["mood"],
         bg_mode=s["bg_mode"],
         bg_custom=s["bg_custom"],
+        state_overrides=s.get("state_overrides"),
     )
 
 
