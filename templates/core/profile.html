@@ -900,6 +900,201 @@
         // Initial render of the 8-state grid without overwriting existing saved precision fields
         runThemeStudio(false);
 
+        // Desktop-only (pywebview) compact color picker popover with native screen eyedropper
+        function initDesktopColorPopover() {
+            const hasDesktopApi = Boolean(window.pywebview && window.pywebview.api && typeof window.pywebview.api.pick_screen_color === 'function');
+            if (!hasDesktopApi || window._desktopColorPopoverInit) return;
+            window._desktopColorPopoverInit = true;
+
+            const pop = document.createElement('div');
+            pop.id = 'desktopColorPopover';
+            pop.className = 'shadow-lg rounded-3 border p-2';
+            pop.style.cssText = 'position:fixed; z-index:2050; width:236px; display:none; background:var(--app-card-bg, #1e293b); color:var(--app-card-color, #f8fafc); border-color:var(--app-table-border-color, #334155) !important;';
+            pop.innerHTML = `
+                <canvas id="dcpSpectrum" width="218" height="130" class="rounded-2 d-block mb-2" style="cursor:crosshair; width:100%; height:130px;"></canvas>
+                <input type="range" id="dcpHue" min="0" max="359" value="210" class="form-range mb-2" style="height:14px;">
+                <div class="d-flex align-items-center gap-1">
+                    <span id="dcpPreview" class="rounded-2 border flex-shrink-0" style="width:28px; height:30px; display:inline-block;"></span>
+                    <input type="text" id="dcpHex" class="form-control form-control-sm font-monospace" maxlength="7" placeholder="#000000" style="height:30px;">
+                    <button type="button" id="dcpEyedropper" class="btn btn-sm btn-outline-primary px-2 flex-shrink-0" style="height:30px;" title="{% trans 'Pipette (Farbe vom Bildschirm aufnehmen)'|escapejs %}">
+                        <i class="bi bi-eyedropper"></i>
+                    </button>
+                    <button type="button" id="dcpClose" class="btn btn-sm btn-primary px-2 flex-shrink-0" style="height:30px;" title="{% trans 'Übernehmen'|escapejs %}">
+                        <i class="bi bi-check-lg"></i>
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(pop);
+
+            const canvas = pop.querySelector('#dcpSpectrum');
+            const ctx = canvas.getContext('2d');
+            const hueSlider = pop.querySelector('#dcpHue');
+            const hexInput = pop.querySelector('#dcpHex');
+            const previewBox = pop.querySelector('#dcpPreview');
+            const eyedropperBtn = pop.querySelector('#dcpEyedropper');
+            const closeBtn = pop.querySelector('#dcpClose');
+            let activeInput = null;
+            let currentHue = 210;
+            let currentSv = { s: 1, v: 1 };
+
+            function hsvToHex(h, s, v) {
+                const c = v * s;
+                const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+                const m = v - c;
+                let r = 0, g = 0, b = 0;
+                if (h < 60) { r = c; g = x; }
+                else if (h < 120) { r = x; g = c; }
+                else if (h < 180) { g = c; b = x; }
+                else if (h < 240) { g = x; b = c; }
+                else if (h < 300) { r = x; b = c; }
+                else { r = c; b = x; }
+                const toH = n => Math.round((n + m) * 255).toString(16).padStart(2, '0').toUpperCase();
+                return `#${toH(r)}${toH(g)}${toH(b)}`;
+            }
+
+            function hexToHsv(hex) {
+                const clean = String(hex || '#000000').replace('#', '');
+                if (clean.length !== 6) return { h: 210, s: 1, v: 1 };
+                const r = parseInt(clean.slice(0, 2), 16) / 255;
+                const g = parseInt(clean.slice(2, 4), 16) / 255;
+                const b = parseInt(clean.slice(4, 6), 16) / 255;
+                const max = Math.max(r, g, b), min = Math.min(r, g, b);
+                const d = max - min;
+                let h = 0;
+                if (d !== 0) {
+                    if (max === r) h = ((g - b) / d) % 6;
+                    else if (max === g) h = (b - r) / d + 2;
+                    else h = (r - g) / d + 4;
+                    h = Math.round(h * 60);
+                    if (h < 0) h += 360;
+                }
+                return { h, s: max === 0 ? 0 : d / max, v: max };
+            }
+
+            function drawSpectrum() {
+                const w = canvas.width, h = canvas.height;
+                ctx.fillStyle = `hsl(${currentHue}, 100%, 50%)`;
+                ctx.fillRect(0, 0, w, h);
+                const gradW = ctx.createLinearGradient(0, 0, w, 0);
+                gradW.addColorStop(0, '#ffffff');
+                gradW.addColorStop(1, 'rgba(255,255,255,0)');
+                ctx.fillStyle = gradW;
+                ctx.fillRect(0, 0, w, h);
+                const gradB = ctx.createLinearGradient(0, 0, 0, h);
+                gradB.addColorStop(0, 'rgba(0,0,0,0)');
+                gradB.addColorStop(1, '#000000');
+                ctx.fillStyle = gradB;
+                ctx.fillRect(0, 0, w, h);
+            }
+
+            function applyColor(hex, fireChange = false) {
+                if (!/^#[0-9A-Fa-f]{6}$/.test(hex)) return;
+                const upper = hex.toUpperCase();
+                hexInput.value = upper;
+                previewBox.style.backgroundColor = upper;
+                if (activeInput) {
+                    activeInput.value = upper;
+                    activeInput.dispatchEvent(new Event('input', { bubbles: true }));
+                    if (fireChange) activeInput.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+            }
+
+            function pickFromCanvas(e) {
+                const rect = canvas.getBoundingClientRect();
+                const x = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+                const y = Math.max(0, Math.min(1, (e.clientY - rect.top) / rect.height));
+                currentSv = { s: x, v: 1 - y };
+                applyColor(hsvToHex(currentHue, currentSv.s, currentSv.v), false);
+            }
+
+            let dragging = false;
+            canvas.addEventListener('mousedown', (e) => { dragging = true; pickFromCanvas(e); });
+            window.addEventListener('mousemove', (e) => { if (dragging) pickFromCanvas(e); });
+            window.addEventListener('mouseup', () => {
+                if (dragging) {
+                    dragging = false;
+                    if (activeInput) activeInput.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+            });
+
+            hueSlider.addEventListener('input', () => {
+                currentHue = parseInt(hueSlider.value, 10) || 0;
+                drawSpectrum();
+                applyColor(hsvToHex(currentHue, currentSv.s, currentSv.v), false);
+            });
+            hueSlider.addEventListener('change', () => {
+                if (activeInput) activeInput.dispatchEvent(new Event('change', { bubbles: true }));
+            });
+
+            hexInput.addEventListener('input', () => {
+                const val = hexInput.value.trim();
+                if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
+                    const hsv = hexToHsv(val);
+                    currentHue = hsv.h;
+                    currentSv = { s: hsv.s, v: hsv.v };
+                    hueSlider.value = currentHue;
+                    drawSpectrum();
+                    applyColor(val, true);
+                }
+            });
+
+            eyedropperBtn.addEventListener('click', async () => {
+                const orig = eyedropperBtn.innerHTML;
+                eyedropperBtn.disabled = true;
+                eyedropperBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+                try {
+                    const picked = await window.pywebview.api.pick_screen_color();
+                    if (picked && /^#[0-9A-Fa-f]{6}$/.test(picked)) {
+                        const hsv = hexToHsv(picked);
+                        currentHue = hsv.h;
+                        currentSv = { s: hsv.s, v: hsv.v };
+                        hueSlider.value = currentHue;
+                        drawSpectrum();
+                        applyColor(picked, true);
+                    }
+                } finally {
+                    eyedropperBtn.disabled = false;
+                    eyedropperBtn.innerHTML = orig;
+                }
+            });
+
+            closeBtn.addEventListener('click', () => {
+                pop.style.display = 'none';
+                activeInput = null;
+            });
+
+            document.addEventListener('click', (e) => {
+                const target = e.target;
+                if (target && target.matches && target.matches('input[type="color"]')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    activeInput = target;
+                    const hsv = hexToHsv(target.value || '#3B82F6');
+                    currentHue = hsv.h;
+                    currentSv = { s: hsv.s, v: hsv.v };
+                    hueSlider.value = currentHue;
+                    hexInput.value = (target.value || '#3B82F6').toUpperCase();
+                    previewBox.style.backgroundColor = hexInput.value;
+                    drawSpectrum();
+
+                    const r = target.getBoundingClientRect();
+                    pop.style.display = 'block';
+                    const top = Math.min(window.innerHeight - pop.offsetHeight - 10, r.bottom + 6);
+                    const left = Math.min(window.innerWidth - pop.offsetWidth - 10, Math.max(10, r.left));
+                    pop.style.top = `${Math.max(10, top)}px`;
+                    pop.style.left = `${left}px`;
+                    return;
+                }
+                if (pop.style.display === 'block' && !pop.contains(target)) {
+                    pop.style.display = 'none';
+                    activeInput = null;
+                }
+            }, true);
+        }
+
+        initDesktopColorPopover();
+        window.addEventListener('pywebviewready', initDesktopColorPopover);
+
         // Children list management
         const childrenJsonInput = document.getElementById('childrenJsonInput');
         const childrenContainer = document.getElementById('profileChildrenContainer');
