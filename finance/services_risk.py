@@ -192,6 +192,7 @@ def calculate_protection_audit(user, situation_override=None, life_stage=None):
     cash_reserve_amount = Decimal('0.00')
     cash_reserve_asset_id = None
     cash_keywords = ('bargeld', 'barreserve', 'tresor', 'zuhause', 'notfallkasse', 'cash reserve', 'cash-reserve')
+    physical_cash_keywords = ('bargeld', 'barreserve', 'notfallkasse', 'cash reserve', 'cash-reserve')
     for a in assets:
         val = a.value or Decimal('0.00')
         if a.is_emergency_fund:
@@ -207,7 +208,7 @@ def calculate_protection_audit(user, situation_override=None, life_stage=None):
 
     for pa in physical_assets:
         hay = f"{pa.name or ''} {pa.location or ''}".lower()
-        if any(kw in hay for kw in cash_keywords):
+        if any(kw in hay for kw in physical_cash_keywords):
             cash_reserve_amount += (pa.value or Decimal('0.00'))
 
     child_cnt_for_cash = len(dependent_children) if dependent_children else (1 if has_children else 0)
