@@ -180,6 +180,39 @@ if __name__ == '__main__':
     else:
         import webview
 
+        class DesktopApi:
+            def pick_screen_color(self):
+                import ctypes
+                from ctypes import wintypes
+                from PIL import ImageGrab
+
+                user32 = ctypes.windll.user32
+                VK_LBUTTON = 0x01
+                VK_RBUTTON = 0x02
+                VK_ESCAPE = 0x1B
+
+                # Wait for initial click release
+                deadline = time.time() + 2.0
+                while (user32.GetAsyncKeyState(VK_LBUTTON) & 0x8000) and time.time() < deadline:
+                    time.sleep(0.02)
+
+                # Wait for next left-click or cancel (Esc / right-click)
+                end_time = time.time() + 30.0
+                while time.time() < end_time:
+                    if (user32.GetAsyncKeyState(VK_ESCAPE) & 0x8000) or (user32.GetAsyncKeyState(VK_RBUTTON) & 0x8000):
+                        return None
+                    if user32.GetAsyncKeyState(VK_LBUTTON) & 0x8000:
+                        pt = wintypes.POINT()
+                        user32.GetCursorPos(ctypes.byref(pt))
+                        try:
+                            img = ImageGrab.grab(bbox=(pt.x, pt.y, pt.x + 1, pt.y + 1), all_screens=True)
+                            r, g, b = img.getpixel((0, 0))[:3]
+                            return f"#{r:02X}{g:02X}{b:02X}"
+                        except Exception:
+                            return None
+                    time.sleep(0.02)
+                return None
+
         # Allow text selection for copying figures, account numbers and notes
         # Start immediately with a clean loading splash screen
         window = webview.create_window(
@@ -188,7 +221,8 @@ if __name__ == '__main__':
             width=1350,
             height=850,
             min_size=(900, 600),
-            text_select=True
+            text_select=True,
+            js_api=DesktopApi()
         )
 
         def bootstrap_and_navigate():
