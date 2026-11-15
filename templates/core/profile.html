@@ -1039,10 +1039,13 @@
             });
 
             let isPickingColor = false;
+            const pickStyle = document.createElement('style');
+            pickStyle.textContent = 'body.desktop-eyedropper-active, body.desktop-eyedropper-active * { cursor: crosshair !important; }';
+            document.head.appendChild(pickStyle);
 
             function stopPicking() {
                 isPickingColor = false;
-                document.body.style.cursor = '';
+                document.body.classList.remove('desktop-eyedropper-active');
                 eyedropperBtn.classList.remove('btn-primary', 'text-white');
                 eyedropperBtn.classList.add('btn-outline-primary');
                 document.removeEventListener('mousedown', onPickMouseDown, true);
@@ -1091,7 +1094,7 @@
                     return;
                 }
                 isPickingColor = true;
-                document.body.style.cursor = 'crosshair';
+                document.body.classList.add('desktop-eyedropper-active');
                 eyedropperBtn.classList.remove('btn-outline-primary');
                 eyedropperBtn.classList.add('btn-primary', 'text-white');
                 setTimeout(() => {
