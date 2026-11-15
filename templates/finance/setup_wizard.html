@@ -318,6 +318,65 @@
                 </div>
             </div>
         </div>
+
+        <!-- Kinder & Kindergeld -->
+        <div class="p-3 rounded-3 bg-body-tertiary mb-2">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+                <div>
+                    <h6 class="fw-bold mb-0 text-secondary"><i class="bi bi-people-fill me-1"></i>{% trans "Kinder im Haushalt (optional)" %}</h6>
+                    <div class="small text-muted">{% trans "Relevant für Kindergeld-Dauer, ALG-I-Satz (67 %), Risikoleben, Halbwaisenrente & DRV-Kindererziehungszeiten." %}</div>
+                </div>
+                <div class="d-flex flex-wrap gap-2">
+                    <button type="button" x-show="form.children.some(c => c.name && c.receives_child_benefit)" @click="syncKindergeldToIncomes()" class="btn btn-sm btn-success rounded-pill px-3">
+                        <i class="bi bi-cash-coin me-1"></i>{% trans "Kindergeld (255 €/Kind) in Einnahmen übernehmen" %}
+                    </button>
+                    <button type="button" @click="addChild()" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                        <i class="bi bi-plus-lg me-1"></i>{% trans "Kind hinzufügen" %}
+                    </button>
+                </div>
+            </div>
+
+            <template x-if="kindergeldSyncMessage">
+                <div class="alert alert-success py-1 px-3 small rounded-3 mb-2" x-text="kindergeldSyncMessage"></div>
+            </template>
+
+            <template x-if="form.children.length === 0">
+                <div class="small text-muted fst-italic">{% trans "Noch keine Kinder eingetragen." %}</div>
+            </template>
+
+            <template x-for="(child, cIdx) in form.children" :key="cIdx">
+                <div class="row g-2 align-items-end mb-2 p-2 rounded-3 border bg-body">
+                    <div class="col-md-3">
+                        <label class="form-label small opacity-75 mb-1">{% trans "Name des Kindes" %}</label>
+                        <input type="text" x-model="child.name" class="form-control form-control-sm" placeholder="z. B. Lena">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small opacity-75 mb-1">{% trans "Geburtsdatum" %}</label>
+                        <input type="date" x-model="child.birth_date" class="form-control form-control-sm">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small opacity-75 mb-1">{% trans "Versorgung / Ausbildung bis" %}</label>
+                        <select x-model.number="child.expected_independence_age" class="form-select form-select-sm">
+                            <option :value="18">{% trans "18 Jahre (Schulabschluss)" %}</option>
+                            <option :value="21">{% trans "21 Jahre (Ausbildung)" %}</option>
+                            <option :value="25">{% trans "25 Jahre (Studium / max. Kindergeld)" %}</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-check form-switch mb-1">
+                            <input class="form-check-input" type="checkbox" x-model="child.receives_child_benefit" :id="'wizChildKg_' + cIdx">
+                            <label class="form-check-label small" :for="'wizChildKg_' + cIdx">{% trans "Kindergeld" %}</label>
+                        </div>
+                        <span class="badge bg-primary bg-opacity-10 text-primary" style="font-size: 0.65rem;" x-text="childIndependenceInfo(child)"></span>
+                    </div>
+                    <div class="col-md-1 text-end">
+                        <button type="button" @click="removeChild(cIdx)" class="btn btn-sm btn-outline-danger" title="{% trans 'Entfernen' %}">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </template>
+        </div>
     </div>
 
     <!-- Step 2: Gesetzliche Renteninformation (DRV) -->
@@ -677,6 +736,7 @@
             initialExpenses: (initialData.expenses || []).slice(),
             deletedItemNames: [],
             deletionCount: 0,
+            kindergeldSyncMessage: '',
 
             get selectedTemplateCount() {
                 let count = 0;
@@ -792,6 +852,7 @@
                 p2_birth_date: prof.partner_birth_date || '',
                 p2_retirement_age: prof.partner_retirement_age || 67,
                 hide_wizard_on_start: prof.hide_wizard_on_start || false,
+                children: Array.isArray(initialData.children) ? initialData.children : [],
                 drv_statements: initialData.drv_statements && initialData.drv_statements.length ? initialData.drv_statements : [
                     {
                         provider: 'Gesetzliche Rente Person 1',
@@ -886,6 +947,75 @@
 
             addIncome() { this.form.incomes.push({ name: '', amount: '' }); },
             removeIncome(idx) { this.form.incomes.splice(idx, 1); },
+
+            addChild() {
+                this.form.children.push({
+                    id: null,
+                    name: '',
+                    birth_date: '',
+                    expected_independence_age: 21,
+                    receives_child_benefit: true
+                });
+            },
+            removeChild(idx) {
+                this.form.children.splice(idx, 1);
+            },
+            childIndependenceInfo(child) {
+                if (!child || !child.birth_date) return '';
+                const parts = String(child.birth_date).split('-');
+                if (parts.length !== 3) return '';
+                const bYear = parseInt(parts[0], 10);
+                const bMonth = parseInt(parts[1], 10);
+                if (isNaN(bYear) || isNaN(bMonth)) return '';
+                const endYear = bYear + (parseInt(child.expected_independence_age, 10) || 21);
+                return `bis ${String(bMonth).padStart(2, '0')}/${endYear}`;
+            },
+            syncKindergeldToIncomes() {
+                if (this.form.incomes.length === 1 && !this.form.incomes[0].name) {
+                    this.form.incomes = [];
+                }
+                let count = 0;
+                this.form.children.forEach(child => {
+                    const cName = String(child.name || '').trim();
+                    if (!cName || !child.receives_child_benefit) return;
+                    const entryName = `Kindergeld (${cName})`;
+                    let endDateStr = '';
+                    if (child.birth_date) {
+                        const parts = String(child.birth_date).split('-');
+                        if (parts.length === 3) {
+                            const endY = parseInt(parts[0], 10) + (parseInt(child.expected_independence_age, 10) || 21);
+                            endDateStr = `${endY}-${parts[1]}-${parts[2]}`;
+                        }
+                    }
+                    const existing = this.form.incomes.find(inc =>
+                        String(inc.name || '').trim().toLowerCase() === entryName.toLowerCase()
+                    );
+                    if (existing) {
+                        existing.amount = '255.00';
+                        existing.frequency = 'monthly';
+                        existing.template_id = 'inc_kindergeld';
+                        existing.category_slug = 'familie-kinder';
+                        existing.category_name = 'Familie & Kinder';
+                        if (endDateStr) existing.end_date = endDateStr;
+                    } else {
+                        this.form.incomes.push({
+                            name: entryName,
+                            amount: '255.00',
+                            frequency: 'monthly',
+                            owner_role: 'joint',
+                            template_id: 'inc_kindergeld',
+                            category_slug: 'familie-kinder',
+                            category_name: 'Familie & Kinder',
+                            end_date: endDateStr
+                        });
+                    }
+                    count++;
+                });
+                if (count > 0) {
+                    this.kindergeldSyncMessage = `${count} Kindergeld-Eintrag/Einträge (je 255 €/Monat inkl. Ablaufdatum) in Schritt 4 (Einnahmen) übernommen.`;
+                    setTimeout(() => { this.kindergeldSyncMessage = ''; }, 5000);
+                }
+            },
 
             addExpense() { this.form.expenses.push({ name: '', amount: '', frequency: 'monthly' }); },
             removeExpense(idx) { this.form.expenses.splice(idx, 1); },

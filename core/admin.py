@@ -50,7 +50,14 @@ class UserProfileAdmin(BaseOwnedModelAdmin):
     )
 
 
-from .models import EditablePageContent, DesignHarmony
+from .models import EditablePageContent, DesignHarmony, ChildProfile
+
+
+@admin.register(ChildProfile)
+class ChildProfileAdmin(BaseOwnedModelAdmin):
+    list_display = ('user', 'name', 'birth_date', 'expected_independence_age', 'receives_child_benefit')
+    list_filter = ('receives_child_benefit', 'expected_independence_age')
+    search_fields = ('name', 'user__username')
 
 @admin.register(EditablePageContent)
 class EditablePageContentAdmin(admin.ModelAdmin):

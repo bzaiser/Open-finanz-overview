@@ -48,6 +48,15 @@
                     </a>
                     {% endif %}
                 </div>
+                {% if protection_audit.children_summary %}
+                <span class="badge rounded-pill bg-body-tertiary text-body border border-secondary border-opacity-25 px-2.5 py-1" style="font-size: 0.75rem;"
+                      title="{% trans 'Im Profil hinterlegte Kinder (relevant für ALG I 67%, Halbwaisenrente, Risikoleben & DRV-Kindererziehungszeiten)' %}">
+                    <i class="bi bi-people-fill text-primary me-1"></i>
+                    {% for ch in protection_audit.children_summary %}
+                        {{ ch.name }}{% if ch.age is not None %} ({{ ch.age }} J.{% if ch.independence_year %}, bis {{ ch.independence_year }}{% endif %}){% endif %}{% if not forloop.last %} · {% endif %}
+                    {% endfor %}
+                </span>
+                {% endif %}
             </p>
         </div>
         <div class="d-flex flex-wrap align-items-center gap-2">

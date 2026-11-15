@@ -11,7 +11,7 @@ from django.utils.translation import gettext as _
 import datetime
 from django.utils import translation, timezone
 from .forms import CustomUserCreationForm, UserProfileForm, AppAuthenticationForm
-from .models import UserProfile, CustomUser, DesignHarmony
+from .models import UserProfile, CustomUser, DesignHarmony, ChildProfile
 
 class AppLoginView(LoginView):
     template_name = 'core/login.html'
@@ -155,6 +155,48 @@ def profile_view(request):
             prof.dashboard_config = dc
             prof.save()
             form.save_m2m()
+
+            if 'children_json' in request.POST:
+                raw_children = request.POST.get('children_json', '').strip()
+                if raw_children:
+                    try:
+                        children_data = json.loads(raw_children)
+                        if isinstance(children_data, list):
+                            keep_ids = []
+                            for c_item in children_data:
+                                if not isinstance(c_item, dict):
+                                    continue
+                                c_name = str(c_item.get('name') or '').strip()
+                                if not c_name:
+                                    continue
+                                c_id = c_item.get('id')
+                                c_birth_str = str(c_item.get('birth_date') or '').strip()
+                                c_birth = None
+                                if c_birth_str:
+                                    try:
+                                        c_birth = datetime.datetime.strptime(c_birth_str, '%Y-%m-%d').date()
+                                    except ValueError:
+                                        pass
+                                try:
+                                    c_ind_age = int(c_item.get('expected_independence_age') or 21)
+                                except (ValueError, TypeError):
+                                    c_ind_age = 21
+                                c_benefit = bool(c_item.get('receives_child_benefit', True))
+                                child_obj = None
+                                if c_id:
+                                    child_obj = ChildProfile.objects.filter(user=request.user, id=c_id).first()
+                                if not child_obj:
+                                    child_obj = ChildProfile(user=request.user)
+                                child_obj.name = c_name
+                                child_obj.birth_date = c_birth
+                                child_obj.expected_independence_age = c_ind_age
+                                child_obj.receives_child_benefit = c_benefit
+                                child_obj.save()
+                                keep_ids.append(child_obj.id)
+                            ChildProfile.objects.filter(user=request.user).exclude(id__in=keep_ids).delete()
+                    except Exception:
+                        pass
+
             messages.success(request, _("Profile updated successfully!"))
             return redirect('finance:dashboard')
     else:
@@ -164,6 +206,18 @@ def profile_view(request):
     is_same_vol = is_same_volume_as_app(profile.backup_path)
     in_docker = is_running_in_docker()
     has_external_mount = any(s.get('is_other_volume') for s in available_shares)
+
+    user_children = list(ChildProfile.objects.filter(user=request.user).order_by('birth_date', 'id'))
+    children_initial = [
+        {
+            'id': c.id,
+            'name': c.name,
+            'birth_date': c.birth_date.strftime('%Y-%m-%d') if c.birth_date else '',
+            'expected_independence_age': c.expected_independence_age or 21,
+            'receives_child_benefit': bool(c.receives_child_benefit),
+        }
+        for c in user_children
+    ]
 
     return render(request, 'core/profile.html', {
         'form': form,
@@ -175,6 +229,8 @@ def profile_view(request):
         'default_backup_dir': get_default_backup_dir(),
         'theme_studio': get_profile_theme_studio_settings(profile),
         'theme_palette': get_profile_theme_palette(profile),
+        'children': user_children,
+        'children_json': json.dumps(children_initial),
     })
 
 import os

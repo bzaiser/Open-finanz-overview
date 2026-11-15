@@ -203,7 +203,8 @@ class SimulationEngine:
         else:
             affected_ret_date = today_norm_init + relativedelta(years=25)
 
-        has_children = (
+        profile_children = list(self.user.children.all().order_by('birth_date', 'id')) if hasattr(self.user, 'children') else []
+        fallback_has_children = (
             getattr(self.profile, 'household_situation', 'standard') == 'single_parent'
             or any(
                 cf.is_income and (
@@ -213,6 +214,7 @@ class SimulationEngine:
                 for cf in cash_flows
             )
         )
+        has_children = bool(profile_children) or fallback_has_children
         self.risk_metrics = {
             'scenario_type': scenario_type,
             'scenario_start': scenario_start.isoformat() if scenario_type != 'none' else None,
@@ -604,7 +606,7 @@ class SimulationEngine:
                     p_cat = str(_('Erwerbsminderungsrente'))
                     month_pension_payout_categories[p_cat] = month_pension_payout_categories.get(p_cat, Decimal('0')) + (dis_val * step_months)
 
-                # Immediate survivor pension (Witwen-/Hinterbliebenenrente ~55%) before regular retirement date when affected_person dies
+                # Immediate survivor pension (Witwen-/Hinterbliebenenrente ~55% + 10% Halbwaisenrente per dependent child) before regular retirement date when affected_person dies
                 if (
                     scenario_type == 'partner_death'
                     and scenario_active
@@ -615,7 +617,13 @@ class SimulationEngine:
                     if base_surv > 0:
                         years_since_death = max(0, ((current_date.year - scenario_start.year) * 12 + (current_date.month - scenario_start.month)) // 12)
                         surv_inc = self.pension_increase if p.is_indexed else Decimal('0.00')
-                        surv_val = (base_surv * Decimal('0.55') * ((1 + surv_inc) ** Decimal(str(years_since_death)))).quantize(Decimal('0.01'))
+                        dep_children_now = [
+                            ch for ch in profile_children
+                            if ch.independence_date is None or ch.independence_date.replace(day=1) >= current_date
+                        ]
+                        orphan_factor = Decimal('0.10') * Decimal(str(len(dep_children_now))) if p.pension_type == 'statutory' else Decimal('0.00')
+                        total_surv_factor = Decimal('0.55') + orphan_factor
+                        surv_val = (base_surv * total_surv_factor * ((1 + surv_inc) ** Decimal(str(years_since_death)))).quantize(Decimal('0.01'))
                         current_monthly_pension_payout += surv_val * step_months
                         month_pension_payouts[str(p.id)] = surv_val
                         current_monthly_pension_payout_fixed += surv_val * step_months
@@ -624,8 +632,16 @@ class SimulationEngine:
 
                 # Payout: only if after/at start payout date
                 if p.start_payout_date and current_date >= p.start_payout_date.replace(day=1):
-                    # In partner_death scenario, affected_person's own pension converts to ~55% survivor pension
-                    survivor_factor = Decimal('0.55') if (scenario_type == 'partner_death' and scenario_active and p_role == affected_person) else Decimal('1.00')
+                    # In partner_death scenario, affected_person's own pension converts to ~55% survivor pension (+10% per dependent child on statutory)
+                    if scenario_type == 'partner_death' and scenario_active and p_role == affected_person:
+                        dep_children_now = [
+                            ch for ch in profile_children
+                            if ch.independence_date is None or ch.independence_date.replace(day=1) >= current_date
+                        ]
+                        orphan_factor = Decimal('0.10') * Decimal(str(len(dep_children_now))) if p.pension_type == 'statutory' else Decimal('0.00')
+                        survivor_factor = Decimal('0.55') + orphan_factor
+                    else:
+                        survivor_factor = Decimal('1.00')
                     # Check if one-time lump-sum payout
                     if getattr(p, 'payout_type', 'monthly') == 'one_time':
                         is_payout_month = (current_date.year == p.start_payout_date.year and current_date.month == p.start_payout_date.month)
@@ -815,8 +831,15 @@ class SimulationEngine:
                 if scenario_type == 'job_loss' and scenario_active and suspended_earned_income > 0:
                     months_into = (current_date.year - scenario_start.year) * 12 + (current_date.month - scenario_start.month)
                     if months_into < 12:
-                        alg1_rate = Decimal('0.67') if has_children else Decimal('0.60')
-                        alg1_cap = Decimal('2950.00') if has_children else Decimal('2600.00')
+                        if profile_children:
+                            has_children_now = any(
+                                ch.independence_date is None or ch.independence_date.replace(day=1) >= current_date
+                                for ch in profile_children
+                            )
+                        else:
+                            has_children_now = fallback_has_children
+                        alg1_rate = Decimal('0.67') if has_children_now else Decimal('0.60')
+                        alg1_cap = Decimal('2950.00') if has_children_now else Decimal('2600.00')
                         alg1_val = min(alg1_cap, (suspended_earned_income * alg1_rate).quantize(Decimal('0.01')))
                         monthly_income += alg1_val * step_months
                         cat_name = str(_('Sozialleistungen & Transfers'))

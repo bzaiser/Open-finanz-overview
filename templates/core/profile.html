@@ -124,6 +124,21 @@
                                 {{ form.partner_retirement_age }}
                             </div>
 
+                            <!-- Children Section -->
+                            <div class="col-12 my-2 pt-2 border-top border-secondary border-opacity-25">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="fw-bold text-primary small"><i class="bi bi-people-fill me-1"></i>{% trans "Kinder (für Risiko, Waisenrente & Vorsorge)" %}</span>
+                                    <button type="button" class="btn btn-sm btn-outline-primary rounded-pill py-0 px-2" style="font-size: 0.7rem;" id="addChildBtn">
+                                        <i class="bi bi-plus-lg me-1"></i>{% trans "Kind hinzufügen" %}
+                                    </button>
+                                </div>
+                                <input type="hidden" name="children_json" id="childrenJsonInput" value="{{ children_json|default:'[]' }}">
+                                <div id="profileChildrenContainer" class="d-flex flex-column gap-2"></div>
+                                <div id="profileChildrenEmptyHint" class="text-muted small fst-italic" style="font-size: 0.72rem; display: none;">
+                                    {% trans "Keine Kinder hinterlegt. Name & Geburtsdatum steuern ALG-I-Satz (67 %), Risikoleben-Bedarf, Halbwaisenrente & DRV-Kindererziehungszeiten." %}
+                                </div>
+                            </div>
+
                             <!-- Planning Goals Section -->
                             <div class="col-12 my-2 pt-2 border-top border-secondary border-opacity-25">
                                 <span class="fw-bold text-secondary small d-block mb-2"><i class="bi bi-bullseye me-1"></i>{% trans "Goals & Simulation" %}</span>
@@ -758,6 +773,145 @@
 
         // Initial render of the 8-state grid without overwriting existing saved precision fields
         runThemeStudio(false);
+
+        // Children list management
+        const childrenJsonInput = document.getElementById('childrenJsonInput');
+        const childrenContainer = document.getElementById('profileChildrenContainer');
+        const childrenEmptyHint = document.getElementById('profileChildrenEmptyHint');
+        const addChildBtn = document.getElementById('addChildBtn');
+        let childrenList = [];
+        try {
+            childrenList = JSON.parse(childrenJsonInput ? (childrenJsonInput.value || '[]') : '[]');
+            if (!Array.isArray(childrenList)) childrenList = [];
+        } catch (e) {
+            childrenList = [];
+        }
+
+        function syncChildrenInput() {
+            if (childrenJsonInput) {
+                childrenJsonInput.value = JSON.stringify(childrenList);
+            }
+            if (childrenEmptyHint) {
+                childrenEmptyHint.style.display = childrenList.length === 0 ? 'block' : 'none';
+            }
+        }
+
+        function computeChildAgeInfo(birthDateStr, indAge) {
+            if (!birthDateStr) return '';
+            const parts = birthDateStr.split('-');
+            if (parts.length !== 3) return '';
+            const bYear = parseInt(parts[0], 10);
+            const bMonth = parseInt(parts[1], 10);
+            const bDay = parseInt(parts[2], 10);
+            if (isNaN(bYear) || isNaN(bMonth)) return '';
+            const now = new Date();
+            let age = now.getFullYear() - bYear;
+            if ((now.getMonth() + 1) < bMonth || ((now.getMonth() + 1) === bMonth && now.getDate() < bDay)) {
+                age--;
+            }
+            const endYear = bYear + (parseInt(indAge, 10) || 21);
+            const endMonthStr = String(bMonth).padStart(2, '0');
+            return `${Math.max(0, age)} J. · Versorgung bis ${endMonthStr}/${endYear}`;
+        }
+
+        function renderChildrenList() {
+            if (!childrenContainer) return;
+            childrenContainer.innerHTML = '';
+            syncChildrenInput();
+
+            childrenList.forEach((child, idx) => {
+                const row = document.createElement('div');
+                row.className = 'p-2 rounded-3 border';
+                row.style.backgroundColor = 'var(--app-input-bg)';
+                row.style.borderColor = 'var(--app-input-border)';
+
+                const infoBadge = computeChildAgeInfo(child.birth_date, child.expected_independence_age);
+                row.innerHTML = `
+                    <div class="row g-2 align-items-end">
+                        <div class="col-5 col-sm-4">
+                            <label class="form-label mb-0 opacity-75" style="font-size: 0.65rem;">Name</label>
+                            <input type="text" class="form-control form-control-sm child-name-inp" placeholder="z. B. Lena" value="">
+                        </div>
+                        <div class="col-7 col-sm-4">
+                            <label class="form-label mb-0 opacity-75" style="font-size: 0.65rem;">Geburtsdatum</label>
+                            <input type="date" class="form-control form-control-sm child-birth-inp" value="">
+                        </div>
+                        <div class="col-7 col-sm-3">
+                            <label class="form-label mb-0 opacity-75" style="font-size: 0.65rem;">Versorgung bis</label>
+                            <select class="form-select form-select-sm child-ind-inp">
+                                <option value="18">18 J. (Schule)</option>
+                                <option value="21">21 J. (Ausbildung)</option>
+                                <option value="25">25 J. (Studium)</option>
+                            </select>
+                        </div>
+                        <div class="col-5 col-sm-1 text-end">
+                            <button type="button" class="btn btn-sm btn-outline-danger py-1 px-2 child-remove-btn" title="Kind entfernen">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mt-1 pt-1">
+                        <div class="form-check form-switch mb-0">
+                            <input class="form-check-input child-benefit-inp" type="checkbox" id="childBenefitSwitch_${idx}">
+                            <label class="form-check-label opacity-75" style="font-size: 0.68rem;" for="childBenefitSwitch_${idx}">Kindergeld aktiv</label>
+                        </div>
+                        <span class="badge bg-primary bg-opacity-10 text-primary child-info-badge" style="font-size: 0.65rem;">${infoBadge}</span>
+                    </div>
+                `;
+
+                const nameInp = row.querySelector('.child-name-inp');
+                const birthInp = row.querySelector('.child-birth-inp');
+                const indInp = row.querySelector('.child-ind-inp');
+                const benefitInp = row.querySelector('.child-benefit-inp');
+                const badgeEl = row.querySelector('.child-info-badge');
+                const removeBtn = row.querySelector('.child-remove-btn');
+
+                nameInp.value = child.name || '';
+                birthInp.value = child.birth_date || '';
+                indInp.value = String(child.expected_independence_age || 21);
+                benefitInp.checked = child.receives_child_benefit !== false;
+
+                nameInp.addEventListener('input', () => {
+                    childrenList[idx].name = nameInp.value;
+                    syncChildrenInput();
+                });
+                birthInp.addEventListener('change', () => {
+                    childrenList[idx].birth_date = birthInp.value;
+                    badgeEl.textContent = computeChildAgeInfo(childrenList[idx].birth_date, childrenList[idx].expected_independence_age);
+                    syncChildrenInput();
+                });
+                indInp.addEventListener('change', () => {
+                    childrenList[idx].expected_independence_age = parseInt(indInp.value, 10) || 21;
+                    badgeEl.textContent = computeChildAgeInfo(childrenList[idx].birth_date, childrenList[idx].expected_independence_age);
+                    syncChildrenInput();
+                });
+                benefitInp.addEventListener('change', () => {
+                    childrenList[idx].receives_child_benefit = benefitInp.checked;
+                    syncChildrenInput();
+                });
+                removeBtn.addEventListener('click', () => {
+                    childrenList.splice(idx, 1);
+                    renderChildrenList();
+                });
+
+                childrenContainer.appendChild(row);
+            });
+        }
+
+        if (addChildBtn) {
+            addChildBtn.addEventListener('click', () => {
+                childrenList.push({
+                    id: null,
+                    name: '',
+                    birth_date: '',
+                    expected_independence_age: 21,
+                    receives_child_benefit: true
+                });
+                renderChildrenList();
+            });
+        }
+
+        renderChildrenList();
     })();
 </script>
 

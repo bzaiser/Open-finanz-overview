@@ -8,7 +8,7 @@ from django.contrib import messages
 from django.utils.translation import gettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
 
-from core.models import UserProfile, get_dashboard_config_for_situation
+from core.models import UserProfile, ChildProfile, get_dashboard_config_for_situation
 from .models import (
     Category, CashFlowSource, Asset, RealEstate, Loan, Pension, AssetSnapshot
 )
@@ -106,8 +106,19 @@ def wizard_page_view(request):
                 return line.split(':', 1)[1].strip()
         return ''
 
-    incomes = [{'id': c.id, 'name': c.name, 'amount': float(c.value), 'frequency': c.frequency, 'owner_role': c.owner_role, 'template_id': _extract_template_id(c)} for c in cash_flows if c.is_income]
-    expenses = [{'id': c.id, 'name': c.name, 'amount': float(c.value), 'frequency': c.frequency, 'owner_role': c.owner_role, 'template_id': _extract_template_id(c)} for c in cash_flows if not c.is_income]
+    incomes = [{'id': c.id, 'name': c.name, 'amount': float(c.value), 'frequency': c.frequency, 'owner_role': c.owner_role, 'template_id': _extract_template_id(c), 'end_date': c.end_date.strftime('%Y-%m-%d') if c.end_date else ''} for c in cash_flows if c.is_income]
+    expenses = [{'id': c.id, 'name': c.name, 'amount': float(c.value), 'frequency': c.frequency, 'owner_role': c.owner_role, 'template_id': _extract_template_id(c), 'end_date': c.end_date.strftime('%Y-%m-%d') if c.end_date else ''} for c in cash_flows if not c.is_income]
+
+    children_list = [
+        {
+            'id': ch.id,
+            'name': ch.name,
+            'birth_date': ch.birth_date.strftime('%Y-%m-%d') if ch.birth_date else '',
+            'expected_independence_age': ch.expected_independence_age or 21,
+            'receives_child_benefit': bool(ch.receives_child_benefit),
+        }
+        for ch in ChildProfile.objects.filter(user=request.user).order_by('birth_date', 'id')
+    ]
 
     # Pre-populate assets, real estate & loans
     assets = [{'name': a.name, 'value': float(a.value), 'growth_rate': float(a.growth_rate)} for a in Asset.objects.filter(user=request.user)]
@@ -116,6 +127,7 @@ def wizard_page_view(request):
 
     wizard_initial_json = {
         'profile': profile_data,
+        'children': children_list,
         'drv_statements': pensions_stat,
         'private_statements': pensions_priv,
         'incomes': incomes,
@@ -246,6 +258,37 @@ def wizard_save_api(request):
             if created or profile_changed:
                 profile.save()
                 saved_summary.append("Haushalts- & Personenstammdaten aktualisiert")
+
+            # 1b. Children
+            if 'children' in data and isinstance(data.get('children'), list):
+                keep_child_ids = []
+                for c_item in data.get('children', []):
+                    if not isinstance(c_item, dict):
+                        continue
+                    c_name = str(c_item.get('name') or '').strip()
+                    if not c_name:
+                        continue
+                    c_id = c_item.get('id')
+                    c_birth = _parse_date(c_item.get('birth_date'))
+                    try:
+                        c_ind_age = int(c_item.get('expected_independence_age') or 21)
+                    except (ValueError, TypeError):
+                        c_ind_age = 21
+                    c_benefit = bool(c_item.get('receives_child_benefit', True))
+                    ch_obj = None
+                    if c_id:
+                        ch_obj = ChildProfile.objects.filter(user=user, id=c_id).first()
+                    if not ch_obj:
+                        ch_obj = ChildProfile(user=user)
+                    ch_obj.name = c_name
+                    ch_obj.birth_date = c_birth
+                    ch_obj.expected_independence_age = c_ind_age
+                    ch_obj.receives_child_benefit = c_benefit
+                    ch_obj.save()
+                    keep_child_ids.append(ch_obj.id)
+                ChildProfile.objects.filter(user=user).exclude(id__in=keep_child_ids).delete()
+                if keep_child_ids:
+                    saved_summary.append(f"{len(keep_child_ids)} Kind(er) im Profil gespeichert")
 
             ct_pension = ContentType.objects.get_for_model(Pension)
 
@@ -441,12 +484,12 @@ def wizard_save_api(request):
                         cf_obj = None
                         if existing_id:
                             cf_obj = CashFlowSource.objects.filter(user=user, id=existing_id, is_income=True).first()
-                        if not cf_obj and t_id:
-                            cf_obj = CashFlowSource.objects.filter(user=user, template_id=t_id, is_income=True).first()
-                            if not cf_obj:
-                                cf_obj = CashFlowSource.objects.filter(user=user, notes__contains=f"tpl_id:{t_id}", is_income=True).first()
                         if not cf_obj:
-                            cf_obj = CashFlowSource.objects.filter(user=user, name=name, is_income=True).first()
+                            cf_obj = CashFlowSource.objects.filter(user=user, name=name, is_income=True).exclude(id__in=saved_income_ids).first()
+                        if not cf_obj and t_id:
+                            cf_obj = CashFlowSource.objects.filter(user=user, template_id=t_id, is_income=True).exclude(id__in=saved_income_ids).first()
+                            if not cf_obj:
+                                cf_obj = CashFlowSource.objects.filter(user=user, notes__contains=f"tpl_id:{t_id}", is_income=True).exclude(id__in=saved_income_ids).first()
 
                         created = False
                         if not cf_obj:
@@ -459,6 +502,8 @@ def wizard_save_api(request):
                         cf_obj.frequency = inc.get('frequency', 'monthly')
                         if inc.get('owner_role') in ('primary', 'partner', 'joint'):
                             cf_obj.owner_role = inc.get('owner_role')
+                        if 'end_date' in inc:
+                            cf_obj.end_date = _parse_date(inc.get('end_date'))
                         if t_id:
                             cf_obj.template_id = t_id
                         # Clean legacy tpl_id from notes if present

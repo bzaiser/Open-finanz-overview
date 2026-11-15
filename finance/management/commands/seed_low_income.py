@@ -1,7 +1,7 @@
 from datetime import date
 from decimal import Decimal
 from django.core.management.base import BaseCommand
-from core.models import CustomUser, UserProfile, get_dashboard_config_for_situation
+from core.models import CustomUser, UserProfile, ChildProfile, get_dashboard_config_for_situation
 from finance.models import (
     Category, CashFlowSource, Asset, Loan, Pension, InsurancePolicy, OneTimeEvent, AssetSnapshot
 )
@@ -34,6 +34,7 @@ class Command(BaseCommand):
         profile.dashboard_config = get_dashboard_config_for_situation("low_income")
         profile.save()
 
+        ChildProfile.objects.filter(user=user).delete()
         CashFlowSource.objects.filter(user=user).delete()
         Asset.objects.filter(user=user).delete()
         Loan.objects.filter(user=user).delete()
@@ -41,6 +42,11 @@ class Command(BaseCommand):
         InsurancePolicy.objects.filter(user=user).delete()
         OneTimeEvent.objects.filter(user=user).delete()
         AssetSnapshot.objects.filter(user=user).delete()
+
+        ChildProfile.objects.create(
+            user=user, name="Noah", birth_date=date(2019, 6, 10),
+            expected_independence_age=21, receives_child_benefit=True,
+        )
 
         def get_cat(slug, name, color):
             cat = Category.objects.filter(slug=slug).first()

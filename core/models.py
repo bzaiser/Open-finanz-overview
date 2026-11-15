@@ -225,6 +225,71 @@ class UserProfile(models.Model):
         return f"{self.user.username}'s Profile"
 
 
+class ChildProfile(models.Model):
+    INDEPENDENCE_AGE_CHOICES = [
+        (18, _('18 Jahre (Schulabschluss)')),
+        (21, _('21 Jahre (Berufsausbildung)')),
+        (25, _('25 Jahre (Studium / max. Kindergeld)')),
+    ]
+
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='children')
+    name = models.CharField(_("Name des Kindes"), max_length=100)
+    birth_date = models.DateField(_("Geburtsdatum"), blank=True, null=True)
+    expected_independence_age = models.PositiveIntegerField(
+        _("Voraussichtliches Ausbildungsende (Alter)"),
+        choices=INDEPENDENCE_AGE_CHOICES,
+        default=21,
+    )
+    receives_child_benefit = models.BooleanField(_("Kindergeld aktiv"), default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = _("Kind")
+        verbose_name_plural = _("Kinder")
+        ordering = ['birth_date', 'id']
+
+    @property
+    def age(self):
+        if not self.birth_date:
+            return None
+        import datetime
+        today = datetime.date.today()
+        return today.year - self.birth_date.year - (
+            (today.month, today.day) < (self.birth_date.month, self.birth_date.day)
+        )
+
+    @property
+    def independence_date(self):
+        if not self.birth_date:
+            return None
+        from dateutil.relativedelta import relativedelta
+        return self.birth_date + relativedelta(years=self.expected_independence_age or 21)
+
+    @property
+    def adulthood_date(self):
+        if not self.birth_date:
+            return None
+        from dateutil.relativedelta import relativedelta
+        return self.birth_date + relativedelta(years=18)
+
+    @property
+    def drv_pension_points(self):
+        if self.birth_date and self.birth_date.year < 1992:
+            return 2.5
+        return 3.0
+
+    @property
+    def riester_allowance_yearly(self):
+        if self.birth_date and self.birth_date.year < 2008:
+            return 185
+        return 300
+
+    def __str__(self):
+        if self.birth_date:
+            return f"{self.name} ({self.birth_date.strftime('%d.%m.%Y')})"
+        return self.name
+
+
 class EditablePageContent(models.Model):
     PAGE_CHOICES = [
         ('help', _('Help')),

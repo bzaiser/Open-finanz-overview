@@ -976,3 +976,65 @@ class AssetModalSaveTests(TestCase):
         for d in (doc_word, doc_excel):
             if d.file:
                 d.file.delete(save=False)
+
+    def test_children_profile_risk_and_wizard_integration(self):
+        from core.models import ChildProfile
+
+        u = CustomUser.objects.create_user(username="family_children_test", password="pw")
+        UserProfile.objects.get_or_create(user=u, defaults={"birth_date": datetime.date(1985, 5, 10)})
+        self.client.force_login(u)
+
+        payload = {
+            "household_type": "couple",
+            "household_situation": "standard",
+            "p1_name": "Martin",
+            "p1_birth_date": "1985-05-10",
+            "p1_retirement_age": 67,
+            "p2_name": "Sandra",
+            "p2_birth_date": "1987-08-20",
+            "p2_retirement_age": 67,
+            "children": [
+                {
+                    "name": "Lena",
+                    "birth_date": "2016-06-15",
+                    "expected_independence_age": 21,
+                    "receives_child_benefit": True,
+                }
+            ],
+            "incomes": [
+                {
+                    "name": "Gehalt Martin",
+                    "amount": "3000.00",
+                    "frequency": "monthly",
+                    "owner_role": "primary",
+                },
+                {
+                    "name": "Kindergeld (Lena)",
+                    "amount": "255.00",
+                    "frequency": "monthly",
+                    "owner_role": "joint",
+                    "template_id": "inc_kindergeld",
+                    "end_date": "2037-06-15",
+                },
+            ],
+        }
+        resp = self.client.post(
+            reverse("finance:setup_wizard_save"),
+            data=json.dumps(payload),
+            content_type="application/json",
+        )
+        self.assertEqual(resp.status_code, 200)
+        children = list(ChildProfile.objects.filter(user=u))
+        self.assertEqual(len(children), 1)
+        self.assertEqual(children[0].name, "Lena")
+        self.assertEqual(children[0].independence_date, datetime.date(2037, 6, 15))
+
+        kg_cf = CashFlowSource.objects.get(user=u, name="Kindergeld (Lena)")
+        self.assertEqual(kg_cf.end_date, datetime.date(2037, 6, 15))
+
+        audit = calculate_protection_audit(u)
+        self.assertTrue(audit["has_children"])
+        self.assertEqual(audit["children_count"], 1)
+        self.assertEqual(audit["dependent_children_count"], 1)
+        self.assertEqual(audit["children_summary"][0]["name"], "Lena")
+        self.assertEqual(audit["alg1_estimated"], 2010.0)

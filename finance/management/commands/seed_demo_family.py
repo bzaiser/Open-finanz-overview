@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 from decimal import Decimal
 from datetime import date
-from core.models import CustomUser, UserProfile
+from core.models import CustomUser, UserProfile, ChildProfile
 from finance.models import (
     Category, CashFlowSource, Asset, RealEstate, Loan, Pension, AssetSnapshot,
     PropertyComponent, PhysicalAsset, InsurancePolicy
@@ -41,6 +41,7 @@ class Command(BaseCommand):
         profile.save()
 
         # 3. Clean existing demo data for clean rerun
+        ChildProfile.objects.filter(user=user).delete()
         InsurancePolicy.objects.filter(user=user).delete()
         CashFlowSource.objects.filter(user=user).delete()
         Asset.objects.filter(user=user).delete()
@@ -50,6 +51,15 @@ class Command(BaseCommand):
         Loan.objects.filter(user=user).delete()
         Pension.objects.filter(user=user).delete()
         AssetSnapshot.objects.filter(user=user).delete()
+
+        ChildProfile.objects.create(
+            user=user, name="Lena", birth_date=date(2014, 5, 14),
+            expected_independence_age=21, receives_child_benefit=True,
+        )
+        ChildProfile.objects.create(
+            user=user, name="Jonas", birth_date=date(2017, 9, 3),
+            expected_independence_age=21, receives_child_benefit=True,
+        )
 
         # 4. Standard Categories
         def get_cat(slug, name, color):

@@ -44,7 +44,7 @@ def calculate_protection_audit(user, situation_override=None, life_stage=None):
     household situation, life stage (accumulation/transition/retirement), income structure,
     loans, assets, and active InsurancePolicy records.
     """
-    from core.models import UserProfile
+    from core.models import UserProfile, ChildProfile
     profile = getattr(user, 'profile', None)
     saved_situation = getattr(profile, 'household_situation', 'standard') if profile else 'standard'
     valid_situations = {c[0] for c in UserProfile.HOUSEHOLD_SITUATION_CHOICES}
@@ -88,19 +88,34 @@ def calculate_protection_audit(user, situation_override=None, life_stage=None):
     real_estates = list(RealEstate.objects.filter(user=user, is_sold=False))
     physical_assets = list(PhysicalAsset.objects.filter(user=user, is_sold=False))
     insurances = list(InsurancePolicy.objects.filter(user=user, is_active=True))
+    profile_children = list(ChildProfile.objects.filter(user=user).order_by('birth_date', 'id'))
+    dependent_children = [
+        ch for ch in profile_children
+        if ch.independence_date is None or ch.independence_date >= today
+    ]
+    max_child_support_years = 0
+    latest_child_ind_date = None
+    latest_child_name = None
+    for ch in dependent_children:
+        if ch.independence_date:
+            yrs = max(1, round((ch.independence_date - today).days / 365.25))
+            if yrs >= max_child_support_years:
+                max_child_support_years = yrs
+                latest_child_ind_date = ch.independence_date
+                latest_child_name = ch.name
 
     # 1. Income & Expense Baseline
     primary_earned = Decimal('0.00')
     partner_earned = Decimal('0.00')
     total_income = Decimal('0.00')
     monthly_expenses = Decimal('0.00')
-    has_children = False
+    has_children = bool(dependent_children) or (situation == 'single_parent' and not profile_children)
 
     for cf in cash_flows:
         amt = (cf.value or Decimal('0.00')) if cf.frequency == 'monthly' else ((cf.value or Decimal('0.00')) / Decimal('12'))
         if cf.is_income:
             total_income += amt
-            if cf.template_id in {'inc_kindergeld', 'inc_kinderzuschlag', 'inc_unterhalt'} or 'kindergeld' in (cf.name or '').lower():
+            if not profile_children and (cf.template_id in {'inc_kindergeld', 'inc_kinderzuschlag', 'inc_unterhalt'} or 'kindergeld' in (cf.name or '').lower()):
                 has_children = True
             if is_earned_income_cf(cf):
                 if cf.owner_role == 'partner':
@@ -112,7 +127,7 @@ def calculate_protection_audit(user, situation_override=None, life_stage=None):
                     primary_earned += amt
         else:
             monthly_expenses += amt
-            if cf.template_id == 'exp_kinderbetreuung':
+            if not profile_children and cf.template_id == 'exp_kinderbetreuung':
                 has_children = True
 
     # Real estate rental income & ongoing costs
@@ -218,9 +233,13 @@ def calculate_protection_audit(user, situation_override=None, life_stage=None):
         (calculate_loan_schedule(l).get('current_balance') or Decimal('0.00'))
         for l in loans
     )
-    # Recommended lump sum: remaining debt + 3 years of partner/primary income replacement
+    # Recommended lump sum: remaining debt + 3 years of partner/primary income replacement (scaled by child dependency horizon if children have birth dates)
     annual_income_ref = max(primary_earned, partner_earned) * Decimal('12')
-    recommended_term_life = total_loan_debt + (annual_income_ref * Decimal('3') if (has_partner or has_children) else Decimal('0.00'))
+    if max_child_support_years > 0:
+        rlv_income_years = max(Decimal('3.0'), min(Decimal('7.5'), (Decimal(str(max_child_support_years)) * Decimal('0.35')).quantize(Decimal('0.1'))))
+    else:
+        rlv_income_years = Decimal('3.0')
+    recommended_term_life = total_loan_debt + ((annual_income_ref * rlv_income_years).quantize(Decimal('0.01')) if (has_partner or has_children) else Decimal('0.00'))
     term_life_covered = max(term_life_partner, term_life_primary)
     term_life_gap = max(Decimal('0.00'), recommended_term_life - term_life_covered) if (has_partner or has_children or total_loan_debt > 0) else Decimal('0.00')
 
@@ -333,7 +352,10 @@ def calculate_protection_audit(user, situation_override=None, life_stage=None):
     else:
         need_term_life = has_partner or has_children or total_loan_debt > Decimal('10000')
         term_life_priority = 'essential' if (has_children or total_loan_debt > Decimal('30000')) else 'recommended'
-        term_life_reason = _('Sichert Hinterbliebene & laufende Kredite bei Tod eines Partners / Elternteils ab.')
+        if latest_child_name and latest_child_ind_date:
+            term_life_reason = _(f"Sichert Hinterbliebene & Kredite ab (empfohlene Laufzeit mind. bis {latest_child_ind_date.year} – Ausbildungsende {latest_child_name}).")
+        else:
+            term_life_reason = _('Sichert Hinterbliebene & laufende Kredite bei Tod eines Partners / Elternteils ab.')
 
     if 'term_life' in existing_types:
         rlv_hint = f"{_('Policen-Schutz aktiv')} ({_('Abgesichert')})" if term_life_gap <= 0 else f"{_('Policen-Schutz aktiv')} ({_('Restlücke')}: ca. {term_life_gap:,.0f} €)"
@@ -390,6 +412,14 @@ def calculate_protection_audit(user, situation_override=None, life_stage=None):
         if situation == 'unemployed':
             optimization_hints.append(str(_('Bei Bürgergeld-Bezug: Angemessene Pflicht-/Privathaftpflicht & KFZ-Haftpflicht können einkommensmindernd berücksichtigt werden.')))
 
+    if latest_child_ind_date:
+        for cf in cash_flows:
+            if cf.is_income and (cf.template_id == 'inc_kindergeld' or 'kindergeld' in (cf.name or '').lower()) and not cf.end_date:
+                optimization_hints.append(
+                    str(_(f"Kindergeld-Eintrag '{cf.name}' hat noch kein Enddatum – laut Kinderprofil endet der Bezug spätestens {latest_child_ind_date.strftime('%m/%Y')}."))
+                )
+                break
+
     situation_label = dict(UserProfile.HOUSEHOLD_SITUATION_CHOICES).get(situation, situation)
 
     return {
@@ -400,6 +430,20 @@ def calculate_protection_audit(user, situation_override=None, life_stage=None):
         'situation_label': str(situation_label),
         'has_partner': has_partner,
         'has_children': has_children,
+        'children_count': len(profile_children),
+        'dependent_children_count': len(dependent_children),
+        'max_child_support_years': max_child_support_years,
+        'children_summary': [
+            {
+                'name': ch.name,
+                'age': ch.age,
+                'independence_year': ch.independence_date.year if ch.independence_date else None,
+                'is_dependent': (ch.independence_date is None or ch.independence_date >= today),
+                'drv_points': ch.drv_pension_points,
+                'riester_allowance': ch.riester_allowance_yearly,
+            }
+            for ch in profile_children
+        ],
         'primary_earned_monthly': float(primary_earned),
         'partner_earned_monthly': float(partner_earned),
         'total_income_monthly': float(total_income),
