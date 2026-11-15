@@ -1089,8 +1089,97 @@
     </main>
 
     <footer class="text-center py-4 text-muted small opacity-75">
-        
+        <a href="{% url 'about' %}#legal-disclaimer" class="text-decoration-none text-reset">
+            <i class="bi bi-shield-exclamation me-1"></i>{% trans "Rechtlicher Hinweis, Haftungsausschluss & Sicherheitsregeln (Privater Gebrauch)" %}
+        </a>
     </footer>
+
+    {% if user.is_authenticated %}
+    <!-- Legal Disclaimer & Security Consent Modal -->
+    <div class="modal fade" id="legalDisclaimerModal" tabindex="-1" aria-hidden="true" {% if user.profile.disclaimer_version != '1.0' %}data-bs-backdrop="static" data-bs-keyboard="false"{% endif %}>
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content border-0 shadow-lg rounded-4" style="background-color: var(--app-card-bg, #ffffff); color: var(--app-card-color, #212529);">
+                <form method="post" action="{% url 'accept_legal_disclaimer' %}">
+                    {% csrf_token %}
+                    <div class="modal-header border-0 text-white p-4" style="background: var(--app-gradient);">
+                        <h5 class="modal-title fw-bold d-flex align-items-center gap-2">
+                            <i class="bi bi-shield-lock-fill"></i>
+                            {% trans "Rechtlicher Hinweis, Haftungsausschluss & IT-Sicherheitsregeln" %}
+                        </h5>
+                        {% if user.profile.disclaimer_version == '1.0' %}
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        {% endif %}
+                    </div>
+                    <div class="modal-body p-4 small" style="max-height: 62vh; overflow-y: auto;">
+                        <div class="p-3 rounded-3 mb-3" style="background-color: rgba(220, 53, 69, 0.08); border: 1px solid rgba(220, 53, 69, 0.3);">
+                            <strong class="text-danger"><i class="bi bi-exclamation-triangle-fill me-1"></i> {% trans "Wichtige Nutzungs- und Sicherheitsbedingungen (Version 1.0):" %}</strong>
+                            <span class="d-block mt-1 opacity-85">
+                                {% trans "Bitte lies die folgenden Punkte sorgfältig durch und bestätige sie unten, bevor du die Anwendung nutzt." %}
+                            </span>
+                        </div>
+
+                        <ol class="ps-3 mb-3 d-flex flex-column gap-2 opacity-90">
+                            <li><strong>{% trans "Open Source & rein privater Gebrauch (AS IS):" %}</strong> {% trans "Diese Software wird unentgeltlich als Open-Source-Projekt (MIT-Lizenz) ausschließlich für die private, nicht-kommerzielle Finanz- und Ruhestandsübersicht bereitgestellt – ohne jegliche Gewährleistung für Fehlerfreiheit, Vollständigkeit oder Verfügbarkeit." %}</li>
+                            <li><strong>{% trans "Keine Finanz-, Anlage-, Versicherungs-, Steuer- oder Rechtsberatung:" %}</strong> {% trans "Sämtliche Simulationen, Renten-, Zins-, Tilgungs-, Inflations-, Risiko- und Steuerberechnungen (z. B. Anlage V, AfA, DRV-Rentenformel, bAV, ALG I, BU-Lücke) sind unverbindliche mathematische Modellrechnungen. Sie ersetzen keine Beratung durch Steuerberater, Rechtsanwälte, Rentenberater oder zugelassene Finanzberater." %}</li>
+                            <li><strong>{% trans "Keine Haftung für Richtigkeit der Daten & Entscheidungen:" %}</strong> {% trans "Gesetzliche Werte, Steuersätze, Freibeträge und Marktdaten ändern sich laufend. Der Autor übernimmt keinerlei Haftung für Rechenfehler, veraltete Parameter oder Vermögensschäden / entgangene Gewinne aus Entscheidungen, die auf Basis dieser Anwendung getroffen werden." %}</li>
+                            <li class="text-danger fw-semibold"><strong>{% trans "Striktes Verbot von Zugangsdaten, Passwörtern, PINs, TANs & Seeds:" %}</strong> {% trans "Hinterlege in dieser Anwendung (weder in Bezeichnungen, Notizen, Kontofeldern noch im Dokumenten-Tresor) niemals Online-Banking-Zugangsdaten, Passwörter, PINs, TANs, Kreditkarten-CVVs, Private Keys oder Krypto-Seed-Phrases (12/24 Wörter)!" %}</li>
+                            <li><strong>{% trans "Eigenverantwortung für IT-Sicherheit, Verschlüsselung & Virenschutz:" %}</strong> {% trans "Da du die Anwendung selbst betreibst (Desktop-App oder eigener Server/NAS), liegen Festplattenverschlüsselung (z. B. BitLocker/LUKS), Betriebssystem-Updates, Schutz gegen Schadsoftware/Viren/Trojaner, Firewall, sichere Passwörter sowie die Verschlüsselung von Backup-Archiven zu 100 % in deiner Eigenverantwortung." %}</li>
+                            <li><strong>{% trans "Eigenverantwortung für Datensicherung (Backups):" %}</strong> {% trans "Für Datenverlust durch Hardwaredefekte, Stromausfall, Fehlbedienung, Updates oder Schadsoftware wird keine Haftung übernommen. Sorge selbst für regelmäßige, extern gesicherte Backups." %}</li>
+                            <li><strong>{% trans "Optionale KI-Funktionen (Lokal vs. Cloud):" %}</strong> {% trans "Bei Nutzung lokaler Modelle (Ollama) bleiben alle Daten auf deinem System. Aktivierst du optional einen Cloud-KI-Anbieter (z. B. Google Gemini API), erfolgt die Datenübertragung auf deine eigene Verantwortung." %}</li>
+                        </ol>
+
+                        <hr style="border-color: var(--app-table-border-color, rgba(125,125,125,0.2));">
+
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" name="consent_no_advice" id="consentNoAdviceCheck" required {% if user.profile.disclaimer_version == '1.0' %}checked{% endif %} onchange="updateDisclaimerSubmitState()">
+                            <label class="form-check-label fw-semibold" for="consentNoAdviceCheck">
+                                {% trans "Ich habe verstanden, dass diese Open-Source-Anwendung nur für den privaten Gebrauch bestimmt ist, keine Finanz-, Steuer- oder Rechtsberatung darstellt und keinerlei Haftung für die Richtigkeit der Daten/Berechnungen oder für finanzielle Schäden übernommen wird." %}
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="consent_security" id="consentSecurityCheck" required {% if user.profile.disclaimer_version == '1.0' %}checked{% endif %} onchange="updateDisclaimerSubmitState()">
+                            <label class="form-check-label fw-semibold" for="consentSecurityCheck">
+                                {% trans "Ich bestätige, dass ich für Datensicherheit, Verschlüsselung, Backups und Schutz gegen Schadsoftware selbst verantwortlich bin und niemals Passwörter, Online-Banking-PINs/TANs oder Krypto-Seeds in der Anwendung hinterlege." %}
+                            </label>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 pt-0 px-4 pb-4 d-flex justify-content-between align-items-center">
+                        <a href="{% url 'about' %}#legal-disclaimer" class="small text-decoration-none opacity-75">
+                            <i class="bi bi-box-arrow-up-right me-1"></i>{% trans "Vollständigen Rechtstext unter 'Über das Projekt' lesen" %}
+                        </a>
+                        <div class="d-flex gap-2">
+                            {% if user.profile.disclaimer_version == '1.0' %}
+                            <button type="button" class="btn btn-outline-secondary rounded-pill px-3" data-bs-dismiss="modal">{% trans "Schließen" %}</button>
+                            {% endif %}
+                            <button type="submit" id="legalDisclaimerSubmitBtn" class="btn btn-primary rounded-pill px-4 fw-bold text-white" style="background: var(--app-gradient); border: none;" {% if user.profile.disclaimer_version != '1.0' %}disabled{% endif %}>
+                                <i class="bi bi-check2-circle me-1"></i>{% trans "Verstanden & Akzeptieren" %}
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        function updateDisclaimerSubmitState() {
+            var c1 = document.getElementById('consentNoAdviceCheck');
+            var c2 = document.getElementById('consentSecurityCheck');
+            var btn = document.getElementById('legalDisclaimerSubmitBtn');
+            if (c1 && c2 && btn) {
+                btn.disabled = !(c1.checked && c2.checked);
+            }
+        }
+        {% if user.profile.disclaimer_version != '1.0' and request.resolver_match.url_name != 'about' %}
+        document.addEventListener('DOMContentLoaded', function() {
+            var el = document.getElementById('legalDisclaimerModal');
+            if (el && typeof bootstrap !== 'undefined') {
+                var m = new bootstrap.Modal(el, { backdrop: 'static', keyboard: false });
+                m.show();
+            }
+        });
+        {% endif %}
+    </script>
+    {% endif %}
 
     
     <!-- Custom Desktop Context Menu -->

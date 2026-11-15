@@ -963,6 +963,28 @@
                             </div>
                         </div>
 
+                        <!-- FAQ 23: Rechtlicher Hinweis, Haftungsausschluss & IT-Sicherheitsregeln -->
+                        <div class="accordion-item help-accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed px-4 py-3 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faq23">
+                                    <i class="bi bi-shield-exclamation me-2 text-danger"></i> 23. {% trans "Rechtlicher Hinweis, Haftungsausschluss & IT-Sicherheitsregeln (Privater Gebrauch, keine Passwörter/Seeds)" %}
+                                </button>
+                            </h2>
+                            <div id="faq23" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
+                                <div class="accordion-body px-4 pb-4 opacity-85">
+                                    <ul class="mb-2">
+                                        <li class="mb-1"><strong>{% trans "Open Source für den privaten Gebrauch:" %}</strong> {% trans "Die Anwendung wird kostenfrei unter der MIT-Lizenz ausschließlich für die private Finanzübersicht bereitgestellt – ohne Gewährleistung oder Haftung für Richtigkeit, Vollständigkeit oder Verfügbarkeit." %}</li>
+                                        <li class="mb-1"><strong>{% trans "Keine Finanz-, Steuer- oder Rechtsberatung:" %}</strong> {% trans "Alle Simulationen und Berechnungen (Rente, Zins, Tilgung, Anlage V, Risiko-Check) sind unverbindliche Modellrechnungen und ersetzen keine fachkundige Beratung." %}</li>
+                                        <li class="mb-1 text-danger"><strong>{% trans "Verbot von Zugangsdaten, Passwörtern, PINs/TANs & Krypto-Seeds:" %}</strong> {% trans "Speichere niemals Online-Banking-Logins, Passwörter, PINs, TANs, Kreditkarten-CVVs oder Krypto-Seed-Phrases in Textfeldern oder im Dokumenten-Tresor." %}</li>
+                                        <li class="mb-0"><strong>{% trans "Eigenverantwortung für Verschlüsselung, Malware-Schutz & Backups:" %}</strong> {% trans "Festplattenverschlüsselung (BitLocker/LUKS), Virenschutz gegen Schadsoftware, System-Updates und regelmäßige externe Backups liegen zu 100 % in deiner Eigenverantwortung." %}</li>
+                                    </ul>
+                                    <a href="{% url 'about' %}#legal-disclaimer" class="btn btn-sm rounded-pill px-3 text-white" style="background: var(--app-gradient); border: none;">
+                                        <i class="bi bi-shield-check me-1"></i>{% trans "Vollständigen Rechtstext & Bestätigungs-Status öffnen" %}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>

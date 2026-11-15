@@ -215,6 +215,17 @@ class UserProfile(models.Model):
         blank=True,
         null=True
     )
+    disclaimer_accepted_at = models.DateTimeField(
+        _("Rechtlicher Hinweis bestätigt am"),
+        blank=True,
+        null=True
+    )
+    disclaimer_version = models.CharField(
+        _("Bestätigte Hinweis-Version"),
+        max_length=16,
+        blank=True,
+        default=""
+    )
 
 
     class Meta:

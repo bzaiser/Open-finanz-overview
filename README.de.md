@@ -99,9 +99,16 @@ Unser System nutzt eine **Key-basierte i18n-Strategie** für maximale Stabilitä
 
 ---
 
-## 🔒 Sicherheit & Datenschutz
+## 🔒 Sicherheit, Datenschutz & Rechtlicher Hinweis (Haftungsausschluss)
 
-Deine Finanzdaten sind sensibel. Deshalb ist Finanzplan so konzipiert, dass es **komplett selbst gehostet** werden kann. Keine Daten verlassen jemals deine Kontrolle, es sei denn, du entscheidest dich explizit für einen Cloud-basierten KI-Anbieter. Selbst dann werden nur anonymisierte Transaktionsbeschreibungen verarbeitet.
+Deine Finanzdaten sind sensibel. Deshalb ist Finanzplan so konzipiert, dass es **komplett selbst gehostet** werden kann.
+
+> [!CAUTION]
+> **Verbindliche Nutzungs- & Sicherheitsregeln:**
+> 1. **Rein privater Gebrauch & Open Source (`AS IS`)**: Diese Software wird unentgeltlich unter der MIT-Lizenz ausschließlich für den privaten, nicht-kommerziellen Gebrauch bereitgestellt – ohne jegliche Gewährleistung für Richtigkeit, Vollständigkeit oder Verfügbarkeit.
+> 2. **Keine Finanz-, Steuer-, Versicherungs- oder Rechtsberatung**: Alle Simulationen, Renten-, Zins-, Tilgungs-, Risiko- und Steuerberechnungen (z. B. Anlage V / AfA) sind unverbindliche mathematische Modellrechnungen. Es wird keinerlei Haftung für Rechenfehler, veraltete Gesetzesparameter oder Vermögensschäden übernommen.
+> 3. **Striktes Verbot von Passwörtern, PINs, TANs & Krypto-Seeds**: Hinterlege in der Anwendung oder im Dokumenten-Tresor **niemals** Online-Banking-Zugangsdaten, Passwörter, PINs, TANs, Kreditkarten-CVVs, Private Keys oder Krypto-Seed-Phrases (12/24 Wörter).
+> 4. **Eigenverantwortung für Verschlüsselung, Malware-Schutz & Backups**: Festplattenverschlüsselung (BitLocker/LUKS), Betriebssystem-Updates, Schutz gegen Schadsoftware/Viren/Ransomware sowie regelmäßige, extern verschlüsselte Backups liegen zu 100 % in der Eigenverantwortung des Benutzers.
 
 ---
 

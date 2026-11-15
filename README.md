@@ -99,9 +99,16 @@ Our system uses a **Key-based i18n strategy** for maximum stability, especially 
 
 ---
 
-## 🔒 Security & Privacy
+## 🔒 Security, Privacy & Legal Disclaimer
 
-Your financial data is sensitive. That's why Finanzplan is designed to be **completely self-hosted**. No data ever leaves your control unless you explicitly choose a cloud-based AI provider. Even then, only anonymized transaction descriptions are processed.
+Your financial data is sensitive. That's why Finanzplan is designed to be **completely self-hosted**.
+
+> [!CAUTION]
+> **Mandatory Terms of Use & Security Rules:**
+> 1. **Private Use Only & Open Source (`AS IS`)**: This software is provided free of charge under the MIT License strictly for private, non-commercial household planning—without any warranty of accuracy, completeness, or availability.
+> 2. **No Financial, Tax, Insurance, or Legal Advice**: All simulations, pension projections, amortization schedules, risk audits, and tax calculations (e.g., Anlage V / depreciation) are non-binding mathematical models. The author assumes no liability for calculation errors, outdated statutory parameters, or financial losses resulting from decisions based on this software.
+> 3. **Strict Prohibition of Passwords, PINs, TANs & Crypto Seeds**: **Never** store online banking credentials, passwords, PINs, TANs, credit card CVVs, private keys, or crypto seed phrases (12/24 words) in any text field or in the Document Vault.
+> 4. **User Responsibility for Encryption, Malware Protection & Backups**: Full-disk encryption (BitLocker/FileVault/LUKS), OS updates, anti-malware/ransomware protection, firewall configuration, and regular encrypted off-site backups are 100% the sole responsibility of the user.
 
 ---
 

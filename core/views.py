@@ -82,7 +82,11 @@ def signup(request):
                 user.is_superuser = True
             user.save()
             # Create profile
-            UserProfile.objects.get_or_create(user=user)
+            profile, _created = UserProfile.objects.get_or_create(user=user)
+            if request.POST.get('accept_disclaimer') == 'on':
+                profile.disclaimer_accepted_at = timezone.now()
+                profile.disclaimer_version = '1.0'
+                profile.save(update_fields=['disclaimer_accepted_at', 'disclaimer_version'])
             login(request, user)
             return redirect('finance:dashboard')
     else:
@@ -366,6 +370,23 @@ def dismiss_backup_warning_view(request):
     profile.backup_dismissed_until = timezone.localdate() + datetime.timedelta(days=7)
     profile.save(update_fields=['backup_dismissed_until'])
     messages.info(request, _("Erinnerung an Datensicherung für 7 Tage stummgeschaltet."))
+    return redirect(request.META.get('HTTP_REFERER', 'finance:dashboard'))
+
+
+@login_required
+@require_POST
+def accept_legal_disclaimer_view(request):
+    consent_no_advice = request.POST.get('consent_no_advice') == 'on'
+    consent_security = request.POST.get('consent_security') == 'on'
+    if not (consent_no_advice and consent_security):
+        messages.error(request, _("Bitte bestätige beide Pflichtpunkte des rechtlichen & sicherheitstechnischen Hinweises."))
+        return redirect(request.META.get('HTTP_REFERER', 'about'))
+
+    profile, _created = UserProfile.objects.get_or_create(user=request.user)
+    profile.disclaimer_accepted_at = timezone.now()
+    profile.disclaimer_version = '1.0'
+    profile.save(update_fields=['disclaimer_accepted_at', 'disclaimer_version'])
+    messages.success(request, _("Rechtliche Hinweise & Sicherheitsregeln (Version 1.0) wurden erfolgreich bestätigt."))
     return redirect(request.META.get('HTTP_REFERER', 'finance:dashboard'))
 
 def get_page_content_map(page_name, lang='de'):

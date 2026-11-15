@@ -1055,3 +1055,18 @@ class AssetModalSaveTests(TestCase):
         audit_after = calculate_protection_audit(u)
         self.assertEqual(audit_after["cash_reserve_amount"], 900.0)
         self.assertTrue(audit_after["cash_reserve_ok"])
+
+        disc_resp = self.client.post(
+            reverse("accept_legal_disclaimer"),
+            {
+                "consent_no_advice": "on",
+                "consent_security": "on",
+            },
+        )
+        self.assertEqual(disc_resp.status_code, 302)
+        u.profile.refresh_from_db()
+        self.assertEqual(u.profile.disclaimer_version, "1.0")
+        self.assertIsNotNone(u.profile.disclaimer_accepted_at)
+        about_resp = self.client.get(reverse("about"))
+        self.assertEqual(about_resp.status_code, 200)
+        self.assertContains(about_resp, "Von dir bestätigt am")

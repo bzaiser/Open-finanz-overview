@@ -137,6 +137,151 @@
             </div>
         </div>
     </div>
+
+    <!-- Rechtlicher Hinweis, Haftungsausschluss & IT-Sicherheitsregeln -->
+    <div id="legal-disclaimer" class="row mb-4" style="scroll-margin-top: 90px;">
+        <div class="col-12">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden about-theme-card">
+                <div class="card-header border-0 p-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 text-white" style="background: var(--app-gradient);">
+                    <div>
+                        <h2 class="h4 fw-bold mb-1">
+                            <i class="bi bi-shield-exclamation me-2"></i>
+                            <span data-editable-key="about_legal_title">{{ content_map.about_legal_title|default:_('Rechtlicher Hinweis, Haftungsausschluss & IT-Sicherheitsregeln')|safe }}</span>
+                        </h2>
+                        <p class="small mb-0 opacity-85" data-editable-key="about_legal_sub">
+                            {{ content_map.about_legal_sub|default:_('Verbindliche Nutzungsbedingungen für den privaten Einsatz dieser Open-Source-Software (Stand: Version 1.0)')|safe }}
+                        </p>
+                    </div>
+                    {% if user.is_authenticated %}
+                    <div class="flex-shrink-0">
+                        {% if user.profile.disclaimer_version == '1.0' and user.profile.disclaimer_accepted_at %}
+                            <span class="badge bg-success text-white rounded-pill px-3 py-2 shadow-sm">
+                                <i class="bi bi-patch-check-fill me-1"></i>
+                                {% trans "Von dir bestätigt am" %} {{ user.profile.disclaimer_accepted_at|date:"d.m.Y H:i" }} (v{{ user.profile.disclaimer_version }})
+                            </span>
+                        {% else %}
+                            <button type="button" class="btn btn-warning btn-sm rounded-pill px-3 fw-bold text-dark shadow-sm" data-bs-toggle="modal" data-bs-target="#legalDisclaimerModal">
+                                <i class="bi bi-check2-square me-1"></i>{% trans "Jetzt lesen & bestätigen" %}
+                            </button>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="card-body p-4 p-md-5">
+                    <!-- Prominente rote Sicherheitswarnung gegen Passwörter / Zugangsdaten -->
+                    <div class="p-3 rounded-4 mb-4" style="background-color: rgba(220, 53, 69, 0.08); border: 1px solid rgba(220, 53, 69, 0.35);">
+                        <div class="d-flex align-items-start gap-3">
+                            <i class="bi bi-key-fill fs-3 text-danger flex-shrink-0"></i>
+                            <div>
+                                <h5 class="h6 fw-bold text-danger mb-1">{% trans "WICHTIGE SICHERHEITSREGEL: Niemals Zugangsdaten, Passwörter, PINs, TANs oder Krypto-Seeds speichern!" %}</h5>
+                                <p class="small mb-0 opacity-90">
+                                    {% trans "Diese Anwendung dient ausschließlich der kaufmännischen Übersicht und Simulation deiner Vermögenswerte und Verträge. Hinterlege in keinen Text-, Konto- oder Notizfeldern und auch nicht im Dokumenten-Tresor Online-Banking-Zugangsdaten, Passwörter, PINs, TAN-Listen, Kreditkarten-Sicherheitscodes (CVV), Private Keys oder Krypto-Seed-Phrases (12/24 Wörter). Für derartige Geheimnisse ist ausschließlich ein dedizierter, verschlüsselter Passwort-Manager (z. B. KeePassXC / Bitwarden) zu verwenden." %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 small">
+                        <div class="col-md-6 col-lg-4">
+                            <div class="p-3 rounded-3 h-100 about-subcard">
+                                <h6 class="fw-bold text-primary mb-2"><i class="bi bi-1-circle-fill me-1"></i> {% trans "Open Source & rein privater Gebrauch" %}</h6>
+                                <p class="opacity-80 mb-0">
+                                    {% trans "Die Software wird unentgeltlich als Open-Source-Projekt unter der MIT-Lizenz („AS IS“ / wie besehen) ausschließlich für den privaten, nicht-kommerziellen Gebrauch bereitgestellt – ohne jegliche ausdrückliche oder stillschweigende Gewährleistung für Fehlerfreiheit, Vollständigkeit oder Verfügbarkeit." %}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="p-3 rounded-3 h-100 about-subcard">
+                                <h6 class="fw-bold text-primary mb-2"><i class="bi bi-2-circle-fill me-1"></i> {% trans "Keine Finanz-, Steuer- oder Rechtsberatung" %}</h6>
+                                <p class="opacity-80 mb-0">
+                                    {% trans "Sämtliche Simulationen, Rentenhochrechnungen (DRV, bAV, Pension), Risiko-Checks (Notgroschen, BU-Lücke, Risikoleben), Tilgungspläne und Steuerberechnungen (z. B. Anlage V / AfA) sind unverbindliche mathematische Modellrechnungen. Sie stellen keine Beratung nach GewO, WpIG, StBerG oder RDG dar und ersetzen niemals die Prüfung durch Steuerberater, Rechtsanwälte, Rentenberater oder Finanzberater." %}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="p-3 rounded-3 h-100 about-subcard">
+                                <h6 class="fw-bold text-primary mb-2"><i class="bi bi-3-circle-fill me-1"></i> {% trans "Keine Haftung für Richtigkeit & Entscheidungen" %}</h6>
+                                <p class="opacity-80 mb-0">
+                                    {% trans "Gesetzliche Rahmenbedingungen, Steuersätze, Sozialabgaben, Rentenwerte (z. B. DRV-Rentenwert, GKV-Freibeträge) sowie Marktzinsen ändern sich laufend. Der Autor übernimmt keinerlei Haftung für Rechenfehler, veraltete Gesetzesparameter oder Vermögensschäden / entgangene Gewinne, die aus Entscheidungen auf Basis dieser Software entstehen." %}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="p-3 rounded-3 h-100 about-subcard">
+                                <h6 class="fw-bold text-danger mb-2"><i class="bi bi-4-circle-fill me-1"></i> {% trans "Verbot von Passwörtern & Geheimnissen" %}</h6>
+                                <p class="opacity-80 mb-0">
+                                    {% trans "In der Datenbank und im Dokumenten-Tresor dürfen unter keinen Umständen Banking-Logins, Passwörter, PINs, TANs, Private Keys oder Krypto-Recovery-Seeds gespeichert werden. IBANs oder Vertragsnummern dienen rein deiner persönlichen Zuordnung." %}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="p-3 rounded-3 h-100 about-subcard">
+                                <h6 class="fw-bold text-warning mb-2"><i class="bi bi-5-circle-fill me-1"></i> {% trans "Eigenverantwortung für Verschlüsselung & Malware-Schutz" %}</h6>
+                                <p class="opacity-80 mb-0">
+                                    {% trans "Da die Anwendung lokal (Desktop-App) oder auf deiner eigenen Infrastruktur (Server/NAS/Docker) läuft, trägst du die alleinige Verantwortung für Festplattenverschlüsselung (z. B. BitLocker, FileVault, LUKS), aktuelle Betriebssystem-Updates, Viren- und Schutzprogramme gegen Schadsoftware/Ransomware, Firewall-Regeln sowie die Verschlüsselung von Backup-Datenträgern." %}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="p-3 rounded-3 h-100 about-subcard">
+                                <h6 class="fw-bold text-warning mb-2"><i class="bi bi-6-circle-fill me-1"></i> {% trans "Eigenverantwortung für Datensicherung (Backups)" %}</h6>
+                                <p class="opacity-80 mb-0">
+                                    {% trans "Trotz integrierter Backup-Funktionen wird keinerlei Haftung für Datenverlust oder Datenbeschädigung (durch Hardwaredefekt, Stromausfall, Fehlbedienung, Programm-Updates oder Schadsoftware) übernommen. Du bist verpflichtet, regelmäßig eigene Sicherungskopien auf getrennten, verschlüsselten Speichermedien anzulegen." %}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="p-3 rounded-3 h-100 about-subcard">
+                                <h6 class="fw-bold text-info mb-2"><i class="bi bi-7-circle-fill me-1"></i> {% trans "Optionale KI-Funktionen (Lokal vs. Cloud)" %}</h6>
+                                <p class="opacity-80 mb-0">
+                                    {% trans "Bei Nutzung lokaler KI-Modelle (Ollama) verbleiben alle Daten vollständig auf deinem Gerät. Aktivierst du optional einen externen Cloud-KI-Anbieter (z. B. Google Gemini API) für den Kontoauszugs-Import, erfolgt die Übermittlung an den Drittanbieter auf deine eigene Verantwortung und nach dessen Datenschutzrichtlinien." %}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="p-3 rounded-3 h-100 about-subcard">
+                                <h6 class="fw-bold text-info mb-2"><i class="bi bi-8-circle-fill me-1"></i> {% trans "Keine echte Bank- oder Vertragsausführung" %}</h6>
+                                <p class="opacity-80 mb-0">
+                                    {% trans "Die Software besitzt keinen schreibenden Zugriff auf Bankkonten, Depots, Versicherungen oder Finanzämter. Alle erfassten Zahlungen, Sparpläne, Sondertilgungen und Anpassungen sind rein planerische Buchungen in deiner lokalen Datenbank." %}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-12 col-lg-4">
+                            <div class="p-3 rounded-3 h-100 about-subcard">
+                                <h6 class="fw-bold text-success mb-2"><i class="bi bi-9-circle-fill me-1"></i> {% trans "Gesetzlicher Haftungsausschluss" %}</h6>
+                                <p class="opacity-80 mb-0">
+                                    {% trans "Jegliche Haftung der Entwickler und Mitwirkenden für direkte, indirekte, zufällige oder Folgeschäden ist – soweit gesetzlich zulässig (insbesondere bei unentgeltlicher Überlassung gem. §§ 521, 599 BGB sowie nach den Bedingungen der MIT-Lizenz) – vollständig ausgeschlossen." %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if user.is_authenticated and user.profile.disclaimer_version != '1.0' %}
+                    <form method="post" action="{% url 'accept_legal_disclaimer' %}" class="mt-4 p-4 rounded-4 about-subcard">
+                        {% csrf_token %}
+                        <h6 class="fw-bold mb-3"><i class="bi bi-check2-circle text-primary me-1"></i> {% trans "Persönliche Bestätigung der Nutzungs- & Sicherheitsbedingungen" %}</h6>
+                        <div class="form-check mb-2 small">
+                            <input class="form-check-input" type="checkbox" name="consent_no_advice" id="aboutConsentNoAdvice" required>
+                            <label class="form-check-label fw-semibold" for="aboutConsentNoAdvice">
+                                {% trans "Ich habe verstanden, dass diese Open-Source-Anwendung nur für den privaten Gebrauch bestimmt ist, keine Finanz-, Steuer- oder Rechtsberatung darstellt und keinerlei Haftung für die Richtigkeit der Daten/Berechnungen oder für finanzielle Schäden übernommen wird." %}
+                            </label>
+                        </div>
+                        <div class="form-check mb-3 small">
+                            <input class="form-check-input" type="checkbox" name="consent_security" id="aboutConsentSecurity" required>
+                            <label class="form-check-label fw-semibold" for="aboutConsentSecurity">
+                                {% trans "Ich bestätige, dass ich für Datensicherheit, Verschlüsselung, Backups und Schutz gegen Schadsoftware selbst verantwortlich bin und niemals Passwörter, Online-Banking-PINs/TANs oder Krypto-Seeds in der Anwendung hinterlege." %}
+                            </label>
+                        </div>
+                        <button type="submit" class="btn btn-primary rounded-pill px-4 fw-bold text-white" style="background: var(--app-gradient); border: none;">
+                            <i class="bi bi-check2-all me-1"></i>{% trans "Rechtliche Hinweise verbindlich bestätigen" %}
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <style>

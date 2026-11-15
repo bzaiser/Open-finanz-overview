@@ -14,6 +14,7 @@ urlpatterns = [
     path('profile/backup/progress/<str:job_id>/', views.backup_progress_view, name='backup_progress'),
     path('profile/backup/download/<str:job_id>/', views.download_backup_file_view, name='download_backup_file'),
     path('profile/backup/dismiss/', views.dismiss_backup_warning_view, name='dismiss_backup_warning'),
+    path('profile/accept-disclaimer/', views.accept_legal_disclaimer_view, name='accept_legal_disclaimer'),
     path('help/', views.help_view, name='help'),
     path('about/', views.about_view, name='about'),
     path('page-content/save/', views.save_page_content, name='save_page_content'),
