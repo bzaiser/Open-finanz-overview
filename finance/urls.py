@@ -70,5 +70,6 @@ urlpatterns = [
     path('loans/<int:pk>/simulate-api/', views.loan_simulate_extra_api, name='loan_simulate_api'),
     path('wizard/', wizard_views.wizard_page_view, name='setup_wizard'),
     path('wizard/save/', wizard_views.wizard_save_api, name='setup_wizard_save'),
+    path('risk/cash-reserve/save/', views.cash_reserve_upsert, name='cash_reserve_upsert'),
     path('dynamic-theme.css', views.dynamic_theme_css, name='dynamic_theme_css'),
 ]

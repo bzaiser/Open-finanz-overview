@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.db import models
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse
+from django.views.decorators.http import require_POST
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.core.cache import cache
@@ -3128,6 +3129,50 @@ def cash_flow_annual_adjustment(request):
                 
         messages.success(request, f"{_('Annual adjustment completed successfully.')} {copied_count} {_('entries updated and copied.')}")
     return redirect('finance:cash_flow_list')
+
+
+@login_required
+@require_POST
+def cash_reserve_upsert(request):
+    from decimal import InvalidOperation
+    name = (request.POST.get('name') or '').strip() or str(_('Bargeldreserve Zuhause'))
+    raw_val = (request.POST.get('value') or '0').replace(',', '.').strip()
+    try:
+        val = Decimal(raw_val).quantize(Decimal('0.01'))
+        if val < 0:
+            val = Decimal('0.00')
+    except (InvalidOperation, ValueError):
+        messages.error(request, _('Bitte einen gültigen Betrag für die Bargeldreserve eingeben.'))
+        return redirect(f"{reverse('finance:pension_plan')}?tab=risk_check")
+
+    is_emergency = request.POST.get('is_emergency_fund') == 'on'
+    asset_id = request.POST.get('asset_id')
+    asset = None
+    if asset_id:
+        asset = Asset.objects.filter(user=request.user, id=asset_id).first()
+    if not asset:
+        asset = Asset.objects.filter(user=request.user, asset_type='cash', name__iexact=name).first()
+    if asset:
+        asset.name = name
+        asset.value = val
+        asset.is_emergency_fund = is_emergency
+        if not asset.institution:
+            asset.institution = str(_('Zuhause / Tresor'))
+        asset.save()
+        messages.success(request, _(f"Bargeldreserve '{asset.name}' ({val:,.2f} €) aktualisiert."))
+    else:
+        asset = Asset.objects.create(
+            user=request.user,
+            name=name,
+            asset_type='cash',
+            institution=str(_('Zuhause / Tresor')),
+            value=val,
+            growth_rate=Decimal('0.00'),
+            is_emergency_fund=is_emergency,
+        )
+        messages.success(request, _(f"Bargeldreserve '{asset.name}' ({val:,.2f} €) im Vermögen angelegt."))
+
+    return redirect(f"{reverse('finance:pension_plan')}?tab=risk_check")
 
 
 from .forms import PensionForm

@@ -1032,9 +1032,26 @@ class AssetModalSaveTests(TestCase):
         kg_cf = CashFlowSource.objects.get(user=u, name="Kindergeld (Lena)")
         self.assertEqual(kg_cf.end_date, datetime.date(2037, 6, 15))
 
+        u = CustomUser.objects.get(pk=u.pk)
         audit = calculate_protection_audit(u)
         self.assertTrue(audit["has_children"])
         self.assertEqual(audit["children_count"], 1)
         self.assertEqual(audit["dependent_children_count"], 1)
         self.assertEqual(audit["children_summary"][0]["name"], "Lena")
         self.assertEqual(audit["alg1_estimated"], 2010.0)
+        # Cash reserve target: 500 base + 250 partner + 150 * 1 child = 900
+        self.assertEqual(audit["cash_reserve_target"], 900.0)
+        self.assertFalse(audit["cash_reserve_ok"])
+
+        cr_resp = self.client.post(
+            reverse("finance:cash_reserve_upsert"),
+            {
+                "name": "Bargeldreserve Zuhause",
+                "value": "900.00",
+                "is_emergency_fund": "on",
+            },
+        )
+        self.assertEqual(cr_resp.status_code, 302)
+        audit_after = calculate_protection_audit(u)
+        self.assertEqual(audit_after["cash_reserve_amount"], 900.0)
+        self.assertTrue(audit_after["cash_reserve_ok"])

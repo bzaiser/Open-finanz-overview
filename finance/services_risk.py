@@ -186,15 +186,34 @@ def calculate_protection_audit(user, situation_override=None, life_stage=None):
     monthly_expenses = monthly_expenses.quantize(Decimal('0.01'))
     monthly_insurance_premiums = monthly_insurance_premiums.quantize(Decimal('0.01'))
 
-    # 2. Liquid Reserves & Emergency Fund
+    # 2. Liquid Reserves, Emergency Fund & Physical Cash Reserve
     emergency_reserve = Decimal('0.00')
     total_liquid = Decimal('0.00')
+    cash_reserve_amount = Decimal('0.00')
+    cash_reserve_asset_id = None
+    cash_keywords = ('bargeld', 'barreserve', 'tresor', 'zuhause', 'notfallkasse', 'cash reserve', 'cash-reserve')
     for a in assets:
         val = a.value or Decimal('0.00')
         if a.is_emergency_fund:
             emergency_reserve += val
         if a.asset_type in {'cash', 'overnight'}:
             total_liquid += val
+        if a.asset_type == 'cash':
+            hay = f"{a.name or ''} {a.institution or ''}".lower()
+            if any(kw in hay for kw in cash_keywords):
+                cash_reserve_amount += val
+                if cash_reserve_asset_id is None:
+                    cash_reserve_asset_id = a.id
+
+    for pa in physical_assets:
+        hay = f"{pa.name or ''} {pa.location or ''}".lower()
+        if any(kw in hay for kw in cash_keywords):
+            cash_reserve_amount += (pa.value or Decimal('0.00'))
+
+    child_cnt_for_cash = len(dependent_children) if dependent_children else (1 if has_children else 0)
+    cash_reserve_target = Decimal(str(500 + (250 if has_partner else 0) + (150 * child_cnt_for_cash))).quantize(Decimal('0.01'))
+    cash_reserve_gap = max(Decimal('0.00'), cash_reserve_target - cash_reserve_amount)
+    cash_reserve_ok = cash_reserve_amount >= cash_reserve_target
 
     reserve_basis = emergency_reserve if emergency_reserve > 0 else total_liquid
     target_months = 6 if situation in {'low_income', 'single_parent', 'early_retiree'} else 3
@@ -420,6 +439,11 @@ def calculate_protection_audit(user, situation_override=None, life_stage=None):
                 )
                 break
 
+    if cash_reserve_amount < cash_reserve_target:
+        optimization_hints.append(
+            str(_(f"Physische Bargeldreserve prüfen: Für Strom- oder Kartenausfälle empfiehlt sich ein kleiner Barbestand zu Hause (Richtwert ca. {cash_reserve_target:,.0f} € in kleinen 5/10/20-€-Scheinen)."))
+        )
+
     situation_label = dict(UserProfile.HOUSEHOLD_SITUATION_CHOICES).get(situation, situation)
 
     return {
@@ -430,6 +454,11 @@ def calculate_protection_audit(user, situation_override=None, life_stage=None):
         'situation_label': str(situation_label),
         'has_partner': has_partner,
         'has_children': has_children,
+        'cash_reserve_amount': float(cash_reserve_amount),
+        'cash_reserve_target': float(cash_reserve_target),
+        'cash_reserve_gap': float(cash_reserve_gap),
+        'cash_reserve_ok': cash_reserve_ok,
+        'cash_reserve_asset_id': cash_reserve_asset_id,
         'children_count': len(profile_children),
         'dependent_children_count': len(dependent_children),
         'max_child_support_years': max_child_support_years,
