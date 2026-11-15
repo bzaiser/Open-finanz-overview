@@ -181,34 +181,33 @@ if __name__ == '__main__':
         import webview
 
         class DesktopApi:
-            def pick_screen_color(self):
+            def pick_color_at_cursor(self):
                 import ctypes
                 from ctypes import wintypes
-                from PIL import ImageGrab
 
                 user32 = ctypes.windll.user32
-                VK_LBUTTON = 0x01
-                VK_RBUTTON = 0x02
-                VK_ESCAPE = 0x1B
+                pt = wintypes.POINT()
+                user32.GetCursorPos(ctypes.byref(pt))
 
-                deadline = time.time() + 2.0
-                while (user32.GetAsyncKeyState(VK_LBUTTON) & 0x8000) and time.time() < deadline:
-                    time.sleep(0.02)
+                try:
+                    from PIL import ImageGrab
+                    img = ImageGrab.grab(bbox=(pt.x, pt.y, pt.x + 1, pt.y + 1), all_screens=True)
+                    r, g, b = img.getpixel((0, 0))[:3]
+                    return f"#{r:02X}{g:02X}{b:02X}"
+                except Exception:
+                    pass
 
-                end_time = time.time() + 30.0
-                while time.time() < end_time:
-                    if (user32.GetAsyncKeyState(VK_ESCAPE) & 0x8000) or (user32.GetAsyncKeyState(VK_RBUTTON) & 0x8000):
-                        return None
-                    if user32.GetAsyncKeyState(VK_LBUTTON) & 0x8000:
-                        pt = wintypes.POINT()
-                        user32.GetCursorPos(ctypes.byref(pt))
-                        try:
-                            img = ImageGrab.grab(bbox=(pt.x, pt.y, pt.x + 1, pt.y + 1), all_screens=True)
-                            r, g, b = img.getpixel((0, 0))[:3]
-                            return f"#{r:02X}{g:02X}{b:02X}"
-                        except Exception:
-                            return None
-                    time.sleep(0.02)
+                try:
+                    hdc = user32.GetDC(0)
+                    color_ref = ctypes.windll.gdi32.GetPixel(hdc, pt.x, pt.y)
+                    user32.ReleaseDC(0, hdc)
+                    if color_ref != -1:
+                        r = color_ref & 0xFF
+                        g = (color_ref >> 8) & 0xFF
+                        b = (color_ref >> 16) & 0xFF
+                        return f"#{r:02X}{g:02X}{b:02X}"
+                except Exception:
+                    pass
                 return None
 
         # Allow text selection for copying figures, account numbers and notes

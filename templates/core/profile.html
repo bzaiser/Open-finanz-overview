@@ -902,7 +902,7 @@
 
         // Desktop-only (pywebview) compact color picker popover with native screen eyedropper
         function initDesktopColorPopover() {
-            const hasDesktopApi = Boolean(window.pywebview && window.pywebview.api && typeof window.pywebview.api.pick_screen_color === 'function');
+            const hasDesktopApi = Boolean(window.pywebview && window.pywebview.api && typeof window.pywebview.api.pick_color_at_cursor === 'function');
             if (!hasDesktopApi || window._desktopColorPopoverInit) return;
             window._desktopColorPopoverInit = true;
 
@@ -1038,12 +1038,31 @@
                 }
             });
 
-            eyedropperBtn.addEventListener('click', async () => {
-                const orig = eyedropperBtn.innerHTML;
-                eyedropperBtn.disabled = true;
-                eyedropperBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+            let isPickingColor = false;
+
+            function stopPicking() {
+                isPickingColor = false;
+                document.body.style.cursor = '';
+                eyedropperBtn.classList.remove('btn-primary', 'text-white');
+                eyedropperBtn.classList.add('btn-outline-primary');
+                document.removeEventListener('mousedown', onPickMouseDown, true);
+                document.removeEventListener('click', onPickClickBlock, true);
+                document.removeEventListener('keydown', onPickKeyDown, true);
+            }
+
+            function onPickClickBlock(e) {
+                if (!isPickingColor) return;
+                e.preventDefault();
+                e.stopPropagation();
+                stopPicking();
+            }
+
+            async function onPickMouseDown(e) {
+                if (!isPickingColor) return;
+                e.preventDefault();
+                e.stopPropagation();
                 try {
-                    const picked = await window.pywebview.api.pick_screen_color();
+                    const picked = await window.pywebview.api.pick_color_at_cursor();
                     if (picked && /^#[0-9A-Fa-f]{6}$/.test(picked)) {
                         const hsv = hexToHsv(picked);
                         currentHue = hsv.h;
@@ -1053,17 +1072,43 @@
                         applyColor(picked, true);
                     }
                 } finally {
-                    eyedropperBtn.disabled = false;
-                    eyedropperBtn.innerHTML = orig;
+                    setTimeout(stopPicking, 50);
                 }
+            }
+
+            function onPickKeyDown(e) {
+                if (e.key === 'Escape') {
+                    e.preventDefault();
+                    stopPicking();
+                }
+            }
+
+            eyedropperBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (isPickingColor) {
+                    stopPicking();
+                    return;
+                }
+                isPickingColor = true;
+                document.body.style.cursor = 'crosshair';
+                eyedropperBtn.classList.remove('btn-outline-primary');
+                eyedropperBtn.classList.add('btn-primary', 'text-white');
+                setTimeout(() => {
+                    document.addEventListener('mousedown', onPickMouseDown, true);
+                    document.addEventListener('click', onPickClickBlock, true);
+                    document.addEventListener('keydown', onPickKeyDown, true);
+                }, 0);
             });
 
             closeBtn.addEventListener('click', () => {
+                stopPicking();
                 pop.style.display = 'none';
                 activeInput = null;
             });
 
             document.addEventListener('click', (e) => {
+                if (isPickingColor) return;
                 const target = e.target;
                 if (target && target.matches && target.matches('input[type="color"]')) {
                     e.preventDefault();
