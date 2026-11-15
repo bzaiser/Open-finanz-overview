@@ -4,15 +4,79 @@
 {% block title %}{% trans "Erst-Einrichtungs-Wizard" %} - Finanzplan{% endblock %}
 
 {% block content %}
+<style>
+    .wizard-card {
+        background-color: var(--app-card-bg) !important;
+        color: var(--app-card-color) !important;
+        border: 1px solid var(--app-table-border-color, rgba(125, 125, 125, 0.2)) !important;
+    }
+    .wizard-subpanel {
+        background-color: color-mix(in srgb, var(--app-card-bg), var(--app-card-color) 4%) !important;
+        color: var(--app-card-color) !important;
+        border: 1px solid var(--app-table-border-color, rgba(125, 125, 125, 0.2)) !important;
+    }
+    .wizard-inner-box {
+        background-color: var(--app-input-bg, var(--app-card-bg)) !important;
+        color: var(--app-input-color, var(--app-card-color)) !important;
+        border: 1px solid var(--app-table-border-color, rgba(125, 125, 125, 0.2)) !important;
+    }
+    .wizard-accent {
+        color: var(--app-primary, #0d6efd) !important;
+    }
+    .wizard-btn-gradient {
+        background: var(--app-gradient) !important;
+        border: none !important;
+        color: #ffffff !important;
+    }
+    .wizard-btn-outline {
+        color: var(--app-primary, #0d6efd) !important;
+        border-color: var(--app-primary, #0d6efd) !important;
+        background: transparent !important;
+    }
+    .wizard-btn-outline:hover {
+        background: var(--app-primary, #0d6efd) !important;
+        color: #ffffff !important;
+    }
+    .wizard-badge-muted {
+        background-color: color-mix(in srgb, var(--app-card-bg), var(--app-card-color) 9%) !important;
+        color: var(--app-card-color) !important;
+        border: 1px solid var(--app-table-border-color, rgba(125, 125, 125, 0.25)) !important;
+    }
+    .wizard-step-pill {
+        cursor: pointer;
+        border: 1px solid var(--app-table-border-color, rgba(125, 125, 125, 0.25));
+        background-color: color-mix(in srgb, var(--app-card-bg), var(--app-card-color) 4%);
+        color: var(--app-card-color);
+        transition: all 0.2s ease;
+    }
+    .wizard-step-pill.is-active {
+        background: var(--app-gradient) !important;
+        color: #ffffff !important;
+        border-color: transparent !important;
+        box-shadow: 0 4px 12px color-mix(in srgb, var(--app-primary, #0d6efd), transparent 70%);
+    }
+    .wizard-step-pill.is-done {
+        border-color: var(--app-primary, #0d6efd) !important;
+    }
+    .wizard-modal-content {
+        background-color: var(--app-card-bg) !important;
+        color: var(--app-card-color) !important;
+        border: 1px solid var(--app-table-border-color, rgba(125, 125, 125, 0.25)) !important;
+    }
+    .wizard-modal-footer {
+        background-color: color-mix(in srgb, var(--app-card-bg), var(--app-card-color) 4%) !important;
+        border-top: 1px solid var(--app-table-border-color, rgba(125, 125, 125, 0.2)) !important;
+    }
+</style>
 <div class="container py-4" x-data="wizardApp()">
     <!-- Header Title -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
         <div>
-            <h2 class="fw-bold mb-1 d-flex align-items-center gap-2" style="color: var(--app-text-main);">
-                <i class="bi bi-magic text-primary"></i>
+            <h2 class="fw-bold mb-1 d-flex align-items-center gap-2" style="color: var(--app-card-color);">
+                <i class="bi bi-magic wizard-accent"></i>
                 {% trans "Erst-Einrichtungs-Wizard" %}
             </h2>
-            <p class="text-muted small mb-0">
+            <p class="opacity-75 small mb-0">
                 {% trans "Schritt-für-Schritt-Erfassung deiner Stammdaten (Personen, Einnahmen, Ausgaben, Konten und Vorsorgeverträge)." %}
             </p>
         </div>
@@ -24,10 +88,10 @@
     <!-- Cancel Confirmation Modal -->
     <div class="modal fade" id="wizardCancelModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content rounded-4 shadow-lg border-0" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+            <div class="modal-content rounded-4 shadow-lg wizard-modal-content">
                 <div class="modal-header border-0 pb-0">
                     <h5 class="modal-title fw-bold d-flex align-items-center gap-2">
-                        <i class="bi bi-question-circle text-primary"></i> {% trans "Einrichtungs-Wizard beenden" %}
+                        <i class="bi bi-question-circle wizard-accent"></i> {% trans "Einrichtungs-Wizard beenden" %}
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -41,10 +105,10 @@
                         {% trans "Zurück zum Wizard" %}
                     </button>
                     <div class="d-flex gap-2">
-                        <button type="button" @click="cancelWithSetting(false)" class="btn btn-outline-primary rounded-pill px-3">
+                        <button type="button" @click="cancelWithSetting(false)" class="btn wizard-btn-outline rounded-pill px-3">
                             {% trans "Nein, wieder anzeigen" %}
                         </button>
-                        <button type="button" @click="cancelWithSetting(true)" class="btn btn-primary rounded-pill px-3">
+                        <button type="button" @click="cancelWithSetting(true)" class="btn wizard-btn-gradient rounded-pill px-3">
                             {% trans "Ja, ausblenden" %}
                         </button>
                     </div>
@@ -56,8 +120,8 @@
     <!-- Success Summary Modal -->
     <div class="modal fade" id="wizardSuccessModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
         <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content rounded-4 shadow-lg border-success">
-                <div class="modal-header bg-success text-white rounded-top-4">
+            <div class="modal-content rounded-4 shadow-lg wizard-modal-content border-success">
+                <div class="modal-header bg-success text-white rounded-top-4 border-0">
                     <h5 class="modal-header-title fw-bold m-0 d-flex align-items-center gap-2">
                         <i class="bi bi-check-circle-fill"></i> {% trans "Zusammenfassung der Speicherung" %}
                     </h5>
@@ -69,14 +133,14 @@
                     <h6 class="fw-bold opacity-75 mb-2">{% trans "Durchgeführte Aktualisierungen:" %}</h6>
                     <ul class="list-group list-group-flush mb-3">
                         <template x-for="(item, idx) in savedSummary" :key="idx">
-                            <li class="list-group-item bg-transparent d-flex align-items-center gap-2 border-0 px-0 py-1.5">
+                            <li class="list-group-item bg-transparent d-flex align-items-center gap-2 border-0 px-0 py-1.5" style="color: inherit;">
                                 <i class="bi bi-check2-circle text-success fs-5"></i>
                                 <span class="fw-medium" x-text="item"></span>
                             </li>
                         </template>
                     </ul>
                 </div>
-                <div class="modal-footer bg-body-tertiary rounded-bottom-4">
+                <div class="modal-footer wizard-modal-footer rounded-bottom-4">
                     <button type="button" @click="proceedAfterSuccess()" class="btn btn-success rounded-pill px-4 py-2 shadow">
                         <i class="bi bi-arrow-right-circle me-1"></i>{% trans "Weiter zur Rentenübersicht" %}
                     </button>
@@ -86,8 +150,8 @@
     </div>
     <div class="modal fade" id="wizardErrorModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content rounded-4 shadow-lg border-danger">
-                <div class="modal-header bg-danger text-white rounded-top-4">
+            <div class="modal-content rounded-4 shadow-lg wizard-modal-content border-danger">
+                <div class="modal-header bg-danger text-white rounded-top-4 border-0">
                     <h5 class="modal-header-title fw-bold m-0 d-flex align-items-center gap-2">
                         <i class="bi bi-exclamation-triangle-fill"></i> {% trans "Fehler beim Speichern" %}
                     </h5>
@@ -97,10 +161,10 @@
                     <p class="fw-bold text-danger mb-2" x-text="errorMessage"></p>
                     <div x-show="errorTraceback" class="mb-3">
                         <label class="form-label small fw-bold opacity-75">{% trans "Fehler-Protokoll / Details (Kopierbar):" %}</label>
-                        <textarea id="errorTracebackTextarea" class="form-control font-monospace small bg-body-tertiary text-danger p-3 rounded-3" rows="10" readonly x-text="errorTraceback"></textarea>
+                        <textarea id="errorTracebackTextarea" class="form-control font-monospace small wizard-inner-box text-danger p-3 rounded-3" rows="10" readonly x-text="errorTraceback"></textarea>
                     </div>
                 </div>
-                <div class="modal-footer bg-body-tertiary rounded-bottom-4">
+                <div class="modal-footer wizard-modal-footer rounded-bottom-4">
                     <button type="button" @click="copyErrorText()" class="btn btn-outline-danger rounded-pill px-3">
                         <i class="bi bi-clipboard me-1"></i><span x-text="copyButtonText"></span>
                     </button>
@@ -113,8 +177,8 @@
     <!-- Deletion Confirmation Modal -->
     <div class="modal fade" id="wizardDeleteConfirmModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content rounded-4 shadow-lg border-warning">
-                <div class="modal-header bg-warning text-dark rounded-top-4">
+            <div class="modal-content rounded-4 shadow-lg wizard-modal-content border-warning">
+                <div class="modal-header bg-warning text-dark rounded-top-4 border-0">
                     <h5 class="modal-header-title fw-bold m-0 d-flex align-items-center gap-2">
                         <i class="bi bi-exclamation-triangle-fill"></i> {% trans "Löschung bestätigen" %}
                     </h5>
@@ -132,11 +196,11 @@
                             </template>
                         </ul>
                     </div>
-                    <p class="fw-semibold mb-0 text-secondary small">
+                    <p class="fw-semibold mb-0 opacity-75 small">
                         {% trans "Möchtest du diese Einträge wirklich löschen und fortfahren?" %}
                     </p>
                 </div>
-                <div class="modal-footer bg-body-tertiary rounded-bottom-4">
+                <div class="modal-footer wizard-modal-footer rounded-bottom-4">
                     <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">
                         {% trans "Abbrechen" %}
                     </button>
@@ -151,15 +215,15 @@
     <!-- Template Selection Modal / Overlay -->
     <div class="modal fade" id="wizardTemplateModal" tabindex="-1" aria-labelledby="wizardTemplateModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
-            <div class="modal-content rounded-4 shadow-lg border-0" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
-                <div class="modal-header border-bottom py-3">
-                    <h5 class="modal-title fw-bold text-primary d-flex align-items-center gap-2" id="wizardTemplateModalLabel">
+            <div class="modal-content rounded-4 shadow-lg wizard-modal-content">
+                <div class="modal-header py-3" style="border-bottom: 1px solid var(--app-table-border-color, rgba(125,125,125,0.2));">
+                    <h5 class="modal-title fw-bold wizard-accent d-flex align-items-center gap-2" id="wizardTemplateModalLabel">
                         <i class="bi bi-collection-fill"></i> {% trans "Vorlagen für Einnahmen & Ausgaben wählen" %}
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4">
-                    <div class="alert alert-warning border-0 d-flex align-items-center gap-3 p-3 rounded-3 mb-3" style="background-color: rgba(255, 193, 7, 0.15); color: #856404;">
+                    <div class="alert border-0 d-flex align-items-center gap-3 p-3 rounded-3 mb-3 wizard-subpanel">
                         <i class="bi bi-info-circle-fill fs-4 flex-shrink-0 text-warning"></i>
                         <div class="small">
                             <strong>{% trans "Hinweis:" %}</strong> {% trans "Ausgewählte Vorlagen werden zunächst mit einem Platzhalter-Betrag von <strong>1,00 €</strong> angelegt. Trage anschließend einfach deine tatsächlichen Beträge ein." %}
@@ -167,7 +231,7 @@
                     </div>
 
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <span class="badge bg-primary-subtle text-primary fw-medium px-3 py-2 rounded-pill" x-text="selectedTemplateCount + ' ausgewählt'"></span>
+                        <span class="badge wizard-badge-muted fw-medium px-3 py-2 rounded-pill" x-text="selectedTemplateCount + ' ausgewählt'"></span>
                         <div class="btn-group btn-group-sm">
                             <button type="button" @click="selectAllTemplates(true)" class="btn btn-outline-secondary">{% trans "Alle markieren" %}</button>
                             <button type="button" @click="selectAllTemplates(false)" class="btn btn-outline-secondary">{% trans "Keine" %}</button>
@@ -176,11 +240,11 @@
 
                     <div class="accordion accordion-flush" id="templatesAccordion">
                         <template x-for="(group, gIdx) in templateGroups" :key="gIdx">
-                            <div class="accordion-item bg-transparent border-bottom mb-2">
+                            <div class="accordion-item bg-transparent border-bottom mb-2" style="border-color: var(--app-table-border-color, rgba(125,125,125,0.2)) !important;">
                                 <h2 class="accordion-header">
-                                    <button class="accordion-button bg-body-tertiary rounded-3 py-2 px-3 fw-bold shadow-none" type="button" data-bs-toggle="collapse" :data-bs-target="'#groupCollapse-' + gIdx">
+                                    <button class="accordion-button wizard-subpanel rounded-3 py-2 px-3 fw-bold shadow-none" type="button" data-bs-toggle="collapse" :data-bs-target="'#groupCollapse-' + gIdx">
                                         <span x-text="group.group"></span>
-                                        <span class="badge rounded-pill bg-secondary ms-2" x-text="group.items.length"></span>
+                                        <span class="badge rounded-pill wizard-badge-muted ms-2" x-text="group.items.length"></span>
                                     </button>
                                 </h2>
                                 <div :id="'groupCollapse-' + gIdx" class="accordion-collapse collapse show">
@@ -188,7 +252,7 @@
                                         <div class="row g-2">
                                             <template x-for="(item, iIdx) in group.items" :key="iIdx">
                                                 <div class="col-md-6">
-                                                    <div class="form-check p-2 rounded-3 border h-100 bg-body-tertiary d-flex align-items-center gap-2"
+                                                    <div class="form-check p-2 rounded-3 h-100 wizard-subpanel d-flex align-items-center gap-2"
                                                          :class="isTemplateAlreadyPresent(item) ? 'opacity-50' : ''">
                                                         <input class="form-check-input ms-0 me-2 mt-0" type="checkbox" :id="'tpl-' + gIdx + '-' + iIdx" 
                                                                x-model="item.selected"
@@ -197,12 +261,12 @@
                                                             <div class="d-flex justify-content-between align-items-center">
                                                                 <span class="fw-semibold" x-text="item.name"></span>
                                                                 <template x-if="isTemplateAlreadyPresent(item)">
-                                                                    <span class="badge bg-secondary-subtle text-secondary" style="font-size: 0.65rem;">{% trans "Vorhanden" %}</span>
+                                                                    <span class="badge wizard-badge-muted" style="font-size: 0.65rem;">{% trans "Vorhanden" %}</span>
                                                                 </template>
                                                             </div>
                                                             <div class="d-flex justify-content-between align-items-center opacity-75 mt-1" style="font-size: 0.75rem;">
-                                                                <span class="badge bg-light text-dark border" x-text="item.category_name"></span>
-                                                                <span class="text-muted" x-text="item.frequency === 'monthly' ? 'Monatlich' : 'Jährlich'"></span>
+                                                                <span class="badge wizard-badge-muted" x-text="item.category_name"></span>
+                                                                <span class="opacity-75" x-text="item.frequency === 'monthly' ? 'Monatlich' : 'Jährlich'"></span>
                                                             </div>
                                                         </label>
                                                     </div>
@@ -215,9 +279,9 @@
                         </template>
                     </div>
                 </div>
-                <div class="modal-footer border-top py-3">
+                <div class="modal-footer wizard-modal-footer py-3">
                     <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">{% trans "Abbrechen" %}</button>
-                    <button type="button" class="btn btn-primary rounded-pill px-4" @click="applySelectedTemplates()">
+                    <button type="button" class="btn wizard-btn-gradient rounded-pill px-4" @click="applySelectedTemplates()">
                         <i class="bi bi-check-lg me-1"></i>{% trans "Ausgewählte übernehmen" %}
                     </button>
                 </div>
@@ -225,20 +289,31 @@
         </div>
     </div>
 
-    <!-- Step Progress Bar -->
-    <div class="card border-0 shadow-sm rounded-4 mb-4 p-3" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
-        <div class="d-flex justify-content-between align-items-center mb-2">
-            <span class="small fw-bold text-uppercase text-primary" x-text="'Schritt ' + currentStep + ' von 5: ' + stepTitles[currentStep - 1]"></span>
-            <span class="small font-monospace text-muted" x-text="Math.round((currentStep / 5) * 100) + '% abgeschlossen'"></span>
+    <!-- Step Progress Bar & Interactive Stepper -->
+    <div class="card shadow-sm rounded-4 mb-4 p-3 wizard-card">
+        <div class="d-flex flex-wrap gap-2 mb-3">
+            <template x-for="(title, sIdx) in stepTitles" :key="sIdx">
+                <button type="button"
+                        @click="currentStep = sIdx + 1"
+                        class="btn btn-sm rounded-pill px-3 py-1.5 d-flex align-items-center gap-2 wizard-step-pill"
+                        :class="{ 'is-active': currentStep === (sIdx + 1), 'is-done': currentStep > (sIdx + 1) }">
+                    <span class="fw-bold font-monospace" x-text="(sIdx + 1) + '.'"></span>
+                    <span class="small fw-semibold" x-text="title"></span>
+                </button>
+            </template>
         </div>
-        <div class="progress" style="height: 8px;">
-            <div class="progress-bar bg-primary" role="progressbar" :style="'width: ' + ((currentStep / 5) * 100) + '%'"></div>
+        <div class="d-flex justify-content-between align-items-center mb-1">
+            <span class="small fw-bold text-uppercase wizard-accent" x-text="'Schritt ' + currentStep + ' von 5: ' + stepTitles[currentStep - 1]"></span>
+            <span class="small font-monospace opacity-75" x-text="Math.round((currentStep / 5) * 100) + '%'"></span>
+        </div>
+        <div class="progress rounded-pill" style="height: 7px; background-color: color-mix(in srgb, var(--app-card-bg), var(--app-card-color) 10%);">
+            <div class="progress-bar rounded-pill" role="progressbar" :style="'width: ' + ((currentStep / 5) * 100) + '%; background: var(--app-gradient);'"></div>
         </div>
     </div>
 
     <!-- Step 1: Haushalt & Personen -->
-    <div x-show="currentStep === 1" class="card border-0 shadow-sm rounded-4 p-4 mb-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
-        <h4 class="fw-bold mb-3 d-flex align-items-center gap-2 text-primary">
+    <div x-show="currentStep === 1" class="card shadow-sm rounded-4 p-4 mb-4 wizard-card">
+        <h4 class="fw-bold mb-3 d-flex align-items-center gap-2 wizard-accent">
             <i class="bi bi-people"></i> {% trans "1. Haushalt & Personen" %}
         </h4>
         <div class="row g-3 mb-4">
@@ -282,8 +357,8 @@
         </div>
 
         <!-- Person 1 -->
-        <div class="p-3 rounded-3 bg-body-tertiary mb-3">
-            <h6 class="fw-bold mb-3 text-secondary"><i class="bi bi-person me-1"></i>{% trans "Person 1 (Hauptverdiener / Du)" %}</h6>
+        <div class="p-3 rounded-3 wizard-subpanel mb-3">
+            <h6 class="fw-bold mb-3 opacity-85"><i class="bi bi-person me-1 wizard-accent"></i>{% trans "Person 1 (Hauptverdiener / Du)" %}</h6>
             <div class="row g-3">
                 <div class="col-md-4">
                     <label class="form-label small opacity-75">{% trans "Name / Bezeichnung" %}</label>
@@ -301,8 +376,8 @@
         </div>
 
         <!-- Person 2 (Couple) -->
-        <div x-show="form.household_type === 'couple'" class="p-3 rounded-3 bg-body-tertiary mb-3">
-            <h6 class="fw-bold mb-3 text-secondary"><i class="bi bi-person-heart me-1"></i>{% trans "Person 2 (Partner/in)" %}</h6>
+        <div x-show="form.household_type === 'couple'" class="p-3 rounded-3 wizard-subpanel mb-3">
+            <h6 class="fw-bold mb-3 opacity-85"><i class="bi bi-person-heart me-1 wizard-accent"></i>{% trans "Person 2 (Partner/in)" %}</h6>
             <div class="row g-3">
                 <div class="col-md-4">
                     <label class="form-label small opacity-75">{% trans "Name / Bezeichnung" %}</label>
@@ -320,17 +395,17 @@
         </div>
 
         <!-- Kinder & Kindergeld -->
-        <div class="p-3 rounded-3 bg-body-tertiary mb-2">
+        <div class="p-3 rounded-3 wizard-subpanel mb-2">
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
                 <div>
-                    <h6 class="fw-bold mb-0 text-secondary"><i class="bi bi-people-fill me-1"></i>{% trans "Kinder im Haushalt (optional)" %}</h6>
-                    <div class="small text-muted">{% trans "Relevant für Kindergeld-Dauer, ALG-I-Satz (67 %), Risikoleben, Halbwaisenrente & DRV-Kindererziehungszeiten." %}</div>
+                    <h6 class="fw-bold mb-0 opacity-85"><i class="bi bi-people-fill me-1 wizard-accent"></i>{% trans "Kinder im Haushalt (optional)" %}</h6>
+                    <div class="small opacity-75">{% trans "Relevant für Kindergeld-Dauer, ALG-I-Satz (67 %), Risikoleben, Halbwaisenrente & DRV-Kindererziehungszeiten." %}</div>
                 </div>
                 <div class="d-flex flex-wrap gap-2">
                     <button type="button" x-show="form.children.some(c => c.name && c.receives_child_benefit)" @click="syncKindergeldToIncomes()" class="btn btn-sm btn-success rounded-pill px-3">
                         <i class="bi bi-cash-coin me-1"></i>{% trans "Kindergeld (255 €/Kind) in Einnahmen übernehmen" %}
                     </button>
-                    <button type="button" @click="addChild()" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                    <button type="button" @click="addChild()" class="btn btn-sm wizard-btn-outline rounded-pill px-3">
                         <i class="bi bi-plus-lg me-1"></i>{% trans "Kind hinzufügen" %}
                     </button>
                 </div>
@@ -341,11 +416,11 @@
             </template>
 
             <template x-if="form.children.length === 0">
-                <div class="small text-muted fst-italic">{% trans "Noch keine Kinder eingetragen." %}</div>
+                <div class="small opacity-75 fst-italic">{% trans "Noch keine Kinder eingetragen." %}</div>
             </template>
 
             <template x-for="(child, cIdx) in form.children" :key="cIdx">
-                <div class="row g-2 align-items-end mb-2 p-2 rounded-3 border bg-body">
+                <div class="row g-2 align-items-end mb-2 p-2 rounded-3 wizard-inner-box">
                     <div class="col-md-3">
                         <label class="form-label small opacity-75 mb-1">{% trans "Name des Kindes" %}</label>
                         <input type="text" x-model="child.name" class="form-control form-control-sm" placeholder="z. B. Lena">
@@ -380,23 +455,23 @@
     </div>
 
     <!-- Step 2: Gesetzliche Renteninformation (DRV) -->
-    <div x-show="currentStep === 2" class="card border-0 shadow-sm rounded-4 p-4 mb-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+    <div x-show="currentStep === 2" class="card shadow-sm rounded-4 p-4 mb-4 wizard-card">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="fw-bold mb-0 d-flex align-items-center gap-2 text-primary">
+            <h4 class="fw-bold mb-0 d-flex align-items-center gap-2 wizard-accent">
                 <i class="bi bi-bank"></i> {% trans "2. Gesetzliche Renteninformation (DRV)" %}
             </h4>
-            <button type="button" @click="addDrvStatement()" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+            <button type="button" @click="addDrvStatement()" class="btn btn-sm wizard-btn-outline rounded-pill px-3">
                 <i class="bi bi-plus-lg me-1"></i>{% trans "Weitere DRV-Mitteilung hinzufügen" %}
             </button>
         </div>
-        <p class="text-muted small mb-4">
+        <p class="opacity-75 small mb-4">
             {% trans "Übernahme der exakten Angaben aus dem offiziellen DRV-Schreiben ('Ihre Renteninformation')." %}
         </p>
 
         <template x-for="(drv, index) in form.drv_statements" :key="index">
-            <div class="p-3 border rounded-3 mb-4 bg-body-tertiary position-relative">
+            <div class="p-3 rounded-3 mb-4 wizard-subpanel position-relative">
                 <button type="button" x-show="form.drv_statements.length > 1" @click="removeDrvStatement(index)" class="btn-close position-absolute top-0 end-0 m-3" aria-label="Close"></button>
-                <h6 class="fw-bold text-primary mb-3" x-text="'Mitteilung #' + (index + 1) + ': ' + (drv.provider || 'Gesetzliche Rente')"></h6>
+                <h6 class="fw-bold wizard-accent mb-3" x-text="'Mitteilung #' + (index + 1) + ': ' + (drv.provider || 'Gesetzliche Rente')"></h6>
 
                 <div class="row g-3 mb-3">
                     <div class="col-md-6">
@@ -426,9 +501,9 @@
                     </div>
                 </div>
 
-                <div class="p-3 bg-body rounded-3 border mb-3">
-                    <h6 class="fw-bold mb-3 text-secondary d-flex align-items-center gap-2">
-                        <i class="bi bi-file-text"></i> {% trans "Rentenbeträge laut Renteninformation" %}
+                <div class="p-3 rounded-3 wizard-inner-box mb-3">
+                    <h6 class="fw-bold mb-3 opacity-85 d-flex align-items-center gap-2">
+                        <i class="bi bi-file-text wizard-accent"></i> {% trans "Rentenbeträge laut Renteninformation" %}
                     </h6>
 
                     <div class="mb-3">
@@ -460,23 +535,23 @@
     </div>
 
     <!-- Step 3: Private & Betriebliche Vorsorge (bAV, Kapital-Police, Riester etc.) -->
-    <div x-show="currentStep === 3" class="card border-0 shadow-sm rounded-4 p-4 mb-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+    <div x-show="currentStep === 3" class="card shadow-sm rounded-4 p-4 mb-4 wizard-card">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="fw-bold mb-0 d-flex align-items-center gap-2 text-primary">
+            <h4 class="fw-bold mb-0 d-flex align-items-center gap-2 wizard-accent">
                 <i class="bi bi-piggy-bank"></i> {% trans "3. Private & Betriebliche Vorsorge (bAV, Kapital-Police, Riester)" %}
             </h4>
-            <button type="button" @click="addPrivateStatement()" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+            <button type="button" @click="addPrivateStatement()" class="btn btn-sm wizard-btn-outline rounded-pill px-3">
                 <i class="bi bi-plus-lg me-1"></i>{% trans "Weitere Mitteilung / Vertrag hinzufügen" %}
             </button>
         </div>
-        <p class="text-muted small mb-4">
+        <p class="opacity-75 small mb-4">
             {% trans "Erfassung von Standmitteilungen aus bAV, Direktversicherungen, Riester, Rürup oder privaten Kapital- und Rentenpolicen." %}
         </p>
 
         <template x-for="(priv, index) in form.private_statements" :key="index">
-            <div class="p-3 border rounded-3 mb-4 bg-body-tertiary position-relative">
+            <div class="p-3 rounded-3 mb-4 wizard-subpanel position-relative">
                 <button type="button" x-show="form.private_statements.length > 1" @click="removePrivateStatement(index)" class="btn-close position-absolute top-0 end-0 m-3" aria-label="Close"></button>
-                <h6 class="fw-bold text-info mb-3" x-text="'Vertrag #' + (index + 1) + ': ' + (priv.provider || 'Private Vorsorge')"></h6>
+                <h6 class="fw-bold wizard-accent mb-3" x-text="'Vertrag #' + (index + 1) + ': ' + (priv.provider || 'Private Vorsorge')"></h6>
 
                 <div class="row g-3 mb-3">
                     <div class="col-md-4">
@@ -496,10 +571,10 @@
                 <!-- Payout Mode Selection -->
                 <div class="row g-3 mb-3">
                     <div class="col-md-12">
-                        <label class="form-label small opacity-75 fw-semibold text-primary">
+                        <label class="form-label small opacity-85 fw-semibold wizard-accent">
                             <i class="bi bi-cash-coin me-1"></i>{% trans "Auszahlungsart des Vertrags" %}
                         </label>
-                        <select x-model="priv.payout_type" class="form-select border-primary border-opacity-50">
+                        <select x-model="priv.payout_type" class="form-select">
                             <option value="capital_drawdown">{% trans "Monatlicher Auszahlungsplan (Kapitalverzehr, z. B. Vermögenspolice)" %}</option>
                             <option value="lifelong_annuity">{% trans "Laufende monatliche Rente (lebenslang garantiert)" %}</option>
                             <option value="one_time">{% trans "Einmalige Kapitalabfindung (z. B. bAV / Direktversicherung)" %}</option>
@@ -550,21 +625,21 @@
     </div>
 
     <!-- Step 4: Einkommen & Haushaltsausgaben -->
-    <div x-show="currentStep === 4" class="card border-0 shadow-sm rounded-4 p-4 mb-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+    <div x-show="currentStep === 4" class="card shadow-sm rounded-4 p-4 mb-4 wizard-card">
         <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
-            <h4 class="fw-bold mb-0 d-flex align-items-center gap-2 text-primary">
+            <h4 class="fw-bold mb-0 d-flex align-items-center gap-2 wizard-accent">
                 <i class="bi bi-wallet2"></i> {% trans "4. Monatliches Einkommen & Ausgaben" %}
             </h4>
-            <button type="button" @click="openTemplateModal()" class="btn btn-outline-primary rounded-pill px-3 btn-sm shadow-sm">
+            <button type="button" @click="openTemplateModal()" class="btn wizard-btn-outline rounded-pill px-3 btn-sm shadow-sm">
                 <i class="bi bi-plus-circle me-1"></i>{% trans "Aus Vorlagen-Katalog auswählen" %}
             </button>
         </div>
         
-        <p class="text-muted small mb-3">
+        <p class="opacity-75 small mb-3">
             {% trans "Erfasse hier deine regelmäßigen Einnahmen und Ausgaben oder wähle typische Posten bequem aus dem Vorlagen-Katalog aus." %}
         </p>
 
-        <h6 class="fw-bold text-secondary mb-2 d-flex align-items-center gap-2">
+        <h6 class="fw-bold opacity-85 mb-2 d-flex align-items-center gap-2">
             <i class="bi bi-arrow-down-left-circle text-success"></i> {% trans "Monatliche Einnahmen" %}
         </h6>
         <template x-for="(inc, index) in form.incomes" :key="'inc-' + index">
@@ -583,16 +658,16 @@
                     </select>
                 </div>
                 <div :class="form.household_type === 'couple' ? 'col-md-2' : 'col-md-3'">
-                    <span class="badge bg-body-secondary text-secondary border px-2 py-1 small text-truncate d-inline-block w-100 text-center" x-text="inc.category_name || 'Gehalt'"></span>
+                    <span class="badge wizard-badge-muted px-2 py-1 small text-truncate d-inline-block w-100 text-center" x-text="inc.category_name || 'Gehalt'"></span>
                 </div>
                 <div class="col-md-1">
                     <button type="button" @click="removeIncome(index)" class="btn btn-outline-danger btn-sm w-100" x-show="form.incomes.length > 1"><i class="bi bi-trash"></i></button>
                 </div>
             </div>
         </template>
-        <button type="button" @click="addIncome()" class="btn btn-sm btn-link text-decoration-none p-0 mb-4">+ {% trans "Weitere Einnahme hinzufügen" %}</button>
+        <button type="button" @click="addIncome()" class="btn btn-sm btn-link wizard-accent text-decoration-none p-0 mb-4">+ {% trans "Weitere Einnahme hinzufügen" %}</button>
 
-        <h6 class="fw-bold text-secondary mb-2 d-flex align-items-center gap-2">
+        <h6 class="fw-bold opacity-85 mb-2 d-flex align-items-center gap-2">
             <i class="bi bi-arrow-up-right-circle text-danger"></i> {% trans "Regelmäßige Ausgaben & Lebenshaltung" %}
         </h6>
         <template x-for="(exp, index) in form.expenses" :key="'exp-' + index">
@@ -610,25 +685,25 @@
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <span class="badge bg-body-secondary text-secondary border px-2 py-1 small text-truncate d-inline-block w-100 text-center" x-text="exp.category_name || 'Ausgabe'"></span>
+                    <span class="badge wizard-badge-muted px-2 py-1 small text-truncate d-inline-block w-100 text-center" x-text="exp.category_name || 'Ausgabe'"></span>
                 </div>
                 <div class="col-md-1">
                     <button type="button" @click="removeExpense(index)" class="btn btn-outline-danger btn-sm w-100" x-show="form.expenses.length > 1"><i class="bi bi-trash"></i></button>
                 </div>
             </div>
         </template>
-        <button type="button" @click="addExpense()" class="btn btn-sm btn-link text-decoration-none p-0">+ {% trans "Weitere Ausgabe hinzufügen" %}</button>
+        <button type="button" @click="addExpense()" class="btn btn-sm btn-link wizard-accent text-decoration-none p-0">+ {% trans "Weitere Ausgabe hinzufügen" %}</button>
 
     </div>
 
     <!-- Step 5: Konten, Depots, Immobilien & Kredite -->
-    <div x-show="currentStep === 5" class="card border-0 shadow-sm rounded-4 p-4 mb-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
-        <h4 class="fw-bold mb-3 d-flex align-items-center gap-2 text-primary">
+    <div x-show="currentStep === 5" class="card shadow-sm rounded-4 p-4 mb-4 wizard-card">
+        <h4 class="fw-bold mb-3 d-flex align-items-center gap-2 wizard-accent">
             <i class="bi bi-house-door"></i> {% trans "5. Vermögen, Immobilien & Kredite" %}
         </h4>
 
         <!-- Assets -->
-        <h6 class="fw-bold text-secondary mb-2">{% trans "Konten, Tagesgeld & ETF Depots" %}</h6>
+        <h6 class="fw-bold opacity-85 mb-2">{% trans "Konten, Tagesgeld & ETF Depots" %}</h6>
         <template x-for="(ast, index) in form.assets" :key="index">
             <div class="row g-2 mb-2 align-items-center">
                 <div class="col-md-5">
@@ -645,11 +720,11 @@
                 </div>
             </div>
         </template>
-        <button type="button" @click="addAsset()" class="btn btn-sm btn-link text-decoration-none p-0 mb-4">+ {% trans "Weitern Vermögenswert hinzufügen" %}</button>
+        <button type="button" @click="addAsset()" class="btn btn-sm btn-link wizard-accent text-decoration-none p-0 mb-4">+ {% trans "Weitern Vermögenswert hinzufügen" %}</button>
 
         <!-- Real Estate & Loans -->
-        <h6 class="fw-bold text-secondary mb-2">{% trans "Immobilien & Darlehen" %}</h6>
-        <div class="p-3 border rounded-3 mb-3 bg-body-tertiary">
+        <h6 class="fw-bold opacity-85 mb-2">{% trans "Immobilien & Darlehen" %}</h6>
+        <div class="p-3 rounded-3 mb-3 wizard-subpanel">
             <div class="row g-3 mb-2">
                 <div class="col-md-4">
                     <label class="form-label small opacity-75">{% trans "Immobilie (z. B. Eigenheim)" %}</label>
@@ -682,7 +757,7 @@
     </div>
 
     <!-- Startup Checkbox & Navigation Buttons -->
-    <div class="card border-0 shadow-sm rounded-4 p-3 mb-3 bg-body-tertiary">
+    <div class="card shadow-sm rounded-4 p-3 mb-3 wizard-card">
         <div class="form-check form-switch d-flex align-items-center gap-2 m-0">
             <input class="form-check-input" type="checkbox" id="hideWizardCheckbox" x-model="form.hide_wizard_on_start" @change="toggleHideWizardSetting()" style="cursor: pointer;">
             <label class="form-check-label small" for="hideWizardCheckbox">
@@ -696,7 +771,7 @@
             <i class="bi bi-arrow-left me-1"></i>{% trans "Zurück" %}
         </button>
         <div></div>
-        <button type="button" @click="currentStep++" x-show="currentStep < 5" class="btn btn-primary rounded-pill px-4 py-2" style="background: var(--app-gradient); border: none;">
+        <button type="button" @click="currentStep++" x-show="currentStep < 5" class="btn wizard-btn-gradient rounded-pill px-4 py-2 shadow-sm">
             {% trans "Weiter" %}<i class="bi bi-arrow-right ms-1"></i>
         </button>
         <button type="button" @click="submitWizard()" x-show="currentStep === 5" class="btn btn-success rounded-pill px-4 py-2 shadow" :disabled="isSubmitting">
