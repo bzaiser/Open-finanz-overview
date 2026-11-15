@@ -1,90 +1,136 @@
 {% extends 'base.html' %}
 {% load i18n %}
 
-{% block title %}{% trans 'About' %} - Finanzplan{% endblock %}
+{% block title %}{% trans "Über das Projekt" %} - Finanzplan{% endblock %}
 
 {% block content %}
 <div class="container py-4">
     {% include 'core/partials/wysiwyg_bar.html' with page_name='about' %}
 
-    <div class="row align-items-center g-5">
-        <div class="col-lg-6">
-            <h1 class="display-3 fw-bold text-primary mb-4" data-editable-key="about_title">
-                {{ content_map.about_title|default:_('About the Project')|safe }}
+    <div class="row align-items-center g-5 mb-5">
+        <div class="col-lg-7">
+            <span class="badge rounded-pill px-3 py-2 mb-3 fw-semibold text-white" style="background: var(--app-gradient);">
+                <i class="bi bi-compass me-1"></i> {% trans "Das ganzheitliche Finanz-, Vorsorge- & Immobilien-Cockpit" %}
+            </span>
+            <h1 class="display-4 fw-bold mb-3" data-editable-key="about_v2_title">
+                {{ content_map.about_v2_title|default:_('Über Finanzplan')|safe }}
             </h1>
-            <p class="lead text-muted mb-4" data-editable-key="about_lead">
-                {{ content_map.about_lead|default:_('Welcome to your personal financial cockpit. This platform is designed to give you a clear and realistic look at your long-term financial future.')|safe }}
+            <p class="lead opacity-85 mb-3" data-editable-key="about_v2_lead">
+                {{ content_map.about_v2_lead|default:_('Willkommen in deinem persönlichen Finanz-, Vorsorge- und Immobilien-Cockpit. Diese Plattform wurde entwickelt, um dir einen glasklaren, ehrlichen und mathematisch präzisen Blick auf deine langfristige finanzielle Zukunft über 30+ Jahre zu geben.')|safe }}
             </p>
-            <p class="text-secondary mb-5" data-editable-key="about_goal">
-                {{ content_map.about_goal|default:_('Our goal is to demystify complex financial planning by offering simple, visual, and highly customizable tools to help you reach your goals.')|safe }}
+            <p class="opacity-75 mb-4" data-editable-key="about_v2_goal">
+                {{ content_map.about_v2_goal|default:_('Unser Ziel ist es, komplexe Finanz-, Renten-, Immobilien- und Steuerfragen zu entmystifizieren – mit interaktiven Simulationen, echter inflationsbereinigter Kaufkraftberechnung, Krisen-Stresstests und einem lückenlosen Risiko- & Notfall-Audit für deinen gesamten Haushalt.')|safe }}
             </p>
-            
-            <div class="d-flex align-items-start gap-4 mb-4">
-                <div class="bg-primary bg-opacity-10 p-3 rounded-4">
-                    <i class="bi bi-shield-check fs-2 text-primary"></i>
+
+            <div class="d-flex align-items-start gap-3 mb-4">
+                <div class="p-3 rounded-4 flex-shrink-0 text-white" style="background: var(--app-gradient);">
+                    <i class="bi bi-shield-lock-fill fs-3"></i>
                 </div>
                 <div>
-                    <h4 class="h5 mb-1" data-editable-key="about_sec_title">
-                        {{ content_map.about_sec_title|default:_('Personal Data Security')|safe }}
+                    <h4 class="h5 fw-bold mb-1" data-editable-key="about_v2_sec_title">
+                        {{ content_map.about_v2_sec_title|default:_('100 % Self-Hosted, Datenschutz & Voll-Backup')|safe }}
                     </h4>
-                    <p class="text-muted small mb-0" data-editable-key="about_sec_text">
-                        {{ content_map.about_sec_text|default:_('Your data is only stored in your personal database and is not shared with third parties.')|safe }}
+                    <p class="opacity-75 small mb-0" data-editable-key="about_v2_sec_text">
+                        {{ content_map.about_v2_sec_text|default:_('Deine Finanzdaten und Dokumente gehören ausschließlich dir: Sie liegen lokal in deiner eigenen Datenbank bzw. deinem Dokumenten-Tresor und verlassen niemals unbefugt dein System. Mit dem integrierten 1-Klick-ZIP-Vollbackup (inkl. externer Ordner-Rotation) behältst du jederzeit die volle Datenhoheit.')|safe }}
                     </p>
                 </div>
             </div>
 
-            <div class="d-flex align-items-start gap-4 mb-4">
-                <div class="bg-info bg-opacity-10 p-3 rounded-4">
-                    <i class="bi bi-cpu fs-2 text-info"></i>
+            <div class="d-flex align-items-start gap-3 mb-4">
+                <div class="bg-info bg-opacity-10 p-3 rounded-4 flex-shrink-0">
+                    <i class="bi bi-graph-up-arrow fs-3 text-info"></i>
                 </div>
                 <div>
-                    <h4 class="h5 mb-1" data-editable-key="about_sim_title">
-                        {{ content_map.about_sim_title|default:_('Advanced Simulation')|safe }}
+                    <h4 class="h5 fw-bold mb-1" data-editable-key="about_v2_sim_title">
+                        {{ content_map.about_v2_sim_title|default:_('30+-Jahre-Präzisions-Simulation & Krisen-Stresstests')|safe }}
                     </h4>
-                    <p class="text-muted small mb-0" data-editable-key="about_sim_text">
-                        {{ content_map.about_sim_text|default:_('We use high-precision calculations for inflation and compound interest over a 30-year period.')|safe }}
+                    <p class="opacity-75 small mb-0" data-editable-key="about_v2_sim_text">
+                        {{ content_map.about_v2_sim_text|default:_('Monatsgenaue Projektion von Zinseszins, Inflation (reale Kaufkraft in heutigen Preisen), 4 Altersvorsorge-Säulen, Tagesgeld-Aktionszinsen, Darlehenstilgung mit Sondertilgungs-Simulator, Vermietungs-Steuern (Anlage V) sowie 5 realen Schock-Szenarien (Jobverlust/ALG I, BU, Börsencrash, Zinsanstieg, Notfallausgabe).')|safe }}
                     </p>
                 </div>
             </div>
 
-            <div class="d-flex align-items-start gap-4">
-                <div class="bg-warning bg-opacity-10 p-3 rounded-4">
-                    <i class="bi bi-magic fs-2 text-warning"></i>
+            <div class="d-flex align-items-start gap-3 mb-4">
+                <div class="bg-success bg-opacity-10 p-3 rounded-4 flex-shrink-0">
+                    <i class="bi bi-heart-pulse-fill fs-3 text-success"></i>
                 </div>
                 <div>
-                    <h4 class="h5 mb-1" data-editable-key="about_dev_title">
-                        {{ content_map.about_dev_title|default:_('Development & AI-Assistance')|safe }}
+                    <h4 class="h5 fw-bold mb-1" data-editable-key="about_v2_family_title">
+                        {{ content_map.about_v2_family_title|default:_('Haushalts-, Kinder- & Notfall-Absicherung')|safe }}
                     </h4>
-                    <p class="text-muted small mb-0" data-editable-key="about_dev_text">
-                        {{ content_map.about_dev_text|default:_('Created via Vibe Coding using Google Antigravity. Simulations and calculations serve informational purposes only and do not constitute financial advice.')|safe }}
+                    <p class="opacity-75 small mb-0" data-editable-key="about_v2_family_text">
+                        {{ content_map.about_v2_family_text|default:_('Berücksichtigt automatisch Partner- und Kinder-Lebenszyklen (inkl. Kindergeld-Enddatum zum Selbstständigkeits-Alter), prüft Pflichtversicherungen per Ampel-System und überwacht Notgroschen-Reichweite, BU-Lücke, Hinterbliebenenschutz sowie die physische Bargeldreserve für Zuhause.')|safe }}
+                    </p>
+                </div>
+            </div>
+
+            <div class="d-flex align-items-start gap-3">
+                <div class="bg-warning bg-opacity-10 p-3 rounded-4 flex-shrink-0">
+                    <i class="bi bi-magic fs-3 text-warning"></i>
+                </div>
+                <div>
+                    <h4 class="h5 fw-bold mb-1" data-editable-key="about_v2_dev_title">
+                        {{ content_map.about_v2_dev_title|default:_('Entwicklung, KI-Unterstützung & Hinweis')|safe }}
+                    </h4>
+                    <p class="opacity-75 small mb-0" data-editable-key="about_v2_dev_text">
+                        {{ content_map.about_v2_dev_text|default:_('Konzipiert und entwickelt mit Google Antigravity. Optionale KI-Kontoauszugsanalyse über lokales Ollama oder Google Gemini. Alle Simulationen, Steuer- und Vorsorgeberechnungen dienen ausschließlich der privaten Information und ersetzen keine steuerliche oder rechtliche Finanzberatung.')|safe }}
                     </p>
                 </div>
             </div>
         </div>
-        
-        <div class="col-lg-5 offset-lg-1">
-            <div class="card border-0 shadow-lg p-4 rounded-5" style="background: linear-gradient(135deg, #ffffff 0%, #f9fbfd 100%);">
+
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-lg p-4 rounded-5 about-theme-card">
                 <div class="card-body text-center">
                     <div class="mb-4">
-                        <div class="rounded-circle bg-primary mx-auto mb-3" style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem;">
+                        <div class="rounded-circle mx-auto mb-3 shadow-sm" style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem; background: var(--app-gradient);">
                             B
                         </div>
-                        <h2 class="h4 fw-bold" data-editable-key="about_author_name">
+                        <h2 class="h4 fw-bold mb-2" data-editable-key="about_author_name">
                             {{ content_map.about_author_name|default:'Bernd Zaiser'|safe }}
                         </h2>
-                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 rounded-pill" data-editable-key="about_author_role">
-                            {{ content_map.about_author_role|default:_('Lead Developer & Architect')|safe }}
+                        <span class="badge px-3 py-2 rounded-pill text-white" style="background: var(--app-gradient);" data-editable-key="about_v2_author_role">
+                            {{ content_map.about_v2_author_role|default:_('Lead Developer & Systemarchitekt')|safe }}
                         </span>
                     </div>
-                    <p class="text-muted small mb-4 px-3" data-editable-key="about_quote">
-                        {{ content_map.about_quote|default:_('Financial Independence is a goal for many, but for most it remains just a dream. My passion is to create tools that turn those dreams into actionable plans.')|safe }}
+                    <p class="opacity-75 small mb-4 px-2" data-editable-key="about_v2_quote">
+                        {{ content_map.about_v2_quote|default:_('„Finanzielle Unabhängigkeit und Sicherheit für die eigene Familie sind für viele ein Wunschtraum. Meine Leidenschaft ist es, ein Werkzeug zu schaffen, das aus unübersichtlichen Ordnern und Verträgen einen klaren, verlässlichen Lebensplan macht.“')|safe }}
                     </p>
-                    <div class="d-flex justify-content-center gap-3 mb-3">
-                        <a href="https://github.com/bzaiser/Open-finanz-overview" target="_blank" class="btn btn-light btn-sm rounded-circle" title="GitHub"><i class="bi bi-github"></i></a>
+
+                    <div class="row g-2 text-start small mb-4">
+                        <div class="col-6">
+                            <div class="p-2 rounded-3 about-subcard">
+                                <i class="bi bi-layers text-primary me-1"></i> <strong>Stack:</strong> Django 6, HTMX, Alpine.js, Chart.js 4
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded-3 about-subcard">
+                                <i class="bi bi-translate text-success me-1"></i> <strong>{% trans "Sprachen" %}:</strong> DE, EN, FR, ES, IT
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded-3 about-subcard">
+                                <i class="bi bi-pc-display text-info me-1"></i> <strong>{% trans "Betrieb" %}:</strong> Windows App & Docker
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded-3 about-subcard">
+                                <i class="bi bi-search text-warning me-1"></i> <strong>Vault:</strong> PDF/Office OCR & Suche
+                            </div>
+                        </div>
                     </div>
-                    <div class="pt-2 border-top">
-                        <span class="text-muted small">
-                            <i class="bi bi-tag me-1"></i>{% trans 'Version' %}: <code>{{ APP_VERSION|default:"v0.9-beta" }}</code>{% if APP_VERSION_DATE %} <span class="ms-1 text-secondary">({{ APP_VERSION_DATE }})</span>{% endif %}
+
+                    <div class="d-flex justify-content-center gap-3 mb-3">
+                        <a href="https://github.com/bzaiser/Open-finanz-overview" target="_blank" rel="noopener" class="btn btn-sm rounded-pill px-3 about-subcard" title="GitHub Repository">
+                            <i class="bi bi-github me-1"></i> GitHub Repository
+                        </a>
+                        <a href="{% url 'help' %}" class="btn btn-sm rounded-pill px-3 text-white" style="background: var(--app-gradient); border: none;">
+                            <i class="bi bi-book me-1"></i> {% trans "Zum Handbuch" %}
+                        </a>
+                    </div>
+                    <div class="pt-3 border-top" style="border-color: var(--app-table-border-color, rgba(125,125,125,0.2)) !important;">
+                        <span class="opacity-75 small">
+                            <i class="bi bi-tag me-1"></i>{% trans 'Version' %}: <code>{{ APP_VERSION|default:"v0.9-beta" }}</code>{% if APP_VERSION_DATE %} <span class="ms-1 opacity-75">({{ APP_VERSION_DATE }})</span>{% endif %}
                         </span>
                     </div>
                 </div>
@@ -92,4 +138,17 @@
         </div>
     </div>
 </div>
+
+<style>
+    .about-theme-card {
+        background-color: var(--app-card-bg);
+        color: var(--app-card-color);
+        border: 1px solid var(--app-table-border-color, rgba(125, 125, 125, 0.2)) !important;
+    }
+    .about-subcard {
+        background-color: rgba(125, 125, 125, 0.06);
+        color: var(--app-card-color);
+        border: 1px solid var(--app-table-border-color, rgba(125, 125, 125, 0.2));
+    }
+</style>
 {% endblock %}

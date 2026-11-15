@@ -1,63 +1,124 @@
 {% extends 'base.html' %}
 {% load i18n %}
 
-{% block title %}{% trans "Hilfe & Wissensdatenbank" %} - Finanzplan{% endblock %}
+{% block title %}{% trans "Hilfe, Benutzerhandbuch & FAQ" %} - Finanzplan{% endblock %}
 
 {% block content %}
 <div class="container py-4">
     {% include 'core/partials/wysiwyg_bar.html' with page_name='help' %}
+
     <!-- Header -->
-    <div class="row mb-5">
+    <div class="row mb-4">
         <div class="col-12 text-center">
-            <h1 class="display-4 fw-bold mb-3" data-editable-key="help_text_1">{{ content_map.help_text_1|default:_('Hilfe, Anleitungen & Finanz-Mathematik')|safe }}</h1>
-            <p class="lead text-muted mx-auto" style="max-width: 800px;" data-editable-key="help_text_2">{{ content_map.help_text_2|default:_('Hier findest du verständliche Erklärungen zu allen Funktionen, den mathematischen Berechnungen im Hintergrund, dem Einrichtungs-Wizard sowie zur Verwaltung deiner historischen Stichtage.')|safe }}</p>
-    <!-- Quickstart / How to start Section -->
-    <div class="row mb-5">
+            <span class="badge rounded-pill px-3 py-2 mb-3 fw-semibold" style="background: var(--app-gradient); color: #fff;">
+                <i class="bi bi-journal-bookmark-fill me-1"></i> {% trans "Komplettes Benutzerhandbuch & Wissensdatenbank" %}
+            </span>
+            <h1 class="display-5 fw-bold mb-3" data-editable-key="help_v2_title">
+                {{ content_map.help_v2_title|default:_('Hilfe, Anleitungen, Module & Finanz-Mathematik')|safe }}
+            </h1>
+            <p class="lead opacity-75 mx-auto mb-4" style="max-width: 860px;" data-editable-key="help_v2_lead">
+                {{ content_map.help_v2_lead|default:_('Dieses Handbuch erklärt dir Schritt für Schritt jede einzelne Funktion der Anwendung – vom 7-Schritte-Einrichtungs-Wizard über Dashboard-Stresstests, Altersvorsorge, Risiko- & Notfall-Check, Immobilien-Steuern (Anlage V) und Dokumenten-Tresor bis hin zum Voll-Backup.')|safe }}
+            </p>
+
+            <!-- Quick Jump Navigation Pills -->
+            <div class="d-flex flex-wrap justify-content-center gap-2 mt-2">
+                <a href="#section-quickstart" class="btn btn-sm rounded-pill px-3 help-nav-pill"><i class="bi bi-rocket-takeoff me-1"></i>{% trans "Schnellstart (5 Schritte)" %}</a>
+                <a href="#mod-global" class="btn btn-sm rounded-pill px-3 help-nav-pill"><i class="bi bi-search me-1"></i>{% trans "A. Suche & Navigation" %}</a>
+                <a href="#mod-wizard" class="btn btn-sm rounded-pill px-3 help-nav-pill"><i class="bi bi-magic me-1"></i>{% trans "B. 7-Schritte-Wizard" %}</a>
+                <a href="#mod-dashboard" class="btn btn-sm rounded-pill px-3 help-nav-pill"><i class="bi bi-graph-up-arrow me-1"></i>{% trans "C. Dashboard & Stresstest" %}</a>
+                <a href="#mod-cashflow" class="btn btn-sm rounded-pill px-3 help-nav-pill"><i class="bi bi-arrow-left-right me-1"></i>{% trans "D. Cashflow & KI-Import" %}</a>
+                <a href="#mod-pensions" class="btn btn-sm rounded-pill px-3 help-nav-pill"><i class="bi bi-shield-check me-1"></i>{% trans "E. Vorsorge & Risiko-Check" %}</a>
+                <a href="#mod-assets" class="btn btn-sm rounded-pill px-3 help-nav-pill"><i class="bi bi-piggy-bank me-1"></i>{% trans "F. Vermögen & Sachwerte" %}</a>
+                <a href="#mod-realestate" class="btn btn-sm rounded-pill px-3 help-nav-pill"><i class="bi bi-houses me-1"></i>{% trans "G. Immobilien & Anlage V" %}</a>
+                <a href="#mod-documents" class="btn btn-sm rounded-pill px-3 help-nav-pill"><i class="bi bi-folder2-open me-1"></i>{% trans "H. Dokumenten-Tresor" %}</a>
+                <a href="#mod-profile" class="btn btn-sm rounded-pill px-3 help-nav-pill"><i class="bi bi-sliders me-1"></i>{% trans "I. Profil, Design & Backup" %}</a>
+                <a href="#section-faq" class="btn btn-sm rounded-pill px-3 help-nav-pill"><i class="bi bi-question-circle me-1"></i>{% trans "Große FAQ (22 Fragen)" %}</a>
+                <a href="#section-math" class="btn btn-sm rounded-pill px-3 help-nav-pill"><i class="bi bi-calculator me-1"></i>{% trans "Formeln & Mathematik" %}</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- TEIL 1: SCHNELLSTART IN 5 SCHRITTEN                                 -->
+    <!-- =================================================================== -->
+    <div id="section-quickstart" class="row mb-5 scroll-anchor">
         <div class="col-12">
-            <div class="card border-0 shadow-lg rounded-4 overflow-hidden" style="background: linear-gradient(135deg, var(--app-card-bg) 0%, rgba(13, 110, 253, 0.05) 100%);">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden help-theme-card">
                 <div class="card-body p-4 p-md-5">
                     <div class="d-flex align-items-center gap-3 mb-4">
-                        <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; font-size: 1.5rem;">
+                        <div class="rounded-circle text-white d-flex align-items-center justify-content-center flex-shrink-0" style="width: 52px; height: 52px; font-size: 1.5rem; background: var(--app-gradient);">
                             <i class="bi bi-rocket-takeoff"></i>
                         </div>
                         <div>
-                            <h2 class="h3 fw-bold mb-0" data-editable-key="help_text_3">{{ content_map.help_text_3|default:_('Schnelleinstieg – In 4 Schritten zum Finanzplan')|safe }}</h2>
-                            <p class="text-muted small mb-0" data-editable-key="help_text_4">{{ content_map.help_text_4|default:_('Der schnellste Weg zu deiner persönlichen Vorsorge-Übersicht')|safe }}</p>
+                            <h2 class="h3 fw-bold mb-1" data-editable-key="help_v2_qs_title">{{ content_map.help_v2_qs_title|default:_('Schnellstart – In 5 Schritten zum kompletten Finanzplan')|safe }}</h2>
+                            <p class="opacity-75 small mb-0" data-editable-key="help_v2_qs_sub">{{ content_map.help_v2_qs_sub|default:_('So richtest du die Anwendung als neuer Benutzer optimal ein – ohne Vorkenntnisse und ohne etwas zu vergessen.')|safe }}</p>
                         </div>
                     </div>
 
-                    <div class="row g-4">
-                        <!-- Step 1 -->
-                        <div class="col-md-6 col-lg-3">
-                            <div class="p-3 rounded-4 bg-body border h-100 shadow-sm">
-                                <div class="badge bg-primary rounded-pill mb-2 px-3 py-1">{% trans "Schritt 1" %}</div>
-                                <h5 class="fw-bold fs-6" data-editable-key="help_text_5">{{ content_map.help_text_5|default:_('Profil & Lebenssituation')|safe }}</h5>
-                                <p class="small text-muted mb-0" data-editable-key="help_text_36">{{ content_map.help_text_36|default:_('Wähle unter \'Einstellungen\' oder im Wizard deine Lebenssituation (Standard, Familie, Alleinerziehend, Student, Frührentner), Geburtsdaten und Ziel-Rentenalter.')|safe }}</p>
+                    <div class="row g-3">
+                        <div class="col-md-6 col-xl">
+                            <div class="p-3 rounded-4 h-100 help-subcard">
+                                <span class="badge rounded-pill mb-2 px-3 py-1" style="background: var(--app-gradient);">{% trans "Schritt 1" %}</span>
+                                <h5 class="fw-bold fs-6 mb-2">{% trans "Profil, Familie & Kinder" %}</h5>
+                                <p class="small opacity-75 mb-0">
+                                    {% trans "Trage unter 'Profil & Einstellungen' dein Geburtsdatum, Ziel-Rentenalter (z. B. 67 J.), Simulations-Endalter (Standard: 90 J.) und deine Netto-Wunschrente ein. Ergänze bei Paaren/Familien Partner-Daten sowie Kinder inklusive Selbstständigkeits-Alter." %}
+                                </p>
                             </div>
                         </div>
-                        <!-- Step 2 -->
-                        <div class="col-md-6 col-lg-3">
-                            <div class="p-3 rounded-4 bg-body border h-100 shadow-sm">
-                                <div class="badge bg-info text-white rounded-pill mb-2 px-3 py-1">{% trans "Schritt 2" %}</div>
-                                <h5 class="fw-bold fs-6" data-editable-key="help_text_6">{{ content_map.help_text_6|default:_('Einrichtungs-Wizard')|safe }}</h5>
-                                <p class="small text-muted mb-0" data-editable-key="help_text_37">{{ content_map.help_text_37|default:_('Öffne oben rechts im Benutzermenü \'🪄 Einrichtungs-Wizard\'. Erfasse DRV-Rentenpunkte (40,79 €), Privatvorsorge, Konten, Immobilien und Kredite.')|safe }}</p>
+                        <div class="col-md-6 col-xl">
+                            <div class="p-3 rounded-4 h-100 help-subcard">
+                                <span class="badge bg-info text-white rounded-pill mb-2 px-3 py-1">{% trans "Schritt 2" %}</span>
+                                <h5 class="fw-bold fs-6 mb-2">{% trans "7-Schritte-Wizard starten" %}</h5>
+                                <p class="small opacity-75 mb-0">
+                                    {% trans "Öffne oben rechts im Benutzermenü '🪄 Einrichtungs-Wizard'. Er führt dich durch Haushalt, Einkommen, Fixkosten, DRV-Rentenpunkte (40,79 €), Privatvorsorge, Konten und Immobilien. Alternativ stehen auf der Login-Seite 5 fertige Demo-Profile bereit." %}
+                                </p>
                             </div>
                         </div>
-                        <!-- Step 3 -->
-                        <div class="col-md-6 col-lg-3">
-                            <div class="p-3 rounded-4 bg-body border h-100 shadow-sm">
-                                <div class="badge bg-warning text-dark rounded-pill mb-2 px-3 py-1">{% trans "Schritt 3" %}</div>
-                                <h5 class="fw-bold fs-6" data-editable-key="help_text_7">{{ content_map.help_text_7|default:_('Cashflow & Absicherung')|safe }}</h5>
-                                <p class="small text-muted mb-0" data-editable-key="help_text_38">{{ content_map.help_text_38|default:_('Prüfe unter \'Einnahmen & Ausgaben\' deine laufenden Ströme, nutze den Jährlichen Anpassungs-Assistenten und kontrolliere deinen Versicherungs- & Risiko-Check.')|safe }}</p>
+                        <div class="col-md-6 col-xl">
+                            <div class="p-3 rounded-4 h-100 help-subcard">
+                                <span class="badge bg-success text-white rounded-pill mb-2 px-3 py-1">{% trans "Schritt 3" %}</span>
+                                <h5 class="fw-bold fs-6 mb-2">{% trans "Notgroschen & Bargeldreserve" %}</h5>
+                                <p class="small opacity-75 mb-0">
+                                    {% trans "Markiere unter 'Vermögen' deine Tagesgeld-/Notfallkonten mit dem Schalter 'Als Notgroschen berücksichtigen' und lege unter 'Vorsorge → Risiko- & Notfall-Check' deine physische Bargeldreserve für Zuhause an." %}
+                                </p>
                             </div>
                         </div>
-                        <!-- Step 4 -->
-                        <div class="col-md-6 col-lg-3">
-                            <div class="p-3 rounded-4 bg-body border h-100 shadow-sm">
-                                <div class="badge bg-success rounded-pill mb-2 px-3 py-1">{% trans "Schritt 4" %}</div>
-                                <h5 class="fw-bold fs-6" data-editable-key="help_text_8">{{ content_map.help_text_8|default:_('Dashboard & Stresstest')|safe }}</h5>
-                                <p class="small text-muted mb-0" data-editable-key="help_text_39">{{ content_map.help_text_39|default:_('Analysiere deine 30+-Jahre-Projektion im Dashboard, verschiebe den Stichtag in die Zukunft und teste Krisenszenarien (Jobverlust, BU, Börsencrash, Zinsanstieg).')|safe }}</p>
+                        <div class="col-md-6 col-xl">
+                            <div class="p-3 rounded-4 h-100 help-subcard">
+                                <span class="badge bg-warning text-dark rounded-pill mb-2 px-3 py-1">{% trans "Schritt 4" %}</span>
+                                <h5 class="fw-bold fs-6 mb-2">{% trans "Absicherung & Auszahlungsart" %}</h5>
+                                <p class="small opacity-75 mb-0">
+                                    {% trans "Prüfe unter 'Vorsorge & Absicherung' die Versicherungs-Ampel (Haftpflicht, BU, Risikoleben, Wohngebäude) und wähle bei privaten Renten/bAV die passende Auszahlungsart (Auszahlungsplan, lebenslange Rente oder Einmalkapital)." %}
+                                </p>
                             </div>
+                        </div>
+                        <div class="col-md-12 col-xl">
+                            <div class="p-3 rounded-4 h-100 help-subcard">
+                                <span class="badge bg-danger text-white rounded-pill mb-2 px-3 py-1">{% trans "Schritt 5" %}</span>
+                                <h5 class="fw-bold fs-6 mb-2">{% trans "Zeitreise & Krisen-Stresstest" %}</h5>
+                                <p class="small opacity-75 mb-0">
+                                    {% trans "Verschiebe im Dashboard den Stichtag in jedes zukünftige Jahr, vergleiche Nominalwert mit realer Kaufkraft (heutige Preise) und simuliere im Stresstest Jobverlust, BU, Börsencrash oder Zinsanstieg." %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3 Deep-Dive Quick Modals -->
+                    <div class="row g-3 mt-3 pt-3 border-top" style="border-color: var(--app-table-border-color, rgba(125,125,125,0.2)) !important;">
+                        <div class="col-md-4">
+                            <button class="btn w-100 rounded-pill py-2 fw-semibold text-white" style="background: var(--app-gradient); border: none;" data-bs-toggle="modal" data-bs-target="#wizardHelpModal">
+                                <i class="bi bi-magic me-2"></i>{% trans "Kompakt-Guide: Standmitteilungs-Wizard" %}
+                            </button>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-outline-info w-100 rounded-pill py-2 fw-semibold" data-bs-toggle="modal" data-bs-target="#snapshotHelpModal">
+                                <i class="bi bi-clock-history me-2"></i>{% trans "Kompakt-Guide: Historische Stichtage" %}
+                            </button>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-outline-warning w-100 rounded-pill py-2 fw-semibold" data-bs-toggle="modal" data-bs-target="#calcHelpModal">
+                                <i class="bi bi-calculator me-2"></i>{% trans "Kompakt-Guide: Formeln & Inflation" %}
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -65,173 +126,539 @@
         </div>
     </div>
 
-    <!-- Overview Topic Cards -->
+    <!-- =================================================================== -->
+    <!-- TEIL 2: MODUL-FÜR-MODUL KOMPLETTANLEITUNG (A BIS I)                 -->
+    <!-- =================================================================== -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <h2 class="h3 fw-bold mb-1"><i class="bi bi-Compass me-2 text-primary"></i>{% trans "Alle Programm-Module & Funktionen im Detail (A–I)" %}</h2>
+            <p class="opacity-75 small mb-3">{% trans "Hier wird jedes einzelne Modul der oberen Navigationsleiste und des Benutzermenüs lückenlos erklärt." %}</p>
+        </div>
+    </div>
+
     <div class="row g-4 mb-5">
-        <!-- 1. Standmitteilungs-Wizard -->
-        <div class="col-md-6 col-lg-4">
-            <div class="card h-100 border-0 shadow-sm transition-hover rounded-4">
-                <div class="card-body p-4 d-flex flex-column">
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="bg-primary bg-opacity-10 text-primary rounded-3 p-3 me-3">
-                            <i class="bi bi-magic fs-3"></i>
+        <!-- MODUL A: Globale Navigation, Suche & Karten-Konfigurator -->
+        <div id="mod-global" class="col-12 scroll-anchor">
+            <div class="card border-0 shadow-sm rounded-4 help-theme-card">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <span class="badge rounded-3 p-2 fs-5 text-white" style="background: var(--app-gradient);"><i class="bi bi-search"></i></span>
+                        <div>
+                            <h3 class="h5 fw-bold mb-0">{% trans "Modul A: Globale Navigation, Volltextsuche (Strg+K) & Karten-Anpassung" %}</h3>
+                            <span class="small opacity-75">{% trans "Kopfleiste, Tastenkürzel, Info-Icons & Zahnrad-Konfigurator" %}</span>
                         </div>
-                        <h3 class="h5 mb-0 fw-bold" data-editable-key="help_text_9">{{ content_map.help_text_9|default:_('Standmitteilungs-Wizard')|safe }}</h3>
                     </div>
-                    <p class="text-muted small mb-4 flex-grow-1" data-editable-key="help_text_10">{{ content_map.help_text_10|default:_('Schritt-für-Schritt Anleitung zur Eingabe von DRV-Renteninformationen (Entgeltpunkte, Rentenwert) und privaten Vorsorge-Dokumenten ohne Datenverlust.')|safe }}</p>
-                    <button class="btn btn-primary w-100 rounded-pill" data-bs-toggle="modal" data-bs-target="#wizardHelpModal">{% trans "Anleitung lesen" %}</button>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="p-3 rounded-3 h-100 help-subcard">
+                                <h6 class="fw-bold mb-2"><i class="bi bi-command text-primary me-1"></i> {% trans "Globale Volltextsuche (Strg+K / Cmd+K)" %}</h6>
+                                <p class="small opacity-75 mb-0">
+                                    {% trans "Drücke an jeder beliebigen Stelle der App Strg+K (oder klicke auf das Lupen-Symbol in der Kopfleiste). Die Suche durchsucht in Echtzeit gleichzeitig Konten, Sachwerte, Immobilien, Darlehen, Vorsorgeverträge, Versicherungen, Cashflows sowie den kompletten Textinhalt deiner hochgeladenen Dokumente (PDF, Word, Excel, Text). Ein Klick auf das Ergebnis springt direkt zum Datensatz." %}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 rounded-3 h-100 help-subcard">
+                                <h6 class="fw-bold mb-2"><i class="bi bi-gear-fill text-info me-1"></i> {% trans "Karten-Konfigurator (⚙️) & Info-Buttons (ℹ️)" %}</h6>
+                                <p class="small opacity-75 mb-0">
+                                    {% trans "Jede KPI- und Diagramm-Karte besitzt oben rechts ein Info-Icon (ℹ️), das dir die genaue Berechnungslogik der Karte erklärt. Über das Zahnrad-Icon (⚙️) daneben kannst du Titel, Untertitel, den Hilfetext sowie eine individuelle Hintergrundfarbe für genau diese Karte frei festlegen oder zurücksetzen." %}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 rounded-3 h-100 help-subcard">
+                                <h6 class="fw-bold mb-2"><i class="bi bi-moon-stars-fill text-warning me-1"></i> {% trans "Nachtmodus-Schalter & 5 Sprachen" %}</h6>
+                                <p class="small opacity-75 mb-0">
+                                    {% trans "Oben rechts in der Navigationsleiste schaltest du mit einem Klick zwischen Tag- und Nachtmodus (☀️/🌙) um. Daneben kannst du die Sprache jederzeit live zwischen Deutsch (DE), Englisch (EN), Französisch (FR), Spanisch (ES) und Italienisch (IT) wechseln." %}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 rounded-3 h-100 help-subcard">
+                                <h6 class="fw-bold mb-2"><i class="bi bi-shield-exclamation text-danger me-1"></i> {% trans "Intelligenter Backup-Erinnerungs-Banner" %}</h6>
+                                <p class="small opacity-75 mb-0">
+                                    {% trans "Falls deine letzte vollständige Datensicherung länger zurückliegt als das im Profil eingestellte Intervall (Standard: 30 Tage), blendet das System oben einen dezenten Sicherheits-Hinweis ein. Du kannst sofort ein Backup starten oder die Erinnerung für 7 Tage stummschalten." %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- 2. Historische Stichtage & Snapshots -->
-        <div class="col-md-6 col-lg-4">
-            <div class="card h-100 border-0 shadow-sm transition-hover rounded-4">
-                <div class="card-body p-4 d-flex flex-column">
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="bg-info bg-opacity-10 text-info rounded-3 p-3 me-3">
-                            <i class="bi bi-clock-history fs-3"></i>
+        <!-- MODUL B: 7-Schritte Einrichtungs- & Standmitteilungs-Wizard -->
+        <div id="mod-wizard" class="col-12 scroll-anchor">
+            <div class="card border-0 shadow-sm rounded-4 help-theme-card">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <span class="badge rounded-3 p-2 fs-5 text-white" style="background: var(--app-gradient);"><i class="bi bi-magic"></i></span>
+                        <div>
+                            <h3 class="h5 fw-bold mb-0">{% trans "Modul B: Der 7-Schritte Einrichtungs- & Standmitteilungs-Wizard" %}</h3>
+                            <span class="small opacity-75">{% trans "Benutzermenü oben rechts → 🪄 Einrichtungs-Wizard (/finance/wizard/)" %}</span>
                         </div>
-                        <h3 class="h5 mb-0 fw-bold" data-editable-key="help_text_11">{{ content_map.help_text_11|default:_('Historische Stichtage')|safe }}</h3>
                     </div>
-                    <p class="text-muted small mb-4 flex-grow-1" data-editable-key="help_text_12">{{ content_map.help_text_12|default:_('Erfahre, wie der Verlauf deines Vermögens und deiner Entgeltpunkte über Jahre hinweg aufgezeichnet, geschützt und in Diagrammen dargestellt wird.')|safe }}</p>
-                    <button class="btn btn-info text-white w-100 rounded-pill" data-bs-toggle="modal" data-bs-target="#snapshotHelpModal">{% trans "Stichtage verstehen" %}</button>
+                    <p class="small opacity-75 mb-3">
+                        {% trans "Der Wizard dient sowohl zur kompletten Ersteinrichtung als auch zur schnellen jährlichen Pflege, wenn neue Renteninformationen oder Standmitteilungen per Post eintreffen. Alle Schritte werden lokal zwischengespeichert und folgen vollständig deinem Profil-Farbschema:" %}
+                    </p>
+                    <div class="row g-3">
+                        <div class="col-md-6 col-lg-4">
+                            <div class="p-3 rounded-3 h-100 help-subcard">
+                                <div class="fw-bold text-primary mb-1">{% trans "1. Haushalt, Lebenssituation & Kinder" %}</div>
+                                <p class="small opacity-75 mb-0">{% trans "Wahl der Lebenssituation (Standard, Knappes Budget, Alleinerziehend, Studierende/Azubi, Arbeitssuchend, Frührentner), Einzelperson oder Paar, Geburtsdaten, Rentenalter sowie Kinder im Haushalt inkl. Geburtsdatum, Selbstständigkeits-Alter (z. B. 25 J.), Kindergeld-Haken und Studien-/Ausbildungskosten ab 18." %}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="p-3 rounded-3 h-100 help-subcard">
+                                <div class="fw-bold text-primary mb-1">{% trans "2. Einkommen & Zuflüsse" %}</div>
+                                <p class="small opacity-75 mb-0">{% trans "Schnellauswahl typischer Einnahmen (Nettogehalt P1/P2, Kindergeld, Mieteinnahmen, Elterngeld, Nebenjob). Ist bei einem Kind 'Kindergeld' aktiv, legt das System automatisch 255 €/Monat mit dem exakten Enddatum des Selbstständigkeits-Geburtstags an." %}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="p-3 rounded-3 h-100 help-subcard">
+                                <div class="fw-bold text-primary mb-1">{% trans "3. Fixkosten & Lebenshaltung" %}</div>
+                                <p class="small opacity-75 mb-0">{% trans "Erfassung der monatlichen Ausgabenblöcke (Wohnen/Miete/Nebenkosten, Lebensmittel, Mobilität/Auto, Kinderbetreuung, Versicherungen, Freizeit/Abos) mit Zuordnung zu Person 1, Person 2 oder Gemeinsam." %}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="p-3 rounded-3 h-100 help-subcard">
+                                <div class="fw-bold text-primary mb-1">{% trans "4. Gesetzliche Rente (DRV)" %}</div>
+                                <p class="small opacity-75 mb-0">{% trans "Direktes Übertragen deiner DRV-Renteninformation: Stichtag 'Stand vom', bisher erreichte Entgeltpunkte (EP), aktueller Rentenwert (40,79 €), projizierte Regelaltersrente und volle Erwerbsminderungsrente." %}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="p-3 rounded-3 h-100 help-subcard">
+                                <div class="fw-bold text-primary mb-1">{% trans "5. Private Vorsorge, bAV & Pension" %}</div>
+                                <p class="small opacity-75 mb-0">{% trans "Erfassung von privaten Rentenversicherungen, ETF-Policen, Riester/Rürup, Betriebsrenten (bAV), Beamtenpensionen und Versorgungswerken inklusive Auszahlungsmodell (Auszahlungsplan, lebenslange Rente, Einmalkapital)." %}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="p-3 rounded-3 h-100 help-subcard">
+                                <div class="fw-bold text-primary mb-1">{% trans "6. Vermögen & 7. Immobilien/Kredite" %}</div>
+                                <p class="small opacity-75 mb-0">{% trans "Anlegen von Giro-, Tagesgeld- und Depotkonten (inkl. Sparplan & Notgroschen-Markierung) sowie Immobilien (Verkehrswert, Miete) und Darlehen (Restschuld, Sollzins, Rate, Zinsbindungsende)." %}</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- 3. Berechnung & Inflation -->
-        <div class="col-md-6 col-lg-4">
-            <div class="card h-100 border-0 shadow-sm transition-hover rounded-4">
-                <div class="card-body p-4 d-flex flex-column">
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="bg-warning bg-opacity-10 text-warning rounded-3 p-3 me-3">
-                            <i class="bi bi-calculator fs-3"></i>
+        <!-- MODUL C: Dashboard, Zeitreise & Krisen-Stresstest -->
+        <div id="mod-dashboard" class="col-12 scroll-anchor">
+            <div class="card border-0 shadow-sm rounded-4 help-theme-card">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <span class="badge rounded-3 p-2 fs-5 text-white" style="background: var(--app-gradient);"><i class="bi bi-graph-up-arrow"></i></span>
+                        <div>
+                            <h3 class="h5 fw-bold mb-0">{% trans "Modul C: Dashboard, 30+-Jahre-Zeitreise & Krisen-Stresstest-Simulator" %}</h3>
+                            <span class="small opacity-75">{% trans "Menüpunkt: Dashboard (/finance/dashboard/)" %}</span>
                         </div>
-                        <h3 class="h5 mb-0 fw-bold" data-editable-key="help_text_13">{{ content_map.help_text_13|default:_('Berechnungen & Inflation')|safe }}</h3>
                     </div>
-                    <p class="text-muted small mb-4 flex-grow-1" data-editable-key="help_text_14">{{ content_map.help_text_14|default:_('Wie funktioniert die Kaufkraft-Berechnung? Unterschied zwischen nominalem und realem Vermögen, Abzüge für KV/PV und Rentenanpassung.')|safe }}</p>
-                    <button class="btn btn-warning w-100 rounded-pill" data-bs-toggle="modal" data-bs-target="#calcHelpModal">{% trans "Formeln & Beispiele" %}</button>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="p-3 rounded-3 h-100 help-subcard">
+                                <h6 class="fw-bold mb-2"><i class="bi bi-calendar-range text-primary me-1"></i> {% trans "Interaktive Stichtags-Zeitreise & KPI-Karten" %}</h6>
+                                <p class="small opacity-75 mb-0">
+                                    {% trans "Über die Stichtags-Auswahl oben im Dashboard kannst du in jeden beliebigen zukünftigen Monat bis zu deinem Simulations-Endalter (Standard: 90 Jahre) reisen. Alle KPI-Karten (Gesamtvermögen, Nettovermögen nach Schulden, Sparrate, projizierte Rente, Versorgungslücke) und Tabellen berechnen sich sofort exakt für diesen Zukunftstag." %}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 rounded-3 h-100 help-subcard">
+                                <h6 class="fw-bold mb-2"><i class="bi bi-currency-exchange text-success me-1"></i> {% trans "Nominalwert vs. Reale Kaufkraft (Inflationsbereinigung)" %}</h6>
+                                <p class="small opacity-75 mb-0">
+                                    {% trans "Jede Kennzahl und jedes Diagramm zeigt neben dem nominalen Euro-Betrag (was später auf dem Kontoauszug steht) auch die reale Kaufkraft in heutigen Preisen (abgezinst mit deiner Inflationsrate aus dem Profil, z. B. 2,0 % p.a.). So erkennst du sofort, was dein Vermögen real wert ist." %}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="p-3 rounded-3 help-subcard">
+                                <h6 class="fw-bold mb-2"><i class="bi bi-lightning-charge-fill text-danger me-1"></i> {% trans "Der Krisen- & Stresstest-Simulator (5 Schock-Szenarien mit Live-Baseline-Vergleich)" %}</h6>
+                                <p class="small opacity-75 mb-2">
+                                    {% trans "Im Stresstest-Panel simulierst du per Knopfdruck reale finanzielle Einschläge. In den Charts erscheint automatisch eine gestrichelte Vergleichskurve ('Ohne Krise'), damit du die exakte Differenz am Ruhestandstag ablesen kannst:" %}
+                                </p>
+                                <div class="row g-2 small">
+                                    <div class="col-md-4"><div class="p-2 rounded border"><strong>1. {% trans "Jobverlust (ALG I):" %}</strong> {% trans "Ersetzt das Gehalt für X Monate durch 60 % / 67 % Arbeitslosengeld I; optional mit automatischer Sparplan-Pause." %}</div></div>
+                                    <div class="col-md-4"><div class="p-2 rounded border"><strong>2. {% trans "Berufsunfähigkeit (BU):" %}</strong> {% trans "Simuliert den dauerhaften Wegfall des Erwerbseinkommens unter Anrechnung von privater BU-Rente + DRV-Erwerbsminderungsrente." %}</div></div>
+                                    <div class="col-md-4"><div class="p-2 rounded border"><strong>3. {% trans "Börsencrash (-X %):" %}</strong> {% trans "Simuliert einen schlagartigen Kurseinbruch auf ETF-/Aktiendepots und Krypto-Werte." %}</div></div>
+                                    <div class="col-md-6"><div class="p-2 rounded border"><strong>4. {% trans "Anschlussfinanzierungs-Schock (+X % Zins):" %}</strong> {% trans "Erhöht den Sollzins aller Immobilienkredite exakt ab deren Zinsbindungsende um X Prozentpunkte." %}</div></div>
+                                    <div class="col-md-6"><div class="p-2 rounded border"><strong>5. {% trans "Ungeplante Notfallausgabe:" %}</strong> {% trans "Simuliert eine sofortige hohe Sonderbelastung (z. B. Heizungsschaden, Autokauf) aus dem liquiden Vermögen." %}</div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODUL D: Einnahmen, Ausgaben, Jahres-Assistent & KI-Bankimport -->
+        <div id="mod-cashflow" class="col-12 scroll-anchor">
+            <div class="card border-0 shadow-sm rounded-4 help-theme-card">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <span class="badge rounded-3 p-2 fs-5 text-white" style="background: var(--app-gradient);"><i class="bi bi-arrow-left-right"></i></span>
+                        <div>
+                            <h3 class="h5 fw-bold mb-0">{% trans "Modul D: Einnahmen, Ausgaben, Jahres-Assistent & KI-Bankimport" %}</h3>
+                            <span class="small opacity-75">{% trans "Menüpunkt: Einnahmen & Ausgaben (/finance/cash-flows/ & /finance/import/)" %}</span>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="p-3 rounded-3 h-100 help-subcard">
+                                <h6 class="fw-bold mb-2"><i class="bi bi-calendar-check text-primary me-1"></i> {% trans "Laufende Ströme, Befristungen & Einmalzahlungen" %}</h6>
+                                <p class="small opacity-75 mb-0">
+                                    {% trans "Erfasse Einnahmen und Ausgaben monatlich, vierteljährlich, halbjährlich, jährlich oder als Einmalzahlung (z. B. Erbschaft, Abfindung, Steuernachzahlung, Sanierung). Über Start- und Enddatum bildest du befristete Posten (Kindergeld, Elterngeld, Kita, Leasing) exakt ab. Gehälter enden automatisch mit dem Renteneintritt der zugeordneten Person." %}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 rounded-3 h-100 help-subcard">
+                                <h6 class="fw-bold mb-2"><i class="bi bi-calendar-plus text-success me-1"></i> {% trans "Jährlicher Anpassungs-Assistent (Historien-sicher)" %}</h6>
+                                <p class="small opacity-75 mb-0">
+                                    {% trans "Statt bei einer Gehaltserhöhung oder Mieterhöhung den alten Eintrag zu überschreiben, nutzt du den Button 'Jährliche Anpassung': Wähle beliebige Einträge aus, gib das neue Startdatum (z. B. 01.01.2027) und die prozentuale Anpassung ein. Das System beendet den alten Eintrag sauber am Vortag (31.12.2026), legt die neue Periode an und aktualisiert verknüpfte Versicherungspolicen automatisch mit." %}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="p-3 rounded-3 help-subcard">
+                                <h6 class="fw-bold mb-2"><i class="bi bi-robot text-info me-1"></i> {% trans "KI-Kontoauszugs-Import (CSV / PDF) & Regel-Suchfilter (/finance/import/)" %}</h6>
+                                <p class="small opacity-75 mb-0">
+                                    {% trans "Lade Bank-Kontoauszüge als CSV- oder PDF-Datei hoch. Die Buchungen werden über definierbare Suchfilter (/finance/import/filters/) oder per KI (lokales Ollama LLM oder Google Gemini) automatisch kategorisiert. Im Review-Dialog gruppierst du wiederkehrende Zahlungen, prüfst Preisabweichungen (> 2 % Warnung bei schleichenden Beitragserhöhungen) und übernimmst bestätigte Buchungen direkt in deine laufenden Cashflows." %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODUL E: Vorsorge (4 Säulen), Versicherungen & Risiko-/Notfall-Check -->
+        <div id="mod-pensions" class="col-12 scroll-anchor">
+            <div class="card border-0 shadow-sm rounded-4 help-theme-card">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <span class="badge rounded-3 p-2 fs-5 text-white" style="background: var(--app-gradient);"><i class="bi bi-shield-check"></i></span>
+                        <div>
+                            <h3 class="h5 fw-bold mb-0">{% trans "Modul E: Vorsorge (4 Säulen), Versicherungs-Ampel & Risiko-/Notfall-Check" %}</h3>
+                            <span class="small opacity-75">{% trans "Menüpunkt: Vorsorge & Absicherung (/finance/pensions/)" %}</span>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="p-3 rounded-3 h-100 help-subcard">
+                                <h6 class="fw-bold text-primary mb-2"><i class="bi bi-bank me-1"></i> {% trans "Tab 1: Altersvorsorge (4 Säulen & 3 Auszahlungsarten)" %}</h6>
+                                <p class="small opacity-75 mb-2">
+                                    {% trans "Verwalte Gesetzliche Rente (DRV), Private Vorsorge/bAV, Beamtenpension (bis 71,75 % Ruhegehaltssatz) sowie Versorgungswerk/VBL." %}
+                                </p>
+                                <p class="small opacity-75 mb-0">
+                                    {% trans "Wähle pro Vertrag das Auszahlungsmodell: 1. Monatlicher Auszahlungsplan (Kapitalverzehr mit Weiterverzinsung), 2. Lebenslange Rente oder 3. Einmalige Kapitalabfindung (automatischer Zufluss ins Barvermögen am Auszahlungstag)." %}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 rounded-3 h-100 help-subcard">
+                                <h6 class="fw-bold text-success mb-2"><i class="bi bi-umbrella me-1"></i> {% trans "Tab 2: Versicherungen & Ampel-Checkliste" %}</h6>
+                                <p class="small opacity-75 mb-2">
+                                    {% trans "Erfasse alle 11 Versicherungssparten (Privathaftpflicht, BU, Risikoleben, Wohngebäude, Hausrat, Kfz, Rechtsschutz, Kranken-/Pflegezusatz, Unfall, Tierhalter, Sonstige)." %}
+                                </p>
+                                <p class="small opacity-75 mb-0">
+                                    {% trans "Die Ampel-Checkliste bewertet automatisch anhand deiner Lebenssituation (Partner, Kinder, Immobilienbesitz), ob alle existenziellen Risiken abgedeckt sind. Verknüpfte Cashflows verhindern doppelte Beitragszählung." %}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 rounded-3 h-100 help-subcard">
+                                <h6 class="fw-bold text-warning mb-2"><i class="bi bi-heart-pulse me-1"></i> {% trans "Tab 3: Risiko-Check & Physische Bargeldreserve" %}</h6>
+                                <p class="small opacity-75 mb-2">
+                                    {% trans "Prüft automatisch: 1. Notgroschen-Reichweite (Ziel: 2–6 Monatsausgaben), 2. Jobverlust-Puffer (ALG I: 60 % / 67 % mit Kind), 3. BU-Lücke (80-%-Netto-Regel) und 4. Hinterbliebenenschutz (3×/5× Jahresnetto + Kredit-Restschulden)." %}
+                                </p>
+                                <p class="small opacity-75 mb-0">
+                                    {% trans "Neu: Physische Bargeldreserve für Strom-/Kartenausfall (Richtwert: 500 € + 250 € Partner + 150 € je Kind in kleinen Scheinen) inkl. 1-Klick-Modal zum direkten Anlegen/Anpassen als Bargeld-Asset." %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODUL F: Vermögen, Konten, Tagesgeld-Hopping & Sachwerte -->
+        <div id="mod-assets" class="col-12 scroll-anchor">
+            <div class="card border-0 shadow-sm rounded-4 help-theme-card">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <span class="badge rounded-3 p-2 fs-5 text-white" style="background: var(--app-gradient);"><i class="bi bi-piggy-bank"></i></span>
+                        <div>
+                            <h3 class="h5 fw-bold mb-0">{% trans "Modul F: Vermögen, Konten, Tagesgeld-Hopping & Physische Sachwerte" %}</h3>
+                            <span class="small opacity-75">{% trans "Menüpunkt: Vermögen (/finance/assets/)" %}</span>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="p-3 rounded-3 h-100 help-subcard">
+                                <h6 class="fw-bold mb-2"><i class="bi bi-wallet2 text-primary me-1"></i> {% trans "6 Anlageklassen & Sachwerte" %}</h6>
+                                <p class="small opacity-75 mb-0">
+                                    {% trans "Strukturiert in Reitern für Liquide Konten (Giro/Bargeld, Tagesgeld/Geldmarkt), Kapitalmarkt (ETF-/Aktiendepots, Krypto, Edelmetalle) sowie Physische Sachwerte (Fahrzeuge, Uhren, Schmuck, Kunst inkl. laufender Unterhaltskosten und optionalem geplanten Verkaufsdatum)." %}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 rounded-3 h-100 help-subcard">
+                                <h6 class="fw-bold mb-2"><i class="bi bi-percent text-success me-1"></i> {% trans "Tagesgeld-Hopping (Aktionszins-Wächter)" %}</h6>
+                                <p class="small opacity-75 mb-0">
+                                    {% trans "Hinterlege bei Tagesgeldkonten einen befristeten Aktionszins (z. B. 3,60 %) samt Ablaufdatum. Die Simulation rechnet exakt bis zu diesem Tag mit dem Aktionszins, fällt danach automatisch auf den regulären Basiszins zurück und warnt dich vor Ablauf." %}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 rounded-3 h-100 help-subcard">
+                                <h6 class="fw-bold mb-2"><i class="bi bi-arrow-repeat text-info me-1"></i> {% trans "Sparplan-Abgleich & Stichtags-Chronik" %}</h6>
+                                <p class="small opacity-75 mb-0">
+                                    {% trans "Monatliche Konto-/Depot-Sparpläne bauen automatisch verzinstes Vermögen auf und werden mit Spar-Ausgaben im Cashflow abgeglichen (keine Doppelzählung). Über das Uhr-Symbol pflegst du historische Kontostände (AssetSnapshots)." %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODUL G: Immobilien, Darlehen, Sondertilgung, Sanierung & Anlage V -->
+        <div id="mod-realestate" class="col-12 scroll-anchor">
+            <div class="card border-0 shadow-sm rounded-4 help-theme-card">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <span class="badge rounded-3 p-2 fs-5 text-white" style="background: var(--app-gradient);"><i class="bi bi-houses"></i></span>
+                        <div>
+                            <h3 class="h5 fw-bold mb-0">{% trans "Modul G: Immobilien, Darlehen, Sondertilgungs-Simulator, Sanierungsfahrplan & Steuern (Anlage V)" %}</h3>
+                            <span class="small opacity-75">{% trans "Menüpunkt: Immobilien & Kredite (/finance/real-estate/)" %}</span>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-6 col-lg-3">
+                            <div class="p-3 rounded-3 h-100 help-subcard">
+                                <h6 class="fw-bold text-primary mb-1">{% trans "1. Immobilien-Portfolio" %}</h6>
+                                <p class="small opacity-75 mb-0">{% trans "Eigengenutzte & vermietete Objekte mit Verkehrswert, Wertsteigerung p.a., Nettokaltmiete, Bewirtschaftungskosten, Instandhaltungsrücklage und Live-Netto-Eigenkapital (Equity)." %}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <div class="p-3 rounded-3 h-100 help-subcard">
+                                <h6 class="fw-bold text-success mb-1">{% trans "2. Darlehen & Sondertilgung" %}</h6>
+                                <p class="small opacity-75 mb-0">{% trans "Annuitäten-, Tilgungs- & endfällige Darlehen mit LTV-Quote, Zinsbindungs-Warnung und interaktivem Sondertilgungs-Simulator (zeigt sofort Zinsersparnis in € und Laufzeitverkürzung in Jahren/Monaten)." %}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <div class="p-3 rounded-3 h-100 help-subcard">
+                                <h6 class="fw-bold text-warning mb-1">{% trans "3. Sanierungsfahrplan" %}</h6>
+                                <p class="small opacity-75 mb-0">{% trans "Überwacht Bauteile (Dach, Heizung, Fenster, Fassade, Elektrik, Bad) mit Einbaujahr, typischer Lebensdauer, Zustand und 20-Jahres-Sanierungskosten- & Rücklagenprognose." %}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <div class="p-3 rounded-3 h-100 help-subcard">
+                                <h6 class="fw-bold text-info mb-1">{% trans "4. Kalender & Steuern (Anlage V)" %}</h6>
+                                <p class="small opacity-75 mb-0">{% trans "12-Monats-Cashflow-Kalender sowie automatische Steuerberechnung für Vermietung (Gebäudeanteil %, lineare AfA p.a., abzugsfähige Schuldzinsen, Handwerkerrechnungen und steuerliches Ergebnis)." %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODUL H: Dokumenten-Tresor (Document Vault) -->
+        <div id="mod-documents" class="col-12 scroll-anchor">
+            <div class="card border-0 shadow-sm rounded-4 help-theme-card">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <span class="badge rounded-3 p-2 fs-5 text-white" style="background: var(--app-gradient);"><i class="bi bi-folder2-open"></i></span>
+                        <div>
+                            <h3 class="h5 fw-bold mb-0">{% trans "Modul H: Dokumenten-Tresor (Document Vault), Direkt-Vorschau & Volltext-Suche" %}</h3>
+                            <span class="small opacity-75">{% trans "Menüpunkt: Dokumente (/finance/documents/)" %}</span>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="p-3 rounded-3 h-100 help-subcard">
+                                <h6 class="fw-bold mb-2"><i class="bi bi-link-45deg text-primary me-1"></i> {% trans "Kategorien & Objekt-Verknüpfung" %}</h6>
+                                <p class="small opacity-75 mb-0">
+                                    {% trans "Ordne hochgeladene Dokumente einer Kategorie sowie direkt einer Immobilie, einem Kredit, einem Vorsorgevertrag, einer Versicherung oder einem Konto zu. Verknüpfte Dateien erscheinen automatisch auch direkt im jeweiligen Fachmodul." %}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 rounded-3 h-100 help-subcard">
+                                <h6 class="fw-bold mb-2"><i class="bi bi-eye text-success me-1"></i> {% trans "Integrierter Browser-Viewer" %}</h6>
+                                <p class="small opacity-75 mb-0">
+                                    {% trans "Betrachte PDF-Dokumente, Bilder (PNG/JPG/WebP), Textdateien sowie Microsoft Word (.docx) und Excel-Tabellen (.xlsx) per Klick auf das Augen-Symbol direkt im integrierten Vorschau-Modal – komplett lokal ohne fremde Cloud-Dienste." %}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 rounded-3 h-100 help-subcard">
+                                <h6 class="fw-bold mb-2"><i class="bi bi-file-earmark-text text-info me-1"></i> {% trans "Automatische Volltext-Indizierung" %}</h6>
+                                <p class="small opacity-75 mb-0">
+                                    {% trans "Beim Hochladen extrahiert das System automatisch den lesbaren Text aus PDFs, Word- und Excel-Dateien. Über die globale Suche (Strg+K) findest du jedes Dokument anhand von Vertragsnummern, Namen oder Beträgen im Text wieder." %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODUL I: Profil, Kinder, Design Studio v2 & Voll-Backup -->
+        <div id="mod-profile" class="col-12 scroll-anchor">
+            <div class="card border-0 shadow-sm rounded-4 help-theme-card">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <span class="badge rounded-3 p-2 fs-5 text-white" style="background: var(--app-gradient);"><i class="bi bi-sliders"></i></span>
+                        <div>
+                            <h3 class="h5 fw-bold mb-0">{% trans "Modul I: Profil, Kinder-Verwaltung, Design Studio v2 & Voll-Backup-System" %}</h3>
+                            <span class="small opacity-75">{% trans "Benutzermenü oben rechts → Profil & Einstellungen (/profile/)" %}</span>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-6 col-lg-3">
+                            <div class="p-3 rounded-3 h-100 help-subcard">
+                                <h6 class="fw-bold text-primary mb-1">{% trans "1. Stammdaten & Parameter" %}</h6>
+                                <p class="small opacity-75 mb-0">{% trans "Geburtsdaten, Rentenalter (P1 & P2), Simulations-Endalter, Währung, Inflationsrate, Gehaltssteigerung, Kapitalertragsteuer-Abzug und monatliche Netto-Wunschrente." %}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <div class="p-3 rounded-3 h-100 help-subcard">
+                                <h6 class="fw-bold text-success mb-1">{% trans "2. Kinder-Profile (ChildProfile)" %}</h6>
+                                <p class="small opacity-75 mb-0">{% trans "Verwalte beliebig viele Kinder mit Geburtsdatum, erwartetem Alter der finanziellen Selbstständigkeit und Kindergeld-Bezug. Steuert automatisch Kindergeld-Enddatum, ALG-I-Satz (67 %), Risikoleben und Bargeld-Richtwert." %}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <div class="p-3 rounded-3 h-100 help-subcard">
+                                <h6 class="fw-bold text-warning mb-1">{% trans "3. Design Studio v2 & Pipette" %}</h6>
+                                <p class="small opacity-75 mb-0">{% trans "Wähle Farb-Harmonien (Deep Ocean, Emerald Trust, Sunset Gold, Midnight Purple) oder eigene Farben für Tag & Nacht. In der Windows-Desktop-App nimmt die integrierte Bildschirm-Pipette Farben vom gesamten Monitor auf." %}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <div class="p-3 rounded-3 h-100 help-subcard">
+                                <h6 class="fw-bold text-info mb-1">{% trans "4. Voll-Backup & Rotation" %}</h6>
+                                <p class="small opacity-75 mb-0">{% trans "Erstellt mit Live-Fortschrittsbalken ein komplettes ZIP-Backup (Datenbank + alle Dokumente). Unterstützt zusätzlich einen externen Zielordner (z. B. NAS/Nextcloud/USB) mit automatischer Backup-Rotation." %}</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Detailed Explanation Accordion -->
-    <div class="row mt-4">
+    <!-- =================================================================== -->
+    <!-- TEIL 3: GROSSE FAQ (22 PRAXIS-FRAGEN & ANTWORTEN)                   -->
+    <!-- =================================================================== -->
+    <div id="section-faq" class="row mt-4 mb-5 scroll-anchor">
         <div class="col-lg-12">
-            <div class="card border-0 shadow-lg overflow-hidden rounded-4">
-                <div class="card-header bg-dark text-white p-4 border-0">
-                    <h2 class="h4 mb-0"><i class="bi bi-book me-2"></i>{% trans "Häufige Fragen & Funktionsweise im Detail" %}</h2>
+            <div class="card border-0 shadow-lg overflow-hidden rounded-4 help-theme-card">
+                <div class="card-header p-4 border-0 text-white" style="background: var(--app-gradient);">
+                    <h2 class="h4 mb-1 fw-bold"><i class="bi bi-patch-question-fill me-2"></i>{% trans "Häufig gestellte Fragen (FAQ) – Alle 22 Themen im Detail" %}</h2>
+                    <p class="small mb-0 opacity-75">{% trans "Klicke auf eine Frage, um die ausführliche Erklärung samt Praxis-Beispielen und Rechenwegen aufzuklappen." %}</p>
                 </div>
                 <div class="card-body p-0">
                     <div class="accordion accordion-flush" id="detailedHelpFaq">
 
-                        <!-- Item 1: Rentenpunkte & Gesetzliche Rente -->
-                        <div class="accordion-item">
+                        <!-- FAQ 1: Gesetzliche Rente (DRV) -->
+                        <div class="accordion-item help-accordion-item">
                             <h2 class="accordion-header">
-                                <button class="accordion-button collapsed px-4 py-4 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faqRente">
-                                    <i class="bi bi-bank me-2 text-primary"></i> {% trans "Wie berechnet sich die gesetzliche Rente (DRV)?" %}
+                                <button class="accordion-button collapsed px-4 py-3 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                    <i class="bi bi-bank me-2 text-primary"></i> 1. {% trans "Wie berechnet sich die gesetzliche Rente (DRV) aus Entgeltpunkten und Abzügen?" %}
                                 </button>
                             </h2>
-                            <div id="faqRente" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
-                                <div class="accordion-body px-4 pb-4 text-muted">
-                                    <p data-editable-key="help_text_15">{{ content_map.help_text_15|default:_('Die monatliche Brutto-Rente berechnet sich aus der Formel:')|safe }}</p>
-                                    <div class="alert alert-primary bg-opacity-10 border-primary text-dark font-monospace mb-3">
-                                        <strong>{% trans "Bruttorente (€)" %} = {% trans "Entgeltpunkte (EP)" %} × {% trans "Aktueller Rentenwert (€)" %}</strong>
+                            <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
+                                <div class="accordion-body px-4 pb-4 opacity-85">
+                                    <p data-editable-key="help_text_15">{{ content_map.help_text_15|default:_('Die monatliche Brutto-Rente der Deutschen Rentenversicherung (DRV) berechnet sich nach der gesetzlichen Rentenformel:')|safe }}</p>
+                                    <div class="p-3 rounded-3 font-monospace mb-3 help-subcard">
+                                        <strong>{% trans "Bruttorente (€)" %} = {% trans "Entgeltpunkte (EP)" %} × {% trans "Zugangsfaktor" %} × {% trans "Aktueller Rentenwert (40,79 €)" %}</strong>
                                     </div>
-                                    <p><strong>{% trans "Beispiel:" %}</strong> {% trans "Du hast 65,20 Entgeltpunkte gesammelt. Bei einem Rentenwert von 40,79 € ergibt das:" %}</p>
-                                    <p class="font-monospace text-dark ms-3">65,20 EP × 40,79 € = 2.659,51 € {% trans "Bruttorente pro Monat" %}</p>
-                                    <hr>
-                                    <p><strong>{% trans "Abzug für Kranken- und Pflegeversicherung (KV/PV):" %}</strong></p>
-                                    <p data-editable-key="help_text_16">{{ content_map.help_text_16|default:_('Von der Bruttorente werden ca. 11,5 % für Kranken- und Pflegeversicherung abgezogen (ca. 7,3 % KV + 4,0 % PV abzüglich Bundeszuschuss). Die verbleibende Nettorente vor Steuern beträgt im Beispiel ca. 2.353,67 €.')|safe }}</p>
+                                    <p class="mb-2"><strong>{% trans "Rechenbeispiel:" %}</strong> {% trans "Bei 65,20 Entgeltpunkten und dem aktuellen Rentenwert von 40,79 € ergibt sich eine monatliche Bruttorente von 2.659,51 €." %}</p>
+                                    <p class="mb-0" data-editable-key="help_text_16">{{ content_map.help_text_16|default:_('<strong>Abzug für Kranken- und Pflegeversicherung (KV/PV):</strong> Von der Bruttorente werden im Standard ca. 11,5 % für die Kranken- und Pflegeversicherung der Rentner (KVdR/PVdR) abgezogen (individuell je Vertrag einstellbar). Im Beispiel verbleiben ca. 2.353,67 € Nettorente vor Einkommensteuer.')|safe }}</p>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Item 2: Kaufkraft & Realkaufkraft -->
-                        <div class="accordion-item">
+                        <!-- FAQ 2: Nominal vs. Reale Kaufkraft -->
+                        <div class="accordion-item help-accordion-item">
                             <h2 class="accordion-header">
-                                <button class="accordion-button collapsed px-4 py-4 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faqInflation">
-                                    <i class="bi bi-graph-down-arrow me-2 text-danger"></i> {% trans "Was ist der Unterschied zwischen nominalem und realem Vermögen?" %}
+                                <button class="accordion-button collapsed px-4 py-3 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                    <i class="bi bi-graph-down-arrow me-2 text-danger"></i> 2. {% trans "Was ist der Unterschied zwischen nominalem Vermögen und realer Kaufkraft (Inflation)?" %}
                                 </button>
                             </h2>
-                            <div id="faqInflation" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
-                                <div class="accordion-body px-4 pb-4 text-muted">
-                                    <p><strong>{% trans "Nominales Vermögen:" %}</strong> {% trans "Der reine Euro-Betrag auf deinem Konto oder im Depot in der Zukunft." %}</p>
-                                    <p><strong>{% trans "Reales Vermögen (Kaufkraft):" %}</strong> {% trans "Was dieser Euro-Betrag in Zukunft unter Berücksichtigung der Inflation im Vergleich zu heutigen Preisen noch wert ist." %}</p>
-                                    <div class="alert alert-danger bg-opacity-10 border-danger text-dark font-monospace mb-3">
+                            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
+                                <div class="accordion-body px-4 pb-4 opacity-85">
+                                    <p class="mb-2"><strong>{% trans "Nominaler Wert:" %}</strong> {% trans "Der unbereinigte Euro-Betrag, der in Zukunft auf deinem Kontoauszug oder deiner Rentenabrechnung steht." %}</p>
+                                    <p class="mb-2"><strong>{% trans "Realer Wert (Kaufkraft in heutigen Preisen):" %}</strong> {% trans "Zeigt, wie viel Warenkorb-Wert dieser zukünftige Betrag nach Abzug der jährlichen Inflation im Vergleich zu heute tatsächlich besitzt." %}</p>
+                                    <div class="p-3 rounded-3 font-monospace mb-2 help-subcard">
                                         <strong>{% trans "Realer Wert (€)" %} = {% trans "Nominaler Wert" %} / (1 + {% trans "Inflationsrate" %})^{% trans "Jahre" %}</strong>
                                     </div>
-                                    <p><strong>{% trans "Rechenbeispiel bei 2,0 % Inflation:" %}</strong></p>
-                                    <p data-editable-key="help_text_17">{{ content_map.help_text_17|default:_('Wenn du in 20 Jahren 4.000 € monatliche Rente erhältst, entspricht deren Kaufkraft bei 2 % jährlicher Inflation heute ca. 2.691,92 €.')|safe }}</p>
+                                    <p class="mb-0" data-editable-key="help_text_17">{{ content_map.help_text_17|default:_('<strong>Beispiel bei 2,0 % Inflation:</strong> 4.000 € nominale Monatsrente in 20 Jahren besitzen eine reale Kaufkraft von heute ca. 2.691,92 €.')|safe }}</p>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Item 3: Rentenentwicklung kontinuierlich bis 2043 -->
-                        <div class="accordion-item">
+                        <!-- FAQ 3: Rentenverlauf im Diagramm -->
+                        <div class="accordion-item help-accordion-item">
                             <h2 class="accordion-header">
-                                <button class="accordion-button collapsed px-4 py-4 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faqRentenverlauf">
-                                    <i class="bi bi-graph-up me-2 text-success"></i> {% trans "Wie entwickelt sich die gesetzliche Rente im Diagramm bis zum Ruhestand?" %}
+                                <button class="accordion-button collapsed px-4 py-3 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                    <i class="bi bi-graph-up me-2 text-success"></i> 3. {% trans "Wie entwickelt sich die gesetzliche Rente im Diagramm vor und ab dem Ruhestand?" %}
                                 </button>
                             </h2>
-                            <div id="faqRentenverlauf" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
-                                <div class="accordion-body px-4 pb-4 text-muted">
-                                    <p data-editable-key="help_text_18">{{ content_map.help_text_18|default:_('Die gesetzliche Rente fällt im Diagramm vor deinem Renteneintritt nicht auf 0 € ab. Stattdessen bildet das System den kontinuierlichen Erwerbsverlauf ab:')|safe }}</p>
-                                    <ul>
-                                        <li><strong>{% trans "Bis zum Renteneintritt:" %}</strong> {% trans "Der angegebene Monatswert entwickelt sich durch jährliche Dynamisierung (z. B. +1,5 % Rentenanpassung) kontinuierlich weiter bis zum Starttermin." %}</li>
-                                        <li><strong>{% trans "Ab dem Renteneintritt:" %}</strong> {% trans "Der gesetzliche Rentenanspruch schaltet von der Ansparphase nahtlos in die Auszahlungsphase um." %}</li>
+                            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
+                                <div class="accordion-body px-4 pb-4 opacity-85">
+                                    <p data-editable-key="help_text_18">{{ content_map.help_text_18|default:_('Die Simulation bildet sowohl die Anwartschaftsphase als auch die Auszahlungsphase kontinuierlich ab:')|safe }}</p>
+                                    <ul class="mb-0">
+                                        <li><strong>{% trans "Bis zum Renteneintritt:" %}</strong> {% trans "Deine erworbene und prognostizierte Rentenanwartschaft wächst mit der hinterlegten jährlichen Rentenanpassungsrate (z. B. +1,5 % p.a.) bis zum Rentenbeginn." %}</li>
+                                        <li><strong>{% trans "Ab dem Renteneintritt:" %}</strong> {% trans "Mit Erreichen deines Ziel-Rentenalters fließt die Nettorente monatlich in deinen Ruhestands-Cashflow und reduziert bzw. schließt deine Versorgungslücke." %}</li>
                                     </ul>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Item 4: Stichtags-Regel -->
-                        <div class="accordion-item">
+                        <!-- FAQ 4: Stichtags-Schutz -->
+                        <div class="accordion-item help-accordion-item">
                             <h2 class="accordion-header">
-                                <button class="accordion-button collapsed px-4 py-4 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faqStichtagsSchutz">
-                                    <i class="bi bi-shield-check me-2 text-info"></i> {% trans "Warum wird mein Vertrag bei älteren Dokumenten nicht überschrieben?" %}
+                                <button class="accordion-button collapsed px-4 py-3 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                                    <i class="bi bi-shield-check me-2 text-info"></i> 4. {% trans "Warum wird mein aktueller Vertrag bei älteren Dokumenten nicht überschrieben (Stichtags-Schutz)?" %}
                                 </button>
                             </h2>
-                            <div id="faqStichtagsSchutz" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
-                                <div class="accordion-body px-4 pb-4 text-muted">
-                                    <p data-editable-key="help_text_19">{{ content_map.help_text_19|default:_('Um deinen aktuellen Vertragsstand zu schützen, nutzt die Anwendung eine intelligente Datums-Logik:')|safe }}</p>
-                                    <ul>
-                                        <li><strong>{% trans "Neueres Datum als bisher:" %}</strong> {% trans "Wenn du eine Renteninformation mit einem neueren Datum eingibst (z. B. Stand 2026 statt 2024), wird dein Hauptvertrag auf die neuen Werte aktualisiert und der alte Stand als historischer Snapshot gesichert." %}</li>
-                                        <li><strong>{% trans "Älteres Datum als bisher:" %}</strong> {% trans "Trägst du nachträglich ein altes Dokument von 2022 ein, bleibt dein Hauptvertrag von 2026 unberührt. Das System fügt den Wert von 2022 lediglich als historischen Stichtag in deine Chronik ein." %}</li>
+                            <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
+                                <div class="accordion-body px-4 pb-4 opacity-85">
+                                    <p data-editable-key="help_text_19">{{ content_map.help_text_19|default:_('Damit du alte Ordner in beliebiger Reihenfolge abheften und nachtragen kannst, schützt eine chronologische Datums-Logik deine aktuellen Werte:')|safe }}</p>
+                                    <ul class="mb-0">
+                                        <li><strong>{% trans "Neueres Stichtags-Datum (z. B. Brief von 2026 nach Stand 2025):" %}</strong> {% trans "Der Hauptvertrag wird auf die neuen Werte von 2026 aktualisiert und der bisherige Stand von 2025 bleibt als historischer Snapshot erhalten." %}</li>
+                                        <li><strong>{% trans "Älteres Stichtags-Datum (z. B. Fund eines Briefs von 2021):" %}</strong> {% trans "Dein aktueller Hauptvertrag von 2026 bleibt völlig unberührt! Der Wert von 2021 wird automatisch an der richtigen Stelle in deine historische Verlaufskurve eingefügt." %}</li>
                                     </ul>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Item: Auszahlungsarten bei privater Vorsorge, Vermögenspolicen & bAV -->
-                        <div class="accordion-item">
+                        <!-- FAQ 5: 3 Auszahlungsarten für Vorsorge & bAV -->
+                        <div class="accordion-item help-accordion-item">
                             <h2 class="accordion-header">
-                                <button class="accordion-button collapsed px-4 py-4 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faqPayoutTypes">
-                                    <i class="bi bi-wallet-fill me-2 text-primary"></i> {% trans "Welche Auszahlungsarten gibt es für private Policen & bAV (Auszahlungsplan vs. lebenslange Rente vs. Einmalkapital)?" %}
+                                <button class="accordion-button collapsed px-4 py-3 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
+                                    <i class="bi bi-wallet-fill me-2 text-primary"></i> 5. {% trans "Welche 3 Auszahlungsarten gibt es für private Policen & bAV (Auszahlungsplan vs. lebenslange Rente vs. Einmalkapital)?" %}
                                 </button>
                             </h2>
-                            <div id="faqPayoutTypes" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
-                                <div class="accordion-body px-4 pb-4 text-muted">
-                                    <p data-editable-key="help_text_20">{{ content_map.help_text_20|default:_('Bei privaten Rentenversicherungen, vermögensbildenden Policen und betrieblicher Altersvorsorge (bAV) stehen dir 3 Auszahlungsmodelle zur Verfügung:')|safe }}</p>
-                                    
-                                    <div class="row g-3 mb-3">
+                            <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
+                                <div class="accordion-body px-4 pb-4 opacity-85">
+                                    <div class="row g-3">
                                         <div class="col-md-4">
-                                            <div class="p-3 rounded-3 bg-body border h-100">
-                                                <div class="fw-bold text-primary mb-1"><i class="bi bi-graph-down-arrow me-1"></i> {% trans "1. Monatlicher Auszahlungsplan (Kapitalverzehr)" %}</div>
-                                                <p class="small mb-0" data-editable-key="help_text_21">{{ content_map.help_text_21|default:_('Typisch für Vermögenspolicen (z. B. 200.000 € Kapital mit 500 € monatlicher Auszahlung). Der Monatsbetrag fließt in dein laufendes Einkommen / Cashflow ein, während das Restkapital im Vertrag mit jeder Entnahme sinkt und weiter verzinst wird.')|safe }}</p>
+                                            <div class="p-3 rounded-3 h-100 help-subcard">
+                                                <div class="fw-bold text-primary mb-1">1. {% trans "Monatlicher Auszahlungsplan (Kapitalverzehr)" %}</div>
+                                                <p class="small mb-0">{% trans "Ideal für Fonds-/Vermögenspolicen und Depot-Entnahmen: Jeden Monat fließt deine Wunschrate in den Cashflow, während das verbleibende Restkapital im Vertrag weiter verzinst wird, bis es aufgebraucht ist." %}</p>
                                             </div>
                                         </div>
                                         <div class="col-md-4">
-                                            <div class="p-3 rounded-3 bg-body border h-100">
-                                                <div class="fw-bold text-success mb-1"><i class="bi bi-infinity me-1"></i> {% trans "2. Laufende Rente (Lebenslang garantiert)" %}</div>
-                                                <p class="small mb-0" data-editable-key="help_text_22">{{ content_map.help_text_22|default:_('Klassische Verrentung: Die Monatsrente wird bis an dein Lebensende ausgezahlt. Das anfängliche Vertragskapital wird rechnerisch nicht verzehrt, da die Versicherung das Langlebigkeitsrisiko trägt.')|safe }}</p>
+                                            <div class="p-3 rounded-3 h-100 help-subcard">
+                                                <div class="fw-bold text-success mb-1">2. {% trans "Lebenslange Rente (Garantiert)" %}</div>
+                                                <p class="small mb-0">{% trans "Klassische Verrentung: Die vereinbarte Monatsrente fließt garantiert bis zum Simulations-Endalter in dein Ruhestandseinkommen, ohne dass das Deckungskapital auf 0 € abschmilzt." %}</p>
                                             </div>
                                         </div>
                                         <div class="col-md-4">
-                                            <div class="p-3 rounded-3 bg-body border h-100">
-                                                <div class="fw-bold text-warning mb-1"><i class="bi bi-cash-stack me-1"></i> {% trans "3. Einmalige Kapitalabfindung (z. B. bAV)" %}</div>
-                                                <p class="small mb-0" data-editable-key="help_text_23">{{ content_map.help_text_23|default:_('Gesamtauszahlung auf einen Schlag: Das Kapital wächst bis zum Stichtag und wird am Auszahlungstag <strong>vollautomatisch in dein Barvermögen</strong> überführt. Der Vorsorgevertrag steht ab diesem Tag auf 0 €.')|safe }}</p>
+                                            <div class="p-3 rounded-3 h-100 help-subcard">
+                                                <div class="fw-bold text-warning mb-1">3. {% trans "Einmalige Kapitalabfindung" %}</div>
+                                                <p class="small mb-0">{% trans "Gesamtauszahlung zum Stichtag: Das Kapital wächst bis zum Auszahlungsdatum und wird an diesem Tag vollautomatisch in dein liquides Barvermögen umgebucht. Der Vorsorgevertrag steht ab diesem Monat auf 0 €." %}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -239,199 +666,360 @@
                             </div>
                         </div>
 
-                        <!-- Item: bAV Einmalkapitalauszahlung -->
-                        <div class="accordion-item">
+                        <!-- FAQ 6: bAV Einmalkapital + 10 Jahre Krankenkasse & Steuern -->
+                        <div class="accordion-item help-accordion-item">
                             <h2 class="accordion-header">
-                                <button class="accordion-button collapsed px-4 py-4 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faqBavEinmalkapital">
-                                    <i class="bi bi-cash-coin me-2 text-primary"></i> {% trans "Wie erfasse ich eine bAV-Einmalkapitalauszahlung (inkl. 10 Jahre Krankenkasse & Steuern)?" %}
+                                <button class="accordion-button collapsed px-4 py-3 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faq6">
+                                    <i class="bi bi-cash-coin me-2 text-primary"></i> 6. {% trans "Wie erfasse ich eine bAV-Einmalkapitalauszahlung (inkl. 10 Jahre Krankenkasse / 120-Monate-Regel & Steuern)?" %}
                                 </button>
                             </h2>
-                            <div id="faqBavEinmalkapital" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
-                                <div class="accordion-body px-4 pb-4 text-muted">
-                                    <p data-editable-key="help_text_24">{{ content_map.help_text_24|default:_('Wenn du eine betriebliche Altersvorsorge (bAV / Direktversicherung) nicht als monatliche Rente, sondern als Einmalkapital ausgezahlt bekommst, lässt sich das über das Zusammenspiel von Vorsorgevertrag, Einmalzahlung und Ausgaben exakt und realistisch abbilden:')|safe }}</p>
-                                    
-                                    <div class="row g-3 mb-3">
-                                        <div class="col-md-6">
-                                            <div class="p-3 rounded-3 bg-body border h-100">
-                                                <div class="fw-bold text-primary mb-1"><i class="bi bi-1-circle me-1"></i> {% trans "Vorsorgevertrag auf 'Einmalkapital' stellen" %}</div>
-                                                <p class="small mb-0" data-editable-key="help_text_40">{{ content_map.help_text_40|default:_('Erfasse die bAV unter \'Vorsorge\' mit aktuellem Kapitalwert / garantierter Summe und Auszahlungsdatum. Wähle als Auszahlungsart <strong>\'Einmalige Kapitalauszahlung\'</strong>. Das Kapital wächst bis zum Stichtag und wird danach im Rentenkapital auf 0 € gesetzt.')|safe }}</p>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="p-3 rounded-3 bg-body border h-100">
-                                                <div class="fw-bold text-success mb-1"><i class="bi bi-2-circle me-1"></i> {% trans "Automatischer Zufluss ins Barvermögen" %}</div>
-                                                <p class="small mb-0" data-editable-key="help_text_41">{{ content_map.help_text_41|default:_('Durch die Auszahlungsart \'Einmalkapital\' bucht die Simulation den hochgerechneten Endbetrag am Auszahlungstag <strong>vollautomatisch in dein Barvermögen</strong>. Du musst keine manuelle Einmalzahlung anlegen!')|safe }}</p>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="p-3 rounded-3 bg-body border h-100">
-                                                <div class="fw-bold text-danger mb-1"><i class="bi bi-3-circle me-1"></i> {% trans "10 Jahre Krankenkasse & Pflege (120 Monate)" %}</div>
-                                                <p class="small mb-0" data-editable-key="help_text_42">{{ content_map.help_text_42|default:_('Nach § 229 SGB V gilt für bAV-Kapitalauszahlungen bei gesetzlich Versicherten die 120-Monate-Regel (1/120tel des Kapitals monatlich beitragspflichtig). Lege unter \'Ausgaben\' einen monatlichen Posten an: <strong>Startdatum</strong> = Auszahlungsdatum, <strong>Enddatum</strong> = exakt 10 Jahre später.')|safe }}</p>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="p-3 rounded-3 bg-body border h-100">
-                                                <div class="fw-bold text-warning mb-1"><i class="bi bi-4-circle me-1"></i> {% trans "Steuernachzahlung im Folgejahr" %}</div>
-                                                <p class="small mb-0" data-editable-key="help_text_43">{{ content_map.help_text_43|default:_('Die Auszahlung ist voll einkommensteuerpflichtig (häufig begünstigt nach der Fünftelregelung). Trage unter \'Einmalige Zahlungen\' zum geschätzten Fälligkeitsdatum im Folgejahr die Steuerlast als <strong>negativen Betrag</strong> ein.')|safe }}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="alert alert-info border-0 rounded-3 p-3 mb-0 small">
-                                        <i class="bi bi-lightbulb-fill text-warning me-1"></i> <strong>{% trans "Praxis-Tipp:" %}</strong> {% trans "Für die gesetzliche Krankenkasse gilt ein monatlicher Freibetrag (GKV-Betriebsrentenfreibetrag). Nur der darüber liegende Teil von 1/120tel der Auszahlungssumme unterliegt den Krankenkassenbeiträgen; die Pflegeversicherung ist voll beitragspflichtig." %}
-                                    </div>
+                            <div id="faq6" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
+                                <div class="accordion-body px-4 pb-4 opacity-85">
+                                    <ol class="mb-2">
+                                        <li class="mb-1"><strong>{% trans "Vorsorgevertrag auf 'Einmalige Kapitalauszahlung' stellen:" %}</strong> {% trans "Trage unter 'Vorsorge' das aktuelle Guthaben bzw. die prognostizierte Endsumme und das Auszahlungsdatum ein. Am Stichtag bucht die Simulation das Kapital automatisch in dein Barvermögen." %}</li>
+                                        <li class="mb-1"><strong>{% trans "10 Jahre Krankenkasse & Pflege (§ 229 SGB V – 1/120-Regel):" %}</strong> {% trans "Bei gesetzlich Krankenversicherten wird 1/120tel der Kapitalabfindung über exakt 120 Monate (10 Jahre) hinweg für KV/PV herangezogen (abzüglich GKV-Betriebsrentenfreibetrag bei der Krankenversicherung). Lege dafür unter 'Einnahmen & Ausgaben' eine monatliche Ausgabe mit Startdatum = Auszahlungstag und Enddatum = 10 Jahre später an." %}</li>
+                                        <li class="mb-0"><strong>{% trans "Einkommensteuer im Auszahlungs-/Folgejahr:" %}</strong> {% trans "Erfasse die geschätzte Steuerlast als 'Einmalige Zahlung' (Ausgabe) zum Fälligkeitstermin des Steuerbescheids." %}</li>
+                                    </ol>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Item 5: Profil, Design Studio & Farben -->
-                        <div class="accordion-item">
+                        <!-- FAQ 7: Physische Bargeldreserve (Wo gespeichert & keine Doppelzählung) -->
+                        <div class="accordion-item help-accordion-item">
                             <h2 class="accordion-header">
-                                <button class="accordion-button collapsed px-4 py-4 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faqSettingsDesign">
-                                    <i class="bi bi-palette me-2 text-primary"></i> {% trans "Profil, Farbwelten & Design Studio anpassen" %}
+                                <button class="accordion-button collapsed px-4 py-3 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faq7">
+                                    <i class="bi bi-cash-stack me-2 text-success"></i> 7. {% trans "Wo wird die physische Bargeldreserve gespeichert und wie wird verhindert, dass sie doppelt zählt?" %}
                                 </button>
                             </h2>
-                            <div id="faqSettingsDesign" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
-                                <div class="accordion-body px-4 pb-4 text-muted">
-                                    <p data-editable-key="help_text_44">{{ content_map.help_text_44|default:_('Im Menü unter \'Profile & Design\' kannst du deine Anwendung vollkommen individuell gestalten:')|safe }}</p>
-                                    <ul>
-                                        <li><strong>{% trans "Stammdaten & Partner:" %}</strong> {% trans "Lege Geburtsdaten, Rentenalter von Person 1 und Person 2 (Partner) sowie dein Haushalts-Sparziel fest." %}</li>
-                                        <li><strong>{% trans "Farbharmonie-Engine:" %}</strong> {% trans "Wähle aus fertigen Farb-Presets (Deep Ocean, Emerald Trust, Sunset Gold, Midnight Purple) oder erstelle dein eigenes Verlaufsmuster." %}</li>
-                                        <li><strong>{% trans "Automatischer Nachtmodus:" %}</strong> {% trans "Auf Wunsch passt sich die Anwendung automatisch an die Systemeinstellungen deines Betriebssystems (Dark / Light Mode) an." %}</li>
+                            <div id="faq7" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
+                                <div class="accordion-body px-4 pb-4 opacity-85">
+                                    <ul class="mb-0">
+                                        <li class="mb-2"><strong>{% trans "Speicherort:" %}</strong> {% trans "Wenn du unter 'Vorsorge & Absicherung → Risiko- & Notfall-Check' auf 'Bargeldreserve anlegen / anpassen' klickst, speichert das System diesen Betrag direkt unter 'Vermögen → Konten & Depots' als Finanz-Asset vom Typ 'Bargeld' (Institut: 'Zuhause / Tresor')." %}</li>
+                                        <li class="mb-2"><strong>{% trans "Aktualisierung statt Duplikat:" %}</strong> {% trans "Ein erneuter Klick auf 'Bargeldreserve anpassen' aktualisiert exakt dieses bestehende Bargeld-Asset, statt einen zweiten Eintrag anzulegen." %}</li>
+                                        <li class="mb-0"><strong>{% trans "Saubere Trennung von Sachwerten im Tresor:" %}</strong> {% trans "Physische Sachwerte (z. B. Uhren, Schmuck oder Gold mit Lagerort 'Zuhause' oder 'Tresor') werden bei der Bargeldreserve bewusst ignoriert – nur explizite Bargeld-Einträge (Bargeld, Barreserve, Notfallkasse) zählen für den Blackout-Bargeld-Check." %}</li>
                                     </ul>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Item 6: Fortführung von Ausgaben & Einnahmen (Dynamisierung) -->
-                        <div class="accordion-item">
+                        <!-- FAQ 8: Kinder-Profile & Auswirkungen -->
+                        <div class="accordion-item help-accordion-item">
                             <h2 class="accordion-header">
-                                <button class="accordion-button collapsed px-4 py-4 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faqCashflowProgression">
-                                    <i class="bi bi-graph-up-arrow me-2 text-warning"></i> {% trans "Wie werden Einnahmen und Ausgaben in die Zukunft fortgeschrieben?" %}
+                                <button class="accordion-button collapsed px-4 py-3 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faq8">
+                                    <i class="bi bi-people-fill me-2 text-info"></i> 8. {% trans "Wie wirken sich Kinder-Profile auf Kindergeld, ALG I (67 %), Risiko-Check und Ausgaben aus?" %}
                                 </button>
                             </h2>
-                            <div id="faqCashflowProgression" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
-                                <div class="accordion-body px-4 pb-4 text-muted">
-                                    <p data-editable-key="help_text_25">{{ content_map.help_text_25|default:_('Alle Zahlungsströme werden über den gesamten Simulationszeitraum intelligent berechnet:')|safe }}</p>
-                                    <ul>
-                                        <li><strong>{% trans "Gehalt & Einkommen:" %}</strong> {% trans "Gehälter wachsen jährlich mit deiner individuellen Gehaltssteigerungsrate (z. B. +2,0 % p.a.) und enden automatisch mit Erreichen deines gesetzlichen Rentenalters." %}</li>
-                                        <li><strong>{% trans "Lebenshaltungskosten & Ausgaben:" %}</strong> {% trans "Ausgaben passen sich kontinuierlich an die Inflationsrate an, um deinen tatsächlichen Lebensstandard im Alter realistisch abzubilden." %}</li>
-                                        <li><strong>{% trans "Einmalige vs. Monatliche Zahlungen:" %}</strong> {% trans "Du kannst Start- und Enddaten festlegen (z. B. auslaufende Kredite oder befristete Einnahmen), um den genauen Verlauf zu steuern." %}</li>
+                            <div id="faq8" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
+                                <div class="accordion-body px-4 pb-4 opacity-85">
+                                    <p class="mb-2">{% trans "Unter 'Profil & Einstellungen' sowie im 1. Schritt des Einrichtungs-Wizards kannst du für jedes Kind Name, Geburtsdatum, erwartetes Alter der finanziellen Selbstständigkeit (Standard: 25 Jahre) und den Kindergeld-Bezug hinterlegen. Das steuert vollautomatisch 5 Bereiche:" %}</p>
+                                    <ul class="mb-0">
+                                        <li><strong>{% trans "Automatische Kindergeld-Terminierung:" %}</strong> {% trans "Der Wizard legt für jedes Kind mit aktivem Kindergeld-Haken 255 €/Monat an und setzt das Enddatum exakt auf den Geburtstag, an dem das Kind das Selbstständigkeits-Alter erreicht." %}</li>
+                                        <li><strong>{% trans "Höheres Arbeitslosengeld I (67 % statt 60 %):" %}</strong> {% trans "Sobald mindestens ein unterhaltsberechtigtes Kind vorhanden ist, rechnet der Jobverlust-Puffer und der Dashboard-Stresstest automatisch mit dem erhöhten ALG-I-Satz von 67 %." %}</li>
+                                        <li><strong>{% trans "Erhöhter Hinterbliebenenschutz (Risikoleben):" %}</strong> {% trans "Die empfohlene Todesfallabsicherung steigt bei Familien mit Kindern auf das 5-fache Jahresnettoeinkommen (statt 3-fach) plus offene Kredit-Restschulden." %}</li>
+                                        <li><strong>{% trans "Haushalts-Richtwert der Bargeldreserve:" %}</strong> {% trans "Pro unterhaltsberechtigtem Kind erhöht sich der empfohlene Bargeld-Puffer zu Hause automatisch um +150 €." %}</li>
+                                        <li><strong>{% trans "Kinder-Zeitleiste im Risiko-Check:" %}</strong> {% trans "Zeigt auf einen Blick das aktuelle Alter, das genaue Datum der finanziellen Selbstständigkeit und die verbleibenden Versorgungsjahre je Kind." %}</li>
                                     </ul>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Item 7: Chart-Icons & Simulations-Indikatoren -->
-                        <div class="accordion-item">
+                        <!-- FAQ 9: Jährlicher Anpassungs-Assistent -->
+                        <div class="accordion-item help-accordion-item">
                             <h2 class="accordion-header">
-                                <button class="accordion-button collapsed px-4 py-4 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faqChartIcons">
-                                    <i class="bi bi-info-circle me-2 text-info"></i> {% trans "Was bedeuten die Info-Icons & Simulations-Indikatoren in den Charts?" %}
+                                <button class="accordion-button collapsed px-4 py-3 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faq9">
+                                    <i class="bi bi-calendar-range me-2 text-success"></i> 9. {% trans "Wie funktioniert der Jährliche Anpassungs-Assistent zum Jahreswechsel ohne Verlust der Historie?" %}
                                 </button>
                             </h2>
-                            <div id="faqChartIcons" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
-                                <div class="accordion-body px-4 pb-4 text-muted">
-                                    <p data-editable-key="help_text_26">{{ content_map.help_text_26|default:_('Die interaktiven Diagramme bieten durch visuelle Icons direkt im Chart zusätzliche Transparenz:')|safe }}</p>
-                                    <ul>
-                                        <li><strong>{% trans "Info-Icons (ℹ️):" %}</strong> {% trans "Klicke auf die kleinen Info-Buttons in den Kurven, um genaue Details zu Formeln, Stichtagswerten und Berechnungsgrundlagen an diesem konkreten Punkt zu lesen." %}</li>
-                                        <li><strong>{% trans "Simulations-Aktiv-Status:" %}</strong> {% trans "Zeigt dir an, ob dein Schieberegler auf dem heutigen Datum steht oder ob du gerade eine Reise in ein zukünftiges Simulationsjahr machst." %}</li>
-                                        <li><strong>{% trans "Gestrichelte Ziellinie:" %}</strong> {% trans "Stellt deine im Profil definierte Netto-Wunschrente dar. So siehst du auf einen Blick, ab welchem Jahr eine Versorgungslücke entsteht." %}</li>
+                            <div id="faq9" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
+                                <div class="accordion-body px-4 pb-4 opacity-85">
+                                    <p class="mb-2">{% trans "Wenn sich ab dem 01.01. dein Gehalt, deine Miete oder deine Versicherungsbeiträge ändern, öffnest du unter 'Einnahmen & Ausgaben' den Button 'Jährliche Anpassung':" %}</p>
+                                    <ol class="mb-0">
+                                        <li>{% trans "Markiere alle Verträge oder Gehälter, die angepasst werden sollen." %}</li>
+                                        <li>{% trans "Wähle das Stichtags-Datum der Erhöhung (z. B. 01.01.2027) und den Prozentsatz (z. B. +3,2 %)." %}</li>
+                                        <li>{% trans "Das System setzt beim bisherigen Eintrag das Enddatum automatisch auf den Vortag (31.12.2026), erzeugt ab 01.01.2027 den neuen Eintrag mit dem erhöhten Betrag und aktualisiert verknüpfte Versicherungspolicen synchron." %}</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ 10: Schutz vor Doppelzählung (Sparpläne & Versicherungen) -->
+                        <div class="accordion-item help-accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed px-4 py-3 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faq10">
+                                    <i class="bi bi-intersect me-2 text-warning"></i> 10. {% trans "Wie wird verhindert, dass Sparpläne oder Versicherungsbeiträge doppelt gezählt werden?" %}
+                                </button>
+                            </h2>
+                            <div id="faq10" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
+                                <div class="accordion-body px-4 pb-4 opacity-85">
+                                    <ul class="mb-0">
+                                        <li class="mb-2"><strong>{% trans "Sparplan-Reconciliation (Konto vs. Cashflow):" %}</strong> {% trans "Wenn du an einem Tagesgeld- oder Depotkonto eine monatliche Sparrate hinterlegst UND gleichzeitig in deinen Ausgaben Spar-Posten führst, gleicht die Simulations-Engine diese Beträge automatisch gegeneinander ab. So wird deine freie Liquidität niemals doppelt belastet." %}</li>
+                                        <li class="mb-0"><strong>{% trans "Versicherungs-Verknüpfung (linked_cash_flow):" %}</strong> {% trans "Wenn eine Versicherungspolice unter 'Vorsorge & Absicherung' mit einer Ausgabe in deinen Cashflows verknüpft ist, zählt das System den Beitrag im Haushaltsbudget exakt einmal." %}</li>
                                     </ul>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Item 8: Mehrsprachigkeit (Internationalisierung) -->
-                        <div class="accordion-item">
+                        <!-- FAQ 11: Tagesgeld-Hopping -->
+                        <div class="accordion-item help-accordion-item">
                             <h2 class="accordion-header">
-                                <button class="accordion-button collapsed px-4 py-4 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faqLanguages">
-                                    <i class="bi bi-translate me-2 text-success"></i> {% trans "Mehrsprachigkeit & Sprachwechsel" %}
+                                <button class="accordion-button collapsed px-4 py-3 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faq11">
+                                    <i class="bi bi-percent me-2 text-primary"></i> 11. {% trans "Wie funktioniert das Tagesgeld-Hopping (Aktionszins mit Ablaufdatum)?" %}
                                 </button>
                             </h2>
-                            <div id="faqLanguages" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
-                                <div class="accordion-body px-4 pb-4 text-muted">
-                                    <p data-editable-key="help_text_27">{{ content_map.help_text_27|default:_('Die Anwendung unterstützt 5 Sprachen vollumfänglich:')|safe }}</p>
+                            <div id="faq11" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
+                                <div class="accordion-body px-4 pb-4 opacity-85">
+                                    <p class="mb-0">
+                                        {% trans "Bearbeite unter 'Vermögen' dein Tagesgeldkonto und trage neben dem dauerhaften Basiszins (z. B. 1,25 %) den befristeten Aktionszins (z. B. 3,50 %) sowie das Datum 'Aktionszins gültig bis' ein. Die Simulation verzinst dein Guthaben bis exakt zu diesem Datum mit 3,50 % und schaltet ab dem Folgemonat automatisch auf 1,25 % um. Zusätzlich warnt dich ein optischer Indikator rechtzeitig vor dem Ablauftag." %}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ 12: Sondertilgungs-Simulator -->
+                        <div class="accordion-item help-accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed px-4 py-3 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faq12">
+                                    <i class="bi bi-calculator-fill me-2 text-success"></i> 12. {% trans "Wie nutze ich den interaktiven Sondertilgungs-Simulator für meine Immobilienkredite?" %}
+                                </button>
+                            </h2>
+                            <div id="faq12" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
+                                <div class="accordion-body px-4 pb-4 opacity-85">
+                                    <p class="mb-0">
+                                        {% trans "Gehe auf 'Immobilien & Kredite → Darlehen & Tilgungsplan' und öffne bei einem Darlehen die Detail-/Tilgungsansicht. Dort kannst du sowohl fest geplante Sondertilgungen speichern als auch im Live-Simulator testen, wie viel Zinsersparnis (in Euro) und wie viele Jahre/Monate Laufzeitverkürzung dir eine einmalige oder jährliche Sondertilgung bringt." %}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ 13: Sanierungsfahrplan & Anlage V -->
+                        <div class="accordion-item help-accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed px-4 py-3 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faq13">
+                                    <i class="bi bi-houses-fill me-2 text-info"></i> 13. {% trans "Wie werden Sanierungsfahrplan (Bauteile) und Vermietungs-Steuern (Anlage V / AfA) berechnet?" %}
+                                </button>
+                            </h2>
+                            <div id="faq13" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
+                                <div class="accordion-body px-4 pb-4 opacity-85">
+                                    <ul class="mb-0">
+                                        <li class="mb-2"><strong>{% trans "Sanierungsfahrplan (PropertyComponent):" %}</strong> {% trans "Aus Einbaujahr + erwarteter Lebensdauer berechnet das System das voraussichtliche Erneuerungsjahr für Dach, Heizung, Fenster, Fassade etc. und teilt die geschätzten Kosten durch die verbleibenden Monate bis zur Fälligkeit (empfohlene Instandhaltungsrücklage)." %}</li>
+                                        <li class="mb-0"><strong>{% trans "Steuer-Cockpit (Anlage V):" %}</strong> {% trans "Für vermietete Immobilien berechnet das System die jährliche Gebäude-AfA (Kaufpreis × Gebäudeanteil % × AfA-Satz %), addiert die im Kalenderjahr anfallenden Darlehenszinsen sowie hinterlegte Handwerker-/Erhaltungsrechnungen und stellt sie den Jahresmieteinnahmen gegenüber." %}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ 14: Dokumenten-Tresor & Volltextsuche -->
+                        <div class="accordion-item help-accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed px-4 py-3 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faq14">
+                                    <i class="bi bi-file-earmark-richtext me-2 text-primary"></i> 14. {% trans "Welche Dateiformate unterstützt der Dokumenten-Tresor und wie suche ich im Dokumententext?" %}
+                                </button>
+                            </h2>
+                            <div id="faq14" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
+                                <div class="accordion-body px-4 pb-4 opacity-85">
+                                    <p class="mb-0">
+                                        {% trans "Der Dokumenten-Tresor (/finance/documents/) speichert beliebige Dateien und bietet eine integrierte Browser-Direktvorschau für PDF, Bilder (PNG, JPG, WebP, GIF), Text/CSV sowie Microsoft Word (.docx) und Excel (.xlsx). Beim Upload liest die Text-Engine automatisch den Inhalt aus PDF-, Word-, Excel- und Textdateien aus. Drückst du Strg+K, durchsucht die globale Suche diesen kompletten Volltext-Index in Millisekunden." %}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ 15: KI-Bankimport & Filter -->
+                        <div class="accordion-item help-accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed px-4 py-3 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faq15">
+                                    <i class="bi bi-cpu me-2 text-success"></i> 15. {% trans "Wie funktioniert der KI-Bankimport (CSV/PDF) mit Ollama / Gemini und den Regel-Filtern?" %}
+                                </button>
+                            </h2>
+                            <div id="faq15" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
+                                <div class="accordion-body px-4 pb-4 opacity-85">
+                                    <p class="mb-2">
+                                        {% trans "Unter 'Einnahmen & Ausgaben → Kontoauszug importieren' lädst du CSV- oder PDF-Auszüge deiner Bank hoch:" %}
+                                    </p>
+                                    <ul class="mb-0">
+                                        <li><strong>{% trans "Stufe 1 – Eigene Suchfilter (/finance/import/filters/):" %}</strong> {% trans "Treffer auf hinterlegte Stichworte (z. B. 'Stadtwerke', 'Allianz', 'Gehalt') werden sofort deterministisch zugeordnet. Ist ein Referenz-Cashflow verknüpft, warnt das System automatisch bei Preisabweichungen über 2 %." %}</li>
+                                        <li><strong>{% trans "Stufe 2 – Optionale KI-Erkennung:" %}</strong> {% trans "Unbekannte Buchungen können durch ein lokales Sprachmodell (Ollama auf deinem Rechner/Server) oder Google Gemini analysiert und mit einem Kategorievorschlag versehen werden." %}</li>
+                                        <li><strong>{% trans "Stufe 3 – Review & Übernahme:" %}</strong> {% trans "Erst wenn du im Review-Dialog eine Buchung oder Gruppe bestätigst, wird sie in deinen echten Finanzplan übernommen." %}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ 16: Dashboard Krisen-Stresstest -->
+                        <div class="accordion-item help-accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed px-4 py-3 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faq16">
+                                    <i class="bi bi-lightning-charge me-2 text-danger"></i> 16. {% trans "Wie teste ich Krisen (Jobverlust, BU, Börsencrash, Zinsanstieg) im Dashboard-Stresstest?" %}
+                                </button>
+                            </h2>
+                            <div id="faq16" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
+                                <div class="accordion-body px-4 pb-4 opacity-85">
+                                    <p class="mb-0">
+                                        {% trans "Klappe im Dashboard das Panel 'Krisen- & Stresstest-Simulator' auf, wähle eines der 5 Szenarien (oder kombiniere Parameter wie Crash-Höhe %, Dauer der Arbeitslosigkeit oder Zinsaufschlag nach Zinsbindung) und klicke auf 'Simulieren'. Deine echten Datenbank-Einträge werden dadurch nicht verändert – die Simulation berechnet lediglich eine temporäre Schock-Projektion und legt die ursprüngliche Kurve ('Ohne Krise') zum direkten Vergleich als gestrichelte Linie darüber." %}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ 17: Karten-Konfigurator -->
+                        <div class="accordion-item help-accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed px-4 py-3 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faq17">
+                                    <i class="bi bi-gear-wide-connected me-2 text-info"></i> 17. {% trans "Wie passe ich einzelne Karten (Titel, Hilfetext, Farbe) über das Zahnrad-Icon an?" %}
+                                </button>
+                            </h2>
+                            <div id="faq17" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
+                                <div class="accordion-body px-4 pb-4 opacity-85">
+                                    <p class="mb-0">
+                                        {% trans "Klicke auf einer beliebigen Karte im Dashboard oder in den Fachmodulen oben rechts auf das Zahnrad-Symbol (⚙️). Im Dialog kannst du einen eigenen Kartentitel, Untertitel, den erklärenden Hilfetext (für das ℹ️-Symbol) sowie eine eigene Hintergrundfarbe für diese Karte speichern. Um zum Standard-Design zurückzukehren, leerst du das Farbfeld oder setzt die Einstellung zurück." %}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ 18: Design Studio v2 & Desktop-Pipette -->
+                        <div class="accordion-item help-accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed px-4 py-3 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faq18">
+                                    <i class="bi bi-palette-fill me-2 text-primary"></i> 18. {% trans "Wie funktionieren Design Studio v2, automatischer Nachtmodus und die Bildschirm-Pipette in der Desktop-App?" %}
+                                </button>
+                            </h2>
+                            <div id="faq18" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
+                                <div class="accordion-body px-4 pb-4 opacity-85">
+                                    <ul class="mb-0">
+                                        <li class="mb-2"><strong>{% trans "Design-Presets & Eigene Farben:" %}</strong> {% trans "Unter 'Profil & Einstellungen' kannst du aus abgestimmten Farb-Harmonien wählen oder jede Farbe (Seitenhintergrund, Karten, Text, Tabellenrahmen, Primär-/Sekundärverlauf) getrennt für Hell- und Dunkelmodus definieren." %}</li>
+                                        <li class="mb-0"><strong>{% trans "Desktop-Bildschirmpipette (Eyedropper):" %}</strong> {% trans "Nutzt du die native Windows-Desktop-App, öffnet das Pipetten-Symbol innerhalb jedes Farbwählers ein bildschirmweites Fadenkreuz mit Lupen-Vorschau, mit dem du jede beliebige Farbe auf deinem gesamten Monitor aufnehmen kannst (Abbruch jederzeit per ESC oder Rechtsklick)." %}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ 19: Voll-Backup & Externer Backup-Ordner -->
+                        <div class="accordion-item help-accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed px-4 py-3 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faq19">
+                                    <i class="bi bi-cloud-arrow-down-fill me-2 text-success"></i> 19. {% trans "Wie erstelle ich ein komplettes Backup (inkl. Dokumenten) und richte einen externen Backup-Ordner mit Rotation ein?" %}
+                                </button>
+                            </h2>
+                            <div id="faq19" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
+                                <div class="accordion-body px-4 pb-4 opacity-85">
+                                    <p class="mb-2">
+                                        {% trans "Im Bereich 'Profil & Einstellungen → Datensicherung & Backup' stehen dir zwei Komfort-Funktionen zur Verfügung:" %}
+                                    </p>
+                                    <ul class="mb-0">
+                                        <li><strong>{% trans "1-Klick-Vollbackup mit Fortschrittsanzeige:" %}</strong> {% trans "Klicke auf 'Backup jetzt erstellen & herunterladen'. Ein Hintergrund-Job packt deine Datenbank und sämtliche Dateien aus dem Dokumenten-Tresor in ein ZIP-Archiv und startet nach Abschluss automatisch den Download." %}</li>
+                                        <li><strong>{% trans "Externer Backup-Pfad & Rotation:" %}</strong> {% trans "Trage optional einen Zielordner ein (z. B. ein verbundenes NAS-Laufwerk, Nextcloud-/OneDrive-Ordner oder USB-Stick) und lege fest, wie viele historische Backups maximal aufbewahrt werden sollen (z. B. die letzten 10 Sicherungen). Ältere Archive werden automatisch bereinigt." %}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ 20: 6 Lebenssituationen & 5 Demo-Profile -->
+                        <div class="accordion-item help-accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed px-4 py-3 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faq20">
+                                    <i class="bi bi-person-badge-fill me-2 text-warning"></i> 20. {% trans "Welche 6 Lebenssituationen und 5 Demo-Profile gibt es zum schnellen Ausprobieren?" %}
+                                </button>
+                            </h2>
+                            <div id="faq20" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
+                                <div class="accordion-body px-4 pb-4 opacity-85">
+                                    <ul class="mb-0">
+                                        <li class="mb-2"><strong>{% trans "6 Lebenssituationen (steuern Richtwerte & Empfehlungen):" %}</strong> {% trans "1. Standard / Familie, 2. Knappes Budget / Geringverdiener (Notgroschen-Ziel: 6 Monate), 3. Alleinerziehend (Notgroschen-Ziel: 6 Monate + Fokus Kinderabsicherung), 4. Studierende / Azubi (Notgroschen-Ziel: 2 Monate), 5. Arbeitssuchend / Übergang, 6. Frührentner / Privatier (Notgroschen-Ziel: 6 Monate)." %}</li>
+                                        <li class="mb-0"><strong>{% trans "5 fertige Demo-Datensätze:" %}</strong> {% trans "Auf der Login-Seite kannst du mit einem Klick realistische Beispiel-Haushalte laden (demo_familie, gering, allein, student, rentner), um alle Funktionen risikofrei zu erkunden." %}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ 21: Mehrsprachigkeit -->
+                        <div class="accordion-item help-accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed px-4 py-3 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faq21">
+                                    <i class="bi bi-translate me-2 text-info"></i> 21. {% trans "Wie wechsle ich die Sprache (Deutsch, Englisch, Französisch, Spanisch, Italienisch)?" %}
+                                </button>
+                            </h2>
+                            <div id="faq21" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
+                                <div class="accordion-body px-4 pb-4 opacity-85">
                                     <p class="mb-2">🇩🇪 <strong>Deutsch</strong> | 🇬🇧 <strong>Englisch</strong> | 🇫🇷 <strong>Französisch</strong> | 🇪🇸 <strong>Spanisch</strong> | 🇮🇹 <strong>Italienisch</strong></p>
-                                    <p data-editable-key="help_text_28">{{ content_map.help_text_28|default:_('Du kannst deine bevorzugte Sprache im Benutzerprofil festlegen. Das gesamte Interface, Berichte und Hilfe-Texte passen sich augenblicklich an.')|safe }}</p>
+                                    <p class="mb-0" data-editable-key="help_text_28">{{ content_map.help_text_28|default:_('Du kannst die Sprache jederzeit direkt über den Sprachwähler oben rechts in der Navigationsleiste oder dauerhaft in deinem Benutzerprofil umstellen.')|safe }}</p>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Item 9: Immobilien, Kredite, Sondertilgung & Anlage V -->
-                        <div class="accordion-item">
+                        <!-- FAQ 22: Admin-Interface & WYSIWYG -->
+                        <div class="accordion-item help-accordion-item">
                             <h2 class="accordion-header">
-                                <button class="accordion-button collapsed px-4 py-4 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faqRealEstateLoans">
-                                    <i class="bi bi-houses-fill me-2 text-primary"></i> {% trans "Immobilien, Kredite, Sondertilgungs-Simulator, Sanierungsfahrplan & Steuern (Anlage V)" %}
+                                <button class="accordion-button collapsed px-4 py-3 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faq22">
+                                    <i class="bi bi-sliders me-2 text-danger"></i> 22. {% trans "Wie nutze ich das Django-Admin-Interface (/admin/) und den Live-Text-Editor als Administrator?" %}
                                 </button>
                             </h2>
-                            <div id="faqRealEstateLoans" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
-                                <div class="accordion-body px-4 pb-4 text-muted" data-editable-key="help_text_48">
-                                    {{ content_map.help_text_48|default:_('<p>Unter <strong>„Immobilien & Kredite“</strong> (<code>/finance/real-estate/</code>) verwaltest du dein gesamtes Immobilienportfolio in 5 spezialisierten Reitern:</p><ul><li><strong>Immobilien-Portfolio:</strong> Verkehrswert, jährliche Wertsteigerung, Nettokaltmiete, Nebenkosten, Instandhaltungsrücklage und Netto-Eigenkapital je Objekt.</li><li><strong>Darlehen & Tilgungsplan:</strong> Unterstützt <em>Annuitätendarlehen</em>, <em>Tilgungsdarlehen (feste Tilgung)</em> und <em>endfällige Darlehen</em> inkl. Beleihungsauslauf (LTV), Zinsbindungs-Frühwarnung (<code>interest_lock_end</code>) und <strong>interaktivem Sondertilgungs-Simulator</strong> (berechnet Zinsersparnis in € sowie Laufzeitverkürzung in Jahren/Monaten).</li><li><strong>Sanierungsfahrplan (PropertyComponent):</strong> Überwacht Bauteile wie Dach, Heizung, Fenster und Fassade mit Einbaujahr, Restlebensdauer und 20-Jahres-Kostenprognose.</li><li><strong>Zahlungskalender & Steuern (Anlage V):</strong> 12-Monats-Cashflow-Kalender sowie automatische Steuerberechnung für vermietete Objekte (Gebäudeanteil %, lineare AfA p.a., abzugsfähige Schuldzinsen, hinterlegte Handwerkerrechnungen und zu versteuerndes Ergebnis).</li></ul>')|safe }}
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Item 10: Vermögen, Konten, Sachwerte & Tagesgeld-Hopping -->
-                        <div class="accordion-item">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed px-4 py-4 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faqAssetsTeaser">
-                                    <i class="bi bi-piggy-bank-fill me-2 text-success"></i> {% trans "Vermögen, Konten, Physische Sachwerte & Tagesgeld-Hopping (Aktionszins)" %}
-                                </button>
-                            </h2>
-                            <div id="faqAssetsTeaser" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
-                                <div class="accordion-body px-4 pb-4 text-muted" data-editable-key="help_text_49">
-                                    {{ content_map.help_text_49|default:_('<p>Im Modul <strong>„Vermögen & Konten“</strong> (<code>/finance/assets/</code>) erfasst du sämtliche liquiden und gebundenen Vermögenswerte:</p><ul><li><strong>6 Finanz-Anlageklassen + Sachwerte:</strong> Giro/Bargeld, Tagesgeld/Geldmarkt, ETF-/Wertpapierdepot, Kryptowährungen, Edelmetalle sowie physische Sachwerte (Fahrzeuge, Uhren, Kunst inkl. Unterhaltskosten und geplantem Verkaufsdatum).</li><li><strong>Tagesgeld-Hopping (Aktionszins-Wächter):</strong> Hinterlege einen befristeten Aktionszins (<code>interest_teaser_rate</code>) mit Ablaufdatum (<code>interest_teaser_until</code>). Die Simulation verzinst bis zum Stichtag mit dem Aktionszins, schaltet danach automatisch auf den regulären Basiszins zurück und warnt rechtzeitig vor Ablauf im Dashboard.</li><li><strong>Sparplan-Reconciliation:</strong> Monatliche Konto-Sparpläne (<code>monthly_savings_amount</code>) bauen verzinstes Vermögen auf und werden automatisch mit manuellen Spar-Ausgaben abgeglichen, damit Sparraten niemals doppelt gezählt werden.</li></ul>')|safe }}
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Item 11: Versicherungen & Risiko-Check -->
-                        <div class="accordion-item">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed px-4 py-4 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faqInsurancesRisk">
-                                    <i class="bi bi-shield-fill-check me-2 text-warning"></i> {% trans "Versicherungen, Ampel-Checkliste & Risiko-/Notfall-Check (Notgroschen, ALG I, BU, Risikoleben)" %}
-                                </button>
-                            </h2>
-                            <div id="faqInsurancesRisk" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
-                                <div class="accordion-body px-4 pb-4 text-muted" data-editable-key="help_text_50">
-                                    {{ content_map.help_text_50|default:_('<p>Unter <strong>„Vorsorge & Absicherung“</strong> (<code>/finance/pensions/</code>) stehen neben den 4 Vorsorgewegen (Gesetzliche Rente, Privatrente, Beamtenpension, Versorgungswerk/VBL) zwei dedizierte Schutz-Tabs bereit:</p><ul><li><strong>Versicherungen & Absicherung:</strong> Verwalte 11 Versicherungssparten. Ist eine Police mit einer Ausgabe verknüpft (<code>linked_cash_flow</code>), verhindert das System jede Doppelzählung im Cashflow. Die <strong>Ampel-Checkliste</strong> prüft automatisch Pflicht- und Kernversicherungen (Haftpflicht, BU, Wohngebäude, Risikoleben).</li><li><strong>Risiko- & Notfall-Check:</strong> Berechnet deine <strong>Notgroschen-Reichweite</strong> (Ziel: 3 Monate Ausgaben Standard, 6 Monate bei knappem Budget/Alleinerziehend/Frührentner, 2 Monate für Studierende), deinen <strong>Jobverlust-Puffer (ALG I: 60 % / 67 %)</strong>, deine <strong>Berufsunfähigkeits-Lücke (80 %-Regel inkl. DRV-Erwerbsminderungsrente + privater BU)</strong> sowie deinen <strong>Hinterbliebenenschutz (3× Jahresnetto + Kredit-Restschuld)</strong>.</li></ul>')|safe }}
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Item 12: Dashboard Krisen-Simulator & Jährlicher Anpassungs-Assistent -->
-                        <div class="accordion-item">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed px-4 py-4 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faqStressAndAnnual">
-                                    <i class="bi bi-lightning-charge-fill me-2 text-danger"></i> {% trans "Dashboard Krisen-Simulator (Stresstest) & Jährlicher Anpassungs-Assistent" %}
-                                </button>
-                            </h2>
-                            <div id="faqStressAndAnnual" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
-                                <div class="accordion-body px-4 pb-4 text-muted" data-editable-key="help_text_51">
-                                    {{ content_map.help_text_51|default:_('<ul><li><strong>Krisen- & Stresstest-Simulator (Dashboard):</strong> Simuliere 5 reale Schockszenarien mit direkter Baseline-Vergleichskurve (<em>„Ohne Krise“</em>): <strong>1. Jobverlust (ALG I)</strong> inkl. optionaler Sparplan-Pause, <strong>2. Berufsunfähigkeit (BU)</strong>, <strong>3. Börsencrash (-X % auf Depots/Krypto)</strong>, <strong>4. Anschlussfinanzierungs-Schock (+X % Zins nach Zinsbindung)</strong> und <strong>5. Ungeplante Notfallausgabe</strong>.</li><li><strong>Jährlicher Anpassungs-Assistent (Einnahmen & Ausgaben):</strong> Wähle beliebige laufende Verträge oder Gehälter aus, lege ein neues Startdatum (z. B. <code>01.01.2027</code>) und eine prozentuale Anpassung fest. Das System beendet den bisherigen Eintrag sauber am Vortag, legt den neuen Zeitraum an und zieht verknüpfte Versicherungspolicen automatisch mit.</li></ul>')|safe }}
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Item 13: Django Admin Interface -->
-                        <div class="accordion-item">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed px-4 py-4 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faqAdminInterface">
-                                    <i class="bi bi-sliders me-2 text-danger"></i> {% trans "Verwaltung über das Django Admin Interface" %}
-                                </button>
-                            </h2>
-                            <div id="faqAdminInterface" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
-                                <div class="accordion-body px-4 pb-4 text-muted">
-                                    <p data-editable-key="help_text_45">{{ content_map.help_text_45|default:_('Für Administratoren steht unter \'/admin/\' eine leistungsfähige Verwaltungszentrale bereit:')|safe }}</p>
-                                    <ul>
-                                        <li><strong>{% trans "Nutzer & Profile:" %}</strong> {% trans "Detaillierte Verwaltung der Benutzerkonten, Partner-Stammdaten und Systemparameter." %}</li>
-                                        <li><strong>{% trans "Vorsorgeverträge & Kategorien:" %}</strong> {% trans "Direkter Zugriff auf alle Verträge, Stichtags-Snapshots und benutzerdefinierte Kategorien mit Farbcodes." %}</li>
-                                        <li><strong>{% trans "Datensicherheit:" %}</strong> {% trans "Streng getrennte Mandantenfähigkeit (Multi-User-Support), sodass jeder Nutzer nur auf seine eigenen Finanzdaten zugreifen kann." %}</li>
+                            <div id="faq22" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
+                                <div class="accordion-body px-4 pb-4 opacity-85">
+                                    <ul class="mb-0">
+                                        <li class="mb-2"><strong>{% trans "Live-Seitenbearbeitung (WYSIWYG):" %}</strong> {% trans "Als Superuser siehst du auf der Hilfe- und About-Seite oben eine Bearbeitungsleiste. Damit kannst du Texte direkt im Browser anklicken, anpassen und sprachspezifisch in der Datenbank speichern." %}</li>
+                                        <li class="mb-0"><strong>{% trans "Django Admin (/admin/):" %}</strong> {% trans "Bietet direkten Datenbankzugriff auf Benutzerkonten, Profile, Kinder-Profile, Design-Harmonien, Verträge, Stichtags-Snapshots, Kategorien und Import-Filter bei strikter Multi-User-Datentrennung." %}</li>
                                     </ul>
                                 </div>
                             </div>
                         </div>
 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- TEIL 4: MATHEMATIK- & FORMEL-REFERENZ                               -->
+    <!-- =================================================================== -->
+    <div id="section-math" class="row mb-4 scroll-anchor">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm rounded-4 help-theme-card">
+                <div class="card-body p-4">
+                    <h2 class="h4 fw-bold mb-3"><i class="bi bi-calculator me-2 text-warning"></i>{% trans "Mathematik- & Formel-Referenz der Simulations-Engine" %}</h2>
+                    <div class="row g-3 small">
+                        <div class="col-md-6">
+                            <div class="p-3 rounded-3 h-100 help-subcard">
+                                <div class="fw-bold mb-1">{% trans "1. Monatlicher Zinseszins & Sparplan (Assets & Vorsorge)" %}</div>
+                                <code class="d-block mb-1">B(t+1) = B(t) × (1 + r_eff / 12) + Sparrate_mtl − Entnahme_mtl</code>
+                                <span class="opacity-75">{% trans "Berücksichtigt optional Aktionszins bis zum Stichtag (interest_teaser_until) und Kapitalertragsteuer auf Erträge." %}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 rounded-3 h-100 help-subcard">
+                                <div class="fw-bold mb-1">{% trans "2. Reale Kaufkraft (Inflationsdiskontierung)" %}</div>
+                                <code class="d-block mb-1">V_real(m) = V_nominal(m) / (1 + i_inflation)^(m / 12)</code>
+                                <span class="opacity-75">{% trans "m = Anzahl der Simulationsmonate ab heute; i_inflation = jährliche Inflationsrate aus dem Profil." %}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 rounded-3 h-100 help-subcard">
+                                <div class="fw-bold mb-1">{% trans "3. Gesetzliche Nettorente (DRV) & Ruhegehalt" %}</div>
+                                <code class="d-block mb-1">R_netto = (EP × 40,79 €) × (1 + g_rente)^Jahre × (1 − Abzug_KV_PV)</code>
+                                <span class="opacity-75">{% trans "Standard-Sozialabzug (KV/PV): ca. 11,5 %. Beamtenpension: Dienstbezüge × Ruhegehaltssatz (max. 71,75 %)." %}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 rounded-3 h-100 help-subcard">
+                                <div class="fw-bold mb-1">{% trans "4. Darlehenstilgung, Sondertilgung & LTV" %}</div>
+                                <code class="d-block mb-1">Zins_m = Restschuld × (Sollzins / 12) | Tilgung_m = Rate − Zins_m + Sondertilgung</code>
+                                <span class="opacity-75">{% trans "Beleihungsauslauf (LTV) = Aktuelle Restschuld / Aktueller Immobilien-Verkehrswert × 100." %}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 rounded-3 h-100 help-subcard">
+                                <div class="fw-bold mb-1">{% trans "5. Risiko- & Notfall-Audit Kennzahlen" %}</div>
+                                <code class="d-block mb-1">BU_Lücke = max(0, 0,80 × Netto_Erwerb − BU_Privat − EM_Rente_DRV)</code>
+                                <span class="opacity-75">{% trans "ALG I = 67 % (mit Kind) bzw. 60 % (ohne Kind). Bargeld-Richtwert = 500 € + 250 € Partner + 150 € × Kinder." %}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 rounded-3 h-100 help-subcard">
+                                <div class="fw-bold mb-1">{% trans "6. Vermietungs-Steuer (Anlage V)" %}</div>
+                                <code class="d-block mb-1">AfA_jahr = Kaufpreis × Gebäudeanteil_% × AfA_Satz_%</code>
+                                <span class="opacity-75">{% trans "Zu versteuerndes Ergebnis = Jahreskaltmiete − (AfA_jahr + Schuldzinsen_jahr + Erhaltungsaufwand)." %}</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -443,20 +1031,21 @@
 <div class="modal fade" id="wizardHelpModal" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content glass-card overflow-hidden">
-            <div class="modal-header border-0 bg-primary text-white p-4">
-                <h5 class="modal-title fw-bold"><i class="bi bi-magic me-2"></i>{% trans "Der Standmitteilungs-Wizard im Detail" %}</h5>
+            <div class="modal-header border-0 text-white p-4" style="background: var(--app-gradient);">
+                <h5 class="modal-title fw-bold"><i class="bi bi-magic me-2"></i>{% trans "Der 7-Schritte Einrichtungs- & Standmitteilungs-Wizard" %}</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body p-4">
                 <h6 class="fw-bold text-primary mb-3" data-editable-key="help_text_29">{{ content_map.help_text_29|default:_('Schritt-für-Schritt Einrichtung (Benutzermenü oben rechts → 🪄 Einrichtungs-Wizard)')|safe }}</h6>
-                <ol class="small text-muted mb-4">
-                    <li class="mb-2"><strong>{% trans "Haushalt, Lebenssituation & Personen:" %}</strong> {% trans "Wähle deine Lebenssituation (Standard, Knappes Budget, Alleinerziehend, Student, Arbeitssuchend, Frührentner), Einzelperson oder Paar sowie Geburtsdaten und geplantes Renteneintrittsalter." %}</li>
-                    <li class="mb-2"><strong>{% trans "Gesetzliche Rentenmitteilungen (DRV):" %}</strong> {% trans "Trage die Entgeltpunkte (EP), den aktuellen Rentenwert (Standard: 40,79 €), die Erwerbsminderungsrente und den Stichtag 'Stand vom' aus deiner DRV-Renteninformation ein." %}</li>
-                    <li class="mb-2"><strong>{% trans "Private Vorsorge, bAV, Beamtenpension & Versorgungswerk:" %}</strong> {% trans "Gib bestehende Verträge mit aktuellem Kapitalwert, Sparbeitrag, Auszahlungsart (Auszahlungsplan, lebenslange Rente oder Einmalkapital) und Rentenwerten ein." %}</li>
-                    <li class="mb-2"><strong>{% trans "Einkommen, Ausgaben, Vermögen, Immobilien & Kredite:" %}</strong> {% trans "Erfasse deine monatlichen Einnahmen/Ausgaben, Konten & Depots (inkl. Sparplänen & Notgroschen-Markierung) sowie Immobilien und Darlehen." %}</li>
+                <ol class="small opacity-85 mb-4">
+                    <li class="mb-2"><strong>{% trans "1. Haushalt, Lebenssituation & Kinder:" %}</strong> {% trans "Wähle deine Lebenssituation, Einzelperson oder Paar, Geburtsdaten, Rentenalter sowie deine Kinder (inkl. Selbstständigkeits-Alter und Kindergeld-Automatik)." %}</li>
+                    <li class="mb-2"><strong>{% trans "2. Einkommen & 3. Fixkosten:" %}</strong> {% trans "Übernahme aus intelligenten Haushalts-Vorlagen oder freie Eingabe mit Personen-Zuordnung (P1, P2, Gemeinsam)." %}</li>
+                    <li class="mb-2"><strong>{% trans "4. Gesetzliche Rentenmitteilungen (DRV):" %}</strong> {% trans "Trage die Entgeltpunkte (EP), den aktuellen Rentenwert (40,79 €), die Erwerbsminderungsrente und den Stichtag 'Stand vom' aus deiner DRV-Renteninformation ein." %}</li>
+                    <li class="mb-2"><strong>{% trans "5. Private Vorsorge, bAV, Beamtenpension & Versorgungswerk:" %}</strong> {% trans "Gib bestehende Verträge mit aktuellem Kapitalwert, Sparbeitrag und Auszahlungsmodell (Auszahlungsplan, lebenslange Rente oder Einmalkapital) ein." %}</li>
+                    <li class="mb-2"><strong>{% trans "6. Vermögen/Konten & 7. Immobilien/Darlehen:" %}</strong> {% trans "Erfasse Konten & Depots (inkl. Sparplänen & Notgroschen-Markierung) sowie Immobilien und Kredite." %}</li>
                 </ol>
-                <div class="alert alert-info bg-opacity-10 border-info text-dark small mb-0">
-                    <i class="bi bi-info-circle me-1"></i> <strong>{% trans "Keine Duplikate:" %}</strong> {% trans "Wenn du den Wizard erneut ausführst, werden bestehende Verträge aktualisiert und historische Stichtage als Snapshot gesichert." %}
+                <div class="p-3 rounded-3 small mb-0 help-subcard">
+                    <i class="bi bi-info-circle text-info me-1"></i> <strong>{% trans "Keine Duplikate & Stichtags-Schutz:" %}</strong> {% trans "Wenn du den Wizard später erneut ausführst, werden bestehende Verträge aktualisiert und historische Stichtage automatisch als Snapshot gesichert." %}
                 </div>
             </div>
         </div>
@@ -468,22 +1057,22 @@
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content glass-card overflow-hidden">
             <div class="modal-header border-0 bg-info text-white p-4">
-                <h5 class="modal-title fw-bold"><i class="bi bi-clock-history me-2"></i>{% trans "Historische Stichtage verwalten" %}</h5>
+                <h5 class="modal-title fw-bold"><i class="bi bi-clock-history me-2"></i>{% trans "Historische Stichtage (Snapshots) verwalten" %}</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body p-4">
-                <p class="small text-muted" data-editable-key="help_text_30">{{ content_map.help_text_30|default:_('Jedes Mal, wenn du eine neue Standmitteilung oder ein Update zu deinen Verträgen erhältst, kannst du dafür einen historischen Stichtag anlegen.')|safe }}</p>
+                <p class="small opacity-85" data-editable-key="help_text_30">{{ content_map.help_text_30|default:_('Jedes Mal, wenn du eine neue Standmitteilung zu deiner Altersvorsorge oder einen neuen Kontostand speicherst, kannst du dafür einen historischen Stichtag anlegen. So entsteht deine persönliche Vermögens-Chronik.')|safe }}</p>
                 <div class="row g-3 my-2">
                     <div class="col-md-6">
-                        <div class="p-3 rounded-3 bg-light border">
-                            <h6 class="fw-bold text-info mb-1" data-editable-key="help_text_31">{{ content_map.help_text_31|default:_('Stichtag bearbeiten (✏️)')|safe }}</h6>
-                            <p class="small text-muted mb-0" data-editable-key="help_text_32">{{ content_map.help_text_32|default:_('Über den Stift-Button in der Stichtags-Tabelle kannst du falsche Eingaben jederzeit nachträglich korrigieren.')|safe }}</p>
+                        <div class="p-3 rounded-3 h-100 help-subcard">
+                            <h6 class="fw-bold text-info mb-1" data-editable-key="help_text_31">{{ content_map.help_text_31|default:_('Stichtag hinzufügen & bearbeiten (🕒 / ✏️)')|safe }}</h6>
+                            <p class="small opacity-75 mb-0" data-editable-key="help_text_32">{{ content_map.help_text_32|default:_('Klicke in der Vorsorge- oder Vermögens-Tabelle auf das Uhr-Symbol, um alle bisherigen Stichtage zu sehen, neue vergangene Belege nachzutragen oder Tippfehler zu korrigieren.')|safe }}</p>
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="p-3 rounded-3 bg-light border">
+                        <div class="p-3 rounded-3 h-100 help-subcard">
                             <h6 class="fw-bold text-danger mb-1" data-editable-key="help_text_33">{{ content_map.help_text_33|default:_('Stichtag löschen (🗑️)')|safe }}</h6>
-                            <p class="small text-muted mb-0" data-editable-key="help_text_34">{{ content_map.help_text_34|default:_('Fehlerhafte oder doppelte Stichtage lassen sich mit einem Klick löschen.')|safe }}</p>
+                            <p class="small opacity-75 mb-0" data-editable-key="help_text_34">{{ content_map.help_text_34|default:_('Fehlerhafte oder doppelte Stichtage lassen sich einzeln löschen, ohne dass dein Hauptvertrag verloren geht.')|safe }}</p>
                         </div>
                     </div>
                 </div>
@@ -501,12 +1090,13 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body p-4">
-                <h6 class="fw-bold mb-3" data-editable-key="help_text_35">{{ content_map.help_text_35|default:_('Formeln der Finanz-Simulation (SimulationEngine):')|safe }}</h6>
-                <ul class="small text-muted mb-4">
-                    <li class="mb-2"><strong>{% trans "Zinseszins Vermögen (monatlich):" %}</strong> <span class="font-monospace text-dark" data-editable-key="help_text_46">{{ content_map.help_text_46|default:_('B(t+1) = B(t) × (1 + r_eff / 12) + Sparrate_mtl − Entnahme_mtl')|safe }}</span></li>
-                    <li class="mb-2"><strong>{% trans "Nettorente gesetzlich (DRV):" %}</strong> <span class="font-monospace text-dark" data-editable-key="help_text_47">{{ content_map.help_text_47|default:_('Nettorente = (Entgeltpunkte × 40,79 €) × (1 − Sozialabzug % / 100)')|safe }}</span></li>
-                    <li class="mb-2"><strong>{% trans "Reale Kaufkraft (Inflationsbereinigung):" %}</strong> <span class="font-monospace text-dark">V_real(t) = V_nominal(t) / (1 + Inflation)^(Monate / 12)</span></li>
-                    <li class="mb-2"><strong>{% trans "Darlehenstilgung & Sondertilgung:" %}</strong> <span class="font-monospace text-dark">Zins_mtl = Restschuld × (Sollzins / 12) | Tilgung_mtl = Monatsrate − Zins_mtl + Sondertilgung</span></li>
+                <h6 class="fw-bold mb-3" data-editable-key="help_text_35">{{ content_map.help_text_35|default:_('Kernformeln der Finanz-Simulation (SimulationEngine):')|safe }}</h6>
+                <ul class="small opacity-85 mb-0">
+                    <li class="mb-2"><strong>{% trans "Zinseszins Vermögen (monatlich):" %}</strong> <code data-editable-key="help_text_46">{{ content_map.help_text_46|default:_('B(t+1) = B(t) × (1 + r_eff / 12) + Sparrate_mtl − Entnahme_mtl')|safe }}</code></li>
+                    <li class="mb-2"><strong>{% trans "Nettorente gesetzlich (DRV):" %}</strong> <code data-editable-key="help_text_47">{{ content_map.help_text_47|default:_('Nettorente = (Entgeltpunkte × 40,79 €) × (1 − Sozialabzug % / 100)')|safe }}</code></li>
+                    <li class="mb-2"><strong>{% trans "Reale Kaufkraft (Inflationsbereinigung):" %}</strong> <code>V_real(t) = V_nominal(t) / (1 + Inflation)^(Monate / 12)</code></li>
+                    <li class="mb-2"><strong>{% trans "Darlehenstilgung & Sondertilgung:" %}</strong> <code>Zins_mtl = Restschuld × (Sollzins / 12) | Tilgung_mtl = Monatsrate − Zins_mtl + Sondertilgung</code></li>
+                    <li class="mb-0"><strong>{% trans "Bargeldreserve-Richtwert:" %}</strong> <code>Ziel = 500 € + (250 € falls Partner) + (150 € × Anzahl abhängiger Kinder)</code></li>
                 </ul>
             </div>
         </div>
@@ -514,22 +1104,51 @@
 </div>
 
 <style>
-    .transition-hover {
-        transition: all 0.3s ease;
+    .scroll-anchor {
+        scroll-margin-top: 90px;
     }
-    .transition-hover:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 1rem 3rem rgba(0,0,0,0.1) !important;
+    .help-theme-card {
+        background-color: var(--app-card-bg);
+        color: var(--app-card-color);
+        border: 1px solid var(--app-table-border-color, rgba(125, 125, 125, 0.2)) !important;
+    }
+    .help-subcard {
+        background-color: rgba(125, 125, 125, 0.06);
+        color: var(--app-card-color);
+        border: 1px solid var(--app-table-border-color, rgba(125, 125, 125, 0.18));
+    }
+    .help-nav-pill {
+        background-color: var(--app-card-bg);
+        color: var(--app-card-color);
+        border: 1px solid var(--app-table-border-color, rgba(125, 125, 125, 0.25));
+        transition: all 0.2s ease;
+    }
+    .help-nav-pill:hover {
+        background: var(--app-gradient);
+        color: #fff !important;
+        border-color: transparent;
+        transform: translateY(-1px);
+    }
+    .help-accordion-item {
+        background-color: var(--app-card-bg);
+        color: var(--app-card-color);
+        border-color: var(--app-table-border-color, rgba(125, 125, 125, 0.18));
+    }
+    .help-accordion-item .accordion-button {
+        background-color: var(--app-card-bg);
+        color: var(--app-card-color);
+    }
+    .help-accordion-item .accordion-button:not(.collapsed) {
+        background-color: rgba(125, 125, 125, 0.08);
+        color: var(--app-card-color);
+        box-shadow: none;
     }
     .glass-card {
-        background: rgba(255, 255, 255, 0.96);
+        background-color: var(--app-card-bg);
+        color: var(--app-card-color);
         backdrop-filter: blur(10px);
-        border: 1px solid rgba(0,0,0,0.05);
+        border: 1px solid var(--app-table-border-color, rgba(125, 125, 125, 0.2));
         border-radius: 24px;
-    }
-    [data-bs-theme="dark"] .glass-card {
-        background: rgba(30, 30, 50, 0.96);
-        border: 1px solid rgba(255,255,255,0.05);
     }
 </style>
 {% endblock %}
