@@ -4,10 +4,33 @@ from django.utils.translation import gettext_lazy as _
 from .models import CustomUser, UserProfile
 from finance.admin import CashFlowSourceInline, BaseOwnedModelAdmin, CurrentUserFilterMixin
 
+class UserProfileDisclaimerInline(admin.StackedInline):
+    model = UserProfile
+    can_delete = False
+    extra = 0
+    verbose_name = _('Rechtlicher Hinweis & Profil-Status')
+    verbose_name_plural = _('Rechtlicher Hinweis & Profil-Status')
+    fields = ('disclaimer_version', 'disclaimer_accepted_at')
+
+
 @admin.register(CustomUser)
 class CustomUserAdmin(CurrentUserFilterMixin, UserAdmin):
     user_filter_field = 'pk'
-    inlines = [CashFlowSourceInline]
+    inlines = [UserProfileDisclaimerInline, CashFlowSourceInline]
+    list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'disclaimer_accepted_display')
+    actions = ['reset_user_legal_disclaimer']
+
+    @admin.display(description=_('Rechtl. Hinweis bestätigt'))
+    def disclaimer_accepted_display(self, obj):
+        prof = getattr(obj, 'profile', None)
+        if prof and prof.disclaimer_version and prof.disclaimer_accepted_at:
+            return f"v{prof.disclaimer_version} ({prof.disclaimer_accepted_at.strftime('%d.%m.%Y %H:%M')})"
+        return _("Offen")
+
+    @admin.action(description=_("Rechtliche Hinweis-Bestätigung zurücksetzen"))
+    def reset_user_legal_disclaimer(self, request, queryset):
+        updated = UserProfile.objects.filter(user__in=queryset).update(disclaimer_version='', disclaimer_accepted_at=None)
+        self.message_user(request, _(f"Bestätigung für {updated} Benutzer zurückgesetzt."))
 
     def get_fieldsets(self, request, obj=None):
         if not request.user.is_superuser:
@@ -29,13 +52,16 @@ from django import forms
 
 @admin.register(UserProfile)
 class UserProfileAdmin(BaseOwnedModelAdmin):
-    list_display = ('user', 'display_name', 'partner_name', 'birth_date', 'partner_birth_date', 'retirement_age', 'partner_retirement_age')
+    list_display = ('user', 'display_name', 'partner_name', 'birth_date', 'retirement_age', 'disclaimer_version', 'disclaimer_accepted_at')
     search_fields = ('user__username', 'user__email', 'display_name', 'partner_name')
+    actions = ['reset_legal_disclaimer']
     fieldsets = (
         (_('User'), {'fields': ('user', 'display_name', 'avatar')}),
         (_('Person 1 (Main)'), {'fields': ('birth_date', 'retirement_age')}),
         (_('Person 2 (Partner)'), {'fields': ('partner_name', 'partner_birth_date', 'partner_retirement_age')}),
         (_('Planning & Simulation'), {'fields': ('target_pension_payout', 'simulation_max_age', 'simulation_start_date', 'inflation_rate', 'salary_increase', 'pension_increase', 'investment_return_offset', 'real_estate_growth_rate')}),
+        (_('Steuer-Stammdaten'), {'fields': ('tax_assessment_mode', 'church_tax_rate', 'annual_gross_income_p1', 'annual_gross_income_p2', 'typical_annual_deductions')}),
+        (_('Rechtlicher Hinweis (Bestätigung)'), {'fields': ('disclaimer_version', 'disclaimer_accepted_at')}),
         (_('Dashboard & Settings'), {'fields': ('dashboard_config', 'hide_wizard_on_start')}),
         (_('System'), {'fields': ('language', 'currency', 'auto_night_mode', 'dark_mode_config')}),
         (_('Theme & Styling'), {
@@ -48,6 +74,11 @@ class UserProfileAdmin(BaseOwnedModelAdmin):
             )
         }),
     )
+
+    @admin.action(description=_("Rechtliche Hinweis-Bestätigung zurücksetzen"))
+    def reset_legal_disclaimer(self, request, queryset):
+        updated = queryset.update(disclaimer_version='', disclaimer_accepted_at=None)
+        self.message_user(request, _(f"Bestätigung für {updated} Benutzerprofil(e) zurückgesetzt."))
 
 
 from .models import EditablePageContent, DesignHarmony, ChildProfile
