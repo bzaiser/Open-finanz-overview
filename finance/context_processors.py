@@ -27,7 +27,7 @@ def card_config_context(request):
         if widget_id not in existing_ids:
             resolved_summary_layout.append({
                 'id': widget_id,
-                'visible': True,
+                'visible': widget_info.get('default_visible', True),
                 'bg_color': widget_info.get('default_bg', '#6c757d'),
                 'text_color': widget_info.get('default_text', '#ffffff'),
                 'order': len(resolved_summary_layout) + 1

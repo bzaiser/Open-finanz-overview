@@ -175,6 +175,42 @@ SUMMARY_WIDGETS = {
         'title': _('Total Debts'), 'default_bg': '#343a40', 'default_text': '#ffffff', 'icon': 'bi-credit-card-2-front',
         'description': _('SUMMARY_DESC_DEBTS')
     },
+    # Unified Subpage KPI Cards (opt-in via Dashboard Configurator, default_visible=False)
+    'emergency_runway': {
+        'title': _('Notgroschen-Reichweite'), 'default_bg': '#198754', 'default_text': '#ffffff', 'icon': 'bi-shield-check',
+        'default_visible': False,
+        'description': _('Zeigt, wie viele Monate dein liquides Vermögen am gewählten Stichtag die laufenden Monatsausgaben deckt (reagiert live auf Zeitreise & Stresstest).')
+    },
+    'disability_gap': {
+        'title': _('BU-Versorgungslücke'), 'default_bg': '#fd7e14', 'default_text': '#ffffff', 'icon': 'bi-heart-pulse',
+        'default_visible': False,
+        'description': _('Monatliche Absicherungslücke bei Berufsunfähigkeit nach der 80-%-Netto-Regel unter Berücksichtigung von privater BU und DRV-Erwerbsminderungsrente.')
+    },
+    'survivor_gap': {
+        'title': _('Hinterbliebenen-Lücke'), 'default_bg': '#dc3545', 'default_text': '#ffffff', 'icon': 'bi-people',
+        'default_visible': False,
+        'description': _('Empfohlenes Todesfallkapital (3×/5× Jahresnetto + aktuelle Kredit-Restschuld am Stichtag) abzüglich vorhandener Risikolebensversicherungen.')
+    },
+    'cash_reserve_status': {
+        'title': _('Physische Bargeldreserve'), 'default_bg': '#20c997', 'default_text': '#ffffff', 'icon': 'bi-cash-coin',
+        'default_visible': False,
+        'description': _('Erfasster physischer Barbestand (Zuhause/Tresor) im Vergleich zum Haushalts-Richtwert für Strom- und Kartenausfälle.')
+    },
+    'tax_annual_estimated': {
+        'title': _('Geschätzte Jahressteuer'), 'default_bg': '#0d6efd', 'default_text': '#ffffff', 'icon': 'bi-bank2',
+        'default_visible': False,
+        'description': _('Ganzheitliche Einkommensteuer-Prognose für das gewählte Simulationsjahr (inkl. Tarif, Kinder, Rentner-Kohorte, Anlage V & Bescheid-Kalibrierung).')
+    },
+    'real_estate_equity': {
+        'title': _('Immobilien-Netto-EK'), 'default_bg': '#6f42c1', 'default_text': '#ffffff', 'icon': 'bi-house-check',
+        'default_visible': False,
+        'description': _('Immobilien-Verkehrswert abzüglich Restschuld am gewählten Stichtag inklusive Beleihungsauslauf (LTV %).')
+    },
+    'renovation_reserve_monthly': {
+        'title': _('Sanierungs-Rücklage'), 'default_bg': '#0dcaf0', 'default_text': '#212529', 'icon': 'bi-tools',
+        'default_visible': False,
+        'description': _('Empfohlene monatliche Instandhaltungsrücklage aus dem 20-Jahres-Sanierungsfahrplan deiner Immobilien-Bauteile.')
+    },
 }
 
 _default_cfg = get_default_dashboard_config()
@@ -1093,6 +1129,7 @@ def dashboard_view(request):
     current_total_combined = round(current_assets_total + current_physical_assets_total + current_real_estate_total - current_debts_total, 2)
 
     kpi_deltas = {}
+    base_month_data = None
     if risk_scenario_active and baseline_forecast:
         base_month_data = min(baseline_forecast, key=lambda d: abs((d['date'] - target_date).days))
         base_last_month = baseline_forecast[-1]
@@ -1510,10 +1547,21 @@ def dashboard_view(request):
             item['display_title'] = info.get('title', item['id'])
             item['help_text'] = info.get('description', '')
             
+        from .services_kpi import resolve_dashboard_subpage_kpis
+        visible_subpage_ids = [item['id'] for item in summary_layout if item.get('visible')]
+        subpage_kpis = resolve_dashboard_subpage_kpis(
+            user,
+            visible_subpage_ids,
+            target_date=target_date,
+            forecast_point=current_month_data,
+            baseline_point=base_month_data,
+        )
+
         for item in summary_layout:
             info = translated_summary_widgets.get(item['id'], {})
             item['display_title'] = info.get('title', item['id'])
             item['help_text'] = info.get('description', '')
+            item['subpage_kpi'] = subpage_kpis.get(item['id'])
 
     context = {
         'profile': profile,

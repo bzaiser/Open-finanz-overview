@@ -1155,3 +1155,32 @@ class AssetModalSaveTests(TestCase):
         eg_cf = CashFlowSource.objects.get(user=u, template_id="inc_elterngeld")
         self.assertEqual(eg_cf.value, Decimal("1800.00"))
         self.assertEqual(eg_cf.end_date, datetime.date(2027, 6, 30))
+
+        # Unified Subpage KPI Cards on Dashboard & Simulation
+        from finance.services_kpi import resolve_dashboard_subpage_kpis
+
+        # Lazy check: only requested IDs are resolved
+        kpis = resolve_dashboard_subpage_kpis(
+            u,
+            ["emergency_runway", "tax_annual_estimated", "cash_reserve_status"],
+            target_date=datetime.date(2030, 6, 1),
+            forecast_point={"real_asset_total": 12000.0, "real_accumulated_cash": 3000.0, "monthly_expenses": 3000.0, "real_loan_total": 0.0, "real_real_estate_total": 0.0},
+            baseline_point={"real_asset_total": 24000.0, "real_accumulated_cash": 3000.0, "monthly_expenses": 3000.0, "real_loan_total": 0.0, "real_real_estate_total": 0.0},
+        )
+        self.assertEqual(set(kpis.keys()), {"emergency_runway", "tax_annual_estimated", "cash_reserve_status"})
+        self.assertEqual(kpis["emergency_runway"]["value"], 5.0)
+        self.assertEqual(kpis["emergency_runway"]["delta"], -4.0)
+
+        # Enable subpage KPI cards in user's dashboard summary_layout and render dashboard
+        u.profile.refresh_from_db()
+        cfg_dash = dict(u.profile.dashboard_config or {})
+        s_lay = list(cfg_dash.get("summary_layout", []))
+        s_lay.append({"id": "tax_annual_estimated", "visible": True, "bg_color": "#0d6efd", "text_color": "#ffffff", "order": 99})
+        cfg_dash["summary_layout"] = s_lay
+        u.profile.dashboard_config = cfg_dash
+        u.profile.hide_wizard_on_start = True
+        u.profile.disclaimer_version = "1.0"
+        u.profile.save()
+        dash_resp = self.client.get(reverse("finance:dashboard"))
+        self.assertEqual(dash_resp.status_code, 200)
+        self.assertContains(dash_resp, "Geschätzte Jahressteuer")
