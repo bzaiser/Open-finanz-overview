@@ -787,6 +787,20 @@ class SimulationEngine:
                                 'value': float(round(ins.coverage_lump_sum, 2)),
                             })
 
+                # Also pay out integrated death_benefit from combined Pension contracts
+                if scenario_type == 'partner_death' and scenario_active and current_date == scenario_start:
+                    for p_obj in pensions:
+                        db_val = getattr(p_obj, 'death_benefit', None)
+                        p_role = getattr(p_obj, 'owner_role', 'primary')
+                        if db_val and db_val > 0 and p_role in {affected_person, 'joint'}:
+                            scenario_event_impact += db_val
+                            events_this_month.append({
+                                'name': f"{p_obj.provider} ({_('Todesfallsumme Vorsorgevertrag')})",
+                                'description': _('Integrierte Todesfall-Leistung aus Vorsorgevertrag'),
+                                'date': current_date.isoformat(),
+                                'value': float(round(db_val, 2)),
+                            })
+
                     if scenario_type == 'partner_death' and scenario_active and ins.insured_person == affected_person:
                         continue
 

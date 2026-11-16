@@ -249,6 +249,17 @@ def calculate_protection_audit(user, situation_override=None, life_stage=None):
             if ins.insured_person in {'primary', 'joint'}:
                 term_life_primary += ins.coverage_lump_sum
 
+    pension_death_benefit_total = Decimal('0.00')
+    for p in pensions:
+        db_val = getattr(p, 'death_benefit', None)
+        if db_val and db_val > 0:
+            pension_death_benefit_total += db_val
+            p_role = getattr(p, 'owner_role', 'primary')
+            if p_role in {'partner', 'joint'}:
+                term_life_partner += db_val
+            if p_role in {'primary', 'joint'}:
+                term_life_primary += db_val
+
     total_loan_debt = sum(
         (calculate_loan_schedule(l).get('current_balance') or Decimal('0.00'))
         for l in loans
@@ -377,8 +388,8 @@ def calculate_protection_audit(user, situation_override=None, life_stage=None):
         else:
             term_life_reason = _('Sichert Hinterbliebene & laufende Kredite bei Tod eines Partners / Elternteils ab.')
 
-    if 'term_life' in existing_types:
-        rlv_hint = f"{_('Policen-Schutz aktiv')} ({_('Abgesichert')})" if term_life_gap <= 0 else f"{_('Policen-Schutz aktiv')} ({_('Restlücke')}: ca. {term_life_gap:,.0f} €)"
+    if 'term_life' in existing_types or pension_death_benefit_total > 0:
+        rlv_hint = f"{_('Schutz aktiv')} ({_('Abgesichert')})" if term_life_gap <= 0 else f"{_('Schutz aktiv')} ({_('Restlücke')}: ca. {term_life_gap:,.0f} €)"
     elif is_retired and need_term_life:
         rlv_hint = _('Bei jüngerem Partner / Restschuld prüfen')
     else:

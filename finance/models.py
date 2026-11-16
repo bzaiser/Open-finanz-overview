@@ -171,7 +171,15 @@ class Pension(models.Model):
     owner_role = models.CharField(_("Zugeordnete Person"), max_length=20, choices=OWNER_ROLE_CHOICES, default='primary')
     pension_type = models.CharField(_("Pension Type"), max_length=20, choices=PENSION_TYPE_CHOICES, default='capital')
     payout_type = models.CharField(_("Payout Type"), max_length=20, choices=PAYOUT_TYPE_CHOICES, default='capital_drawdown', help_text=_("Auszahlungsart: Kapitalverzehr, lebenslange Rente oder Einmalabfindung"))
-    current_value = models.DecimalField(_("Current Value"), max_digits=12, decimal_places=2, default=0.00)
+    current_value = models.DecimalField(_("Aktueller Kapitalwert / Rückkaufswert (€)"), max_digits=12, decimal_places=2, default=0.00)
+    death_benefit = models.DecimalField(
+        _("Integrierte Todesfallsumme (€, optional)"),
+        max_digits=14,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        help_text=_("Todesfallschutz bei kombinierten Kapital-/Renten-Lebensversicherungen. Zählt automatisch im Risikoleben-Check & Todesfall-Stresstest.")
+    )
     monthly_contribution = models.DecimalField(_("Monthly Contribution"), max_digits=10, decimal_places=2, default=0.00)
     growth_rate = models.DecimalField(_("Annual Growth Rate (%)"), max_digits=5, decimal_places=2, default=0.00)
     

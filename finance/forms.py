@@ -50,7 +50,7 @@ class PensionForm(forms.ModelForm):
     class Meta:
         model = Pension
         fields = [
-            'provider', 'owner_role', 'pension_type', 'payout_type', 'current_value', 'monthly_contribution', 'growth_rate',
+            'provider', 'owner_role', 'pension_type', 'payout_type', 'current_value', 'death_benefit', 'monthly_contribution', 'growth_rate',
             'pension_points', 'point_value', 'gross_payout_amount', 'social_deduction_rate', 'disability_pension_net',
             'expected_payout_at_retirement', 'retirement_age', 'target_pension_payout',
             'contribution_end_date', 'start_payout_date', 'is_indexed', 'notes'
@@ -61,6 +61,7 @@ class PensionForm(forms.ModelForm):
             'pension_type': forms.Select(attrs={'class': 'form-select'}),
             'payout_type': forms.Select(attrs={'class': 'form-select'}),
             'current_value': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
+            'death_benefit': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01', 'placeholder': 'Optional (z. B. 50000)'}),
             'monthly_contribution': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
             'growth_rate': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.01'}),
             'pension_points': forms.NumberInput(attrs={'class': 'form-control font-monospace', 'step': '0.0001'}),

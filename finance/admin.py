@@ -267,7 +267,7 @@ class PensionAdmin(BaseOwnedModelAdmin):
         }),
         (_('Capital & Contributions'), {
             'classes': ('pension-capital-group',),
-            'fields': ('current_value', 'monthly_contribution', 'growth_rate')
+            'fields': ('current_value', 'death_benefit', 'monthly_contribution', 'growth_rate')
         }),
         (_('Statutory Pension (Points & Deductions)'), {
             'classes': ('pension-statutory-group',),

@@ -3790,6 +3790,7 @@ def pension_plan_view(request):
             'social_deduction_rate': float(p.social_deduction_rate) if p.social_deduction_rate is not None else 11.5,
             'disability_pension_net': float(p.disability_pension_net) if p.disability_pension_net is not None else None,
             'expected_payout_at_retirement': float(p.expected_payout_at_retirement) if p.expected_payout_at_retirement is not None else None,
+            'death_benefit': float(p.death_benefit) if getattr(p, 'death_benefit', None) is not None else None,
             'retirement_age': p.retirement_age,
             'target_pension_payout': float(p.target_pension_payout) if p.target_pension_payout is not None else None,
             'current_value': float(p.current_value) if p.current_value is not None else 0.0,

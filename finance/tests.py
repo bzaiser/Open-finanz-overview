@@ -1190,3 +1190,29 @@ class AssetModalSaveTests(TestCase):
         u.profile.save(update_fields=["enable_kpi_animations"])
         dash_off_resp = self.client.get(reverse("finance:dashboard"))
         self.assertContains(dash_off_resp, 'data-kpi-animate="false"')
+
+        # Combined Pension with Rückkaufswert (current_value) + Todesfallsumme (death_benefit)
+        p_combo = Pension.objects.create(
+            user=u,
+            provider="Allianz Kapital-LV Kombi",
+            pension_type="capital",
+            payout_type="one_time",
+            owner_role="primary",
+            current_value=Decimal("25000.00"),
+            death_benefit=Decimal("80000.00"),
+            monthly_contribution=Decimal("150.00"),
+            growth_rate=Decimal("3.00"),
+        )
+        audit_combo = calculate_protection_audit(u)
+        self.assertGreaterEqual(audit_combo["term_life_covered"], 80000.0)
+        start_death = timezone.localdate().replace(day=1)
+        fc_death = SimulationEngine(
+            u,
+            months=6,
+            risk_scenario={
+                "type": "partner_death",
+                "affected_person": "primary",
+                "start_date": start_death.strftime("%Y-%m-%d"),
+            },
+        ).get_forecast()
+        self.assertGreater(fc_death[0]["accumulated_cash"], 75000.0)
