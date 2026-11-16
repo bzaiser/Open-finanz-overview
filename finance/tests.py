@@ -1184,3 +1184,9 @@ class AssetModalSaveTests(TestCase):
         dash_resp = self.client.get(reverse("finance:dashboard"))
         self.assertEqual(dash_resp.status_code, 200)
         self.assertContains(dash_resp, "Geschätzte Jahressteuer")
+        self.assertContains(dash_resp, 'data-kpi-animate="true"')
+
+        u.profile.enable_kpi_animations = False
+        u.profile.save(update_fields=["enable_kpi_animations"])
+        dash_off_resp = self.client.get(reverse("finance:dashboard"))
+        self.assertContains(dash_off_resp, 'data-kpi-animate="false"')

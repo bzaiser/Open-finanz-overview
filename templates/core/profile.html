@@ -180,6 +180,14 @@
                                 <label class="form-label fw-bold d-block mb-0" style="font-size: 0.7rem;">{{ form.real_estate_growth_rate.label }}</label>
                                 {{ form.real_estate_growth_rate }}
                             </div>
+                            <div class="col-12 mt-2">
+                                <div class="form-check form-switch">
+                                    {{ form.enable_kpi_animations }}
+                                    <label class="form-check-label small fw-bold" for="{{ form.enable_kpi_animations.id_for_label }}">
+                                        {% trans "KPI-Karten beim Laden animieren (Count-Up)" %}
+                                    </label>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

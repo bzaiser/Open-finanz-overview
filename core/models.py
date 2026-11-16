@@ -270,6 +270,11 @@ class UserProfile(models.Model):
         null=True,
         help_text=_("Wird automatisch aus historischen Steuerbescheiden gelernt, falls leer.")
     )
+    enable_kpi_animations = models.BooleanField(
+        _("KPI-Zahlenanimation aktivieren"),
+        default=True,
+        help_text=_("Animiert KPI-Karten beim Laden und bei der Zeitreise mit einem weichen Count-Up-Effekt.")
+    )
 
 
     class Meta:

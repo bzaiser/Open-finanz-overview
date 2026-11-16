@@ -888,7 +888,7 @@
     {% block extra_css %}{% endblock %}
 </head>
 
-<body>
+<body data-kpi-animate="{% if user.is_authenticated and not user.profile.enable_kpi_animations %}false{% else %}true{% endif %}">
     <nav class="navbar navbar-expand-lg navbar-dark mb-4" style="background: var(--app-gradient);">
         <div class="container-fluid">
             <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'finance:dashboard' %}">
@@ -1519,6 +1519,79 @@
     {% endif %}
 
     <script>document.body.addEventListener('htmx:configRequest', (e) => { e.detail.headers['X-CSRFToken'] = '{{csrf_token}}'; });</script>
+    <script>
+    (function() {
+        function animateKpiCounters(root) {
+            if (!document.body || document.body.dataset.kpiAnimate !== 'true') return;
+            if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            var scope = root || document;
+            var headers = scope.querySelectorAll('.metric-card h3, .kpi-animate');
+            headers.forEach(function(h3) {
+                if (h3.dataset.kpiAnimated === '1') return;
+                // Find the primary text node containing the formatted number (preserving child <span> units)
+                var targetNode = null;
+                for (var i = 0; i < h3.childNodes.length; i++) {
+                    var n = h3.childNodes[i];
+                    if (n.nodeType === 3 && /\d/.test(n.textContent)) {
+                        targetNode = n;
+                        break;
+                    }
+                }
+                if (!targetNode) return;
+                var raw = targetNode.textContent;
+                var m = raw.match(/^(\s*[+\-−]?)\s*([0-9.,]+)(.*)$/);
+                if (!m) return;
+                var prefix = m[1];
+                var numStr = m[2];
+                var suffix = m[3];
+
+                // Detect decimal separator & precision
+                var decMatch = numStr.match(/([.,])(\d{1,2})$/);
+                var decimals = 0;
+                var decSep = ',';
+                var thouSep = '.';
+                var clean = numStr;
+                if (decMatch && !(numStr.indexOf('.') !== -1 && decMatch[1] === '.' && decMatch[2].length === 3)) {
+                    if (decMatch[1] === ',' || decMatch[2].length <= 2) {
+                        decimals = decMatch[2].length;
+                        decSep = decMatch[1];
+                        thouSep = decSep === ',' ? '.' : ',';
+                        clean = numStr.slice(0, numStr.length - decMatch[0].length).replace(/[.,]/g, '') + '.' + decMatch[2];
+                    }
+                } else {
+                    clean = numStr.replace(/[.,]/g, '');
+                    if (numStr.indexOf(',') !== -1 && numStr.indexOf('.') === -1) thouSep = ',';
+                }
+                var targetVal = parseFloat(clean);
+                if (isNaN(targetVal) || targetVal === 0) return;
+
+                h3.dataset.kpiAnimated = '1';
+                var duration = 650;
+                var startTs = null;
+                function formatVal(val) {
+                    var fixed = val.toFixed(decimals);
+                    var parts = fixed.split('.');
+                    var intPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, thouSep);
+                    return decimals > 0 ? intPart + decSep + parts[1] : intPart;
+                }
+                function step(ts) {
+                    if (!startTs) startTs = ts;
+                    var p = Math.min(1, (ts - startTs) / duration);
+                    var eased = 1 - Math.pow(1 - p, 3);
+                    targetNode.textContent = prefix + formatVal(targetVal * eased) + suffix;
+                    if (p < 1) {
+                        requestAnimationFrame(step);
+                    } else {
+                        targetNode.textContent = raw;
+                    }
+                }
+                requestAnimationFrame(step);
+            });
+        }
+        document.addEventListener('DOMContentLoaded', function() { animateKpiCounters(document); });
+        document.body.addEventListener('htmx:afterSettle', function(e) { animateKpiCounters(e.target || document); });
+    })();
+    </script>
     {% block extra_js %}{% endblock %}
 </body>
 
