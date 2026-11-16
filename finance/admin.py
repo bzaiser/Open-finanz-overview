@@ -62,7 +62,7 @@ class CurrentUserFilterMixin:
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         if not request.user.is_superuser:
-            return qs.filter(**{self.user_filter_field: request.user})
+            return qs.filter(**{self.user_filter_field: request.user.pk})
         return qs
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
