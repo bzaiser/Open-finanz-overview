@@ -227,6 +227,50 @@ class UserProfile(models.Model):
         default=""
     )
 
+    # Holistic Tax Estimation Parameters (Optional)
+    TAX_ASSESSMENT_MODE_CHOICES = [
+        ('auto', _('Automatisch (Paar = Splittingtarif, Single = Grundtarif)')),
+        ('single', _('Einzelveranlagung (Grundtarif)')),
+        ('splitting', _('Zusammenveranlagung (Splittingtarif)')),
+    ]
+    tax_assessment_mode = models.CharField(
+        _("Steuer-Veranlagungsart"),
+        max_length=16,
+        choices=TAX_ASSESSMENT_MODE_CHOICES,
+        default='auto'
+    )
+    church_tax_rate = models.DecimalField(
+        _("Kirchensteuersatz (%)"),
+        max_digits=4,
+        decimal_places=2,
+        default=0.00,
+        help_text=_("0 % (keine), 8 % (BY/BW) oder 9 % (übrige Bundesländer)")
+    )
+    annual_gross_income_p1 = models.DecimalField(
+        _("Jahresbruttogehalt Person 1 (€, optional)"),
+        max_digits=12,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        help_text=_("Leer lassen für automatische Schätzung aus dem Nettoeinkommen.")
+    )
+    annual_gross_income_p2 = models.DecimalField(
+        _("Jahresbruttogehalt Person 2 (€, optional)"),
+        max_digits=12,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        help_text=_("Leer lassen für automatische Schätzung aus dem Nettoeinkommen.")
+    )
+    typical_annual_deductions = models.DecimalField(
+        _("Typische jährliche Steuerabzüge / Werbungskosten (€, optional)"),
+        max_digits=12,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        help_text=_("Wird automatisch aus historischen Steuerbescheiden gelernt, falls leer.")
+    )
+
 
     class Meta:
         verbose_name = _("User Profile")

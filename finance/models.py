@@ -719,3 +719,93 @@ class InsurancePolicy(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.get_insurance_type_display()})"
+
+
+class TaxAssessment(models.Model):
+    ASSESSMENT_TYPE_CHOICES = [
+        ('single', _('Einzelveranlagung (Grundtarif)')),
+        ('splitting', _('Zusammenveranlagung (Splittingtarif)')),
+    ]
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='tax_assessments',
+        verbose_name=_("User")
+    )
+    year = models.PositiveIntegerField(_("Steuerjahr"))
+    assessment_type = models.CharField(
+        _("Veranlagungsart"),
+        max_length=20,
+        choices=ASSESSMENT_TYPE_CHOICES,
+        default='splitting'
+    )
+    gross_income = models.DecimalField(
+        _("Gesamtbetrag der Einkünfte / Brutto (€)"),
+        max_digits=12,
+        decimal_places=2,
+        default=0
+    )
+    deductible_expenses = models.DecimalField(
+        _("Abzüge / Werbungskosten & Sonderausgaben (€)"),
+        max_digits=12,
+        decimal_places=2,
+        default=0
+    )
+    rental_income_taxable = models.DecimalField(
+        _("Einkünfte aus Vermietung & Verpachtung (Anlage V, €)"),
+        max_digits=12,
+        decimal_places=2,
+        default=0
+    )
+    taxable_income_zve = models.DecimalField(
+        _("Zu versteuerndes Einkommen (zvE, €)"),
+        max_digits=12,
+        decimal_places=2,
+        default=0
+    )
+    assessed_tax_total = models.DecimalField(
+        _("Festgesetzte Steuer gesamt (ESt + Soli + KiSt, €)"),
+        max_digits=12,
+        decimal_places=2,
+        default=0
+    )
+    prepaid_tax = models.DecimalField(
+        _("Bereits gezahlte Lohnsteuer / Vorauszahlungen (€)"),
+        max_digits=12,
+        decimal_places=2,
+        default=0
+    )
+    refund_or_payment = models.DecimalField(
+        _("Erstattung (+) / Nachzahlung (-) (€)"),
+        max_digits=12,
+        decimal_places=2,
+        default=0
+    )
+    linked_document = models.ForeignKey(
+        'Document',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='tax_assessments',
+        verbose_name=_("Steuerbescheid-Dokument")
+    )
+    notes = models.TextField(_("Notizen"), blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = _("Historischer Steuerbescheid")
+        verbose_name_plural = _("Historische Steuerbescheide")
+        ordering = ['-year']
+        unique_together = ('user', 'year')
+
+    @property
+    def effective_tax_rate_zve(self):
+        if self.taxable_income_zve and self.taxable_income_zve > 0:
+            return round(float(self.assessed_tax_total) / float(self.taxable_income_zve) * 100.0, 1)
+        return 0.0
+
+    def __str__(self):
+        return f"Steuerbescheid {self.year} ({self.user.username}): zvE {self.taxable_income_zve} €"
+

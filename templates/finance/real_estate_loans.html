@@ -1391,11 +1391,240 @@
         <!-- ========================================== -->
         <div class="tab-pane fade" id="tax-docs-pane" role="tabpanel">
 
-            <!-- Section 1: Tax Dashboard / Anlage V -->
+            <!-- ========================================================== -->
+            <!-- GANZHEITLICHES STEUER-COCKPIT & BESCHEID-CHRONIK           -->
+            <!-- ========================================================== -->
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3">
+                <div>
+                    <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+                        <h5 class="fw-bold mb-0">
+                            <i class="bi bi-bank2 text-primary me-2"></i>{% trans "Ganzheitliches Steuer-Cockpit & 30-Jahres-Steuerprognose" %}
+                        </h5>
+                        {% if tax_cockpit.calibration_status == 'high' %}
+                            <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill">
+                                <i class="bi bi-patch-check-fill me-1"></i>{{ tax_cockpit.calibration_label }}
+                            </span>
+                        {% elif tax_cockpit.calibration_status == 'medium' %}
+                            <span class="badge bg-info-subtle text-info border border-info-subtle rounded-pill">
+                                <i class="bi bi-check-circle-fill me-1"></i>{{ tax_cockpit.calibration_label }}
+                            </span>
+                        {% else %}
+                            <span class="badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill">
+                                <i class="bi bi-calculator me-1"></i>{{ tax_cockpit.calibration_label }}
+                            </span>
+                        {% endif %}
+                    </div>
+                    <p class="text-muted small mb-0">
+                        {% trans "Kombiniert Erwerbseinkommen, Lebensphasen (Splitting, Alleinerziehend, Kinderfreibeträge, Rentner-Kohorten), Kapitalerträge und Immobilien (Anlage V) – selbstlernend kalibriert durch deine echten Steuerbescheide." %}
+                    </p>
+                </div>
+                <div class="d-flex flex-wrap gap-2 flex-shrink-0">
+                    <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#taxSettingsModal">
+                        <i class="bi bi-sliders me-1"></i>{% trans "Steuer-Stammdaten" %}
+                    </button>
+                    <button type="button" class="btn btn-sm btn-primary rounded-pill px-3 fw-bold text-white shadow-sm" style="background: var(--app-gradient); border: none;" onclick="openTaxAssessmentModal()">
+                        <i class="bi bi-file-earmark-medical me-1"></i>{% trans "Steuerbescheid erfassen / PDF auslesen" %}
+                    </button>
+                </div>
+            </div>
+
+            <!-- Holistic Tax KPI Row -->
+            <div class="row g-3 mb-4">
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="card border-0 shadow-sm rounded-4 h-100 p-3" style="background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color, rgba(125,125,125,0.2)) !important;">
+                        <span class="text-uppercase fw-bold opacity-75 small" style="font-size: 0.68rem;">{% trans "Geschätzte Gesamtsteuer" %} ({{ tax_cockpit.current_year }})</span>
+                        <h3 class="fw-bold mb-1 mt-1 font-monospace text-primary">
+                            {{ tax_cockpit.current_row.estimated_tax|floatformat:0|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}/J.</span>
+                        </h3>
+                        <span class="small opacity-75" style="font-size: 0.74rem;">
+                            {% trans "zvE ca." %} {{ tax_cockpit.current_row.zve|floatformat:0|intcomma }} € · {{ tax_cockpit.current_row.phase_label }}
+                        </span>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="card border-0 shadow-sm rounded-4 h-100 p-3" style="background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color, rgba(125,125,125,0.2)) !important;">
+                        <span class="text-uppercase fw-bold opacity-75 small" style="font-size: 0.68rem;">{% trans "Persönlicher Steuersatz (Kalibriert)" %}</span>
+                        <h3 class="fw-bold mb-1 mt-1 font-monospace">
+                            Ø {{ tax_cockpit.current_row.effective_rate|floatformat:1 }} % <span class="fs-6 opacity-75">/ Grenz: {{ tax_cockpit.current_row.marginal_rate|floatformat:1 }} %</span>
+                        </h3>
+                        <span class="small opacity-75" style="font-size: 0.74rem;">
+                            {% if tax_cockpit.is_splitting %}{% trans "Splittingtarif (Zusammenveranlagung)" %}{% else %}{% trans "Grundtarif (Einzelveranlagung)" %}{% endif %}
+                            {% if tax_cockpit.church_tax_rate > 0 %} · {% trans "KiSt" %} {{ tax_cockpit.church_tax_rate|floatformat:0 }} %{% endif %}
+                        </span>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="card border-0 shadow-sm rounded-4 h-100 p-3" style="background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color, rgba(125,125,125,0.2)) !important;">
+                        <span class="text-uppercase fw-bold opacity-75 small" style="font-size: 0.68rem;">{% trans "Steuerlast im Ruhestand" %} ({{ tax_cockpit.retirement_year }})</span>
+                        <h3 class="fw-bold mb-1 mt-1 font-monospace text-info">
+                            {{ tax_cockpit.retirement_row.estimated_tax|floatformat:0|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}/J.</span>
+                        </h3>
+                        <span class="small opacity-75" style="font-size: 0.74rem;">
+                            Ø {{ tax_cockpit.retirement_row.effective_rate|floatformat:1 }} % · {% trans "inkl. Renten-Kohorte & bAV" %}
+                        </span>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="card border-0 shadow-sm rounded-4 h-100 p-3" style="background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color, rgba(125,125,125,0.2)) !important;">
+                        <span class="text-uppercase fw-bold opacity-75 small" style="font-size: 0.68rem;">{% trans "Lern-Faktor & Bescheide" %}</span>
+                        <h3 class="fw-bold mb-1 mt-1 font-monospace text-success">
+                            {{ tax_cockpit.assessments|length }} <span class="fs-6 opacity-75">{% trans "Bescheid(e)" %}</span>
+                        </h3>
+                        <span class="small opacity-75" style="font-size: 0.74rem;">
+                            {% if tax_cockpit.learned_deduction_amount %}
+                                {% trans "Gelernte Ø Abzüge:" %} {{ tax_cockpit.learned_deduction_amount|floatformat:0|intcomma }} €/J.
+                            {% else %}
+                                {% trans "Nutzt Standard-Pauschbeträge" %}
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 30-Year Holistic Tax Chart & Life-Phase Hints -->
+            <div class="row g-4 mb-4">
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-sm rounded-4 h-100" style="background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color, rgba(125,125,125,0.2)) !important;">
+                        <div class="card-header border-0 d-flex justify-content-between align-items-center">
+                            <span class="fw-bold"><i class="bi bi-graph-up me-2 text-primary"></i>{% trans "Steuerlast-Verlauf: Historische Bescheide vs. 30-Jahres-Zukunftsprognose" %}</span>
+                        </div>
+                        <div class="card-body">
+                            <div style="height: 290px; position: relative;">
+                                <canvas id="holisticTaxChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card border-0 shadow-sm rounded-4 h-100" style="background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color, rgba(125,125,125,0.2)) !important;">
+                        <div class="card-header border-0">
+                            <span class="fw-bold"><i class="bi bi-lightbulb text-warning me-2"></i>{% trans "Lebensphasen- & Steuer-Hinweise" %}</span>
+                        </div>
+                        <div class="card-body pt-2 d-flex flex-column justify-content-between">
+                            <ul class="small ps-3 mb-3 opacity-85">
+                                {% for hint in tax_cockpit.tax_hints %}
+                                    <li class="mb-2">{{ hint }}</li>
+                                {% endfor %}
+                            </ul>
+                            <div class="p-2 px-3 rounded-3 small opacity-80" style="background-color: rgba(125,125,125,0.07);">
+                                <div class="d-flex justify-content-between py-1 border-bottom border-secondary border-opacity-10">
+                                    <span>{% trans "Aktuelles Brutto (geschätzt):" %}</span>
+                                    <strong class="font-monospace">{{ tax_cockpit.current_row.gross_earned|floatformat:0|intcomma }} €</strong>
+                                </div>
+                                <div class="d-flex justify-content-between py-1 border-bottom border-secondary border-opacity-10">
+                                    <span>{% trans "Anlage V (Vermietung):" %}</span>
+                                    <strong class="font-monospace">{{ tax_cockpit.current_row.vv_taxable|floatformat:0|intcomma }} €</strong>
+                                </div>
+                                <div class="d-flex justify-content-between py-1">
+                                    <span>{% trans "Berücksichtigte Abzüge/Freibeträge:" %}</span>
+                                    <strong class="font-monospace">-{{ tax_cockpit.current_row.deductions|floatformat:0|intcomma }} €</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Historical Tax Assessments (Echte Steuerbescheide der Vergangenheit) -->
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-5" style="background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color);">
+                <div class="card-header border-0 d-flex flex-wrap justify-content-between align-items-center gap-2">
+                    <div>
+                        <span class="fw-bold"><i class="bi bi-journal-check me-2 opacity-75"></i>{% trans "Historische Einkommensteuerbescheide (Reale Werte zur Prognose-Kalibrierung)" %}</span>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-light rounded-pill px-3 fw-semibold" onclick="openTaxAssessmentModal()">
+                        <i class="bi bi-plus-lg me-1"></i>{% trans "Steuerbescheid hinzufügen" %}
+                    </button>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0 text-center real-estate-table" style="font-size: 0.84rem;">
+                            <thead>
+                                <tr>
+                                    <th class="py-3 px-3 text-start">{% trans "Steuerjahr" %}</th>
+                                    <th class="py-3 px-3">{% trans "Tarif" %}</th>
+                                    <th class="py-3 px-3">{% trans "Einkünfte / Brutto" %}</th>
+                                    <th class="py-3 px-3">{% trans "Abzüge" %}</th>
+                                    <th class="py-3 px-3">{% trans "Anlage V" %}</th>
+                                    <th class="py-3 px-3">{% trans "zvE (lt. Bescheid)" %}</th>
+                                    <th class="py-3 px-3">{% trans "Festgesetzte Steuer" %}</th>
+                                    <th class="py-3 px-3">{% trans "Ø Satz" %}</th>
+                                    <th class="py-3 px-3">{% trans "Erstattung / Nachzahlung" %}</th>
+                                    <th class="py-3 px-3">{% trans "PDF" %}</th>
+                                    <th class="py-3 px-3 text-end pe-3">{% trans "Aktionen" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for a in tax_cockpit.assessments %}
+                                <tr>
+                                    <td class="py-2 px-3 text-start fw-bold font-monospace">{{ a.year }}</td>
+                                    <td class="py-2 px-3">
+                                        <span class="badge rounded-pill bg-secondary-subtle text-body">{{ a.get_assessment_type_display }}</span>
+                                    </td>
+                                    <td class="py-2 px-3 font-monospace">{{ a.gross_income|floatformat:2|intcomma }} €</td>
+                                    <td class="py-2 px-3 font-monospace text-success">-{{ a.deductible_expenses|floatformat:2|intcomma }} €</td>
+                                    <td class="py-2 px-3 font-monospace {% if a.rental_income_taxable < 0 %}text-success{% elif a.rental_income_taxable > 0 %}text-danger{% endif %}">
+                                        {{ a.rental_income_taxable|floatformat:2|intcomma }} €
+                                    </td>
+                                    <td class="py-2 px-3 font-monospace fw-bold">{{ a.taxable_income_zve|floatformat:2|intcomma }} €</td>
+                                    <td class="py-2 px-3 font-monospace text-danger fw-bold">{{ a.assessed_tax_total|floatformat:2|intcomma }} €</td>
+                                    <td class="py-2 px-3 font-monospace">{{ a.effective_tax_rate_zve }} %</td>
+                                    <td class="py-2 px-3 font-monospace fw-bold {% if a.refund_or_payment >= 0 %}text-success{% else %}text-danger{% endif %}">
+                                        {% if a.refund_or_payment >= 0 %}+{% endif %}{{ a.refund_or_payment|floatformat:2|intcomma }} €
+                                    </td>
+                                    <td class="py-2 px-3">
+                                        {% if a.linked_document %}
+                                            <a href="{% url 'finance:document_download' a.linked_document.id %}" class="btn btn-sm btn-outline-info py-0 px-2" title="{{ a.linked_document.title }}">
+                                                <i class="bi bi-file-earmark-pdf"></i>
+                                            </a>
+                                        {% else %}-{% endif %}
+                                    </td>
+                                    <td class="py-2 px-3 text-end pe-3">
+                                        <div class="d-inline-flex gap-1">
+                                            <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-2"
+                                                    onclick="openTaxAssessmentModal({
+                                                        id: '{{ a.id }}',
+                                                        year: '{{ a.year }}',
+                                                        assessment_type: '{{ a.assessment_type }}',
+                                                        gross_income: '{{ a.gross_income|floatformat:2 }}',
+                                                        deductible_expenses: '{{ a.deductible_expenses|floatformat:2 }}',
+                                                        rental_income_taxable: '{{ a.rental_income_taxable|floatformat:2 }}',
+                                                        taxable_income_zve: '{{ a.taxable_income_zve|floatformat:2 }}',
+                                                        assessed_tax_total: '{{ a.assessed_tax_total|floatformat:2 }}',
+                                                        prepaid_tax: '{{ a.prepaid_tax|floatformat:2 }}',
+                                                        refund_or_payment: '{{ a.refund_or_payment|floatformat:2 }}',
+                                                        notes: '{{ a.notes|escapejs }}'
+                                                    })"
+                                                    title="{% trans 'Bearbeiten' %}">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                            <form method="post" action="{% url 'finance:tax_assessment_delete' a.id %}" class="d-inline" onsubmit="return confirm('{% trans 'Steuerbescheid wirklich löschen?' %}');">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-sm btn-outline-danger py-0 px-2" title="{% trans 'Löschen' %}">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="11" class="py-4 text-center opacity-75">
+                                        <i class="bi bi-file-earmark-medical me-1"></i>
+                                        {% trans "Noch keine historischen Steuerbescheide erfasst. Klicke oben auf 'Steuerbescheid erfassen / PDF auslesen', um deine Prognose mit echten Werten zu kalibrieren." %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Tax Dashboard / Anlage V (Immobilien-Detailbetrachtung) -->
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <div>
                     <h5 class="fw-bold mb-1">
-                        <i class="bi bi-receipt-cutoff text-primary me-2"></i>{% trans "Tax Summary & Anlage V Preparation" %}
+                        <i class="bi bi-receipt-cutoff text-primary me-2"></i>{% trans "Immobilien-Steuerdetails & Anlage V (Vermietung & Verpachtung)" %}
                     </h5>
                     <p class="text-muted small mb-0">{% trans "Tax depreciation (AfA), mortgage interest, operating deductions and taxable rental results." %}</p>
                 </div>
@@ -1527,7 +1756,7 @@
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
                                 <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
-                                    {% trans "Est. Tax Impact (~35%)" %}
+                                    {% trans "Est. Tax Impact" %} (~{{ tax_cockpit.calibrated_marginal_rate|default:35|floatformat:0 }}%)
                                 </span>
                                 <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
                                     {% if overview.portfolio_tax.is_tax_saving %}+{% else %}-{% endif %}{{ overview.portfolio_tax.estimated_tax_impact|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}</span>
@@ -1545,8 +1774,8 @@
                         <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card.bg_color|default:card_colors.cashflow_bg }}; color: {{ card.text_color|default:card_colors.cashflow_text }};">
                             <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Tax Estimation Basis" %}:</span>
                             <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
-                                <span>{% trans "Assumed Tax Rate" %}</span>
-                                <span class="font-monospace fw-bold">~35 %</span>
+                                <span>{% trans "Persönlicher Grenzsteuersatz" %}</span>
+                                <span class="font-monospace fw-bold">~{{ tax_cockpit.calibrated_marginal_rate|default:35|floatformat:1 }} %</span>
                             </div>
                             <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
                                 <span>{% trans "Basis V+V Result" %}</span>
@@ -1781,6 +2010,161 @@
                 {% endif %}
             </div>
 
+            <!-- Dezenter 1-Zeilen-Hinweis im Steuer-Cockpit -->
+            <div class="text-center small opacity-75 mb-3">
+                <i class="bi bi-info-circle me-1"></i>
+                {% trans "Hinweis: Alle Steuer- und Prognosewerte sind unverbindliche mathematische Modell-Schätzungen zur privaten Orientierung und stellen keine Steuerberatung (§ 2 StBerG) dar." %}
+                <a href="{% url 'help' %}#mod-realestate" class="text-reset text-decoration-underline ms-1">{% trans "Methodik in der Hilfe" %}</a> ·
+                <a href="{% url 'about' %}#legal-disclaimer" class="text-reset text-decoration-underline">{% trans "Rechtliche Hinweise" %}</a>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MODAL: STEUERBESCHEID ERFASSEN / PDF PARSE -->
+    <!-- ========================================== -->
+    <div class="modal fade" id="taxAssessmentModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+                <form method="post" id="taxAssessmentForm" action="{% url 'finance:tax_assessment_add' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="modal-header border-0 text-white p-4" style="background: var(--app-gradient);">
+                        <div>
+                            <h5 class="modal-title fw-bold mb-1">
+                                <i class="bi bi-file-earmark-medical me-2"></i><span id="taxAssessmentModalTitle">{% trans "Historischen Einkommensteuerbescheid erfassen" %}</span>
+                            </h5>
+                            <p class="small mb-0 opacity-85">{% trans "Kalibriert deine 30-Jahres-Steuerprognose automatisch anhand realer Werte aus deiner Steuererklärung." %}</p>
+                        </div>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <!-- 1-Klick PDF-Direkt-Auslesung ohne KI -->
+                        <div class="p-3 rounded-4 mb-3" style="background-color: rgba(13, 110, 253, 0.08); border: 1px dashed rgba(13, 110, 253, 0.4);">
+                            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
+                                <div>
+                                    <h6 class="fw-bold mb-1 text-primary"><i class="bi bi-magic me-1"></i>{% trans "Schnell-Auslesung aus PDF-Steuerbescheid (lokal & ohne KI)" %}</h6>
+                                    <p class="small opacity-80 mb-2">
+                                        {% trans "Wähle deinen digitalen Steuerbescheid (PDF aus ELSTER, WISO, DATEV o. Ä.) aus. Die Werte werden sofort erkannt, in die Felder unten eingetragen und das PDF wird beim Speichern im Dokumenten-Tresor abgelegt." %}
+                                    </p>
+                                </div>
+                            </div>
+                            <input type="file" name="pdf_file" id="taxPdfFileInput" accept=".pdf" class="form-control form-control-sm" onchange="handleTaxPdfUpload(this)">
+                            <div id="taxPdfParseFeedback" class="small mt-2 fw-semibold" style="display: none;"></div>
+                        </div>
+
+                        <div class="row g-3 small">
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">{% trans "Steuerjahr" %}</label>
+                                <input type="number" name="year" id="taxField_year" class="form-control font-monospace" min="2005" max="2040" value="{{ tax_cockpit.current_year|add:'-1' }}" required>
+                            </div>
+                            <div class="col-md-8">
+                                <label class="form-label fw-bold">{% trans "Veranlagungsart (Tarif)" %}</label>
+                                <select name="assessment_type" id="taxField_assessment_type" class="form-select">
+                                    <option value="splitting" {% if tax_cockpit.is_splitting %}selected{% endif %}>{% trans "Zusammenveranlagung (Splittingtarif)" %}</option>
+                                    <option value="single" {% if not tax_cockpit.is_splitting %}selected{% endif %}>{% trans "Einzelveranlagung (Grundtarif)" %}</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">{% trans "Gesamtbetrag Einkünfte / Brutto (€)" %}</label>
+                                <input type="number" step="0.01" name="gross_income" id="taxField_gross_income" class="form-control font-monospace" value="0.00">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">{% trans "Anerkannte Abzüge / Werbungsk. (€)" %}</label>
+                                <input type="number" step="0.01" name="deductible_expenses" id="taxField_deductible_expenses" class="form-control font-monospace" value="0.00">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">{% trans "Davon Vermietung Anlage V (€)" %}</label>
+                                <input type="number" step="0.01" name="rental_income_taxable" id="taxField_rental_income_taxable" class="form-control font-monospace" value="0.00">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold text-primary">{% trans "Zu versteuerndes Einkommen (zvE, €)" %} *</label>
+                                <input type="number" step="0.01" name="taxable_income_zve" id="taxField_taxable_income_zve" class="form-control font-monospace fw-bold" value="0.00" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold text-danger">{% trans "Festgesetzte Steuer gesamt (€)" %} *</label>
+                                <input type="number" step="0.01" name="assessed_tax_total" id="taxField_assessed_tax_total" class="form-control font-monospace fw-bold" value="0.00" required oninput="recalcTaxModalRefund()">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">{% trans "Gezahlte Lohnsteuer / Vorausz. (€)" %}</label>
+                                <input type="number" step="0.01" name="prepaid_tax" id="taxField_prepaid_tax" class="form-control font-monospace" value="0.00" oninput="recalcTaxModalRefund()">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">{% trans "Erstattung (+) oder Nachzahlung (-) (€)" %}</label>
+                                <input type="number" step="0.01" name="refund_or_payment" id="taxField_refund_or_payment" class="form-control font-monospace" value="0.00">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">{% trans "Notizen (optional)" %}</label>
+                                <input type="text" name="notes" id="taxField_notes" class="form-control" placeholder="{% trans 'z. B. inkl. Handwerkerbonus § 35a' %}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 pt-0 px-4 pb-4">
+                        <button type="button" class="btn btn-outline-secondary rounded-pill px-3" data-bs-dismiss="modal">{% trans "Abbrechen" %}</button>
+                        <button type="submit" class="btn btn-primary rounded-pill px-4 fw-bold text-white" style="background: var(--app-gradient); border: none;">
+                            <i class="bi bi-check2-circle me-1"></i>{% trans "Bescheid speichern & Prognose kalibrieren" %}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MODAL: STEUER-STAMMDATEN (OPTIONAL)        -->
+    <!-- ========================================== -->
+    <div class="modal fade" id="taxSettingsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+                <form method="post" action="{% url 'finance:tax_settings_save' %}">
+                    {% csrf_token %}
+                    <div class="modal-header border-0 text-white p-4" style="background: var(--app-gradient);">
+                        <h5 class="modal-title fw-bold"><i class="bi bi-sliders me-2"></i>{% trans "Steuer-Stammdaten & Prognose-Parameter" %}</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body p-4 small">
+                        <p class="opacity-75 mb-3">
+                            {% trans "Alle Angaben sind optional. Bleiben die Brutto-/Abzugsfelder leer, schätzt das System die Werte automatisch aus deinen Netto-Cashflows und kalibriert sie anhand deiner hinterlegten Steuerbescheide." %}
+                        </p>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">{% trans "Steuer-Veranlagungsart" %}</label>
+                            <select name="tax_assessment_mode" class="form-select">
+                                <option value="auto" {% if user.profile.tax_assessment_mode == 'auto' %}selected{% endif %}>{% trans "Automatisch (Paar = Splittingtarif, Single = Grundtarif)" %}</option>
+                                <option value="splitting" {% if user.profile.tax_assessment_mode == 'splitting' %}selected{% endif %}>{% trans "Zusammenveranlagung (Splittingtarif § 32a Abs. 5 EStG)" %}</option>
+                                <option value="single" {% if user.profile.tax_assessment_mode == 'single' %}selected{% endif %}>{% trans "Einzelveranlagung (Grundtarif)" %}</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">{% trans "Kirchensteuersatz (%)" %}</label>
+                            <select name="church_tax_rate" class="form-select">
+                                <option value="0.00" {% if user.profile.church_tax_rate == 0 %}selected{% endif %}>0 % ({% trans "Keine Kirchensteuer" %})</option>
+                                <option value="8.00" {% if user.profile.church_tax_rate == 8 %}selected{% endif %}>8 % ({% trans "Bayern / Baden-Württemberg" %})</option>
+                                <option value="9.00" {% if user.profile.church_tax_rate == 9 %}selected{% endif %}>9 % ({% trans "Übrige Bundesländer" %})</option>
+                            </select>
+                        </div>
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">{% trans "Jahresbrutto Person 1 (€, opt.)" %}</label>
+                                <input type="number" step="0.01" name="annual_gross_income_p1" class="form-control font-monospace" value="{{ user.profile.annual_gross_income_p1|default_if_none:'' }}" placeholder="{% trans 'Automatisch aus Netto' %}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">{% trans "Jahresbrutto Person 2 (€, opt.)" %}</label>
+                                <input type="number" step="0.01" name="annual_gross_income_p2" class="form-control font-monospace" value="{{ user.profile.annual_gross_income_p2|default_if_none:'' }}" placeholder="{% trans 'Automatisch aus Netto' %}">
+                            </div>
+                        </div>
+                        <div class="mb-0">
+                            <label class="form-label fw-bold">{% trans "Typische jährliche Abzüge / Werbungskosten (€, opt.)" %}</label>
+                            <input type="number" step="0.01" name="typical_annual_deductions" class="form-control font-monospace" value="{{ user.profile.typical_annual_deductions|default_if_none:'' }}" placeholder="{% trans 'Wird automatisch aus Steuerbescheiden gelernt' %}">
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 pt-0 px-4 pb-4">
+                        <button type="button" class="btn btn-outline-secondary rounded-pill px-3" data-bs-dismiss="modal">{% trans "Abbrechen" %}</button>
+                        <button type="submit" class="btn btn-primary rounded-pill px-4 fw-bold text-white" style="background: var(--app-gradient); border: none;">
+                            <i class="bi bi-check2 me-1"></i>{% trans "Speichern" %}
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -3300,6 +3684,169 @@ document.addEventListener('DOMContentLoaded', function() {
     if (document.getElementById('calendar-pane') && document.getElementById('calendar-pane').classList.contains('active')) {
         renderCashflowChart();
     }
+
+    // Holistic 30-Year Tax Chart
+    let holisticTaxChartInstance = null;
+    const taxChartRaw = {{ tax_cockpit_chart_json|safe|default:"{}" }};
+    function renderHolisticTaxChart() {
+        const ctx = document.getElementById('holisticTaxChart');
+        if (!ctx || !taxChartRaw || !taxChartRaw.labels) return;
+        if (holisticTaxChartInstance) {
+            holisticTaxChartInstance.destroy();
+        }
+        holisticTaxChartInstance = new Chart(ctx, {
+            data: {
+                labels: taxChartRaw.labels,
+                datasets: [
+                    {
+                        type: 'bar',
+                        label: '{% trans "Geschätzte Jahressteuerlast (€)" %}',
+                        data: taxChartRaw.estimated_tax,
+                        backgroundColor: 'rgba(13, 110, 253, 0.65)',
+                        borderRadius: 4,
+                        yAxisID: 'y'
+                    },
+                    {
+                        type: 'bar',
+                        label: '{% trans "Echter Steuerbescheid (€)" %}',
+                        data: taxChartRaw.actual_tax,
+                        backgroundColor: 'rgba(25, 135, 84, 0.9)',
+                        borderRadius: 4,
+                        yAxisID: 'y'
+                    },
+                    {
+                        type: 'line',
+                        label: '{% trans "Effektiver Steuersatz (%)" %}',
+                        data: taxChartRaw.effective_rate,
+                        borderColor: '#ffc107',
+                        backgroundColor: 'rgba(255, 193, 7, 0.15)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        yAxisID: 'y1'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        position: 'left',
+                        ticks: {
+                            callback: function(v) { return Number(v).toLocaleString('de-DE') + ' €'; }
+                        }
+                    },
+                    y1: {
+                        beginAtZero: true,
+                        max: 50,
+                        position: 'right',
+                        grid: { drawOnChartArea: false },
+                        ticks: {
+                            callback: function(v) { return v + ' %'; }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    const taxDocsTab = document.getElementById('tax-docs-tab');
+    if (taxDocsTab) {
+        taxDocsTab.addEventListener('shown.bs.tab', function() {
+            setTimeout(renderHolisticTaxChart, 50);
+        });
+    }
+    if (document.getElementById('tax-docs-pane') && document.getElementById('tax-docs-pane').classList.contains('active')) {
+        renderHolisticTaxChart();
+    }
 });
+
+function openTaxAssessmentModal(data) {
+    const form = document.getElementById('taxAssessmentForm');
+    const feedback = document.getElementById('taxPdfParseFeedback');
+    const fileInput = document.getElementById('taxPdfFileInput');
+    if (feedback) {
+        feedback.style.display = 'none';
+        feedback.innerText = '';
+    }
+    if (fileInput) fileInput.value = '';
+    const fields = ['year', 'assessment_type', 'gross_income', 'deductible_expenses', 'rental_income_taxable', 'taxable_income_zve', 'assessed_tax_total', 'prepaid_tax', 'refund_or_payment', 'notes'];
+    fields.forEach(function(f) {
+        const el = document.getElementById('taxField_' + f);
+        if (el) el.classList.remove('is-valid');
+    });
+
+    if (data && data.id) {
+        form.action = '/finance/tax/assessment/save/' + data.id + '/';
+        fields.forEach(function(f) {
+            const el = document.getElementById('taxField_' + f);
+            if (el && data[f] !== undefined) el.value = data[f];
+        });
+    } else {
+        form.action = '{% url "finance:tax_assessment_add" %}';
+        document.getElementById('taxField_year').value = '{{ tax_cockpit.current_year|add:"-1" }}';
+        ['gross_income', 'deductible_expenses', 'rental_income_taxable', 'taxable_income_zve', 'assessed_tax_total', 'prepaid_tax', 'refund_or_payment'].forEach(function(f) {
+            const el = document.getElementById('taxField_' + f);
+            if (el) el.value = '0.00';
+        });
+        document.getElementById('taxField_notes').value = '';
+    }
+    const modalEl = document.getElementById('taxAssessmentModal');
+    if (modalEl && typeof bootstrap !== 'undefined') {
+        bootstrap.Modal.getOrCreateInstance(modalEl).show();
+    }
+}
+
+function recalcTaxModalRefund() {
+    const assessed = parseFloat(document.getElementById('taxField_assessed_tax_total').value || '0');
+    const prepaid = parseFloat(document.getElementById('taxField_prepaid_tax').value || '0');
+    if (prepaid > 0 || assessed > 0) {
+        document.getElementById('taxField_refund_or_payment').value = (prepaid - assessed).toFixed(2);
+    }
+}
+
+function handleTaxPdfUpload(inputEl) {
+    if (!inputEl.files || !inputEl.files[0]) return;
+    const feedback = document.getElementById('taxPdfParseFeedback');
+    const fd = new FormData();
+    fd.append('pdf_file', inputEl.files[0]);
+    const csrf = document.querySelector('#taxAssessmentForm input[name="csrfmiddlewaretoken"]');
+    if (csrf) fd.append('csrfmiddlewaretoken', csrf.value);
+
+    if (feedback) {
+        feedback.style.display = 'block';
+        feedback.className = 'small mt-2 fw-semibold text-primary';
+        feedback.innerText = 'PDF wird lokal ausgelesen...';
+    }
+
+    fetch('{% url "finance:tax_parse_pdf_api" %}', {
+        method: 'POST',
+        body: fd
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(res) {
+        if (feedback) {
+            feedback.className = 'small mt-2 fw-semibold ' + (res.ok ? 'text-success' : 'text-warning');
+            feedback.innerText = res.message || '';
+        }
+        if (res.data) {
+            Object.keys(res.data).forEach(function(k) {
+                const el = document.getElementById('taxField_' + k);
+                if (el && (res.found_fields || []).indexOf(k) !== -1) {
+                    el.value = res.data[k];
+                    el.classList.add('is-valid');
+                }
+            });
+        }
+    })
+    .catch(function() {
+        if (feedback) {
+            feedback.className = 'small mt-2 fw-semibold text-danger';
+            feedback.innerText = 'Fehler beim Auslesen der PDF-Datei.';
+        }
+    });
+}
 </script>
 {% endblock %}

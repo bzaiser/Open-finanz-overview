@@ -1070,3 +1070,50 @@ class AssetModalSaveTests(TestCase):
         about_resp = self.client.get(reverse("about"))
         self.assertEqual(about_resp.status_code, 200)
         self.assertContains(about_resp, "Von dir bestätigt am")
+
+        # Holistic Tax Cockpit & AI-free PDF/Text Tax Assessment Parser test
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        from finance.services_tax import calculate_holistic_tax_cockpit, parse_tax_assessment_pdf
+
+        sample_bescheid_text = (
+            "Finanzamt Musterstadt - Bescheid für 2024 über Einkommensteuer\n"
+            "Art der Veranlagung: Zusammenveranlagung nach dem Splittingtarif\n"
+            "Gesamtbetrag der Einkünfte 92.400,00\n"
+            "Einkünfte aus Vermietung und Verpachtung -4.800,00\n"
+            "Zu versteuerndes Einkommen 71.200,00\n"
+            "Festgesetzte Einkommensteuer 13.450,00\n"
+            "Steuerabzug vom Lohn 15.100,00\n"
+            "Guthaben wird erstattet 1.650,00\n"
+        ).encode("utf-8")
+        fake_txt = SimpleUploadedFile("steuerbescheid_2024.txt", sample_bescheid_text, content_type="text/plain")
+        parsed = parse_tax_assessment_pdf(fake_txt, filename="steuerbescheid_2024.txt")
+        self.assertTrue(parsed["ok"])
+        self.assertEqual(parsed["data"]["year"], 2024)
+        self.assertEqual(parsed["data"]["assessment_type"], "splitting")
+        self.assertEqual(parsed["data"]["taxable_income_zve"], "71200.00")
+        self.assertEqual(parsed["data"]["assessed_tax_total"], "13450.00")
+        self.assertEqual(parsed["data"]["refund_or_payment"], "1650.00")
+
+        tax_save_resp = self.client.post(
+            reverse("finance:tax_assessment_add"),
+            {
+                "year": "2024",
+                "assessment_type": "splitting",
+                "gross_income": "92400.00",
+                "deductible_expenses": "21200.00",
+                "rental_income_taxable": "-4800.00",
+                "taxable_income_zve": "71200.00",
+                "assessed_tax_total": "13450.00",
+                "prepaid_tax": "15100.00",
+                "refund_or_payment": "1650.00",
+                "notes": "ELSTER Bescheid 2024",
+            },
+        )
+        self.assertEqual(tax_save_resp.status_code, 302)
+        cockpit = calculate_holistic_tax_cockpit(u)
+        self.assertEqual(cockpit["calibration_status"], "medium")
+        self.assertEqual(cockpit["learned_deduction_amount"], 21200.0)
+        self.assertTrue(len(cockpit["projection_years"]) >= 20)
+        re_tax_resp = self.client.get(f"{reverse('finance:real_estate_loans')}?tab=tax-docs")
+        self.assertEqual(re_tax_resp.status_code, 200)
+        self.assertContains(re_tax_resp, "Ganzheitliches Steuer-Cockpit")

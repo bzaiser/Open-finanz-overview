@@ -791,18 +791,20 @@
                             </div>
                         </div>
 
-                        <!-- FAQ 13: Sanierungsfahrplan & Anlage V -->
+                        <!-- FAQ 13: Sanierungsfahrplan & Ganzheitliches Steuer-Cockpit -->
                         <div class="accordion-item help-accordion-item">
                             <h2 class="accordion-header">
                                 <button class="accordion-button collapsed px-4 py-3 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faq13">
-                                    <i class="bi bi-houses-fill me-2 text-info"></i> 13. {% trans "Wie werden Sanierungsfahrplan (Bauteile) und Vermietungs-Steuern (Anlage V / AfA) berechnet?" %}
+                                    <i class="bi bi-houses-fill me-2 text-info"></i> 13. {% trans "Wie funktionieren das ganzheitliche Steuer-Cockpit, der 1-Klick-PDF-Bescheid-Import (ohne KI) und die Selbstkalibrierung?" %}
                                 </button>
                             </h2>
                             <div id="faq13" class="accordion-collapse collapse" data-bs-parent="#detailedHelpFaq">
                                 <div class="accordion-body px-4 pb-4 opacity-85">
-                                    <ul class="mb-0">
-                                        <li class="mb-2"><strong>{% trans "Sanierungsfahrplan (PropertyComponent):" %}</strong> {% trans "Aus Einbaujahr + erwarteter Lebensdauer berechnet das System das voraussichtliche Erneuerungsjahr für Dach, Heizung, Fenster, Fassade etc. und teilt die geschätzten Kosten durch die verbleibenden Monate bis zur Fälligkeit (empfohlene Instandhaltungsrücklage)." %}</li>
-                                        <li class="mb-0"><strong>{% trans "Steuer-Cockpit (Anlage V):" %}</strong> {% trans "Für vermietete Immobilien berechnet das System die jährliche Gebäude-AfA (Kaufpreis × Gebäudeanteil % × AfA-Satz %), addiert die im Kalenderjahr anfallenden Darlehenszinsen sowie hinterlegte Handwerker-/Erhaltungsrechnungen und stellt sie den Jahresmieteinnahmen gegenüber." %}</li>
+                                    <ul class="mb-2">
+                                        <li class="mb-2"><strong>{% trans "Ganzheitliche 30-Jahres-Steuerprognose über alle Lebensphasen:" %}</strong> {% trans "Unter 'Immobilien & Kredite → Steuern' schätzt die Engine deine gesamte Haushalts-Steuerlast über 30 Jahre. Sie berücksichtigt automatisch deine aktuelle und zukünftige Lebensphase: Grundtarif vs. Ehegattensplitting (§ 32a Abs. 5 EStG), den Entlastungsbetrag für Alleinerziehende (§ 24b EStG: 4.260 € + 240 € bis zum Selbstständigkeits-Alter der Kinder), die Günstigerprüfung Kindergeld vs. Kinderfreibetrag (§ 32 Abs. 6 EStG), Kapitalerträge oberhalb des Sparerpauschbetrags (1.000 €/2.000 €) sowie im Ruhestand den jahrgangsabhängigen Besteuerungsanteil der gesetzlichen Rente (§ 22 EStG Kohortenprinzip), 100 % steuerpflichtige Betriebsrenten/Pensionen und den günstigen Ertragsanteil privater Renten." %}</li>
+                                        <li class="mb-2"><strong>{% trans "Historische Steuerbescheide & 1-Klick-PDF-Auslesung (ohne KI):" %}</strong> {% trans "Über den Button 'Steuerbescheid erfassen / PDF auslesen' kannst du deinen digitalen Einkommensteuerbescheid (PDF aus ELSTER, WISO, DATEV) auswählen. Ein lokaler, regelbasierter Parser liest ohne KI sofort Steuerjahr, Tarif, Einkünfte, Anlage V, zu versteuerndes Einkommen (zvE), festgesetzte Steuer und Erstattung/Nachzahlung aus, füllt die Maske automatisch vor und legt das PDF zugleich im Dokumenten-Tresor ab." %}</li>
+                                        <li class="mb-2"><strong>{% trans "Selbstlernende Prognose-Kalibrierung:" %}</strong> {% trans "Sobald echte Steuerbescheide der Vergangenheit hinterlegt sind, lernt die Engine automatisch deine individuelle Abzugs-Quote (Werbungskosten, Sonderausgaben, Vorsorgeaufwendungen) sowie deinen realen persönlichen Grenz- und Durchschnittssteuersatz und verfeinert damit sowohl die 30-Jahres-Prognose als auch die Immobilien-Steuerberechnung (Anlage V)." %}</li>
+                                        <li class="mb-0"><strong>{% trans "Rechtliche Abgrenzung (Keine Steuerberatung gem. §§ 2, 3, 5 StBerG):" %}</strong> {% trans "Alle berechneten Steuer-, zvE-, Grenzsteuersatz- und Erstattungswerte sind unverbindliche mathematische Näherungs- und Modellschätzungen zur privaten Finanzplanung. Künftige Gesetzesänderungen, Progressionstabellen und individuelle steuerliche Sondertatbestände können von einer Simulations-Software nicht vorweggenommen werden; rechtsverbindliche Auskünfte erteilen ausschließlich Steuerberater, Lohnsteuerhilfevereine oder das Finanzamt." %}</li>
                                     </ul>
                                 </div>
                             </div>

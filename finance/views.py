@@ -4184,8 +4184,18 @@ def real_estate_loans_view(request):
         serialize_document(doc) for doc in overview['documents_data']['documents']
     ]
 
+    from .services_tax import calculate_holistic_tax_cockpit
+    tax_cockpit = calculate_holistic_tax_cockpit(user, portfolio_tax_vv=overview.get('portfolio_tax'))
+    if overview.get('portfolio_tax') and tax_cockpit.get('calibrated_marginal_rate'):
+        cal_rate = Decimal(str(tax_cockpit['calibrated_marginal_rate'])) / Decimal('100.0')
+        vv_res = overview['portfolio_tax'].get('total_taxable_result_vv', Decimal('0.00'))
+        overview['portfolio_tax']['estimated_tax_impact'] = (abs(vv_res) * cal_rate).quantize(Decimal('0.01'))
+        overview['portfolio_tax']['calibrated_marginal_rate'] = tax_cockpit['calibrated_marginal_rate']
+
     context = {
         'overview': overview,
+        'tax_cockpit': tax_cockpit,
+        'tax_cockpit_chart_json': json.dumps(tax_cockpit['chart_json']),
         'calendar_chart_json': calendar_chart_json,
         'loans_json': json.dumps(loans_table_data),
         'components_json': json.dumps(components_table_data),
@@ -4200,6 +4210,145 @@ def real_estate_loans_view(request):
         **get_document_modal_context(user),
     }
     return render(request, 'finance/real_estate_loans.html', context)
+
+
+@login_required
+@require_POST
+def tax_parse_pdf_api(request):
+    from .services_tax import parse_tax_assessment_pdf
+    pdf_file = request.FILES.get('pdf_file')
+    if not pdf_file:
+        return JsonResponse({'ok': False, 'message': _('Bitte eine PDF-Datei auswählen.')}, status=400)
+    res = parse_tax_assessment_pdf(pdf_file, filename=pdf_file.name)
+    return JsonResponse(res)
+
+
+@login_required
+@require_POST
+def tax_assessment_save(request, pk=None):
+    from decimal import InvalidOperation
+    from .models import TaxAssessment
+
+    def _dec(field_name):
+        raw = (request.POST.get(field_name) or '0').replace(',', '.').strip()
+        try:
+            return Decimal(raw).quantize(Decimal('0.01'))
+        except (InvalidOperation, ValueError):
+            return Decimal('0.00')
+
+    try:
+        year = int(request.POST.get('year') or timezone.localdate().year - 1)
+    except ValueError:
+        year = timezone.localdate().year - 1
+
+    assessment_type = request.POST.get('assessment_type')
+    if assessment_type not in {'single', 'splitting'}:
+        assessment_type = 'splitting'
+
+    gross_income = _dec('gross_income')
+    deductible_expenses = _dec('deductible_expenses')
+    rental_income_taxable = _dec('rental_income_taxable')
+    taxable_income_zve = _dec('taxable_income_zve')
+    assessed_tax_total = _dec('assessed_tax_total')
+    prepaid_tax = _dec('prepaid_tax')
+    refund_raw = (request.POST.get('refund_or_payment') or '').strip()
+    if refund_raw:
+        refund_or_payment = _dec('refund_or_payment')
+    else:
+        refund_or_payment = (prepaid_tax - assessed_tax_total).quantize(Decimal('0.01'))
+
+    if deductible_expenses <= 0 and gross_income > taxable_income_zve > 0:
+        deductible_expenses = (gross_income - taxable_income_zve).quantize(Decimal('0.01'))
+
+    notes = (request.POST.get('notes') or '').strip()
+
+    # Optional PDF upload -> store in Document Vault & link
+    uploaded_pdf = request.FILES.get('pdf_file')
+    linked_doc = None
+    linked_doc_id = request.POST.get('linked_document_id')
+    if linked_doc_id:
+        linked_doc = Document.objects.filter(user=request.user, id=linked_doc_id).first()
+
+    if uploaded_pdf:
+        ext_text = extract_document_text(uploaded_pdf, filename=uploaded_pdf.name)
+        linked_doc = Document.objects.create(
+            user=request.user,
+            domain='general',
+            category='tax_statement',
+            title=f"Einkommensteuerbescheid {year}",
+            file=uploaded_pdf,
+            date=datetime.date(year, 12, 31),
+            amount=assessed_tax_total,
+            notes=notes,
+            extracted_text=ext_text,
+        )
+
+    if pk:
+        obj = get_object_or_404(TaxAssessment, id=pk, user=request.user)
+        obj.year = year
+    else:
+        obj, _created = TaxAssessment.objects.get_or_create(user=request.user, year=year)
+
+    obj.assessment_type = assessment_type
+    obj.gross_income = gross_income
+    obj.deductible_expenses = deductible_expenses
+    obj.rental_income_taxable = rental_income_taxable
+    obj.taxable_income_zve = taxable_income_zve
+    obj.assessed_tax_total = assessed_tax_total
+    obj.prepaid_tax = prepaid_tax
+    obj.refund_or_payment = refund_or_payment
+    obj.notes = notes
+    if linked_doc:
+        obj.linked_document = linked_doc
+    obj.save()
+
+    messages.success(request, _(f"Steuerbescheid {year} gespeichert. Zukunfts-Prognose wurde automatisch neu kalibriert."))
+    return redirect(f"{reverse('finance:real_estate_loans')}?tab=tax-docs")
+
+
+@login_required
+@require_POST
+def tax_assessment_delete(request, pk):
+    from .models import TaxAssessment
+    obj = get_object_or_404(TaxAssessment, id=pk, user=request.user)
+    yr = obj.year
+    obj.delete()
+    messages.success(request, _(f"Steuerbescheid {yr} gelöscht."))
+    return redirect(f"{reverse('finance:real_estate_loans')}?tab=tax-docs")
+
+
+@login_required
+@require_POST
+def tax_settings_save(request):
+    from decimal import InvalidOperation
+    profile = request.user.profile
+
+    def _opt_dec(field_name):
+        raw = (request.POST.get(field_name) or '').replace(',', '.').strip()
+        if not raw:
+            return None
+        try:
+            return Decimal(raw).quantize(Decimal('0.01'))
+        except (InvalidOperation, ValueError):
+            return None
+
+    mode = request.POST.get('tax_assessment_mode')
+    if mode in {'auto', 'single', 'splitting'}:
+        profile.tax_assessment_mode = mode
+    church = _opt_dec('church_tax_rate')
+    profile.church_tax_rate = church if church is not None else Decimal('0.00')
+    profile.annual_gross_income_p1 = _opt_dec('annual_gross_income_p1')
+    profile.annual_gross_income_p2 = _opt_dec('annual_gross_income_p2')
+    profile.typical_annual_deductions = _opt_dec('typical_annual_deductions')
+    profile.save(update_fields=[
+        'tax_assessment_mode',
+        'church_tax_rate',
+        'annual_gross_income_p1',
+        'annual_gross_income_p2',
+        'typical_annual_deductions',
+    ])
+    messages.success(request, _("Steuer-Stammdaten & Prognose-Parameter aktualisiert."))
+    return redirect(f"{reverse('finance:real_estate_loans')}?tab=tax-docs")
 
 
 @login_required

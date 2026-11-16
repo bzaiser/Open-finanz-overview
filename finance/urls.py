@@ -71,5 +71,10 @@ urlpatterns = [
     path('wizard/', wizard_views.wizard_page_view, name='setup_wizard'),
     path('wizard/save/', wizard_views.wizard_save_api, name='setup_wizard_save'),
     path('risk/cash-reserve/save/', views.cash_reserve_upsert, name='cash_reserve_upsert'),
+    path('tax/parse-pdf/', views.tax_parse_pdf_api, name='tax_parse_pdf_api'),
+    path('tax/assessment/save/', views.tax_assessment_save, name='tax_assessment_add'),
+    path('tax/assessment/save/<int:pk>/', views.tax_assessment_save, name='tax_assessment_edit'),
+    path('tax/assessment/delete/<int:pk>/', views.tax_assessment_delete, name='tax_assessment_delete'),
+    path('tax/settings/save/', views.tax_settings_save, name='tax_settings_save'),
     path('dynamic-theme.css', views.dynamic_theme_css, name='dynamic_theme_css'),
 ]

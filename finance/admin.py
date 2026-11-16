@@ -916,3 +916,14 @@ class InsurancePolicyAdmin(BaseOwnedModelAdmin):
 
     class Media:
         js = ('js/admin_insurance_policy.js',)
+
+
+from .models import TaxAssessment
+
+
+@admin.register(TaxAssessment)
+class TaxAssessmentAdmin(BaseOwnedModelAdmin):
+    list_display = ('year', 'user', 'assessment_type', 'gross_income', 'taxable_income_zve', 'assessed_tax_total', 'refund_or_payment', 'updated_at')
+    list_filter = ('year', 'assessment_type', 'user')
+    search_fields = ('user__username', 'year', 'notes')
+
