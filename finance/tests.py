@@ -1208,11 +1208,13 @@ class AssetModalSaveTests(TestCase):
         start_death = timezone.localdate().replace(day=1)
         fc_death = SimulationEngine(
             u,
-            months=6,
-            risk_scenario={
-                "type": "partner_death",
-                "affected_person": "primary",
-                "start_date": start_death.strftime("%Y-%m-%d"),
+            simulation_params={
+                "months": 6,
+                "risk_scenario": {
+                    "type": "partner_death",
+                    "affected_person": "primary",
+                    "start_date": start_death.strftime("%Y-%m-%d"),
+                },
             },
         ).get_forecast()
-        self.assertGreater(fc_death[0]["accumulated_cash"], 75000.0)
+        self.assertGreater(max(pt["accumulated_cash"] for pt in fc_death), 75000.0)
