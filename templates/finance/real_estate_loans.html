@@ -1585,13 +1585,13 @@
                                                         id: '{{ a.id }}',
                                                         year: '{{ a.year }}',
                                                         assessment_type: '{{ a.assessment_type }}',
-                                                        gross_income: '{{ a.gross_income|floatformat:2 }}',
-                                                        deductible_expenses: '{{ a.deductible_expenses|floatformat:2 }}',
-                                                        rental_income_taxable: '{{ a.rental_income_taxable|floatformat:2 }}',
-                                                        taxable_income_zve: '{{ a.taxable_income_zve|floatformat:2 }}',
-                                                        assessed_tax_total: '{{ a.assessed_tax_total|floatformat:2 }}',
-                                                        prepaid_tax: '{{ a.prepaid_tax|floatformat:2 }}',
-                                                        refund_or_payment: '{{ a.refund_or_payment|floatformat:2 }}',
+                                                        gross_income: '{{ a.gross_income|stringformat:".2f" }}',
+                                                        deductible_expenses: '{{ a.deductible_expenses|stringformat:".2f" }}',
+                                                        rental_income_taxable: '{{ a.rental_income_taxable|stringformat:".2f" }}',
+                                                        taxable_income_zve: '{{ a.taxable_income_zve|stringformat:".2f" }}',
+                                                        assessed_tax_total: '{{ a.assessed_tax_total|stringformat:".2f" }}',
+                                                        prepaid_tax: '{{ a.prepaid_tax|stringformat:".2f" }}',
+                                                        refund_or_payment: '{{ a.refund_or_payment|stringformat:".2f" }}',
                                                         notes: '{{ a.notes|escapejs }}'
                                                     })"
                                                     title="{% trans 'Bearbeiten' %}">
