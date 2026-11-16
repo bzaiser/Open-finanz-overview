@@ -66,10 +66,11 @@ def parse_tax_assessment_pdf(file_obj, filename=None):
         'refund_or_payment': Decimal('0.00'),
     }
 
-    # 1. Year detection
+    # 1. Year detection (supports Finanzamt Steuerbescheid AND WISO/ELSTER Einkommensteuererklärung)
     year_patterns = [
         r'(?:Bescheid|Steuerbescheid)\s+f[üu]r\s+(20[123]\d)',
-        r'Einkommensteuer(?:bescheid)?\s+(?:f[üu]r\s+)?(20[123]\d)',
+        r'Einkommensteuer(?:bescheid|erkl[äa]rung)?\s+(?:f[üu]r\s+)?(20[123]\d)',
+        r'Berechnung\s+(20[123]\d)\s+f[üu]r\s+Einkommensteuer',
         r'Veranlagungszeitraum\s*:?\s*(20[123]\d)',
         r'Steuerjahr\s*:?\s*(20[123]\d)',
     ]
@@ -100,10 +101,13 @@ def parse_tax_assessment_pdf(file_obj, filename=None):
                     return val
         return None
 
+    # Allow spaces, colons, € or single newline between label and number (WISO/ELSTER multi-line tables)
+    sep = r'[^\d\-\n]*(?:\n[^\d\-\n]*)?'
+
     # 3. Zu versteuerndes Einkommen (zvE)
     zve = _find_amount([
-        r'zu\s+versteuerndes\s+Einkommen[^\n0-9\-]*([\-]?\d[\d\.,]*[\-]?)',
-        r'Zu\s+versteuerndes\s+Einkommen\s*\(zvE\)[^\n0-9\-]*([\-]?\d[\d\.,]*[\-]?)',
+        rf'Einkommen\s*/\s*zu\s+versteuerndes\s+Einkommen{sep}([\-]?\d[\d\.,]*[\-]?)',
+        rf'Zu\s+versteuerndes\s+Einkommen(?:\s*\(zvE\))?{sep}([\-]?\d[\d\.,]*[\-]?)',
     ])
     if zve is not None and zve >= 0:
         data['taxable_income_zve'] = zve
@@ -111,9 +115,11 @@ def parse_tax_assessment_pdf(file_obj, filename=None):
 
     # 4. Gesamtbetrag / Summe der Einkünfte / Bruttoarbeitslohn
     gross = _find_amount([
-        r'Gesamtbetrag\s+der\s+Eink[üu]nfte[^\n0-9\-]*([\-]?\d[\d\.,]*[\-]?)',
-        r'Summe\s+der\s+Eink[üu]nfte[^\n0-9\-]*([\-]?\d[\d\.,]*[\-]?)',
-        r'Bruttoarbeitslohn[^\n0-9\-]*([\-]?\d[\d\.,]*[\-]?)',
+        rf'Gesamtbetrag\s+der\s+Eink[üu]nfte\s+insgesamt{sep}([\-]?\d[\d\.,]*[\-]?)',
+        rf'Gesamtbetrag\s+der\s+Eink[üu]nfte{sep}([\-]?\d[\d\.,]*[\-]?)',
+        rf'Summe\s+der\s+Eink[üu]nfte\s+insgesamt{sep}([\-]?\d[\d\.,]*[\-]?)',
+        rf'Summe\s+der\s+Eink[üu]nfte{sep}([\-]?\d[\d\.,]*[\-]?)',
+        rf'Bruttoarbeitslohn{sep}([\-]?\d[\d\.,]*[\-]?)',
     ])
     if gross is not None and gross >= 0:
         data['gross_income'] = gross
@@ -121,8 +127,8 @@ def parse_tax_assessment_pdf(file_obj, filename=None):
 
     # 5. Einkünfte aus Vermietung und Verpachtung (Anlage V)
     rental = _find_amount([
-        r'Eink[üu]nfte\s+aus\s+Vermietung\s+und\s+Verpachtung[^\n0-9\-]*([\-]?\d[\d\.,]*[\-]?)',
-        r'Vermietung\s+und\s+Verpachtung[^\n0-9\-]*([\-]?\d[\d\.,]*[\-]?)',
+        rf'Eink[üu]nfte\s+aus\s+Vermietung\s+und\s+Verpachtung{sep}([\-]?\d[\d\.,]*[\-]?)',
+        rf'Vermietung\s+und\s+Verpachtung{sep}([\-]?\d[\d\.,]*[\-]?)',
     ])
     if rental is not None:
         data['rental_income_taxable'] = rental
@@ -130,14 +136,18 @@ def parse_tax_assessment_pdf(file_obj, filename=None):
 
     # 6. Festgesetzte Einkommensteuer (+ Soli + Kirchensteuer)
     est = _find_amount([
-        r'Festgesetzte\s+Einkommensteuer[^\n0-9\-]*(\d[\d\.,]*)',
-        r'festgesetzte\s+Steuer(?:n)?\s+gesamt[^\n0-9\-]*(\d[\d\.,]*)',
-        r'tarifliche\s+Einkommensteuer[^\n0-9\-]*(\d[\d\.,]*)',
+        rf'Festzusetzende\s+Einkommensteuer{sep}(\d[\d\.,]*)',
+        rf'Festgesetzte\s+Einkommensteuer{sep}(\d[\d\.,]*)',
+        rf'Festgesetzt\s+werden{sep}(\d[\d\.,]*)',
+        rf'festgesetzte\s+Steuer(?:n)?\s+gesamt{sep}(\d[\d\.,]*)',
+        rf'tarifliche\s+Einkommensteuer{sep}(\d[\d\.,]*)',
     ])
     soli = _find_amount([
+        rf'Festzusetzender\s+Solidarit[äa]tszuschlag{sep}(\d[\d\.,]*)',
         r'Solidarit[äa]tszuschlag[^\n0-9\-]*(\d[\d\.,]*)',
     ]) or Decimal('0.00')
     kist = _find_amount([
+        rf'Festzusetzende\s+Kirchensteuer{sep}(\d[\d\.,]*)',
         r'Kirchensteuer[^\n0-9\-]*(\d[\d\.,]*)',
     ]) or Decimal('0.00')
 
@@ -148,10 +158,11 @@ def parse_tax_assessment_pdf(file_obj, filename=None):
 
     # 7. Bereits gezahlte Lohnsteuer / Vorauszahlungen
     prepaid = _find_amount([
-        r'Steuerabzug\s+vom\s+Lohn[^\n0-9\-]*(\d[\d\.,]*)',
-        r'Bereits\s+getilgt[^\n0-9\-]*(\d[\d\.,]*)',
-        r'anzurechnende\s+Steuern[^\n0-9\-]*(\d[\d\.,]*)',
-        r'Gezahlte\s+Vorauszahlungen[^\n0-9\-]*(\d[\d\.,]*)',
+        rf'Summe\s*\(aufgerundet\s+bei\s+Einkommensteuer\){sep}(\d[\d\.,]*)',
+        rf'Steuerabzug\s+vom\s+(?:Arbeits)?lohn{sep}(\d[\d\.,]*)',
+        rf'Bereits\s+getilgt{sep}(\d[\d\.,]*)',
+        rf'anzurechnende\s+Steuern{sep}(\d[\d\.,]*)',
+        rf'Gezahlte\s+Vorauszahlungen{sep}(\d[\d\.,]*)',
     ])
     if prepaid is not None and prepaid >= 0:
         data['prepaid_tax'] = prepaid
@@ -159,10 +170,10 @@ def parse_tax_assessment_pdf(file_obj, filename=None):
 
     # 8. Erstattung / Nachzahlung
     refund = _find_amount([
-        r'(?:wird\s+erstattet|Erstattungsbetrag|Guthaben)[^\n0-9\-]*(\d[\d\.,]*)',
+        rf'(?:wird\s+erstattet|Erstattungsbetrag|Erstattung|Guthaben){sep}(\d[\d\.,]*)',
     ])
     payment = _find_amount([
-        r'(?:Bitte\s+zahlen\s+Sie|Nachzahlung|Restbetrag\s+bis)[^\n0-9\-]*(\d[\d\.,]*)',
+        rf'(?:Abschlusszahlung|Bitte\s+zahlen\s+Sie|Nachzahlungsbetrag(?:\s+in\s+H[öo]he\s+von)?|Nachzahlung|Restbetrag\s+bis){sep}(\d[\d\.,]*)',
     ])
     if refund is not None:
         data['refund_or_payment'] = abs(refund)
