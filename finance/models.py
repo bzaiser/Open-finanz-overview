@@ -809,3 +809,67 @@ class TaxAssessment(models.Model):
     def __str__(self):
         return f"Steuerbescheid {self.year} ({self.user.username}): zvE {self.taxable_income_zve} €"
 
+
+class TaxAndBenefitConfig(models.Model):
+    """
+    Singleton configuration for statutory tax allowances and family/social benefit thresholds
+    so legislative updates can be adjusted in Django Admin without code changes.
+    """
+    effective_year = models.PositiveIntegerField(_("Gültig ab / Regelwerk-Stand"), default=2025)
+    basic_tax_allowance = models.DecimalField(
+        _("Grundfreibetrag Single (€/Jahr)"), max_digits=10, decimal_places=2, default=Decimal("12096.00")
+    )
+    soli_threshold_single = models.DecimalField(
+        _("Soli-Freigrenze ESt Single (€/Jahr)"), max_digits=10, decimal_places=2, default=Decimal("18130.00")
+    )
+    saver_allowance_single = models.DecimalField(
+        _("Sparerpauschbetrag Single (€/Jahr)"), max_digits=10, decimal_places=2, default=Decimal("1000.00")
+    )
+    employee_lump_sum = models.DecimalField(
+        _("Arbeitnehmer-Pauschbetrag (€/Jahr)"), max_digits=10, decimal_places=2, default=Decimal("1230.00")
+    )
+    single_parent_relief_base = models.DecimalField(
+        _("Entlastungsbetrag Alleinerziehende Basis (§ 24b EStG, €/Jahr)"), max_digits=10, decimal_places=2, default=Decimal("4260.00")
+    )
+    single_parent_relief_extra_child = models.DecimalField(
+        _("Entlastungsbetrag je weiterem Kind (€/Jahr)"), max_digits=10, decimal_places=2, default=Decimal("240.00")
+    )
+    child_allowance_total = models.DecimalField(
+        _("Kinderfreibetrag gesamt je Kind (§ 32 EStG, €/Jahr)"), max_digits=10, decimal_places=2, default=Decimal("9600.00")
+    )
+    child_benefit_monthly = models.DecimalField(
+        _("Kindergeld je Kind (€/Monat)"), max_digits=8, decimal_places=2, default=Decimal("255.00")
+    )
+    elterngeld_zve_limit = models.DecimalField(
+        _("Elterngeld Einkommensgrenze zvE (€/Jahr)"), max_digits=12, decimal_places=2, default=Decimal("175000.00")
+    )
+    elterngeld_min_monthly = models.DecimalField(
+        _("Basiselterngeld Mindestbetrag (€/Monat)"), max_digits=8, decimal_places=2, default=Decimal("300.00")
+    )
+    elterngeld_max_monthly = models.DecimalField(
+        _("Basiselterngeld Höchstbetrag (€/Monat)"), max_digits=8, decimal_places=2, default=Decimal("1800.00")
+    )
+    kiz_max_monthly = models.DecimalField(
+        _("Kinderzuschlag Höchstbetrag je Kind (€/Monat)"), max_digits=8, decimal_places=2, default=Decimal("297.00")
+    )
+    buergergeld_single_monthly = models.DecimalField(
+        _("Bürgergeld Regelsatz Alleinstehend (€/Monat)"), max_digits=8, decimal_places=2, default=Decimal("563.00")
+    )
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = _("Steuer- & Sozial-Regelwerk (Grenzwerte)")
+        verbose_name_plural = _("Steuer- & Sozial-Regelwerk (Grenzwerte)")
+
+    def __str__(self):
+        return f"Steuer- & Sozial-Regelwerk (Stand {self.effective_year})"
+
+    @classmethod
+    def get_active(cls):
+        try:
+            obj, _created = cls.objects.get_or_create(pk=1)
+            return obj
+        except Exception:
+            return cls()
+
+

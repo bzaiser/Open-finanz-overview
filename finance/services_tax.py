@@ -206,30 +206,39 @@ def parse_tax_assessment_pdf(file_obj, filename=None):
     }
 
 
-def _tariff_32a_single(zve_float):
+def _tariff_32a_single(zve_float, basic_allowance=12096.0):
     """
-    German § 32a EStG base tariff (Grundtarif) for a given taxable income (zvE).
+    German § 32a EStG base tariff (Grundtarif) for a given taxable income (zvE),
+    using configurable basic_tax_allowance from TaxAndBenefitConfig.
     """
     x = max(0.0, float(zve_float))
-    if x <= 12096.0:
+    gfb = max(0.0, float(basic_allowance or 12096.0))
+    shift = gfb - 12096.0
+    if x <= gfb:
         return 0.0
-    elif x <= 17443.0:
-        y = (x - 12096.0) / 10000.0
+    elif x <= (17443.0 + shift):
+        y = (x - gfb) / 10000.0
         return (932.30 * y + 1400.0) * y
-    elif x <= 68480.0:
-        z = (x - 17443.0) / 10000.0
+    elif x <= (68480.0 + shift):
+        z = (x - (17443.0 + shift)) / 10000.0
         return (176.64 * z + 2397.0) * z + 1015.13
     elif x <= 277825.0:
-        return 0.42 * x - 10911.92
+        return 0.42 * x - 10911.92 - (shift * 0.14)
     else:
-        return 0.45 * x - 19246.67
+        return 0.45 * x - 19246.67 - (shift * 0.14)
 
 
-def calculate_german_income_tax(zve, splitting=False, church_tax_rate=0.0, calibration_multiplier=1.0):
+def calculate_german_income_tax(zve, splitting=False, church_tax_rate=0.0, calibration_multiplier=1.0, config=None):
     """
     Calculates German Einkommensteuer + Solidaritätszuschlag + Kirchensteuer,
     plus effective and marginal tax rates.
     """
+    if config is None:
+        from .models import TaxAndBenefitConfig
+        config = TaxAndBenefitConfig.get_active()
+    basic_allowance = float(getattr(config, 'basic_tax_allowance', 12096.0) or 12096.0)
+    soli_base = float(getattr(config, 'soli_threshold_single', 18130.0) or 18130.0)
+
     zve_f = max(0.0, float(zve or 0.0))
     if zve_f <= 0.0:
         return {
@@ -242,13 +251,13 @@ def calculate_german_income_tax(zve, splitting=False, church_tax_rate=0.0, calib
         }
 
     if splitting:
-        est = 2.0 * _tariff_32a_single(zve_f / 2.0)
-        est_plus = 2.0 * _tariff_32a_single((zve_f + 1000.0) / 2.0)
-        soli_freigrenze = 36260.0
+        est = 2.0 * _tariff_32a_single(zve_f / 2.0, basic_allowance=basic_allowance)
+        est_plus = 2.0 * _tariff_32a_single((zve_f + 1000.0) / 2.0, basic_allowance=basic_allowance)
+        soli_freigrenze = soli_base * 2.0
     else:
-        est = _tariff_32a_single(zve_f)
-        est_plus = _tariff_32a_single(zve_f + 1000.0)
-        soli_freigrenze = 18130.0
+        est = _tariff_32a_single(zve_f, basic_allowance=basic_allowance)
+        est_plus = _tariff_32a_single(zve_f + 1000.0, basic_allowance=basic_allowance)
+        soli_freigrenze = soli_base
 
     est *= float(calibration_multiplier or 1.0)
     est_plus *= float(calibration_multiplier or 1.0)
@@ -304,7 +313,15 @@ def calculate_holistic_tax_cockpit(user, portfolio_tax_vv=None, rental_objects_m
     3. 30-year life-phase projection (working -> children independent -> retirement -> loan interest decline)
     4. Actionable life-phase tax hints (non-binding educational orientation)
     """
-    from .models import Asset, CashFlowSource, Loan, Pension, RealEstate, TaxAssessment
+    from .models import Asset, CashFlowSource, Loan, Pension, RealEstate, TaxAssessment, TaxAndBenefitConfig
+
+    cfg = TaxAndBenefitConfig.get_active()
+    cfg_emp_lump = float(cfg.employee_lump_sum or 1230.0)
+    cfg_sp_base = float(cfg.single_parent_relief_base or 4260.0)
+    cfg_sp_extra = float(cfg.single_parent_relief_extra_child or 240.0)
+    cfg_kfb = float(cfg.child_allowance_total or 9600.0)
+    cfg_kg_year = float(cfg.child_benefit_monthly or 255.0) * 12.0
+    cfg_saver_single = float(cfg.saver_allowance_single or 1000.0)
 
     today = timezone.localdate()
     current_year = today.year
@@ -516,33 +533,35 @@ def calculate_holistic_tax_cockpit(user, portfolio_tax_vv=None, rental_objects_m
         elif learned_deduction_amount is not None and not p1_is_retired:
             base_ded = learned_deduction_amount
         else:
-            # Standard social security pension/health deductions (~18% on earned income, ~11.5% on pensions) + Arbeitnehmer-Pauschbetrag (1.230 €)
+            # Standard social security pension/health deductions (~18.5% on earned income, ~11.5% on pensions) + Arbeitnehmer-Pauschbetrag
             active_workers = (0 if p1_is_retired else 1) + (1 if (has_partner and not p2_is_retired) else 0)
-            base_ded = (yr_gross_earned * 0.185) + (yr_gross_pension * 0.115) + (active_workers * 1230.0)
+            base_ded = (yr_gross_earned * 0.185) + (yr_gross_pension * 0.115) + (active_workers * cfg_emp_lump)
 
-        # Alleinerziehenden-Entlastungsbetrag (§ 24b EStG: 4.260 € + 240 € per additional child)
+        # Alleinerziehenden-Entlastungsbetrag (§ 24b EStG)
         single_parent_allowance = 0.0
         if (situation == 'single_parent' or not has_partner) and dep_children_yr > 0:
-            single_parent_allowance = 4260.0 + max(0, dep_children_yr - 1) * 240.0
+            single_parent_allowance = cfg_sp_base + max(0, dep_children_yr - 1) * cfg_sp_extra
 
         # Compute zvE for year `yr`
         yr_zve = max(0.0, yr_gross_earned + yr_taxable_pension + yr_vv_taxable - base_ded - single_parent_allowance)
 
-        # Günstigerprüfung Kinderfreibetrag (§ 32 Abs. 6 EStG: ~9,600 € per child vs. 3,060 € Kindergeld)
+        # Günstigerprüfung Kinderfreibetrag (§ 32 Abs. 6 EStG)
         tax_without_kfb = calculate_german_income_tax(
             yr_zve,
             splitting=is_splitting,
             church_tax_rate=church_tax_rate,
             calibration_multiplier=calibration_multiplier,
+            config=cfg,
         )
         if dep_children_yr > 0:
-            kfb_total = dep_children_yr * 9600.0
-            kindergeld_yr = dep_children_yr * 3060.0
+            kfb_total = dep_children_yr * cfg_kfb
+            kindergeld_yr = dep_children_yr * cfg_kg_year
             tax_with_kfb = calculate_german_income_tax(
                 max(0.0, yr_zve - kfb_total),
                 splitting=is_splitting,
                 church_tax_rate=church_tax_rate,
                 calibration_multiplier=calibration_multiplier,
+                config=cfg,
             )
             tax_saving_kfb = float(tax_without_kfb['income_tax']) - float(tax_with_kfb['income_tax'])
             if tax_saving_kfb > kindergeld_yr:
@@ -557,7 +576,7 @@ def calculate_holistic_tax_cockpit(user, portfolio_tax_vv=None, rental_objects_m
             tax_res = tax_without_kfb
 
         # Capital gains tax (Abgeltungsteuer 25% + Soli vs. personal marginal rate Günstigerprüfung in retirement)
-        sparer_pausch = 2000.0 if is_splitting else 1000.0
+        sparer_pausch = (cfg_saver_single * 2.0) if is_splitting else cfg_saver_single
         taxable_cap = max(0.0, annual_capital_gains * ((1.0 + 0.02) ** yr_offset) - sparer_pausch)
         cap_rate = min(0.26375, (tax_res['marginal_rate'] / 100.0)) if tax_res['marginal_rate'] > 0 else 0.0
         cap_tax = taxable_cap * cap_rate

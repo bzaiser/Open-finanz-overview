@@ -1112,6 +1112,52 @@
                 </div>
             </div>
         </div>
+
+        <!-- Elterngeld- & Staatliche-Zuwendungen-Check -->
+        {% if benefits_audit %}
+        <div class="card border-0 shadow-sm rounded-4 mb-4" style="background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color, rgba(125,125,125,0.2)) !important;">
+            <div class="card-header border-0 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
+                <div>
+                    <div class="d-flex flex-wrap align-items-center gap-2">
+                        <h6 class="fw-bold mb-0"><i class="bi bi-balloon-heart text-primary me-2"></i>{% trans "Elterngeld- & Staatliche-Zuwendungen-Check" %}</h6>
+                        {% if benefits_audit.elterngeld_eligible %}
+                            <span class="badge bg-success-subtle text-success rounded-pill">{% trans "Elterngeld-Anspruch möglich" %} (zvE ≤ {{ benefits_audit.zve_limit|floatformat:0|intcomma }} €)</span>
+                        {% else %}
+                            <span class="badge bg-danger-subtle text-danger rounded-pill">{% trans "zvE-Grenze überschritten" %} (&gt; {{ benefits_audit.zve_limit|floatformat:0|intcomma }} €)</span>
+                        {% endif %}
+                    </div>
+                    <div class="small opacity-75">
+                        {% trans "Prüf-Basis:" %} {{ benefits_audit.zve_source }} (<strong class="font-monospace">{{ benefits_audit.zve_ref|floatformat:0|intcomma }} € zvE</strong>) · {% trans "Regelwerk-Stand:" %} {{ benefits_audit.effective_year }}
+                    </div>
+                </div>
+                <button type="button" class="btn btn-sm btn-primary rounded-pill px-3 flex-shrink-0" style="background: var(--app-gradient); border: none;" data-bs-toggle="modal" data-bs-target="#elterngeldModal">
+                    <i class="bi bi-calculator me-1"></i>{% trans "Elterngeld berechnen & einplanen" %}
+                </button>
+            </div>
+            <div class="card-body pt-0">
+                <div class="row g-3">
+                    {% for ben in benefits_audit.benefits_list %}
+                    <div class="col-md-6 col-lg-4">
+                        <div class="p-3 rounded-3 border h-100" style="border-color: var(--app-table-border-color, rgba(125,125,125,0.2)) !important; background: rgba(125,125,125,0.03);">
+                            <div class="d-flex justify-content-between align-items-start gap-2 mb-1">
+                                <span class="fw-bold small">{{ ben.title }}</span>
+                                <span class="badge rounded-pill {% if ben.status == 'active' or ben.status == 'eligible' %}bg-success-subtle text-success{% elif ben.status == 'excluded' %}bg-danger-subtle text-danger{% else %}bg-secondary-subtle text-secondary{% endif %}">
+                                    {{ ben.badge }}
+                                </span>
+                            </div>
+                            <div class="fw-semibold font-monospace small text-primary mb-1">{{ ben.amount_hint }}</div>
+                            <div class="small opacity-75">{{ ben.reason }}</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="small opacity-75 mt-3">
+                    <i class="bi bi-info-circle me-1"></i>
+                    {% trans "Unverbindliche Orientierungshilfe (Stand" %} {{ benefits_audit.effective_year }}). {% trans "Maßgeblich sind die Bescheide von Elterngeldstelle, Familienkasse und Wohngeldbehörde. Elterngeld unterliegt dem Progressionsvorbehalt (§ 32b EStG)." %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
     </div><!-- /TAB 3: risk_check -->
 
     <!-- Cash Reserve Quick Modal -->
@@ -1162,6 +1208,109 @@
             </div>
         </div>
     </div>
+
+    <!-- Elterngeld Calculator & 1-Click Apply Modal -->
+    {% if benefits_audit %}
+    <div class="modal fade" id="elterngeldModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
+                <form method="post" action="{% url 'finance:elterngeld_apply' %}">
+                    {% csrf_token %}
+                    <div class="modal-header border-0 text-white p-4" style="background: var(--app-gradient);">
+                        <div>
+                            <h5 class="modal-title fw-bold mb-1"><i class="bi bi-balloon-heart me-2"></i>{% trans "Elterngeld-Rechner & Übernahme" %}</h5>
+                            <p class="small mb-0 opacity-85">zvE-Grenze: {{ benefits_audit.zve_limit|floatformat:0|intcomma }} € · {% trans "Dein zvE:" %} {{ benefits_audit.zve_ref|floatformat:0|intcomma }} €</p>
+                        </div>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-4 small">
+                        {% if not benefits_audit.elterngeld_eligible %}
+                        <div class="alert alert-danger py-2 px-3 small mb-3">
+                            <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                            {% trans "Hinweis: Dein aktuelles zvE liegt über der gesetzlichen Einkommensgrenze. Regulär besteht kein Elterngeld-Anspruch." %}
+                        </div>
+                        {% endif %}
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">{% trans "Variante" %}</label>
+                                <select name="variant" id="egVariant" class="form-select" onchange="recalcElterngeldPreview()">
+                                    <option value="basis">{% trans "Basiselterngeld (300–1.800 €)" %}</option>
+                                    <option value="plus">{% trans "ElterngeldPlus (150–900 €)" %}</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">{% trans "Person in Elternzeit" %}</label>
+                                <select name="owner_role" id="egOwner" class="form-select" onchange="onEgOwnerChange()">
+                                    <option value="primary">{% trans "Person 1 (Hauptverdiener)" %}</option>
+                                    <option value="partner">{% trans "Person 2 (Partner)" %}</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">{% trans "Vorheriges Monats-Netto (€)" %}</label>
+                                <input type="number" step="0.01" min="0" name="prior_net_monthly" id="egPriorNet" class="form-control font-monospace"
+                                       value="{{ benefits_audit.net_primary_m|stringformat:'.2f' }}" oninput="recalcElterngeldPreview()">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">{% trans "Bezugsdauer (Monate)" %}</label>
+                                <input type="number" min="1" max="32" name="duration_months" id="egMonths" class="form-control font-monospace" value="12">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">{% trans "Startdatum" %}</label>
+                                <input type="date" name="start_date" class="form-control" value="{% now 'Y-m-01' %}" required>
+                            </div>
+                            <div class="col-md-6 d-flex align-items-end">
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" name="has_sibling_bonus" id="egSibling" {% if benefits_audit.has_sibling_bonus %}checked{% endif %} onchange="recalcElterngeldPreview()">
+                                    <label class="form-check-label fw-semibold" for="egSibling">{% trans "Geschwisterbonus (+10 %)" %}</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-3 rounded-3 text-center" style="background-color: rgba(13, 110, 253, 0.08); border: 1px solid rgba(13, 110, 253, 0.25);">
+                            <div class="opacity-75 mb-1">{% trans "Geschätztes monatliches Elterngeld:" %}</div>
+                            <div class="fs-4 fw-bold font-monospace text-primary" id="egPreviewAmount">{{ benefits_audit.est_basis_p1|floatformat:2 }} € / Mt.</div>
+                            <div class="opacity-75 mt-1" style="font-size: 0.72rem;">{% trans "Wird als befristete Einnahme (inc_elterngeld) in deinen Cashflow übernommen." %}</div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 pt-0 px-4 pb-4">
+                        <button type="button" class="btn btn-outline-secondary rounded-pill px-3" data-bs-dismiss="modal">{% trans "Abbrechen" %}</button>
+                        <button type="submit" class="btn btn-primary rounded-pill px-4 fw-bold text-white" style="background: var(--app-gradient); border: none;">
+                            <i class="bi bi-plus-circle me-1"></i>{% trans "In Einnahmen übernehmen" %}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        function onEgOwnerChange() {
+            const owner = document.getElementById('egOwner').value;
+            const netEl = document.getElementById('egPriorNet');
+            if (netEl) {
+                netEl.value = owner === 'partner' ? '{{ benefits_audit.net_partner_m|stringformat:".2f" }}' : '{{ benefits_audit.net_primary_m|stringformat:".2f" }}';
+                recalcElterngeldPreview();
+            }
+        }
+        function recalcElterngeldPreview() {
+            const variant = document.getElementById('egVariant').value;
+            const net = Math.max(0, parseFloat(document.getElementById('egPriorNet').value || '0'));
+            const sib = document.getElementById('egSibling').checked;
+            const minB = {{ benefits_audit.min_basis|stringformat:".2f" }};
+            const maxB = {{ benefits_audit.max_basis|stringformat:".2f" }};
+            let base = minB;
+            if (net > 0) {
+                let rate = 0.65;
+                if (net < 1000) rate = Math.min(1.0, 0.67 + ((1000 - net) / 2) * 0.001);
+                else if (net < 1200) rate = 0.67;
+                else if (net < 1240) rate = 0.67 - ((net - 1200) / 2) * 0.001;
+                base = Math.max(minB, Math.min(maxB, net * rate));
+            }
+            let amt = variant === 'plus' ? base * 0.5 : base;
+            if (sib) amt += Math.max(variant === 'plus' ? 37.5 : 75.0, amt * 0.10);
+            const out = document.getElementById('egPreviewAmount');
+            if (out) out.innerText = amt.toLocaleString('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' € / Mt.';
+        }
+    </script>
+    {% endif %}
 
     <!-- TAB 4: Documents -->
     <div x-show="activeTab === 'documents'" x-cloak class="mb-4">

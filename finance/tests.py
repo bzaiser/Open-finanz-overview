@@ -1121,3 +1121,37 @@ class AssetModalSaveTests(TestCase):
         re_tax_resp = self.client.get(f"{reverse('finance:real_estate_loans')}?tab=tax-docs")
         self.assertEqual(re_tax_resp.status_code, 200)
         self.assertContains(re_tax_resp, "Ganzheitliches Steuer-Cockpit")
+
+        # Configurable TaxAndBenefitConfig + Elterngeld & Benefits Check
+        from finance.models import TaxAndBenefitConfig
+        from finance.services_benefits import calculate_elterngeld_and_benefits
+
+        cfg = TaxAndBenefitConfig.get_active()
+        self.assertEqual(float(cfg.elterngeld_zve_limit), 175000.0)
+        ben = calculate_elterngeld_and_benefits(u)
+        self.assertTrue(ben["elterngeld_eligible"])
+        self.assertEqual(ben["zve_ref"], 71200.0)
+        self.assertEqual(ben["est_basis_p1"], 1800.0)
+
+        # Lowering configurable zvE limit in DB immediately changes eligibility
+        cfg.elterngeld_zve_limit = Decimal("60000.00")
+        cfg.save()
+        ben_excl = calculate_elterngeld_and_benefits(u)
+        self.assertFalse(ben_excl["elterngeld_eligible"])
+        cfg.elterngeld_zve_limit = Decimal("175000.00")
+        cfg.save()
+
+        eg_resp = self.client.post(
+            reverse("finance:elterngeld_apply"),
+            {
+                "variant": "basis",
+                "owner_role": "primary",
+                "prior_net_monthly": "3000.00",
+                "duration_months": "12",
+                "start_date": "2026-07-01",
+            },
+        )
+        self.assertEqual(eg_resp.status_code, 302)
+        eg_cf = CashFlowSource.objects.get(user=u, template_id="inc_elterngeld")
+        self.assertEqual(eg_cf.value, Decimal("1800.00"))
+        self.assertEqual(eg_cf.end_date, datetime.date(2027, 6, 30))

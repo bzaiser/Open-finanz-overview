@@ -71,6 +71,7 @@ urlpatterns = [
     path('wizard/', wizard_views.wizard_page_view, name='setup_wizard'),
     path('wizard/save/', wizard_views.wizard_save_api, name='setup_wizard_save'),
     path('risk/cash-reserve/save/', views.cash_reserve_upsert, name='cash_reserve_upsert'),
+    path('benefits/elterngeld/apply/', views.elterngeld_apply_view, name='elterngeld_apply'),
     path('tax/parse-pdf/', views.tax_parse_pdf_api, name='tax_parse_pdf_api'),
     path('tax/assessment/save/', views.tax_assessment_save, name='tax_assessment_add'),
     path('tax/assessment/save/<int:pk>/', views.tax_assessment_save, name='tax_assessment_edit'),

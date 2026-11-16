@@ -918,7 +918,7 @@ class InsurancePolicyAdmin(BaseOwnedModelAdmin):
         js = ('js/admin_insurance_policy.js',)
 
 
-from .models import TaxAssessment
+from .models import TaxAssessment, TaxAndBenefitConfig
 
 
 @admin.register(TaxAssessment)
@@ -926,4 +926,26 @@ class TaxAssessmentAdmin(BaseOwnedModelAdmin):
     list_display = ('year', 'user', 'assessment_type', 'gross_income', 'taxable_income_zve', 'assessed_tax_total', 'refund_or_payment', 'updated_at')
     list_filter = ('year', 'assessment_type', 'user')
     search_fields = ('user__username', 'year', 'notes')
+
+
+@admin.register(TaxAndBenefitConfig)
+class TaxAndBenefitConfigAdmin(admin.ModelAdmin):
+    list_display = ('effective_year', 'basic_tax_allowance', 'child_benefit_monthly', 'elterngeld_zve_limit', 'elterngeld_max_monthly', 'kiz_max_monthly', 'updated_at')
+    fieldsets = (
+        (_('Gültigkeit'), {'fields': ('effective_year',)}),
+        (_('Einkommensteuer & Freibeträge'), {
+            'fields': (
+                'basic_tax_allowance', 'soli_threshold_single', 'saver_allowance_single',
+                'employee_lump_sum', 'single_parent_relief_base', 'single_parent_relief_extra_child',
+                'child_allowance_total',
+            )
+        }),
+        (_('Elterngeld & Staatliche Zuwendungen'), {
+            'fields': (
+                'child_benefit_monthly', 'elterngeld_zve_limit', 'elterngeld_min_monthly',
+                'elterngeld_max_monthly', 'kiz_max_monthly', 'buergergeld_single_monthly',
+            )
+        }),
+    )
+
 

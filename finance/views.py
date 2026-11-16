@@ -3175,6 +3175,62 @@ def cash_reserve_upsert(request):
     return redirect(f"{reverse('finance:pension_plan')}?tab=risk_check")
 
 
+@login_required
+@require_POST
+def elterngeld_apply_view(request):
+    from decimal import InvalidOperation
+    from dateutil.relativedelta import relativedelta
+    from .services_benefits import estimate_elterngeld_monthly
+    from .models import TaxAndBenefitConfig
+
+    variant = request.POST.get('variant') if request.POST.get('variant') in {'basis', 'plus'} else 'basis'
+    owner_role = request.POST.get('owner_role') if request.POST.get('owner_role') in {'primary', 'partner'} else 'primary'
+    has_sibling = request.POST.get('has_sibling_bonus') == 'on'
+
+    raw_net = (request.POST.get('prior_net_monthly') or '0').replace(',', '.').strip()
+    try:
+        prior_net = Decimal(raw_net)
+    except (InvalidOperation, ValueError):
+        prior_net = Decimal('0.00')
+
+    try:
+        duration_months = max(1, min(32, int(request.POST.get('duration_months') or (12 if variant == 'basis' else 24))))
+    except ValueError:
+        duration_months = 12 if variant == 'basis' else 24
+
+    raw_start = (request.POST.get('start_date') or '').strip()
+    try:
+        start_date = datetime.date.fromisoformat(raw_start) if raw_start else timezone.localdate().replace(day=1)
+    except ValueError:
+        start_date = timezone.localdate().replace(day=1)
+
+    end_date = start_date + relativedelta(months=duration_months) - datetime.timedelta(days=1)
+
+    cfg = TaxAndBenefitConfig.get_active()
+    monthly_amount = Decimal(str(estimate_elterngeld_monthly(prior_net, variant=variant, has_sibling_bonus=has_sibling, config=cfg))).quantize(Decimal('0.01'))
+
+    cat_family, _created = Category.objects.get_or_create(
+        slug='familie-kinder',
+        defaults={'name': 'Familie & Kinder'},
+    )
+    label_variant = 'ElterngeldPlus' if variant == 'plus' else 'Basiselterngeld'
+    CashFlowSource.objects.create(
+        user=request.user,
+        name=f"{label_variant} ({duration_months} Mt.)",
+        value=monthly_amount,
+        is_income=True,
+        frequency='monthly',
+        category=cat_family,
+        template_id='inc_elterngeld',
+        owner_role=owner_role,
+        start_date=start_date,
+        end_date=end_date,
+        notes=_("Automatisch über Elterngeld-Rechner angelegt (Progressionsvorbehalt § 32b EStG beachten)."),
+    )
+    messages.success(request, _(f"{label_variant} ({monthly_amount:,.2f} €/Mt., {start_date:%d.%m.%Y}–{end_date:%d.%m.%Y}) in Einnahmen übernommen."))
+    return redirect(f"{reverse('finance:pension_plan')}?tab=risk_check")
+
+
 from .forms import PensionForm
 
 @login_required
@@ -3759,6 +3815,9 @@ def pension_plan_view(request):
         'active_policies_count': sum(1 for ins in insurances if ins.is_active),
     }
 
+    from .services_benefits import calculate_elterngeld_and_benefits
+    benefits_audit = calculate_elterngeld_and_benefits(request.user)
+
     context = {
         'pensions': pensions,
         'pensions_json': json.dumps(pensions_json),
@@ -3766,6 +3825,7 @@ def pension_plan_view(request):
         'insurances': insurances,
         'insurances_json': json.dumps(insurances_json),
         'protection_audit': protection_audit,
+        'benefits_audit': benefits_audit,
         'situation_choices': UserProfile.HOUSEHOLD_SITUATION_CHOICES,
         'audit_overview': audit_overview,
         'insurance_form': InsurancePolicyForm(user=request.user),
