@@ -1119,25 +1119,25 @@
         <!-- Elterngeld- & Staatliche-Zuwendungen-Check -->
         {% if benefits_audit %}
         <div class="card border-0 shadow-sm rounded-4 mb-4" style="background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color, rgba(125,125,125,0.2)) !important;">
-            <div class="card-header border-0 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
-                <div>
-                    <div class="d-flex flex-wrap align-items-center gap-2">
-                        <h6 class="fw-bold mb-0"><i class="bi bi-balloon-heart text-primary me-2"></i>{% trans "Elterngeld- & Staatliche-Zuwendungen-Check" %}</h6>
-                        {% if benefits_audit.elterngeld_eligible %}
-                            <span class="badge bg-success-subtle text-success rounded-pill">{% trans "Elterngeld-Anspruch möglich" %} (zvE ≤ {{ benefits_audit.zve_limit|floatformat:0|intcomma }} €)</span>
-                        {% else %}
-                            <span class="badge bg-danger-subtle text-danger rounded-pill">{% trans "zvE-Grenze überschritten" %} (&gt; {{ benefits_audit.zve_limit|floatformat:0|intcomma }} €)</span>
-                        {% endif %}
+            <div class="card-body">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3">
+                    <div>
+                        <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+                            <h6 class="fw-bold mb-0"><i class="bi bi-balloon-heart text-primary me-2"></i>{% trans "Elterngeld- & Staatliche-Zuwendungen-Check" %}</h6>
+                            {% if benefits_audit.elterngeld_eligible %}
+                                <span class="badge bg-success-subtle text-success rounded-pill">{% trans "Elterngeld-Anspruch möglich" %} (zvE ≤ {{ benefits_audit.zve_limit|floatformat:0|intcomma }} €)</span>
+                            {% else %}
+                                <span class="badge bg-danger-subtle text-danger rounded-pill">{% trans "zvE-Grenze überschritten" %} (&gt; {{ benefits_audit.zve_limit|floatformat:0|intcomma }} €)</span>
+                            {% endif %}
+                        </div>
+                        <div class="small opacity-75">
+                            {% trans "Prüf-Basis:" %} {{ benefits_audit.zve_source }} (<strong class="font-monospace">{{ benefits_audit.zve_ref|floatformat:0|intcomma }} € zvE</strong>) · {% trans "Regelwerk-Stand:" %} {{ benefits_audit.effective_year }}
+                        </div>
                     </div>
-                    <div class="small opacity-75">
-                        {% trans "Prüf-Basis:" %} {{ benefits_audit.zve_source }} (<strong class="font-monospace">{{ benefits_audit.zve_ref|floatformat:0|intcomma }} € zvE</strong>) · {% trans "Regelwerk-Stand:" %} {{ benefits_audit.effective_year }}
-                    </div>
+                    <button type="button" class="btn btn-primary rounded-pill px-3 flex-shrink-0" style="background: var(--app-gradient); border: none;" data-bs-toggle="modal" data-bs-target="#elterngeldModal">
+                        <i class="bi bi-calculator me-1"></i>{% trans "Elterngeld berechnen & einplanen" %}
+                    </button>
                 </div>
-                <button type="button" class="btn btn-sm btn-primary rounded-pill px-3 flex-shrink-0" style="background: var(--app-gradient); border: none;" data-bs-toggle="modal" data-bs-target="#elterngeldModal">
-                    <i class="bi bi-calculator me-1"></i>{% trans "Elterngeld berechnen & einplanen" %}
-                </button>
-            </div>
-            <div class="card-body pt-0">
                 <div class="row g-3">
                     {% for ben in benefits_audit.benefits_list %}
                     <div class="col-md-6 col-lg-4">
