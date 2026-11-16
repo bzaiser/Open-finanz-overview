@@ -119,4 +119,32 @@ class Command(BaseCommand):
             include_in_cashflow=True, is_active=True
         )
 
+        from django.utils import timezone as dj_tz
+        from finance.models import TaxAssessment
+
+        profile.disclaimer_version = "1.0"
+        profile.disclaimer_accepted_at = dj_tz.now()
+        profile.tax_assessment_mode = "single"
+        profile.save()
+
+        Asset.objects.update_or_create(
+            user=user, name="Bargeldreserve Zuhause",
+            defaults={
+                "asset_type": "cash",
+                "institution": "Zuhause / Tresor",
+                "value": Decimal("600.00"),
+                "growth_rate": Decimal("0.00"),
+                "is_emergency_fund": True,
+            }
+        )
+
+        TaxAssessment.objects.filter(user=user).delete()
+        TaxAssessment.objects.create(
+            user=user, year=2025, assessment_type="single",
+            gross_income=Decimal("20440.00"), deductible_expenses=Decimal("4950.00"),
+            taxable_income_zve=Decimal("15490.00"), assessed_tax_total=Decimal("530.00"),
+            prepaid_tax=Decimal("400.00"), refund_or_payment=Decimal("-130.00"),
+            notes="Rentenbesteuerung nach § 22 EStG (Kohorte 2025 = 83,5 % steuerpflichtig)"
+        )
+
         self.stdout.write(self.style.SUCCESS(f"Seeded {username} (Frührentner / Erwerbsminderung) successfully."))

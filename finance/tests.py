@@ -322,6 +322,7 @@ class TargetGroupSeedCommandsTests(TestCase):
             self.assertTrue(u.check_password(uname), f"Password mismatch for {uname}")
 
         usernames = [
+            "demo_familie",
             "gering",
             "allein",
             "student",
@@ -330,6 +331,9 @@ class TargetGroupSeedCommandsTests(TestCase):
         for uname in usernames:
             user = CustomUser.objects.get(username=uname)
             self.client.force_login(user)
+
+            r_re = self.client.get(reverse("finance:real_estate_loans"))
+            self.assertEqual(r_re.status_code, 200, f"Real estate & tax cockpit failed for {uname}")
 
             r_dash = self.client.get(reverse("finance:dashboard"))
             self.assertEqual(r_dash.status_code, 200, f"Dashboard failed for {uname}")

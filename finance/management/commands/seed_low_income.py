@@ -157,4 +157,36 @@ class Command(BaseCommand):
             linked_cash_flow=cf_hp, include_in_cashflow=True, is_active=True
         )
 
+        from django.utils import timezone as dj_tz
+        from finance.models import TaxAssessment
+
+        profile.disclaimer_version = "1.0"
+        profile.disclaimer_accepted_at = dj_tz.now()
+        profile.tax_assessment_mode = "splitting"
+        profile.save()
+
+        Asset.objects.update_or_create(
+            user=user, name="Bargeldreserve Zuhause",
+            defaults={
+                "asset_type": "cash",
+                "institution": "Zuhause / Tresor",
+                "value": Decimal("450.00"),
+                "growth_rate": Decimal("0.00"),
+                "is_emergency_fund": True,
+            }
+        )
+
+        TaxAssessment.objects.filter(user=user).delete()
+        for yr, gross, ded, zve, tax_tot, prep in (
+            (2024, "39800.00", "9400.00", "30400.00", "1120.00", "1680.00"),
+            (2025, "41200.00", "9650.00", "31550.00", "1340.00", "1850.00"),
+        ):
+            TaxAssessment.objects.create(
+                user=user, year=yr, assessment_type="splitting",
+                gross_income=Decimal(gross), deductible_expenses=Decimal(ded),
+                taxable_income_zve=Decimal(zve), assessed_tax_total=Decimal(tax_tot),
+                prepaid_tax=Decimal(prep), refund_or_payment=Decimal(prep) - Decimal(tax_tot),
+                notes=f"Steuerbescheid {yr} (Familie mit 2 Kindern)"
+            )
+
         self.stdout.write(self.style.SUCCESS(f"Seeded {username} (Geringverdiener-Familie) successfully."))

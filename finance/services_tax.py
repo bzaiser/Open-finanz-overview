@@ -472,11 +472,11 @@ def calculate_holistic_tax_cockpit(user, portfolio_tax_vv=None, rental_objects_m
             for p in pensions:
                 owner_ret = p2_is_retired if p.owner_role == 'partner' else p1_is_retired
                 owner_ret_yr = p2_ret_year if p.owner_role == 'partner' else p1_ret_year
-                if not owner_ret or p.payout_type == 'lump_sum':
+                if not owner_ret or p.payout_type == 'one_time':
                     continue
-                monthly_gross = float(p.gross_payout_amount or p.expected_payout or 0.0)
-                if p.pension_type == 'statutory' and monthly_gross <= 0 and p.statutory_points:
-                    monthly_gross = float(p.statutory_points) * float(p.point_value or Decimal('40.79'))
+                monthly_gross = float(p.gross_payout_amount or p.expected_payout_at_retirement or 0.0)
+                if p.pension_type == 'statutory' and monthly_gross <= 0 and p.pension_points:
+                    monthly_gross = float(p.pension_points) * float(p.point_value or Decimal('40.79'))
                 annual_p = monthly_gross * 12.0 * ((1.0 + pension_growth) ** yr_offset)
                 yr_gross_pension += annual_p
                 if p.pension_type == 'statutory':

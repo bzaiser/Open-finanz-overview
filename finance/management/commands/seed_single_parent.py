@@ -139,4 +139,36 @@ class Command(BaseCommand):
             linked_cash_flow=cf_rlv, include_in_cashflow=True, is_active=True
         )
 
+        from django.utils import timezone as dj_tz
+        from finance.models import TaxAssessment
+
+        profile.disclaimer_version = "1.0"
+        profile.disclaimer_accepted_at = dj_tz.now()
+        profile.tax_assessment_mode = "single"
+        profile.save()
+
+        Asset.objects.update_or_create(
+            user=user, name="Bargeldreserve Zuhause",
+            defaults={
+                "asset_type": "cash",
+                "institution": "Zuhause / Tresor",
+                "value": Decimal("600.00"),
+                "growth_rate": Decimal("0.00"),
+                "is_emergency_fund": True,
+            }
+        )
+
+        TaxAssessment.objects.filter(user=user).delete()
+        for yr, gross, ded, zve, tax_tot, prep in (
+            (2024, "35400.00", "11200.00", "24200.00", "2680.00", "3420.00"),
+            (2025, "36600.00", "11500.00", "25100.00", "2890.00", "3600.00"),
+        ):
+            TaxAssessment.objects.create(
+                user=user, year=yr, assessment_type="single",
+                gross_income=Decimal(gross), deductible_expenses=Decimal(ded),
+                taxable_income_zve=Decimal(zve), assessed_tax_total=Decimal(tax_tot),
+                prepaid_tax=Decimal(prep), refund_or_payment=Decimal(prep) - Decimal(tax_tot),
+                notes=f"Steuerbescheid {yr} (Steuerklasse II / Entlastungsbetrag Alleinerziehende § 24b EStG)"
+            )
+
         self.stdout.write(self.style.SUCCESS(f"Seeded {username} (Alleinerziehend) successfully."))

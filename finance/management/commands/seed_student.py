@@ -112,4 +112,32 @@ class Command(BaseCommand):
             include_in_cashflow=True, is_active=True
         )
 
+        from django.utils import timezone as dj_tz
+        from finance.models import TaxAssessment
+
+        profile.disclaimer_version = "1.0"
+        profile.disclaimer_accepted_at = dj_tz.now()
+        profile.tax_assessment_mode = "single"
+        profile.save()
+
+        Asset.objects.update_or_create(
+            user=user, name="Bargeldreserve Zuhause",
+            defaults={
+                "asset_type": "cash",
+                "institution": "Zuhause / Tresor",
+                "value": Decimal("300.00"),
+                "growth_rate": Decimal("0.00"),
+                "is_emergency_fund": True,
+            }
+        )
+
+        TaxAssessment.objects.filter(user=user).delete()
+        TaxAssessment.objects.create(
+            user=user, year=2025, assessment_type="single",
+            gross_income=Decimal("11400.00"), deductible_expenses=Decimal("2400.00"),
+            taxable_income_zve=Decimal("9000.00"), assessed_tax_total=Decimal("0.00"),
+            prepaid_tax=Decimal("180.00"), refund_or_payment=Decimal("180.00"),
+            notes="Werkstudentenjob unter Grundfreibetrag + Studienkosten"
+        )
+
         self.stdout.write(self.style.SUCCESS(f"Seeded {username} (Student / Berufseinsteiger) successfully."))

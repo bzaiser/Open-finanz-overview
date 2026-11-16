@@ -832,6 +832,49 @@ class Command(BaseCommand):
             is_active=True,
         )
 
+        # 9. Bargeldreserve & Historische Steuerbescheide
+        from django.utils import timezone as dj_tz
+        from finance.models import TaxAssessment
+
+        profile.disclaimer_version = "1.0"
+        profile.disclaimer_accepted_at = dj_tz.now()
+        profile.hide_wizard_on_start = True
+        profile.tax_assessment_mode = "splitting"
+        profile.annual_gross_income_p1 = Decimal("74500.00")
+        profile.annual_gross_income_p2 = Decimal("36800.00")
+        profile.save()
+
+        Asset.objects.update_or_create(
+            user=user, name="Bargeldreserve Zuhause",
+            defaults={
+                "asset_type": "cash",
+                "institution": "Zuhause / Tresor",
+                "value": Decimal("1200.00"),
+                "growth_rate": Decimal("0.00"),
+                "is_emergency_fund": True,
+            }
+        )
+
+        TaxAssessment.objects.filter(user=user).delete()
+        for yr, gross, ded, vv, zve, tax_tot, prep in (
+            (2023, "104500.00", "22400.00", "-3200.00", "78900.00", "15120.00", "16850.00"),
+            (2024, "108200.00", "23100.00", "-2850.00", "82250.00", "16240.00", "17900.00"),
+            (2025, "111300.00", "23850.00", "-2400.00", "85050.00", "17110.00", "18600.00"),
+        ):
+            TaxAssessment.objects.create(
+                user=user,
+                year=yr,
+                assessment_type="splitting",
+                gross_income=Decimal(gross),
+                deductible_expenses=Decimal(ded),
+                rental_income_taxable=Decimal(vv),
+                taxable_income_zve=Decimal(zve),
+                assessed_tax_total=Decimal(tax_tot),
+                prepaid_tax=Decimal(prep),
+                refund_or_payment=Decimal(prep) - Decimal(tax_tot),
+                notes=f"Einkommensteuerbescheid {yr} (Splittingtarif + Vermietung Anlage V)",
+            )
+
         self.stdout.write(self.style.SUCCESS("[OK] Realistischer Demo-Familien-Datensatz erfolgreich angelegt!"))
         self.stdout.write(f"Benutzername: {username}")
         self.stdout.write(f"Passwort:    {password}")
