@@ -140,6 +140,68 @@ def toggle_night_mode(request):
     profile.save()
     return redirect(request.META.get('HTTP_REFERER', 'profile'))
 
+
+@login_required
+def export_theme_json_view(request):
+    from django.http import HttpResponse
+    from .theme_engine import get_profile_theme_studio_settings
+
+    profile, _ = UserProfile.objects.get_or_create(user=request.user)
+    ts = get_profile_theme_studio_settings(profile)
+    payload = {
+        "version": 1,
+        "c1": ts["c1"],
+        "c2": ts["c2"],
+        "mood": ts["mood"],
+        "bg_mode": ts["bg_mode"],
+        "day_bg_mode": (profile.dashboard_config or {}).get("theme_studio", {}).get("day_bg_mode", "light"),
+        "bg_custom": ts["bg_custom"],
+        "sync_cards_and_charts": ts["sync_cards_and_charts"],
+        "state_overrides": ts["state_overrides"],
+        "card_surface": ts["card_surface"],
+        "bg_svg_mode": ts["bg_svg_mode"],
+        "kpi_sparklines": ts["kpi_sparklines"],
+        "kpi_progress_bars": ts["kpi_progress_bars"],
+        "kpi_watermarks": ts["kpi_watermarks"],
+        "kpi_spotlight": ts["kpi_spotlight"],
+        "kpi_click_navigation": ts["kpi_click_navigation"],
+    }
+    resp = HttpResponse(json.dumps(payload, indent=2), content_type="application/json")
+    resp["Content-Disposition"] = 'attachment; filename="design-studio-theme.json"'
+    return resp
+
+
+@login_required
+@require_POST
+def import_theme_json_view(request):
+    from .theme_engine import apply_theme_studio_to_profile
+
+    profile, _ = UserProfile.objects.get_or_create(user=request.user)
+    raw_text = ""
+    if request.FILES.get("theme_file"):
+        raw_text = request.FILES["theme_file"].read().decode("utf-8", errors="replace")
+    elif request.POST.get("theme_json"):
+        raw_text = request.POST.get("theme_json", "")
+    elif request.body:
+        raw_text = request.body.decode("utf-8", errors="replace")
+
+    try:
+        parsed = json.loads(raw_text)
+        if not isinstance(parsed, dict):
+            raise ValueError("Invalid JSON object")
+    except Exception as exc:
+        return JsonResponse({"status": "error", "message": str(exc)}, status=400)
+
+    if isinstance(parsed.get("c1"), str) and parsed["c1"].startswith("#"):
+        profile.gradient_start = parsed["c1"]
+    if isinstance(parsed.get("c2"), str) and parsed["c2"].startswith("#"):
+        profile.gradient_end = parsed["c2"]
+
+    apply_theme_studio_to_profile(profile, parsed, manual_precision=False)
+    profile.save()
+    return JsonResponse({"status": "success"})
+
+
 @login_required
 def profile_view(request):
     from .theme_engine import (

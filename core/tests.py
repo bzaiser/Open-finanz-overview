@@ -156,6 +156,37 @@ class ProfileThemeStudioTests(TestCase):
         self.assertEqual(self.profile.dashboard_config["theme_studio"]["bg_mode"], "light")
         self.assertFalse(get_profile_theme_palette(self.profile)["is_dark"])
 
+    def test_theme_json_export_import_and_adapter(self):
+        import json
+        from .theme_adapter import FinanzplanThemeAdapter
+
+        adapter = FinanzplanThemeAdapter()
+        adapter.save_settings(self.user, {
+            "c1": "#1E3A8A",
+            "c2": "#0F766E",
+            "mood": "serioes",
+            "bg_mode": "light",
+            "card_surface": "glass",
+            "bg_svg_mode": "grid",
+        })
+        exp = self.client.get(reverse("export_theme_json"))
+        self.assertEqual(exp.status_code, 200)
+        payload = json.loads(exp.content.decode("utf-8"))
+        self.assertEqual(payload["mood"], "serioes")
+        self.assertEqual(payload["card_surface"], "glass")
+
+        payload["mood"] = "neon"
+        payload["bg_mode"] = "dark"
+        imp = self.client.post(
+            reverse("import_theme_json"),
+            {"theme_json": json.dumps(payload)},
+        )
+        self.assertEqual(imp.status_code, 200)
+        loaded = adapter.get_settings(self.user)
+        self.assertEqual(loaded["mood"], "neon")
+        self.assertEqual(loaded["bg_mode"], "dark")
+
+
 
 
 

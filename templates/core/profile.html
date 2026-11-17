@@ -195,7 +195,18 @@
                 <!-- Rechts: Design Studio & Datensicherung -->
                 <div class="col-lg-6 d-flex flex-column gap-4">
                     <div class="glass-card shadow-lg p-4 h-100">
-                        <h4 class="mb-3 fw-bold"><i class="bi bi-magic me-2 text-primary"></i>{% trans "Design Studio" %}</h4>
+                        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+                            <h4 class="mb-0 fw-bold"><i class="bi bi-magic me-2 text-primary"></i>{% trans "Design Studio" %}</h4>
+                            <div class="d-flex gap-1">
+                                <a href="{% url 'export_theme_json' %}" class="btn btn-sm btn-outline-primary rounded-pill px-2 px-sm-3" style="font-size: 0.74rem;" title="{% trans 'Design als JSON für andere Apps exportieren' %}">
+                                    <i class="bi bi-download me-1"></i>{% trans "Export (.json)" %}
+                                </a>
+                                <button type="button" id="btnImportThemeJson" class="btn btn-sm btn-outline-secondary rounded-pill px-2 px-sm-3" style="font-size: 0.74rem;" title="{% trans 'Design-Vorlage (.json) importieren' %}">
+                                    <i class="bi bi-upload me-1"></i>{% trans "Import" %}
+                                </button>
+                                <input type="file" id="inputImportThemeJson" accept=".json,application/json" class="d-none">
+                            </div>
+                        </div>
                         
                         <!-- Design Studio 2.0 Control Bar -->
                         <div class="p-3 rounded-4 border border-secondary border-opacity-25 mb-3" style="background: rgba(125,125,125,0.04);">
@@ -1079,6 +1090,29 @@
                 el.addEventListener('change', () => runThemeStudio(false));
             }
         });
+
+        const btnImportTheme = document.getElementById('btnImportThemeJson');
+        const inputImportTheme = document.getElementById('inputImportThemeJson');
+        if (btnImportTheme && inputImportTheme) {
+            btnImportTheme.addEventListener('click', () => inputImportTheme.click());
+            inputImportTheme.addEventListener('change', async (e) => {
+                const file = e.target.files && e.target.files[0];
+                if (!file) return;
+                const fd = new FormData();
+                fd.append('theme_file', file);
+                const csrfInput = profileForm ? profileForm.querySelector('input[name="csrfmiddlewaretoken"]') : null;
+                const resp = await fetch("{% url 'import_theme_json' %}", {
+                    method: 'POST',
+                    headers: csrfInput ? { 'X-CSRFToken': csrfInput.value } : {},
+                    body: fd,
+                });
+                if (resp.ok) {
+                    window.location.reload();
+                } else {
+                    alert("{% trans 'Ungültige Theme-JSON-Datei.'|escapejs %}");
+                }
+            });
+        }
         if (studioSyncCards) {
             studioSyncCards.addEventListener('change', () => {
                 if (studioSyncCards.checked) runThemeStudio(true);
