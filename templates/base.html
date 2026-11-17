@@ -609,7 +609,11 @@
         }
         body[data-menu-style="glass"] .app-navbar,
         body[data-menu-style="brutal"] .app-navbar {
-            background: color-mix(in srgb, var(--app-sidebar-bg, var(--app-card-bg, #ffffff)) 80%, transparent) !important;
+            background: linear-gradient(
+                135deg,
+                color-mix(in srgb, var(--app-primary, #0d6efd) 14%, color-mix(in srgb, var(--app-sidebar-bg, var(--app-card-bg, #ffffff)) 82%, transparent)),
+                color-mix(in srgb, var(--app-card-bg, #ffffff) 82%, transparent)
+            ) !important;
             backdrop-filter: blur(18px) saturate(145%);
             -webkit-backdrop-filter: blur(18px) saturate(145%);
             border-bottom: 1px solid var(--app-table-border-color, rgba(128,128,128,0.18));
