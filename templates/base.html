@@ -542,21 +542,185 @@
             border-color: var(--app-table-border-color);
         }
         
-        /* Navbar Polishing */
-        .navbar-dark .navbar-nav .nav-link {
-            color: rgba(255,255,255,0.95) !important;
+        /* Navbar Polishing & Configurable Sidebar Panel */
+        .app-navbar {
+            transition: background 0.25s ease, box-shadow 0.25s ease, width 0.22s ease;
+            z-index: 1035;
+        }
+        .app-navbar .nav-link {
+            border-radius: 999px;
+            padding: 0.42rem 0.85rem !important;
             font-weight: 500;
             white-space: nowrap;
-            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            transition: all 0.18s ease;
         }
-        .navbar-dark .navbar-nav .nav-link:hover {
+        .app-navbar .nav-link.app-nav-icon-only {
+            padding: 0.42rem 0.58rem !important;
+        }
+        body[data-menu-style="gradient"] .app-navbar {
+            background: var(--app-gradient) !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.14);
+        }
+        body[data-menu-style="gradient"] .app-navbar .navbar-brand,
+        body[data-menu-style="gradient"] .app-navbar .nav-link,
+        body[data-menu-style="gradient"] .app-navbar .sidebar-toggle-btn {
+            color: rgba(255, 255, 255, 0.92) !important;
+        }
+        body[data-menu-style="gradient"] .app-navbar .nav-link:hover {
             color: #ffffff !important;
-            transform: translateY(-1px);
-            text-shadow: 0 0 10px rgba(255,255,255,0.3);
+            background: rgba(255, 255, 255, 0.14);
         }
-        .navbar-dark .navbar-nav .nav-link.active {
+        body[data-menu-style="gradient"] .app-navbar .nav-link.active {
+            color: #ffffff !important;
+            background: rgba(255, 255, 255, 0.24);
+            font-weight: 700;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+        }
+        body[data-menu-style="glass"] .app-navbar,
+        body[data-menu-style="brutal"] .app-navbar {
+            background: color-mix(in srgb, var(--app-sidebar-bg, var(--app-card-bg, #ffffff)) 80%, transparent) !important;
+            backdrop-filter: blur(18px) saturate(145%);
+            -webkit-backdrop-filter: blur(18px) saturate(145%);
+            border-bottom: 1px solid var(--app-table-border-color, rgba(128,128,128,0.18));
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
+        }
+        body[data-menu-style="brutal"] .app-navbar {
+            background: var(--app-card-bg, #111317) !important;
+            border-bottom: 2px solid var(--app-primary, #0d6efd);
+            border-radius: 0 !important;
+        }
+        body[data-menu-style="brutal"] .app-navbar .nav-link {
+            border-radius: 8px;
+        }
+        body[data-menu-style="glass"] .app-navbar .navbar-brand,
+        body[data-menu-style="glass"] .app-navbar .nav-link,
+        body[data-menu-style="glass"] .app-navbar .sidebar-toggle-btn,
+        body[data-menu-style="brutal"] .app-navbar .navbar-brand,
+        body[data-menu-style="brutal"] .app-navbar .nav-link,
+        body[data-menu-style="brutal"] .app-navbar .sidebar-toggle-btn {
+            color: var(--app-card-color, #1e293b) !important;
+        }
+        body[data-menu-style="glass"] .app-navbar .nav-link:hover,
+        body[data-menu-style="brutal"] .app-navbar .nav-link:hover {
+            background: color-mix(in srgb, var(--app-primary, #0d6efd) 12%, transparent);
+            color: var(--app-primary, #0d6efd) !important;
+        }
+        body[data-menu-style="glass"] .app-navbar .nav-link.active,
+        body[data-menu-style="brutal"] .app-navbar .nav-link.active {
+            background: var(--app-gradient);
             color: #ffffff !important;
             font-weight: 700;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.14);
+        }
+        body[data-menu-style="glass"] .app-navbar .navbar-toggler-icon,
+        body[data-menu-style="brutal"] .app-navbar .navbar-toggler-icon {
+            filter: invert(0.5);
+        }
+
+        /* Sidebar Panel Mode on Desktop (>= 992px) */
+        .sidebar-toggle-btn {
+            display: none;
+        }
+        @media (min-width: 992px) {
+            body[data-menu-layout="sidebar"] {
+                padding-left: 248px;
+                transition: padding-left 0.22s ease;
+            }
+            body[data-menu-layout="sidebar"].sidebar-collapsed {
+                padding-left: 74px;
+            }
+            body[data-menu-layout="sidebar"] .app-navbar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                width: 248px;
+                margin-bottom: 0 !important;
+                flex-direction: column;
+                align-items: stretch !important;
+                padding: 1rem 0.75rem;
+                border-bottom: none !important;
+                border-right: 1px solid var(--app-table-border-color, rgba(128,128,128,0.18));
+                overflow-y: auto;
+                overflow-x: hidden;
+            }
+            body[data-menu-layout="sidebar"][data-menu-style="brutal"] .app-navbar {
+                border-right: 2px solid var(--app-primary, #0d6efd);
+            }
+            body[data-menu-layout="sidebar"].sidebar-collapsed .app-navbar {
+                width: 74px;
+                padding: 1rem 0.45rem;
+            }
+            body[data-menu-layout="sidebar"] .app-navbar > .container-fluid {
+                flex-direction: column;
+                align-items: stretch !important;
+                height: 100%;
+                padding: 0;
+                gap: 0.75rem;
+            }
+            body[data-menu-layout="sidebar"] .app-navbar .navbar-brand {
+                justify-content: space-between;
+                margin-right: 0;
+                padding: 0.35rem 0.5rem;
+            }
+            body[data-menu-layout="sidebar"] .sidebar-toggle-btn {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                border: none;
+                background: transparent;
+                padding: 0.25rem 0.4rem;
+                border-radius: 8px;
+                opacity: 0.75;
+                cursor: pointer;
+            }
+            body[data-menu-layout="sidebar"] .sidebar-toggle-btn:hover {
+                opacity: 1;
+                background: rgba(128,128,128,0.14);
+            }
+            body[data-menu-layout="sidebar"] .app-navbar .navbar-collapse {
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: stretch !important;
+                justify-content: space-between;
+                flex-grow: 1;
+            }
+            body[data-menu-layout="sidebar"] .app-navbar .navbar-nav {
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: 0.25rem !important;
+                width: 100%;
+                margin: 0 !important;
+            }
+            body[data-menu-layout="sidebar"] .app-navbar .navbar-nav.ms-auto {
+                margin-top: auto !important;
+                padding-top: 0.75rem !important;
+                border-top: 1px solid rgba(128, 128, 128, 0.2);
+            }
+            body[data-menu-layout="sidebar"] .app-navbar .nav-link {
+                width: 100%;
+                justify-content: flex-start;
+                border-radius: 12px;
+                padding: 0.55rem 0.75rem !important;
+            }
+            body[data-menu-layout="sidebar"].sidebar-collapsed .app-navbar .brand-text,
+            body[data-menu-layout="sidebar"].sidebar-collapsed .app-navbar .nav-label,
+            body[data-menu-layout="sidebar"].sidebar-collapsed .app-navbar .dropdown-toggle::after {
+                display: none !important;
+            }
+            body[data-menu-layout="sidebar"].sidebar-collapsed .app-navbar .nav-link,
+            body[data-menu-layout="sidebar"].sidebar-collapsed .app-navbar .navbar-brand {
+                justify-content: center;
+                padding-left: 0.4rem !important;
+                padding-right: 0.4rem !important;
+            }
+            body[data-menu-layout="sidebar"] > .container,
+            body[data-menu-layout="sidebar"] > .container-fluid {
+                padding-top: 1.25rem;
+            }
         }
         
         /* Sidebar layout placeholder */
@@ -1290,7 +1454,9 @@
       data-kpi-progress="{{ theme_studio.kpi_progress_bars|yesno:'true,false'|default:'true' }}"
       data-kpi-watermarks="{{ theme_studio.kpi_watermarks|yesno:'true,false'|default:'true' }}"
       data-kpi-spotlight="{{ theme_studio.kpi_spotlight|yesno:'true,false'|default:'true' }}"
-      data-kpi-click="{{ theme_studio.kpi_click_navigation|yesno:'true,false'|default:'true' }}">
+      data-kpi-click="{{ theme_studio.kpi_click_navigation|yesno:'true,false'|default:'true' }}"
+      data-menu-layout="{{ theme_studio.menu_layout|default:'top' }}"
+      data-menu-style="{{ theme_studio.resolved_menu_style|default:'gradient' }}">
     {% if user.is_authenticated and theme_studio.resolved_bg_svg and theme_studio.resolved_bg_svg != 'none' %}
     <div class="app-bg-svg-layer" aria-hidden="true">
         {% if theme_studio.resolved_bg_svg == 'topography' %}
@@ -1369,115 +1535,82 @@
         {% endif %}
     </div>
     {% endif %}
-    <nav class="navbar navbar-expand-lg navbar-dark mb-4" style="background: var(--app-gradient);">
+    <nav class="navbar navbar-expand-lg app-navbar mb-4">
         <div class="container-fluid">
-            <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'finance:dashboard' %}">
-                <i class="bi bi-speedometer2"></i>
-                <span>Finanzplan{% if APP_INSTANCE_NAME %} ({{ APP_INSTANCE_NAME }}){% endif %}</span>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+            <div class="d-flex align-items-center justify-content-between w-100 w-lg-auto">
+                <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'finance:dashboard' %}">
+                    <i class="bi bi-speedometer2"></i>
+                    <span class="brand-text">Finanzplan{% if APP_INSTANCE_NAME %} ({{ APP_INSTANCE_NAME }}){% endif %}</span>
+                </a>
+                <button type="button" id="sidebarCollapseBtn" class="sidebar-toggle-btn" title="{% trans 'Seitenpanel ein-/ausklappen' %}" aria-label="Toggle Sidebar">
+                    <i class="bi bi-layout-sidebar-inset"></i>
+                </button>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
             <div class="collapse navbar-collapse" id="navbarContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-1">
+                    {% if user.is_authenticated and nav_main_items %}
+                        {% for item in nav_main_items %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name in item.match_urls %}active{% endif %} {% if item.display == 'icon_only' %}app-nav-icon-only{% endif %}"
+                               href="{{ item.url }}"
+                               title="{% if item.id == 'night_mode' %}{% if theme_palette and theme_palette.is_dark %}{% trans 'Tagmodus aktivieren' %}{% else %}{% trans 'Nachtmodus aktivieren' %}{% endif %}{% else %}{{ item.label }}{% endif %}">
+                                {% if item.display != 'text_only' %}
+                                    {% if item.id == 'night_mode' %}
+                                        {% if theme_palette and theme_palette.is_dark %}<i class="bi bi-sun-fill text-warning"></i>{% else %}<i class="bi {{ item.icon }}"></i>{% endif %}
+                                    {% else %}
+                                        <i class="bi {{ item.icon }}"></i>
+                                    {% endif %}
+                                {% endif %}
+                                {% if item.display == 'icon_only' %}
+                                    <span class="d-lg-none nav-label">{{ item.label }}</span>
+                                {% else %}
+                                    <span class="nav-label">{{ item.label }}</span>
+                                {% endif %}
+                            </a>
+                        </li>
+                        {% endfor %}
+                    {% elif user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link {% if request.resolver_match.url_name == 'cash_flow_list' %}active{% endif %}" href="{% url 'finance:cash_flow_list' %}">
-                           <i class="bi bi-arrow-down-up me-1"></i>
-                           {% trans 'Transactions' %}
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'pension_plan' %}active{% endif %}" href="{% url 'finance:pension_plan' %}">
-                           <i class="bi bi-bank me-1"></i>
-                           {% trans 'Retirement Planning' %}
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'real_estate_loans' %}active{% endif %}" href="{% url 'finance:real_estate_loans' %}">
-                           <i class="bi bi-houses me-1"></i>
-                           {% trans 'Real Estate & Loans' %}
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'assets_overview' %}active{% endif %}" href="{% url 'finance:assets_overview' %}">
-                           <i class="bi bi-pie-chart me-1"></i>
-                           {% trans 'Portfolio' %}
-                        </a>
-                    </li>
-                    {# Bank Import disabled for now #}
-                    {# <li class="nav-item"> #}
-                    {#     <a class="nav-link" href="{% url 'finance:import_transactions' %}"> #}
-                    {#         <i class="bi bi-magic me-1"></i> #}
-                    {#         {% trans 'Bank Import' %} #}
-                    {#     </a> #}
-                    {# </li> #}
-                </ul>
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center flex-column flex-lg-row gap-lg-1 gap-1 pt-2 pt-lg-0">
-                    {% if user.is_authenticated %}
-                    <!-- 1. Global Search -->
-                    <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center px-2 py-2 py-lg-1 {% if request.resolver_match.url_name == 'global_search' %}text-primary{% endif %}"
-                           href="{% url 'finance:global_search' %}"
-                           title="{% trans 'Global Search' %}"
-                           aria-label="{% trans 'Global Search' %}">
-                            <i class="bi bi-search fs-5"></i>
-                            <span class="d-lg-none ms-2">{% trans "Global Search" %}</span>
-                        </a>
-                    </li>
-                    <!-- 2. Documents -->
-                    <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center px-2 py-2 py-lg-1 {% if request.resolver_match.url_name == 'documents_vault' %}text-primary{% endif %}"
-                           href="{% url 'finance:documents_vault' %}"
-                           title="{% trans 'Documents' %}"
-                           aria-label="{% trans 'Documents' %}">
-                            <i class="bi bi-folder2-open fs-5"></i>
-                            <span class="d-lg-none ms-2">{% trans "Documents" %}</span>
-                        </a>
-                    </li>
-                    <!-- 3. Settings -->
-                    <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center px-2 py-2 py-lg-1 {% if request.resolver_match.url_name == 'profile' %}text-primary{% endif %}"
-                           href="{% url 'profile' %}"
-                           title="{% trans 'Settings' %}"
-                           aria-label="{% trans 'Settings' %}">
-                            <i class="bi bi-gear fs-5"></i>
-                            <span class="d-lg-none ms-2">{% trans "Settings" %}</span>
-                        </a>
-                    </li>
-                    <!-- 4. Administration (Staff only) -->
-                    {% if user.is_staff %}
-                    <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center px-2 py-2 py-lg-1"
-                           href="{% url 'admin:index' %}"
-                           title="{% trans 'Administration' %}"
-                           aria-label="{% trans 'Administration' %}">
-                            <i class="bi bi-shield-lock fs-5"></i>
-                            <span class="d-lg-none ms-2">{% trans "Administration" %}</span>
+                           <i class="bi bi-arrow-down-up"></i>
+                           <span class="nav-label">{% trans 'Transactions' %}</span>
                         </a>
                     </li>
                     {% endif %}
-                    <!-- Night Mode Toggle (Direct Icon Toggle: Moon / Sun) -->
-                    <li class="nav-item">
-                        <a href="{% url 'toggle_night_mode' %}"
-                           class="nav-link d-flex align-items-center px-2 py-2 py-lg-1"
-                           title="{% if theme_palette and theme_palette.is_dark %}{% trans 'Tagmodus aktivieren' %}{% else %}{% trans 'Nachtmodus aktivieren' %}{% endif %}"
-                           aria-label="{% trans 'Toggle Night Mode' %}">
-                            {% if theme_palette and theme_palette.is_dark %}
-                                <i class="bi bi-sun-fill text-warning fs-5"></i>
-                                <span class="d-lg-none ms-2">{% trans "Tagmodus" %}</span>
-                            {% else %}
-                                <i class="bi bi-moon-stars fs-5"></i>
-                                <span class="d-lg-none ms-2">{% trans "Nachtmodus" %}</span>
-                            {% endif %}
-                        </a>
-                    </li>
-                    <!-- 5. User Account Dropdown (Dedicated Row in Burger Menu) -->
+                </ul>
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center flex-column flex-lg-row gap-lg-1 gap-1 pt-2 pt-lg-0">
+                    {% if user.is_authenticated %}
+                        {% for item in nav_utility_items %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name in item.match_urls %}active{% endif %} {% if item.display == 'icon_only' %}app-nav-icon-only{% endif %}"
+                               href="{{ item.url }}"
+                               title="{% if item.id == 'night_mode' %}{% if theme_palette and theme_palette.is_dark %}{% trans 'Tagmodus aktivieren' %}{% else %}{% trans 'Nachtmodus aktivieren' %}{% endif %}{% else %}{{ item.label }}{% endif %}"
+                               aria-label="{{ item.label }}">
+                                {% if item.display != 'text_only' %}
+                                    {% if item.id == 'night_mode' %}
+                                        {% if theme_palette and theme_palette.is_dark %}<i class="bi bi-sun-fill text-warning fs-5"></i>{% else %}<i class="bi {{ item.icon }} fs-5"></i>{% endif %}
+                                    {% else %}
+                                        <i class="bi {{ item.icon }} fs-5"></i>
+                                    {% endif %}
+                                {% endif %}
+                                {% if item.display == 'icon_only' %}
+                                    <span class="d-lg-none nav-label">{{ item.label }}</span>
+                                {% else %}
+                                    <span class="nav-label">{{ item.label }}</span>
+                                {% endif %}
+                            </a>
+                        </li>
+                        {% endfor %}
+                    <!-- User Account Dropdown -->
                     <li class="nav-item dropdown ps-lg-1">
-                        <a class="nav-link dropdown-toggle d-flex align-items-center py-2 px-2 p-lg-0" href="#" id="navbarDropdown" role="button"
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false" title="{{ user.best_name }}">
-                            {% if user.profile.avatar %}<img src="{{ user.profile.avatar.url }}" class="rounded-circle me-1"
-                                height="28" width="28">{% else %}<i class="bi bi-person-circle fs-5 me-1"></i>{% endif %}
-                            <span>{{ user.best_name|slice:":12" }}{% if user.best_name|length > 12 %}...{% endif %}</span>
+                            {% if user.profile.avatar %}<img src="{{ user.profile.avatar.url }}" class="rounded-circle"
+                                height="26" width="26">{% else %}<i class="bi bi-person-circle fs-5"></i>{% endif %}
+                            <span class="nav-label">{{ user.best_name|slice:":12" }}{% if user.best_name|length > 12 %}...{% endif %}</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end shadow border-0" style="z-index: 1050;">
                             <li><a class="dropdown-item" href="{% url 'finance:setup_wizard' %}"><i class="bi bi-magic me-2"></i>{% trans 'Einrichtungs-Wizard' %}</a></li>
@@ -2120,6 +2253,23 @@
             card.style.setProperty('--mouse-x', (e.clientX - rect.left) + 'px');
             card.style.setProperty('--mouse-y', (e.clientY - rect.top) + 'px');
         }, { passive: true });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                if (localStorage.getItem('fp_sidebar_collapsed') === '1') {
+                    document.body.classList.add('sidebar-collapsed');
+                }
+            } catch (err) {}
+            var sbBtn = document.getElementById('sidebarCollapseBtn');
+            if (sbBtn) {
+                sbBtn.addEventListener('click', function() {
+                    document.body.classList.toggle('sidebar-collapsed');
+                    try {
+                        localStorage.setItem('fp_sidebar_collapsed', document.body.classList.contains('sidebar-collapsed') ? '1' : '0');
+                    } catch (err) {}
+                });
+            }
+        });
     })();
     </script>
     {% block extra_js %}{% endblock %}

@@ -38,6 +38,7 @@ class ProfileThemeStudioTests(TestCase):
             },
         )
         self.assertEqual(resp.status_code, 302)
+        self.user.refresh_from_db()
         self.profile.refresh_from_db()
         dc = self.profile.dashboard_config
         self.assertEqual(dc["theme_studio"]["mood"], "dualtone")
@@ -92,6 +93,7 @@ class ProfileThemeStudioTests(TestCase):
             },
         )
         self.assertEqual(resp.status_code, 302)
+        self.user.refresh_from_db()
         self.profile.refresh_from_db()
         ts = get_profile_theme_studio_settings(self.profile)
         self.assertEqual(ts["resolved_card_surface"], "glass")
@@ -128,6 +130,7 @@ class ProfileThemeStudioTests(TestCase):
 
         resp = self.client.get(reverse("toggle_night_mode"))
         self.assertEqual(resp.status_code, 302)
+        self.user.refresh_from_db()
         self.profile.refresh_from_db()
         self.assertTrue(self.profile.auto_night_mode)
         self.assertEqual(self.profile.dashboard_config["theme_studio"]["bg_mode"], "dark")
@@ -136,6 +139,7 @@ class ProfileThemeStudioTests(TestCase):
 
         resp = self.client.get(reverse("toggle_night_mode"))
         self.assertEqual(resp.status_code, 302)
+        self.user.refresh_from_db()
         self.profile.refresh_from_db()
         self.assertFalse(self.profile.auto_night_mode)
         self.assertEqual(self.profile.dashboard_config["theme_studio"]["bg_mode"], "custom")
@@ -185,6 +189,61 @@ class ProfileThemeStudioTests(TestCase):
         loaded = adapter.get_settings(self.user)
         self.assertEqual(loaded["mood"], "neon")
         self.assertEqual(loaded["bg_mode"], "dark")
+
+    def test_menu_studio_configuration_and_sidebar_mode(self):
+        import json
+        from .menu_registry import resolve_user_menu
+        from .theme_engine import get_profile_theme_studio_settings
+
+        custom_menu = [
+            {"id": "dashboard", "label": "Cockpit", "icon": "bi-star", "display": "icon_only", "zone": "main", "visible": True, "order": 1},
+            {"id": "cash_flow", "label": "", "icon": "bi-wallet2", "display": "text_only", "zone": "main", "visible": False, "order": 2},
+            {"id": "settings", "label": "Mein Profil", "icon": "bi-gear", "display": "icon_text", "zone": "utility", "visible": False, "order": 3},
+        ]
+        resp = self.client.post(
+            reverse("profile"),
+            {
+                "language": "de",
+                "currency": "EUR",
+                "retirement_age": 67,
+                "partner_retirement_age": 67,
+                "simulation_max_age": 95,
+                "inflation_rate": "2.00",
+                "salary_increase": "1.50",
+                "pension_increase": "1.00",
+                "investment_return_offset": "0.00",
+                "real_estate_growth_rate": "2.00",
+                "backup_frequency": "never",
+                "backup_max_keep": 5,
+                "gradient_start": "#3b82f6",
+                "gradient_end": "#10b981",
+                "primary_color": "#3b82f6",
+                "background_color": "#f4f6f9",
+                "text_color": "#1e293b",
+                "theme_mood": "modern",
+                "theme_bg_mode": "light",
+                "theme_menu_layout": "sidebar",
+                "theme_menu_style": "glass",
+                "menu_config_json": json.dumps(custom_menu),
+            },
+        )
+        self.assertEqual(resp.status_code, 302)
+        self.user.refresh_from_db()
+        self.profile.refresh_from_db()
+        ts = get_profile_theme_studio_settings(self.profile)
+        self.assertEqual(ts["menu_layout"], "sidebar")
+        self.assertEqual(ts["resolved_menu_style"], "glass")
+
+        menu = resolve_user_menu(self.user)
+        by_id = {m["id"]: m for m in menu["all_items"]}
+        self.assertEqual(by_id["dashboard"]["label"], "Cockpit")
+        self.assertEqual(by_id["dashboard"]["icon"], "bi-star")
+        self.assertEqual(by_id["dashboard"]["display"], "icon_only")
+        self.assertFalse(by_id["cash_flow"]["visible"])
+        # Settings cannot be hidden
+        self.assertTrue(by_id["settings"]["visible"])
+        self.assertEqual(by_id["settings"]["label"], "Mein Profil")
+
 
 
 

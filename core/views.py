@@ -208,6 +208,8 @@ def profile_view(request):
         MOODS,
         CARD_SURFACES,
         BG_SVG_MODES,
+        MENU_LAYOUTS,
+        MENU_STYLES,
         apply_theme_studio_to_profile,
         get_profile_theme_studio_settings,
         get_profile_theme_palette,
@@ -264,6 +266,12 @@ def profile_view(request):
                 bg_svg_mode = 'auto'
             has_kpi_ext_fields = 'kpi_ext_present' in request.POST
             day_bg_mode = bg_mode if bg_mode != 'dark' else prev_ts.get('day_bg_mode', 'light')
+            menu_layout = request.POST.get('theme_menu_layout', prev_ts.get('menu_layout', 'top'))
+            if menu_layout not in MENU_LAYOUTS:
+                menu_layout = 'top'
+            menu_style = request.POST.get('theme_menu_style', prev_ts.get('menu_style', 'auto'))
+            if menu_style not in MENU_STYLES:
+                menu_style = 'auto'
             ts_payload = {
                 'mood': mood,
                 'bg_mode': bg_mode,
@@ -278,10 +286,48 @@ def profile_view(request):
                 'kpi_watermarks': (request.POST.get('kpi_watermarks') == 'on') if has_kpi_ext_fields else bool(prev_ts.get('kpi_watermarks', True)),
                 'kpi_spotlight': (request.POST.get('kpi_spotlight') == 'on') if has_kpi_ext_fields else bool(prev_ts.get('kpi_spotlight', True)),
                 'kpi_click_navigation': (request.POST.get('kpi_click_navigation') == 'on') if has_kpi_ext_fields else bool(prev_ts.get('kpi_click_navigation', True)),
+                'menu_layout': menu_layout,
+                'menu_style': menu_style,
             }
 
             manual_precision = request.POST.get('theme_manual_precision') == '1'
             apply_theme_studio_to_profile(prof, ts_payload, manual_precision=manual_precision)
+
+            if 'menu_config_json' in request.POST:
+                raw_menu = request.POST.get('menu_config_json', '').strip()
+                if raw_menu == 'RESET':
+                    cur_dc = dict(prof.dashboard_config or {})
+                    cur_dc.pop('menu_config', None)
+                    prof.dashboard_config = cur_dc
+                elif raw_menu:
+                    try:
+                        parsed_menu = json.loads(raw_menu)
+                        if isinstance(parsed_menu, list):
+                            clean_menu = []
+                            for idx, m_item in enumerate(parsed_menu):
+                                if not isinstance(m_item, dict) or not m_item.get('id'):
+                                    continue
+                                mid = str(m_item['id']).strip()
+                                ic = str(m_item.get('icon') or '').strip()
+                                if not ic.startswith('bi-'):
+                                    ic = ''
+                                disp = m_item.get('display') if m_item.get('display') in ('icon_text', 'icon_only', 'text_only') else 'icon_text'
+                                zn = m_item.get('zone') if m_item.get('zone') in ('main', 'utility') else 'main'
+                                clean_menu.append({
+                                    'id': mid,
+                                    'label': str(m_item.get('label') or '').strip()[:40],
+                                    'icon': ic,
+                                    'display': disp,
+                                    'zone': zn,
+                                    'visible': True if mid == 'settings' else bool(m_item.get('visible', True)),
+                                    'order': int(m_item.get('order', idx + 1)),
+                                })
+                            cur_dc = dict(prof.dashboard_config or {})
+                            cur_dc['menu_config'] = clean_menu
+                            prof.dashboard_config = cur_dc
+                    except Exception:
+                        pass
+
             prof.save()
             form.save_m2m()
 

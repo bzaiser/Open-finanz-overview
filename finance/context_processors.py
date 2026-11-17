@@ -63,9 +63,11 @@ def card_config_context(request):
             backup_due = True
 
     from core.theme_engine import get_profile_theme_palette, get_profile_theme_studio_settings
+    from core.menu_registry import resolve_user_menu
     import json
     theme_palette = get_profile_theme_palette(profile)
     theme_studio = get_profile_theme_studio_settings(profile)
+    user_menu = resolve_user_menu(user)
 
     return {
         'card_config_user_groups': user_card_groups,
@@ -78,6 +80,10 @@ def card_config_context(request):
         'backup_due': backup_due,
         'theme_palette': theme_palette,
         'theme_studio': theme_studio,
+        'nav_main_items': user_menu['main_items'],
+        'nav_utility_items': user_menu['utility_items'],
+        'menu_studio_items': user_menu['all_items'],
+        'menu_icon_choices': user_menu['icon_choices'],
         'theme_palette_json': json.dumps({
             'mood': theme_palette['mood'],
             'is_dark': theme_palette['is_dark'],

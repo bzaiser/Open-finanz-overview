@@ -438,6 +438,99 @@
                             {% include "core/partials/harmony_presets.html" %}
                         </div>
 
+                        <!-- Menü-Studio (Accordion) -->
+                        <div class="accordion accordion-flush rounded-4 overflow-hidden border border-secondary border-opacity-25 mb-3" id="menuStudioAccordion">
+                            <div class="accordion-item bg-transparent">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed py-3 fw-bold bg-transparent text-inherit" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMenuStudio" style="color: inherit !important;">
+                                        <i class="bi bi-layout-sidebar-inset me-2 text-primary"></i> {% trans "Menü-Studio (Navigation, Seitenpanel & Icons)" %}
+                                    </button>
+                                </h2>
+                                <div id="collapseMenuStudio" class="accordion-collapse collapse" data-bs-parent="#menuStudioAccordion">
+                                    <div class="accordion-body">
+                                        <div class="row g-2 mb-3">
+                                            <div class="col-12 col-sm-6">
+                                                <label class="form-label fw-bold mb-1 d-block" style="font-size: 0.7rem;">{% trans "Menü-Position" %}</label>
+                                                <select name="theme_menu_layout" id="studioMenuLayout" class="form-select form-select-sm">
+                                                    <option value="top" {% if theme_studio.menu_layout == 'top' or not theme_studio.menu_layout %}selected{% endif %}>{% trans "Top-Navigationsleiste (Oben)" %}</option>
+                                                    <option value="sidebar" {% if theme_studio.menu_layout == 'sidebar' %}selected{% endif %}>{% trans "Seitenpanel (Links am Desktop, einklappbar)" %}</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-12 col-sm-6">
+                                                <label class="form-label fw-bold mb-1 d-block" style="font-size: 0.7rem;">{% trans "Menü-Design" %}</label>
+                                                <select name="theme_menu_style" id="studioMenuStyle" class="form-select form-select-sm">
+                                                    <option value="auto" {% if theme_studio.menu_style == 'auto' or not theme_studio.menu_style %}selected{% endif %}>{% trans "Auto (passend zum Karten-Stil)" %}</option>
+                                                    <option value="glass" {% if theme_studio.menu_style == 'glass' %}selected{% endif %}>{% trans "Edles Milchglas (Translucent)" %}</option>
+                                                    <option value="gradient" {% if theme_studio.menu_style == 'gradient' %}selected{% endif %}>{% trans "Markanter Farbverlauf (Gradient)" %}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <input type="hidden" name="menu_config_json" id="menuConfigJsonInput" value="">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="small fw-bold" style="font-size: 0.72rem;">{% trans "Menüpunkte per Drag & Drop sortieren, umbenennen & anpassen:" %}</span>
+                                            <button type="button" id="btnResetMenuStudio" class="btn btn-outline-secondary btn-sm py-0 px-2 rounded-pill" style="font-size: 0.68rem;">
+                                                <i class="bi bi-arrow-counterclockwise me-1"></i>{% trans "Standard" %}
+                                            </button>
+                                        </div>
+                                        <div class="table-responsive border rounded-3">
+                                            <table class="table table-sm table-hover align-middle mb-0" style="font-size: 0.78rem;">
+                                                <thead>
+                                                    <tr>
+                                                        <th style="width: 28px;"></th>
+                                                        <th style="width: 145px;">{% trans "Icon" %}</th>
+                                                        <th>{% trans "Menü-Text" %}</th>
+                                                        <th style="width: 112px;">{% trans "Darstellung" %}</th>
+                                                        <th style="width: 100px;">{% trans "Bereich" %}</th>
+                                                        <th style="width: 56px;" class="text-center">{% trans "An" %}</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="menuStudioTableBody">
+                                                    {% for mitem in menu_studio_items %}
+                                                    <tr data-id="{{ mitem.id }}">
+                                                        <td class="text-center"><i class="bi bi-grip-vertical menu-drag-handle text-muted" style="cursor: grab;"></i></td>
+                                                        <td>
+                                                            <div class="d-flex align-items-center gap-1">
+                                                                <i class="bi {{ mitem.icon }} menu-icon-preview fs-6 text-primary"></i>
+                                                                <select class="form-select form-select-sm menu-item-icon py-0 px-1" style="font-size: 0.72rem;">
+                                                                    {% for ic_val, ic_lbl in menu_icon_choices %}
+                                                                    <option value="{{ ic_val }}" {% if mitem.icon == ic_val %}selected{% endif %}>{{ ic_lbl }}</option>
+                                                                    {% endfor %}
+                                                                </select>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" class="form-control form-control-sm menu-item-label py-0 px-2" style="font-size: 0.74rem;"
+                                                                   value="{{ mitem.custom_label }}" placeholder="{{ mitem.default_label }}" maxlength="40">
+                                                        </td>
+                                                        <td>
+                                                            <select class="form-select form-select-sm menu-item-display py-0 px-1" style="font-size: 0.72rem;">
+                                                                <option value="icon_text" {% if mitem.display == 'icon_text' %}selected{% endif %}>{% trans "Icon + Text" %}</option>
+                                                                <option value="icon_only" {% if mitem.display == 'icon_only' %}selected{% endif %}>{% trans "Nur Icon" %}</option>
+                                                                <option value="text_only" {% if mitem.display == 'text_only' %}selected{% endif %}>{% trans "Nur Text" %}</option>
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <select class="form-select form-select-sm menu-item-zone py-0 px-1" style="font-size: 0.72rem;">
+                                                                <option value="main" {% if mitem.zone == 'main' %}selected{% endif %}>{% trans "Hauptmenü" %}</option>
+                                                                <option value="utility" {% if mitem.zone == 'utility' %}selected{% endif %}>{% trans "Aktionen" %}</option>
+                                                            </select>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <input type="checkbox" class="form-check-input menu-item-visible"
+                                                                   {% if mitem.visible %}checked{% endif %}
+                                                                   {% if mitem.locked %}disabled title="{% trans 'Einstellungen bleiben immer sichtbar' %}"{% endif %}>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Precision Studio (Accordion) -->
                         <div class="accordion accordion-flush rounded-4 overflow-hidden border border-white border-opacity-10" id="precisionStudio">
                             <div class="accordion-item bg-transparent">
@@ -1142,6 +1235,66 @@
                 applyLiveTheme(false);
             }
         });
+
+        // Menü-Studio Drag & Drop + Serialization
+        const menuTableBody = document.getElementById('menuStudioTableBody');
+        const menuConfigInput = document.getElementById('menuConfigJsonInput');
+        const btnResetMenu = document.getElementById('btnResetMenuStudio');
+
+        function serializeMenuStudio() {
+            if (!menuTableBody || !menuConfigInput) return;
+            if (menuConfigInput.dataset.reset === '1') return;
+            const rows = menuTableBody.querySelectorAll('tr');
+            const list = [];
+            rows.forEach((tr, idx) => {
+                list.push({
+                    id: tr.dataset.id,
+                    icon: tr.querySelector('.menu-item-icon') ? tr.querySelector('.menu-item-icon').value : '',
+                    label: tr.querySelector('.menu-item-label') ? tr.querySelector('.menu-item-label').value : '',
+                    display: tr.querySelector('.menu-item-display') ? tr.querySelector('.menu-item-display').value : 'icon_text',
+                    zone: tr.querySelector('.menu-item-zone') ? tr.querySelector('.menu-item-zone').value : 'main',
+                    visible: tr.querySelector('.menu-item-visible') ? tr.querySelector('.menu-item-visible').checked : true,
+                    order: idx + 1,
+                });
+            });
+            menuConfigInput.value = JSON.stringify(list);
+        }
+
+        if (menuTableBody) {
+            if (typeof Sortable !== 'undefined') {
+                new Sortable(menuTableBody, {
+                    handle: '.menu-drag-handle',
+                    animation: 150,
+                    onEnd: serializeMenuStudio,
+                });
+            }
+            menuTableBody.addEventListener('change', (e) => {
+                if (menuConfigInput) menuConfigInput.dataset.reset = '0';
+                if (e.target.classList.contains('menu-item-icon')) {
+                    const prevIcon = e.target.closest('td').querySelector('.menu-icon-preview');
+                    if (prevIcon) {
+                        prevIcon.className = `bi ${e.target.value} menu-icon-preview fs-6 text-primary`;
+                    }
+                }
+                serializeMenuStudio();
+            });
+            menuTableBody.addEventListener('input', () => {
+                if (menuConfigInput) menuConfigInput.dataset.reset = '0';
+                serializeMenuStudio();
+            });
+        }
+        if (btnResetMenu && menuConfigInput) {
+            btnResetMenu.addEventListener('click', () => {
+                menuConfigInput.dataset.reset = '1';
+                menuConfigInput.value = 'RESET';
+                if (profileForm) profileForm.submit();
+            });
+        }
+        if (profileForm) {
+            profileForm.addEventListener('submit', () => {
+                serializeMenuStudio();
+            });
+        }
 
         if (profileForm) {
             profileForm.addEventListener('input', (e) => {

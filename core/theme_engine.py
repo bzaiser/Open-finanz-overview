@@ -32,6 +32,8 @@ MOODS = {
 
 CARD_SURFACES = ("auto", "solid", "glass", "tinted", "brutal")
 BG_SVG_MODES = ("auto", "topography", "grid", "curves", "aura", "brutal_grid", "none")
+MENU_LAYOUTS = ("top", "sidebar")
+MENU_STYLES = ("auto", "glass", "gradient")
 
 
 def hex_to_hsl(hex_str):
@@ -273,6 +275,9 @@ def get_profile_theme_studio_settings(profile):
             "kpi_watermarks": True,
             "kpi_spotlight": True,
             "kpi_click_navigation": True,
+            "menu_layout": "top",
+            "menu_style": "auto",
+            "resolved_menu_style": "glass",
         }
     dc = profile.dashboard_config or {}
     ts = dc.get("theme_studio", {})
@@ -289,6 +294,13 @@ def get_profile_theme_studio_settings(profile):
         bg_svg_mode = "auto"
     resolved_surface = m.get("surface", "tinted") if card_surface == "auto" else card_surface
     resolved_svg = m.get("svg", "topography") if bg_svg_mode == "auto" else bg_svg_mode
+    menu_layout = ts.get("menu_layout", "top")
+    if menu_layout not in MENU_LAYOUTS:
+        menu_layout = "top"
+    menu_style = ts.get("menu_style", "auto")
+    if menu_style not in MENU_STYLES:
+        menu_style = "auto"
+    resolved_menu_style = ("glass" if resolved_surface in ("glass", "tinted") else ("brutal" if resolved_surface == "brutal" else "gradient")) if menu_style == "auto" else menu_style
     return {
         "c1": profile.gradient_start or "#6610f2",
         "c2": profile.gradient_end or "#0d6efd",
@@ -306,6 +318,9 @@ def get_profile_theme_studio_settings(profile):
         "kpi_watermarks": bool(ts.get("kpi_watermarks", True)),
         "kpi_spotlight": bool(ts.get("kpi_spotlight", True)),
         "kpi_click_navigation": bool(ts.get("kpi_click_navigation", True)),
+        "menu_layout": menu_layout,
+        "menu_style": menu_style,
+        "resolved_menu_style": resolved_menu_style,
     }
 
 
