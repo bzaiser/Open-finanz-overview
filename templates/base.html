@@ -300,24 +300,43 @@
                             beforeUpdate(chart) {
                                 const dark = document.documentElement.getAttribute('data-bs-theme') === 'dark' ||
                                     (window.APP_THEME_PALETTE && window.APP_THEME_PALETTE.is_dark);
-                                const txt = dark ? '#e2e8f0' : '#334155';
-                                const grd = dark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.1)';
-                                if (chart.options && chart.options.plugins && chart.options.plugins.legend) {
-                                    if (!chart.options.plugins.legend.labels) chart.options.plugins.legend.labels = {};
-                                    if (!chart.options.plugins.legend.labels.color || chart.options.plugins.legend.labels.color === '#666') {
+                                const cs = getComputedStyle(document.documentElement);
+                                const cardBg = cs.getPropertyValue('--app-card-bg').trim() || (dark ? '#0f172a' : '#ffffff');
+                                const cardTxt = cs.getPropertyValue('--app-card-color').trim() || (dark ? '#e2e8f0' : '#334155');
+                                const primary = cs.getPropertyValue('--app-primary').trim() || '#0d6efd';
+                                const txt = cardTxt || (dark ? '#e2e8f0' : '#334155');
+                                const grd = dark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.08)';
+                                if (chart.options && chart.options.plugins) {
+                                    if (chart.options.plugins.legend) {
+                                        if (!chart.options.plugins.legend.labels) chart.options.plugins.legend.labels = {};
                                         chart.options.plugins.legend.labels.color = txt;
                                     }
+                                    if (chart.options.plugins.title) {
+                                        chart.options.plugins.title.color = txt;
+                                    }
+                                    if (!chart.options.plugins.tooltip) chart.options.plugins.tooltip = {};
+                                    chart.options.plugins.tooltip.backgroundColor = dark ? 'rgba(15, 23, 42, 0.94)' : 'rgba(255, 255, 255, 0.96)';
+                                    chart.options.plugins.tooltip.titleColor = txt;
+                                    chart.options.plugins.tooltip.bodyColor = txt;
+                                    chart.options.plugins.tooltip.borderColor = primary;
+                                    chart.options.plugins.tooltip.borderWidth = 1;
                                 }
                                 if (chart.options && chart.options.scales) {
                                     Object.values(chart.options.scales).forEach(scale => {
                                         if (!scale) return;
                                         if (!scale.ticks) scale.ticks = {};
-                                        if (!scale.ticks.color || scale.ticks.color === '#666') {
-                                            scale.ticks.color = txt;
+                                        scale.ticks.color = txt;
+                                        if (scale.title) {
+                                            scale.title.color = txt;
                                         }
                                         if (!scale.grid) scale.grid = {};
-                                        if (!scale.grid.color) {
-                                            scale.grid.color = grd;
+                                        scale.grid.color = grd;
+                                    });
+                                }
+                                if (chart.config && (chart.config.type === 'doughnut' || chart.config.type === 'pie') && chart.data && chart.data.datasets) {
+                                    chart.data.datasets.forEach(ds => {
+                                        if (!ds.borderColor || ds.borderColor === '#ffffff' || ds.borderColor === '#fff') {
+                                            ds.borderColor = cardBg;
                                         }
                                     });
                                 }
@@ -350,8 +369,8 @@
             flex-grow: 1;
             min-height: 0;
             overflow: hidden;
-            background-color: var(--app-table-body-bg) !important;
-            color: var(--app-table-body-text) !important;
+            background-color: transparent !important;
+            color: var(--app-card-color, var(--app-table-body-text)) !important;
             padding-bottom: 10px !important;
         }
         
@@ -417,20 +436,96 @@
             font-weight: 600;
         }
 
-        /* Global Table Unification */
+        /* Global Table & Card Unification */
+        .card:not(.metric-card) {
+            background-color: var(--app-card-bg);
+            color: var(--app-card-color);
+            border-color: var(--app-table-border-color, rgba(125,125,125,0.18));
+            border-radius: 16px;
+        }
+        body[data-card-surface="glass"] .card:not(.metric-card) {
+            background: color-mix(in srgb, var(--app-card-bg, #ffffff) 78%, transparent) !important;
+            backdrop-filter: blur(14px) saturate(135%);
+            -webkit-backdrop-filter: blur(14px) saturate(135%);
+            border: 1px solid color-mix(in srgb, var(--app-card-color, #888888) 12%, transparent) !important;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06) !important;
+        }
+        body[data-card-surface="tinted"] .card:not(.metric-card) {
+            background: linear-gradient(
+                145deg,
+                color-mix(in srgb, var(--app-primary, #0d6efd) 6%, color-mix(in srgb, var(--app-card-bg, #ffffff) 82%, transparent)),
+                color-mix(in srgb, var(--app-card-bg, #ffffff) 80%, transparent)
+            ) !important;
+            backdrop-filter: blur(14px) saturate(140%);
+            -webkit-backdrop-filter: blur(14px) saturate(140%);
+            border: 1px solid color-mix(in srgb, var(--app-primary, #0d6efd) 22%, var(--app-table-border-color, rgba(125,125,125,0.18))) !important;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06) !important;
+        }
+        body[data-card-surface="brutal"] .card:not(.metric-card) {
+            background: var(--app-card-bg, #111317) !important;
+            border: 2px solid var(--app-primary, #0d6efd) !important;
+            border-radius: 10px !important;
+            box-shadow: 4px 4px 0 var(--app-primary, #0d6efd) !important;
+        }
+        .card:not(.metric-card) > .card-header.bg-white,
+        .card:not(.metric-card) > .card-header.bg-light {
+            background: color-mix(in srgb, var(--app-primary, #0d6efd) 8%, transparent) !important;
+            color: var(--app-card-color) !important;
+            border-bottom: 1px solid var(--app-table-border-color) !important;
+        }
+        .card:not(.metric-card) > .card-footer,
+        .modal-footer.bg-light {
+            background-color: color-mix(in srgb, var(--app-primary, #0d6efd) 4%, transparent) !important;
+            color: var(--app-card-color) !important;
+            border-color: var(--app-table-border-color) !important;
+        }
+
+        .table {
+            --bs-table-bg: transparent;
+            --bs-table-color: var(--app-table-body-text);
+            --bs-table-border-color: var(--app-table-border-color);
+            --bs-table-hover-bg: var(--app-table-row-hover-bg);
+            --bs-table-hover-color: var(--app-table-body-text);
+            color: var(--app-table-body-text);
+            border-color: var(--app-table-border-color);
+        }
         .table thead,
-        .table thead th {
+        .table thead th,
+        .table thead.bg-light th,
+        .table thead.bg-body-tertiary th {
             --bs-table-bg: var(--app-table-header-bg) !important;
             --bs-table-color: var(--app-table-header-text) !important;
             background-color: var(--app-table-header-bg) !important;
             color: var(--app-table-header-text) !important;
+            border-color: color-mix(in srgb, var(--app-table-header-text) 15%, transparent) !important;
         }
         .table tbody {
-            --bs-table-bg: var(--app-table-body-bg) !important;
+            --bs-table-bg: transparent !important;
             --bs-table-color: var(--app-table-body-text) !important;
         }
-        .table-hover tbody tr:hover {
-            --bs-table-hover-bg: rgba(0,0,0,0.05) !important;
+        body[data-card-surface="solid"] .card:not(.metric-card) .table tbody {
+            --bs-table-bg: var(--app-table-body-bg) !important;
+        }
+        .table tfoot,
+        .table tfoot td,
+        .table tfoot th,
+        .table tfoot.bg-light td,
+        .table tfoot.bg-white td {
+            --bs-table-bg: var(--app-table-filter-bg, color-mix(in srgb, var(--app-primary) 6%, transparent)) !important;
+            background-color: var(--app-table-filter-bg, color-mix(in srgb, var(--app-primary) 6%, transparent)) !important;
+            color: var(--app-table-body-text) !important;
+            border-color: var(--app-table-border-color) !important;
+        }
+        .table-hover tbody tr:hover,
+        .table-hover tbody tr:hover > td,
+        .table-hover tbody tr:hover > th {
+            --bs-table-hover-bg: var(--app-table-row-hover-bg, color-mix(in srgb, var(--app-primary) 10%, transparent)) !important;
+            background-color: var(--app-table-row-hover-bg, color-mix(in srgb, var(--app-primary) 10%, transparent)) !important;
+        }
+        .list-group-item {
+            background-color: transparent;
+            color: var(--app-card-color);
+            border-color: var(--app-table-border-color);
         }
         
         /* Navbar Polishing */
