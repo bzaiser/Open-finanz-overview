@@ -603,6 +603,58 @@
         body[data-menu-style="brutal"] .app-navbar .sidebar-toggle-btn {
             color: var(--app-card-color, #1e293b) !important;
         }
+        .app-navbar .nav-pill-track {
+            position: relative;
+        }
+        .app-navbar .nav-pill-track .nav-item {
+            position: relative;
+            z-index: 1;
+        }
+        .nav-sliding-pill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            border-radius: 999px;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0;
+            transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+                        width 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+                        height 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+                        opacity 0.18s ease;
+        }
+        body[data-menu-style="gradient"] .nav-sliding-pill {
+            background: rgba(255, 255, 255, 0.20);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+        body[data-menu-style="glass"] .nav-sliding-pill {
+            background: color-mix(in srgb, var(--app-primary, #0d6efd) 14%, transparent);
+            border: 1px solid color-mix(in srgb, var(--app-primary, #0d6efd) 28%, transparent);
+        }
+        [data-bs-theme="dark"] body[data-menu-style="glass"] .nav-sliding-pill {
+            background: color-mix(in srgb, var(--app-primary, #0d6efd) 26%, rgba(255, 255, 255, 0.14));
+            border: 1px solid rgba(255, 255, 255, 0.22);
+        }
+        body[data-menu-style="brutal"] .nav-sliding-pill {
+            border-radius: 8px;
+            border: 2px solid var(--app-primary, #0d6efd);
+            background: color-mix(in srgb, var(--app-primary, #0d6efd) 16%, transparent);
+        }
+        body[data-menu-layout="sidebar"] .nav-sliding-pill {
+            border-radius: 12px;
+        }
+        @media (max-width: 991.98px), (prefers-reduced-motion: reduce) {
+            .nav-sliding-pill {
+                display: none !important;
+            }
+        }
+        @media (min-width: 992px) {
+            body[data-menu-style="gradient"] .app-navbar .nav-pill-track .nav-link:hover,
+            body[data-menu-style="glass"] .app-navbar .nav-pill-track .nav-link:hover,
+            body[data-menu-style="brutal"] .app-navbar .nav-pill-track .nav-link:hover {
+                background: transparent !important;
+            }
+        }
         body[data-menu-style="glass"] .app-navbar .nav-link:hover,
         body[data-menu-style="brutal"] .app-navbar .nav-link:hover {
             background: color-mix(in srgb, var(--app-primary, #0d6efd) 14%, transparent);
@@ -1563,7 +1615,8 @@
                 </button>
             </div>
             <div class="collapse navbar-collapse" id="navbarContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-1">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-1 nav-pill-track" id="navMainList">
+                    <li class="nav-sliding-pill" aria-hidden="true"></li>
                     {% if user.is_authenticated and nav_main_items %}
                         {% for item in nav_main_items %}
                         <li class="nav-item">
@@ -1594,7 +1647,8 @@
                     </li>
                     {% endif %}
                 </ul>
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center flex-column flex-lg-row gap-lg-1 gap-1 pt-2 pt-lg-0">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center flex-column flex-lg-row gap-lg-1 gap-1 pt-2 pt-lg-0 nav-pill-track" id="navUtilityList">
+                    <li class="nav-sliding-pill" aria-hidden="true"></li>
                     {% if user.is_authenticated %}
                         {% for item in nav_utility_items %}
                         <li class="nav-item">
@@ -2282,6 +2336,37 @@
                     } catch (err) {}
                 });
             }
+
+            document.querySelectorAll('.nav-pill-track').forEach(function(track) {
+                var pill = track.querySelector('.nav-sliding-pill');
+                if (!pill) return;
+                var currentTarget = null;
+                function movePillTo(el) {
+                    if (!el || window.innerWidth < 992) {
+                        pill.style.opacity = '0';
+                        return;
+                    }
+                    var tRect = track.getBoundingClientRect();
+                    var elRect = el.getBoundingClientRect();
+                    pill.style.width = elRect.width + 'px';
+                    pill.style.height = elRect.height + 'px';
+                    pill.style.transform = 'translate3d(' + (elRect.left - tRect.left) + 'px, ' + (elRect.top - tRect.top) + 'px, 0)';
+                    pill.style.opacity = '1';
+                }
+                track.querySelectorAll('.nav-link').forEach(function(link) {
+                    link.addEventListener('pointerenter', function() {
+                        currentTarget = link;
+                        movePillTo(link);
+                    });
+                });
+                track.addEventListener('pointerleave', function() {
+                    currentTarget = null;
+                    pill.style.opacity = '0';
+                });
+                window.addEventListener('resize', function() {
+                    if (currentTarget) movePillTo(currentTarget);
+                }, { passive: true });
+            });
         });
     })();
     </script>
