@@ -1547,7 +1547,7 @@ def dashboard_view(request):
             item['display_title'] = info.get('title', item['id'])
             item['help_text'] = info.get('description', '')
             
-        from .services_kpi import resolve_dashboard_subpage_kpis
+        from .services_kpi import resolve_dashboard_subpage_kpis, enrich_dashboard_kpi_items
         visible_subpage_ids = [item['id'] for item in summary_layout if item.get('visible')]
         subpage_kpis = resolve_dashboard_subpage_kpis(
             user,
@@ -1562,6 +1562,20 @@ def dashboard_view(request):
             item['display_title'] = info.get('title', item['id'])
             item['help_text'] = info.get('description', '')
             item['subpage_kpi'] = subpage_kpis.get(item['id'])
+
+        enrich_dashboard_kpi_items(
+            summary_layout,
+            user=user,
+            profile=profile,
+            forecast_data=forecast_data,
+            summary_widgets=translated_summary_widgets,
+            current_metrics={
+                'monthly_income': current_monthly_income,
+                'monthly_expenses': current_monthly_expenses,
+                'expected_payout': raw_expected_sum,
+                'current_pension_payout': total_expected_pensions,
+            },
+        )
 
     context = {
         'profile': profile,

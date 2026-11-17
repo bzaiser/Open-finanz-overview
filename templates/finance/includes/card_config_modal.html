@@ -135,6 +135,7 @@
                                             <th style="width: 40px;"></th>
                                             <th>{% trans "Widget" %}</th>
                                             <th style="width: 90px;" class="text-center">{% trans "Sichtbar" %}</th>
+                                            <th style="width: 115px;">{% trans "Größe" %}</th>
                                             <th style="width: 140px;">{% trans "Farben (Bg / Text)" %}</th>
                                         </tr>
                                     </thead>
@@ -155,6 +156,13 @@
                                             </td>
                                             <td class="text-center">
                                                 <input type="checkbox" class="form-check-input summary-visible" {{ item.visible|yesno:"checked," }}>
+                                            </td>
+                                            <td>
+                                                <select class="form-select form-select-sm summary-size px-2">
+                                                    <option value="sm" {% if item.size == 'sm' or not item.size %}selected{% endif %}>S (1/4)</option>
+                                                    <option value="md" {% if item.size == 'md' %}selected{% endif %}>M (1/2)</option>
+                                                    <option value="lg" {% if item.size == 'lg' %}selected{% endif %}>L (Hero)</option>
+                                                </select>
                                             </td>
                                             <td>
                                                 <div class="d-flex gap-1 align-items-center">
@@ -810,6 +818,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 summaryData.push({
                     id: row.getAttribute('data-id'),
                     visible: row.querySelector('.summary-visible') ? row.querySelector('.summary-visible').checked : true,
+                    size: row.querySelector('.summary-size') ? row.querySelector('.summary-size').value : 'sm',
                     bg_color: row.querySelector('.summary-bg') ? row.querySelector('.summary-bg').value : '',
                     text_color: row.querySelector('.summary-text') ? row.querySelector('.summary-text').value : '',
                     order: index + 1

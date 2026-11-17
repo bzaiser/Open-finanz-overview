@@ -253,6 +253,58 @@
                                         {% trans "Basisverlauf" %}
                                     </div>
                                 </div>
+                                <div class="col-12 col-sm-6 mt-2">
+                                    <label class="form-label fw-bold mb-1 d-block" style="font-size: 0.7rem;">{% trans "KPI-Karten-Stil" %}</label>
+                                    <select id="studioCardSurface" name="theme_card_surface" class="form-select form-select-sm" style="height: 38px; font-size: 0.8rem;">
+                                        <option value="auto" {% if theme_studio.card_surface == 'auto' %}selected{% endif %}>{% trans "Auto (passend zur Design-Stimmung)" %}</option>
+                                        <option value="tinted" {% if theme_studio.card_surface == 'tinted' %}selected{% endif %}>{% trans "Farbharmonie-Milchglas (Tinted Glass)" %}</option>
+                                        <option value="glass" {% if theme_studio.card_surface == 'glass' %}selected{% endif %}>{% trans "Edles Milchglas mit Lichtkante (Frosted)" %}</option>
+                                        <option value="solid" {% if theme_studio.card_surface == 'solid' %}selected{% endif %}>{% trans "Klassisch Vollton (Solid)" %}</option>
+                                        <option value="brutal" {% if theme_studio.card_surface == 'brutal' %}selected{% endif %}>{% trans "Polished Brutalism (Kontrast-Kante)" %}</option>
+                                    </select>
+                                </div>
+                                <div class="col-12 col-sm-6 mt-2">
+                                    <label class="form-label fw-bold mb-1 d-block" style="font-size: 0.7rem;">{% trans "Seiten-SVG-Hintergrund" %}</label>
+                                    <select id="studioBgSvg" name="theme_bg_svg_mode" class="form-select form-select-sm" style="height: 38px; font-size: 0.8rem;">
+                                        <option value="auto" {% if theme_studio.bg_svg_mode == 'auto' %}selected{% endif %}>{% trans "Auto (passend zur Design-Stimmung)" %}</option>
+                                        <option value="topography" {% if theme_studio.bg_svg_mode == 'topography' %}selected{% endif %}>{% trans "Topografie & Höhenlinien" %}</option>
+                                        <option value="grid" {% if theme_studio.bg_svg_mode == 'grid' %}selected{% endif %}>{% trans "Architektur-Raster & Fadenkreuze" %}</option>
+                                        <option value="curves" {% if theme_studio.bg_svg_mode == 'curves' %}selected{% endif %}>{% trans "Zinseszins-Kurven & Strahlen" %}</option>
+                                        <option value="aura" {% if theme_studio.bg_svg_mode == 'aura' %}selected{% endif %}>{% trans "Seiden-Aura (Dualtone)" %}</option>
+                                        <option value="brutal_grid" {% if theme_studio.bg_svg_mode == 'brutal_grid' %}selected{% endif %}>{% trans "Technisches Kontrast-Gitter" %}</option>
+                                        <option value="none" {% if theme_studio.bg_svg_mode == 'none' %}selected{% endif %}>{% trans "Aus (Reiner Farbhintergrund)" %}</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- KPI-Karten 2.0 Erweiterungen (Ein-/Ausschaltbar) -->
+                            <div class="mt-3 pt-2 border-top border-secondary border-opacity-25">
+                                <input type="hidden" name="kpi_ext_present" value="1">
+                                <span class="small fw-bold d-block mb-2" style="font-size: 0.72rem;">
+                                    <i class="bi bi-stars me-1 text-primary"></i>{% trans "KPI-Karten-Erweiterungen & Interaktion" %}
+                                </span>
+                                <div class="d-flex flex-wrap gap-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="chkKpiSparklines" name="kpi_sparklines" {% if theme_studio.kpi_sparklines %}checked{% endif %}>
+                                        <label class="form-check-label small" for="chkKpiSparklines" style="font-size: 0.75rem;">{% trans "SVG-Sparklines" %}</label>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="chkKpiProgress" name="kpi_progress_bars" {% if theme_studio.kpi_progress_bars %}checked{% endif %}>
+                                        <label class="form-check-label small" for="chkKpiProgress" style="font-size: 0.75rem;">{% trans "Ziel-Fortschrittsbalken" %}</label>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="chkKpiWatermarks" name="kpi_watermarks" {% if theme_studio.kpi_watermarks %}checked{% endif %}>
+                                        <label class="form-check-label small" for="chkKpiWatermarks" style="font-size: 0.75rem;">{% trans "Watermark-Icons" %}</label>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="chkKpiSpotlight" name="kpi_spotlight" {% if theme_studio.kpi_spotlight %}checked{% endif %}>
+                                        <label class="form-check-label small" for="chkKpiSpotlight" style="font-size: 0.75rem;">{% trans "Maus-Spotlight" %}</label>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="chkKpiClickNav" name="kpi_click_navigation" {% if theme_studio.kpi_click_navigation %}checked{% endif %}>
+                                        <label class="form-check-label small" for="chkKpiClickNav" style="font-size: 0.75rem;">{% trans "Klick-Navigation zum Bereich" %}</label>
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="form-check form-switch mt-3 pt-2 border-top border-secondary border-opacity-25">

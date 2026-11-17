@@ -513,6 +513,7 @@ def get_user_card_groups(user):
                 c['text_color'] = u_card.get('text_color') or c['text_color']
                 c['visible'] = bool(u_card.get('visible', True))
                 c['order'] = u_card.get('order', len(merged_cards) + 1)
+                c['size'] = u_card.get('size') if u_card.get('size') in ('sm', 'md', 'lg') else c.get('size', 'sm')
                 merged_cards.append(c)
                 seen_ids.add(cid)
 
@@ -520,6 +521,7 @@ def get_user_card_groups(user):
         for cid, def_card in default_cards.items():
             if cid not in seen_ids:
                 c = dict(def_card)
+                c['size'] = c.get('size', 'sm')
                 if palette_states:
                     st_idx = CARD_SEMANTIC_STATE_MAP.get(cid, 2)
                     st = palette_states.get(st_idx)
@@ -670,6 +672,7 @@ def apply_theme_palette_to_cards(dashboard_config, palette):
                     'id': cid,
                     'visible': bool(uc.get('visible', True)),
                     'order': int(uc.get('order', len(merged) + 1)),
+                    'size': uc.get('size') if uc.get('size') in ('sm', 'md', 'lg') else def_c.get('size', 'sm'),
                     'bg_color': st.get('hex', def_c['bg_color']),
                     'text_color': st.get('card_text', def_c['text_color']),
                 })
@@ -683,6 +686,7 @@ def apply_theme_palette_to_cards(dashboard_config, palette):
                     'id': cid,
                     'visible': bool(def_card.get('visible', True)),
                     'order': int(def_card.get('order', len(merged) + 1)),
+                    'size': def_card.get('size', 'sm'),
                     'bg_color': st.get('hex', def_card['bg_color']),
                     'text_color': st.get('card_text', def_card['text_color']),
                 })

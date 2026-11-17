@@ -14,6 +14,159 @@ SUBPAGE_KPI_IDS = {
 }
 
 
+def build_svg_sparkline(values, width=200, height=42):
+    """
+    Generates normalized SVG path strings ('line' and 'area') from a sequence of numeric values.
+    Downsamples to at most 10 evenly spaced points for crisp rendering.
+    """
+    pts = [float(v or 0.0) for v in (values or ()) if v is not None]
+    if len(pts) < 2:
+        return None
+    if len(pts) > 10:
+        step = (len(pts) - 1) / 9.0
+        pts = [pts[round(i * step)] for i in range(10)]
+    mn = min(pts)
+    mx = max(pts)
+    span = mx - mn
+    pad_top = 6.0
+    pad_bot = 5.0
+    usable_h = height - pad_top - pad_bot
+    coords = []
+    for idx, val in enumerate(pts):
+        x = round(idx * (width / float(len(pts) - 1)), 1)
+        if span <= 1e-6:
+            y = round(height - pad_bot - usable_h * 0.45, 1)
+        else:
+            norm = (val - mn) / span
+            y = round(height - pad_bot - norm * usable_h, 1)
+        coords.append((x, y))
+    line_d = "M" + " L".join(f"{x},{y}" for x, y in coords)
+    area_d = f"{line_d} L{width},{height} L0,{height} Z"
+    return {"line": line_d, "area": area_d}
+
+
+def build_segmented_progress(current_val, target_val, marker_pct=None, label=""):
+    """
+    Builds a 10-segment progress bar dict with optional target marker percentage.
+    """
+    cur = max(0.0, float(current_val or 0.0))
+    tgt = float(target_val or 0.0)
+    if tgt <= 0:
+        return None
+    raw_pct = min(100.0, max(0.0, (cur / tgt) * 100.0))
+    active_count = min(10, max(0, round(raw_pct / 10.0)))
+    return {
+        "pct": round(raw_pct),
+        "active_count": active_count,
+        "segments": [i < active_count for i in range(10)],
+        "marker_pct": marker_pct,
+        "label": label,
+    }
+
+
+def get_kpi_target_url(kpi_id):
+    """
+    Maps any dashboard or module KPI card ID to its canonical target URL / tab.
+    """
+    mapping = {
+        'monthly_income': f"{reverse('finance:cash_flow_list')}?type=INCOME",
+        'monthly_expenses': f"{reverse('finance:cash_flow_list')}?type=EXPENSE",
+        'monthly_surplus': reverse('finance:cash_flow_list'),
+        'current_assets': f"{reverse('finance:assets_overview')}?tab=accounts",
+        'total_physical_assets': f"{reverse('finance:assets_overview')}?tab=physical",
+        'total_combined_assets': reverse('finance:assets_overview'),
+        'total_pensions': f"{reverse('finance:pension_plan')}?tab=pensions",
+        'expected_payout': f"{reverse('finance:pension_plan')}?tab=pensions",
+        'current_pension_payout': f"{reverse('finance:pension_plan')}?tab=pensions",
+        'total_real_estate': reverse('finance:real_estate_loans'),
+        'total_debts': f"{reverse('finance:real_estate_loans')}#loans-section",
+        'emergency_runway': f"{reverse('finance:pension_plan')}?tab=risk_check",
+        'disability_gap': f"{reverse('finance:pension_plan')}?tab=risk_check",
+        'survivor_gap': f"{reverse('finance:pension_plan')}?tab=risk_check",
+        'cash_reserve_status': f"{reverse('finance:pension_plan')}?tab=risk_check",
+        'tax_annual_estimated': f"{reverse('finance:real_estate_loans')}?tab=tax-docs",
+        'real_estate_equity': reverse('finance:real_estate_loans'),
+        'renovation_reserve_monthly': f"{reverse('finance:real_estate_loans')}?tab=components",
+    }
+    return mapping.get(kpi_id, reverse('finance:dashboard'))
+
+
+def enrich_dashboard_kpi_items(summary_layout, user, profile, forecast_data, summary_widgets, current_metrics):
+    """
+    Attaches target_url, icon, size ('sm'|'md'|'lg'), sparkline, and progress bar data
+    to every item in summary_layout.
+    """
+    samples = []
+    if forecast_data:
+        n = len(forecast_data)
+        if n <= 10:
+            samples = list(forecast_data)
+        else:
+            step = (n - 1) / 9.0
+            samples = [forecast_data[round(i * step)] for i in range(10)]
+
+    inc_series = [p.get('monthly_income', 0.0) for p in samples]
+    exp_series = [p.get('monthly_expenses', 0.0) for p in samples]
+    pen_series = [p.get('real_pension_total', 0.0) for p in samples]
+    ast_series = [
+        float(p.get('real_asset_total', 0.0)) + float(p.get('real_pension_total', 0.0)) + min(0.0, float(p.get('real_accumulated_cash', 0.0)))
+        for p in samples
+    ]
+    phys_series = [p.get('real_physical_asset_total', 0.0) for p in samples]
+    re_series = [p.get('real_real_estate_total', 0.0) for p in samples]
+    debt_series = [p.get('real_loan_total', 0.0) for p in samples]
+    comb_series = [a + ph + r - d for a, ph, r, d in zip(ast_series, phys_series, re_series, debt_series)]
+
+    spark_map = {
+        'monthly_income': build_svg_sparkline(inc_series),
+        'monthly_expenses': build_svg_sparkline(exp_series),
+        'current_assets': build_svg_sparkline(ast_series),
+        'total_pensions': build_svg_sparkline(pen_series),
+        'total_physical_assets': build_svg_sparkline(phys_series),
+        'total_real_estate': build_svg_sparkline(re_series),
+        'total_debts': build_svg_sparkline(debt_series),
+        'total_combined_assets': build_svg_sparkline(comb_series),
+    }
+
+    inc_now = float(current_metrics.get('monthly_income', 0.0) or 0.0)
+    exp_now = float(current_metrics.get('monthly_expenses', 0.0) or 0.0)
+    exp_pen = float(current_metrics.get('expected_payout', 0.0) or 0.0)
+    cur_pen = float(current_metrics.get('current_pension_payout', 0.0) or 0.0)
+    target_pen = float(getattr(profile, 'target_pension_payout', 0.0) or 0.0) or (inc_now * 0.8 if inc_now > 0 else 2500.0)
+
+    prog_map = {}
+    if target_pen > 0:
+        prog_map['expected_payout'] = build_segmented_progress(
+            exp_pen, target_pen, marker_pct=80,
+            label=f"{round(min(100.0, (exp_pen / target_pen) * 100.0))}% {_('vom Rentenziel')} ({target_pen:,.0f} {getattr(profile, 'currency', 'EUR')})"
+        )
+        if cur_pen > 0:
+            prog_map['current_pension_payout'] = build_segmented_progress(
+                cur_pen, target_pen, marker_pct=80,
+                label=f"{round(min(100.0, (cur_pen / target_pen) * 100.0))}% {_('vom Rentenziel')}"
+            )
+    if inc_now > 0:
+        savings_rate = max(0.0, (inc_now - exp_now) / inc_now * 100.0)
+        prog_map['monthly_expenses'] = build_segmented_progress(
+            savings_rate, 50.0, marker_pct=40,
+            label=f"{_('Sparquote')}: {round(savings_rate)} %"
+        )
+
+    for item in summary_layout:
+        wid = item.get('id')
+        w_info = summary_widgets.get(wid, {})
+        sz = item.get('size', 'sm')
+        if sz not in ('sm', 'md', 'lg'):
+            sz = 'sm'
+        item['size'] = sz
+        item['icon'] = w_info.get('icon', 'bi-graph-up')
+        sub_kpi = item.get('subpage_kpi')
+        item['target_url'] = sub_kpi.get('link_url') if (sub_kpi and sub_kpi.get('link_url')) else get_kpi_target_url(wid)
+        item['sparkline'] = (sub_kpi.get('sparkline') if sub_kpi else None) or spark_map.get(wid)
+        item['progress'] = (sub_kpi.get('progress') if sub_kpi else None) or prog_map.get(wid)
+
+
+
 def resolve_dashboard_subpage_kpis(user, visible_ids, target_date=None, forecast_point=None, baseline_point=None):
     """
     Single Source of Truth resolver for subpage KPI cards shown on the Dashboard.
@@ -65,6 +218,7 @@ def resolve_dashboard_subpage_kpis(user, visible_ids, target_date=None, forecast
             'delta': delta_val,
             'delta_unit': str(_('Mt.')),
             'link_url': f"{reverse('finance:pension_plan')}?tab=risk_check",
+            'progress': build_segmented_progress(months_cov, max(6.0, float(target_m) * 1.5), marker_pct=round(float(target_m) / max(6.0, float(target_m) * 1.5) * 100), label=f"{str(_('Ziel'))}: {target_m} {str(_('Monate'))}"),
             'hover_rows': [
                 {'label': str(_('Liquides Vermögen (Stichtag)')), 'value': f"{liq:,.0f} {currency}"},
                 {'label': str(_('Monatliche Ausgaben')), 'value': f"{exp:,.0f} {currency}"},

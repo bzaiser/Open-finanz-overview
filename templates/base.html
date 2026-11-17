@@ -677,6 +677,234 @@
             pointer-events: none;
         }
 
+        /* =========================================================
+           KPI Cards 2.0 & Mood SVG Backgrounds
+           ========================================================= */
+        .app-bg-svg-layer {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+            contain: strict;
+        }
+        body[data-bg-svg="none"] .app-bg-svg-layer {
+            display: none !important;
+        }
+        body > nav,
+        body > main,
+        body > footer,
+        body > .container,
+        body > .container-fluid {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Bento Grid for Dashboard KPI Summary */
+        #dashboard-summary.kpi-bento-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            grid-auto-flow: dense;
+            gap: 1rem;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+        }
+        #dashboard-summary.kpi-bento-grid > .metric-card-col {
+            width: 100% !important;
+            max-width: 100% !important;
+            padding: 0 !important;
+            margin-bottom: 0 !important;
+        }
+        #dashboard-summary.kpi-bento-grid > .kpi-size-sm { grid-column: span 3; }
+        #dashboard-summary.kpi-bento-grid > .kpi-size-md { grid-column: span 6; }
+        #dashboard-summary.kpi-bento-grid > .kpi-size-lg { grid-column: span 12; }
+        #dashboard-summary.kpi-bento-grid > .kpi-size-lg .metric-value h3 {
+            font-size: 1.95rem;
+        }
+        @media (max-width: 1199.98px) {
+            #dashboard-summary.kpi-bento-grid > .kpi-size-sm,
+            #dashboard-summary.kpi-bento-grid > .kpi-size-md { grid-column: span 6; }
+            #dashboard-summary.kpi-bento-grid > .kpi-size-lg { grid-column: span 12; }
+        }
+        @media (max-width: 575.98px) {
+            #dashboard-summary.kpi-bento-grid { gap: 0.65rem; }
+            #dashboard-summary.kpi-bento-grid > .kpi-size-sm { grid-column: span 6; }
+            #dashboard-summary.kpi-bento-grid > .kpi-size-md,
+            #dashboard-summary.kpi-bento-grid > .kpi-size-lg { grid-column: span 12; }
+            #dashboard-summary.kpi-bento-grid > .kpi-size-sm .card-body {
+                padding: 0.75rem !important;
+            }
+            #dashboard-summary.kpi-bento-grid > .kpi-size-sm .metric-value h3 {
+                font-size: 1.12rem !important;
+            }
+        }
+
+        /* Clipped decoration layer inside .metric-card (preserves overflow:visible for hover details) */
+        .kpi-decor-clip {
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .metric-card > .card-body,
+        .metric-card > .d-flex {
+            position: relative;
+            z-index: 2;
+        }
+        body[data-kpi-click="true"] .metric-card[data-target-url] {
+            cursor: pointer;
+        }
+
+        /* 1. Mouse Spotlight */
+        .kpi-spotlight {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(
+                300px circle at var(--mouse-x, -500px) var(--mouse-y, -500px),
+                rgba(255, 255, 255, 0.22),
+                transparent 70%
+            );
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+        body:not([data-card-surface="solid"]) .kpi-spotlight {
+            background: radial-gradient(
+                300px circle at var(--mouse-x, -500px) var(--mouse-y, -500px),
+                color-mix(in srgb, var(--card-accent, var(--app-primary)) 22%, rgba(255,255,255,0.45)),
+                transparent 70%
+            );
+        }
+        .metric-card:hover .kpi-spotlight {
+            opacity: 1;
+        }
+        body[data-kpi-spotlight="false"] .kpi-spotlight {
+            display: none !important;
+        }
+
+        /* 2. Watermark Icon (bottom right, cropped, rotated -10deg, opacity 0.06-0.09) */
+        .kpi-watermark-icon {
+            position: absolute;
+            right: -10px;
+            bottom: -14px;
+            font-size: 4.8rem;
+            line-height: 1;
+            opacity: 0.08;
+            transform: rotate(-10deg);
+            color: currentColor;
+            pointer-events: none;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+        body:not([data-card-surface="solid"]) .kpi-watermark-icon {
+            color: var(--card-accent, var(--app-primary));
+            opacity: 0.09;
+        }
+        .metric-card:hover .kpi-watermark-icon {
+            transform: rotate(-5deg) scale(1.06);
+        }
+        body[data-kpi-watermarks="false"] .kpi-watermark-icon {
+            display: none !important;
+        }
+
+        /* 3. SVG Sparkline */
+        .kpi-sparkline-svg {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            height: 42px;
+            pointer-events: none;
+            color: currentColor;
+        }
+        body:not([data-card-surface="solid"]) .kpi-sparkline-svg {
+            color: var(--card-accent, var(--app-primary));
+        }
+        body[data-kpi-sparklines="false"] .kpi-sparkline-svg {
+            display: none !important;
+        }
+
+        /* 4. Segmented Progress Bar with Target Marker */
+        .kpi-segmented-wrap {
+            margin-top: 0.45rem;
+        }
+        body[data-kpi-progress="false"] .kpi-segmented-wrap {
+            display: none !important;
+        }
+        .segmented-progress {
+            position: relative;
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 3px;
+            height: 7px;
+            margin: 0.25rem 0;
+        }
+        .seg-bar {
+            background: rgba(255, 255, 255, 0.26);
+            border-radius: 2px;
+        }
+        .seg-bar.active {
+            background: #ffffff;
+        }
+        body:not([data-card-surface="solid"]) .seg-bar {
+            background: rgba(128, 128, 128, 0.22);
+        }
+        body:not([data-card-surface="solid"]) .seg-bar.active {
+            background: var(--card-accent, var(--app-primary));
+        }
+        .target-marker {
+            position: absolute;
+            top: -3px;
+            bottom: -3px;
+            width: 2px;
+            background: #f59e0b;
+            border-radius: 2px;
+            box-shadow: 0 0 3px rgba(0,0,0,0.45);
+        }
+
+        /* Card Surface Modes: glass, tinted, brutal */
+        body[data-card-surface="glass"] .metric-card {
+            background: color-mix(in srgb, var(--app-card-bg, #ffffff) 78%, transparent) !important;
+            backdrop-filter: blur(16px) saturate(140%);
+            -webkit-backdrop-filter: blur(16px) saturate(140%);
+            color: var(--app-card-color, #1e293b) !important;
+            border-top: 1px solid rgba(255, 255, 255, 0.55) !important;
+            border-left: 1px solid rgba(255, 255, 255, 0.55) !important;
+            border-right: 1px solid rgba(128, 128, 128, 0.16) !important;
+            border-bottom: 1px solid rgba(128, 128, 128, 0.16) !important;
+            box-shadow: 0 8px 26px rgba(0, 0, 0, 0.07) !important;
+        }
+        body[data-card-surface="tinted"] .metric-card {
+            background: linear-gradient(
+                135deg,
+                color-mix(in srgb, var(--card-accent, var(--app-primary)) 22%, color-mix(in srgb, var(--app-card-bg, #ffffff) 82%, transparent)),
+                color-mix(in srgb, var(--card-accent, var(--app-primary)) 8%, color-mix(in srgb, var(--app-card-bg, #ffffff) 82%, transparent))
+            ) !important;
+            backdrop-filter: blur(16px) saturate(145%);
+            -webkit-backdrop-filter: blur(16px) saturate(145%);
+            color: var(--app-card-color, #1e293b) !important;
+            border: 1px solid color-mix(in srgb, var(--card-accent, var(--app-primary)) 34%, rgba(128, 128, 128, 0.18)) !important;
+            box-shadow: 0 8px 26px rgba(0, 0, 0, 0.08) !important;
+        }
+        body[data-card-surface="brutal"] .metric-card {
+            background: var(--app-card-bg, #111317) !important;
+            color: var(--app-card-color, #f8fafc) !important;
+            border: 2px solid var(--card-accent, var(--app-primary)) !important;
+            border-radius: 10px !important;
+            box-shadow: 4px 4px 0px var(--card-accent, var(--app-primary)) !important;
+        }
+        body:not([data-card-surface="solid"]) .metric-card .widget-hover-details {
+            background-color: var(--app-card-bg, #ffffff) !important;
+            color: var(--app-card-color, #1e293b) !important;
+            border: 1px solid color-mix(in srgb, var(--card-accent, var(--app-primary)) 30%, rgba(128, 128, 128, 0.2)) !important;
+            border-top: none !important;
+        }
+        body:not([data-card-surface="solid"]) .metric-card .card-glass-glow {
+            display: none;
+        }
+
         /* Gentle & Smooth Simulation Pulsing Effect */
         @keyframes sim-blink-anim {
             0% {
@@ -978,7 +1206,92 @@
     {% block extra_css %}{% endblock %}
 </head>
 
-<body data-kpi-animate="{% if user.is_authenticated and not user.profile.enable_kpi_animations %}false{% else %}true{% endif %}">
+<body data-kpi-animate="{% if user.is_authenticated and not user.profile.enable_kpi_animations %}false{% else %}true{% endif %}"
+      data-card-surface="{{ theme_studio.resolved_card_surface|default:'solid' }}"
+      data-bg-svg="{{ theme_studio.resolved_bg_svg|default:'none' }}"
+      data-kpi-sparklines="{{ theme_studio.kpi_sparklines|yesno:'true,false'|default:'true' }}"
+      data-kpi-progress="{{ theme_studio.kpi_progress_bars|yesno:'true,false'|default:'true' }}"
+      data-kpi-watermarks="{{ theme_studio.kpi_watermarks|yesno:'true,false'|default:'true' }}"
+      data-kpi-spotlight="{{ theme_studio.kpi_spotlight|yesno:'true,false'|default:'true' }}"
+      data-kpi-click="{{ theme_studio.kpi_click_navigation|yesno:'true,false'|default:'true' }}">
+    {% if user.is_authenticated and theme_studio.resolved_bg_svg and theme_studio.resolved_bg_svg != 'none' %}
+    <div class="app-bg-svg-layer" aria-hidden="true">
+        {% if theme_studio.resolved_bg_svg == 'topography' %}
+        <svg viewBox="0 0 800 1000" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <radialGradient id="bgTopA" cx="20%" cy="18%" r="45%">
+                    <stop offset="0%" stop-color="var(--app-primary)" stop-opacity="0.22"/>
+                    <stop offset="100%" stop-color="var(--app-primary)" stop-opacity="0"/>
+                </radialGradient>
+                <radialGradient id="bgTopB" cx="82%" cy="76%" r="48%">
+                    <stop offset="0%" stop-color="var(--app-secondary, var(--app-primary))" stop-opacity="0.18"/>
+                    <stop offset="100%" stop-color="var(--app-secondary, var(--app-primary))" stop-opacity="0"/>
+                </radialGradient>
+            </defs>
+            <rect width="800" height="1000" fill="url(#bgTopA)"/>
+            <rect width="800" height="1000" fill="url(#bgTopB)"/>
+            <g fill="none" stroke="var(--app-primary)" stroke-width="1.2" opacity="0.14">
+                <path d="M-50,220 C200,120 400,380 850,250" />
+                <path d="M-50,270 C220,170 420,430 850,300" />
+                <path d="M-50,320 C240,220 440,480 850,350" />
+                <path d="M-50,620 C180,520 500,740 850,590" />
+                <path d="M-50,670 C200,570 520,790 850,640" />
+            </g>
+        </svg>
+        {% elif theme_studio.resolved_bg_svg == 'grid' %}
+        <svg viewBox="0 0 800 1000" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <radialGradient id="bgGridA" cx="78%" cy="18%" r="45%">
+                    <stop offset="0%" stop-color="var(--app-primary)" stop-opacity="0.20"/>
+                    <stop offset="100%" stop-color="var(--app-primary)" stop-opacity="0"/>
+                </radialGradient>
+                <pattern id="bgArchGrid" width="60" height="60" patternUnits="userSpaceOnUse">
+                    <path d="M 60 0 L 0 0 0 60" fill="none" stroke="var(--app-primary)" stroke-width="0.7" opacity="0.14" />
+                    <path d="M -3 0 L 3 0 M 0 -3 L 0 3" stroke="var(--app-primary)" stroke-width="1.1" opacity="0.26" />
+                </pattern>
+            </defs>
+            <rect width="800" height="1000" fill="url(#bgGridA)"/>
+            <rect width="800" height="1000" fill="url(#bgArchGrid)"/>
+        </svg>
+        {% elif theme_studio.resolved_bg_svg == 'curves' %}
+        <svg viewBox="0 0 800 1000" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="bgCurveGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="var(--app-primary)" stop-opacity="0.20" />
+                    <stop offset="100%" stop-color="var(--app-secondary, var(--app-primary))" stop-opacity="0.03" />
+                </linearGradient>
+            </defs>
+            <path d="M 0 1000 Q 350 920 800 200 L 800 1000 Z" fill="url(#bgCurveGrad)" />
+            <path d="M 0 1000 Q 420 940 800 380" fill="none" stroke="var(--app-primary)" stroke-width="1.5" opacity="0.20" />
+            <path d="M 0 1000 Q 480 960 800 540" fill="none" stroke="var(--app-secondary, var(--app-primary))" stroke-width="1.5" opacity="0.18" />
+        </svg>
+        {% elif theme_studio.resolved_bg_svg == 'aura' %}
+        <svg viewBox="0 0 800 1000" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <radialGradient id="bgAuraA" cx="25%" cy="24%" r="48%">
+                    <stop offset="0%" stop-color="var(--app-primary)" stop-opacity="0.25"/>
+                    <stop offset="100%" stop-color="var(--app-primary)" stop-opacity="0"/>
+                </radialGradient>
+                <radialGradient id="bgAuraB" cx="78%" cy="72%" r="50%">
+                    <stop offset="0%" stop-color="var(--app-secondary, var(--app-primary))" stop-opacity="0.22"/>
+                    <stop offset="100%" stop-color="var(--app-secondary, var(--app-primary))" stop-opacity="0"/>
+                </radialGradient>
+            </defs>
+            <rect width="800" height="1000" fill="url(#bgAuraA)"/>
+            <rect width="800" height="1000" fill="url(#bgAuraB)"/>
+        </svg>
+        {% elif theme_studio.resolved_bg_svg == 'brutal_grid' %}
+        <svg viewBox="0 0 800 1000" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <pattern id="bgBrutalGrid" width="40" height="40" patternUnits="userSpaceOnUse">
+                    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="var(--app-primary)" stroke-width="1" opacity="0.12" />
+                </pattern>
+            </defs>
+            <rect width="800" height="1000" fill="url(#bgBrutalGrid)"/>
+        </svg>
+        {% endif %}
+    </div>
+    {% endif %}
     <nav class="navbar navbar-expand-lg navbar-dark mb-4" style="background: var(--app-gradient);">
         <div class="container-fluid">
             <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'finance:dashboard' %}">
@@ -1682,6 +1995,54 @@
         document.addEventListener('DOMContentLoaded', function() { animateKpiCounters(document); });
         document.body.addEventListener('htmx:afterSettle', function(e) { animateKpiCounters(e.target || document); });
         document.body.addEventListener('htmx:oobAfterSwap', function(e) { animateKpiCounters(e.target || document); });
+    })();
+
+    function navigateKpiCard(evt, targetUrl) {
+        if (!document.body || document.body.dataset.kpiClick !== 'true' || !targetUrl) return;
+        if (evt && evt.target && evt.target.closest('a, button, input, select, .bi-info-circle, .widget-hover-details')) return;
+        window.location.href = targetUrl;
+    }
+
+    (function() {
+        function enhanceKpiCards(root) {
+            var scope = root || document;
+            scope.querySelectorAll('.metric-card').forEach(function(card) {
+                if (!card.style.getPropertyValue('--card-accent')) {
+                    var inlineStyle = card.getAttribute('style') || '';
+                    var hexMatch = inlineStyle.match(/#[0-9a-fA-F]{6}\b/);
+                    if (hexMatch) {
+                        card.style.setProperty('--card-accent', hexMatch[0]);
+                    }
+                }
+                if (!card.querySelector('.kpi-decor-clip')) {
+                    var clip = document.createElement('div');
+                    clip.className = 'kpi-decor-clip';
+                    var spot = document.createElement('div');
+                    spot.className = 'kpi-spotlight';
+                    clip.appendChild(spot);
+                    var iconEl = card.querySelector('.bi:not(.bi-info-circle):not(.bi-calendar3):not(.bi-file-earmark-text):not(.bi-box-arrow-up-right)');
+                    if (iconEl) {
+                        var wm = document.createElement('i');
+                        var iconClasses = Array.from(iconEl.classList).filter(function(c) { return c === 'bi' || c.indexOf('bi-') === 0; });
+                        wm.className = iconClasses.join(' ') + ' kpi-watermark-icon';
+                        clip.appendChild(wm);
+                    }
+                    card.insertBefore(clip, card.firstChild);
+                }
+            });
+        }
+        document.addEventListener('DOMContentLoaded', function() { enhanceKpiCards(document); });
+        document.body.addEventListener('htmx:afterSettle', function(e) { enhanceKpiCards(e.target || document); });
+        document.body.addEventListener('htmx:oobAfterSwap', function(e) { enhanceKpiCards(e.target || document); });
+
+        document.addEventListener('pointermove', function(e) {
+            if (!document.body || document.body.dataset.kpiSpotlight === 'false') return;
+            var card = e.target && e.target.closest ? e.target.closest('.metric-card') : null;
+            if (!card) return;
+            var rect = card.getBoundingClientRect();
+            card.style.setProperty('--mouse-x', (e.clientX - rect.left) + 'px');
+            card.style.setProperty('--mouse-y', (e.clientY - rect.top) + 'px');
+        }, { passive: true });
     })();
     </script>
     {% block extra_js %}{% endblock %}

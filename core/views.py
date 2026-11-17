@@ -104,6 +104,8 @@ def toggle_night_mode(request):
 def profile_view(request):
     from .theme_engine import (
         MOODS,
+        CARD_SURFACES,
+        BG_SVG_MODES,
         compute_theme_palette,
         get_profile_theme_studio_settings,
         get_profile_theme_palette,
@@ -152,12 +154,27 @@ def profile_view(request):
                     pass
 
             dc = dict(prof.dashboard_config or {})
+            prev_ts = dc.get('theme_studio', {}) if isinstance(dc.get('theme_studio'), dict) else {}
+            card_surface = request.POST.get('theme_card_surface', prev_ts.get('card_surface', 'auto'))
+            if card_surface not in CARD_SURFACES:
+                card_surface = 'auto'
+            bg_svg_mode = request.POST.get('theme_bg_svg_mode', prev_ts.get('bg_svg_mode', 'auto'))
+            if bg_svg_mode not in BG_SVG_MODES:
+                bg_svg_mode = 'auto'
+            has_kpi_ext_fields = 'kpi_ext_present' in request.POST
             dc['theme_studio'] = {
                 'mood': mood,
                 'bg_mode': bg_mode,
                 'bg_custom': bg_custom,
                 'sync_cards_and_charts': sync_cards,
                 'state_overrides': clean_overrides,
+                'card_surface': card_surface,
+                'bg_svg_mode': bg_svg_mode,
+                'kpi_sparklines': (request.POST.get('kpi_sparklines') == 'on') if has_kpi_ext_fields else bool(prev_ts.get('kpi_sparklines', True)),
+                'kpi_progress_bars': (request.POST.get('kpi_progress_bars') == 'on') if has_kpi_ext_fields else bool(prev_ts.get('kpi_progress_bars', True)),
+                'kpi_watermarks': (request.POST.get('kpi_watermarks') == 'on') if has_kpi_ext_fields else bool(prev_ts.get('kpi_watermarks', True)),
+                'kpi_spotlight': (request.POST.get('kpi_spotlight') == 'on') if has_kpi_ext_fields else bool(prev_ts.get('kpi_spotlight', True)),
+                'kpi_click_navigation': (request.POST.get('kpi_click_navigation') == 'on') if has_kpi_ext_fields else bool(prev_ts.get('kpi_click_navigation', True)),
             }
 
             palette = compute_theme_palette(

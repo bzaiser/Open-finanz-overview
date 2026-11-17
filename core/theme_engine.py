@@ -12,23 +12,26 @@ STATES = [
 ]
 
 MOODS = {
-    "modern":    {"s": 70, "l": 50, "bg": "#f4f6f9", "dark": False, "shift": 0.06},
-    "dualtone":  {"s": 78, "l": 52, "bg": "#f4f6f9", "dark": False, "shift": 0.00, "dual": True},
-    "serioes":   {"s": 42, "l": 45, "bg": "#f1f5f9", "dark": False, "shift": 0.10},
-    "dunkel":    {"s": 65, "l": 52, "bg": "#0f172a", "dark": True,  "shift": 0.08},
-    "brutalism": {"s": 92, "l": 56, "bg": "#050505", "dark": True,  "shift": 0.00, "brutal": True},
-    "wellness":  {"s": 36, "l": 74, "bg": "#f6f7f4", "dark": False, "shift": 0.18},
-    "ecofuture": {"s": 88, "l": 52, "bg": "#141d18", "dark": True,  "shift": 0.05, "eco": True},
-    "moody":     {"s": 58, "l": 36, "bg": "#16131c", "dark": True,  "shift": 0.12},
-    "fancy":     {"s": 65, "l": 68, "bg": "#f8f5fc", "dark": False, "shift": 0.12},
-    "vintage":   {"s": 48, "l": 54, "bg": "#f5f0e6", "dark": False, "shift": 0.25, "warm": True},
-    "knallbunt": {"s": 95, "l": 52, "bg": "#f4f6f9", "dark": False, "shift": 0.02},
-    "neon":      {"s": 100,"l": 55, "bg": "#090a0f", "dark": True,  "shift": 0.00, "glow": True},
-    "duester":   {"s": 35, "l": 38, "bg": "#111317", "dark": True,  "shift": 0.15},
-    "earth":     {"s": 32, "l": 48, "bg": "#ede6dc", "dark": False, "shift": 0.15, "earth": True},
-    "monochrom": {"s": 55, "l": 50, "bg": "#f4f6f9", "dark": False, "shift": 0.88},
-    "grayscale": {"s": 0,  "l": 50, "bg": "#efefef", "dark": False, "shift": 0.00},
+    "modern":    {"s": 70, "l": 50, "bg": "#f4f6f9", "dark": False, "shift": 0.06, "surface": "tinted", "svg": "topography"},
+    "dualtone":  {"s": 78, "l": 52, "bg": "#f4f6f9", "dark": False, "shift": 0.00, "dual": True, "surface": "tinted", "svg": "curves"},
+    "serioes":   {"s": 42, "l": 45, "bg": "#f1f5f9", "dark": False, "shift": 0.10, "surface": "glass", "svg": "grid"},
+    "dunkel":    {"s": 65, "l": 52, "bg": "#0f172a", "dark": True,  "shift": 0.08, "surface": "glass", "svg": "grid"},
+    "brutalism": {"s": 92, "l": 56, "bg": "#050505", "dark": True,  "shift": 0.00, "brutal": True, "surface": "brutal", "svg": "brutal_grid"},
+    "wellness":  {"s": 36, "l": 74, "bg": "#f6f7f4", "dark": False, "shift": 0.18, "surface": "tinted", "svg": "topography"},
+    "ecofuture": {"s": 88, "l": 52, "bg": "#141d18", "dark": True,  "shift": 0.05, "eco": True, "surface": "tinted", "svg": "curves"},
+    "moody":     {"s": 58, "l": 36, "bg": "#16131c", "dark": True,  "shift": 0.12, "surface": "tinted", "svg": "aura"},
+    "fancy":     {"s": 65, "l": 68, "bg": "#f8f5fc", "dark": False, "shift": 0.12, "surface": "tinted", "svg": "aura"},
+    "vintage":   {"s": 48, "l": 54, "bg": "#f5f0e6", "dark": False, "shift": 0.25, "warm": True, "surface": "tinted", "svg": "aura"},
+    "knallbunt": {"s": 95, "l": 52, "bg": "#f4f6f9", "dark": False, "shift": 0.02, "surface": "solid", "svg": "curves"},
+    "neon":      {"s": 100,"l": 55, "bg": "#090a0f", "dark": True,  "shift": 0.00, "glow": True, "surface": "tinted", "svg": "curves"},
+    "duester":   {"s": 35, "l": 38, "bg": "#111317", "dark": True,  "shift": 0.15, "surface": "glass", "svg": "aura"},
+    "earth":     {"s": 32, "l": 48, "bg": "#ede6dc", "dark": False, "shift": 0.15, "earth": True, "surface": "tinted", "svg": "topography"},
+    "monochrom": {"s": 55, "l": 50, "bg": "#f4f6f9", "dark": False, "shift": 0.88, "surface": "glass", "svg": "grid"},
+    "grayscale": {"s": 0,  "l": 50, "bg": "#efefef", "dark": False, "shift": 0.00, "surface": "glass", "svg": "grid"},
 }
+
+CARD_SURFACES = ("auto", "solid", "glass", "tinted", "brutal")
+BG_SVG_MODES = ("auto", "topography", "grid", "curves", "aura", "brutal_grid", "none")
 
 
 def hex_to_hsl(hex_str):
@@ -259,18 +262,48 @@ def get_profile_theme_studio_settings(profile):
             "bg_custom": "#ffffff",
             "sync_cards_and_charts": True,
             "state_overrides": {},
+            "card_surface": "auto",
+            "bg_svg_mode": "auto",
+            "resolved_card_surface": "tinted",
+            "resolved_bg_svg": "topography",
+            "kpi_sparklines": True,
+            "kpi_progress_bars": True,
+            "kpi_watermarks": True,
+            "kpi_spotlight": True,
+            "kpi_click_navigation": True,
         }
     dc = profile.dashboard_config or {}
     ts = dc.get("theme_studio", {})
     raw_ov = ts.get("state_overrides", {})
+    mood_key = ts.get("mood", "modern")
+    if mood_key not in MOODS:
+        mood_key = "modern"
+    m = MOODS[mood_key]
+    card_surface = ts.get("card_surface", "auto")
+    if card_surface not in CARD_SURFACES:
+        card_surface = "auto"
+    bg_svg_mode = ts.get("bg_svg_mode", "auto")
+    if bg_svg_mode not in BG_SVG_MODES:
+        bg_svg_mode = "auto"
+    resolved_surface = m.get("surface", "tinted") if card_surface == "auto" else card_surface
+    resolved_svg = m.get("svg", "topography") if bg_svg_mode == "auto" else bg_svg_mode
     return {
         "c1": profile.gradient_start or "#6610f2",
         "c2": profile.gradient_end or "#0d6efd",
-        "mood": ts.get("mood", "modern"),
+        "mood": mood_key,
         "bg_mode": ts.get("bg_mode", "auto"),
         "bg_custom": ts.get("bg_custom", profile.background_color or "#ffffff"),
         "sync_cards_and_charts": ts.get("sync_cards_and_charts", True),
         "state_overrides": raw_ov if isinstance(raw_ov, dict) else {},
+        "card_surface": card_surface,
+        "bg_svg_mode": bg_svg_mode,
+        "resolved_card_surface": resolved_surface,
+        "resolved_bg_svg": resolved_svg,
+        "kpi_sparklines": bool(ts.get("kpi_sparklines", True)),
+        "kpi_progress_bars": bool(ts.get("kpi_progress_bars", True)),
+        "kpi_watermarks": bool(ts.get("kpi_watermarks", True)),
+        "kpi_spotlight": bool(ts.get("kpi_spotlight", True)),
+        "kpi_click_navigation": bool(ts.get("kpi_click_navigation", True)),
     }
 
 
