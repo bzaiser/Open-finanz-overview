@@ -624,16 +624,23 @@
                         opacity 0.18s ease;
         }
         body[data-menu-style="gradient"] .nav-sliding-pill {
-            background: rgba(255, 255, 255, 0.20);
-            border: 1px solid rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.24);
+            border: 1px solid rgba(255, 255, 255, 0.36);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.16);
         }
         body[data-menu-style="glass"] .nav-sliding-pill {
-            background: color-mix(in srgb, var(--app-primary, #0d6efd) 14%, transparent);
-            border: 1px solid color-mix(in srgb, var(--app-primary, #0d6efd) 28%, transparent);
+            background: color-mix(in srgb, var(--app-primary, #0d6efd) 16%, transparent);
+            border: 1px solid color-mix(in srgb, var(--app-primary, #0d6efd) 32%, transparent);
         }
         [data-bs-theme="dark"] body[data-menu-style="glass"] .nav-sliding-pill {
-            background: color-mix(in srgb, var(--app-primary, #0d6efd) 26%, rgba(255, 255, 255, 0.14));
-            border: 1px solid rgba(255, 255, 255, 0.22);
+            background: color-mix(in srgb, var(--app-primary, #3b82f6) 35%, rgba(255, 255, 255, 0.22));
+            border: 1px solid rgba(255, 255, 255, 0.42);
+            box-shadow: 0 0 14px color-mix(in srgb, var(--app-primary, #3b82f6) 35%, transparent);
+        }
+        [data-bs-theme="dark"] body[data-menu-style="gradient"] .nav-sliding-pill {
+            background: rgba(255, 255, 255, 0.28);
+            border: 1px solid rgba(255, 255, 255, 0.46);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.28);
         }
         body[data-menu-style="brutal"] .nav-sliding-pill {
             border-radius: 8px;
@@ -763,6 +770,9 @@
                 justify-content: flex-start;
                 border-radius: 12px;
                 padding: 0.55rem 0.75rem !important;
+            }
+            body[data-menu-layout="sidebar"]:not(.sidebar-collapsed) .app-navbar .nav-label {
+                display: inline !important;
             }
             body[data-menu-layout="sidebar"].sidebar-collapsed .app-navbar .brand-text,
             body[data-menu-layout="sidebar"].sidebar-collapsed .app-navbar .nav-label,
@@ -1623,7 +1633,7 @@
                             <a class="nav-link {% if request.resolver_match.url_name in item.match_urls %}active{% endif %} {% if item.display == 'icon_only' %}app-nav-icon-only{% endif %}"
                                href="{{ item.url }}"
                                title="{% if item.id == 'night_mode' %}{% if theme_palette and theme_palette.is_dark %}{% trans 'Tagmodus aktivieren' %}{% else %}{% trans 'Nachtmodus aktivieren' %}{% endif %}{% else %}{{ item.label }}{% endif %}">
-                                {% if item.display != 'text_only' %}
+                                {% if item.display != 'text_only' or theme_studio.menu_layout == 'sidebar' %}
                                     {% if item.id == 'night_mode' %}
                                         {% if theme_palette and theme_palette.is_dark %}<i class="bi bi-sun-fill text-warning"></i>{% else %}<i class="bi {{ item.icon }}"></i>{% endif %}
                                     {% else %}
@@ -1656,7 +1666,7 @@
                                href="{{ item.url }}"
                                title="{% if item.id == 'night_mode' %}{% if theme_palette and theme_palette.is_dark %}{% trans 'Tagmodus aktivieren' %}{% else %}{% trans 'Nachtmodus aktivieren' %}{% endif %}{% else %}{{ item.label }}{% endif %}"
                                aria-label="{{ item.label }}">
-                                {% if item.display != 'text_only' %}
+                                {% if item.display != 'text_only' or theme_studio.menu_layout == 'sidebar' %}
                                     {% if item.id == 'night_mode' %}
                                         {% if theme_palette and theme_palette.is_dark %}<i class="bi bi-sun-fill text-warning fs-5"></i>{% else %}<i class="bi {{ item.icon }} fs-5"></i>{% endif %}
                                     {% else %}

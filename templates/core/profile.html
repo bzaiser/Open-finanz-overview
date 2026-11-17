@@ -1290,18 +1290,6 @@
                 if (profileForm) profileForm.submit();
             });
         }
-        const studioMenuLayoutSelect = document.getElementById('studioMenuLayout');
-        if (studioMenuLayoutSelect && menuTableBody) {
-            studioMenuLayoutSelect.addEventListener('change', () => {
-                if (studioMenuLayoutSelect.value === 'sidebar') {
-                    if (menuConfigInput) menuConfigInput.dataset.reset = '0';
-                    menuTableBody.querySelectorAll('.menu-item-display').forEach(sel => {
-                        sel.value = 'icon_text';
-                    });
-                    serializeMenuStudio();
-                }
-            });
-        }
         if (profileForm) {
             profileForm.addEventListener('submit', () => {
                 serializeMenuStudio();
