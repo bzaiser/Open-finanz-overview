@@ -95,8 +95,48 @@ def signup(request):
 
 @login_required
 def toggle_night_mode(request):
+    from .theme_engine import (
+        MOODS,
+        apply_theme_studio_to_profile,
+        get_profile_theme_palette,
+    )
+
     profile = request.user.profile
-    profile.auto_night_mode = not profile.auto_night_mode
+    dc = dict(profile.dashboard_config or {})
+    raw_ts = dict(dc.get('theme_studio') or {}) if isinstance(dc.get('theme_studio'), dict) else {}
+    palette = get_profile_theme_palette(profile)
+
+    mood_key = raw_ts.get('mood', 'modern')
+    if mood_key not in MOODS:
+        mood_key = 'modern'
+    current_bg_mode = raw_ts.get('bg_mode', 'auto')
+
+    if palette.get('is_dark'):
+        # Switch from Night -> Day: restore saved day_bg_mode ('light' or 'custom')
+        day_mode = raw_ts.get('day_bg_mode', 'light')
+        if day_mode not in ('auto', 'light', 'custom'):
+            day_mode = 'light'
+        if day_mode == 'auto' and MOODS[mood_key].get('dark'):
+            day_mode = 'light'
+        if day_mode == 'custom':
+            custom_hex = raw_ts.get('bg_custom') or profile.background_color or '#ffffff'
+            from .theme_engine import hex_to_hsl
+            if hex_to_hsl(custom_hex)['l'] < 50:
+                day_mode = 'light'
+        raw_ts['bg_mode'] = day_mode
+    else:
+        # Switch from Day -> Night: remember current day mode, set bg_mode='dark'
+        if current_bg_mode in ('auto', 'light', 'custom'):
+            raw_ts['day_bg_mode'] = current_bg_mode
+        else:
+            raw_ts['day_bg_mode'] = 'light'
+        raw_ts['bg_mode'] = 'dark'
+
+    raw_ts.setdefault('mood', mood_key)
+    raw_ts.setdefault('bg_custom', profile.background_color or '#ffffff')
+    raw_ts.setdefault('sync_cards_and_charts', True)
+
+    apply_theme_studio_to_profile(profile, raw_ts, manual_precision=False)
     profile.save()
     return redirect(request.META.get('HTTP_REFERER', 'profile'))
 
@@ -106,11 +146,10 @@ def profile_view(request):
         MOODS,
         CARD_SURFACES,
         BG_SVG_MODES,
-        compute_theme_palette,
+        apply_theme_studio_to_profile,
         get_profile_theme_studio_settings,
         get_profile_theme_palette,
     )
-    from finance.card_registry import apply_theme_palette_to_cards
 
     profile, created = UserProfile.objects.get_or_create(user=request.user)
     if request.method == 'POST':
@@ -162,9 +201,11 @@ def profile_view(request):
             if bg_svg_mode not in BG_SVG_MODES:
                 bg_svg_mode = 'auto'
             has_kpi_ext_fields = 'kpi_ext_present' in request.POST
-            dc['theme_studio'] = {
+            day_bg_mode = bg_mode if bg_mode != 'dark' else prev_ts.get('day_bg_mode', 'light')
+            ts_payload = {
                 'mood': mood,
                 'bg_mode': bg_mode,
+                'day_bg_mode': day_bg_mode,
                 'bg_custom': bg_custom,
                 'sync_cards_and_charts': sync_cards,
                 'state_overrides': clean_overrides,
@@ -177,31 +218,8 @@ def profile_view(request):
                 'kpi_click_navigation': (request.POST.get('kpi_click_navigation') == 'on') if has_kpi_ext_fields else bool(prev_ts.get('kpi_click_navigation', True)),
             }
 
-            palette = compute_theme_palette(
-                c1=prof.gradient_start or '#6610f2',
-                c2=prof.gradient_end or '#0d6efd',
-                mood_key=mood,
-                bg_mode=bg_mode,
-                bg_custom=bg_custom,
-                state_overrides=clean_overrides,
-            )
-
             manual_precision = request.POST.get('theme_manual_precision') == '1'
-            if sync_cards and not manual_precision:
-                prof.primary_color = palette['primary_color']
-                prof.background_color = palette['background_color']
-                prof.text_color = palette['text_color']
-                prof.sidebar_bg_color = palette['sidebar_bg_color']
-                prof.table_header_bg_color = palette['table_header_bg_color']
-                prof.table_header_text_color = palette['table_header_text_color']
-                prof.table_body_bg_color = palette['table_body_bg_color']
-                prof.table_body_text_color = palette['table_body_text_color']
-                prof.table_border_color = palette['table_border_color']
-
-            if sync_cards:
-                dc = apply_theme_palette_to_cards(dc, palette)
-
-            prof.dashboard_config = dc
+            apply_theme_studio_to_profile(prof, ts_payload, manual_precision=manual_precision)
             prof.save()
             form.save_m2m()
 

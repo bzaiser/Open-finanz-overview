@@ -319,6 +319,61 @@ def get_profile_theme_palette(profile):
     )
 
 
+def apply_theme_studio_to_profile(profile, theme_studio_data, manual_precision=False):
+    """
+    Applies Design Studio settings (mood, bg_mode, bg_custom, sync_cards_and_charts, etc.)
+    to `profile` (colors, dashboard_config, cards, and auto_night_mode flag).
+    Returns the computed theme palette dict.
+    """
+    from finance.card_registry import apply_theme_palette_to_cards
+
+    dc = dict(profile.dashboard_config or {})
+    ts = dict(theme_studio_data or {})
+    mood = ts.get("mood", "modern")
+    if mood not in MOODS:
+        mood = "modern"
+    bg_mode = ts.get("bg_mode", "auto")
+    if bg_mode not in ("auto", "light", "dark", "custom"):
+        bg_mode = "auto"
+    bg_custom = ts.get("bg_custom") or profile.background_color or "#ffffff"
+    sync_cards = bool(ts.get("sync_cards_and_charts", True))
+    state_overrides = ts.get("state_overrides") if isinstance(ts.get("state_overrides"), dict) else {}
+
+    ts["mood"] = mood
+    ts["bg_mode"] = bg_mode
+    ts["bg_custom"] = bg_custom
+    ts["sync_cards_and_charts"] = sync_cards
+    ts["state_overrides"] = state_overrides
+    dc["theme_studio"] = ts
+
+    palette = compute_theme_palette(
+        c1=profile.gradient_start or "#6610f2",
+        c2=profile.gradient_end or "#0d6efd",
+        mood_key=mood,
+        bg_mode=bg_mode,
+        bg_custom=bg_custom,
+        state_overrides=state_overrides,
+    )
+
+    profile.auto_night_mode = bool(palette["is_dark"])
+    if sync_cards and not manual_precision:
+        profile.primary_color = palette["primary_color"]
+        profile.background_color = palette["background_color"]
+        profile.text_color = palette["text_color"]
+        profile.sidebar_bg_color = palette["sidebar_bg_color"]
+        profile.table_header_bg_color = palette["table_header_bg_color"]
+        profile.table_header_text_color = palette["table_header_text_color"]
+        profile.table_body_bg_color = palette["table_body_bg_color"]
+        profile.table_body_text_color = palette["table_body_text_color"]
+        profile.table_border_color = palette["table_border_color"]
+
+    if sync_cards:
+        dc = apply_theme_palette_to_cards(dc, palette)
+
+    profile.dashboard_config = dc
+    return palette
+
+
 def harmonize_category_color(raw_hex, idx, profile=None, is_income=False, palette=None):
     """
     Transforms a category's color (or assigns a distinct hue if default grey)

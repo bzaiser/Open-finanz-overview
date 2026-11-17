@@ -1,5 +1,5 @@
 {% load i18n static %}
-<html lang="{{ request.LANGUAGE_CODE }}" data-bs-theme="{% if request.user.is_authenticated and profile and profile.background_color == '#212529' or profile.background_color == '#1a1a2e' or profile.background_color == '#0d1117' or profile.background_color == '#1e1e2e' %}dark{% else %}light{% endif %}">
+<html lang="{{ request.LANGUAGE_CODE }}" data-bs-theme="{% if theme_palette and theme_palette.is_dark %}dark{% else %}light{% endif %}">
 
 <head>
     <meta charset="UTF-8">
@@ -275,46 +275,14 @@
     <script>
         (function() {
             function applyTheme() {
-                const autoNight = {% if user.is_authenticated and user.profile.auto_night_mode %}true{% else %}false{% endif %};
+                const studioDark = {% if theme_palette and theme_palette.is_dark %}true{% else %}false{% endif %};
                 const html = document.documentElement;
-                
-                if (autoNight) {
+                if (studioDark) {
                     html.setAttribute('data-bs-theme', 'dark');
-                    const config = {
-                        'gradient': 'linear-gradient(135deg, color-mix(in srgb, var(--app-primary, #0d6efd), black 75%) 0%, #000000 100%)',
-                        'card-bg': 'color-mix(in srgb, var(--app-primary, #0d6efd), black 88%)',
-                        'card-color': '#f8fafc',
-                        'sidebar-bg': 'color-mix(in srgb, var(--app-primary, #0d6efd), black 92%)',
-                        'table-header-bg': 'color-mix(in srgb, var(--app-primary, #0d6efd), black 75%)',
-                        'table-header-text': '#ffffff',
-                        'table-filter-bg': 'color-mix(in srgb, var(--app-primary, #0d6efd), black 90%)',
-                        'table-body-bg': 'color-mix(in srgb, var(--app-primary, #0d6efd), black 88%)',
-                        'table-body-text': '#cbd5e1',
-                        'table-row-bg': 'color-mix(in srgb, var(--app-primary, #0d6efd), black 88%)',
-                        'table-row-text': '#cbd5e1',
-                        'table-row-hover-bg': 'color-mix(in srgb, var(--app-primary, #0d6efd), black 80%)',
-                        'table-border-color': 'rgba(255,255,255,0.15)',
-                        'input-bg': '#000000',
-                        'input-color': '#cbd5e1',
-                        'input-border': '#1e293b'
-                    };
-                    for (const [key, value] of Object.entries(config)) {
-                        html.style.setProperty('--app-' + key, value);
-                    }
-                    // System overrides for Bootstrap
-                    html.style.setProperty('--bs-body-bg', 'color-mix(in srgb, var(--app-primary, #0d6efd), black 95%)');
-                    html.style.setProperty('--bs-body-color', config['card-color']);
-                    html.style.setProperty('--bs-tertiary-bg', config['card-bg']);
-                    html.style.setProperty('--bs-card-bg', config['card-bg']);
                 } else {
-                    const studioDark = {% if theme_palette and theme_palette.is_dark %}true{% else %}false{% endif %};
-                    if (studioDark) {
-                        html.setAttribute('data-bs-theme', 'dark');
-                    } else {
-                        html.removeAttribute('data-bs-theme');
-                    }
-                    html.removeAttribute('style');
+                    html.removeAttribute('data-bs-theme');
                 }
+                html.removeAttribute('style');
 
                 if (typeof Chart !== 'undefined') {
                     const isDark = html.getAttribute('data-bs-theme') === 'dark';
@@ -1383,9 +1351,9 @@
                     <li class="nav-item">
                         <a href="{% url 'toggle_night_mode' %}"
                            class="nav-link d-flex align-items-center px-2 py-2 py-lg-1"
-                           title="{% if user.profile.auto_night_mode %}{% trans 'Tagmodus aktivieren' %}{% else %}{% trans 'Nachtmodus aktivieren' %}{% endif %}"
+                           title="{% if theme_palette and theme_palette.is_dark %}{% trans 'Tagmodus aktivieren' %}{% else %}{% trans 'Nachtmodus aktivieren' %}{% endif %}"
                            aria-label="{% trans 'Toggle Night Mode' %}">
-                            {% if user.profile.auto_night_mode %}
+                            {% if theme_palette and theme_palette.is_dark %}
                                 <i class="bi bi-sun-fill text-warning fs-5"></i>
                                 <span class="d-lg-none ms-2">{% trans "Tagmodus" %}</span>
                             {% else %}

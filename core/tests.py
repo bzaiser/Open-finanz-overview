@@ -112,5 +112,50 @@ class ProfileThemeStudioTests(TestCase):
         self.assertEqual(prog["active_count"], 7)
         self.assertEqual(sum(1 for s in prog["segments"] if s), 7)
 
+    def test_toggle_night_mode_syncs_with_design_studio(self):
+        from .theme_engine import apply_theme_studio_to_profile, get_profile_theme_palette
+
+        # 1. Custom light background -> Night -> restores Custom light background
+        apply_theme_studio_to_profile(self.profile, {
+            "mood": "modern",
+            "bg_mode": "custom",
+            "bg_custom": "#E8F5E9",
+            "sync_cards_and_charts": True,
+        })
+        self.profile.save()
+        self.assertFalse(self.profile.auto_night_mode)
+        self.assertEqual(self.profile.background_color, "#E8F5E9")
+
+        resp = self.client.get(reverse("toggle_night_mode"))
+        self.assertEqual(resp.status_code, 302)
+        self.profile.refresh_from_db()
+        self.assertTrue(self.profile.auto_night_mode)
+        self.assertEqual(self.profile.dashboard_config["theme_studio"]["bg_mode"], "dark")
+        self.assertTrue(get_profile_theme_palette(self.profile)["is_dark"])
+        self.assertEqual(self.profile.background_color, "#0f172a")
+
+        resp = self.client.get(reverse("toggle_night_mode"))
+        self.assertEqual(resp.status_code, 302)
+        self.profile.refresh_from_db()
+        self.assertFalse(self.profile.auto_night_mode)
+        self.assertEqual(self.profile.dashboard_config["theme_studio"]["bg_mode"], "custom")
+        self.assertEqual(self.profile.background_color, "#E8F5E9")
+
+        # 2. Dark mood ('dunkel', bg_mode='auto') -> Day -> switches to 'light'
+        apply_theme_studio_to_profile(self.profile, {
+            "mood": "dunkel",
+            "bg_mode": "auto",
+            "sync_cards_and_charts": True,
+        })
+        self.profile.save()
+        self.assertTrue(self.profile.auto_night_mode)
+
+        self.client.get(reverse("toggle_night_mode"))
+        self.profile.refresh_from_db()
+        self.assertFalse(self.profile.auto_night_mode)
+        self.assertEqual(self.profile.dashboard_config["theme_studio"]["bg_mode"], "light")
+        self.assertFalse(get_profile_theme_palette(self.profile)["is_dark"])
+
+
 
 
