@@ -1635,7 +1635,7 @@
                                title="{% if item.id == 'night_mode' %}{% if theme_palette and theme_palette.is_dark %}{% trans 'Tagmodus aktivieren' %}{% else %}{% trans 'Nachtmodus aktivieren' %}{% endif %}{% else %}{{ item.label }}{% endif %}">
                                 {% if item.display != 'text_only' or theme_studio.menu_layout == 'sidebar' %}
                                     {% if item.id == 'night_mode' %}
-                                        {% if theme_palette and theme_palette.is_dark %}<i class="bi bi-sun-fill text-warning"></i>{% else %}<i class="bi {{ item.icon }}"></i>{% endif %}
+                                        {% if theme_palette and theme_palette.is_dark %}<i class="bi bi-sun"></i>{% else %}<i class="bi {{ item.icon }}"></i>{% endif %}
                                     {% else %}
                                         <i class="bi {{ item.icon }}"></i>
                                     {% endif %}
@@ -1668,7 +1668,7 @@
                                aria-label="{{ item.label }}">
                                 {% if item.display != 'text_only' or theme_studio.menu_layout == 'sidebar' %}
                                     {% if item.id == 'night_mode' %}
-                                        {% if theme_palette and theme_palette.is_dark %}<i class="bi bi-sun-fill text-warning fs-5"></i>{% else %}<i class="bi {{ item.icon }} fs-5"></i>{% endif %}
+                                        {% if theme_palette and theme_palette.is_dark %}<i class="bi bi-sun fs-5"></i>{% else %}<i class="bi {{ item.icon }} fs-5"></i>{% endif %}
                                     {% else %}
                                         <i class="bi {{ item.icon }} fs-5"></i>
                                     {% endif %}
