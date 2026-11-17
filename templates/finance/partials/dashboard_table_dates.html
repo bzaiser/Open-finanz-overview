@@ -91,11 +91,11 @@
             <template x-for="(group, gIdx) in groupedItems" :key="group.name">
                 <tbody class="border-0">
                     <!-- Group Header -->
-                    <tr class="cursor-pointer border-0" @click="collapsedGroups[group.name] = !collapsedGroups[group.name]"
+                    <tr class="cursor-pointer border-0 table-group-header" @click="collapsedGroups[group.name] = !collapsedGroups[group.name]"
                         :class="{
                             'table-danger': group.maxStatus === 'danger'
                         }"
-                        :style="group.maxStatus !== 'danger' ? 'background-color: var(--app-table-filter-bg) !important; color: var(--app-table-body-text) !important;' : ''">
+                        :style="group.maxStatus !== 'danger' ? '--bs-table-bg: var(--app-table-filter-bg); background-color: var(--app-table-filter-bg) !important; color: var(--app-table-body-text) !important;' : ''">
                         <td colspan="2" class="py-2 px-3 fw-bold border-0">
                             <i class="bi me-2" :class="collapsedGroups[group.name] ? 'bi-chevron-right' : 'bi-chevron-down'"></i>
                             <span x-text="group.name"></span>

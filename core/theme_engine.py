@@ -225,6 +225,7 @@ def compute_theme_palette(c1="#6610f2", c2="#0d6efd", mood_key="modern", bg_mode
     th_lightness = 30 if mood_key == "grayscale" else (28 if is_dark else max(32, min(52, m["l"])))
     table_header_bg = hsl_to_hex(th_hue, m["s"], th_lightness)
     table_header_text = get_contrast_text(table_header_bg)
+    table_filter_bg = hsl_to_hex(base1["h"], min(22, m["s"]), 16 if is_dark else 94)
     table_body_bg = hsl_to_hex(base1["h"], min(18, m["s"]), 11 if is_dark else 99) if bg_mode != "custom" else page_bg
     table_body_text = text_color
     table_border = "#334155" if is_dark else "#dee2e6"
@@ -244,6 +245,7 @@ def compute_theme_palette(c1="#6610f2", c2="#0d6efd", mood_key="modern", bg_mode
         "sidebar_bg_color": sidebar_bg,
         "table_header_bg_color": table_header_bg,
         "table_header_text_color": table_header_text,
+        "table_filter_bg_color": table_filter_bg,
         "table_body_bg_color": table_body_bg,
         "table_body_text_color": table_body_text,
         "table_border_color": table_border,
@@ -363,6 +365,7 @@ def apply_theme_studio_to_profile(profile, theme_studio_data, manual_precision=F
         profile.sidebar_bg_color = palette["sidebar_bg_color"]
         profile.table_header_bg_color = palette["table_header_bg_color"]
         profile.table_header_text_color = palette["table_header_text_color"]
+        profile.table_filter_bg_color = palette["table_filter_bg_color"]
         profile.table_body_bg_color = palette["table_body_bg_color"]
         profile.table_body_text_color = palette["table_body_text_color"]
         profile.table_border_color = palette["table_border_color"]

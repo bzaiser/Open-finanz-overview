@@ -51,7 +51,7 @@
             /* Table Styles from UserProfile */
             --app-table-header-bg: {{ user.profile.table_header_bg_color|default:"#0d6efd" }};
             --app-table-header-text: {{ user.profile.table_header_text_color|default:"#ffffff" }};
-            --app-table-filter-bg: {{ user.profile.table_filter_bg_color|default:"rgba(0,0,0,0.05)" }};
+            --app-table-filter-bg: {{ theme_palette.table_filter_bg_color|default:user.profile.table_filter_bg_color|default:"rgba(0,0,0,0.05)" }};
             --app-table-body-bg: {{ user.profile.table_body_bg_color|default:"var(--app-card-bg)" }};
             --app-table-body-text: {{ user.profile.table_body_text_color|default:"var(--app-card-color)" }};
             --app-table-border-color: {{ user.profile.table_border_color|default:"rgba(0,0,0,0.1)" }};
@@ -521,6 +521,20 @@
         .table-hover tbody tr:hover > th {
             --bs-table-hover-bg: var(--app-table-row-hover-bg, color-mix(in srgb, var(--app-primary) 10%, transparent)) !important;
             background-color: var(--app-table-row-hover-bg, color-mix(in srgb, var(--app-primary) 10%, transparent)) !important;
+        }
+        .table tr.table-group-header > td,
+        .table tr[style*="var(--app-table-filter-bg)"] > td {
+            --bs-table-bg: var(--app-table-filter-bg) !important;
+            --bs-table-color: var(--app-table-body-text) !important;
+            background-color: var(--app-table-filter-bg) !important;
+            color: var(--app-table-body-text) !important;
+        }
+        .table tr.table-danger > td,
+        .table tr.table-danger > th {
+            --bs-table-bg: color-mix(in srgb, var(--theme-state-5, #dc3545) 16%, transparent) !important;
+            --bs-table-color: var(--app-table-body-text) !important;
+            background-color: color-mix(in srgb, var(--theme-state-5, #dc3545) 16%, transparent) !important;
+            color: var(--app-table-body-text) !important;
         }
         .list-group-item {
             background-color: transparent;
