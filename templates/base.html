@@ -1087,10 +1087,38 @@
             #dashboard-summary.kpi-bento-grid > .kpi-size-lg { grid-column: span 12; }
         }
         @media (max-width: 575.98px) {
-            #dashboard-summary.kpi-bento-grid { gap: 0.65rem; }
-            #dashboard-summary.kpi-bento-grid > .kpi-size-sm,
-            #dashboard-summary.kpi-bento-grid > .kpi-size-md,
-            #dashboard-summary.kpi-bento-grid > .kpi-size-lg { grid-column: span 12; }
+            #dashboard-summary.kpi-bento-grid,
+            .row:has(> .metric-card-col) {
+                display: flex !important;
+                flex-wrap: nowrap !important;
+                overflow-x: auto !important;
+                overflow-y: visible !important;
+                scroll-snap-type: x mandatory;
+                -webkit-overflow-scrolling: touch;
+                gap: 0.75rem !important;
+                padding-bottom: 0.35rem;
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+                scrollbar-width: none;
+                align-items: stretch;
+            }
+            #dashboard-summary.kpi-bento-grid::-webkit-scrollbar,
+            .row:has(> .metric-card-col)::-webkit-scrollbar {
+                display: none;
+            }
+            #dashboard-summary.kpi-bento-grid > .metric-card-col,
+            .row:has(> .metric-card-col) > .metric-card-col {
+                flex: 0 0 85% !important;
+                width: 85% !important;
+                max-width: 85% !important;
+                scroll-snap-align: start;
+                padding: 0 !important;
+                margin-bottom: 0 !important;
+            }
+            #dashboard-summary.kpi-bento-grid:has(.is-touch-expanded),
+            .row:has(> .metric-card-col):has(.is-touch-expanded) {
+                align-items: flex-start;
+            }
         }
 
         /* Clipped decoration layer inside .metric-card (preserves overflow:visible for hover details) */
@@ -1452,8 +1480,49 @@
             overflow-y: auto;
             padding: 0.75rem 1rem 1rem 1rem;
         }
-        /* Touch devices: disable sticky :hover and use explicit toggle button */
-        .kpi-touch-toggle-btn {
+        /* Apple Health Touch Pattern (B1): Tap card = toggle details, top-right pill = navigate */
+        .kpi-nav-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.65rem;
+            height: 1.65rem;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.18);
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            color: inherit !important;
+            text-decoration: none !important;
+            font-size: 0.78rem;
+            line-height: 1;
+            flex-shrink: 0;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+        .kpi-nav-pill:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(1px, -1px);
+        }
+        body:not([data-card-surface="solid"]) .kpi-nav-pill {
+            background: color-mix(in srgb, var(--card-accent, var(--app-primary)) 14%, transparent);
+            border-color: color-mix(in srgb, var(--card-accent, var(--app-primary)) 30%, transparent);
+        }
+        .kpi-details-nav-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 0.45rem;
+            padding-top: 0.45rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.22);
+            color: inherit !important;
+            text-decoration: none !important;
+            font-size: 0.74rem;
+            font-weight: 700;
+            opacity: 0.92;
+        }
+        body[data-kpi-click="false"] .kpi-nav-pill,
+        body[data-kpi-click="false"] .kpi-details-nav-link {
+            display: none !important;
+        }
+        .kpi-expand-hint {
             display: none;
         }
         @media (hover: none), (pointer: coarse) {
@@ -1470,29 +1539,20 @@
                 padding-bottom: 0 !important;
                 pointer-events: none !important;
             }
-            .kpi-touch-toggle-btn {
-                display: inline-flex;
+            .kpi-expand-hint {
+                display: flex;
                 align-items: center;
                 justify-content: center;
-                position: absolute;
-                right: 0.65rem;
-                bottom: 0.65rem;
-                width: 1.75rem;
-                height: 1.75rem;
-                border-radius: 999px;
-                border: 1px solid rgba(255, 255, 255, 0.35);
-                background: rgba(0, 0, 0, 0.25);
-                color: inherit;
-                font-size: 0.85rem;
-                z-index: 4;
-                padding: 0;
-                cursor: pointer;
-                backdrop-filter: blur(4px);
-                transition: transform 0.2s ease, background-color 0.2s ease;
+                font-size: 0.7rem;
+                opacity: 0.55;
+                margin-top: 0.25rem;
+                line-height: 1;
+                transition: transform 0.25s ease;
+                pointer-events: none;
             }
-            body:not([data-card-surface="solid"]) .kpi-touch-toggle-btn {
-                background: color-mix(in srgb, var(--card-accent, var(--app-primary)) 14%, rgba(255, 255, 255, 0.8));
-                border-color: color-mix(in srgb, var(--card-accent, var(--app-primary)) 35%, transparent);
+            .widget-expand-card.is-touch-expanded .kpi-expand-hint {
+                transform: rotate(180deg);
+                opacity: 0.85;
             }
             .widget-expand-card.is-touch-expanded {
                 overflow: hidden !important;
@@ -1507,7 +1567,7 @@
                 max-height: 320px !important;
                 opacity: 1 !important;
                 overflow-y: auto !important;
-                padding: 0.6rem 0.75rem 2.4rem 0.75rem !important;
+                padding: 0.6rem 0.75rem 0.75rem 0.75rem !important;
                 pointer-events: auto !important;
             }
         }
@@ -2405,9 +2465,35 @@
         document.body.addEventListener('htmx:oobAfterSwap', function(e) { animateKpiCounters(e.target || document); });
     })();
 
+    function isTouchPrimary() {
+        return !!(window.matchMedia && window.matchMedia('(hover: none), (pointer: coarse)').matches);
+    }
+
+    function toggleTouchKpiDetails(card) {
+        if (!card) return false;
+        var details = card.querySelector('.widget-hover-details');
+        if (!details) return false;
+        var willExpand = !card.classList.contains('is-touch-expanded');
+        var parentRow = card.closest('.kpi-bento-grid, .row');
+        if (parentRow && willExpand) {
+            parentRow.querySelectorAll('.widget-expand-card.is-touch-expanded').forEach(function(other) {
+                if (other !== card) other.classList.remove('is-touch-expanded');
+            });
+        }
+        card.classList.toggle('is-touch-expanded', willExpand);
+        return true;
+    }
+
     function navigateKpiCard(evt, targetUrl) {
+        if (evt && evt.target && evt.target.closest('a, button, input, select, .bi-info-circle')) return;
+        var card = evt && evt.currentTarget ? evt.currentTarget : (evt && evt.target && evt.target.closest ? evt.target.closest('.metric-card') : null);
+        if (isTouchPrimary() && card && card.querySelector('.widget-hover-details')) {
+            if (evt && evt.target && evt.target.closest('.widget-hover-details')) return;
+            toggleTouchKpiDetails(card);
+            return;
+        }
+        if (evt && evt.target && evt.target.closest('.widget-hover-details')) return;
         if (!document.body || document.body.dataset.kpiClick !== 'true' || !targetUrl) return;
-        if (evt && evt.target && evt.target.closest('a, button, input, select, .bi-info-circle, .widget-hover-details')) return;
         window.location.href = targetUrl;
     }
 
@@ -2428,7 +2514,7 @@
                     var spot = document.createElement('div');
                     spot.className = 'kpi-spotlight';
                     clip.appendChild(spot);
-                    var iconEl = card.querySelector('.bi:not(.bi-info-circle):not(.bi-calendar3):not(.bi-file-earmark-text):not(.bi-box-arrow-up-right)');
+                    var iconEl = card.querySelector('.bi:not(.bi-info-circle):not(.bi-calendar3):not(.bi-file-earmark-text):not(.bi-box-arrow-up-right):not(.bi-arrow-up-right):not(.bi-arrow-right):not(.bi-chevron-down)');
                     if (iconEl) {
                         var wm = document.createElement('i');
                         var iconClasses = Array.from(iconEl.classList).filter(function(c) { return c === 'bi' || c.indexOf('bi-') === 0; });
@@ -2437,21 +2523,49 @@
                     }
                     card.insertBefore(clip, card.firstChild);
                 }
-                if (card.classList.contains('widget-expand-card') && card.querySelector('.widget-hover-details') && !card.querySelector('.kpi-touch-toggle-btn')) {
-                    var toggleBtn = document.createElement('button');
-                    toggleBtn.type = 'button';
-                    toggleBtn.className = 'kpi-touch-toggle-btn';
-                    toggleBtn.setAttribute('aria-expanded', 'false');
-                    toggleBtn.setAttribute('aria-label', 'Details anzeigen');
-                    toggleBtn.innerHTML = '<i class="bi bi-info-circle"></i>';
-                    toggleBtn.addEventListener('click', function(ev) {
-                        ev.preventDefault();
-                        ev.stopPropagation();
-                        var expanded = card.classList.toggle('is-touch-expanded');
-                        toggleBtn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
-                        toggleBtn.innerHTML = expanded ? '<i class="bi bi-x-lg"></i>' : '<i class="bi bi-info-circle"></i>';
-                    });
-                    card.appendChild(toggleBtn);
+                var targetUrl = card.getAttribute('data-target-url');
+                var detailsEl = card.querySelector('.widget-hover-details');
+                if (targetUrl && !card.querySelector('.kpi-nav-pill')) {
+                    var headerRow = card.querySelector('.card-body > .d-flex.justify-content-between') || card.querySelector('.d-flex.justify-content-between');
+                    if (headerRow) {
+                        var pill = document.createElement('a');
+                        pill.href = targetUrl;
+                        pill.className = 'kpi-nav-pill ms-2';
+                        pill.title = 'Zur Detailseite';
+                        pill.setAttribute('aria-label', 'Zur Detailseite');
+                        pill.innerHTML = '<i class="bi bi-arrow-up-right"></i>';
+                        pill.addEventListener('click', function(ev) { ev.stopPropagation(); });
+                        headerRow.appendChild(pill);
+                    }
+                }
+                if (detailsEl) {
+                    if (targetUrl && !detailsEl.querySelector('.kpi-details-nav-link')) {
+                        var footerLink = document.createElement('a');
+                        footerLink.href = targetUrl;
+                        footerLink.className = 'kpi-details-nav-link';
+                        footerLink.innerHTML = '<span>Zur Detailseite</span><i class="bi bi-arrow-right ms-1"></i>';
+                        footerLink.addEventListener('click', function(ev) { ev.stopPropagation(); });
+                        detailsEl.appendChild(footerLink);
+                    }
+                    if (!card.querySelector('.kpi-expand-hint')) {
+                        var metricVal = card.querySelector('.metric-value') || card.querySelector('.card-body') || card;
+                        var hint = document.createElement('div');
+                        hint.className = 'kpi-expand-hint';
+                        hint.setAttribute('aria-hidden', 'true');
+                        hint.innerHTML = '<i class="bi bi-chevron-down"></i>';
+                        metricVal.appendChild(hint);
+                    }
+                    if (!card.dataset.kpiTouchBound) {
+                        card.dataset.kpiTouchBound = '1';
+                        var onclickAttr = card.getAttribute('onclick') || '';
+                        if (onclickAttr.indexOf('navigateKpiCard') === -1) {
+                            card.addEventListener('click', function(ev) {
+                                if (!isTouchPrimary()) return;
+                                if (ev.target && ev.target.closest('a, button, input, select, .bi-info-circle, .widget-hover-details')) return;
+                                toggleTouchKpiDetails(card);
+                            });
+                        }
+                    }
                 }
             });
         }
