@@ -40,7 +40,7 @@
             {% if card.visible %}
                 {% if card.id == 'monthly_income' %}
                 <div class="col-12 col-md-4 metric-card-col">
-                    <div class="card metric-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
+                    <div class="card metric-card h-100 p-3" data-target-tab="income" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
                         <div class="card-glass-glow"></div>
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
@@ -62,7 +62,7 @@
                 </div>
                 {% elif card.id == 'monthly_expenses' %}
                 <div class="col-12 col-md-4 metric-card-col">
-                    <div class="card metric-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
+                    <div class="card metric-card h-100 p-3" data-target-tab="expense" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
                         <div class="card-glass-glow"></div>
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
@@ -84,7 +84,7 @@
                 </div>
                 {% elif card.id == 'monthly_surplus' %}
                 <div class="col-12 col-md-4 metric-card-col">
-                    <div class="card metric-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
+                    <div class="card metric-card h-100 p-3" data-target-tab="all" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
                         <div class="card-glass-glow"></div>
                         <div class="d-flex justify-content-between align-items-start">
                             <div>

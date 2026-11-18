@@ -200,6 +200,12 @@
         .border-primary {
             border-color: var(--app-primary, #0d6efd) !important;
         }
+        .border-primary.border-opacity-25 {
+            border-color: color-mix(in srgb, var(--app-primary, #0d6efd) 25%, transparent) !important;
+        }
+        .border-primary.border-opacity-50 {
+            border-color: color-mix(in srgb, var(--app-primary, #0d6efd) 50%, transparent) !important;
+        }
         .bg-primary {
             background-color: var(--app-primary, #0d6efd) !important;
         }
@@ -212,6 +218,43 @@
         .bg-primary.bg-opacity-25 {
             background-color: color-mix(in srgb, var(--app-primary, #0d6efd) 25%, transparent) !important;
         }
+        .btn-primary {
+            background: var(--app-gradient) !important;
+            border-color: var(--app-primary, #0d6efd) !important;
+            color: #ffffff !important;
+        }
+        .btn-primary:hover,
+        .btn-primary:focus,
+        .btn-primary:active {
+            filter: brightness(1.07);
+            border-color: var(--app-primary, #0d6efd) !important;
+            color: #ffffff !important;
+        }
+        .btn-outline-primary {
+            color: var(--app-primary, #0d6efd) !important;
+            border-color: var(--app-primary, #0d6efd) !important;
+            background-color: transparent;
+        }
+        .btn-outline-primary:hover,
+        .btn-outline-primary:focus,
+        .btn-outline-primary:active,
+        .btn-outline-primary.active {
+            background: var(--app-gradient) !important;
+            border-color: var(--app-primary, #0d6efd) !important;
+            color: #ffffff !important;
+        }
+        .form-check-input:checked {
+            background-color: var(--app-primary, #0d6efd) !important;
+            border-color: var(--app-primary, #0d6efd) !important;
+        }
+        .form-check-input:focus {
+            border-color: var(--app-primary, #0d6efd) !important;
+            box-shadow: 0 0 0 0.22rem color-mix(in srgb, var(--app-primary, #0d6efd) 25%, transparent) !important;
+        }
+        .nav-pills .nav-link.active {
+            background: var(--app-gradient) !important;
+            color: #ffffff !important;
+        }
 
         /* Global Form Control Harmonization */
         .form-control, .form-select {
@@ -222,8 +265,8 @@
         .form-control:focus, .form-select:focus {
             background-color: var(--app-input-bg) !important;
             color: var(--app-input-color) !important;
-            border-color: var(--app-primary) !important;
-            box-shadow: 0 0 0 0.25rem rgba(var(--app-primary-rgb, 13, 110, 253), 0.25);
+            border-color: var(--app-primary, #0d6efd) !important;
+            box-shadow: 0 0 0 0.22rem color-mix(in srgb, var(--app-primary, #0d6efd) 25%, transparent) !important;
         }
         .form-label {
             color: var(--app-card-color) !important;
@@ -1678,8 +1721,14 @@
                 max-height: 320px !important;
                 opacity: 1 !important;
                 overflow-y: auto !important;
-                padding: 0.55rem 0 0.25rem 0 !important;
+                margin: 0 !important;
+                padding: 0.55rem 0.65rem 0.6rem 0.65rem !important;
+                border-bottom-left-radius: inherit !important;
+                border-bottom-right-radius: inherit !important;
                 pointer-events: auto !important;
+            }
+            .widget-expand-card.p-3.is-touch-expanded > .widget-hover-details {
+                margin: 0.65rem -1rem -1rem -1rem !important;
             }
         }
         /* Disable card hover expansion when offcanvas or modal panels are open */
@@ -1785,7 +1834,10 @@
             }
             .widget-expand-card:hover .widget-hover-details {
                 max-height: 320px;
-                padding: 0.55rem 0 0.25rem 0;
+                padding: 0.55rem 0.65rem 0.6rem 0.65rem;
+            }
+            .widget-expand-card.p-3:hover > .widget-hover-details {
+                margin: 0.65rem -1rem -1rem -1rem;
             }
             .folder-tabs-bar .nav-link {
                 padding: 0.5rem 0.85rem;
@@ -2597,8 +2649,34 @@
         return true;
     }
 
+    function activateKpiTarget(card, targetUrl, targetTab) {
+        if (!document.body || document.body.dataset.kpiClick === 'false') return;
+        if (targetTab) {
+            var alpineRoot = card ? card.closest('[x-data]') : null;
+            if (alpineRoot && alpineRoot._x_dataStack && alpineRoot._x_dataStack[0]) {
+                var data = alpineRoot._x_dataStack[0];
+                if (typeof data.setTab === 'function') {
+                    data.setTab(targetTab);
+                } else if ('activeTab' in data) {
+                    data.activeTab = targetTab;
+                }
+            }
+            var scrollAnchor = document.querySelector('.folder-tabs-bar') ||
+                               (card && card.closest('.row') ? card.closest('.row').nextElementSibling : null);
+            if (scrollAnchor && typeof scrollAnchor.scrollIntoView === 'function') {
+                setTimeout(function() {
+                    scrollAnchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 60);
+            }
+            return;
+        }
+        if (targetUrl) {
+            window.location.href = targetUrl;
+        }
+    }
+
     function navigateKpiCard(evt, targetUrl) {
-        if (evt && evt.target && evt.target.closest('a, button, input, select, .bi-info-circle')) return;
+        if (evt && evt.target && evt.target.closest('a, button, input, select, .bi-info-circle, .kpi-nav-pill, .kpi-details-nav-link')) return;
         var card = evt && evt.currentTarget ? evt.currentTarget : (evt && evt.target && evt.target.closest ? evt.target.closest('.metric-card') : null);
         if (isTouchPrimary() && card && card.querySelector('.widget-hover-details')) {
             if (evt && evt.target && evt.target.closest('.widget-hover-details')) return;
@@ -2637,27 +2715,51 @@
                     card.insertBefore(clip, card.firstChild);
                 }
                 var targetUrl = card.getAttribute('data-target-url');
+                var targetTab = card.getAttribute('data-target-tab');
+                if (!targetTab) {
+                    var alpineClick = card.getAttribute('@click') || card.getAttribute('x-on:click') || '';
+                    var mTab = alpineClick.match(/setTab\(\s*['"]([^'"]+)['"]\s*\)/);
+                    if (mTab) {
+                        targetTab = mTab[1];
+                        card.setAttribute('data-target-tab', targetTab);
+                    }
+                }
                 var detailsEl = card.querySelector('.widget-hover-details');
-                if (targetUrl && !card.querySelector('.kpi-nav-pill')) {
+                if (detailsEl && detailsEl.parentElement && detailsEl.parentElement !== card && detailsEl.parentElement.classList.contains('card-body')) {
+                    card.appendChild(detailsEl);
+                }
+                if ((targetUrl || targetTab) && !card.querySelector('.kpi-nav-pill')) {
                     var headerRow = card.querySelector('.card-body > .d-flex.justify-content-between') || card.querySelector('.d-flex.justify-content-between');
                     if (headerRow) {
                         var pill = document.createElement('a');
-                        pill.href = targetUrl;
+                        pill.href = targetUrl || 'javascript:void(0)';
                         pill.className = 'kpi-nav-pill ms-2';
-                        pill.title = 'Zur Detailseite';
-                        pill.setAttribute('aria-label', 'Zur Detailseite');
+                        pill.title = targetTab ? 'Zum Bereich springen' : 'Zur Detailseite';
+                        pill.setAttribute('aria-label', pill.title);
                         pill.innerHTML = '<i class="bi bi-arrow-up-right"></i>';
-                        pill.addEventListener('click', function(ev) { ev.stopPropagation(); });
+                        pill.addEventListener('click', function(ev) {
+                            ev.stopPropagation();
+                            if (targetTab) {
+                                ev.preventDefault();
+                                activateKpiTarget(card, null, targetTab);
+                            }
+                        });
                         headerRow.appendChild(pill);
                     }
                 }
                 if (detailsEl) {
-                    if (targetUrl && !detailsEl.querySelector('.kpi-details-nav-link')) {
+                    if ((targetUrl || targetTab) && !detailsEl.querySelector('.kpi-details-nav-link')) {
                         var footerLink = document.createElement('a');
-                        footerLink.href = targetUrl;
+                        footerLink.href = targetUrl || 'javascript:void(0)';
                         footerLink.className = 'kpi-details-nav-link';
-                        footerLink.innerHTML = '<span>Zur Detailseite</span><i class="bi bi-arrow-right ms-1"></i>';
-                        footerLink.addEventListener('click', function(ev) { ev.stopPropagation(); });
+                        footerLink.innerHTML = '<span>' + (targetTab ? 'Zum Bereich' : 'Zur Detailseite') + '</span><i class="bi bi-arrow-right ms-1"></i>';
+                        footerLink.addEventListener('click', function(ev) {
+                            ev.stopPropagation();
+                            if (targetTab) {
+                                ev.preventDefault();
+                                activateKpiTarget(card, null, targetTab);
+                            }
+                        });
                         detailsEl.appendChild(footerLink);
                     }
                     if (!card.querySelector('.kpi-expand-hint')) {
@@ -2666,18 +2768,28 @@
                         hint.className = 'kpi-expand-hint';
                         hint.setAttribute('aria-hidden', 'true');
                         hint.innerHTML = '<i class="bi bi-chevron-down"></i>';
-                        metricVal.appendChild(hint);
-                    }
-                    if (!card.dataset.kpiTouchBound) {
-                        card.dataset.kpiTouchBound = '1';
-                        var onclickAttr = card.getAttribute('onclick') || '';
-                        if (onclickAttr.indexOf('navigateKpiCard') === -1) {
-                            card.addEventListener('click', function(ev) {
-                                if (!isTouchPrimary()) return;
-                                if (ev.target && ev.target.closest('a, button, input, select, .bi-info-circle, .widget-hover-details')) return;
-                                toggleTouchKpiDetails(card);
-                            });
+                        if (metricVal === card && detailsEl.parentElement === card) {
+                            card.insertBefore(hint, detailsEl);
+                        } else {
+                            metricVal.appendChild(hint);
                         }
+                    }
+                }
+                if (!card.dataset.kpiTouchBound) {
+                    card.dataset.kpiTouchBound = '1';
+                    var onclickAttr = card.getAttribute('onclick') || '';
+                    if (onclickAttr.indexOf('navigateKpiCard') === -1) {
+                        card.addEventListener('click', function(ev) {
+                            if (ev.target && ev.target.closest('a, button, input, select, .bi-info-circle, .kpi-nav-pill, .kpi-details-nav-link, .widget-hover-details')) return;
+                            if (isTouchPrimary() && detailsEl) {
+                                ev.stopPropagation();
+                                toggleTouchKpiDetails(card);
+                                return;
+                            }
+                            if (targetTab && !(card.hasAttribute('@click') || card.hasAttribute('x-on:click'))) {
+                                activateKpiTarget(card, targetUrl, targetTab);
+                            }
+                        }, true);
                     }
                 }
             });

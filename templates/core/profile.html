@@ -4,8 +4,8 @@
 {% block title %}{% trans "Profile & Design Studio" %}{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-xl-11">
+<div class="row">
+    <div class="col-12">
         <div class="d-flex justify-content-between align-items-end mb-4">
             <div>
                 <h2 class="display-5 fw-bold mb-0">{% trans "Settings" %}</h2>
@@ -35,9 +35,9 @@
             {{ form.auto_night_mode.as_hidden }}
             {{ form.dark_mode_config.as_hidden }}
             
-            <div class="row g-4 mb-4">
+            <div class="row g-3 mb-4">
                 <!-- Links: Stammdaten -->
-                <div class="col-lg-6">
+                <div class="col-lg-5">
                     <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
                         <div class="card-header border-0 d-flex align-items-center">
                             <span class="fw-bold"><i class="bi bi-person-vcard me-2 opacity-75"></i>{% trans "Stammdaten" %}</span>
@@ -197,7 +197,7 @@
                 </div>
 
                 <!-- Rechts: Design Studio & Datensicherung -->
-                <div class="col-lg-6 d-flex flex-column gap-4">
+                <div class="col-lg-7 d-flex flex-column gap-3">
                     <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
                         <div class="card-header border-0 d-flex flex-wrap justify-content-between align-items-center gap-2">
                             <span class="fw-bold"><i class="bi bi-magic me-2 opacity-75"></i>{% trans "Design Studio" %}</span>
@@ -393,6 +393,16 @@
                                                             </span>
                                                         </div>
                                                     </div>
+                                                    <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: var(--theme-state-1, #198754); color: inherit;">
+                                                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 small">
+                                                            <span>{% trans "Hauptgehalt" %}</span>
+                                                            <span class="font-monospace fw-bold">+4.200 {{ user.profile.currency|default:"EUR" }}</span>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-center py-1 small">
+                                                            <span>{% trans "Kapitalerträge" %}</span>
+                                                            <span class="font-monospace fw-bold">+630 {{ user.profile.currency|default:"EUR" }}</span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -431,6 +441,16 @@
                                                                 <span>70 % vom Rentenziel</span>
                                                                 <span>Ziel: 3.400 €</span>
                                                             </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: var(--theme-state-8, #6f42c1); color: inherit;">
+                                                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 small">
+                                                            <span>{% trans "Gesetzliche Rente" %}</span>
+                                                            <span class="font-monospace fw-bold">1.650 {{ user.profile.currency|default:"EUR" }}</span>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-center py-1 small">
+                                                            <span>{% trans "Private Vorsorge" %}</span>
+                                                            <span class="font-monospace fw-bold">730 {{ user.profile.currency|default:"EUR" }}</span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -836,6 +856,8 @@
                 studioDemoCard1.style.setProperty('--card-accent', st1Hex);
                 studioDemoCard1.style.background = `linear-gradient(135deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0) 100%), ${st1Hex}`;
                 studioDemoCard1.style.color = st1Txt;
+                const hd1 = studioDemoCard1.querySelector('.widget-hover-details');
+                if (hd1) { hd1.style.backgroundColor = st1Hex; hd1.style.color = st1Txt; }
                 const pill = studioDemoCard1.querySelector('.studio-demo-click-pill');
                 if (pill) pill.style.display = (!chkKpiClickNav || chkKpiClickNav.checked) ? 'inline-block' : 'none';
             }
@@ -843,6 +865,8 @@
                 studioDemoCard2.style.setProperty('--card-accent', st8Hex);
                 studioDemoCard2.style.background = `linear-gradient(135deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0) 100%), ${st8Hex}`;
                 studioDemoCard2.style.color = st8Txt;
+                const hd2 = studioDemoCard2.querySelector('.widget-hover-details');
+                if (hd2) { hd2.style.backgroundColor = st8Hex; hd2.style.color = st8Txt; }
             }
             if (studioLiveResolvedBadge) {
                 const surfaceNames = { tinted: 'Tinted Glass', glass: 'Frosted Glass', solid: 'Classic Solid', brutal: 'Brutalist' };

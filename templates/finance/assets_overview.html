@@ -69,7 +69,7 @@
                 {% if card.id == 'assets_top_total' %}
                 <!-- Total Wealth -->
                 <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
-                    <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
+                    <div class="card metric-card widget-expand-card h-100 p-3" data-target-tab="all" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
                         <div class="card-glass-glow"></div>
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
@@ -111,7 +111,7 @@
                 {% elif card.id == 'assets_top_cash' %}
                 <!-- Liquidity & Emergency Fund -->
                 <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
-                    <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
+                    <div class="card metric-card widget-expand-card h-100 p-3" data-target-tab="all" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
                         <div class="card-glass-glow"></div>
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
@@ -149,7 +149,7 @@
                 {% elif card.id == 'assets_top_depot' %}
                 <!-- ETF Depots & Capital Market -->
                 <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
-                    <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
+                    <div class="card metric-card widget-expand-card h-100 p-3" data-target-tab="depots" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
                         <div class="card-glass-glow"></div>
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
@@ -181,7 +181,7 @@
                 {% elif card.id == 'assets_top_physical' %}
                 <!-- Crypto, Metals & Physical -->
                 <div class="col-12 col-sm-6 col-xl-3 metric-card-col">
-                    <div class="card metric-card widget-expand-card h-100 p-3" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
+                    <div class="card metric-card widget-expand-card h-100 p-3" data-target-tab="physical" style="background: linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%), {{ card.bg_color }}; color: {{ card.text_color }}; border: none;">
                         <div class="card-glass-glow"></div>
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
