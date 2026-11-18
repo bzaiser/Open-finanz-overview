@@ -43,9 +43,9 @@
     
     <div class="flex-grow-1 overflow-auto px-0" style="background-color: var(--app-table-body-bg) !important; height: 0;">
         <table class="table table-sm table-hover align-middle mb-0" 
-               style="font-size: 0.82rem; border-color: var(--app-table-border-color) !important; --bs-table-bg: var(--app-table-body-bg); --bs-table-color: var(--app-table-body-text);">
+               style="font-size: var(--app-fs-sm); border-color: var(--app-table-border-color) !important; --bs-table-bg: var(--app-table-body-bg); --bs-table-color: var(--app-table-body-text);">
             <thead class="sticky-top" style="z-index: 10;">
-                <tr class="text-uppercase" style="font-size: 0.65rem;">
+                <tr class="text-uppercase" style="font-size: var(--app-fs-xs);">
                     <th class="py-2 px-3 border-0 cursor-pointer" @click="sortCol = 'name'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
                         style="background-color: var(--app-table-header-bg) !important; color: var(--app-table-header-text) !important;">
                         <div class="d-flex align-items-center justify-content-between">
@@ -85,10 +85,10 @@
                 <!-- Inline Filters -->
                 <tr>
                     <td class="p-1 px-3 border-0" style="background-color: var(--app-table-filter-bg) !important;">
-                        <input type="text" x-model="colFilters.name" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body" style="font-size: 0.75rem;" placeholder="Filter...">
+                        <input type="text" x-model="colFilters.name" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body" style="font-size: var(--app-fs-xs);" placeholder="Filter...">
                     </td>
                     <td class="p-1 border-0" style="background-color: var(--app-table-filter-bg) !important;">
-                        <input type="text" x-model="colFilters.provider" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body" style="font-size: 0.75rem;" placeholder="Filter...">
+                        <input type="text" x-model="colFilters.provider" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body" style="font-size: var(--app-fs-xs);" placeholder="Filter...">
                     </td>
                     <td class="p-1 px-3 border-0" colspan="3" style="background-color: var(--app-table-filter-bg) !important;"></td>
                 </tr>
@@ -116,7 +116,7 @@
 
     <!-- Summary Footer -->
     <div class="p-3 d-flex justify-content-between align-items-center table-footer" 
-         style="background-color: var(--app-table-header-bg) !important; color: var(--app-table-header-text) !important; border-top-color: var(--app-table-border-color) !important; font-size: 0.8rem;">
+         style="background-color: var(--app-table-header-bg) !important; color: var(--app-table-header-text) !important; border-top-color: var(--app-table-border-color) !important; font-size: var(--app-fs-sm);">
         <div class="d-flex gap-4">
             <span class="small opacity-75 text-uppercase fw-bold">
                 {% trans 'Loans' %}: <span class="text-white" x-text="filteredItems.length"></span>

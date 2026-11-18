@@ -29,7 +29,7 @@
             <div class="card-glass-glow"></div>
             <div class="card-body p-3 d-flex flex-column justify-content-between">
                 <div class="d-flex justify-content-between align-items-start mb-2">
-                    <div class="text-uppercase fw-bold d-flex align-items-center" style="font-size: 0.65rem; letter-spacing: 0.05em; opacity: 0.85;">
+                    <div class="text-uppercase fw-bold d-flex align-items-center" style="font-size: var(--app-fs-xs); letter-spacing: 0.05em; opacity: 0.85;">
                         {{ item.display_title }}
                         <i class="bi bi-info-circle ms-1" 
                            style="color: inherit; opacity: 0.7; cursor: pointer; padding: 4px;"
@@ -70,7 +70,7 @@
                         <span class="ms-1 fs-6 fw-normal opacity-75">{{ profile.currency }}</span>
                     </h3>
                     <div class="mt-2 d-flex flex-wrap align-items-center justify-content-between gap-2">
-                        <span class="opacity-75" style="font-size: 0.72rem;">
+                        <span class="opacity-75" style="font-size: var(--app-fs-xs);">
                             {% if item.id == 'expected_payout' %}
                                 <i class="bi bi-file-earmark-text me-1"></i>{% trans "Sum from contracts" %} <span class="ms-1">(Nominal)</span>
                             {% else %}
@@ -79,19 +79,19 @@
                         </span>
                         {% if risk_scenario_active and kpi_deltas %}
                             {% if item.id == 'current_assets' and kpi_deltas.current_assets %}
-                                <span class="badge rounded-pill text-white fw-bold font-monospace shadow-sm" style="font-size: 0.85rem; padding: 0.35em 0.65em; background: rgba(0,0,0,0.68); border: 1px solid rgba(255,255,255,0.35);">Δ {% if kpi_deltas.current_assets > 0 %}+{% endif %}{{ kpi_deltas.current_assets|intcomma }} {{ profile.currency }}</span>
+                                <span class="badge rounded-pill text-white fw-bold font-monospace shadow-sm" style="font-size: var(--app-fs-sm); padding: 0.35em 0.65em; background: rgba(0,0,0,0.68); border: 1px solid rgba(255,255,255,0.35);">Δ {% if kpi_deltas.current_assets > 0 %}+{% endif %}{{ kpi_deltas.current_assets|intcomma }} {{ profile.currency }}</span>
                             {% elif item.id == 'monthly_income' and kpi_deltas.monthly_income %}
-                                <span class="badge rounded-pill text-white fw-bold font-monospace shadow-sm" style="font-size: 0.85rem; padding: 0.35em 0.65em; background: rgba(0,0,0,0.68); border: 1px solid rgba(255,255,255,0.35);">Δ {% if kpi_deltas.monthly_income > 0 %}+{% endif %}{{ kpi_deltas.monthly_income|intcomma }} {{ profile.currency }}</span>
+                                <span class="badge rounded-pill text-white fw-bold font-monospace shadow-sm" style="font-size: var(--app-fs-sm); padding: 0.35em 0.65em; background: rgba(0,0,0,0.68); border: 1px solid rgba(255,255,255,0.35);">Δ {% if kpi_deltas.monthly_income > 0 %}+{% endif %}{{ kpi_deltas.monthly_income|intcomma }} {{ profile.currency }}</span>
                             {% elif item.id == 'monthly_expenses' and kpi_deltas.monthly_expenses %}
-                                <span class="badge rounded-pill text-white fw-bold font-monospace shadow-sm" style="font-size: 0.85rem; padding: 0.35em 0.65em; background: rgba(0,0,0,0.68); border: 1px solid rgba(255,255,255,0.35);">Δ {% if kpi_deltas.monthly_expenses > 0 %}+{% endif %}{{ kpi_deltas.monthly_expenses|intcomma }} {{ profile.currency }}</span>
+                                <span class="badge rounded-pill text-white fw-bold font-monospace shadow-sm" style="font-size: var(--app-fs-sm); padding: 0.35em 0.65em; background: rgba(0,0,0,0.68); border: 1px solid rgba(255,255,255,0.35);">Δ {% if kpi_deltas.monthly_expenses > 0 %}+{% endif %}{{ kpi_deltas.monthly_expenses|intcomma }} {{ profile.currency }}</span>
                             {% elif item.id == 'total_pensions' and kpi_deltas.total_pensions %}
-                                <span class="badge rounded-pill text-white fw-bold font-monospace shadow-sm" style="font-size: 0.85rem; padding: 0.35em 0.65em; background: rgba(0,0,0,0.68); border: 1px solid rgba(255,255,255,0.35);">Δ {% if kpi_deltas.total_pensions > 0 %}+{% endif %}{{ kpi_deltas.total_pensions|intcomma }} {{ profile.currency }}</span>
+                                <span class="badge rounded-pill text-white fw-bold font-monospace shadow-sm" style="font-size: var(--app-fs-sm); padding: 0.35em 0.65em; background: rgba(0,0,0,0.68); border: 1px solid rgba(255,255,255,0.35);">Δ {% if kpi_deltas.total_pensions > 0 %}+{% endif %}{{ kpi_deltas.total_pensions|intcomma }} {{ profile.currency }}</span>
                             {% elif item.id == 'current_pension_payout' and kpi_deltas.current_pension_payout %}
-                                <span class="badge rounded-pill text-white fw-bold font-monospace shadow-sm" style="font-size: 0.85rem; padding: 0.35em 0.65em; background: rgba(0,0,0,0.68); border: 1px solid rgba(255,255,255,0.35);">Δ {% if kpi_deltas.current_pension_payout > 0 %}+{% endif %}{{ kpi_deltas.current_pension_payout|intcomma }} {{ profile.currency }}</span>
+                                <span class="badge rounded-pill text-white fw-bold font-monospace shadow-sm" style="font-size: var(--app-fs-sm); padding: 0.35em 0.65em; background: rgba(0,0,0,0.68); border: 1px solid rgba(255,255,255,0.35);">Δ {% if kpi_deltas.current_pension_payout > 0 %}+{% endif %}{{ kpi_deltas.current_pension_payout|intcomma }} {{ profile.currency }}</span>
                             {% elif item.id == 'total_real_estate' and kpi_deltas.total_real_estate %}
-                                <span class="badge rounded-pill text-white fw-bold font-monospace shadow-sm" style="font-size: 0.85rem; padding: 0.35em 0.65em; background: rgba(0,0,0,0.68); border: 1px solid rgba(255,255,255,0.35);">Δ {% if kpi_deltas.total_real_estate > 0 %}+{% endif %}{{ kpi_deltas.total_real_estate|intcomma }} {{ profile.currency }}</span>
+                                <span class="badge rounded-pill text-white fw-bold font-monospace shadow-sm" style="font-size: var(--app-fs-sm); padding: 0.35em 0.65em; background: rgba(0,0,0,0.68); border: 1px solid rgba(255,255,255,0.35);">Δ {% if kpi_deltas.total_real_estate > 0 %}+{% endif %}{{ kpi_deltas.total_real_estate|intcomma }} {{ profile.currency }}</span>
                             {% elif item.id == 'total_combined_assets' and kpi_deltas.total_combined_assets %}
-                                <span class="badge rounded-pill text-white fw-bold font-monospace shadow-sm" style="font-size: 0.85rem; padding: 0.35em 0.65em; background: rgba(0,0,0,0.68); border: 1px solid rgba(255,255,255,0.35);">Δ {% if kpi_deltas.total_combined_assets > 0 %}+{% endif %}{{ kpi_deltas.total_combined_assets|intcomma }} {{ profile.currency }}</span>
+                                <span class="badge rounded-pill text-white fw-bold font-monospace shadow-sm" style="font-size: var(--app-fs-sm); padding: 0.35em 0.65em; background: rgba(0,0,0,0.68); border: 1px solid rgba(255,255,255,0.35);">Δ {% if kpi_deltas.total_combined_assets > 0 %}+{% endif %}{{ kpi_deltas.total_combined_assets|intcomma }} {{ profile.currency }}</span>
                             {% endif %}
                         {% endif %}
                     </div>
@@ -106,7 +106,7 @@
                             {% endif %}
                         </div>
                         {% if item.progress.label %}
-                        <div class="opacity-85 fw-semibold" style="font-size: 0.68rem;">{{ item.progress.label }}</div>
+                        <div class="opacity-85 fw-semibold" style="font-size: var(--app-fs-xs);">{{ item.progress.label }}</div>
                         {% endif %}
                     </div>
                     {% endif %}
@@ -115,57 +115,57 @@
                 <!-- Hover Expand Details (like in /pensions) -->
                 <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ item.bg_color|default:'var(--app-card-bg)' }}; background-image: none; color: {{ item.text_color|default:'inherit' }};">
                     {% if item.id == 'current_assets' %}
-                        <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Asset Breakdown" %}:</span>
+                        <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: var(--app-fs-xs);">{% trans "Asset Breakdown" %}:</span>
                         {% for a in table_datasets.asset_table_widget %}
-                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: var(--app-fs-xs);">
                             <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ a.name }}">{{ a.name }}</span>
                             <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">{{ a.amount|intcomma }} <span class="small font-normal opacity-75">{{ profile.currency }}</span></span>
                         </div>
                         {% empty %}
-                        <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No entries." %}</div>
+                        <div class="small opacity-75 py-1" style="font-size: var(--app-fs-xs);">{% trans "No entries." %}</div>
                         {% endfor %}
 
                     {% elif item.id == 'monthly_income' %}
-                        <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Income Sources" %}:</span>
+                        <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: var(--app-fs-xs);">{% trans "Income Sources" %}:</span>
                         {% for inc in table_datasets.income_table_widget %}
-                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: var(--app-fs-xs);">
                             <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ inc.name }}">{{ inc.name }}</span>
                             <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">+{{ inc.amount|intcomma }} <span class="small font-normal opacity-75">{{ profile.currency }}</span></span>
                         </div>
                         {% empty %}
-                        <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No entries." %}</div>
+                        <div class="small opacity-75 py-1" style="font-size: var(--app-fs-xs);">{% trans "No entries." %}</div>
                         {% endfor %}
 
                     {% elif item.id == 'monthly_expenses' %}
-                        <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Expenses Breakdown" %}:</span>
+                        <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: var(--app-fs-xs);">{% trans "Expenses Breakdown" %}:</span>
                         {% for exp in table_datasets.expense_table_widget %}
-                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: var(--app-fs-xs);">
                             <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ exp.name }}">{{ exp.name }}</span>
                             <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">-{{ exp.amount|intcomma }} <span class="small font-normal opacity-75">{{ profile.currency }}</span></span>
                         </div>
                         {% empty %}
-                        <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No entries." %}</div>
+                        <div class="small opacity-75 py-1" style="font-size: var(--app-fs-xs);">{% trans "No entries." %}</div>
                         {% endfor %}
 
                     {% elif item.id == 'current_pension_payout' %}
-                        <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Aktuelle Rente (am Stichtag)" %}:</span>
+                        <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: var(--app-fs-xs);">{% trans "Aktuelle Rente (am Stichtag)" %}:</span>
                         {% for p in table_datasets.current_pension_payout_widget %}
-                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: var(--app-fs-xs);">
                             <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ p.name }}">{{ p.name }}</span>
                             <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">
                                 +{{ p.amount|intcomma }} <span class="small font-normal opacity-75">{{ profile.currency }}</span>
                             </span>
                         </div>
                         {% empty %}
-                        <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No entries." %}</div>
+                        <div class="small opacity-75 py-1" style="font-size: var(--app-fs-xs);">{% trans "No entries." %}</div>
                         {% endfor %}
 
                     {% elif item.id == 'total_pensions' or item.id == 'expected_payout' %}
                         {% if item.id == 'total_pensions' %}
-                        <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Angespartes Kapital (am Stichtag)" %}:</span>
+                        <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: var(--app-fs-xs);">{% trans "Angespartes Kapital (am Stichtag)" %}:</span>
                         {% for p in table_datasets.pension_table_widget %}
                             {% if p.pension_type != 'statutory' and p.capital_balance > 0 %}
-                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: var(--app-fs-xs);">
                                 <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ p.name }}">{{ p.name }}</span>
                                 <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">
                                     {{ p.capital_balance|intcomma }} <span class="small font-normal opacity-75">{{ profile.currency }}</span>
@@ -173,28 +173,28 @@
                             </div>
                             {% endif %}
                         {% empty %}
-                        <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No entries." %}</div>
+                        <div class="small opacity-75 py-1" style="font-size: var(--app-fs-xs);">{% trans "No entries." %}</div>
                         {% endfor %}
-                        <span class="d-block text-uppercase fw-bold opacity-75 mb-1 mt-2" style="font-size: 0.65rem;">{% trans "Pension Contracts" %}:</span>
+                        <span class="d-block text-uppercase fw-bold opacity-75 mb-1 mt-2" style="font-size: var(--app-fs-xs);">{% trans "Pension Contracts" %}:</span>
                         {% else %}
-                        <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Pension Contracts" %}:</span>
+                        <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: var(--app-fs-xs);">{% trans "Pension Contracts" %}:</span>
                         {% endif %}
                         {% for p in table_datasets.pension_table_widget %}
                             {% if p.pension_type == 'statutory' %}
-                                <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                                <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: var(--app-fs-xs);">
                                     <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ p.name }} (EP)">{{ p.name }} (EP)</span>
                                     <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">
                                         {{ p.pension_points|floatformat:"-2" }} <span class="small font-normal opacity-75">EP</span>
                                     </span>
                                 </div>
-                                <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                                <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: var(--app-fs-xs);">
                                     <span class="text-truncate flex-grow-1 opacity-90" style="min-width: 0;" title="{{ p.name }} (Betrag)">{{ p.name }} (Betrag)</span>
                                     <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">
                                         {{ p.gross_payout|intcomma }} <span class="small font-normal opacity-75">{{ profile.currency }}</span>
                                     </span>
                                 </div>
                             {% else %}
-                                <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                                <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: var(--app-fs-xs);">
                                     <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ p.name }}">{{ p.name }}</span>
                                     <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">
                                         {{ p.amount|intcomma }} <span class="small font-normal opacity-75">{{ profile.currency }}</span>
@@ -202,57 +202,57 @@
                                 </div>
                             {% endif %}
                         {% empty %}
-                        <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No entries." %}</div>
+                        <div class="small opacity-75 py-1" style="font-size: var(--app-fs-xs);">{% trans "No entries." %}</div>
                         {% endfor %}
 
                     {% elif item.id == 'total_physical_assets' %}
-                        <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Physical Assets" %}:</span>
+                        <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: var(--app-fs-xs);">{% trans "Physical Assets" %}:</span>
                         {% for pa in user.physical_assets.all %}
-                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: var(--app-fs-xs);">
                             <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ pa.name }}">{{ pa.name }}</span>
                             <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">{{ pa.value|intcomma }} <span class="small font-normal opacity-75">{{ profile.currency }}</span></span>
                         </div>
                         {% empty %}
-                        <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No entries." %}</div>
+                        <div class="small opacity-75 py-1" style="font-size: var(--app-fs-xs);">{% trans "No entries." %}</div>
                         {% endfor %}
 
                     {% elif item.id == 'total_real_estate' %}
-                        <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Real Estate Objects" %}:</span>
+                        <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: var(--app-fs-xs);">{% trans "Real Estate Objects" %}:</span>
                         {% for re in user.real_estates.all %}
-                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: var(--app-fs-xs);">
                             <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ re.name }}">{{ re.name }}</span>
                             <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">{{ re.property_value|intcomma }} <span class="small font-normal opacity-75">{{ profile.currency }}</span></span>
                         </div>
                         {% empty %}
-                        <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No entries." %}</div>
+                        <div class="small opacity-75 py-1" style="font-size: var(--app-fs-xs);">{% trans "No entries." %}</div>
                         {% endfor %}
 
                     {% elif item.id == 'total_debts' %}
-                        <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Loans & Debts" %}:</span>
+                        <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: var(--app-fs-xs);">{% trans "Loans & Debts" %}:</span>
                         {% for l in table_datasets.loan_table_widget %}
-                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: var(--app-fs-xs);">
                             <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ l.name }}">{{ l.name }}</span>
                             <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">-{{ l.current_balance|intcomma }} <span class="small font-normal opacity-75">{{ profile.currency }}</span></span>
                         </div>
                         {% empty %}
-                        <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No entries." %}</div>
+                        <div class="small opacity-75 py-1" style="font-size: var(--app-fs-xs);">{% trans "No entries." %}</div>
                         {% endfor %}
 
                     {% elif item.id == 'total_combined_assets' %}
-                        <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Net Worth Breakdown" %}:</span>
-                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                        <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: var(--app-fs-xs);">{% trans "Net Worth Breakdown" %}:</span>
+                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: var(--app-fs-xs);">
                             <span class="text-truncate flex-grow-1" style="min-width: 0;">{% trans "Geldvermögen" %}</span>
                             <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">{{ current_assets_total|intcomma }} <span class="small font-normal opacity-75">{{ profile.currency }}</span></span>
                         </div>
-                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: var(--app-fs-xs);">
                             <span class="text-truncate flex-grow-1" style="min-width: 0;">{% trans "Sachwerte" %}</span>
                             <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">{{ current_physical_assets_total|intcomma }} <span class="small font-normal opacity-75">{{ profile.currency }}</span></span>
                         </div>
-                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: var(--app-fs-xs);">
                             <span class="text-truncate flex-grow-1" style="min-width: 0;">{% trans "Immobilien" %}</span>
                             <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">{{ current_real_estate_total|intcomma }} <span class="small font-normal opacity-75">{{ profile.currency }}</span></span>
                         </div>
-                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: var(--app-fs-xs);">
                             <span class="text-truncate flex-grow-1" style="min-width: 0;">{% trans "Verbindlichkeiten" %}</span>
                             <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">-{{ current_debts_total|intcomma }} <span class="small font-normal opacity-75">{{ profile.currency }}</span></span>
                         </div>

@@ -261,10 +261,10 @@
                                                             <div class="d-flex justify-content-between align-items-center">
                                                                 <span class="fw-semibold" x-text="item.name"></span>
                                                                 <template x-if="isTemplateAlreadyPresent(item)">
-                                                                    <span class="badge wizard-badge-muted" style="font-size: 0.65rem;">{% trans "Vorhanden" %}</span>
+                                                                    <span class="badge wizard-badge-muted" style="font-size: var(--app-fs-xs);">{% trans "Vorhanden" %}</span>
                                                                 </template>
                                                             </div>
-                                                            <div class="d-flex justify-content-between align-items-center opacity-75 mt-1" style="font-size: 0.75rem;">
+                                                            <div class="d-flex justify-content-between align-items-center opacity-75 mt-1" style="font-size: var(--app-fs-xs);">
                                                                 <span class="badge wizard-badge-muted" x-text="item.category_name"></span>
                                                                 <span class="opacity-75" x-text="item.frequency === 'monthly' ? 'Monatlich' : 'Jährlich'"></span>
                                                             </div>
@@ -442,7 +442,7 @@
                             <input class="form-check-input" type="checkbox" x-model="child.receives_child_benefit" :id="'wizChildKg_' + cIdx">
                             <label class="form-check-label small" :for="'wizChildKg_' + cIdx">{% trans "Kindergeld" %}</label>
                         </div>
-                        <span class="badge bg-primary bg-opacity-10 text-primary" style="font-size: 0.65rem;" x-text="childIndependenceInfo(child)"></span>
+                        <span class="badge bg-primary bg-opacity-10 text-primary" style="font-size: var(--app-fs-xs);" x-text="childIndependenceInfo(child)"></span>
                     </div>
                     <div class="col-md-1 text-end">
                         <button type="button" @click="removeChild(cIdx)" class="btn btn-sm btn-outline-danger" title="{% trans 'Entfernen' %}">

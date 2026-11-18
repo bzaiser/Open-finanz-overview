@@ -70,13 +70,13 @@
                             <div class="spinner-grow spinner-grow-sm text-primary me-2" role="status"></div>
                             <span class="small fw-bold text-uppercase text-muted">KI Live Konsole</span>
                         </div>
-                        <button onclick="copyAiLogs()" class="btn btn-sm btn-outline-secondary py-0" style="font-size: 0.75rem;">
+                        <button onclick="copyAiLogs()" class="btn btn-sm btn-outline-secondary py-0" style="font-size: var(--app-fs-xs);">
                             <i class="bi bi-clipboard"></i> Logs kopieren
                         </button>
                     </div>
                     <div id="ai-log-stream" 
                          class="p-3 bg-dark text-success rounded shadow-lg border border-secondary" 
-                         style="height: 250px; overflow-y: auto; font-family: 'Courier New', Courier, monospace; font-size: 0.85rem; line-height: 1.4; scroll-behavior: smooth;">
+                         style="height: 250px; overflow-y: auto; font-family: 'Courier New', Courier, monospace; font-size: var(--app-fs-sm); line-height: 1.4; scroll-behavior: smooth;">
                         <span class="text-muted">Verbindung hergestellt. Warte auf KI-Kontext...</span>
                     </div>
                 </div>

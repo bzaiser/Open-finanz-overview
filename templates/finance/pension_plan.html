@@ -18,7 +18,7 @@
                 {% trans "Retirement Planning" %}
             </h2>
             <p class="text-muted small mb-0 d-flex align-items-center flex-wrap gap-2">
-                <span class="badge rounded-pill bg-body-tertiary text-body border border-secondary border-opacity-25 px-2.5 py-1" style="font-size: 0.75rem;">
+                <span class="badge rounded-pill bg-body-tertiary text-body border border-secondary border-opacity-25 px-2.5 py-1" style="font-size: var(--app-fs-xs);">
                     <i class="bi {% if life_stage == 'retirement' %}bi-balloon-heart text-success{% elif life_stage == 'transition' %}bi-hourglass-split text-warning{% else %}bi-piggy-bank text-info{% endif %} me-1"></i>
                     {% if life_stage == 'retirement' %}
                         {% trans "Life Stage: Retirement" %}
@@ -31,11 +31,11 @@
                         {% trans "Target Retirement Age" %}: <strong class="text-primary" x-text="retirementAge + ' {% trans "years" %} (' + retirementYear + ')'"></strong>
                     </span>
                 </span>
-                <div class="d-inline-flex align-items-center gap-1 bg-body-tertiary border border-secondary border-opacity-25 rounded-pill px-2.5 py-0.5" style="font-size: 0.75rem;">
+                <div class="d-inline-flex align-items-center gap-1 bg-body-tertiary border border-secondary border-opacity-25 rounded-pill px-2.5 py-0.5" style="font-size: var(--app-fs-xs);">
                     <i class="bi bi-person-badge text-primary"></i>
                     <span class="text-muted">{% trans "Lebenssituation" %}:</span>
                     <select class="form-select form-select-sm border-0 bg-transparent fw-semibold py-0 ps-1 pe-4 shadow-none"
-                            style="width: auto; font-size: 0.75rem; cursor: pointer;"
+                            style="width: auto; font-size: var(--app-fs-xs); cursor: pointer;"
                             aria-label="{% trans 'Lebenssituation umschalten' %}"
                             @change="window.location.href = '?tab=' + activeTab + '&situation=' + encodeURIComponent($event.target.value)">
                         {% for val, label in situation_choices %}
@@ -49,7 +49,7 @@
                     {% endif %}
                 </div>
                 {% if protection_audit.children_summary %}
-                <span class="badge rounded-pill bg-body-tertiary text-body border border-secondary border-opacity-25 px-2.5 py-1" style="font-size: 0.75rem;"
+                <span class="badge rounded-pill bg-body-tertiary text-body border border-secondary border-opacity-25 px-2.5 py-1" style="font-size: var(--app-fs-xs);"
                       title="{% trans 'Im Profil hinterlegte Kinder (relevant für ALG I 67%, Halbwaisenrente, Risikoleben & DRV-Kindererziehungszeiten)' %}">
                     <i class="bi bi-people-fill text-primary me-1"></i>
                     {% for ch in protection_audit.children_summary %}
@@ -94,13 +94,13 @@
                         <div class="card-glass-glow"></div>
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: var(--app-fs-xs); letter-spacing: 0.05em;">
                                     {% trans "Vorsorge & Rentenbasis" %}
                                 </span>
                                 <h3 class="fw-bold mb-0 mt-1 font-monospace">
                                     {% if life_stage == 'retirement' %}{{ current_total_monthly_payout|floatformat:2|intcomma }}{% else %}{{ total_monthly_net|floatformat:2|intcomma }}{% endif %} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span>
                                 </h3>
-                                <span class="small opacity-85" style="font-size: 0.75rem;">
+                                <span class="small opacity-85" style="font-size: var(--app-fs-xs);">
                                     {% if pension_gap > 0 %}
                                         {% trans "Lücke" %}: -{{ pension_gap_abs|floatformat:0|intcomma }} {{ user.profile.currency }}
                                     {% else %}
@@ -110,7 +110,7 @@
                             </div>
                             <div class="ms-2"><i class="bi {{ card.icon|default:'bi-piggy-bank' }} fs-5"></i></div>
                         </div>
-                        <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
+                        <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: var(--app-fs-xs); background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
                             <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
                                 <span>{% trans "Gesetzliche Rente" %}:</span>
                                 <span class="font-monospace fw-bold">{% if life_stage == 'retirement' %}{{ statutory_current_monthly_payout|floatformat:0|intcomma }}{% else %}{{ statutory_monthly_net|floatformat:0|intcomma }}{% endif %} €</span>
@@ -134,13 +134,13 @@
                         <div class="card-glass-glow"></div>
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: var(--app-fs-xs); letter-spacing: 0.05em;">
                                     {% trans "Absicherungs-Check" %}
                                 </span>
                                 <h3 class="fw-bold mb-0 mt-1 font-monospace">
                                     {{ audit_overview.ok_count }} / {{ audit_overview.relevant_count }} <span class="fs-6 opacity-75">{% trans "OK" %}</span>
                                 </h3>
-                                <span class="small opacity-85" style="font-size: 0.75rem;">
+                                <span class="small opacity-85" style="font-size: var(--app-fs-xs);">
                                     {% if audit_overview.gap_count > 0 %}
                                         {{ audit_overview.gap_count }} {% trans "offene Lücke(n) prüfen" %}
                                     {% else %}
@@ -150,7 +150,7 @@
                             </div>
                             <div class="ms-2"><i class="bi {{ card.icon|default:'bi-shield-check' }} fs-5"></i></div>
                         </div>
-                        <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
+                        <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: var(--app-fs-xs); background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
                             {% for item in protection_audit.checklist %}
                             <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10">
                                 <span class="text-truncate me-2">{{ item.title }}</span>
@@ -172,20 +172,20 @@
                         <div class="card-glass-glow"></div>
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: var(--app-fs-xs); letter-spacing: 0.05em;">
                                     {% trans "Versicherungsbeiträge" %}
                                 </span>
                                 <h3 class="fw-bold mb-0 mt-1 font-monospace">
                                     {{ protection_audit.monthly_insurance_premiums|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span>
                                 </h3>
-                                <span class="small opacity-85" style="font-size: 0.75rem;">
+                                <span class="small opacity-85" style="font-size: var(--app-fs-xs);">
                                     {{ audit_overview.active_policies_count }} {% trans "aktive Police(n) / Monat" %}
                                 </span>
                             </div>
                             <div class="ms-2"><i class="bi {{ card.icon|default:'bi-file-earmark-check' }} fs-5"></i></div>
                         </div>
-                        <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
-                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Aktive Verträge" %}:</span>
+                        <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: var(--app-fs-xs); background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
+                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: var(--app-fs-xs);">{% trans "Aktive Verträge" %}:</span>
                             {% for ins in insurances %}
                                 {% if ins.is_active %}
                                 <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
@@ -207,13 +207,13 @@
                         <div class="card-glass-glow"></div>
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: var(--app-fs-xs); letter-spacing: 0.05em;">
                                     {% trans "Notfall- & Risikopuffer" %}
                                 </span>
                                 <h3 class="fw-bold mb-0 mt-1 font-monospace">
                                     {{ protection_audit.emergency_months_covered }} <span class="fs-6 opacity-75">/ {{ protection_audit.emergency_target_months }} {% trans "Mt." %}</span>
                                 </h3>
-                                <span class="small opacity-85" style="font-size: 0.75rem;">
+                                <span class="small opacity-85" style="font-size: var(--app-fs-xs);">
                                     {% if protection_audit.disability_gap_primary > 0 %}
                                         {% trans "BU-Lücke" %}: -{{ protection_audit.disability_gap_primary|floatformat:0|intcomma }} €/Mt.
                                     {% else %}
@@ -223,7 +223,7 @@
                             </div>
                             <div class="ms-2"><i class="bi {{ card.icon|default:'bi-shield-exclamation' }} fs-5"></i></div>
                         </div>
-                        <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
+                        <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: var(--app-fs-xs); background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
                             <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
                                 <span>{% trans "Notfallreserve" %}:</span>
                                 <span class="font-monospace fw-bold">{{ protection_audit.emergency_reserve|floatformat:0|intcomma }} €</span>
@@ -254,7 +254,7 @@
         <li class="nav-item" role="presentation">
             <button class="nav-link" :class="activeTab === 'insurances' ? 'active' : ''" @click="setTab('insurances')" type="button" role="tab">
                 <i class="bi bi-shield-check me-2 text-success"></i>{% trans "Versicherungen & Absicherung" %}
-                <span class="badge bg-secondary-subtle text-body ms-1" style="font-size: 0.7rem;" x-text="insurances.length"></span>
+                <span class="badge bg-secondary-subtle text-body ms-1" style="font-size: var(--app-fs-xs);" x-text="insurances.length"></span>
             </button>
         </li>
         <li class="nav-item" role="presentation">
@@ -265,7 +265,7 @@
         <li class="nav-item" role="presentation">
             <button class="nav-link" :class="activeTab === 'documents' ? 'active' : ''" @click="setTab('documents')" type="button" role="tab">
                 <i class="bi bi-folder2-open me-2 text-info"></i>{% trans "Dokumente" %}
-                <span class="badge bg-secondary-subtle text-body ms-1" style="font-size: 0.7rem;">{{ domain_documents.total_count }}</span>
+                <span class="badge bg-secondary-subtle text-body ms-1" style="font-size: var(--app-fs-xs);">{{ domain_documents.total_count }}</span>
             </button>
         </li>
     </ul>
@@ -283,13 +283,13 @@
                         <div class="card-glass-glow"></div>
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: var(--app-fs-xs); letter-spacing: 0.05em;">
                                     {% if life_stage == 'retirement' %}{% trans "Statutory Pension (Current)" %}{% else %}{% trans "Statutory Pension (Net)" %}{% endif %}
                                 </span>
                                 <h3 class="fw-bold mb-0 mt-1 font-monospace">
                                     {% if life_stage == 'retirement' %}{{ statutory_current_monthly_payout|floatformat:2|intcomma }}{% else %}{{ statutory_monthly_net|floatformat:2|intcomma }}{% endif %} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span>
                                 </h3>
-                                <span class="small opacity-75" style="font-size: 0.75rem;">
+                                <span class="small opacity-75" style="font-size: var(--app-fs-xs);">
                                     {{ total_statutory_points|floatformat:2 }} {% trans "Pension Points" %}
                                 </span>
                             </div>
@@ -299,10 +299,10 @@
                         </div>
                         <!-- Hover Expand Details: Statutory Contracts -->
                         <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
-                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Statutory Contracts" %}:</span>
+                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: var(--app-fs-xs);">{% trans "Statutory Contracts" %}:</span>
                             {% for p in pensions %}
                                 {% if p.pension_type == 'statutory' %}
-                                <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10" style="font-size: 0.75rem;">
+                                <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10" style="font-size: var(--app-fs-xs);">
                                     <span>{{ p.provider }}</span>
                                     <span class="font-monospace fw-bold">
                                         {% if p.expected_payout_at_retirement %}{{ p.expected_payout_at_retirement|floatformat:2|intcomma }} €{% else %}-{% endif %}
@@ -321,13 +321,13 @@
                         <div class="card-glass-glow"></div>
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: var(--app-fs-xs); letter-spacing: 0.05em;">
                                     {% trans "Private Pension Capital" %}
                                 </span>
                                 <h3 class="fw-bold mb-0 mt-1 font-monospace">
                                     {{ total_capital_value|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span>
                                 </h3>
-                                <span class="small opacity-75" style="font-size: 0.75rem;">
+                                <span class="small opacity-75" style="font-size: var(--app-fs-xs);">
                                     {% if life_stage == 'retirement' %}
                                         +{{ private_current_monthly_payout|floatformat:2|intcomma }} {{ user.profile.currency }} / {% trans "month net today" %}
                                     {% else %}
@@ -341,10 +341,10 @@
                         </div>
                         <!-- Hover Expand Details: Private Contracts (Capital & Payout) -->
                         <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
-                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Angespartes Kapital (Verträge)" %}:</span>
+                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: var(--app-fs-xs);">{% trans "Angespartes Kapital (Verträge)" %}:</span>
                             {% for p in pensions %}
                                 {% if p.pension_type != 'statutory' and p.current_value > 0 %}
-                                <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                                <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: var(--app-fs-xs);">
                                     <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ p.provider }}">{{ p.provider }}</span>
                                     <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">
                                         {{ p.current_value|floatformat:2|intcomma }} <span class="small font-normal opacity-75">{{ user.profile.currency }}</span>
@@ -352,13 +352,13 @@
                                 </div>
                                 {% endif %}
                             {% empty %}
-                                <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No entries." %}</div>
+                                <div class="small opacity-75 py-1" style="font-size: var(--app-fs-xs);">{% trans "No entries." %}</div>
                             {% endfor %}
 
-                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1 mt-2" style="font-size: 0.65rem;">{% trans "Vorsorgeverträge (Monatsrente)" %}:</span>
+                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1 mt-2" style="font-size: var(--app-fs-xs);">{% trans "Vorsorgeverträge (Monatsrente)" %}:</span>
                             {% for p in pensions %}
                                 {% if p.pension_type != 'statutory' and p.payout_type != 'one_time' and p.expected_payout_at_retirement and p.expected_payout_at_retirement > 0 %}
-                                <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                                <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: var(--app-fs-xs);">
                                     <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ p.provider }}">{{ p.provider }}</span>
                                     <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">
                                         +{{ p.expected_payout_at_retirement|floatformat:2|intcomma }} {{ user.profile.currency }}/mtl.
@@ -366,7 +366,7 @@
                                 </div>
                                 {% endif %}
                             {% empty %}
-                                <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No entries." %}</div>
+                                <div class="small opacity-75 py-1" style="font-size: var(--app-fs-xs);">{% trans "No entries." %}</div>
                             {% endfor %}
                         </div>
                     </div>
@@ -378,13 +378,13 @@
                         <div class="card-glass-glow"></div>
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: var(--app-fs-xs); letter-spacing: 0.05em;">
                                     {% if life_stage == 'retirement' %}{% trans "Current Net Income" %}{% else %}{% trans "Total Monthly Net Payout" %}{% endif %}
                                 </span>
                                 <h3 class="fw-bold mb-0 mt-1 font-monospace">
                                     {% if life_stage == 'retirement' %}{{ current_total_monthly_payout|floatformat:2|intcomma }}{% else %}{{ total_monthly_net|floatformat:2|intcomma }}{% endif %} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span>
                                 </h3>
-                                <span class="small opacity-75" style="font-size: 0.75rem;">
+                                <span class="small opacity-75" style="font-size: var(--app-fs-xs);">
                                     {% if life_stage == 'retirement' %}
                                         {% trans "Actual currently flowing pension payout" %}
                                     {% else %}
@@ -398,9 +398,9 @@
                         </div>
                         <!-- Hover Expand Details: Breakdown of all contracts -->
                         <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
-                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "All Contracts (Net Pension & Start)" %}:</span>
+                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: var(--app-fs-xs);">{% trans "All Contracts (Net Pension & Start)" %}:</span>
                             {% for p in pensions %}
-                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10" style="font-size: 0.75rem;">
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10" style="font-size: var(--app-fs-xs);">
                                 <span>{{ p.provider }}</span>
                                 <span class="font-monospace fw-bold">
                                     {% if p.expected_payout_at_retirement %}{{ p.expected_payout_at_retirement|floatformat:2|intcomma }} €{% else %}-{% endif %}
@@ -418,7 +418,7 @@
                         <div class="card-glass-glow"></div>
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: var(--app-fs-xs); letter-spacing: 0.05em;">
                                     {% if life_stage == 'retirement' %}
                                         {% if pension_gap <= 0 %}{% trans "Retirement Coverage (Current)" %}{% else %}{% trans "Retirement Gap (Current)" %}{% endif %}
                                     {% else %}
@@ -428,7 +428,7 @@
                                 <h3 class="fw-bold mb-0 mt-1 font-monospace">
                                     {% if pension_gap > 0 %}-{% else %}+{% endif %}{{ pension_gap_abs|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span>
                                 </h3>
-                                <span class="small opacity-75" style="font-size: 0.75rem;">
+                                <span class="small opacity-75" style="font-size: var(--app-fs-xs);">
                                     {% if life_stage == 'retirement' %}
                                         {% if pension_gap <= 0 %}{% trans "Current income covers your goal!" %}{% else %}{% trans "Current shortfall compared to target pension" %}{% endif %}
                                     {% else %}
@@ -441,7 +441,7 @@
                             </div>
                         </div>
                         <!-- Hover Expand Details: Gap Formula & Details -->
-                        <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
+                        <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: var(--app-fs-xs); background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
                             {% if life_stage == 'retirement' %}
                             <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
                                 <span>{% trans "Total Income today" %}:</span>
@@ -601,7 +601,7 @@
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0" style="font-size: 0.85rem;">
+                <table class="table table-hover align-middle mb-0" style="font-size: var(--app-fs-sm);">
                     <thead>
                         <tr>
                             <th class="py-3 px-3 border-0">{% trans "Provider / Name" %}</th>
@@ -623,18 +623,18 @@
                                         <i class="bi opacity-75" :class="p.pension_type === 'statutory' ? 'bi-bank' : (p.pension_type === 'civil_service' ? 'bi-award' : (p.pension_type === 'occupational_fund' ? 'bi-briefcase' : 'bi-piggy-bank'))"></i>
                                         <div>
                                             <span class="d-block" x-text="p.provider"></span>
-                                            <span class="badge rounded-pill bg-body-tertiary text-body border border-secondary border-opacity-20 opacity-90 d-md-none me-1" style="font-size: 0.65rem;" x-text="p.pension_type_display"></span>
-                                            <span x-show="p.notes" class="small opacity-75" style="font-size: 0.7rem;" x-text="p.notes"></span>
+                                            <span class="badge rounded-pill bg-body-tertiary text-body border border-secondary border-opacity-20 opacity-90 d-md-none me-1" style="font-size: var(--app-fs-xs);" x-text="p.pension_type_display"></span>
+                                            <span x-show="p.notes" class="small opacity-75" style="font-size: var(--app-fs-xs);" x-text="p.notes"></span>
                                         </div>
                                     </div>
                                 </td>
                                 <td class="py-3 px-3 d-none d-md-table-cell">
                                     <span class="badge rounded-pill bg-body-tertiary text-body border border-secondary border-opacity-20 opacity-90" x-text="p.pension_type_display"></span>
                                     <template x-if="p.payout_type === 'one_time'">
-                                        <span class="badge rounded-pill bg-warning-subtle text-warning border border-warning border-opacity-25 ms-1" style="font-size: 0.65rem;">{% trans "Einmalkapital" %}</span>
+                                        <span class="badge rounded-pill bg-warning-subtle text-warning border border-warning border-opacity-25 ms-1" style="font-size: var(--app-fs-xs);">{% trans "Einmalkapital" %}</span>
                                     </template>
                                     <template x-if="p.death_benefit > 0">
-                                        <span class="badge rounded-pill bg-info-subtle text-info border border-info border-opacity-25 ms-1" style="font-size: 0.65rem;" x-text="'✝ ' + formatEuro(p.death_benefit) + ' €'"></span>
+                                        <span class="badge rounded-pill bg-info-subtle text-info border border-info border-opacity-25 ms-1" style="font-size: var(--app-fs-xs);" x-text="'✝ ' + formatEuro(p.death_benefit) + ' €'"></span>
                                     </template>
                                 </td>
                                 <td class="py-3 px-3 text-end font-monospace fw-bold d-none d-md-table-cell" x-text="p.current_value > 0 ? formatEuro(p.current_value) + ' €' : '-'"></td>
@@ -684,13 +684,13 @@
                             <div class="card-glass-glow"></div>
                             <div class="d-flex justify-content-between align-items-start">
                                 <div>
-                                    <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">{% trans "Monatliche Beiträge (aktiv)" %}</span>
+                                    <span class="text-uppercase fw-bold opacity-85 small" style="font-size: var(--app-fs-xs); letter-spacing: 0.05em;">{% trans "Monatliche Beiträge (aktiv)" %}</span>
                                     <h3 class="fw-bold mb-0 mt-1 font-monospace">{{ protection_audit.monthly_insurance_premiums|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span></h3>
-                                    <span class="small opacity-85" style="font-size: 0.75rem;">{{ audit_overview.active_policies_count }} {% trans "aktive Police(n) im Cashflow" %}</span>
+                                    <span class="small opacity-85" style="font-size: var(--app-fs-xs);">{{ audit_overview.active_policies_count }} {% trans "aktive Police(n) im Cashflow" %}</span>
                                 </div>
                                 <div class="ms-2"><i class="bi {{ card.icon|default:'bi-wallet2' }} fs-5"></i></div>
                             </div>
-                            <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
+                            <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: var(--app-fs-xs); background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
                                 {% for ins in insurances %}
                                     {% if ins.is_active %}
                                     <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
@@ -710,15 +710,15 @@
                             <div class="card-glass-glow"></div>
                             <div class="d-flex justify-content-between align-items-start">
                                 <div>
-                                    <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">{% trans "BU-Schutz gesamt (Mt.)" %}</span>
+                                    <span class="text-uppercase fw-bold opacity-85 small" style="font-size: var(--app-fs-xs); letter-spacing: 0.05em;">{% trans "BU-Schutz gesamt (Mt.)" %}</span>
                                     <h3 class="fw-bold mb-0 mt-1 font-monospace">{{ protection_audit.disability_covered_primary|floatformat:0|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span></h3>
-                                    <span class="small opacity-85" style="font-size: 0.75rem;">
+                                    <span class="small opacity-85" style="font-size: var(--app-fs-xs);">
                                         {% if protection_audit.disability_gap_primary > 0 %}{% trans "Lücke" %}: -{{ protection_audit.disability_gap_primary|floatformat:0|intcomma }} €{% else %}{% trans "Bedarf gedeckt" %}{% endif %}
                                     </span>
                                 </div>
                                 <div class="ms-2"><i class="bi {{ card.icon|default:'bi-heart-pulse' }} fs-5"></i></div>
                             </div>
-                            <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
+                            <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: var(--app-fs-xs); background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
                                 <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
                                     <span>{% trans "DRV EM-Rente" %}:</span>
                                     <span class="font-monospace fw-bold">{{ protection_audit.drv_disability_primary|floatformat:0|intcomma }} €</span>
@@ -740,15 +740,15 @@
                             <div class="card-glass-glow"></div>
                             <div class="d-flex justify-content-between align-items-start">
                                 <div>
-                                    <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">{% trans "Risikolebens-Schutz" %}</span>
+                                    <span class="text-uppercase fw-bold opacity-85 small" style="font-size: var(--app-fs-xs); letter-spacing: 0.05em;">{% trans "Risikolebens-Schutz" %}</span>
                                     <h3 class="fw-bold mb-0 mt-1 font-monospace">{{ protection_audit.term_life_covered|floatformat:0|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span></h3>
-                                    <span class="small opacity-85" style="font-size: 0.75rem;">
+                                    <span class="small opacity-85" style="font-size: var(--app-fs-xs);">
                                         {% if protection_audit.recommended_term_life > 0 %}{% trans "Empfohlen" %}: {{ protection_audit.recommended_term_life|floatformat:0|intcomma }} €{% else %}{% trans "Kein familiärer Bedarf" %}{% endif %}
                                     </span>
                                 </div>
                                 <div class="ms-2"><i class="bi {{ card.icon|default:'bi-people' }} fs-5"></i></div>
                             </div>
-                            <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
+                            <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: var(--app-fs-xs); background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
                                 <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
                                     <span>{% trans "Abgesicherte Summe" %}:</span>
                                     <span class="font-monospace fw-bold">{{ protection_audit.term_life_covered|floatformat:0|intcomma }} €</span>
@@ -766,15 +766,15 @@
                             <div class="card-glass-glow"></div>
                             <div class="d-flex justify-content-between align-items-start">
                                 <div>
-                                    <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">{% trans "Basis-Schutz Quote" %}</span>
+                                    <span class="text-uppercase fw-bold opacity-85 small" style="font-size: var(--app-fs-xs); letter-spacing: 0.05em;">{% trans "Basis-Schutz Quote" %}</span>
                                     <h3 class="fw-bold mb-0 mt-1 font-monospace">{{ audit_overview.ok_count }} / {{ audit_overview.relevant_count }}</h3>
-                                    <span class="small opacity-85" style="font-size: 0.75rem;">
+                                    <span class="small opacity-85" style="font-size: var(--app-fs-xs);">
                                         {% if audit_overview.gap_count > 0 %}{{ audit_overview.gap_count }} {% trans "Empfehlung(en) offen" %}{% else %}{% trans "Alle Pflicht-Checks OK" %}{% endif %}
                                     </span>
                                 </div>
                                 <div class="ms-2"><i class="bi {{ card.icon|default:'bi-shield-check' }} fs-5"></i></div>
                             </div>
-                            <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
+                            <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: var(--app-fs-xs); background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
                                 {% for item in protection_audit.checklist %}
                                 <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
                                     <span class="text-truncate me-2">{{ item.title }}</span>
@@ -851,7 +851,7 @@
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0" style="font-size: 0.85rem;">
+                    <table class="table table-hover align-middle mb-0" style="font-size: var(--app-fs-sm);">
                         <thead>
                             <tr>
                                 <th class="ps-3">{% trans "Vertrag / Art" %}</th>
@@ -925,15 +925,15 @@
                             <div class="card-glass-glow"></div>
                             <div class="d-flex justify-content-between align-items-start">
                                 <div>
-                                    <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">{% trans "Notgroschen & Puffer" %}</span>
+                                    <span class="text-uppercase fw-bold opacity-85 small" style="font-size: var(--app-fs-xs); letter-spacing: 0.05em;">{% trans "Notgroschen & Puffer" %}</span>
                                     <h3 class="fw-bold mb-0 mt-1 font-monospace">{{ protection_audit.emergency_reserve|floatformat:0|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span></h3>
-                                    <span class="small opacity-85" style="font-size: 0.75rem;">
+                                    <span class="small opacity-85" style="font-size: var(--app-fs-xs);">
                                         {{ protection_audit.emergency_months_covered }} / {{ protection_audit.emergency_target_months }} {% trans "Monate gedeckt" %}
                                     </span>
                                 </div>
                                 <div class="ms-2"><i class="bi {{ card.icon|default:'bi-piggy-bank' }} fs-5"></i></div>
                             </div>
-                            <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
+                            <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: var(--app-fs-xs); background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
                                 <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
                                     <span>{% trans "Zielwert" %} ({{ protection_audit.emergency_target_months }}×):</span>
                                     <span class="font-monospace fw-bold">{{ protection_audit.emergency_target|floatformat:0|intcomma }} €</span>
@@ -957,9 +957,9 @@
                             <div class="card-glass-glow"></div>
                             <div class="d-flex justify-content-between align-items-start">
                                 <div>
-                                    <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">{% trans "Jobverlust-Puffer (ALG I)" %}</span>
+                                    <span class="text-uppercase fw-bold opacity-85 small" style="font-size: var(--app-fs-xs); letter-spacing: 0.05em;">{% trans "Jobverlust-Puffer (ALG I)" %}</span>
                                     <h3 class="fw-bold mb-0 mt-1 font-monospace">{{ protection_audit.alg1_estimated|floatformat:0|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}/Mt.</span></h3>
-                                    <span class="small opacity-85" style="font-size: 0.75rem;">
+                                    <span class="small opacity-85" style="font-size: var(--app-fs-xs);">
                                         {% if protection_audit.job_loss_runway_months is not None %}
                                             {% trans "Reichweite" %}: {{ protection_audit.job_loss_runway_months }} {% trans "Monate" %}
                                         {% else %}
@@ -969,7 +969,7 @@
                                 </div>
                                 <div class="ms-2"><i class="bi {{ card.icon|default:'bi-briefcase' }} fs-5"></i></div>
                             </div>
-                            <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
+                            <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: var(--app-fs-xs); background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
                                 <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
                                     <span>{% trans "Erwerbseinkommen (Primary)" %}:</span>
                                     <span class="font-monospace fw-bold">{{ protection_audit.primary_earned_monthly|floatformat:0|intcomma }} €</span>
@@ -989,9 +989,9 @@
                             <div class="card-glass-glow"></div>
                             <div class="d-flex justify-content-between align-items-start">
                                 <div>
-                                    <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">{% trans "Berufsunfähigkeit (BU)" %}</span>
+                                    <span class="text-uppercase fw-bold opacity-85 small" style="font-size: var(--app-fs-xs); letter-spacing: 0.05em;">{% trans "Berufsunfähigkeit (BU)" %}</span>
                                     <h3 class="fw-bold mb-0 mt-1 font-monospace">{{ protection_audit.disability_covered_primary|floatformat:0|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}/Mt.</span></h3>
-                                    <span class="small opacity-85" style="font-size: 0.75rem;">
+                                    <span class="small opacity-85" style="font-size: var(--app-fs-xs);">
                                         {% if protection_audit.disability_gap_primary > 0 %}
                                             {% trans "Lücke" %}: -{{ protection_audit.disability_gap_primary|floatformat:0|intcomma }} €/Mt.
                                         {% else %}
@@ -1001,7 +1001,7 @@
                                 </div>
                                 <div class="ms-2"><i class="bi {{ card.icon|default:'bi-heart-pulse' }} fs-5"></i></div>
                             </div>
-                            <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
+                            <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: var(--app-fs-xs); background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
                                 <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
                                     <span>{% trans "DRV EM-Rente" %}:</span>
                                     <span class="font-monospace fw-bold">{{ protection_audit.drv_disability_primary|floatformat:0|intcomma }} €</span>
@@ -1025,9 +1025,9 @@
                             <div class="card-glass-glow"></div>
                             <div class="d-flex justify-content-between align-items-start">
                                 <div>
-                                    <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em;">{% trans "Hinterbliebenenschutz" %}</span>
+                                    <span class="text-uppercase fw-bold opacity-85 small" style="font-size: var(--app-fs-xs); letter-spacing: 0.05em;">{% trans "Hinterbliebenenschutz" %}</span>
                                     <h3 class="fw-bold mb-0 mt-1 font-monospace">{{ protection_audit.term_life_covered|floatformat:0|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span></h3>
-                                    <span class="small opacity-85" style="font-size: 0.75rem;">
+                                    <span class="small opacity-85" style="font-size: var(--app-fs-xs);">
                                         {% if protection_audit.term_life_gap > 0 %}
                                             {% trans "Lücke" %}: -{{ protection_audit.term_life_gap|floatformat:0|intcomma }} €
                                         {% else %}
@@ -1037,7 +1037,7 @@
                                 </div>
                                 <div class="ms-2"><i class="bi {{ card.icon|default:'bi-people' }} fs-5"></i></div>
                             </div>
-                            <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: 0.75rem; background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
+                            <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="font-size: var(--app-fs-xs); background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
                                 <div class="d-flex justify-content-between py-1 border-bottom border-white border-opacity-10">
                                     <span>{% trans "Empfohlene Deckung (3×)" %}:</span>
                                     <span class="font-monospace fw-bold">{{ protection_audit.recommended_term_life|floatformat:0|intcomma }} €</span>
@@ -1271,7 +1271,7 @@
                         <div class="p-3 rounded-3 text-center" style="background-color: rgba(13, 110, 253, 0.08); border: 1px solid rgba(13, 110, 253, 0.25);">
                             <div class="opacity-75 mb-1">{% trans "Geschätztes monatliches Elterngeld:" %}</div>
                             <div class="fs-4 fw-bold font-monospace text-primary" id="egPreviewAmount">{{ benefits_audit.est_basis_p1|floatformat:2 }} € / Mt.</div>
-                            <div class="opacity-75 mt-1" style="font-size: 0.72rem;">{% trans "Wird als befristete Einnahme (inc_elterngeld) in deinen Cashflow übernommen." %}</div>
+                            <div class="opacity-75 mt-1" style="font-size: var(--app-fs-xs);">{% trans "Wird als befristete Einnahme (inc_elterngeld) in deinen Cashflow übernommen." %}</div>
                         </div>
                     </div>
                     <div class="modal-footer border-0 pt-0 px-4 pb-4">
@@ -1397,7 +1397,7 @@
 
                         <!-- Statutory Specific Fields (Neat 2-Row Layout) -->
                         <div x-show="form.pension_type === 'statutory'" class="card p-3 mb-3 border-0 bg-body-tertiary rounded-3 shadow-sm">
-                            <h6 class="fw-bold mb-3 text-primary d-flex align-items-center gap-1" style="font-size: 0.85rem;">
+                            <h6 class="fw-bold mb-3 text-primary d-flex align-items-center gap-1" style="font-size: var(--app-fs-sm);">
                                 <i class="bi bi-calculator me-1"></i>{% trans "Information from the official statutory pension statement (DRV)" %}
                             </h6>
                             <div class="row g-3 mb-2">
@@ -1490,12 +1490,12 @@
 
                         <!-- Integrated Historical Snapshots Table with Direct Inline Editing -->
                         <div x-show="editId" class="mt-4 pt-3 border-top border-secondary border-opacity-25">
-                            <h6 class="fw-bold mb-2 text-primary d-flex align-items-center justify-content-between" style="font-size: 0.85rem;">
+                            <h6 class="fw-bold mb-2 text-primary d-flex align-items-center justify-content-between" style="font-size: var(--app-fs-sm);">
                                 <span><i class="bi bi-clock-history me-1"></i>{% trans "Previous Record Dates for this Contract" %}</span>
                                 <span class="badge rounded-pill bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2.5 py-1" x-text="getSnapshotsForEditId().length + ' {% trans "Record Dates" %}'"></span>
                             </h6>
                             <div class="table-responsive rounded-3 border border-secondary border-opacity-20 shadow-sm" style="max-height: 250px; overflow-y: auto;">
-                                <table class="table table-sm table-hover align-middle mb-0" style="font-size: 0.8rem;">
+                                <table class="table table-sm table-hover align-middle mb-0" style="font-size: var(--app-fs-sm);">
                                     <thead class="bg-body-tertiary">
                                         <tr>
                                             <th class="py-2 px-3 border-0">{% trans "Record Date" %}</th>
@@ -1547,10 +1547,10 @@
                                                     <td class="py-2 px-3 text-center">
                                                          <div class="d-flex gap-2 justify-content-center">
                                                              <button type="button" @click="startInlineEditSnapshot(s)" class="btn btn-sm btn-link p-0 text-primary" title="{% trans 'Edit directly in table' %}">
-                                                                 <i class="bi bi-pencil" style="font-size: 0.95rem;"></i>
+                                                                 <i class="bi bi-pencil" style="font-size: var(--app-fs-base);"></i>
                                                              </button>
                                                              <a :href="'/finance/pensions/snapshot/delete/' + s.id + '/?edit_pension_id=' + editId" onclick="return confirm('{% trans "Really delete this record date?" %}')" class="btn btn-sm btn-link p-0 text-danger" title="{% trans "Delete" %}">
-                                                                 <i class="bi bi-trash" style="font-size: 0.95rem;"></i>
+                                                                 <i class="bi bi-trash" style="font-size: var(--app-fs-base);"></i>
                                                              </a>
                                                          </div>
                                                     </td>
@@ -1559,37 +1559,37 @@
                                                 <!-- Inline Edit Form Row -->
                                                 <template x-if="editingSnapshotId === s.id">
                                                     <td class="py-1 px-2">
-                                                        <input type="date" x-model="inlineSnapshotForm.date" class="form-control form-control-sm p-1 font-monospace" style="font-size: 0.75rem;">
+                                                        <input type="date" x-model="inlineSnapshotForm.date" class="form-control form-control-sm p-1 font-monospace" style="font-size: var(--app-fs-xs);">
                                                     </td>
                                                 </template>
                                                 <template x-if="editingSnapshotId === s.id && form.pension_type === 'statutory'">
                                                     <td class="py-1 px-1 text-center">
-                                                        <input type="number" step="0.0001" x-model="inlineSnapshotForm.pension_points" @input="calcInlineStatutoryNet()" class="form-control form-control-sm p-1 text-center font-monospace" style="font-size: 0.75rem;">
+                                                        <input type="number" step="0.0001" x-model="inlineSnapshotForm.pension_points" @input="calcInlineStatutoryNet()" class="form-control form-control-sm p-1 text-center font-monospace" style="font-size: var(--app-fs-xs);">
                                                     </td>
                                                 </template>
                                                 <template x-if="editingSnapshotId === s.id && form.pension_type === 'statutory'">
                                                     <td class="py-1 px-1 text-center">
-                                                        <input type="number" step="0.01" x-model="inlineSnapshotForm.point_value" @input="calcInlineStatutoryNet()" class="form-control form-control-sm p-1 text-center font-monospace" style="font-size: 0.75rem;">
+                                                        <input type="number" step="0.01" x-model="inlineSnapshotForm.point_value" @input="calcInlineStatutoryNet()" class="form-control form-control-sm p-1 text-center font-monospace" style="font-size: var(--app-fs-xs);">
                                                     </td>
                                                 </template>
                                                 <template x-if="editingSnapshotId === s.id && form.pension_type === 'statutory'">
                                                     <td class="py-1 px-2 text-end">
-                                                        <input type="number" step="0.01" x-model="inlineSnapshotForm.expected_payout_net" class="form-control form-control-sm p-1 text-end font-monospace fw-bold text-success" style="font-size: 0.75rem;">
+                                                        <input type="number" step="0.01" x-model="inlineSnapshotForm.expected_payout_net" class="form-control form-control-sm p-1 text-end font-monospace fw-bold text-success" style="font-size: var(--app-fs-xs);">
                                                     </td>
                                                 </template>
                                                 <template x-if="editingSnapshotId === s.id && form.pension_type === 'statutory'">
                                                     <td class="py-1 px-1 text-end">
-                                                        <input type="number" step="0.01" x-model="inlineSnapshotForm.disability_pension_net" class="form-control form-control-sm p-1 text-end font-monospace text-info" style="font-size: 0.75rem;">
+                                                        <input type="number" step="0.01" x-model="inlineSnapshotForm.disability_pension_net" class="form-control form-control-sm p-1 text-end font-monospace text-info" style="font-size: var(--app-fs-xs);">
                                                     </td>
                                                 </template>
                                                 <template x-if="editingSnapshotId === s.id && form.pension_type !== 'statutory'">
                                                     <td class="py-1 px-2 text-end">
-                                                        <input type="number" step="0.01" x-model="inlineSnapshotForm.value" class="form-control form-control-sm p-1 text-end font-monospace fw-bold text-info" style="font-size: 0.75rem;">
+                                                        <input type="number" step="0.01" x-model="inlineSnapshotForm.value" class="form-control form-control-sm p-1 text-end font-monospace fw-bold text-info" style="font-size: var(--app-fs-xs);">
                                                     </td>
                                                 </template>
                                                 <template x-if="editingSnapshotId === s.id">
                                                     <td class="py-1 px-2">
-                                                        <input type="text" x-model="inlineSnapshotForm.notes" class="form-control form-control-sm p-1" placeholder="Notiz" style="font-size: 0.75rem;">
+                                                        <input type="text" x-model="inlineSnapshotForm.notes" class="form-control form-control-sm p-1" placeholder="Notiz" style="font-size: var(--app-fs-xs);">
                                                     </td>
                                                 </template>
                                                 <template x-if="editingSnapshotId === s.id">
@@ -1762,7 +1762,7 @@
                     <h5 class="modal-title fw-bold"><i class="bi bi-info-circle text-primary me-2"></i>{% trans "Forecast Timeline (Monthly Net Payouts)" %}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body p-4" style="font-size: 0.9rem; line-height: 1.6;">
+                <div class="modal-body p-4" style="font-size: var(--app-fs-base); line-height: 1.6;">
                     <h6 class="fw-bold text-primary">{% trans "Where does the data come from?" %}</h6>
                     <p>{% trans "The timeline combines your recorded pension contracts, recurring income (salary, side jobs), rental income, asset withdrawal plans, and active living expenses and loan installments." %}</p>
                     
@@ -1787,7 +1787,7 @@
                     <h5 class="modal-title fw-bold"><i class="bi bi-info-circle text-info me-2"></i>{% trans "Capital & Pension Points Progression" %}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body p-4" style="font-size: 0.9rem; line-height: 1.6;">
+                <div class="modal-body p-4" style="font-size: var(--app-fs-base); line-height: 1.6;">
                     <h6 class="fw-bold text-info">{% trans "Where does the data come from?" %}</h6>
                     <p>{% trans "The curves combine historical snapshots (recorded via 'Record Historical Date') with future projections from your" %} <a href="javascript:void(0)" onclick="scrollToPensionsTable('infoCapitalModal')" class="fw-bold text-decoration-underline text-info">{% trans "active contracts" %}</a>.</p>
 
@@ -1809,7 +1809,7 @@
                     <h5 class="modal-title fw-bold"><i class="bi bi-info-circle text-purple me-2"></i>{% trans "Pension Components Breakdown" %}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body p-4" style="font-size: 0.9rem; line-height: 1.6;">
+                <div class="modal-body p-4" style="font-size: var(--app-fs-base); line-height: 1.6;">
                     <h6 class="fw-bold text-purple">{% trans "Where does the data come from?" %}</h6>
                     <p>{% trans "Shows the percentage share of each individual contract in your accumulated monthly net pension entitlements on the retirement date." %}</p>
                     <p class="mb-0">{% trans "Directly linked to your" %} <a href="javascript:void(0)" onclick="scrollToPensionsTable('infoBreakdownModal')" class="fw-bold text-decoration-underline text-purple">{% trans "pension contracts" %}</a>.</p>
@@ -1826,7 +1826,7 @@
                     <h5 class="modal-title fw-bold"><i class="bi bi-info-circle text-warning me-2"></i>{% trans "Active Pension Contracts & Entitlements" %}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body p-4" style="font-size: 0.9rem; line-height: 1.6;">
+                <div class="modal-body p-4" style="font-size: var(--app-fs-base); line-height: 1.6;">
                     <h6 class="fw-bold text-warning">{% trans "Pension Components Management" %}</h6>
                     <p>{% trans "All your statutory and private pension contracts are managed here. Each entry forms the foundation for calculations across all charts above." %}</p>
                     <ul class="ps-3 mb-0">

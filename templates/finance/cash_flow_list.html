@@ -44,13 +44,13 @@
                         <div class="card-glass-glow"></div>
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.7rem; letter-spacing: 0.05em; color: inherit;">
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: var(--app-fs-xs); letter-spacing: 0.05em; color: inherit;">
                                     {% trans "Monthly Income" %}
                                 </span>
                                 <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
                                     +{{ monthly_income_sum|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span>
                                 </h3>
-                                <span class="small opacity-75" style="font-size: 0.75rem; color: inherit;">
+                                <span class="small opacity-75" style="font-size: var(--app-fs-xs); color: inherit;">
                                     {{ yearly_income_sum|floatformat:2|intcomma }} {{ user.profile.currency }} / {% trans "year" %}
                                 </span>
                             </div>
@@ -66,13 +66,13 @@
                         <div class="card-glass-glow"></div>
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.7rem; letter-spacing: 0.05em; color: inherit;">
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: var(--app-fs-xs); letter-spacing: 0.05em; color: inherit;">
                                     {% trans "Monthly Expenses" %}
                                 </span>
                                 <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
                                     -{{ monthly_expense_sum|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span>
                                 </h3>
-                                <span class="small opacity-75" style="font-size: 0.75rem; color: inherit;">
+                                <span class="small opacity-75" style="font-size: var(--app-fs-xs); color: inherit;">
                                     {{ yearly_expense_sum|floatformat:2|intcomma }} {{ user.profile.currency }} / {% trans "year" %}
                                 </span>
                             </div>
@@ -88,13 +88,13 @@
                         <div class="card-glass-glow"></div>
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.7rem; letter-spacing: 0.05em; color: inherit;">
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: var(--app-fs-xs); letter-spacing: 0.05em; color: inherit;">
                                     {% trans "Net Monthly Surplus" %}
                                 </span>
                                 <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
                                     {% if monthly_net_surplus >= 0 %}+{% endif %}{{ monthly_net_surplus|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency }}</span>
                                 </h3>
-                                <span class="small opacity-75" style="font-size: 0.75rem; color: inherit;">
+                                <span class="small opacity-75" style="font-size: var(--app-fs-xs); color: inherit;">
                                     {{ yearly_net_surplus|floatformat:2|intcomma }} {{ user.profile.currency }} / {% trans "year" %}
                                 </span>
                             </div>
@@ -176,7 +176,7 @@
                     </span>
                 </div>
                 <div class="d-flex align-items-center gap-2">
-                    <button type="button" class="btn btn-sm py-0 px-2 btn-outline-warning text-nowrap" style="color: #ff9800; border-color: #ff9800; font-size: 0.78rem;" @click="toggleAllGroups()">
+                    <button type="button" class="btn btn-sm py-0 px-2 btn-outline-warning text-nowrap" style="color: #ff9800; border-color: #ff9800; font-size: var(--app-fs-sm);" @click="toggleAllGroups()">
                         <i class="bi" :class="allGroupsCollapsed ? 'bi-arrows-expand me-1' : 'bi-arrows-collapse me-1'"></i>
                         <span x-text="allGroupsCollapsed ? '{% trans "Expand All" %}' : '{% trans "Collapse All" %}'"></span>
                     </button>
@@ -197,8 +197,8 @@
             <span class="badge rounded-pill bg-white bg-opacity-25 text-white" x-text="filteredItems.length + ' / ' + items.length"></span>
         </div>
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0" style="font-size: 0.88rem; --bs-table-color: var(--app-table-body-text); border-color: var(--app-table-border-color);">
-                <thead class="text-uppercase small" style="background-color: var(--app-table-header-bg) !important; color: var(--app-table-header-text) !important; font-size: 0.7rem; letter-spacing: 0.05em;">
+            <table class="table table-hover align-middle mb-0" style="font-size: var(--app-fs-sm); --bs-table-color: var(--app-table-body-text); border-color: var(--app-table-border-color);">
+                <thead class="text-uppercase small" style="background-color: var(--app-table-header-bg) !important; color: var(--app-table-header-text) !important; font-size: var(--app-fs-xs); letter-spacing: 0.05em;">
                     <tr>
                         <!-- Header: Name -->
                         <th class="py-3 px-3 text-nowrap user-select-none" style="background-color: var(--app-table-header-bg) !important; color: var(--app-table-header-text) !important;">
@@ -306,15 +306,15 @@
                                     </span>
                                     <div>
                                         <span class="d-block" x-text="item.name"></span>
-                                        <span x-show="item.notes" class="small opacity-75" style="font-size: 0.75rem;" x-text="item.notes"></span>
+                                        <span x-show="item.notes" class="small opacity-75" style="font-size: var(--app-fs-xs);" x-text="item.notes"></span>
                                     </div>
-                                    <i x-show="item.is_inflation_adjusted" class="bi bi-shield-check text-primary ms-1" title="{% trans 'Indexed to Inflation' %}" style="font-size: 0.85rem;"></i>
+                                    <i x-show="item.is_inflation_adjusted" class="bi bi-shield-check text-primary ms-1" title="{% trans 'Indexed to Inflation' %}" style="font-size: var(--app-fs-sm);"></i>
                                 </div>
                             </td>
                             <td class="py-3 px-3">
-                                <span class="badge rounded-pill me-1" :class="item.is_income ? 'bg-success-subtle text-success border border-success-subtle' : 'bg-danger-subtle text-danger border border-danger-subtle'" style="font-size: 0.7rem;" x-text="item.is_income ? '{% trans "Income" %}' : '{% trans "Expense" %}'"></span>
-                                <span class="badge rounded-pill me-1" :style="'font-size: 0.7rem; background: ' + (item.category_badge_bg || 'rgba(108,117,125,0.15)') + '; color: ' + (item.category_badge_txt || '#6c757d') + '; border: 1px solid ' + (item.category_color_hex || '#6c757d') + '40;'" x-text="item.category_translated"></span>
-                                <span x-show="item.source_type !== 'manual'" class="badge bg-info bg-opacity-10 text-info border border-info-subtle rounded-pill" style="font-size: 0.7rem;" x-text="item.source_label"></span>
+                                <span class="badge rounded-pill me-1" :class="item.is_income ? 'bg-success-subtle text-success border border-success-subtle' : 'bg-danger-subtle text-danger border border-danger-subtle'" style="font-size: var(--app-fs-xs);" x-text="item.is_income ? '{% trans "Income" %}' : '{% trans "Expense" %}'"></span>
+                                <span class="badge rounded-pill me-1" :style="'font-size: var(--app-fs-xs); background: ' + (item.category_badge_bg || 'rgba(108,117,125,0.15)') + '; color: ' + (item.category_badge_txt || '#6c757d') + '; border: 1px solid ' + (item.category_color_hex || '#6c757d') + '40;'" x-text="item.category_translated"></span>
+                                <span x-show="item.source_type !== 'manual'" class="badge bg-info bg-opacity-10 text-info border border-info-subtle rounded-pill" style="font-size: var(--app-fs-xs);" x-text="item.source_label"></span>
                             </td>
                             <td class="py-3 px-3 small font-monospace" x-text="item.period_formatted"></td>
                             <td class="py-3 px-3 text-end font-monospace fw-bold" :class="item.is_income ? 'text-success' : 'text-danger'">
@@ -384,15 +384,15 @@
                                         </span>
                                         <div>
                                             <span class="d-block" x-text="item.name"></span>
-                                            <span x-show="item.notes" class="small opacity-75" style="font-size: 0.75rem;" x-text="item.notes"></span>
+                                            <span x-show="item.notes" class="small opacity-75" style="font-size: var(--app-fs-xs);" x-text="item.notes"></span>
                                         </div>
-                                        <i x-show="item.is_inflation_adjusted" class="bi bi-shield-check text-primary ms-1" title="{% trans 'Indexed to Inflation' %}" style="font-size: 0.85rem;"></i>
+                                        <i x-show="item.is_inflation_adjusted" class="bi bi-shield-check text-primary ms-1" title="{% trans 'Indexed to Inflation' %}" style="font-size: var(--app-fs-sm);"></i>
                                     </div>
                                 </td>
                                 <td class="py-3 px-3">
-                                    <span class="badge rounded-pill me-1" :class="item.is_income ? 'bg-success-subtle text-success border border-success-subtle' : 'bg-danger-subtle text-danger border border-danger-subtle'" style="font-size: 0.7rem;" x-text="item.is_income ? '{% trans "Income" %}' : '{% trans "Expense" %}'"></span>
-                                    <span class="badge rounded-pill me-1" :style="'font-size: 0.7rem; background: ' + (item.category_badge_bg || 'rgba(108,117,125,0.15)') + '; color: ' + (item.category_badge_txt || '#6c757d') + '; border: 1px solid ' + (item.category_color_hex || '#6c757d') + '40;'" x-text="item.category_translated"></span>
-                                    <span x-show="item.source_type !== 'manual'" class="badge bg-info bg-opacity-10 text-info border border-info-subtle rounded-pill" style="font-size: 0.7rem;" x-text="item.source_label"></span>
+                                    <span class="badge rounded-pill me-1" :class="item.is_income ? 'bg-success-subtle text-success border border-success-subtle' : 'bg-danger-subtle text-danger border border-danger-subtle'" style="font-size: var(--app-fs-xs);" x-text="item.is_income ? '{% trans "Income" %}' : '{% trans "Expense" %}'"></span>
+                                    <span class="badge rounded-pill me-1" :style="'font-size: var(--app-fs-xs); background: ' + (item.category_badge_bg || 'rgba(108,117,125,0.15)') + '; color: ' + (item.category_badge_txt || '#6c757d') + '; border: 1px solid ' + (item.category_color_hex || '#6c757d') + '40;'" x-text="item.category_translated"></span>
+                                    <span x-show="item.source_type !== 'manual'" class="badge bg-info bg-opacity-10 text-info border border-info-subtle rounded-pill" style="font-size: var(--app-fs-xs);" x-text="item.source_label"></span>
                                 </td>
                                 <td class="py-3 px-3 small font-monospace" x-text="item.period_formatted"></td>
                                 <td class="py-3 px-3 text-end font-monospace fw-bold" :class="item.is_income ? 'text-success' : 'text-danger'">
@@ -571,7 +571,7 @@
                         </div>
 
                         <div class="border rounded-3 p-2 overflow-auto" style="max-height: 300px;">
-                            <table class="table table-sm table-hover mb-0" style="font-size: 0.82rem;">
+                            <table class="table table-sm table-hover mb-0" style="font-size: var(--app-fs-sm);">
                                 <thead>
                                     <tr>
                                         <th style="width: 40px;"></th>
@@ -589,14 +589,14 @@
                                         <td class="fw-semibold">
                                             {{ cf.name }}
                                             {% if not cf.is_latest %}
-                                            <span class="badge bg-secondary opacity-75 ms-1" style="font-size: 0.65rem;">{% trans "Older" %}</span>
+                                            <span class="badge bg-secondary opacity-75 ms-1" style="font-size: var(--app-fs-xs);">{% trans "Older" %}</span>
                                             {% endif %}
                                         </td>
                                         <td>{{ cf.category.translated_name|default:'-' }}</td>
                                         <td class="text-end font-monospace {% if cf.is_income %}text-success{% else %}text-danger{% endif %}">
                                             {{ cf.value|floatformat:2|intcomma }} € / {{ cf.get_frequency_display }}
                                             {% if cf.start_date or cf.end_date %}
-                                            <div class="small opacity-75" style="font-size: 0.7rem;">
+                                            <div class="small opacity-75" style="font-size: var(--app-fs-xs);">
                                                 {% if cf.start_date %}{{ cf.start_date|date:"d.m.Y" }}{% else %}...{% endif %} - {% if cf.end_date %}{{ cf.end_date|date:"d.m.Y" }}{% else %}{% trans "open" %}{% endif %}
                                             </div>
                                             {% endif %}

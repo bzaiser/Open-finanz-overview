@@ -258,7 +258,7 @@
             min-height: 2rem !important;
             padding: 0 !important;
             border-radius: 50% !important;
-            font-size: 0.85rem !important;
+            font-size: var(--app-fs-sm) !important;
             line-height: 1 !important;
             flex-shrink: 0 !important;
             transition: all 0.15s ease-in-out;
@@ -269,6 +269,109 @@
             display: inline-block !important;
             margin: 0 !important;
             padding: 0 !important;
+        }
+
+        /* ==============================================================
+           4-Tier Typography System & Mood-Matched Font Families
+           ============================================================== */
+        :root,
+        body[data-font-scale="normal"] {
+            --app-fs-xs: 0.75rem;
+            --app-fs-sm: 0.85rem;
+            --app-fs-base: 0.95rem;
+            --app-fs-lg: 1.2rem;
+            --app-fs-xl: 1.45rem;
+        }
+        body[data-font-scale="compact"] {
+            --app-fs-xs: 0.71rem;
+            --app-fs-sm: 0.8rem;
+            --app-fs-base: 0.89rem;
+            --app-fs-lg: 1.12rem;
+            --app-fs-xl: 1.35rem;
+        }
+        body[data-font-scale="comfortable"] {
+            --app-fs-xs: 0.8rem;
+            --app-fs-sm: 0.9rem;
+            --app-fs-base: 1.0rem;
+            --app-fs-lg: 1.28rem;
+            --app-fs-xl: 1.55rem;
+        }
+
+        :root,
+        body[data-font-family="sans"] {
+            --app-font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            --app-font-heading: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+        body[data-font-family="rounded"] {
+            --app-font-body: 'Plus Jakarta Sans', 'Avenir Next', 'Nunito', 'Segoe UI', system-ui, sans-serif;
+            --app-font-heading: 'Plus Jakarta Sans', 'Avenir Next', 'Nunito', 'Segoe UI', system-ui, sans-serif;
+        }
+        body[data-font-family="serif"] {
+            --app-font-body: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            --app-font-heading: Georgia, 'Playfair Display', 'Times New Roman', serif;
+        }
+        body[data-font-family="tech"] {
+            --app-font-body: 'Space Grotesk', 'SF Pro Text', 'Segoe UI', system-ui, sans-serif;
+            --app-font-heading: 'Space Grotesk', 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
+        }
+        body[data-font-family="mono"] {
+            --app-font-body: 'JetBrains Mono', 'Fira Code', 'SFMono-Regular', Consolas, 'Courier New', monospace;
+            --app-font-heading: 'JetBrains Mono', 'Fira Code', 'SFMono-Regular', Consolas, 'Courier New', monospace;
+        }
+
+        body {
+            font-family: var(--app-font-body);
+            font-size: var(--app-fs-base);
+        }
+        h1, h2, h3, h4, h5, h6,
+        .h1, .h2, .h3, .h4, .h5, .h6,
+        .display-3, .display-4, .display-5, .display-6,
+        .card-header, .modal-title, .navbar-brand {
+            font-family: var(--app-font-heading);
+        }
+        h2, .h2, .display-5 {
+            font-size: var(--app-fs-xl);
+        }
+        h4, .h4, h5, .h5 {
+            font-size: var(--app-fs-lg);
+        }
+        h6, .h6, .card-header {
+            font-size: var(--app-fs-base);
+        }
+        .form-label,
+        .form-text,
+        .small,
+        small,
+        .badge {
+            font-size: var(--app-fs-xs);
+        }
+        .table,
+        .form-control,
+        .form-select,
+        .btn:not(.btn-lg),
+        .dropdown-menu {
+            font-size: var(--app-fs-sm);
+        }
+        .metric-card .metric-value h3,
+        .metric-card .metric-value h4 {
+            font-family: 'SFMono-Regular', Consolas, 'JetBrains Mono', monospace;
+            font-size: var(--app-fs-xl);
+        }
+
+        /* Semantic Theme Callouts (replaces hardcoded rgba boxes) */
+        .theme-callout-danger {
+            background-color: var(--theme-state-6-bg, rgba(220, 53, 69, 0.1));
+            border: 1px solid color-mix(in srgb, var(--theme-state-6, #dc3545) 38%, transparent);
+            color: var(--app-card-color);
+        }
+        .theme-callout-danger strong,
+        .theme-callout-danger i {
+            color: var(--theme-state-6, #dc3545) !important;
+        }
+        .theme-callout-primary {
+            background-color: color-mix(in srgb, var(--app-primary, #0d6efd) 10%, transparent);
+            border: 1px dashed color-mix(in srgb, var(--app-primary, #0d6efd) 42%, transparent);
+            color: var(--app-card-color);
         }
     </style>
 
@@ -850,7 +953,7 @@
         /* Mobile Table & Layout Optimizations */
         @media (max-width: 767.98px) {
             body {
-                font-size: 0.9rem;
+                font-size: var(--app-fs-base);
             }
             .container, .container-fluid {
                 padding-left: 0.55rem !important;
@@ -869,40 +972,48 @@
             .card > .card-header {
                 padding: 0.7rem 0.85rem !important;
             }
-            .card-body .p-3, .card-body .p-4,
-            .modal-body .p-3, .modal-body .p-4 {
+            .card-body .p-3, .card-body .p-4 {
                 padding: 0.7rem !important;
+            }
+            .modal-body .p-3, .modal-body .p-4,
+            .modal-body .card.p-3 {
+                padding: 0.55rem 0.5rem !important;
+            }
+            .modal-body .row.p-3, .modal-body .row.p-2 {
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+                padding: 0.45rem 0.25rem !important;
             }
             /* Responsive Typography */
             h1, .display-3, .display-4, .display-5 {
-                font-size: clamp(1.32rem, 5.2vw, 1.75rem) !important;
+                font-size: clamp(1.25rem, 5vw, 1.55rem) !important;
                 line-height: 1.22 !important;
             }
             h2, .h2, .h3 {
                 font-size: 1.15rem !important;
             }
             .lead {
-                font-size: 0.92rem !important;
+                font-size: var(--app-fs-base) !important;
             }
             .metric-card h3 {
                 font-size: 1.32rem !important;
             }
             .accordion-button {
-                padding: 0.72rem 0.85rem !important;
-                font-size: 0.88rem !important;
+                padding: 0.65rem 0.7rem !important;
+                font-size: var(--app-fs-sm) !important;
             }
-            .accordion-body {
-                padding: 0.75rem 0.85rem !important;
-                font-size: 0.85rem !important;
+            .accordion-body:not(.p-0) {
+                padding: 0.65rem 0.65rem !important;
+                font-size: var(--app-fs-sm) !important;
             }
             /* Compact Buttons */
             .btn:not(.btn-sm):not(.table-action-btn):not(.btn-close) {
                 padding: 0.42rem 0.82rem !important;
-                font-size: 0.84rem !important;
+                font-size: var(--app-fs-sm) !important;
             }
             .btn-lg {
                 padding: 0.5rem 1rem !important;
-                font-size: 0.9rem !important;
+                font-size: var(--app-fs-base) !important;
             }
             .btn.px-5, .btn.px-4 {
                 padding-left: 0.9rem !important;
@@ -912,25 +1023,25 @@
                 padding-top: 0.55rem !important;
                 padding-bottom: 0.55rem !important;
             }
-            /* Mobile-friendly Modals */
+            /* Mobile-friendly Modals (no wasted horizontal space) */
             .modal-dialog {
-                margin: 0.35rem auto !important;
-                max-width: calc(100vw - 0.7rem) !important;
+                margin: 0.2rem auto !important;
+                max-width: calc(100vw - 0.4rem) !important;
             }
             .modal-header {
-                padding: 0.75rem 0.9rem !important;
+                padding: 0.65rem 0.65rem !important;
             }
             .modal-title {
-                font-size: 1rem !important;
+                font-size: var(--app-fs-base) !important;
             }
-            .modal-body {
-                padding: 0.8rem 0.9rem !important;
-                max-height: 75vh;
+            .modal-body:not(.p-0) {
+                padding: 0.65rem 0.65rem !important;
+                max-height: 78vh;
                 overflow-y: auto;
                 -webkit-overflow-scrolling: touch;
             }
             .modal-footer {
-                padding: 0.65rem 0.9rem !important;
+                padding: 0.55rem 0.65rem !important;
                 gap: 0.4rem;
                 flex-wrap: wrap;
             }
@@ -940,7 +1051,7 @@
             }
             .table th, .table td {
                 padding: 0.55rem 0.45rem !important;
-                font-size: 0.78rem !important;
+                font-size: var(--app-fs-sm) !important;
                 white-space: nowrap;
             }
             .metric-card-col {
@@ -1404,7 +1515,7 @@
         .app-action-btn {
             border-radius: 9999px !important;
             padding: 0.45rem 1rem !important;
-            font-size: 0.85rem !important;
+            font-size: var(--app-fs-sm) !important;
             font-weight: 600 !important;
             display: inline-flex;
             align-items: center;
@@ -1492,7 +1603,7 @@
             border: 1px solid rgba(255, 255, 255, 0.28);
             color: inherit !important;
             text-decoration: none !important;
-            font-size: 0.78rem;
+            font-size: var(--app-fs-sm);
             line-height: 1;
             flex-shrink: 0;
             transition: transform 0.2s ease, background-color 0.2s ease;
@@ -1514,7 +1625,7 @@
             border-top: 1px solid rgba(255, 255, 255, 0.22);
             color: inherit !important;
             text-decoration: none !important;
-            font-size: 0.74rem;
+            font-size: var(--app-fs-xs);
             font-weight: 700;
             opacity: 0.92;
         }
@@ -1543,7 +1654,7 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                font-size: 0.7rem;
+                font-size: var(--app-fs-xs);
                 opacity: 0.55;
                 margin-top: 0.25rem;
                 line-height: 1;
@@ -1589,19 +1700,19 @@
         /* Compact notebooks (992px - 1366px) navbar & tab spacing */
         @media (min-width: 992px) and (max-width: 1366px) {
             .navbar-nav .nav-link {
-                font-size: 0.88rem;
+                font-size: var(--app-fs-sm);
                 padding-left: 0.5rem !important;
                 padding-right: 0.5rem !important;
             }
             .folder-tabs-bar .nav-link {
                 padding: 0.55rem 0.95rem;
-                font-size: 0.85rem;
+                font-size: var(--app-fs-sm);
             }
         }
         /* Mobile & Tablet responsive details formatting */
         @media (max-width: 991.98px) {
             .widget-hover-details {
-                font-size: 0.72rem !important;
+                font-size: var(--app-fs-xs) !important;
             }
             #navbarContent {
                 border-top: 1px solid var(--app-table-border-color, rgba(128, 128, 128, 0.2));
@@ -1678,7 +1789,7 @@
             }
             .folder-tabs-bar .nav-link {
                 padding: 0.5rem 0.85rem;
-                font-size: 0.82rem;
+                font-size: var(--app-fs-sm);
             }
         }
         @media (max-width: 575.98px) {
@@ -1712,7 +1823,9 @@
       data-kpi-spotlight="{{ theme_studio.kpi_spotlight|yesno:'true,false'|default:'true' }}"
       data-kpi-click="{{ theme_studio.kpi_click_navigation|yesno:'true,false'|default:'true' }}"
       data-menu-layout="{{ theme_studio.menu_layout|default:'top' }}"
-      data-menu-style="{{ theme_studio.resolved_menu_style|default:'gradient' }}">
+      data-menu-style="{{ theme_studio.resolved_menu_style|default:'gradient' }}"
+      data-font-family="{{ theme_studio.resolved_font_family|default:'sans' }}"
+      data-font-scale="{{ theme_studio.font_scale|default:'normal' }}">
     {% if user.is_authenticated and theme_studio.resolved_bg_svg and theme_studio.resolved_bg_svg != 'none' %}
     <div class="app-bg-svg-layer" aria-hidden="true">
         {% if theme_studio.resolved_bg_svg == 'topography' %}
@@ -1982,8 +2095,8 @@
                         {% endif %}
                     </div>
                     <div class="modal-body p-4 small" style="max-height: 62vh; overflow-y: auto;">
-                        <div class="p-3 rounded-3 mb-3" style="background-color: rgba(220, 53, 69, 0.08); border: 1px solid rgba(220, 53, 69, 0.3);">
-                            <strong class="text-danger"><i class="bi bi-exclamation-triangle-fill me-1"></i> {% trans "Wichtige Nutzungs- und Sicherheitsbedingungen (Version 1.0):" %}</strong>
+                        <div class="p-3 rounded-3 mb-3 theme-callout-danger">
+                            <strong><i class="bi bi-exclamation-triangle-fill me-1"></i> {% trans "Wichtige Nutzungs- und Sicherheitsbedingungen (Version 1.0):" %}</strong>
                             <span class="d-block mt-1 opacity-85">
                                 {% trans "Bitte lies die folgenden Punkte sorgfältig durch und bestätige sie unten, bevor du die Anwendung nutzt." %}
                             </span>
@@ -2333,7 +2446,7 @@
                         }
                         if (bannerPercent) bannerPercent.innerText = '100 %';
                         if (bannerStep) {
-                            bannerStep.innerHTML = '<i class="bi bi-check-circle-fill text-success me-1"></i> ' + label + (job.target_file ? ' <br><small class="text-white-50 font-monospace" style="font-size:0.75rem;">' + job.target_file + '</small>' : '');
+                            bannerStep.innerHTML = '<i class="bi bi-check-circle-fill text-success me-1"></i> ' + label + (job.target_file ? ' <br><small class="text-white-50 font-monospace" style="font-size: var(--app-fs-xs);">' + job.target_file + '</small>' : '');
                         }
 
                         if (profileBar) {

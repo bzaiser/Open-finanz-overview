@@ -30,12 +30,12 @@
                 {% trans "Assets, Accounts & Wealth Management" %}
             </h2>
             <p class="text-muted small mb-0 d-flex align-items-center flex-wrap gap-2">
-                <span class="badge rounded-pill bg-body-tertiary text-body border border-secondary border-opacity-25 px-2.5 py-1" style="font-size: 0.75rem;">
+                <span class="badge rounded-pill bg-body-tertiary text-body border border-secondary border-opacity-25 px-2.5 py-1" style="font-size: var(--app-fs-xs);">
                     <i class="bi bi-shield-check text-success me-1"></i>{% trans "Emergency Fund Health" %}:
                     <strong :class="emergencyMonthsCovered >= 3 ? 'text-success' : 'text-danger'" x-text="emergencyMonthsCovered + ' {% trans 'Months' %}'"></strong>
                     <span class="opacity-75 ms-1">({% trans 'Target' %}: 3-6)</span>
                 </span>
-                <span class="badge rounded-pill bg-body-tertiary text-body border border-secondary border-opacity-25 px-2.5 py-1" style="font-size: 0.75rem;">
+                <span class="badge rounded-pill bg-body-tertiary text-body border border-secondary border-opacity-25 px-2.5 py-1" style="font-size: var(--app-fs-xs);">
                     <i class="bi bi-arrow-repeat text-info me-1"></i>{% trans "Monthly Savings Volume" %}:
                     <strong class="text-primary" x-text="formatEuro(totalMonthlySavings) + ' € / M'"></strong>
                 </span>
@@ -73,13 +73,13 @@
                         <div class="card-glass-glow"></div>
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em; color: inherit;">
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: var(--app-fs-xs); letter-spacing: 0.05em; color: inherit;">
                                     {% trans "Total Asset Wealth" %}
                                 </span>
                                 <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
                                     {{ total_wealth|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ profile.currency|default:"EUR" }}</span>
                                 </h3>
-                                <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                                <span class="small opacity-85" style="font-size: var(--app-fs-xs); color: inherit;">
                                     {% trans "Accounts, Depots, Crypto & Physical" %}
                                 </span>
                             </div>
@@ -88,20 +88,20 @@
 
                         <!-- Hover Details -->
                         <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
-                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Asset Class Allocation" %}:</span>
-                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: var(--app-fs-xs);">{% trans "Asset Class Allocation" %}:</span>
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: var(--app-fs-xs);">
                                 <span>{% trans "Cash & Overnight" %}</span>
                                 <span class="font-monospace fw-bold">{{ total_cash|floatformat:2|intcomma }} {{ profile.currency|default:"EUR" }}</span>
                             </div>
-                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: var(--app-fs-xs);">
                                 <span>{% trans "Depots & Securities" %}</span>
                                 <span class="font-monospace fw-bold">{{ total_depot|floatformat:2|intcomma }} {{ profile.currency|default:"EUR" }}</span>
                             </div>
-                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: var(--app-fs-xs);">
                                 <span>{% trans "Crypto & Precious Metals" %}</span>
                                 <span class="font-monospace fw-bold">{{ total_crypto|add:total_metals|floatformat:2|intcomma }} {{ profile.currency|default:"EUR" }}</span>
                             </div>
-                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: var(--app-fs-xs);">
                                 <span>{% trans "Physical Assets & Valuables" %}</span>
                                 <span class="font-monospace fw-bold">{{ total_physical|floatformat:2|intcomma }} {{ profile.currency|default:"EUR" }}</span>
                             </div>
@@ -115,13 +115,13 @@
                         <div class="card-glass-glow"></div>
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em; color: inherit;">
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: var(--app-fs-xs); letter-spacing: 0.05em; color: inherit;">
                                     {% trans "Liquid Assets & Notgroschen" %}
                                 </span>
                                 <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
                                     {{ total_cash|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ profile.currency|default:"EUR" }}</span>
                                 </h3>
-                                <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                                <span class="small opacity-85" style="font-size: var(--app-fs-xs); color: inherit;">
                                     {% trans "Designated Reserve" %}: {{ emergency_fund_actual|floatformat:2|intcomma }} {{ profile.currency|default:"EUR" }}
                                 </span>
                             </div>
@@ -130,16 +130,16 @@
 
                         <!-- Hover Details -->
                         <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
-                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Liquidity Health Check" %}:</span>
-                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: var(--app-fs-xs);">{% trans "Liquidity Health Check" %}:</span>
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: var(--app-fs-xs);">
                                 <span>{% trans "Monthly Outflow / Fix" %}</span>
                                 <span class="font-monospace fw-bold">{{ monthly_expenses|floatformat:2|intcomma }} {{ profile.currency|default:"EUR" }}</span>
                             </div>
-                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: var(--app-fs-xs);">
                                 <span>{% trans "3-Month Target" %}</span>
                                 <span class="font-monospace fw-bold">{{ emergency_target|floatformat:2|intcomma }} {{ profile.currency|default:"EUR" }}</span>
                             </div>
-                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: var(--app-fs-xs);">
                                 <span>{% trans "Coverage Quotient" %}</span>
                                 <span class="font-monospace fw-bold" :class="emergencyMonthsCovered >= 3 ? 'text-success' : 'text-warning'" x-text="emergencyMonthsCovered + ' {% trans 'Months' %}'"></span>
                             </div>
@@ -153,13 +153,13 @@
                         <div class="card-glass-glow"></div>
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em; color: inherit;">
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: var(--app-fs-xs); letter-spacing: 0.05em; color: inherit;">
                                     {% trans "ETF & Securities Depots" %}
                                 </span>
                                 <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
                                     {{ total_depot|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ profile.currency|default:"EUR" }}</span>
                                 </h3>
-                                <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                                <span class="small opacity-85" style="font-size: var(--app-fs-xs); color: inherit;">
                                     {% trans "Monthly Inflow" %}: +{{ total_monthly_savings|floatformat:2|intcomma }} {{ profile.currency|default:"EUR" }}
                                 </span>
                             </div>
@@ -168,9 +168,9 @@
 
                         <!-- Hover Details -->
                         <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
-                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Depots Breakdown" %}:</span>
+                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: var(--app-fs-xs);">{% trans "Depots Breakdown" %}:</span>
                             <template x-for="a in assets.filter(item => item.asset_type === 'depot')" :key="a.id">
-                                <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                                <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: var(--app-fs-xs);">
                                     <span class="text-truncate flex-grow-1" x-text="a.name"></span>
                                     <span class="font-monospace fw-bold text-end" x-text="formatEuro(a.value) + ' €'"></span>
                                 </div>
@@ -185,13 +185,13 @@
                         <div class="card-glass-glow"></div>
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.65rem; letter-spacing: 0.05em; color: inherit;">
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: var(--app-fs-xs); letter-spacing: 0.05em; color: inherit;">
                                     {% trans "Alternative & Physical Assets" %}
                                 </span>
                                 <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
                                     {{ total_crypto|add:total_metals|add:total_physical|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ profile.currency|default:"EUR" }}</span>
                                 </h3>
-                                <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                                <span class="small opacity-85" style="font-size: var(--app-fs-xs); color: inherit;">
                                     {% trans "Bitcoin, Gold, Tangibles & Collectibles" %}
                                 </span>
                             </div>
@@ -200,16 +200,16 @@
 
                         <!-- Hover Details -->
                         <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
-                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Alternative Breakdown" %}:</span>
-                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: var(--app-fs-xs);">{% trans "Alternative Breakdown" %}:</span>
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: var(--app-fs-xs);">
                                 <span>{% trans "Cryptocurrencies" %}</span>
                                 <span class="font-monospace fw-bold">{{ total_crypto|floatformat:2|intcomma }} €</span>
                             </div>
-                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: var(--app-fs-xs);">
                                 <span>{% trans "Precious Metals" %}</span>
                                 <span class="font-monospace fw-bold">{{ total_metals|floatformat:2|intcomma }} €</span>
                             </div>
-                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: var(--app-fs-xs);">
                                 <span>{% trans "Physical Tangibles" %}</span>
                                 <span class="font-monospace fw-bold">{{ total_physical|floatformat:2|intcomma }} €</span>
                             </div>
@@ -260,7 +260,7 @@
         <li class="nav-item" role="presentation">
             <button class="nav-link" :class="activeTab === 'documents' ? 'active' : ''" @click="setTab('documents')" type="button">
                 <i class="bi bi-folder2-open me-1 text-info"></i>{% trans "Documents" %}
-                <span class="badge bg-secondary-subtle text-body ms-1" style="font-size: 0.7rem;">{{ domain_documents.total_count }}</span>
+                <span class="badge bg-secondary-subtle text-body ms-1" style="font-size: var(--app-fs-xs);">{{ domain_documents.total_count }}</span>
             </button>
         </li>
     </ul>
@@ -533,7 +533,7 @@
                                         <div class="fw-bold d-flex align-items-center gap-1">
                                             <span x-text="a.name"></span>
                                             <template x-if="a.is_emergency_fund">
-                                                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-2 py-0.5" style="font-size: 0.65rem;">
+                                                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-2 py-0.5" style="font-size: var(--app-fs-xs);">
                                                     <i class="bi bi-shield-check me-1"></i>{% trans "Notgroschen" %}
                                                 </span>
                                             </template>
@@ -543,7 +543,7 @@
                                         </div>
                                     </td>
                                     <td class="py-3 px-3">
-                                        <span class="badge rounded-pill bg-body-tertiary text-body border border-secondary border-opacity-20" style="font-size: 0.72rem;" x-text="a.asset_type_display"></span>
+                                        <span class="badge rounded-pill bg-body-tertiary text-body border border-secondary border-opacity-20" style="font-size: var(--app-fs-xs);" x-text="a.asset_type_display"></span>
                                     </td>
                                     <td class="py-3 px-3">
                                         <span class="opacity-85" x-text="a.institution || '-'"></span>
@@ -551,7 +551,7 @@
                                     <td class="py-3 px-3 text-end font-monospace">
                                         <span x-text="a.growth_rate + ' %'"></span>
                                         <template x-if="a.teaser_active">
-                                            <div class="small text-warning" style="font-size: 0.7rem;">
+                                            <div class="small text-warning" style="font-size: var(--app-fs-xs);">
                                                 <i class="bi bi-lightning-fill"></i> <span x-text="a.interest_teaser_rate + ' % bis ' + a.interest_teaser_until_display"></span>
                                             </div>
                                         </template>
@@ -562,7 +562,7 @@
                                     <td class="py-3 px-3 text-end font-monospace fw-bold fs-6">
                                         <span x-text="formatEuro(a.value) + ' €'"></span>
                                         <template x-if="a.snapshots && a.snapshots.length > 1">
-                                            <div class="small" :class="a.change_pct >= 0 ? 'text-success' : 'text-danger'" style="font-size: 0.7rem;">
+                                            <div class="small" :class="a.change_pct >= 0 ? 'text-success' : 'text-danger'" style="font-size: var(--app-fs-xs);">
                                                 <span x-text="(a.change_pct >= 0 ? '+' : '') + a.change_pct + ' %'"></span>
                                             </div>
                                         </template>
@@ -625,7 +625,7 @@
                                     <td class="py-3 px-3">
                                         <div class="fw-bold" x-text="pa.name"></div>
                                         <template x-if="pa.is_sold">
-                                            <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-2 py-0.5" style="font-size: 0.65rem;">{% trans "Sold" %}</span>
+                                            <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-2 py-0.5" style="font-size: var(--app-fs-xs);">{% trans "Sold" %}</span>
                                         </template>
                                     </td>
                                     <td class="py-3 px-3">
@@ -763,8 +763,8 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body pt-3">
-                        <div class="p-2 px-3 rounded-3 mb-3 small d-flex align-items-center gap-2" style="background-color: rgba(220, 53, 69, 0.08); border: 1px solid rgba(220, 53, 69, 0.3);">
-                            <i class="bi bi-shield-lock-fill text-danger"></i>
+                        <div class="p-2 px-3 rounded-3 mb-3 small d-flex align-items-center gap-2 theme-callout-danger">
+                            <i class="bi bi-shield-lock-fill"></i>
                             <span><strong>{% trans "Sicherheitshinweis:" %}</strong> {% trans "Hinterlege niemals Online-Banking-Zugangsdaten, Passwörter, PINs/TANs oder Krypto-Seed-Phrases (12/24 Wörter) in dieser Anwendung!" %}</span>
                         </div>
                         <div class="row g-3">
@@ -856,8 +856,8 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body pt-3">
-                        <div class="p-2 px-3 rounded-3 mb-3 small d-flex align-items-center gap-2" style="background-color: rgba(220, 53, 69, 0.08); border: 1px solid rgba(220, 53, 69, 0.3);">
-                            <i class="bi bi-shield-lock-fill text-danger"></i>
+                        <div class="p-2 px-3 rounded-3 mb-3 small d-flex align-items-center gap-2 theme-callout-danger">
+                            <i class="bi bi-shield-lock-fill"></i>
                             <span><strong>{% trans "Sicherheitshinweis:" %}</strong> {% trans "Hinterlege niemals Online-Banking-Zugangsdaten, Passwörter, PINs/TANs oder Krypto-Seed-Phrases (12/24 Wörter) in dieser Anwendung!" %}</span>
                         </div>
                         <div class="row g-3">
@@ -937,7 +937,7 @@
 
                     <!-- Snapshot History Table -->
                     <div class="table-responsive rounded-3 border">
-                        <table class="table table-sm table-hover align-middle mb-0" style="font-size: 0.85rem;">
+                        <table class="table table-sm table-hover align-middle mb-0" style="font-size: var(--app-fs-sm);">
                             <thead>
                                 <tr>
                                     <th class="py-2 px-3">{% trans "Date" %}</th>

@@ -6,7 +6,7 @@
         {% trans "Simulation" %}
     </button>
     {% if is_simulation_active %}
-    <span class="position-absolute start-50 translate-middle-x small fw-bold sim-blinking text-nowrap" style="top: 100%; font-size: 0.68rem; margin-top: 2px;">
+    <span class="position-absolute start-50 translate-middle-x small fw-bold sim-blinking text-nowrap" style="top: 100%; font-size: var(--app-fs-xs); margin-top: 2px;">
         <i class="bi bi-circle-fill me-1" style="font-size: 0.45rem;"></i>{% trans "active" %}
     </span>
     {% endif %}
@@ -60,7 +60,7 @@
                 <span class="fw-bold d-flex align-items-center">
                     {{ item.display_title }}
                     <i class="bi bi-info-circle ms-2" 
-                       style="font-size: 0.9rem; color: inherit; opacity: 0.7; cursor: pointer; padding: 4px;"
+                       style="font-size: var(--app-fs-base); color: inherit; opacity: 0.7; cursor: pointer; padding: 4px;"
                        onclick="showHelp('{{ item.display_title|escapejs }}', '{{ item.help_text|escapejs }}')"></i>
                 </span>
                 {% if item.id in affected_charts %}

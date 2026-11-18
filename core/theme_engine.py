@@ -12,28 +12,30 @@ STATES = [
 ]
 
 MOODS = {
-    "modern":    {"s": 70, "l": 50, "bg": "#f4f6f9", "dark": False, "shift": 0.06, "surface": "tinted", "svg": "topography"},
-    "dualtone":  {"s": 78, "l": 52, "bg": "#f4f6f9", "dark": False, "shift": 0.00, "dual": True, "surface": "tinted", "svg": "curves"},
-    "serioes":   {"s": 42, "l": 45, "bg": "#f1f5f9", "dark": False, "shift": 0.10, "surface": "glass", "svg": "grid"},
-    "dunkel":    {"s": 65, "l": 52, "bg": "#0f172a", "dark": True,  "shift": 0.08, "surface": "glass", "svg": "grid"},
-    "brutalism": {"s": 92, "l": 56, "bg": "#050505", "dark": True,  "shift": 0.00, "brutal": True, "surface": "brutal", "svg": "brutal_grid"},
-    "wellness":  {"s": 36, "l": 74, "bg": "#f6f7f4", "dark": False, "shift": 0.18, "surface": "tinted", "svg": "topography"},
-    "ecofuture": {"s": 88, "l": 52, "bg": "#141d18", "dark": True,  "shift": 0.05, "eco": True, "surface": "tinted", "svg": "curves"},
-    "moody":     {"s": 58, "l": 36, "bg": "#16131c", "dark": True,  "shift": 0.12, "surface": "tinted", "svg": "aura"},
-    "fancy":     {"s": 65, "l": 68, "bg": "#f8f5fc", "dark": False, "shift": 0.12, "surface": "tinted", "svg": "aura"},
-    "vintage":   {"s": 48, "l": 54, "bg": "#f5f0e6", "dark": False, "shift": 0.25, "warm": True, "surface": "tinted", "svg": "aura"},
-    "knallbunt": {"s": 95, "l": 52, "bg": "#f4f6f9", "dark": False, "shift": 0.02, "surface": "solid", "svg": "curves"},
-    "neon":      {"s": 100,"l": 55, "bg": "#090a0f", "dark": True,  "shift": 0.00, "glow": True, "surface": "tinted", "svg": "curves"},
-    "duester":   {"s": 35, "l": 38, "bg": "#111317", "dark": True,  "shift": 0.15, "surface": "glass", "svg": "aura"},
-    "earth":     {"s": 32, "l": 48, "bg": "#ede6dc", "dark": False, "shift": 0.15, "earth": True, "surface": "tinted", "svg": "topography"},
-    "monochrom": {"s": 55, "l": 50, "bg": "#f4f6f9", "dark": False, "shift": 0.88, "surface": "glass", "svg": "grid"},
-    "grayscale": {"s": 0,  "l": 50, "bg": "#efefef", "dark": False, "shift": 0.00, "surface": "glass", "svg": "grid"},
+    "modern":    {"s": 70, "l": 50, "bg": "#f4f6f9", "dark": False, "shift": 0.06, "surface": "tinted", "svg": "topography", "font": "sans"},
+    "dualtone":  {"s": 78, "l": 52, "bg": "#f4f6f9", "dark": False, "shift": 0.00, "dual": True, "surface": "tinted", "svg": "curves", "font": "sans"},
+    "serioes":   {"s": 42, "l": 45, "bg": "#f1f5f9", "dark": False, "shift": 0.10, "surface": "glass", "svg": "grid", "font": "serif"},
+    "dunkel":    {"s": 65, "l": 52, "bg": "#0f172a", "dark": True,  "shift": 0.08, "surface": "glass", "svg": "grid", "font": "tech"},
+    "brutalism": {"s": 92, "l": 56, "bg": "#050505", "dark": True,  "shift": 0.00, "brutal": True, "surface": "brutal", "svg": "brutal_grid", "font": "mono"},
+    "wellness":  {"s": 36, "l": 74, "bg": "#f6f7f4", "dark": False, "shift": 0.18, "surface": "tinted", "svg": "topography", "font": "rounded"},
+    "ecofuture": {"s": 88, "l": 52, "bg": "#141d18", "dark": True,  "shift": 0.05, "eco": True, "surface": "tinted", "svg": "curves", "font": "tech"},
+    "moody":     {"s": 58, "l": 36, "bg": "#16131c", "dark": True,  "shift": 0.12, "surface": "tinted", "svg": "aura", "font": "tech"},
+    "fancy":     {"s": 65, "l": 68, "bg": "#f8f5fc", "dark": False, "shift": 0.12, "surface": "tinted", "svg": "aura", "font": "rounded"},
+    "vintage":   {"s": 48, "l": 54, "bg": "#f5f0e6", "dark": False, "shift": 0.25, "warm": True, "surface": "tinted", "svg": "aura", "font": "serif"},
+    "knallbunt": {"s": 95, "l": 52, "bg": "#f4f6f9", "dark": False, "shift": 0.02, "surface": "solid", "svg": "curves", "font": "rounded"},
+    "neon":      {"s": 100,"l": 55, "bg": "#090a0f", "dark": True,  "shift": 0.00, "glow": True, "surface": "tinted", "svg": "curves", "font": "tech"},
+    "duester":   {"s": 35, "l": 38, "bg": "#111317", "dark": True,  "shift": 0.15, "surface": "glass", "svg": "aura", "font": "tech"},
+    "earth":     {"s": 32, "l": 48, "bg": "#ede6dc", "dark": False, "shift": 0.15, "earth": True, "surface": "tinted", "svg": "topography", "font": "serif"},
+    "monochrom": {"s": 55, "l": 50, "bg": "#f4f6f9", "dark": False, "shift": 0.88, "surface": "glass", "svg": "grid", "font": "sans"},
+    "grayscale": {"s": 0,  "l": 50, "bg": "#efefef", "dark": False, "shift": 0.00, "surface": "glass", "svg": "grid", "font": "sans"},
 }
 
 CARD_SURFACES = ("auto", "solid", "glass", "tinted", "brutal")
 BG_SVG_MODES = ("auto", "topography", "grid", "curves", "aura", "brutal_grid", "none")
 MENU_LAYOUTS = ("top", "sidebar")
 MENU_STYLES = ("auto", "glass", "gradient")
+FONT_FAMILIES = ("auto", "sans", "rounded", "serif", "tech", "mono")
+FONT_SCALES = ("compact", "normal", "comfortable")
 
 
 def hex_to_hsl(hex_str):
@@ -278,6 +280,9 @@ def get_profile_theme_studio_settings(profile):
             "menu_layout": "top",
             "menu_style": "auto",
             "resolved_menu_style": "gradient",
+            "font_family": "auto",
+            "resolved_font_family": "sans",
+            "font_scale": "normal",
         }
     dc = profile.dashboard_config or {}
     ts = dc.get("theme_studio", {})
@@ -301,6 +306,13 @@ def get_profile_theme_studio_settings(profile):
     if menu_style not in MENU_STYLES:
         menu_style = "auto"
     resolved_menu_style = ("brutal" if resolved_surface == "brutal" else "gradient") if menu_style == "auto" else menu_style
+    font_family = ts.get("font_family", "auto")
+    if font_family not in FONT_FAMILIES:
+        font_family = "auto"
+    resolved_font_family = m.get("font", "sans") if font_family == "auto" else font_family
+    font_scale = ts.get("font_scale", "normal")
+    if font_scale not in FONT_SCALES:
+        font_scale = "normal"
     return {
         "c1": profile.gradient_start or "#6610f2",
         "c2": profile.gradient_end or "#0d6efd",
@@ -321,6 +333,9 @@ def get_profile_theme_studio_settings(profile):
         "menu_layout": menu_layout,
         "menu_style": menu_style,
         "resolved_menu_style": resolved_menu_style,
+        "font_family": font_family,
+        "resolved_font_family": resolved_font_family,
+        "font_scale": font_scale,
     }
 
 

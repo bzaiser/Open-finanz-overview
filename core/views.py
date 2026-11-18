@@ -210,6 +210,8 @@ def profile_view(request):
         BG_SVG_MODES,
         MENU_LAYOUTS,
         MENU_STYLES,
+        FONT_FAMILIES,
+        FONT_SCALES,
         apply_theme_studio_to_profile,
         get_profile_theme_studio_settings,
         get_profile_theme_palette,
@@ -272,6 +274,12 @@ def profile_view(request):
             menu_style = request.POST.get('theme_menu_style', prev_ts.get('menu_style', 'auto'))
             if menu_style not in MENU_STYLES:
                 menu_style = 'auto'
+            font_family = request.POST.get('theme_font_family', prev_ts.get('font_family', 'auto'))
+            if font_family not in FONT_FAMILIES:
+                font_family = 'auto'
+            font_scale = request.POST.get('theme_font_scale', prev_ts.get('font_scale', 'normal'))
+            if font_scale not in FONT_SCALES:
+                font_scale = 'normal'
             ts_payload = {
                 'mood': mood,
                 'bg_mode': bg_mode,
@@ -288,6 +296,8 @@ def profile_view(request):
                 'kpi_click_navigation': (request.POST.get('kpi_click_navigation') == 'on') if has_kpi_ext_fields else bool(prev_ts.get('kpi_click_navigation', True)),
                 'menu_layout': menu_layout,
                 'menu_style': menu_style,
+                'font_family': font_family,
+                'font_scale': font_scale,
             }
 
             manual_precision = request.POST.get('theme_manual_precision') == '1'

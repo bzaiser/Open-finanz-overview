@@ -7,7 +7,7 @@
 <style>
 /* Table Harmonization matching Pension Planning */
 .real-estate-table {
-    font-size: 0.85rem;
+    font-size: var(--app-fs-sm);
     --bs-table-bg: transparent !important;
     --bs-table-color: var(--app-table-body-text) !important;
     border-color: var(--app-table-border-color) !important;
@@ -71,13 +71,13 @@
                         <div class="card-glass-glow"></div>
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: var(--app-fs-xs); letter-spacing: 0.05em; color: inherit;">
                                     {% trans "Total Property Value" %}
                                 </span>
                                 <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
                                     {{ overview.total_property_value|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}</span>
                                 </h3>
-                                <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                                <span class="small opacity-85" style="font-size: var(--app-fs-xs); color: inherit;">
                                     {{ overview.properties|length }} {% trans "Properties recorded" %}
                                 </span>
                             </div>
@@ -88,14 +88,14 @@
 
                         <!-- Hover Expand Details: Properties Breakdown -->
                         <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
-                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Real Estate Breakdown" %}:</span>
+                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: var(--app-fs-xs);">{% trans "Real Estate Breakdown" %}:</span>
                             {% for p in overview.properties %}
-                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: var(--app-fs-xs);">
                                 <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ p.real_estate.name }}">{{ p.real_estate.name }}</span>
                                 <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">{{ p.property_value|floatformat:2|intcomma }} <span class="small font-normal opacity-75">{{ user.profile.currency|default:"€" }}</span></span>
                             </div>
                             {% empty %}
-                            <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No entries." %}</div>
+                            <div class="small opacity-75 py-1" style="font-size: var(--app-fs-xs);">{% trans "No entries." %}</div>
                             {% endfor %}
                         </div>
                     </div>
@@ -107,13 +107,13 @@
                         <div class="card-glass-glow"></div>
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: var(--app-fs-xs); letter-spacing: 0.05em; color: inherit;">
                                     {% trans "Total Remaining Debt" %}
                                 </span>
                                 <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
                                     {{ overview.total_debt_all|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}</span>
                                 </h3>
-                                <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                                <span class="small opacity-85" style="font-size: var(--app-fs-xs); color: inherit;">
                                     LTV: {{ overview.overall_ltv }} % | {% trans "Secured" %}: {{ overview.total_linked_debt|floatformat:0|intcomma }} {{ user.profile.currency|default:"€" }}
                                 </span>
                             </div>
@@ -124,14 +124,14 @@
 
                         <!-- Hover Expand Details: Loans Breakdown -->
                         <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
-                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Loan Portfolio" %}:</span>
+                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: var(--app-fs-xs);">{% trans "Loan Portfolio" %}:</span>
                             {% for item in overview.all_loans %}
-                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: var(--app-fs-xs);">
                                 <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ item.loan.name }}">{{ item.loan.name }}</span>
                                 <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">{{ item.details.current_balance|floatformat:2|intcomma }} <span class="small font-normal opacity-75">{{ user.profile.currency|default:"€" }}</span></span>
                             </div>
                             {% empty %}
-                            <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No entries." %}</div>
+                            <div class="small opacity-75 py-1" style="font-size: var(--app-fs-xs);">{% trans "No entries." %}</div>
                             {% endfor %}
                         </div>
                     </div>
@@ -143,13 +143,13 @@
                         <div class="card-glass-glow"></div>
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: var(--app-fs-xs); letter-spacing: 0.05em; color: inherit;">
                                     {% trans "Net Equity" %}
                                 </span>
                                 <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
                                     {{ overview.total_equity_all|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}</span>
                                 </h3>
-                                <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                                <span class="small opacity-85" style="font-size: var(--app-fs-xs); color: inherit;">
                                     {% trans "Property value minus total debt" %}
                                 </span>
                             </div>
@@ -160,14 +160,14 @@
 
                         <!-- Hover Expand Details: Property Equity Breakdown -->
                         <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
-                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Equity by Property" %}:</span>
+                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: var(--app-fs-xs);">{% trans "Equity by Property" %}:</span>
                             {% for p in overview.properties %}
-                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: var(--app-fs-xs);">
                                 <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ p.real_estate.name }}">{{ p.real_estate.name }}</span>
                                 <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">{{ p.equity|floatformat:2|intcomma }} <span class="small font-normal opacity-75">{{ user.profile.currency|default:"€" }}</span></span>
                             </div>
                             {% empty %}
-                            <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No entries." %}</div>
+                            <div class="small opacity-75 py-1" style="font-size: var(--app-fs-xs);">{% trans "No entries." %}</div>
                             {% endfor %}
                         </div>
                     </div>
@@ -179,13 +179,13 @@
                         <div class="card-glass-glow"></div>
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: var(--app-fs-xs); letter-spacing: 0.05em; color: inherit;">
                                     {% trans "Monthly Cashflow" %}
                                 </span>
                                 <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
                                     {% if overview.total_property_cashflow >= 0 %}+{% endif %}{{ overview.total_property_cashflow|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }} / M</span>
                                 </h3>
-                                <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                                <span class="small opacity-85" style="font-size: var(--app-fs-xs); color: inherit;">
                                     {% trans "Rent minus operating costs and loan installments" %}
                                 </span>
                             </div>
@@ -196,16 +196,16 @@
 
                         <!-- Hover Expand Details: Monthly Cashflow by Property -->
                         <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
-                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Cashflow by Property" %}:</span>
+                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: var(--app-fs-xs);">{% trans "Cashflow by Property" %}:</span>
                             {% for p in overview.properties %}
-                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: var(--app-fs-xs);">
                                 <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ p.real_estate.name }}">{{ p.real_estate.name }}</span>
                                 <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto {% if p.net_cashflow >= 0 %}text-white{% else %}text-danger{% endif %}">
                                     {% if p.net_cashflow >= 0 %}+{% endif %}{{ p.net_cashflow|floatformat:2|intcomma }} <span class="small font-normal opacity-75">{{ user.profile.currency|default:"€" }}</span>
                                 </span>
                             </div>
                             {% empty %}
-                            <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No entries." %}</div>
+                            <div class="small opacity-75 py-1" style="font-size: var(--app-fs-xs);">{% trans "No entries." %}</div>
                             {% endfor %}
                         </div>
                     </div>
@@ -397,7 +397,7 @@
                                     {% trans "Ongoing monthly burden at 100% vacancy" %}:
                                     <strong class="font-monospace text-danger">{{ p.vacancy_stress.monthly_loss_burden|floatformat:2|intcomma }} € / M</strong>
                                 </div>
-                                <div class="row g-2 text-center" style="font-size: 0.75rem;">
+                                <div class="row g-2 text-center" style="font-size: var(--app-fs-xs);">
                                     <div class="col-4 p-1 border rounded bg-white bg-opacity-10">
                                         <div class="opacity-75">3 {% trans "Months" %}</div>
                                         <div class="fw-bold font-monospace text-danger">{{ p.vacancy_stress.loss_3m|floatformat:0|intcomma }} €</div>
@@ -431,14 +431,14 @@
                                             <span class="fw-bold">{{ item.loan.name }}</span>
                                             <span class="opacity-75 ms-1">({{ item.loan.provider|default:_("Bank") }})</span>
                                             {% if item.details.lock_months_left is not None %}
-                                            <span class="badge {% if item.details.lock_status == 'critical' %}bg-danger{% elif item.details.lock_status == 'warning' %}bg-warning text-dark{% else %}bg-success bg-opacity-25 text-success{% endif %} ms-1" style="font-size: 0.65rem;">
+                                            <span class="badge {% if item.details.lock_status == 'critical' %}bg-danger{% elif item.details.lock_status == 'warning' %}bg-warning text-dark{% else %}bg-success bg-opacity-25 text-success{% endif %} ms-1" style="font-size: var(--app-fs-xs);">
                                                 {% trans "Lock" %}: {{ item.details.lock_months_left }}M ({{ item.loan.interest_lock_end|date:"d.m.Y" }})
                                             </span>
                                             {% endif %}
                                         </div>
                                         <div class="text-end font-monospace">
                                             <span class="fw-bold text-danger">{{ item.details.current_balance|floatformat:2|intcomma }} €</span>
-                                            <div class="opacity-75" style="font-size: 0.7rem;">{% trans "Installment" %}: {{ item.loan.monthly_installment|floatformat:2|intcomma }} €</div>
+                                            <div class="opacity-75" style="font-size: var(--app-fs-xs);">{% trans "Installment" %}: {{ item.loan.monthly_installment|floatformat:2|intcomma }} €</div>
                                         </div>
                                     </div>
                                     {% endfor %}
@@ -554,14 +554,14 @@
                                 <!-- Inline Filter Row (Dashboard Style) -->
                                 <tr style="background-color: var(--app-table-filter-bg) !important;">
                                     <td class="p-1 px-3 border-0">
-                                        <input type="text" x-model="loanFilters.name" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body" style="font-size: 0.75rem;" placeholder="{% trans 'Filter Name/Bank...' %}">
+                                        <input type="text" x-model="loanFilters.name" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body" style="font-size: var(--app-fs-xs);" placeholder="{% trans 'Filter Name/Bank...' %}">
                                     </td>
                                     <td class="p-1 px-3 border-0">
-                                        <input type="text" x-model="loanFilters.real_estate" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body" style="font-size: 0.75rem;" placeholder="{% trans 'Filter Objekt...' %}">
+                                        <input type="text" x-model="loanFilters.real_estate" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body" style="font-size: var(--app-fs-xs);" placeholder="{% trans 'Filter Objekt...' %}">
                                     </td>
                                     <td class="p-1 px-3 border-0" colspan="3"></td>
                                     <td class="p-1 px-3 border-0">
-                                        <input type="text" x-model="loanFilters.lock_status" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body" style="font-size: 0.75rem;" placeholder="{% trans 'Status...' %}">
+                                        <input type="text" x-model="loanFilters.lock_status" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body" style="font-size: var(--app-fs-xs);" placeholder="{% trans 'Status...' %}">
                                     </td>
                                     <td class="p-1 px-3 border-0"></td>
                                 </tr>
@@ -580,16 +580,16 @@
                                         </td>
                                         <td class="py-3 px-3">
                                             <div>
-                                                <span class="badge rounded-pill bg-body-tertiary text-body border border-secondary border-opacity-20" style="font-size: 0.7rem;" x-text="item.loan_type_display"></span>
+                                                <span class="badge rounded-pill bg-body-tertiary text-body border border-secondary border-opacity-20" style="font-size: var(--app-fs-xs);" x-text="item.loan_type_display"></span>
                                             </div>
                                             <div class="mt-1">
                                                 <template x-if="item.real_estate_name">
-                                                    <span class="badge rounded-pill bg-primary-subtle text-primary border border-primary border-opacity-25" style="font-size: 0.7rem;">
+                                                    <span class="badge rounded-pill bg-primary-subtle text-primary border border-primary border-opacity-25" style="font-size: var(--app-fs-xs);">
                                                         <i class="bi bi-house me-1"></i><span x-text="item.real_estate_name"></span>
                                                     </span>
                                                 </template>
                                                 <template x-if="!item.real_estate_name">
-                                                    <span class="badge rounded-pill bg-body-tertiary text-muted border border-secondary border-opacity-20 opacity-75" style="font-size: 0.7rem;">
+                                                    <span class="badge rounded-pill bg-body-tertiary text-muted border border-secondary border-opacity-20 opacity-75" style="font-size: var(--app-fs-xs);">
                                                         {% trans "Unsecured Loan" %}
                                                     </span>
                                                 </template>
@@ -606,13 +606,13 @@
                                         </td>
                                         <td class="py-3 px-3">
                                             <div class="fw-bold font-monospace"><span x-text="formatEuro(item.monthly_installment)"></span> €</div>
-                                            <div class="small opacity-75 font-monospace" style="font-size: 0.72rem;">
+                                            <div class="small opacity-75 font-monospace" style="font-size: var(--app-fs-xs);">
                                                 {% trans "Interest" %}: <span x-text="formatEuro(item.current_interest_portion)"></span> € | {% trans "Principal" %}: <span x-text="formatEuro(item.current_principal_portion)"></span> €
                                             </div>
                                         </td>
                                         <td class="py-3 px-3 text-end">
                                             <div class="fw-bold font-monospace text-danger fs-6"><span x-text="formatEuro(item.current_balance)"></span> €</div>
-                                            <div class="small opacity-75 font-monospace" style="font-size: 0.7rem;">
+                                            <div class="small opacity-75 font-monospace" style="font-size: var(--app-fs-xs);">
                                                 Start: <span x-text="formatEuro(item.nominal_amount)"></span> €
                                             </div>
                                         </td>
@@ -699,13 +699,13 @@
                                 <div class="card-glass-glow"></div>
                                 <div class="d-flex justify-content-between align-items-start">
                                     <div>
-                                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
+                                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: var(--app-fs-xs); letter-spacing: 0.05em; color: inherit;">
                                             {% trans "Accumulated Reserves" %}
                                         </span>
                                         <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
                                             {{ overview.portfolio_reserves.total_current_reserve|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}</span>
                                         </h3>
-                                        <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                                        <span class="small opacity-85" style="font-size: var(--app-fs-xs); color: inherit;">
                                             {% trans "Total maintenance reserves saved" %}
                                         </span>
                                     </div>
@@ -716,14 +716,14 @@
 
                                 <!-- Hover Expand Details: Reserves by Property -->
                                 <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
-                                    <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Reserves by Property" %}:</span>
+                                    <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: var(--app-fs-xs);">{% trans "Reserves by Property" %}:</span>
                                     {% for p in overview.properties %}
-                                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: var(--app-fs-xs);">
                                         <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ p.real_estate.name }}">{{ p.real_estate.name }}</span>
                                         <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">{{ p.reserves.current_reserve|floatformat:2|intcomma }} <span class="small font-normal opacity-75">{{ user.profile.currency|default:"€" }}</span></span>
                                     </div>
                                     {% empty %}
-                                    <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No entries." %}</div>
+                                    <div class="small opacity-75 py-1" style="font-size: var(--app-fs-xs);">{% trans "No entries." %}</div>
                                     {% endfor %}
                                 </div>
                             </div>
@@ -735,13 +735,13 @@
                                 <div class="card-glass-glow"></div>
                                 <div class="d-flex justify-content-between align-items-start">
                                     <div>
-                                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
+                                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: var(--app-fs-xs); letter-spacing: 0.05em; color: inherit;">
                                             {% trans "Target Reserve (Peters)" %}
                                         </span>
                                         <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
                                             {{ overview.portfolio_reserves.total_target_monthly|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }} / M</span>
                                         </h3>
-                                        <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                                        <span class="small opacity-85" style="font-size: var(--app-fs-xs); color: inherit;">
                                             {% trans "Recommended monthly saving rate" %}
                                         </span>
                                     </div>
@@ -752,14 +752,14 @@
 
                                 <!-- Hover Expand Details: Monthly Target by Property -->
                                 <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
-                                    <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Target Allocation by Property" %}:</span>
+                                    <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: var(--app-fs-xs);">{% trans "Target Allocation by Property" %}:</span>
                                     {% for p in overview.properties %}
-                                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: var(--app-fs-xs);">
                                         <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ p.real_estate.name }}">{{ p.real_estate.name }}</span>
                                         <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">{{ p.reserves.peters_target_monthly|floatformat:2|intcomma }} <span class="small font-normal opacity-75">{{ user.profile.currency|default:"€" }}</span></span>
                                     </div>
                                     {% empty %}
-                                    <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No entries." %}</div>
+                                    <div class="small opacity-75 py-1" style="font-size: var(--app-fs-xs);">{% trans "No entries." %}</div>
                                     {% endfor %}
                                 </div>
                             </div>
@@ -771,13 +771,13 @@
                                 <div class="card-glass-glow"></div>
                                 <div class="d-flex justify-content-between align-items-start">
                                     <div>
-                                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
+                                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: var(--app-fs-xs); letter-spacing: 0.05em; color: inherit;">
                                             {% trans "Demand Next 5 Years" %}
                                         </span>
                                         <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
                                             {{ overview.components_roadmap.capital_5_years|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}</span>
                                         </h3>
-                                        <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                                        <span class="small opacity-85" style="font-size: var(--app-fs-xs); color: inherit;">
                                             {% trans "Estimated cost for upcoming renewals" %}
                                         </span>
                                     </div>
@@ -788,14 +788,14 @@
 
                                 <!-- Hover Expand Details: Components Due in 5 Years -->
                                 <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
-                                    <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Due Components (<= 5 Yrs)" %}:</span>
+                                    <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: var(--app-fs-xs);">{% trans "Due Components (<= 5 Yrs)" %}:</span>
                                     {% for c in overview.components_roadmap.due_soon %}
-                                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: var(--app-fs-xs);">
                                         <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ c.name }} ({{ c.real_estate.name }})">{{ c.name }}</span>
                                         <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">{{ c.estimated_cost|floatformat:2|intcomma }} <span class="small font-normal opacity-75">{{ user.profile.currency|default:"€" }}</span></span>
                                     </div>
                                     {% empty %}
-                                    <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No urgent components due." %}</div>
+                                    <div class="small opacity-75 py-1" style="font-size: var(--app-fs-xs);">{% trans "No urgent components due." %}</div>
                                     {% endfor %}
                                 </div>
                             </div>
@@ -807,13 +807,13 @@
                                 <div class="card-glass-glow"></div>
                                 <div class="d-flex justify-content-between align-items-start">
                                     <div>
-                                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
+                                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: var(--app-fs-xs); letter-spacing: 0.05em; color: inherit;">
                                             {% trans "5-Year Reserve Coverage" %}
                                         </span>
                                         <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
                                             {% if overview.portfolio_reserves.reserve_vs_5yr_demand >= 0 %}+{% endif %}{{ overview.portfolio_reserves.reserve_vs_5yr_demand|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}</span>
                                         </h3>
-                                        <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                                        <span class="small opacity-85" style="font-size: var(--app-fs-xs); color: inherit;">
                                             {% if overview.portfolio_reserves.reserve_vs_5yr_demand >= 0 %}{% trans "Fully covered by reserves" %}{% else %}{% trans "Reserve deficit expected" %}{% endif %}
                                         </span>
                                     </div>
@@ -824,12 +824,12 @@
 
                                 <!-- Hover Expand Details: Coverage Overview -->
                                 <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card.bg_color }}; color: {{ card.text_color }};">
-                                    <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Coverage Details" %}:</span>
-                                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                                    <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: var(--app-fs-xs);">{% trans "Coverage Details" %}:</span>
+                                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: var(--app-fs-xs);">
                                         <span>{% trans "Saved Reserves" %}</span>
                                         <span class="font-monospace fw-bold">{{ overview.portfolio_reserves.total_current_reserve|floatformat:2|intcomma }} {{ user.profile.currency|default:"€" }}</span>
                                     </div>
-                                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: var(--app-fs-xs);">
                                         <span>{% trans "Demand 5 Years" %}</span>
                                         <span class="font-monospace fw-bold">{{ overview.components_roadmap.capital_5_years|floatformat:2|intcomma }} {{ user.profile.currency|default:"€" }}</span>
                                     </div>
@@ -920,14 +920,14 @@
                                 <!-- Inline Filter Row (Dashboard Style) -->
                                 <tr style="background-color: var(--app-table-filter-bg) !important;">
                                     <td class="p-1 px-3 border-0">
-                                        <input type="text" x-model="compFilters.name" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body" style="font-size: 0.75rem;" placeholder="{% trans 'Filter Name...' %}">
+                                        <input type="text" x-model="compFilters.name" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body" style="font-size: var(--app-fs-xs);" placeholder="{% trans 'Filter Name...' %}">
                                     </td>
                                     <td class="p-1 px-3 border-0">
-                                        <input type="text" x-model="compFilters.real_estate" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body" style="font-size: 0.75rem;" placeholder="{% trans 'Filter Objekt...' %}">
+                                        <input type="text" x-model="compFilters.real_estate" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body" style="font-size: var(--app-fs-xs);" placeholder="{% trans 'Filter Objekt...' %}">
                                     </td>
                                     <td class="p-1 px-3 border-0" colspan="5"></td>
                                     <td class="p-1 px-3 border-0">
-                                        <input type="text" x-model="compFilters.condition" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body" style="font-size: 0.75rem;" placeholder="{% trans 'Zustand...' %}">
+                                        <input type="text" x-model="compFilters.condition" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body" style="font-size: var(--app-fs-xs);" placeholder="{% trans 'Zustand...' %}">
                                     </td>
                                     <td class="p-1 px-3 border-0"></td>
                                 </tr>
@@ -1103,13 +1103,13 @@
                                 <div class="card-glass-glow"></div>
                                 <div class="d-flex justify-content-between align-items-start">
                                     <div>
-                                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
+                                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: var(--app-fs-xs); letter-spacing: 0.05em; color: inherit;">
                                             {% trans "Total Annual Rent" %}
                                         </span>
                                         <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
                                             {{ overview.cashflow_calendar.annual_totals.total_rent|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}</span>
                                         </h3>
-                                        <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                                        <span class="small opacity-85" style="font-size: var(--app-fs-xs); color: inherit;">
                                             {% trans "12 months expected gross rent" %}
                                         </span>
                                     </div>
@@ -1123,13 +1123,13 @@
                                 <div class="card-glass-glow"></div>
                                 <div class="d-flex justify-content-between align-items-start">
                                     <div>
-                                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
+                                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: var(--app-fs-xs); letter-spacing: 0.05em; color: inherit;">
                                             {% trans "Total Debt Service" %}
                                         </span>
                                         <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
                                             -{{ overview.cashflow_calendar.annual_totals.total_debt|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}</span>
                                         </h3>
-                                        <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                                        <span class="small opacity-85" style="font-size: var(--app-fs-xs); color: inherit;">
                                             {% trans "12 months loan installments" %}
                                         </span>
                                     </div>
@@ -1143,13 +1143,13 @@
                                 <div class="card-glass-glow"></div>
                                 <div class="d-flex justify-content-between align-items-start">
                                     <div>
-                                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
+                                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: var(--app-fs-xs); letter-spacing: 0.05em; color: inherit;">
                                             {% trans "Operating & Reserves" %}
                                         </span>
                                         <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
                                             -{{ overview.cashflow_calendar.annual_totals.total_maintenance|add:overview.cashflow_calendar.annual_totals.total_ancillary|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}</span>
                                         </h3>
-                                        <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                                        <span class="small opacity-85" style="font-size: var(--app-fs-xs); color: inherit;">
                                             {% trans "Reserves and ancillary costs" %}
                                         </span>
                                     </div>
@@ -1163,13 +1163,13 @@
                                 <div class="card-glass-glow"></div>
                                 <div class="d-flex justify-content-between align-items-start">
                                     <div>
-                                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
+                                        <span class="text-uppercase fw-bold opacity-85 small" style="font-size: var(--app-fs-xs); letter-spacing: 0.05em; color: inherit;">
                                             {% trans "Annual Net Cashflow" %}
                                         </span>
                                         <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
                                             {% if overview.cashflow_calendar.annual_totals.total_net >= 0 %}+{% endif %}{{ overview.cashflow_calendar.annual_totals.total_net|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}</span>
                                         </h3>
-                                        <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                                        <span class="small opacity-85" style="font-size: var(--app-fs-xs); color: inherit;">
                                             {% trans "Full year projected net yield" %}
                                         </span>
                                     </div>
@@ -1260,7 +1260,7 @@
                                 <!-- Inline Filter Row (Dashboard Style) -->
                                 <tr style="background-color: var(--app-table-filter-bg) !important;">
                                     <td class="p-1 px-3 border-0" colspan="3">
-                                        <input type="text" x-model="calFilters.search" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body" style="font-size: 0.75rem;" placeholder="{% trans 'Filter Monat oder Ereignis...' %}">
+                                        <input type="text" x-model="calFilters.search" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body" style="font-size: var(--app-fs-xs);" placeholder="{% trans 'Filter Monat oder Ereignis...' %}">
                                     </td>
                                     <td class="p-1 px-3 border-0" colspan="7"></td>
                                 </tr>
@@ -1274,7 +1274,7 @@
                                     </td>
                                     <td class="text-start fw-bold">
                                         <span x-text="m.month_name"></span>
-                                        <span class="badge bg-secondary bg-opacity-25 text-body rounded-pill ms-1 small" style="font-size: 0.7rem;">
+                                        <span class="badge bg-secondary bg-opacity-25 text-body rounded-pill ms-1 small" style="font-size: var(--app-fs-xs);">
                                             <span x-text="m.total_items_count"></span> {% trans "items" %}
                                         </span>
                                     </td>
@@ -1316,7 +1316,7 @@
                                                                 <div class="list-group-item d-flex justify-content-between align-items-center py-2 px-3 small" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
                                                                     <div>
                                                                         <div class="fw-semibold" x-text="item.title"></div>
-                                                                        <span class="badge bg-secondary bg-opacity-25 text-body rounded-pill" style="font-size: 0.65rem;" x-text="item.property_name"></span>
+                                                                        <span class="badge bg-secondary bg-opacity-25 text-body rounded-pill" style="font-size: var(--app-fs-xs);" x-text="item.property_name"></span>
                                                                     </div>
                                                                     <span class="font-monospace text-success fw-bold text-nowrap ms-2">+<span x-text="formatEuro(item.amount)"></span> €</span>
                                                                 </div>
@@ -1339,8 +1339,8 @@
                                                                 <div class="list-group-item d-flex justify-content-between align-items-center py-2 px-3 small" style="background-color: var(--app-card-bg); color: var(--app-card-color);">
                                                                     <div>
                                                                         <div class="fw-semibold" x-text="item.title"></div>
-                                                                        <span class="badge bg-secondary bg-opacity-25 text-body rounded-pill me-1" style="font-size: 0.65rem;" x-text="item.property_name"></span>
-                                                                        <span class="badge bg-info bg-opacity-10 text-info-emphasis rounded-pill" style="font-size: 0.65rem;" x-text="item.category"></span>
+                                                                        <span class="badge bg-secondary bg-opacity-25 text-body rounded-pill me-1" style="font-size: var(--app-fs-xs);" x-text="item.property_name"></span>
+                                                                        <span class="badge bg-info bg-opacity-10 text-info-emphasis rounded-pill" style="font-size: var(--app-fs-xs);" x-text="item.category"></span>
                                                                     </div>
                                                                     <span class="font-monospace text-danger fw-bold text-nowrap ms-2">-<span x-text="formatEuro(item.amount)"></span> €</span>
                                                                 </div>
@@ -1432,22 +1432,22 @@
             <div class="row g-3 mb-4">
                 <div class="col-12 col-sm-6 col-xl-3">
                     <div class="card border-0 shadow-sm rounded-4 h-100 p-3" style="background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color, rgba(125,125,125,0.2)) !important;">
-                        <span class="text-uppercase fw-bold opacity-75 small" style="font-size: 0.68rem;">{% trans "Geschätzte Gesamtsteuer" %} ({{ tax_cockpit.current_year }})</span>
+                        <span class="text-uppercase fw-bold opacity-75 small" style="font-size: var(--app-fs-xs);">{% trans "Geschätzte Gesamtsteuer" %} ({{ tax_cockpit.current_year }})</span>
                         <h3 class="fw-bold mb-1 mt-1 font-monospace text-primary">
                             {{ tax_cockpit.current_row.estimated_tax|floatformat:0|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}/J.</span>
                         </h3>
-                        <span class="small opacity-75" style="font-size: 0.74rem;">
+                        <span class="small opacity-75" style="font-size: var(--app-fs-xs);">
                             {% trans "zvE ca." %} {{ tax_cockpit.current_row.zve|floatformat:0|intcomma }} € · {{ tax_cockpit.current_row.phase_label }}
                         </span>
                     </div>
                 </div>
                 <div class="col-12 col-sm-6 col-xl-3">
                     <div class="card border-0 shadow-sm rounded-4 h-100 p-3" style="background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color, rgba(125,125,125,0.2)) !important;">
-                        <span class="text-uppercase fw-bold opacity-75 small" style="font-size: 0.68rem;">{% trans "Persönlicher Steuersatz (Kalibriert)" %}</span>
+                        <span class="text-uppercase fw-bold opacity-75 small" style="font-size: var(--app-fs-xs);">{% trans "Persönlicher Steuersatz (Kalibriert)" %}</span>
                         <h3 class="fw-bold mb-1 mt-1 font-monospace">
                             Ø {{ tax_cockpit.current_row.effective_rate|floatformat:1 }} % <span class="fs-6 opacity-75">/ Grenz: {{ tax_cockpit.current_row.marginal_rate|floatformat:1 }} %</span>
                         </h3>
-                        <span class="small opacity-75" style="font-size: 0.74rem;">
+                        <span class="small opacity-75" style="font-size: var(--app-fs-xs);">
                             {% if tax_cockpit.is_splitting %}{% trans "Splittingtarif (Zusammenveranlagung)" %}{% else %}{% trans "Grundtarif (Einzelveranlagung)" %}{% endif %}
                             {% if tax_cockpit.church_tax_rate > 0 %} · {% trans "KiSt" %} {{ tax_cockpit.church_tax_rate|floatformat:0 }} %{% endif %}
                         </span>
@@ -1455,22 +1455,22 @@
                 </div>
                 <div class="col-12 col-sm-6 col-xl-3">
                     <div class="card border-0 shadow-sm rounded-4 h-100 p-3" style="background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color, rgba(125,125,125,0.2)) !important;">
-                        <span class="text-uppercase fw-bold opacity-75 small" style="font-size: 0.68rem;">{% trans "Steuerlast im Ruhestand" %} ({{ tax_cockpit.retirement_year }})</span>
+                        <span class="text-uppercase fw-bold opacity-75 small" style="font-size: var(--app-fs-xs);">{% trans "Steuerlast im Ruhestand" %} ({{ tax_cockpit.retirement_year }})</span>
                         <h3 class="fw-bold mb-1 mt-1 font-monospace text-info">
                             {{ tax_cockpit.retirement_row.estimated_tax|floatformat:0|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}/J.</span>
                         </h3>
-                        <span class="small opacity-75" style="font-size: 0.74rem;">
+                        <span class="small opacity-75" style="font-size: var(--app-fs-xs);">
                             Ø {{ tax_cockpit.retirement_row.effective_rate|floatformat:1 }} % · {% trans "inkl. Renten-Kohorte & bAV" %}
                         </span>
                     </div>
                 </div>
                 <div class="col-12 col-sm-6 col-xl-3">
                     <div class="card border-0 shadow-sm rounded-4 h-100 p-3" style="background-color: var(--app-card-bg); color: var(--app-card-color); border: 1px solid var(--app-table-border-color, rgba(125,125,125,0.2)) !important;">
-                        <span class="text-uppercase fw-bold opacity-75 small" style="font-size: 0.68rem;">{% trans "Lern-Faktor & Bescheide" %}</span>
+                        <span class="text-uppercase fw-bold opacity-75 small" style="font-size: var(--app-fs-xs);">{% trans "Lern-Faktor & Bescheide" %}</span>
                         <h3 class="fw-bold mb-1 mt-1 font-monospace text-success">
                             {{ tax_cockpit.assessments|length }} <span class="fs-6 opacity-75">{% trans "Bescheid(e)" %}</span>
                         </h3>
-                        <span class="small opacity-75" style="font-size: 0.74rem;">
+                        <span class="small opacity-75" style="font-size: var(--app-fs-xs);">
                             {% if tax_cockpit.learned_deduction_amount %}
                                 {% trans "Gelernte Ø Abzüge:" %} {{ tax_cockpit.learned_deduction_amount|floatformat:0|intcomma }} €/J.
                             {% else %}
@@ -1537,7 +1537,7 @@
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0 text-center real-estate-table" style="font-size: 0.84rem;">
+                        <table class="table table-hover align-middle mb-0 text-center real-estate-table" style="font-size: var(--app-fs-sm);">
                             <thead>
                                 <tr>
                                     <th class="py-3 px-3 text-start">{% trans "Steuerjahr" %}</th>
@@ -1641,13 +1641,13 @@
                         <div class="card-glass-glow"></div>
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: var(--app-fs-xs); letter-spacing: 0.05em; color: inherit;">
                                     {% trans "Gross Rental Income" %}
                                 </span>
                                 <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
                                     {{ overview.portfolio_tax.total_gross_rent_annual|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}</span>
                                 </h3>
-                                <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                                <span class="small opacity-85" style="font-size: var(--app-fs-xs); color: inherit;">
                                     {% trans "Per year (taxable receipts)" %}
                                 </span>
                             </div>
@@ -1658,16 +1658,16 @@
 
                         <!-- Hover Expand Details: Gross Rent by Property -->
                         <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card.bg_color|default:card_colors.property_bg }}; color: {{ card.text_color|default:card_colors.property_text }};">
-                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Gross Rent by Property" %}:</span>
+                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: var(--app-fs-xs);">{% trans "Gross Rent by Property" %}:</span>
                             {% for p in overview.properties %}
                             {% if p.tax_metrics.is_rental %}
-                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: var(--app-fs-xs);">
                                 <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ p.real_estate.name }}">{{ p.real_estate.name }}</span>
                                 <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">{{ p.tax_metrics.annual_rental_income|floatformat:2|intcomma }} <span class="small font-normal opacity-75">{{ user.profile.currency|default:"€" }}</span></span>
                             </div>
                             {% endif %}
                             {% empty %}
-                            <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No rented properties." %}</div>
+                            <div class="small opacity-75 py-1" style="font-size: var(--app-fs-xs);">{% trans "No rented properties." %}</div>
                             {% endfor %}
                         </div>
                     </div>
@@ -1679,13 +1679,13 @@
                         <div class="card-glass-glow"></div>
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: var(--app-fs-xs); letter-spacing: 0.05em; color: inherit;">
                                     {% trans "Total Deductions (Werbungskosten)" %}
                                 </span>
                                 <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
                                     -{{ overview.portfolio_tax.total_werbungskosten_annual|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}</span>
                                 </h3>
-                                <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                                <span class="small opacity-85" style="font-size: var(--app-fs-xs); color: inherit;">
                                     {% trans "AfA, loan interest & operating costs" %}
                                 </span>
                             </div>
@@ -1696,16 +1696,16 @@
 
                         <!-- Hover Expand Details: Deductions by Property -->
                         <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card.bg_color|default:card_colors.debt_bg }}; color: {{ card.text_color|default:card_colors.debt_text }};">
-                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Deductions by Property" %}:</span>
+                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: var(--app-fs-xs);">{% trans "Deductions by Property" %}:</span>
                             {% for p in overview.properties %}
                             {% if p.tax_metrics.is_rental %}
-                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: var(--app-fs-xs);">
                                 <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ p.real_estate.name }}">{{ p.real_estate.name }}</span>
                                 <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">-{{ p.tax_metrics.total_werbungskosten|floatformat:2|intcomma }} <span class="small font-normal opacity-75">{{ user.profile.currency|default:"€" }}</span></span>
                             </div>
                             {% endif %}
                             {% empty %}
-                            <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No entries." %}</div>
+                            <div class="small opacity-75 py-1" style="font-size: var(--app-fs-xs);">{% trans "No entries." %}</div>
                             {% endfor %}
                         </div>
                     </div>
@@ -1717,13 +1717,13 @@
                         <div class="card-glass-glow"></div>
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: var(--app-fs-xs); letter-spacing: 0.05em; color: inherit;">
                                     {% trans "Taxable Result (V+V)" %}
                                 </span>
                                 <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
                                     {% if overview.portfolio_tax.total_taxable_result_vv >= 0 %}+{% endif %}{{ overview.portfolio_tax.total_taxable_result_vv|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}</span>
                                 </h3>
-                                <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                                <span class="small opacity-85" style="font-size: var(--app-fs-xs); color: inherit;">
                                     {% if overview.portfolio_tax.total_taxable_result_vv < 0 %}{% trans "Tax loss (offsets income)" %}{% else %}{% trans "Taxable surplus" %}{% endif %}
                                 </span>
                             </div>
@@ -1734,16 +1734,16 @@
 
                         <!-- Hover Expand Details: Result by Property -->
                         <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card.bg_color|default:card_colors.equity_bg }}; color: {{ card.text_color|default:card_colors.equity_text }};">
-                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Tax Result by Property" %}:</span>
+                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: var(--app-fs-xs);">{% trans "Tax Result by Property" %}:</span>
                             {% for p in overview.properties %}
                             {% if p.tax_metrics.is_rental %}
-                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: var(--app-fs-xs);">
                                 <span class="text-truncate flex-grow-1" style="min-width: 0;" title="{{ p.real_estate.name }}">{{ p.real_estate.name }}</span>
                                 <span class="font-monospace fw-bold text-end text-nowrap flex-shrink-0 ms-auto">{% if p.tax_metrics.taxable_result >= 0 %}+{% endif %}{{ p.tax_metrics.taxable_result|floatformat:2|intcomma }} <span class="small font-normal opacity-75">{{ user.profile.currency|default:"€" }}</span></span>
                             </div>
                             {% endif %}
                             {% empty %}
-                            <div class="small opacity-75 py-1" style="font-size: 0.73rem;">{% trans "No entries." %}</div>
+                            <div class="small opacity-75 py-1" style="font-size: var(--app-fs-xs);">{% trans "No entries." %}</div>
                             {% endfor %}
                         </div>
                     </div>
@@ -1755,13 +1755,13 @@
                         <div class="card-glass-glow"></div>
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: 0.68rem; letter-spacing: 0.05em; color: inherit;">
+                                <span class="text-uppercase fw-bold opacity-85 small" style="font-size: var(--app-fs-xs); letter-spacing: 0.05em; color: inherit;">
                                     {% trans "Est. Tax Impact" %} (~{{ tax_cockpit.calibrated_marginal_rate|default:35|floatformat:0 }}%)
                                 </span>
                                 <h3 class="fw-bold mb-0 mt-1 font-monospace" style="color: inherit;">
                                     {% if overview.portfolio_tax.is_tax_saving %}+{% else %}-{% endif %}{{ overview.portfolio_tax.estimated_tax_impact|floatformat:2|intcomma }} <span class="fs-6 opacity-75">{{ user.profile.currency|default:"€" }}</span>
                                 </h3>
-                                <span class="small opacity-85" style="font-size: 0.75rem; color: inherit;">
+                                <span class="small opacity-85" style="font-size: var(--app-fs-xs); color: inherit;">
                                     {% if overview.portfolio_tax.is_tax_saving %}{% trans "Estimated tax refund / savings" %}{% else %}{% trans "Estimated tax burden" %}{% endif %}
                                 </span>
                             </div>
@@ -1772,12 +1772,12 @@
 
                         <!-- Hover Expand Details: Rate Note -->
                         <div class="widget-hover-details border-top border-white border-opacity-25 pt-2" style="background-color: {{ card.bg_color|default:card_colors.cashflow_bg }}; color: {{ card.text_color|default:card_colors.cashflow_text }};">
-                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: 0.65rem;">{% trans "Tax Estimation Basis" %}:</span>
-                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                            <span class="d-block text-uppercase fw-bold opacity-75 mb-1" style="font-size: var(--app-fs-xs);">{% trans "Tax Estimation Basis" %}:</span>
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: var(--app-fs-xs);">
                                 <span>{% trans "Persönlicher Grenzsteuersatz" %}</span>
                                 <span class="font-monospace fw-bold">~{{ tax_cockpit.calibrated_marginal_rate|default:35|floatformat:1 }} %</span>
                             </div>
-                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: 0.73rem;">
+                            <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white border-opacity-10 gap-2" style="font-size: var(--app-fs-xs);">
                                 <span>{% trans "Basis V+V Result" %}</span>
                                 <span class="font-monospace fw-bold">{{ overview.portfolio_tax.total_taxable_result_vv|floatformat:2|intcomma }} {{ user.profile.currency|default:"€" }}</span>
                             </div>
@@ -1847,7 +1847,7 @@
                                 <!-- Inline Filter Row (Dashboard Style) -->
                                 <tr style="background-color: var(--app-table-filter-bg) !important;">
                                     <td class="p-1 px-3 border-0">
-                                        <input type="text" x-model="taxFilters.search" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body" style="font-size: 0.75rem;" placeholder="{% trans 'Filter Objekt...' %}">
+                                        <input type="text" x-model="taxFilters.search" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body" style="font-size: var(--app-fs-xs);" placeholder="{% trans 'Filter Objekt...' %}">
                                     </td>
                                     <td class="p-1 px-3 border-0" colspan="7"></td>
                                 </tr>
@@ -1947,13 +1947,13 @@
                                 <!-- Inline Filter Row (Dashboard Style) -->
                                 <tr style="background-color: var(--app-table-filter-bg) !important;">
                                     <td class="p-1 px-3 border-0">
-                                        <input type="text" x-model="docFilters.title" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body" style="font-size: 0.75rem;" placeholder="{% trans 'Filter Titel...' %}">
+                                        <input type="text" x-model="docFilters.title" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body" style="font-size: var(--app-fs-xs);" placeholder="{% trans 'Filter Titel...' %}">
                                     </td>
                                     <td class="p-1 px-3 border-0">
-                                        <input type="text" x-model="docFilters.real_estate" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body" style="font-size: 0.75rem;" placeholder="{% trans 'Filter Objekt...' %}">
+                                        <input type="text" x-model="docFilters.real_estate" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body" style="font-size: var(--app-fs-xs);" placeholder="{% trans 'Filter Objekt...' %}">
                                     </td>
                                     <td class="p-1 px-3 border-0">
-                                        <input type="text" x-model="docFilters.category" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body" style="font-size: 0.75rem;" placeholder="{% trans 'Kategorie...' %}">
+                                        <input type="text" x-model="docFilters.category" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body" style="font-size: var(--app-fs-xs);" placeholder="{% trans 'Kategorie...' %}">
                                     </td>
                                     <td class="p-1 px-3 border-0" colspan="4"></td>
                                 </tr>
@@ -2040,7 +2040,7 @@
                     </div>
                     <div class="modal-body p-4">
                         <!-- 1-Klick PDF-Direkt-Auslesung ohne KI -->
-                        <div class="p-3 rounded-4 mb-3" style="background-color: rgba(13, 110, 253, 0.08); border: 1px dashed rgba(13, 110, 253, 0.4);">
+                        <div class="p-3 rounded-4 mb-3 theme-callout-primary">
                             <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
                                 <div>
                                     <h6 class="fw-bold mb-1 text-primary"><i class="bi bi-magic me-1"></i>{% trans "Schnell-Auslesung aus PDF-Steuerbescheid (lokal & ohne KI)" %}</h6>
@@ -2471,7 +2471,7 @@
                     </div>
                 </div>
                 <div class="modal-body pt-3">
-                    <div class="row g-3 text-center mb-3 p-2 rounded-3 bg-body-tertiary">
+                    <div class="row g-2 mx-0 text-center mb-3 p-2 rounded-3 bg-body-tertiary">
                         <div class="col-4 border-end">
                             <span class="small opacity-75 text-uppercase">{% trans "Initial Loan Amount" %}</span>
                             <div class="fw-bold font-monospace fs-6" x-text="formatEuro(scheduleState.nominalAmount) + ' €'"></div>
@@ -2487,7 +2487,7 @@
                     </div>
 
                     <div class="table-responsive rounded-3 border" style="max-height: 450px; border-color: var(--app-table-border-color) !important;">
-                        <table class="table table-sm table-hover align-middle mb-0 font-monospace real-estate-table" style="font-size: 0.8rem;">
+                        <table class="table table-sm table-hover align-middle mb-0 font-monospace real-estate-table" style="font-size: var(--app-fs-sm);">
                             <thead class="sticky-top">
                                 <tr>
                                     <th class="py-2 px-3 cursor-pointer user-select-none" @click="sortSchedule('year')" style="cursor: pointer;">
@@ -2539,7 +2539,7 @@
                                     <tr :class="{'opacity-75': !row.is_future}">
                                         <td>
                                             <span class="fw-bold" x-text="row.year"></span>
-                                            <span x-show="!row.is_future" class="badge bg-secondary opacity-50 ms-1" style="font-size: 0.6rem;">{% trans "Past" %}</span>
+                                            <span x-show="!row.is_future" class="badge bg-secondary opacity-50 ms-1" style="font-size: var(--app-fs-xs);">{% trans "Past" %}</span>
                                         </td>
                                         <td class="text-end" x-text="formatEuro(row.balance_start) + ' €'"></td>
                                         <td class="text-end" x-text="formatEuro(row.total_installment) + ' €'"></td>
@@ -2797,7 +2797,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body pt-3">
-                    <div class="row g-3 p-3 rounded-3 bg-body-tertiary mb-3 text-center">
+                    <div class="row g-2 mx-0 p-2 rounded-3 bg-body-tertiary mb-3 text-center">
                         <div class="col-4 border-end">
                             <span class="small opacity-75 text-uppercase">{% trans "Interest Lock Expiry" %}</span>
                             <div class="fw-bold fs-6 text-warning" x-text="stressState.lockEndDate"></div>
@@ -2814,7 +2814,7 @@
 
                     <h6 class="small fw-bold text-uppercase opacity-75 mb-2">{% trans "Scenarios on Interest Rate Shift" %}</h6>
                     <div class="table-responsive rounded-3 border mb-3" style="border-color: var(--app-table-border-color) !important;">
-                        <table class="table table-sm table-hover align-middle mb-0 font-monospace real-estate-table" style="font-size: 0.85rem;">
+                        <table class="table table-sm table-hover align-middle mb-0 font-monospace real-estate-table" style="font-size: var(--app-fs-sm);">
                             <thead>
                                 <tr>
                                     <th class="py-2 px-3 cursor-pointer user-select-none" @click="sortStress('code')">

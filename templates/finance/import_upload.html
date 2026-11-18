@@ -58,7 +58,7 @@
                             <h5 class="fw-bold mb-0"><i class="bi bi-clock-history me-2"></i>{% trans "Previous Imports" %}</h5>
                             <form method="post" action="{% url 'finance:delete_all_import_history' %}" onsubmit="return confirm('{% trans "Do you really want to delete the entire import history (all open and applied batches)?" %}');">
                                 {% csrf_token %}
-                                <button type="submit" class="btn btn-outline-danger btn-sm py-0 px-2" style="font-size: 0.75rem;">
+                                <button type="submit" class="btn btn-outline-danger btn-sm py-0 px-2" style="font-size: var(--app-fs-xs);">
                                     <i class="bi bi-trash-fill me-1"></i>{% trans "Clear History" %}
                                 </button>
                             </form>

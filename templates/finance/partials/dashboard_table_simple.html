@@ -65,9 +65,9 @@
     
     <div class="flex-grow-1 overflow-auto px-0" style="background-color: var(--app-table-body-bg) !important; height: 0;">
         <table class="table table-sm table-hover align-middle mb-0" 
-               style="font-size: 0.82rem; border-color: var(--app-table-border-color) !important; --bs-table-bg: var(--app-table-body-bg); --bs-table-color: var(--app-table-body-text);">
+               style="font-size: var(--app-fs-sm); border-color: var(--app-table-border-color) !important; --bs-table-bg: var(--app-table-body-bg); --bs-table-color: var(--app-table-body-text);">
             <thead class="sticky-top" style="z-index: 10;">
-                <tr class="text-uppercase" style="font-size: 0.65rem;">
+                <tr class="text-uppercase" style="font-size: var(--app-fs-xs);">
                     <th class="py-2 px-3 border-0 cursor-pointer" @click="sortCol = 'name'; sortDir = sortDir === 'asc' ? 'desc' : 'asc'"
                         style="background-color: var(--app-table-header-bg) !important; color: var(--app-table-header-text) !important;">
                         <div class="d-flex align-items-center justify-content-between">
@@ -100,16 +100,16 @@
                 <!-- Inline Filters -->
                 <tr>
                     <td class="p-1 px-3 border-0" style="background-color: var(--app-table-filter-bg) !important;">
-                        <input type="text" x-model="colFilters.name" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body" style="font-size: 0.75rem;" placeholder="Filter...">
+                        <input type="text" x-model="colFilters.name" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body" style="font-size: var(--app-fs-xs);" placeholder="Filter...">
                     </td>
                     <td class="p-1 border-0" style="background-color: var(--app-table-filter-bg) !important;">
-                        <input type="text" x-model="colFilters.cat" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body" style="font-size: 0.75rem;" placeholder="Filter...">
+                        <input type="text" x-model="colFilters.cat" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body" style="font-size: var(--app-fs-xs);" placeholder="Filter...">
                     </td>
                     <td class="p-1 border-0" style="background-color: var(--app-table-filter-bg) !important;">
-                        <input type="text" x-model="colFilters.year" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body" style="font-size: 0.75rem;" placeholder="Zeitraum...">
+                        <input type="text" x-model="colFilters.year" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body" style="font-size: var(--app-fs-xs);" placeholder="Zeitraum...">
                     </td>
                     <td class="p-1 px-3 border-0" style="background-color: var(--app-table-filter-bg) !important;">
-                        <input type="text" x-model="colFilters.amount" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body text-end" style="font-size: 0.75rem;" placeholder="{% trans 'Amount' %}...">
+                        <input type="text" x-model="colFilters.amount" class="form-control form-control-sm border-0 bg-white bg-opacity-10 text-body text-end" style="font-size: var(--app-fs-xs);" placeholder="{% trans 'Amount' %}...">
                     </td>
                 </tr>
             </thead>
@@ -119,21 +119,21 @@
                         <td class="py-2 px-3 border-0">
                             <span x-text="item.name"></span>
                             <template x-if="item.teaser_active">
-                                <span class="badge bg-danger rounded-pill ms-2" style="font-size: 0.6rem;" 
+                                <span class="badge bg-danger rounded-pill ms-2" style="font-size: var(--app-fs-xs);" 
                                       :title="'Aktionszins bis: ' + item.teaser_until">
                                     <i class="bi bi-fire"></i> {% trans 'Teaser' %}
                                 </span>
                             </template>
                             <template x-if="item.notes">
-                                <div class="small opacity-75 mt-1 text-wrap" style="font-size: 0.7rem; white-space: pre-line;" x-text="item.notes"></div>
+                                <div class="small opacity-75 mt-1 text-wrap" style="font-size: var(--app-fs-xs); white-space: pre-line;" x-text="item.notes"></div>
                             </template>
                         </td>
 
                         <td class="py-2 px-3 border-0">
-                            <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill mb-1 d-block" style="font-size: 0.65rem;" x-text="item.category"></span>
-                            <span class="small opacity-75 d-block" style="font-size: 0.65rem;" x-text="item.date"></span>
+                            <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill mb-1 d-block" style="font-size: var(--app-fs-xs);" x-text="item.category"></span>
+                            <span class="small opacity-75 d-block" style="font-size: var(--app-fs-xs);" x-text="item.date"></span>
                         </td>
-                        <td class="py-2 px-3 border-0 font-monospace text-center" style="font-size: 0.7rem;" x-text="item.year"></td>
+                        <td class="py-2 px-3 border-0 font-monospace text-center" style="font-size: var(--app-fs-xs);" x-text="item.year"></td>
                         <td class="py-2 px-3 border-0 text-end font-monospace fw-bold" 
                             :class="item.amount < 0 ? 'text-danger' : 'text-success'"
                             x-text="(item.amount || 0).toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })">

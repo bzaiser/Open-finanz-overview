@@ -38,19 +38,22 @@
             <div class="row g-4 mb-4">
                 <!-- Links: Stammdaten -->
                 <div class="col-lg-6">
-                    <div class="glass-card shadow-lg p-4 h-100">
-                        <h4 class="mb-4 fw-bold"><i class="bi bi-person-vcard me-2 text-primary"></i>{% trans "Stammdaten" %}</h4>
+                    <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
+                        <div class="card-header border-0 d-flex align-items-center">
+                            <span class="fw-bold"><i class="bi bi-person-vcard me-2 opacity-75"></i>{% trans "Stammdaten" %}</span>
+                        </div>
+                        <div class="card-body">
                         <div class="row g-2">
                             <!-- Prominent Top Fields -->
                             <div class="col-12 mb-1">
-                                <label class="form-label fw-bold mb-0 d-block" style="font-size: 0.75rem;">{% trans "Display Name" %}</label>
+                                <label class="form-label fw-bold mb-0 d-block">{% trans "Display Name" %}</label>
                                 {{ form.display_name }}
                             </div>
                             
                             <div class="col-12 mb-2">
                                 <div class="rounded-2 p-1 px-2 border d-flex justify-content-between align-items-center" style="background-color: var(--app-input-bg); color: var(--app-input-color); border-color: var(--app-input-border) !important;">
-                                    <span class="opacity-75" style="font-size: 0.65rem;">{% trans "Username (Login)" %}</span>
-                                    <span class="fw-bold" style="font-size: 0.75rem;">{{ user.username }}</span>
+                                    <span class="small opacity-75">{% trans "Username (Login)" %}</span>
+                                    <span class="small fw-bold">{{ user.username }}</span>
                                 </div>
                             </div>
 
@@ -67,7 +70,7 @@
                                         {% endif %}
                                     </div>
                                     <div class="flex-grow-1">
-                                        <label class="form-label fw-bold mb-0 d-block" style="font-size: 0.65rem;">{% trans "Profile Picture" %}</label>
+                                        <label class="form-label fw-bold mb-0 d-block">{% trans "Profile Picture" %}</label>
                                         {{ form.avatar }}
                                     </div>
                                 </div>
@@ -75,35 +78,35 @@
                             
                             <!-- Identification Data -->
                             <div class="col-md-6 mb-1">
-                                <label class="form-label fw-bold mb-0 d-block" style="font-size: 0.7rem;">{% trans "First Name" %}</label>
+                                <label class="form-label fw-bold mb-0 d-block">{% trans "First Name" %}</label>
                                 {{ form.first_name }}
                             </div>
                             <div class="col-md-6 mb-1">
-                                <label class="form-label fw-bold mb-0 d-block" style="font-size: 0.7rem;">{% trans "Last Name" %}</label>
+                                <label class="form-label fw-bold mb-0 d-block">{% trans "Last Name" %}</label>
                                 {{ form.last_name }}
                             </div>
                             
                             <div class="col-12 mb-2">
-                                <label class="form-label fw-bold mb-0 d-block" style="font-size: 0.7rem;">{% trans "Email Address" %}</label>
+                                <label class="form-label fw-bold mb-0 d-block">{% trans "Email Address" %}</label>
                                 {{ form.email }}
                             </div>
 
                             <!-- Metadata Grid -->
                             <div class="col-md-6 mb-1">
-                                <label class="form-label fw-bold mb-0 d-block" style="font-size: 0.7rem;">{% trans "Language" %}</label>
+                                <label class="form-label fw-bold mb-0 d-block">{% trans "Language" %}</label>
                                 {{ form.language }}
                             </div>
                             <div class="col-md-6 mb-1">
-                                <label class="form-label fw-bold mb-0 d-block" style="font-size: 0.7rem;">{% trans "Currency" %}</label>
+                                <label class="form-label fw-bold mb-0 d-block">{% trans "Currency" %}</label>
                                 {{ form.currency }}
                             </div>
 
                             <div class="col-md-6 mb-1">
-                                <label class="form-label fw-bold mb-0 d-block" style="font-size: 0.7rem;">{% trans "Birth Date (Person 1)" %}</label>
+                                <label class="form-label fw-bold mb-0 d-block">{% trans "Birth Date (Person 1)" %}</label>
                                 {{ form.birth_date }}
                             </div>
                             <div class="col-md-6 mb-1">
-                                <label class="form-label fw-bold mb-0 d-block" style="font-size: 0.7rem;">{% trans "Retirement Age (Person 1)" %}</label>
+                                <label class="form-label fw-bold mb-0 d-block">{% trans "Retirement Age (Person 1)" %}</label>
                                 {{ form.retirement_age }}
                             </div>
 
@@ -112,15 +115,15 @@
                                 <span class="fw-bold text-primary small d-block mb-2"><i class="bi bi-person-heart me-1"></i>{% trans "Partner Data (Person 2)" %}</span>
                             </div>
                             <div class="col-12 mb-1">
-                                <label class="form-label fw-bold mb-0 d-block" style="font-size: 0.7rem;">{% trans "Partner Name" %}</label>
+                                <label class="form-label fw-bold mb-0 d-block">{% trans "Partner Name" %}</label>
                                 {{ form.partner_name }}
                             </div>
                             <div class="col-md-6 mb-1">
-                                <label class="form-label fw-bold mb-0 d-block" style="font-size: 0.7rem;">{% trans "Partner Birth Date" %}</label>
+                                <label class="form-label fw-bold mb-0 d-block">{% trans "Partner Birth Date" %}</label>
                                 {{ form.partner_birth_date }}
                             </div>
                             <div class="col-md-6 mb-1">
-                                <label class="form-label fw-bold mb-0 d-block" style="font-size: 0.7rem;">{% trans "Partner Retirement Age" %}</label>
+                                <label class="form-label fw-bold mb-0 d-block">{% trans "Partner Retirement Age" %}</label>
                                 {{ form.partner_retirement_age }}
                             </div>
 
@@ -128,13 +131,13 @@
                             <div class="col-12 my-2 pt-2 border-top border-secondary border-opacity-25">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                     <span class="fw-bold text-primary small"><i class="bi bi-people-fill me-1"></i>{% trans "Kinder (für Risiko, Waisenrente & Vorsorge)" %}</span>
-                                    <button type="button" class="btn btn-sm btn-outline-primary rounded-pill py-0 px-2" style="font-size: 0.7rem;" id="addChildBtn">
+                                    <button type="button" class="btn btn-sm btn-outline-primary rounded-pill py-0 px-2" id="addChildBtn">
                                         <i class="bi bi-plus-lg me-1"></i>{% trans "Kind hinzufügen" %}
                                     </button>
                                 </div>
                                 <input type="hidden" name="children_json" id="childrenJsonInput" value="{{ children_json|default:'[]' }}">
                                 <div id="profileChildrenContainer" class="d-flex flex-column gap-2"></div>
-                                <div id="profileChildrenEmptyHint" class="text-muted small fst-italic" style="font-size: 0.72rem; display: none;">
+                                <div id="profileChildrenEmptyHint" class="text-muted small fst-italic" style="display: none;">
                                     {% trans "Keine Kinder hinterlegt. Name & Geburtsdatum steuern ALG-I-Satz (67 %), Risikoleben-Bedarf, Halbwaisenrente & DRV-Kindererziehungszeiten." %}
                                 </div>
                             </div>
@@ -144,15 +147,15 @@
                                 <span class="fw-bold text-secondary small d-block mb-2"><i class="bi bi-bullseye me-1"></i>{% trans "Goals & Simulation" %}</span>
                             </div>
                             <div class="col-md-6 mb-1">
-                                <label class="form-label fw-bold mb-0 d-block" style="font-size: 0.7rem;">{% trans "Total Target Net Pension in Retirement (€/mo.)" %}</label>
+                                <label class="form-label fw-bold mb-0 d-block">{% trans "Total Target Net Pension in Retirement (€/mo.)" %}</label>
                                 {{ form.target_pension_payout }}
                             </div>
                             <div class="col-md-6 mb-1">
-                                <label class="form-label fw-bold mb-0 d-block" style="font-size: 0.7rem;">{% trans "Sim. Max Age" %}</label>
+                                <label class="form-label fw-bold mb-0 d-block">{% trans "Sim. Max Age" %}</label>
                                 {{ form.simulation_max_age }}
                             </div>
                             <div class="col-md-6 mb-1">
-                                <label class="form-label fw-bold mb-0 d-block" style="font-size: 0.7rem;">{% trans "Sim. Start Date" %}</label>
+                                <label class="form-label fw-bold mb-0 d-block">{% trans "Sim. Start Date" %}</label>
                                 {{ form.simulation_start_date }}
                             </div>
                         </div>
@@ -161,23 +164,23 @@
                         
                         <div class="row g-2">
                             <div class="col-md-6 mb-1">
-                                <label class="form-label fw-bold d-block mb-0" style="font-size: 0.7rem;">{{ form.inflation_rate.label }}</label>
+                                <label class="form-label fw-bold d-block mb-0">{{ form.inflation_rate.label }}</label>
                                 {{ form.inflation_rate }}
                             </div>
                             <div class="col-md-6 mb-1">
-                                <label class="form-label fw-bold d-block mb-0" style="font-size: 0.7rem;">{{ form.salary_increase.label }}</label>
+                                <label class="form-label fw-bold d-block mb-0">{{ form.salary_increase.label }}</label>
                                 {{ form.salary_increase }}
                             </div>
                             <div class="col-md-6 mb-1">
-                                <label class="form-label fw-bold d-block mb-0" style="font-size: 0.7rem;">{{ form.pension_increase.label }}</label>
+                                <label class="form-label fw-bold d-block mb-0">{{ form.pension_increase.label }}</label>
                                 {{ form.pension_increase }}
                             </div>
                             <div class="col-md-6 mb-2">
-                                <label class="form-label fw-bold d-block mb-0" style="font-size: 0.7rem;">{{ form.investment_return_offset.label }}</label>
+                                <label class="form-label fw-bold d-block mb-0">{{ form.investment_return_offset.label }}</label>
                                 {{ form.investment_return_offset }}
                             </div>
                             <div class="col-md-6 mb-2">
-                                <label class="form-label fw-bold d-block mb-0" style="font-size: 0.7rem;">{{ form.real_estate_growth_rate.label }}</label>
+                                <label class="form-label fw-bold d-block mb-0">{{ form.real_estate_growth_rate.label }}</label>
                                 {{ form.real_estate_growth_rate }}
                             </div>
                             <div class="col-12 mt-2">
@@ -189,39 +192,41 @@
                                 </div>
                             </div>
                         </div>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Rechts: Design Studio & Datensicherung -->
                 <div class="col-lg-6 d-flex flex-column gap-4">
-                    <div class="glass-card shadow-lg p-4 h-100">
-                        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-                            <h4 class="mb-0 fw-bold"><i class="bi bi-magic me-2 text-primary"></i>{% trans "Design Studio" %}</h4>
+                    <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
+                        <div class="card-header border-0 d-flex flex-wrap justify-content-between align-items-center gap-2">
+                            <span class="fw-bold"><i class="bi bi-magic me-2 opacity-75"></i>{% trans "Design Studio" %}</span>
                             <div class="d-flex gap-1">
-                                <a href="{% url 'export_theme_json' %}" class="btn btn-sm btn-outline-primary rounded-pill px-2 px-sm-3" style="font-size: 0.74rem;" title="{% trans 'Design als JSON für andere Apps exportieren' %}">
+                                <a href="{% url 'export_theme_json' %}" class="btn btn-sm bg-white bg-opacity-25 text-white border border-white border-opacity-25 rounded-pill px-2 px-sm-3" title="{% trans 'Design als JSON für andere Apps exportieren' %}">
                                     <i class="bi bi-download me-1"></i>{% trans "Export (.json)" %}
                                 </a>
-                                <button type="button" id="btnImportThemeJson" class="btn btn-sm btn-outline-secondary rounded-pill px-2 px-sm-3" style="font-size: 0.74rem;" title="{% trans 'Design-Vorlage (.json) importieren' %}">
+                                <button type="button" id="btnImportThemeJson" class="btn btn-sm bg-white bg-opacity-25 text-white border border-white border-opacity-25 rounded-pill px-2 px-sm-3" title="{% trans 'Design-Vorlage (.json) importieren' %}">
                                     <i class="bi bi-upload me-1"></i>{% trans "Import" %}
                                 </button>
                                 <input type="file" id="inputImportThemeJson" accept=".json,application/json" class="d-none">
                             </div>
                         </div>
+                        <div class="card-body">
                         
                         <!-- Design Studio 2.0 Control Bar -->
                         <div class="p-3 rounded-4 border border-secondary border-opacity-25 mb-3" style="background: rgba(125,125,125,0.04);">
                             <div class="row g-2 align-items-end">
                                 <div class="col-6 col-sm-3">
-                                    <label class="form-label fw-bold mb-1 d-block" style="font-size: 0.7rem;">{% trans "Grundfarbe" %}</label>
+                                    <label class="form-label fw-bold mb-1 d-block">{% trans "Grundfarbe" %}</label>
                                     <input type="color" id="studioC1" class="form-control form-control-color w-100" value="{{ user.profile.gradient_start|default:'#3b82f6' }}" style="height: 38px;">
                                 </div>
                                 <div class="col-6 col-sm-3">
-                                    <label class="form-label fw-bold mb-1 d-block" style="font-size: 0.7rem;">{% trans "Verlauf / Dualtone 2" %}</label>
+                                    <label class="form-label fw-bold mb-1 d-block">{% trans "Verlauf / Dualtone 2" %}</label>
                                     <input type="color" id="studioC2" class="form-control form-control-color w-100" value="{{ user.profile.gradient_end|default:'#f43f5e' }}" style="height: 38px;">
                                 </div>
                                 <div class="col-12 col-sm-6">
-                                    <label class="form-label fw-bold mb-1 d-block" style="font-size: 0.7rem;">{% trans "Design-Stimmung" %}</label>
-                                    <select id="studioMood" name="theme_mood" class="form-select form-select-sm" style="height: 38px; font-size: 0.8rem;">
+                                    <label class="form-label fw-bold mb-1 d-block">{% trans "Design-Stimmung" %}</label>
+                                    <select id="studioMood" name="theme_mood" class="form-select form-select-sm" style="height: 38px;">
                                         <optgroup label="{% trans 'Klassisch & Modern' %}">
                                             <option value="modern" {% if theme_studio.mood == 'modern' %}selected{% endif %}>{% trans "Modern (Ausgewogen)" %}</option>
                                             <option value="dualtone" {% if theme_studio.mood == 'dualtone' %}selected{% endif %}>{% trans "Dualtone (2-Farben-Harmonie)" %}</option>
@@ -247,9 +252,9 @@
                                     </select>
                                 </div>
                                 <div class="col-12 col-sm-6 mt-2">
-                                    <label class="form-label fw-bold mb-1 d-block" style="font-size: 0.7rem;">{% trans "Hintergrund" %}</label>
+                                    <label class="form-label fw-bold mb-1 d-block">{% trans "Hintergrund" %}</label>
                                     <div class="d-flex gap-2 align-items-center">
-                                        <select id="studioBgMode" name="theme_bg_mode" class="form-select form-select-sm flex-grow-1" style="height: 38px; font-size: 0.8rem;">
+                                        <select id="studioBgMode" name="theme_bg_mode" class="form-select form-select-sm flex-grow-1" style="height: 38px;">
                                             <option value="auto" {% if theme_studio.bg_mode == 'auto' %}selected{% endif %}>{% trans "Auto (zur Stimmung)" %}</option>
                                             <option value="light" {% if theme_studio.bg_mode == 'light' %}selected{% endif %}>{% trans "Immer Hell" %}</option>
                                             <option value="dark" {% if theme_studio.bg_mode == 'dark' %}selected{% endif %}>{% trans "Immer Dunkel" %}</option>
@@ -260,13 +265,13 @@
                                 </div>
                                 <div class="col-12 col-sm-6 mt-2">
                                     <div id="harmonyPreview" class="rounded-3 px-3 text-white shadow-sm d-flex align-items-center justify-content-center text-center fw-bold"
-                                         style="background: var(--app-preview-gradient); height: 38px; font-size: 0.85rem; text-shadow: 0 1px 3px rgba(0,0,0,0.4);">
+                                         style="background: var(--app-preview-gradient); height: 38px; text-shadow: 0 1px 3px rgba(0,0,0,0.4);">
                                         {% trans "Basisverlauf" %}
                                     </div>
                                 </div>
                                 <div class="col-12 col-sm-6 mt-2">
-                                    <label class="form-label fw-bold mb-1 d-block" style="font-size: 0.7rem;">{% trans "KPI-Karten-Stil" %}</label>
-                                    <select id="studioCardSurface" name="theme_card_surface" class="form-select form-select-sm" style="height: 38px; font-size: 0.8rem;">
+                                    <label class="form-label fw-bold mb-1 d-block">{% trans "KPI-Karten-Stil" %}</label>
+                                    <select id="studioCardSurface" name="theme_card_surface" class="form-select form-select-sm" style="height: 38px;">
                                         <option value="auto" {% if theme_studio.card_surface == 'auto' %}selected{% endif %}>{% trans "Auto (passend zur Design-Stimmung)" %}</option>
                                         <option value="tinted" {% if theme_studio.card_surface == 'tinted' %}selected{% endif %}>{% trans "Farbharmonie-Milchglas (Tinted Glass)" %}</option>
                                         <option value="glass" {% if theme_studio.card_surface == 'glass' %}selected{% endif %}>{% trans "Edles Milchglas mit Lichtkante (Frosted)" %}</option>
@@ -275,8 +280,8 @@
                                     </select>
                                 </div>
                                 <div class="col-12 col-sm-6 mt-2">
-                                    <label class="form-label fw-bold mb-1 d-block" style="font-size: 0.7rem;">{% trans "Seiten-SVG-Hintergrund" %}</label>
-                                    <select id="studioBgSvg" name="theme_bg_svg_mode" class="form-select form-select-sm" style="height: 38px; font-size: 0.8rem;">
+                                    <label class="form-label fw-bold mb-1 d-block">{% trans "Seiten-SVG-Hintergrund" %}</label>
+                                    <select id="studioBgSvg" name="theme_bg_svg_mode" class="form-select form-select-sm" style="height: 38px;">
                                         <option value="auto" {% if theme_studio.bg_svg_mode == 'auto' %}selected{% endif %}>{% trans "Auto (passend zur Design-Stimmung)" %}</option>
                                         <option value="topography" {% if theme_studio.bg_svg_mode == 'topography' %}selected{% endif %}>{% trans "Topografie & Höhenlinien" %}</option>
                                         <option value="grid" {% if theme_studio.bg_svg_mode == 'grid' %}selected{% endif %}>{% trans "Architektur-Raster & Fadenkreuze" %}</option>
@@ -286,34 +291,53 @@
                                         <option value="none" {% if theme_studio.bg_svg_mode == 'none' %}selected{% endif %}>{% trans "Aus (Reiner Farbhintergrund)" %}</option>
                                     </select>
                                 </div>
+                                <div class="col-12 col-sm-6 mt-2">
+                                    <label class="form-label fw-bold mb-1 d-block"><i class="bi bi-fonts me-1 text-primary"></i>{% trans "Schriftart (Typografie)" %}</label>
+                                    <select id="studioFontFamily" name="theme_font_family" class="form-select form-select-sm" style="height: 38px;">
+                                        <option value="auto" {% if theme_studio.font_family == 'auto' %}selected{% endif %}>{% trans "Auto (passend zur Design-Stimmung)" %}</option>
+                                        <option value="sans" {% if theme_studio.font_family == 'sans' %}selected{% endif %}>{% trans "Modern Sans (Klar & Neutral)" %}</option>
+                                        <option value="rounded" {% if theme_studio.font_family == 'rounded' %}selected{% endif %}>{% trans "Soft Geometric (Freundlich & Rund)" %}</option>
+                                        <option value="serif" {% if theme_studio.font_family == 'serif' %}selected{% endif %}>{% trans "Editorial Serif (Klassisch & Seriös)" %}</option>
+                                        <option value="tech" {% if theme_studio.font_family == 'tech' %}selected{% endif %}>{% trans "Technical Grotesk (Präzise & Modern)" %}</option>
+                                        <option value="mono" {% if theme_studio.font_family == 'mono' %}selected{% endif %}>{% trans "Brutalist Mono (Technisch / Code)" %}</option>
+                                    </select>
+                                </div>
+                                <div class="col-12 col-sm-6 mt-2">
+                                    <label class="form-label fw-bold mb-1 d-block"><i class="bi bi-arrows-angle-expand me-1 text-primary"></i>{% trans "Schriftgröße (4-Stufen-Skala)" %}</label>
+                                    <select id="studioFontScale" name="theme_font_scale" class="form-select form-select-sm" style="height: 38px;">
+                                        <option value="compact" {% if theme_studio.font_scale == 'compact' %}selected{% endif %}>{% trans "Kompakt (Hohe Informationsdichte)" %}</option>
+                                        <option value="normal" {% if not theme_studio.font_scale or theme_studio.font_scale == 'normal' %}selected{% endif %}>{% trans "Standard (Ruhig & Ausgewogen)" %}</option>
+                                        <option value="comfortable" {% if theme_studio.font_scale == 'comfortable' %}selected{% endif %}>{% trans "Komfort (Größer & Entspannt)" %}</option>
+                                    </select>
+                                </div>
                             </div>
 
                             <!-- KPI-Karten 2.0 Erweiterungen (Ein-/Ausschaltbar) -->
                             <div class="mt-3 pt-2 border-top border-secondary border-opacity-25">
                                 <input type="hidden" name="kpi_ext_present" value="1">
-                                <span class="small fw-bold d-block mb-2" style="font-size: 0.72rem;">
+                                <span class="small fw-bold d-block mb-2">
                                     <i class="bi bi-stars me-1 text-primary"></i>{% trans "KPI-Karten-Erweiterungen & Interaktion" %}
                                 </span>
                                 <div class="d-flex flex-wrap gap-3">
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" id="chkKpiSparklines" name="kpi_sparklines" {% if theme_studio.kpi_sparklines %}checked{% endif %}>
-                                        <label class="form-check-label small" for="chkKpiSparklines" style="font-size: 0.75rem;">{% trans "SVG-Sparklines" %}</label>
+                                        <label class="form-check-label small" for="chkKpiSparklines">{% trans "SVG-Sparklines" %}</label>
                                     </div>
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" id="chkKpiProgress" name="kpi_progress_bars" {% if theme_studio.kpi_progress_bars %}checked{% endif %}>
-                                        <label class="form-check-label small" for="chkKpiProgress" style="font-size: 0.75rem;">{% trans "Ziel-Fortschrittsbalken" %}</label>
+                                        <label class="form-check-label small" for="chkKpiProgress">{% trans "Ziel-Fortschrittsbalken" %}</label>
                                     </div>
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" id="chkKpiWatermarks" name="kpi_watermarks" {% if theme_studio.kpi_watermarks %}checked{% endif %}>
-                                        <label class="form-check-label small" for="chkKpiWatermarks" style="font-size: 0.75rem;">{% trans "Watermark-Icons" %}</label>
+                                        <label class="form-check-label small" for="chkKpiWatermarks">{% trans "Watermark-Icons" %}</label>
                                     </div>
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" id="chkKpiSpotlight" name="kpi_spotlight" {% if theme_studio.kpi_spotlight %}checked{% endif %}>
-                                        <label class="form-check-label small" for="chkKpiSpotlight" style="font-size: 0.75rem;">{% trans "Maus-Spotlight" %}</label>
+                                        <label class="form-check-label small" for="chkKpiSpotlight">{% trans "Maus-Spotlight" %}</label>
                                     </div>
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" id="chkKpiClickNav" name="kpi_click_navigation" {% if theme_studio.kpi_click_navigation %}checked{% endif %}>
-                                        <label class="form-check-label small" for="chkKpiClickNav" style="font-size: 0.75rem;">{% trans "Klick-Navigation zum Bereich" %}</label>
+                                        <label class="form-check-label small" for="chkKpiClickNav">{% trans "Klick-Navigation zum Bereich" %}</label>
                                     </div>
                                 </div>
                             </div>
@@ -321,10 +345,10 @@
                             <!-- Live KPI-Karten & SVG-Hintergrund Vorschau -->
                             <div class="mt-3 pt-3 border-top border-secondary border-opacity-25">
                                 <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
-                                    <span class="small fw-bold" style="font-size: 0.74rem;">
+                                    <span class="small fw-bold">
                                         <i class="bi bi-eye-fill me-1 text-primary"></i>{% trans "Live-Vorschau: KPI-Karten & Stimmungs-Hintergrund" %}
                                     </span>
-                                    <span id="studioLiveResolvedBadge" class="badge rounded-pill bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25" style="font-size: 0.68rem;">
+                                    <span id="studioLiveResolvedBadge" class="badge rounded-pill bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25">
                                         Tinted Glass · Topografie
                                     </span>
                                 </div>
@@ -335,7 +359,7 @@
                                         <div class="col-12 col-sm-6">
                                             <div id="studioDemoCard1" class="card metric-card widget-expand-card h-100"
                                                  data-target-url="#studioLiveStage"
-                                                 style="--card-accent: #198754; background: linear-gradient(135deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0) 100%), #198754; color: #ffffff;">
+                                                 style="--card-accent: var(--theme-state-1, #198754); background: linear-gradient(135deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0) 100%), var(--theme-state-1, #198754); color: #ffffff;">
                                                 <div class="kpi-decor-clip">
                                                     <div class="kpi-spotlight"></div>
                                                     <i class="bi bi-graph-up-arrow kpi-watermark-icon"></i>
@@ -353,18 +377,18 @@
                                                 <div class="card-glass-glow"></div>
                                                 <div class="card-body p-2 px-3 d-flex flex-column justify-content-between">
                                                     <div class="d-flex justify-content-between align-items-start mb-1">
-                                                        <span class="text-uppercase fw-bold" style="font-size: 0.62rem; letter-spacing: 0.05em; opacity: 0.85;">
+                                                        <span class="text-uppercase fw-bold small opacity-85">
                                                             {% trans "Monatliche Einnahmen" %}
                                                         </span>
-                                                        <i class="bi bi-graph-up-arrow" style="font-size: 0.95rem;"></i>
+                                                        <i class="bi bi-graph-up-arrow"></i>
                                                     </div>
                                                     <div class="metric-value">
-                                                        <h4 class="mb-0 fw-bold font-monospace" style="font-size: 1.25rem;">
+                                                        <h4 class="mb-0 fw-bold font-monospace">
                                                             4.830 <span class="fs-6 fw-normal opacity-75">{{ user.profile.currency|default:"EUR" }}</span>
                                                         </h4>
-                                                        <div class="mt-1 d-flex justify-content-between align-items-center" style="font-size: 0.68rem;">
+                                                        <div class="mt-1 d-flex justify-content-between align-items-center small">
                                                             <span class="opacity-75"><i class="bi bi-calendar3 me-1"></i>+4,2 % Prognose</span>
-                                                            <span class="studio-demo-click-pill badge rounded-pill" style="background: rgba(128,128,128,0.2); color: inherit; font-size: 0.62rem;">
+                                                            <span class="studio-demo-click-pill badge rounded-pill" style="background: rgba(128,128,128,0.2); color: inherit;">
                                                                 <i class="bi bi-box-arrow-up-right me-1"></i>Cashflow
                                                             </span>
                                                         </div>
@@ -377,7 +401,7 @@
                                         <div class="col-12 col-sm-6">
                                             <div id="studioDemoCard2" class="card metric-card widget-expand-card h-100"
                                                  data-target-url="#studioLiveStage"
-                                                 style="--card-accent: #6f42c1; background: linear-gradient(135deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0) 100%), #6f42c1; color: #ffffff;">
+                                                 style="--card-accent: var(--theme-state-8, #6f42c1); background: linear-gradient(135deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0) 100%), var(--theme-state-8, #6f42c1); color: #ffffff;">
                                                 <div class="kpi-decor-clip">
                                                     <div class="kpi-spotlight"></div>
                                                     <i class="bi bi-shield-check kpi-watermark-icon"></i>
@@ -385,13 +409,13 @@
                                                 <div class="card-glass-glow"></div>
                                                 <div class="card-body p-2 px-3 d-flex flex-column justify-content-between">
                                                     <div class="d-flex justify-content-between align-items-start mb-1">
-                                                        <span class="text-uppercase fw-bold" style="font-size: 0.62rem; letter-spacing: 0.05em; opacity: 0.85;">
+                                                        <span class="text-uppercase fw-bold small opacity-85">
                                                             {% trans "Ziel-Rente (Vertrag)" %}
                                                         </span>
-                                                        <i class="bi bi-shield-check" style="font-size: 0.95rem;"></i>
+                                                        <i class="bi bi-shield-check"></i>
                                                     </div>
                                                     <div class="metric-value">
-                                                        <h4 class="mb-0 fw-bold font-monospace" style="font-size: 1.25rem;">
+                                                        <h4 class="mb-0 fw-bold font-monospace">
                                                             2.380 <span class="fs-6 fw-normal opacity-75">{{ user.profile.currency|default:"EUR" }}</span>
                                                         </h4>
                                                         <div class="kpi-segmented-wrap">
@@ -403,7 +427,7 @@
                                                                 <div class="seg-bar"></div><div class="seg-bar"></div>
                                                                 <div class="target-marker" style="left: 80%;"></div>
                                                             </div>
-                                                            <div class="d-flex justify-content-between opacity-85 fw-semibold" style="font-size: 0.65rem;">
+                                                            <div class="d-flex justify-content-between opacity-85 fw-semibold small">
                                                                 <span>70 % vom Rentenziel</span>
                                                                 <span>Ziel: 3.400 €</span>
                                                             </div>
@@ -419,7 +443,7 @@
                             <div class="form-check form-switch mt-3 pt-2 border-top border-secondary border-opacity-25">
                                 <input type="hidden" id="studioPrecisionManual" name="theme_manual_precision" value="0">
                                 <input class="form-check-input" type="checkbox" role="switch" id="studioSyncCards" name="theme_sync_cards" {% if theme_studio.sync_cards_and_charts %}checked{% endif %}>
-                                <label class="form-check-label small fw-semibold" for="studioSyncCards" style="font-size: 0.75rem;">
+                                <label class="form-check-label small fw-semibold" for="studioSyncCards">
                                     {% trans "KPI-Karten, Kategorien & Diagramme automatisch an Design-Stimmung anpassen" %}
                                 </label>
                             </div>
@@ -427,13 +451,13 @@
 
                         <!-- 8-State Semantic Harmony Grid -->
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="small fw-bold" style="font-size: 0.75rem;"><i class="bi bi-palette2 me-1 text-primary"></i>{% trans "Semantische Farbharmonie (8 Zustände für Karten, Kategorien & Charts)" %}</span>
-                            <small class="text-muted" style="font-size: 0.65rem;">{% trans "Klick auf Farbfeld ändert Farbe · Copy-Icon kopiert HEX" %}</small>
+                            <span class="small fw-bold"><i class="bi bi-palette2 me-1 text-primary"></i>{% trans "Semantische Farbharmonie (8 Zustände für Karten, Kategorien & Charts)" %}</span>
+                            <small class="text-muted">{% trans "Klick auf Farbfeld ändert Farbe · Copy-Icon kopiert HEX" %}</small>
                         </div>
                         <input type="hidden" name="theme_state_overrides" id="studioStateOverrides" value='{{ theme_state_overrides_json|default:"{}" }}'>
                         <div class="studio-harmony-grid mb-3" id="studioSwatchGrid"></div>
 
-                        <label class="form-label small fw-bold mb-2" style="font-size: 0.75rem;">{% trans "Schnellvorlagen (Farbharmonien)" %}</label>
+                        <label class="form-label small fw-bold mb-2">{% trans "Schnellvorlagen (Farbharmonien)" %}</label>
                         <div class="d-flex flex-wrap gap-2 mb-3">
                             {% include "core/partials/harmony_presets.html" %}
                         </div>
@@ -450,14 +474,14 @@
                                     <div class="accordion-body">
                                         <div class="row g-2 mb-3">
                                             <div class="col-12 col-sm-6">
-                                                <label class="form-label fw-bold mb-1 d-block" style="font-size: 0.7rem;">{% trans "Menü-Position" %}</label>
+                                                <label class="form-label fw-bold mb-1 d-block" style="font-size: var(--app-fs-xs);">{% trans "Menü-Position" %}</label>
                                                 <select name="theme_menu_layout" id="studioMenuLayout" class="form-select form-select-sm">
                                                     <option value="top" {% if theme_studio.menu_layout == 'top' or not theme_studio.menu_layout %}selected{% endif %}>{% trans "Top-Navigationsleiste (Oben)" %}</option>
                                                     <option value="sidebar" {% if theme_studio.menu_layout == 'sidebar' %}selected{% endif %}>{% trans "Seitenpanel (Links am Desktop, einklappbar)" %}</option>
                                                 </select>
                                             </div>
                                             <div class="col-12 col-sm-6">
-                                                <label class="form-label fw-bold mb-1 d-block" style="font-size: 0.7rem;">{% trans "Menü-Design" %}</label>
+                                                <label class="form-label fw-bold mb-1 d-block" style="font-size: var(--app-fs-xs);">{% trans "Menü-Design" %}</label>
                                                 <select name="theme_menu_style" id="studioMenuStyle" class="form-select form-select-sm">
                                                     <option value="auto" {% if theme_studio.menu_style == 'auto' or not theme_studio.menu_style %}selected{% endif %}>{% trans "Auto (passend zum Karten-Stil)" %}</option>
                                                     <option value="glass" {% if theme_studio.menu_style == 'glass' %}selected{% endif %}>{% trans "Edles Milchglas (Translucent)" %}</option>
@@ -468,13 +492,13 @@
 
                                         <input type="hidden" name="menu_config_json" id="menuConfigJsonInput" value="">
                                         <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <span class="small fw-bold" style="font-size: 0.72rem;">{% trans "Menüpunkte per Drag & Drop sortieren, umbenennen & anpassen:" %}</span>
-                                            <button type="button" id="btnResetMenuStudio" class="btn btn-outline-secondary btn-sm py-0 px-2 rounded-pill" style="font-size: 0.68rem;">
+                                            <span class="small fw-bold" style="font-size: var(--app-fs-xs);">{% trans "Menüpunkte per Drag & Drop sortieren, umbenennen & anpassen:" %}</span>
+                                            <button type="button" id="btnResetMenuStudio" class="btn btn-outline-secondary btn-sm py-0 px-2 rounded-pill" style="font-size: var(--app-fs-xs);">
                                                 <i class="bi bi-arrow-counterclockwise me-1"></i>{% trans "Standard" %}
                                             </button>
                                         </div>
                                         <div class="table-responsive border rounded-3">
-                                            <table class="table table-sm table-hover align-middle mb-0" style="font-size: 0.78rem;">
+                                            <table class="table table-sm table-hover align-middle mb-0" style="font-size: var(--app-fs-sm);">
                                                 <thead>
                                                     <tr>
                                                         <th style="width: 28px;"></th>
@@ -492,7 +516,7 @@
                                                         <td>
                                                             <div class="d-flex align-items-center gap-1">
                                                                 <i class="bi {{ mitem.icon }} menu-icon-preview fs-6 text-primary"></i>
-                                                                <select class="form-select form-select-sm menu-item-icon py-0 px-1" style="font-size: 0.72rem;">
+                                                                <select class="form-select form-select-sm menu-item-icon py-0 px-1" style="font-size: var(--app-fs-xs);">
                                                                     {% for ic_val, ic_lbl in menu_icon_choices %}
                                                                     <option value="{{ ic_val }}" {% if mitem.icon == ic_val %}selected{% endif %}>{{ ic_lbl }}</option>
                                                                     {% endfor %}
@@ -500,18 +524,18 @@
                                                             </div>
                                                         </td>
                                                         <td>
-                                                            <input type="text" class="form-control form-control-sm menu-item-label py-0 px-2" style="font-size: 0.74rem;"
+                                                            <input type="text" class="form-control form-control-sm menu-item-label py-0 px-2" style="font-size: var(--app-fs-xs);"
                                                                    value="{{ mitem.custom_label }}" placeholder="{{ mitem.default_label }}" maxlength="40">
                                                         </td>
                                                         <td>
-                                                            <select class="form-select form-select-sm menu-item-display py-0 px-1" style="font-size: 0.72rem;">
+                                                            <select class="form-select form-select-sm menu-item-display py-0 px-1" style="font-size: var(--app-fs-xs);">
                                                                 <option value="icon_text" {% if mitem.display == 'icon_text' %}selected{% endif %}>{% trans "Icon + Text" %}</option>
                                                                 <option value="icon_only" {% if mitem.display == 'icon_only' %}selected{% endif %}>{% trans "Nur Icon" %}</option>
                                                                 <option value="text_only" {% if mitem.display == 'text_only' %}selected{% endif %}>{% trans "Nur Text" %}</option>
                                                             </select>
                                                         </td>
                                                         <td>
-                                                            <select class="form-select form-select-sm menu-item-zone py-0 px-1" style="font-size: 0.72rem;">
+                                                            <select class="form-select form-select-sm menu-item-zone py-0 px-1" style="font-size: var(--app-fs-xs);">
                                                                 <option value="main" {% if mitem.zone == 'main' %}selected{% endif %}>{% trans "Hauptmenü" %}</option>
                                                                 <option value="utility" {% if mitem.zone == 'utility' %}selected{% endif %}>{% trans "Aktionen" %}</option>
                                                             </select>
@@ -562,40 +586,40 @@
                         <!-- Data Backup Section (Right side under Precision Studio) -->
                         <div class="mt-4 pt-3 border-top border-secondary border-opacity-25" id="backup-section">
                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span class="fw-bold text-success small d-block">
+                                <span class="fw-bold small d-block" style="color: var(--theme-state-1, #198754);">
                                     <i class="bi bi-shield-check me-1"></i>{% trans "Datensicherung & Backup (Desktop & Server)" %}
                                 </span>
                                 {% if user.profile.backup_last_run %}
-                                <span class="badge bg-success-subtle text-success border border-success border-opacity-25" style="font-size: 0.7rem;">
+                                <span class="badge border" style="background: var(--theme-state-1-bg); color: var(--theme-state-1-txt); border-color: var(--theme-state-1) !important;">
                                     {% trans "Letztes Backup:" %} {{ user.profile.backup_last_run|date:"SHORT_DATETIME_FORMAT" }}
                                 </span>
                                 {% else %}
-                                <span class="badge bg-warning-subtle text-warning border border-warning border-opacity-25" style="font-size: 0.7rem;">
+                                <span class="badge border" style="background: var(--theme-state-3-bg); color: var(--theme-state-3-txt); border-color: var(--theme-state-3) !important;">
                                     {% trans "Noch kein Backup erstellt" %}
                                 </span>
                                 {% endif %}
                             </div>
-                            <p class="text-muted small mb-3" style="font-size: 0.75rem;">
+                            <p class="text-muted small mb-3">
                                 {% trans "Sichert die gesamte SQLite-Datenbank (inkl. Verträge, Konten, Immobilien) sowie alle hochgeladenen Dokumente/Belege in ein ZIP-Archiv." %}
                             </p>
 
                             <div class="row g-2">
                                 <div class="col-md-6 mb-2">
-                                    <label class="form-label fw-bold d-block mb-0" style="font-size: 0.7rem;">{{ form.backup_frequency.label }}</label>
+                                    <label class="form-label fw-bold d-block mb-0">{{ form.backup_frequency.label }}</label>
                                     {{ form.backup_frequency }}
-                                    <small class="text-muted d-block mt-0.5" style="font-size: 0.65rem;">
+                                    <small class="text-muted d-block mt-0.5">
                                         {% trans "Bei externer Sicherung (NAS/Cloud) 'Nie sichern' wählen." %}
                                     </small>
                                 </div>
                                 <div class="col-md-6 mb-2">
-                                    <label class="form-label fw-bold d-block mb-0" style="font-size: 0.7rem;">{{ form.backup_max_keep.label }}</label>
+                                    <label class="form-label fw-bold d-block mb-0">{{ form.backup_max_keep.label }}</label>
                                     {{ form.backup_max_keep }}
-                                    <small class="text-muted d-block mt-0.5" style="font-size: 0.65rem;">
+                                    <small class="text-muted d-block mt-0.5">
                                         {% trans "Automatische Bereinigung alter Backups im Ordner." %}
                                     </small>
                                 </div>
                                 <div class="col-12 mb-3">
-                                    <label class="form-label fw-bold d-block mb-1" style="font-size: 0.75rem;">
+                                    <label class="form-label fw-bold d-block mb-1">
                                         {{ form.backup_path.label }}
                                     </label>
                                     <div class="input-group input-group-sm mb-1">
@@ -603,13 +627,13 @@
                                         <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="{% trans 'Typische Pfade auswählen' %}">
                                             <i class="bi bi-folder2-open me-1"></i>{% trans "Vorschläge" %}
                                         </button>
-                                        <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="font-size: 0.75rem; max-width: 340px;">
-                                            <li><h6 class="dropdown-header py-1 text-success fw-bold" style="font-size: 0.7rem;"><i class="bi bi-hdd-network me-1"></i>{% trans "Tatsächlich verfügbare Speicherorte" %}</h6></li>
+                                        <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="max-width: 340px;">
+                                            <li><h6 class="dropdown-header py-1 fw-bold" style="color: var(--theme-state-1, #198754);"><i class="bi bi-hdd-network me-1"></i>{% trans "Tatsächlich verfügbare Speicherorte" %}</h6></li>
                                             {% for s in available_shares %}
                                             <li>
                                                 <a class="dropdown-item py-1 text-wrap {% if s.is_other_volume %}text-success{% else %}text-muted{% endif %}" href="javascript:void(0);" onclick="setBackupPath('{{ s.path|escapejs }}')">
                                                     <strong><i class="bi bi-check-circle-fill me-1"></i>{{ s.label }}</strong><br>
-                                                    <code style="font-size: 0.65rem;">{{ s.path }}</code>
+                                                    <code class="small">{{ s.path }}</code>
                                                 </a>
                                             </li>
                                             {% empty %}
@@ -624,7 +648,7 @@
                                         </ul>
                                     </div>
                                     {% if is_in_docker and not has_external_mount %}
-                                    <div class="alert alert-info py-2 px-3 my-2 border-0 rounded-3" style="font-size: 0.72rem;">
+                                    <div class="alert alert-info py-2 px-3 my-2 border-0 rounded-3 small">
                                         <div class="d-flex align-items-start gap-2">
                                             <i class="bi bi-info-circle-fill text-info fs-6 mt-0.5"></i>
                                             <div>
@@ -639,18 +663,18 @@
                                         </div>
                                     </div>
                                     {% elif is_same_volume and user.profile.backup_path %}
-                                    <div class="alert alert-warning py-1 px-2 my-1 d-flex align-items-center gap-1" style="font-size: 0.68rem;">
+                                    <div class="alert alert-warning py-1 px-2 my-1 d-flex align-items-center gap-1 small">
                                         <i class="bi bi-exclamation-triangle-fill text-warning flex-shrink-0"></i>
                                         <span>{% trans "Hinweis: Dieser Pfad liegt auf demselben Laufwerk/Volume wie die Anwendung. Für echte Datensicherheit empfiehlt sich ein anderes Volume/USB/NAS-Share." %}</span>
                                     </div>
                                     {% endif %}
-                                    <small class="text-muted d-block" style="font-size: 0.65rem;">
+                                    <small class="text-muted d-block">
                                         {% trans "Leer lassen für Standard (" %}<code>{{ default_backup_dir }}</code>{% trans "). Wichtig: Der Pfad muss für den Server/NAS beschreibbar sein, auf dem die App läuft." %}
                                     </small>
                                 </div>
                                 <div class="col-12 mb-2">
                                     <div class="d-flex flex-wrap align-items-center gap-2">
-                                        <button type="button" class="btn btn-success btn-sm rounded-pill px-4 shadow-sm fw-bold" id="btn-profile-start-backup" onclick="triggerAsyncBackup('profile')">
+                                        <button type="button" class="btn btn-sm rounded-pill px-4 shadow-sm fw-bold text-white" style="background: var(--theme-state-1, #198754); border: none;" id="btn-profile-start-backup" onclick="triggerAsyncBackup('profile')">
                                             <i class="bi bi-shield-lock me-1"></i>{% trans "Sicherung jetzt im Hintergrund ausführen" %}
                                         </button>
                                     </div>
@@ -665,10 +689,11 @@
                                         <div class="progress rounded-pill bg-body" style="height: 10px;">
                                             <div id="backup-profile-bar" class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: 0%;"></div>
                                         </div>
-                                        <small id="backup-profile-target-msg" class="text-muted d-block mt-2 font-monospace" style="font-size: 0.7rem;"></small>
+                                        <small id="backup-profile-target-msg" class="text-muted d-block mt-2 font-monospace"></small>
                                     </div>
                                 </div>
                             </div>
+                        </div>
                         </div>
                     </div>
                 </div>
@@ -722,22 +747,22 @@
         ];
 
         const STUDIO_MOODS = {
-            modern:    { s: 70, l: 50, bg: "#f4f6f9", dark: false, shift: 0.06, surface: "tinted", svg: "topography" },
-            dualtone:  { s: 78, l: 52, bg: "#f4f6f9", dark: false, shift: 0.00, dual: true, surface: "tinted", svg: "curves" },
-            serioes:   { s: 42, l: 45, bg: "#f1f5f9", dark: false, shift: 0.10, surface: "glass", svg: "grid" },
-            dunkel:    { s: 65, l: 52, bg: "#0f172a", dark: true,  shift: 0.08, surface: "glass", svg: "grid" },
-            brutalism: { s: 92, l: 56, bg: "#050505", dark: true,  shift: 0.00, brutal: true, surface: "brutal", svg: "brutal_grid" },
-            wellness:  { s: 36, l: 74, bg: "#f6f7f4", dark: false, shift: 0.18, surface: "tinted", svg: "topography" },
-            ecofuture: { s: 88, l: 52, bg: "#141d18", dark: true,  shift: 0.05, eco: true, surface: "tinted", svg: "curves" },
-            moody:     { s: 58, l: 36, bg: "#16131c", dark: true,  shift: 0.12, surface: "tinted", svg: "aura" },
-            fancy:     { s: 65, l: 68, bg: "#f8f5fc", dark: false, shift: 0.12, surface: "tinted", svg: "aura" },
-            vintage:   { s: 48, l: 54, bg: "#f5f0e6", dark: false, shift: 0.25, warm: true, surface: "tinted", svg: "aura" },
-            knallbunt: { s: 95, l: 52, bg: "#f4f6f9", dark: false, shift: 0.02, surface: "solid", svg: "curves" },
-            neon:      { s: 100,l: 55, bg: "#090a0f", dark: true,  shift: 0.00, glow: true, surface: "tinted", svg: "curves" },
-            duester:   { s: 35, l: 38, bg: "#111317", dark: true,  shift: 0.15, surface: "glass", svg: "aura" },
-            earth:     { s: 32, l: 48, bg: "#ede6dc", dark: false, shift: 0.15, earth: true, surface: "tinted", svg: "topography" },
-            monochrom: { s: 55, l: 50, bg: "#f4f6f9", dark: false, shift: 0.88, surface: "glass", svg: "grid" },
-            grayscale: { s: 0,  l: 50, bg: "#efefef", dark: false, shift: 0.00, surface: "glass", svg: "grid" }
+            modern:    { s: 70, l: 50, bg: "#f4f6f9", dark: false, shift: 0.06, surface: "tinted", svg: "topography", font: "sans" },
+            dualtone:  { s: 78, l: 52, bg: "#f4f6f9", dark: false, shift: 0.00, dual: true, surface: "tinted", svg: "curves", font: "sans" },
+            serioes:   { s: 42, l: 45, bg: "#f1f5f9", dark: false, shift: 0.10, surface: "glass", svg: "grid", font: "serif" },
+            dunkel:    { s: 65, l: 52, bg: "#0f172a", dark: true,  shift: 0.08, surface: "glass", svg: "grid", font: "tech" },
+            brutalism: { s: 92, l: 56, bg: "#050505", dark: true,  shift: 0.00, brutal: true, surface: "brutal", svg: "brutal_grid", font: "mono" },
+            wellness:  { s: 36, l: 74, bg: "#f6f7f4", dark: false, shift: 0.18, surface: "tinted", svg: "topography", font: "rounded" },
+            ecofuture: { s: 88, l: 52, bg: "#141d18", dark: true,  shift: 0.05, eco: true, surface: "tinted", svg: "curves", font: "tech" },
+            moody:     { s: 58, l: 36, bg: "#16131c", dark: true,  shift: 0.12, surface: "tinted", svg: "aura", font: "tech" },
+            fancy:     { s: 65, l: 68, bg: "#f8f5fc", dark: false, shift: 0.12, surface: "tinted", svg: "aura", font: "rounded" },
+            vintage:   { s: 48, l: 54, bg: "#f5f0e6", dark: false, shift: 0.25, warm: true, surface: "tinted", svg: "aura", font: "serif" },
+            knallbunt: { s: 95, l: 52, bg: "#f4f6f9", dark: false, shift: 0.02, surface: "solid", svg: "curves", font: "rounded" },
+            neon:      { s: 100,l: 55, bg: "#090a0f", dark: true,  shift: 0.00, glow: true, surface: "tinted", svg: "curves", font: "tech" },
+            duester:   { s: 35, l: 38, bg: "#111317", dark: true,  shift: 0.15, surface: "glass", svg: "aura", font: "tech" },
+            earth:     { s: 32, l: 48, bg: "#ede6dc", dark: false, shift: 0.15, earth: true, surface: "tinted", svg: "topography", font: "serif" },
+            monochrom: { s: 55, l: 50, bg: "#f4f6f9", dark: false, shift: 0.88, surface: "glass", svg: "grid", font: "sans" },
+            grayscale: { s: 0,  l: 50, bg: "#efefef", dark: false, shift: 0.00, surface: "glass", svg: "grid", font: "sans" }
         };
 
         const STUDIO_SVG_TEMPLATES = {
@@ -751,6 +776,8 @@
 
         const studioCardSurface = document.getElementById('studioCardSurface');
         const studioBgSvg = document.getElementById('studioBgSvg');
+        const studioFontFamily = document.getElementById('studioFontFamily');
+        const studioFontScale = document.getElementById('studioFontScale');
         const chkKpiSparklines = document.getElementById('chkKpiSparklines');
         const chkKpiProgress = document.getElementById('chkKpiProgress');
         const chkKpiWatermarks = document.getElementById('chkKpiWatermarks');
@@ -767,11 +794,16 @@
             const m = STUDIO_MOODS[moodKey] || STUDIO_MOODS.modern;
             const rawSurface = studioCardSurface ? studioCardSurface.value : 'auto';
             const rawSvg = studioBgSvg ? studioBgSvg.value : 'auto';
+            const rawFont = studioFontFamily ? studioFontFamily.value : 'auto';
+            const rawScale = studioFontScale ? studioFontScale.value : 'normal';
             const resolvedSurface = rawSurface === 'auto' ? (m.surface || 'tinted') : rawSurface;
             const resolvedSvg = rawSvg === 'auto' ? (m.svg || 'topography') : rawSvg;
+            const resolvedFont = rawFont === 'auto' ? (m.font || 'sans') : rawFont;
 
             document.body.setAttribute('data-card-surface', resolvedSurface);
             document.body.setAttribute('data-bg-svg', resolvedSvg);
+            document.body.setAttribute('data-font-family', resolvedFont);
+            document.body.setAttribute('data-font-scale', rawScale);
             if (chkKpiSparklines) document.body.setAttribute('data-kpi-sparklines', chkKpiSparklines.checked ? 'true' : 'false');
             if (chkKpiProgress) document.body.setAttribute('data-kpi-progress', chkKpiProgress.checked ? 'true' : 'false');
             if (chkKpiWatermarks) document.body.setAttribute('data-kpi-watermarks', chkKpiWatermarks.checked ? 'true' : 'false');
@@ -815,7 +847,8 @@
             if (studioLiveResolvedBadge) {
                 const surfaceNames = { tinted: 'Tinted Glass', glass: 'Frosted Glass', solid: 'Classic Solid', brutal: 'Brutalist' };
                 const svgNames = { topography: 'Topografie', grid: 'Architektur-Raster', curves: 'Zinseszins-Kurven', aura: 'Seiden-Aura', brutal_grid: 'Kontrast-Gitter', none: 'Ohne SVG' };
-                studioLiveResolvedBadge.textContent = `${surfaceNames[resolvedSurface] || resolvedSurface} · ${svgNames[resolvedSvg] || resolvedSvg}`;
+                const fontNames = { sans: 'Modern Sans', rounded: 'Soft Geometric', serif: 'Editorial Serif', tech: 'Technical', mono: 'Mono' };
+                studioLiveResolvedBadge.textContent = `${surfaceNames[resolvedSurface] || resolvedSurface} · ${svgNames[resolvedSvg] || resolvedSvg} · ${fontNames[resolvedFont] || resolvedFont}`;
             }
         }
 
@@ -1048,14 +1081,14 @@
                       <input type="color" class="studio-state-color-input position-absolute opacity-0" data-state-key="${stateKey}" value="${hex}" style="inset:0; width:100%; height:100%; cursor:pointer;" aria-label="${st.n}">
                       <span class="position-relative" style="pointer-events:none;">${hex}</span>
                       <div class="d-flex align-items-center gap-1 position-relative" style="z-index:2;">
-                        <button type="button" class="btn btn-link p-0 border-0 studio-state-text-btn" data-state-key="${stateKey}" style="color:${swatchText}; font-size:0.85rem; line-height:1;" title="{% trans 'Textfarbe ändern'|escapejs %}"><i class="bi bi-type"></i></button>
+                        <button type="button" class="btn btn-link p-0 border-0 studio-state-text-btn" data-state-key="${stateKey}" style="color:${swatchText}; font-size: var(--app-fs-sm); line-height:1;" title="{% trans 'Textfarbe ändern'|escapejs %}"><i class="bi bi-type"></i></button>
                         <input type="color" class="studio-state-text-input" data-state-key="${stateKey}" value="${swatchText}" style="position:absolute; right:0; bottom:0; width:1px; height:1px; opacity:0; pointer-events:none;">
-                        ${isOverridden ? `<button type="button" class="btn btn-link p-0 border-0 studio-state-reset" data-state-key="${stateKey}" style="color:${swatchText}; font-size:0.72rem; line-height:1;" title="{% trans 'Zurücksetzen'|escapejs %}"><i class="bi bi-arrow-counterclockwise"></i></button>` : ''}
-                        <button type="button" class="btn btn-link p-0 border-0 studio-state-copy" data-hex="${hex}" style="color:${swatchText}; font-size:0.72rem; line-height:1;" title="{% trans 'HEX kopieren'|escapejs %}"><i class="bi bi-clipboard"></i></button>
+                        ${isOverridden ? `<button type="button" class="btn btn-link p-0 border-0 studio-state-reset" data-state-key="${stateKey}" style="color:${swatchText}; font-size: var(--app-fs-xs); line-height:1;" title="{% trans 'Zurücksetzen'|escapejs %}"><i class="bi bi-arrow-counterclockwise"></i></button>` : ''}
+                        <button type="button" class="btn btn-link p-0 border-0 studio-state-copy" data-hex="${hex}" style="color:${swatchText}; font-size: var(--app-fs-xs); line-height:1;" title="{% trans 'HEX kopieren'|escapejs %}"><i class="bi bi-clipboard"></i></button>
                       </div>
                     </div>
                     <div class="studio-state-info">
-                      <div class="fw-bold text-truncate" style="font-size:0.72rem;" title="${st.n}">${st.n}</div>
+                      <div class="fw-bold text-truncate" style="font-size: var(--app-fs-xs);" title="${st.n}">${st.n}</div>
                       <span class="studio-state-badge" style="background:${bg}; color:${txt}; border:1px solid ${hex}44">${st.t}</span>
                     </div>
                   </div>`;
@@ -1178,7 +1211,7 @@
                 el.addEventListener('change', () => runThemeStudio(true));
             }
         });
-        [studioCardSurface, studioBgSvg, chkKpiSparklines, chkKpiProgress, chkKpiWatermarks, chkKpiSpotlight, chkKpiClickNav].forEach(el => {
+        [studioCardSurface, studioBgSvg, studioFontFamily, studioFontScale, chkKpiSparklines, chkKpiProgress, chkKpiWatermarks, chkKpiSpotlight, chkKpiClickNav].forEach(el => {
             if (el) {
                 el.addEventListener('change', () => runThemeStudio(false));
             }
@@ -1628,15 +1661,15 @@
                 row.innerHTML = `
                     <div class="row g-2 align-items-end">
                         <div class="col-5 col-sm-4">
-                            <label class="form-label mb-0 opacity-75" style="font-size: 0.65rem;">Name</label>
+                            <label class="form-label mb-0 opacity-75" style="font-size: var(--app-fs-xs);">Name</label>
                             <input type="text" class="form-control form-control-sm child-name-inp" placeholder="z. B. Lena" value="">
                         </div>
                         <div class="col-7 col-sm-4">
-                            <label class="form-label mb-0 opacity-75" style="font-size: 0.65rem;">Geburtsdatum</label>
+                            <label class="form-label mb-0 opacity-75" style="font-size: var(--app-fs-xs);">Geburtsdatum</label>
                             <input type="date" class="form-control form-control-sm child-birth-inp" value="">
                         </div>
                         <div class="col-7 col-sm-3">
-                            <label class="form-label mb-0 opacity-75" style="font-size: 0.65rem;">Versorgung bis</label>
+                            <label class="form-label mb-0 opacity-75" style="font-size: var(--app-fs-xs);">Versorgung bis</label>
                             <select class="form-select form-select-sm child-ind-inp">
                                 <option value="18">18 J. (Schule)</option>
                                 <option value="21">21 J. (Ausbildung)</option>
@@ -1652,9 +1685,9 @@
                     <div class="d-flex justify-content-between align-items-center mt-1 pt-1">
                         <div class="form-check form-switch mb-0">
                             <input class="form-check-input child-benefit-inp" type="checkbox" id="childBenefitSwitch_${idx}">
-                            <label class="form-check-label opacity-75" style="font-size: 0.68rem;" for="childBenefitSwitch_${idx}">Kindergeld aktiv</label>
+                            <label class="form-check-label opacity-75" style="font-size: var(--app-fs-xs);" for="childBenefitSwitch_${idx}">Kindergeld aktiv</label>
                         </div>
-                        <span class="badge bg-primary bg-opacity-10 text-primary child-info-badge" style="font-size: 0.65rem;">${infoBadge}</span>
+                        <span class="badge bg-primary bg-opacity-10 text-primary child-info-badge" style="font-size: var(--app-fs-xs);">${infoBadge}</span>
                     </div>
                 `;
 
@@ -1732,7 +1765,7 @@
         height: 48px;
         padding: 6px 8px;
         font-family: monospace;
-        font-size: 0.72rem;
+        font-size: var(--app-fs-xs);
         font-weight: bold;
         display: flex;
         align-items: flex-end;
@@ -1748,7 +1781,7 @@
     .studio-state-badge {
         padding: 2px 7px;
         border-radius: 5px;
-        font-size: 0.68rem;
+        font-size: var(--app-fs-xs);
         font-weight: bold;
         display: inline-block;
         margin-top: 4px;

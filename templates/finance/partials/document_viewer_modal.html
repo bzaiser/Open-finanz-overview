@@ -80,7 +80,7 @@
                         </div>
                         <!-- Sheet Table -->
                         <div class="table-responsive flex-grow-1 border rounded-3 overflow-auto" style="max-height: 62vh;">
-                            <table class="table table-sm table-striped table-hover font-monospace mb-0" style="font-size: 0.85rem;">
+                            <table class="table table-sm table-striped table-hover font-monospace mb-0" style="font-size: var(--app-fs-sm);">
                                 <tbody>
                                     <template x-for="(row, rIdx) in currentSheetRows" :key="rIdx">
                                         <tr :class="rIdx === 0 ? 'table-secondary fw-bold' : ''">

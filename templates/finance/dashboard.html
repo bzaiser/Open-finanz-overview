@@ -34,7 +34,7 @@
                         <span>{% trans "Simulation" %}</span>
                     </button>
                     {% if is_simulation_active %}
-                    <span class="position-absolute start-50 translate-middle-x small fw-bold sim-blinking text-nowrap" style="top: 100%; font-size: 0.68rem; margin-top: 2px;">
+                    <span class="position-absolute start-50 translate-middle-x small fw-bold sim-blinking text-nowrap" style="top: 100%; font-size: var(--app-fs-xs); margin-top: 2px;">
                         <i class="bi bi-circle-fill me-1" style="font-size: 0.45rem;"></i>{% trans "active" %}
                     </span>
                     {% endif %}
@@ -62,7 +62,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
-        <div class="alert alert-info py-2 small mb-4 shadow-sm" style="font-size: 0.8rem; border-left: 4px solid var(--app-primary);">
+        <div class="alert alert-info py-2 small mb-4 shadow-sm" style="font-size: var(--app-fs-sm); border-left: 4px solid var(--app-primary);">
             <i class="bi bi-info-circle"></i> {% trans "Changes here are temporary. Update your profile for permanent settings." %}
         </div>
         <form id="simulation-form" hx-post="{% url 'finance:dashboard' %}" hx-target="#dashboard-charts"
@@ -72,7 +72,7 @@
             <div class="row g-3 mb-4">
                 <!-- Stichtag -->
                 <div class="col-12">
-                    <label class="form-label fw-bold small text-uppercase d-flex align-items-center mb-1" style="font-size: 0.7rem;">
+                    <label class="form-label fw-bold small text-uppercase d-flex align-items-center mb-1" style="font-size: var(--app-fs-xs);">
                         <span><i class="bi bi-calendar-event me-1 text-primary"></i>{% trans "Target Date" %}</span>
                         <i class="bi bi-info-circle ms-1 text-primary cursor-pointer" 
                            onclick="showHelp('{% trans "Target Date"|escapejs %}', '{% trans "HELP_TARGET_DATE"|escapejs %}')"></i>
@@ -83,7 +83,7 @@
                 <!-- Inflationsrate (%) -->
                 <div class="col-12">
                     <div class="d-flex justify-content-between align-items-center mb-1">
-                        <label class="form-label fw-bold small text-uppercase mb-0 d-flex align-items-center" style="font-size: 0.7rem;">
+                        <label class="form-label fw-bold small text-uppercase mb-0 d-flex align-items-center" style="font-size: var(--app-fs-xs);">
                             <span><i class="bi bi-graph-up-arrow me-1 text-danger"></i>{% trans "Inflationsrate" %} (%)</span>
                             <i class="bi bi-info-circle ms-1 text-primary cursor-pointer" 
                                onclick="showHelp('{% trans "Inflation Rate"|escapejs %}', '{% trans "HELP_INFLATION_RATE"|escapejs %}')"></i>
@@ -94,7 +94,7 @@
                            id="range_inflation_rate" name="inflation_rate" 
                            value="{{ simulation_params.inflation_rate|stringformat:'.2f' }}"
                            oninput="document.getElementById('val_inflation_rate').textContent = parseFloat(this.value).toFixed(2) + '%'">
-                    <div class="d-flex justify-content-between text-muted" style="font-size: 0.65rem;">
+                    <div class="d-flex justify-content-between text-muted" style="font-size: var(--app-fs-xs);">
                         <span>0%</span>
                         <span class="text-primary fw-semibold cursor-pointer" role="button" title="{% trans "Auf Standard zurücksetzen" %}"
                               onclick="setSliderDefault('range_inflation_rate', 'val_inflation_rate', '{{ profile_params.inflation_rate|stringformat:'.2f' }}')">
@@ -107,7 +107,7 @@
                 <!-- Gehaltssteigerung (%) -->
                 <div class="col-12">
                     <div class="d-flex justify-content-between align-items-center mb-1">
-                        <label class="form-label fw-bold small text-uppercase mb-0 d-flex align-items-center" style="font-size: 0.7rem;">
+                        <label class="form-label fw-bold small text-uppercase mb-0 d-flex align-items-center" style="font-size: var(--app-fs-xs);">
                             <span><i class="bi bi-cash-stack me-1 text-success"></i>{% trans "Gehaltssteigerung" %} (%)</span>
                             <i class="bi bi-info-circle ms-1 text-primary cursor-pointer" 
                                onclick="showHelp('{% trans "Salary Increase"|escapejs %}', '{% trans "HELP_SALARY_INCREASE"|escapejs %}')"></i>
@@ -118,7 +118,7 @@
                            id="range_salary_increase" name="salary_increase" 
                            value="{{ simulation_params.salary_increase|stringformat:'.2f' }}"
                            oninput="document.getElementById('val_salary_increase').textContent = parseFloat(this.value).toFixed(2) + '%'">
-                    <div class="d-flex justify-content-between text-muted" style="font-size: 0.65rem;">
+                    <div class="d-flex justify-content-between text-muted" style="font-size: var(--app-fs-xs);">
                         <span>0%</span>
                         <span class="text-primary fw-semibold cursor-pointer" role="button" title="{% trans "Auf Standard zurücksetzen" %}"
                               onclick="setSliderDefault('range_salary_increase', 'val_salary_increase', '{{ profile_params.salary_increase|stringformat:'.2f' }}')">
@@ -131,7 +131,7 @@
                 <!-- Rentenerhöhung (%) -->
                 <div class="col-12">
                     <div class="d-flex justify-content-between align-items-center mb-1">
-                        <label class="form-label fw-bold small text-uppercase mb-0 d-flex align-items-center" style="font-size: 0.7rem;">
+                        <label class="form-label fw-bold small text-uppercase mb-0 d-flex align-items-center" style="font-size: var(--app-fs-xs);">
                             <span><i class="bi bi-bank me-1 text-warning"></i>{% trans "Rentenerhöhung" %} (%)</span>
                             <i class="bi bi-info-circle ms-1 text-primary cursor-pointer" 
                                onclick="showHelp('{% trans "Pension Increase"|escapejs %}', '{% trans "HELP_PENSION_INCREASE"|escapejs %}')"></i>
@@ -142,7 +142,7 @@
                            id="range_pension_increase" name="pension_increase" 
                            value="{{ simulation_params.pension_increase|stringformat:'.2f' }}"
                            oninput="document.getElementById('val_pension_increase').textContent = parseFloat(this.value).toFixed(2) + '%'">
-                    <div class="d-flex justify-content-between text-muted" style="font-size: 0.65rem;">
+                    <div class="d-flex justify-content-between text-muted" style="font-size: var(--app-fs-xs);">
                         <span>0%</span>
                         <span class="text-primary fw-semibold cursor-pointer" role="button" title="{% trans "Auf Standard zurücksetzen" %}"
                               onclick="setSliderDefault('range_pension_increase', 'val_pension_increase', '{{ profile_params.pension_increase|stringformat:'.2f' }}')">
@@ -155,7 +155,7 @@
                 <!-- Zusatz-Rendite (%) -->
                 <div class="col-12">
                     <div class="d-flex justify-content-between align-items-center mb-1">
-                        <label class="form-label fw-bold small text-uppercase mb-0 d-flex align-items-center" style="font-size: 0.7rem;">
+                        <label class="form-label fw-bold small text-uppercase mb-0 d-flex align-items-center" style="font-size: var(--app-fs-xs);">
                             <span><i class="bi bi-percent me-1 text-info"></i>{% trans "Zusatz-Rendite" %} (%)</span>
                             <i class="bi bi-info-circle ms-1 text-primary cursor-pointer" 
                                onclick="showHelp('{% trans "Zusatz-Rendite"|escapejs %} (%)', '{% trans "HELP_INTEREST_BUFFER"|escapejs %}')"></i>
@@ -166,7 +166,7 @@
                            id="range_investment_return_offset" name="investment_return_offset" 
                            value="{{ simulation_params.investment_return_offset|stringformat:'.2f' }}"
                            oninput="document.getElementById('val_investment_return_offset').textContent = parseFloat(this.value).toFixed(2) + '%'">
-                    <div class="d-flex justify-content-between text-muted" style="font-size: 0.65rem;">
+                    <div class="d-flex justify-content-between text-muted" style="font-size: var(--app-fs-xs);">
                         <span>0%</span>
                         <span class="text-primary fw-semibold cursor-pointer" role="button" title="{% trans "Auf Standard zurücksetzen" %}"
                               onclick="setSliderDefault('range_investment_return_offset', 'val_investment_return_offset', '{{ profile_params.investment_return_offset|stringformat:'.2f' }}')">
@@ -179,7 +179,7 @@
                 <!-- Wertsteigerung Immobilien (%) -->
                 <div class="col-12">
                     <div class="d-flex justify-content-between align-items-center mb-1">
-                        <label class="form-label fw-bold small text-uppercase mb-0 d-flex align-items-center" style="font-size: 0.7rem;">
+                        <label class="form-label fw-bold small text-uppercase mb-0 d-flex align-items-center" style="font-size: var(--app-fs-xs);">
                             <span><i class="bi bi-house-door me-1 text-primary"></i>{% trans "Wertsteigerung Immobilien" %} (%)</span>
                             <i class="bi bi-info-circle ms-1 text-primary cursor-pointer" 
                                onclick="showHelp('{% trans "Wertsteigerung Immobilien"|escapejs %} (%)', '{% trans "HELP_REAL_ESTATE_GROWTH"|escapejs %}')"></i>
@@ -190,7 +190,7 @@
                            id="range_real_estate_growth_rate" name="real_estate_growth_rate" 
                            value="{{ simulation_params.real_estate_growth_rate|stringformat:'.2f' }}"
                            oninput="document.getElementById('val_real_estate_growth_rate').textContent = parseFloat(this.value).toFixed(2) + '%'">
-                    <div class="d-flex justify-content-between text-muted" style="font-size: 0.65rem;">
+                    <div class="d-flex justify-content-between text-muted" style="font-size: var(--app-fs-xs);">
                         <span>0%</span>
                         <span class="text-primary fw-semibold cursor-pointer" role="button" title="{% trans "Auf Standard zurücksetzen" %}"
                               onclick="setSliderDefault('range_real_estate_growth_rate', 'val_real_estate_growth_rate', '{{ profile_params.real_estate_growth_rate|stringformat:'.2f' }}')">
@@ -408,13 +408,13 @@
                     <i class="bi bi-info-lg"></i>
                 </div>
                 <h6 class="modal-title fw-bold m-0" id="helpModalTitle" style="color: var(--app-card-color); font-size: 1rem;"></h6>
-                <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close" style="font-size: 0.8rem;"></button>
+                <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close" style="font-size: var(--app-fs-sm);"></button>
             </div>
-            <div class="modal-body pt-3 pb-4" id="helpModalBody" style="color: var(--app-card-color); font-size: 0.95rem; line-height: 1.6; opacity: 0.9;">
+            <div class="modal-body pt-3 pb-4" id="helpModalBody" style="color: var(--app-card-color); font-size: var(--app-fs-base); line-height: 1.6; opacity: 0.9;">
             </div>
             <div class="px-3 pb-3">
                 <button type="button" class="btn btn-sm w-100 rounded-pill py-2 fw-bold" data-bs-dismiss="modal" 
-                        style="background: var(--app-gradient); border: none; color: white; font-size: 0.8rem; letter-spacing: 0.5px;">
+                        style="background: var(--app-gradient); border: none; color: white; font-size: var(--app-fs-sm); letter-spacing: 0.5px;">
                     {% trans "Verstanden" %}
                 </button>
             </div>
