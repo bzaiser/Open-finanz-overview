@@ -96,7 +96,7 @@ INSTALLED_APPS = [
 ]
 
 DESIGN_STUDIO_APP_NAME = "Finanzplan"
-DESIGN_STUDIO_STORAGE_ADAPTER = "core.theme_adapter.FinanzplanThemeAdapter"
+DESIGN_STUDIO_PROFILE_ADAPTER = "core.theme_adapter.FinanzplanThemeAdapter"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

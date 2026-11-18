@@ -1,11 +1,11 @@
 from design_studio.engine import normalize_settings
-from design_studio.storage import BaseThemeStorageAdapter
+from design_studio.storage import DefaultThemeStorageAdapter
 
 from .models import UserProfile
 from .theme_engine import apply_theme_studio_to_profile, get_profile_theme_studio_settings
 
 
-class FinanzplanThemeAdapter(BaseThemeStorageAdapter):
+class FinanzplanThemeAdapter(DefaultThemeStorageAdapter):
     """Bridges django-design-studio with Finanzplan's UserProfile without touching profile.html."""
 
     def get_settings(self, user):
