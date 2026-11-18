@@ -81,8 +81,7 @@ CSRF_COOKIE_HTTPONLY = False
 # Application definition
 
 INSTALLED_APPS = [
-    'admin_interface',
-    'colorfield',
+    'design_studio',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -96,6 +95,9 @@ INSTALLED_APPS = [
     'crispy_bootstrap5',
 ]
 
+DESIGN_STUDIO_APP_NAME = "Finanzplan"
+DESIGN_STUDIO_STORAGE_ADAPTER = "core.theme_adapter.FinanzplanThemeAdapter"
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -105,7 +107,6 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'core.middleware.UserLanguageMiddleware',
-    'core.middleware.DynamicAdminThemeMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]

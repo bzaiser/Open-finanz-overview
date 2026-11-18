@@ -1,28 +1,22 @@
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
-MENU_ICON_CHOICES = [
-    ("bi-speedometer2", _("Dashboard / Tacho")),
-    ("bi-arrow-down-up", _("Transaktionen / Pfeile")),
-    ("bi-bank", _("Bank / Altersvorsorge")),
-    ("bi-houses", _("Immobilien / Häuser")),
-    ("bi-pie-chart", _("Portfolio / Torte")),
-    ("bi-magic", _("Zauberstab / Import")),
-    ("bi-search", _("Suche / Lupe")),
-    ("bi-folder2-open", _("Dokumente / Ordner")),
-    ("bi-gear", _("Einstellungen / Zahnrad")),
-    ("bi-shield-lock", _("Admin / Schild")),
-    ("bi-moon-stars", _("Tag / Nacht")),
-    ("bi-graph-up-arrow", _("Wachstum / Chart")),
-    ("bi-wallet2", _("Geldbörse / Konten")),
-    ("bi-cash-stack", _("Bargeld / Einkommen")),
-    ("bi-piggy-bank", _("Sparen / Rücklage")),
-    ("bi-calculator", _("Rechner / Steuer")),
-    ("bi-calendar-event", _("Kalender / Termine")),
-    ("bi-question-circle", _("Hilfe / Fragezeichen")),
-    ("bi-info-circle", _("Info / Über")),
-    ("bi-star", _("Favorit / Stern")),
-]
+try:
+    from design_studio.menu import MENU_ICON_CHOICES
+except ImportError:
+    MENU_ICON_CHOICES = [
+        ("bi-speedometer2", _("Dashboard / Tacho")),
+        ("bi-arrow-down-up", _("Transaktionen / Pfeile")),
+        ("bi-bank", _("Bank / Altersvorsorge")),
+        ("bi-houses", _("Immobilien / Häuser")),
+        ("bi-pie-chart", _("Portfolio / Torte")),
+        ("bi-magic", _("Zauberstab / Import")),
+        ("bi-search", _("Suche / Lupe")),
+        ("bi-folder2-open", _("Dokumente / Ordner")),
+        ("bi-gear", _("Einstellungen / Zahnrad")),
+        ("bi-shield-lock", _("Admin / Schild")),
+        ("bi-moon-stars", _("Tag / Nacht")),
+    ]
 
 DEFAULT_MENU_ITEMS = [
     {
