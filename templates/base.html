@@ -1954,6 +1954,11 @@
                     <i class="bi bi-speedometer2"></i>
                     <span class="brand-text">Finanzplan{% if APP_INSTANCE_NAME %} ({{ APP_INSTANCE_NAME }}){% endif %}</span>
                 </a>
+                <a href="{% url 'design_studio:toggle_menu_layout' %}" class="menu-layout-toggle-btn"
+                   title="{% if theme_studio.menu_layout == 'sidebar' %}{% trans 'Menü nach oben legen' %}{% else %}{% trans 'Menü als Seitenpanel links andocken' %}{% endif %}"
+                   aria-label="Toggle Menu Layout">
+                    <i class="bi {% if theme_studio.menu_layout == 'sidebar' %}bi-layout-text-window{% else %}bi-layout-sidebar{% endif %}"></i>
+                </a>
                 <button type="button" id="sidebarCollapseBtn" class="sidebar-toggle-btn" title="{% trans 'Seitenpanel ein-/ausklappen' %}" aria-label="Toggle Sidebar">
                     <i class="bi bi-layout-sidebar-inset"></i>
                 </button>
@@ -2797,54 +2802,6 @@
             card.style.setProperty('--mouse-x', (e.clientX - rect.left) + 'px');
             card.style.setProperty('--mouse-y', (e.clientY - rect.top) + 'px');
         }, { passive: true });
-
-        document.addEventListener('DOMContentLoaded', function() {
-            try {
-                if (localStorage.getItem('fp_sidebar_collapsed') === '1') {
-                    document.body.classList.add('sidebar-collapsed');
-                }
-            } catch (err) {}
-            var sbBtn = document.getElementById('sidebarCollapseBtn');
-            if (sbBtn) {
-                sbBtn.addEventListener('click', function() {
-                    document.body.classList.toggle('sidebar-collapsed');
-                    try {
-                        localStorage.setItem('fp_sidebar_collapsed', document.body.classList.contains('sidebar-collapsed') ? '1' : '0');
-                    } catch (err) {}
-                });
-            }
-
-            document.querySelectorAll('.nav-pill-track').forEach(function(track) {
-                var pill = track.querySelector('.nav-sliding-pill');
-                if (!pill) return;
-                var currentTarget = null;
-                function movePillTo(el) {
-                    if (!el || window.innerWidth < 992) {
-                        pill.style.opacity = '0';
-                        return;
-                    }
-                    var tRect = track.getBoundingClientRect();
-                    var elRect = el.getBoundingClientRect();
-                    pill.style.width = elRect.width + 'px';
-                    pill.style.height = elRect.height + 'px';
-                    pill.style.transform = 'translate3d(' + (elRect.left - tRect.left) + 'px, ' + (elRect.top - tRect.top) + 'px, 0)';
-                    pill.style.opacity = '1';
-                }
-                track.querySelectorAll('.nav-link').forEach(function(link) {
-                    link.addEventListener('pointerenter', function() {
-                        currentTarget = link;
-                        movePillTo(link);
-                    });
-                });
-                track.addEventListener('pointerleave', function() {
-                    currentTarget = null;
-                    pill.style.opacity = '0';
-                });
-                window.addEventListener('resize', function() {
-                    if (currentTarget) movePillTo(currentTarget);
-                }, { passive: true });
-            });
-        });
     })();
     </script>
     {% include "design_studio/includes/scripts.html" %}
