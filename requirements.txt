@@ -44,5 +44,6 @@ uritemplate==4.2.0
 urllib3==2.6.3
 whitenoise==6.6.0
 https://github.com/bzaiser/django-design-studio/archive/refs/heads/main.zip
+https://github.com/bzaiser/ops-django-kit/archive/refs/heads/main.zip
 
 pypdf

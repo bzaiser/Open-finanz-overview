@@ -82,6 +82,7 @@ CSRF_COOKIE_HTTPONLY = False
 
 INSTALLED_APPS = [
     'design_studio',
+    'ops_kit',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -97,6 +98,7 @@ INSTALLED_APPS = [
 
 DESIGN_STUDIO_APP_NAME = "Finanzplan"
 DESIGN_STUDIO_PROFILE_ADAPTER = "core.theme_adapter.FinanzplanThemeAdapter"
+OPS_GITHUB_REPO = "bzaiser/finanzplan"
 from core.menu_registry import DEFAULT_MENU_ITEMS as DESIGN_STUDIO_MENU_ITEMS
 
 MIDDLEWARE = [

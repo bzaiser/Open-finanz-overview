@@ -24,6 +24,7 @@ urlpatterns = [
     path('admin/login/', auth_views.LoginView.as_view(template_name='core/login.html')),
     path('admin/', admin.site.urls),
     path('design-studio/', include('design_studio.urls')),
+    path('ops/', include('ops_kit.urls')),
     path('i18n/', include('django.conf.urls.i18n')),
     path('', include('core.urls')),
     path('finance/', include('finance.urls')),
