@@ -30,14 +30,49 @@
         </div>
         {% endif %}
 
+        {% url 'ops_kit:updates' as ops_updates_url %}
+        <ul class="nav nav-tabs ds-tabs mb-3" id="settingsHubTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="tab-profile-btn" data-bs-toggle="tab" data-bs-target="#pane-profile" type="button" role="tab" aria-controls="pane-profile" aria-selected="true">
+                    <i class="bi bi-person-vcard me-1"></i>{% trans "Stammdaten" %}
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="tab-backup-btn" data-bs-toggle="tab" data-bs-target="#pane-backup" type="button" role="tab" aria-controls="pane-backup" aria-selected="false">
+                    <i class="bi bi-shield-check me-1"></i>{% trans "Datensicherung & Backup" %}
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="tab-design-btn" data-bs-toggle="tab" data-bs-target="#pane-design" type="button" role="tab" aria-controls="pane-design" aria-selected="false">
+                    <i class="bi bi-palette me-1"></i>{% trans "Design & Menü" %}
+                </button>
+            </li>
+            {% if request.user.is_staff and ops_updates_url %}
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="tab-updates-btn" data-bs-toggle="tab" data-bs-target="#pane-updates" type="button" role="tab" aria-controls="pane-updates" aria-selected="false">
+                    <i class="bi bi-cloud-download me-1"></i>{% trans "Auto-Updates" %}
+                </button>
+            </li>
+            {% endif %}
+            {% if request.user.is_staff %}
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" href="/admin/">
+                    <i class="bi bi-shield-lock me-1"></i>{% trans "Administration" %}
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+
         <form method="post" enctype="multipart/form-data" id="profileForm">
             {% csrf_token %}
             {{ form.auto_night_mode.as_hidden }}
             {{ form.dark_mode_config.as_hidden }}
-            
-            <div class="row g-3 mb-4">
-                <!-- Links: Stammdaten -->
-                <div class="col-lg-5">
+
+            <div class="tab-content" id="settingsHubTabContent">
+                <div class="tab-pane fade show active" id="pane-profile" role="tabpanel" aria-labelledby="tab-profile-btn">
+                    <div class="row g-3 mb-3">
+                        <!-- Stammdaten -->
+                        <div class="col-lg-8 mx-auto">
                     <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
                         <div class="card-header border-0 d-flex align-items-center">
                             <span class="fw-bold"><i class="bi bi-person-vcard me-2 opacity-75"></i>{% trans "Stammdaten" %}</span>
@@ -195,46 +230,25 @@
                         </div>
                     </div>
                 </div>
+                </div><!-- /row -->
 
-                <!-- Rechts: Design Studio & Datensicherung -->
-                <div class="col-lg-7 d-flex flex-column gap-3">
-                    <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
-                        <div class="card-header border-0 d-flex flex-wrap justify-content-between align-items-center gap-2">
-                            <span class="fw-bold"><i class="bi bi-magic me-2 opacity-75"></i>{% trans "Design Studio" %}</span>
-                            <div class="d-flex gap-1">
-                                <a href="{% url 'export_theme_json' %}" class="btn btn-sm bg-white bg-opacity-25 text-white border border-white border-opacity-25 rounded-pill px-2 px-sm-3" title="{% trans 'Design als JSON für andere Apps exportieren' %}">
-                                    <i class="bi bi-download me-1"></i>{% trans "Export (.json)" %}
-                                </a>
-                                <button type="button" id="btnImportThemeJson" class="btn btn-sm bg-white bg-opacity-25 text-white border border-white border-opacity-25 rounded-pill px-2 px-sm-3" title="{% trans 'Design-Vorlage (.json) importieren' %}">
-                                    <i class="bi bi-upload me-1"></i>{% trans "Import" %}
-                                </button>
-                                <input type="file" id="inputImportThemeJson" accept=".json,application/json" class="d-none">
-                            </div>
-                        </div>
-                        <div class="card-body">
-                        
-                        <div class="p-3 rounded-4 border border-secondary border-opacity-25 mb-3 d-flex flex-wrap justify-content-between align-items-center gap-3">
-                            <div>
-                                <div class="fw-bold mb-1"><i class="bi bi-palette me-1 text-primary"></i>{% trans "Zentrales Design & Menü Studio" %}</div>
-                                <div class="small text-muted">{% trans "Farben, Liquid Glass, App-Vorlagen, Layout-Dichte, Zoom (10–100%) und Menü-Sortierung werden zentral im Design Studio verwaltet." %}</div>
-                            </div>
-                            <div class="d-flex flex-wrap gap-2">
-                                <a href="{% url 'design_studio:studio' %}" class="btn btn-primary rounded-pill px-4 fw-bold">
-                                    <i class="bi bi-magic me-1"></i> {% trans "Design Studio öffnen" %}
-                                </a>
-                                {% if request.user.is_staff %}
-                                {% url 'ops_kit:updates' as ops_updates_url %}
-                                {% if ops_updates_url %}
-                                <a href="{{ ops_updates_url }}" class="btn btn-outline-primary rounded-pill px-3 fw-bold">
-                                    <i class="bi bi-cloud-download me-1"></i> {% trans "Auto-Updates" %}
-                                </a>
-                                {% endif %}
-                                {% endif %}
-                            </div>
-                        </div>
+                <div class="d-flex justify-content-center mb-4 mt-3">
+                    <button type="submit" class="btn btn-primary btn-lg px-5 shadow-lg rounded-pill btn-preview-styled py-2">
+                        <i class="bi bi-check2-circle me-2 fs-5"></i>
+                        <span class="fw-bold">{% trans "Stammdaten speichern" %}</span>
+                    </button>
+                </div>
+                </div><!-- /pane-profile -->
 
-                        <!-- Data Backup Section (Right side under Precision Studio) -->
-                        <div class="mt-4 pt-3 border-top border-secondary border-opacity-25" id="backup-section">
+                <div class="tab-pane fade" id="pane-backup" role="tabpanel" aria-labelledby="tab-backup-btn">
+                    <div class="row g-3 mb-3">
+                        <div class="col-lg-10 mx-auto">
+                            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                                <div class="card-header border-0 d-flex justify-content-between align-items-center">
+                                    <span class="fw-bold"><i class="bi bi-shield-check me-2 opacity-75"></i>{% trans "Datensicherung & Backup (Desktop & Server)" %}</span>
+                                </div>
+                                <div class="card-body">
+                                    <div id="backup-section">
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <span class="fw-bold small d-block" style="color: var(--theme-state-1, #198754);">
                                     <i class="bi bi-shield-check me-1"></i>{% trans "Datensicherung & Backup (Desktop & Server)" %}
@@ -346,20 +360,64 @@
                         </div>
                         </div>
                     </div>
-                </div>
-            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-center mb-4 mt-3">
+                        <button type="submit" class="btn btn-primary btn-lg px-5 shadow-lg rounded-pill btn-preview-styled py-2">
+                            <i class="bi bi-check2-circle me-2 fs-5"></i>
+                            <span class="fw-bold">{% trans "Backup-Einstellungen speichern" %}</span>
+                        </button>
+                    </div>
+                </div><!-- /pane-backup -->
 
-            <div class="d-flex justify-content-center mb-5 mt-2">
-                <button type="submit" class="btn btn-primary btn-lg px-5 shadow-lg rounded-pill btn-preview-styled py-3">
-                    <i class="bi bi-check2-circle me-2 fs-4"></i>
-                    <span class="fs-5 fw-bold">{% trans "Save Changes & Design" %}</span>
-                </button>
-            </div>
+                <div class="tab-pane fade" id="pane-design" role="tabpanel" aria-labelledby="tab-design-btn">
+                    <iframe id="iframe-design" class="w-100 border-0 rounded-4" style="min-height: 75vh; background: transparent;" data-src="{% url 'design_studio:studio' %}?embed=1" title="{% trans 'Design & Menü' %}"></iframe>
+                </div>
+
+                {% if request.user.is_staff and ops_updates_url %}
+                <div class="tab-pane fade" id="pane-updates" role="tabpanel" aria-labelledby="tab-updates-btn">
+                    <iframe id="iframe-updates" class="w-100 border-0 rounded-4" style="min-height: 70vh; background: transparent;" data-src="{{ ops_updates_url }}?embed=1" title="{% trans 'Auto-Updates' %}"></iframe>
+                </div>
+                {% endif %}
+            </div><!-- /tab-content -->
         </form>
     </div>
 </div>
 
 <script>
+    (function () {
+        function loadTabIframe(targetSelector) {
+            const pane = document.querySelector(targetSelector);
+            if (!pane) return;
+            const iframe = pane.querySelector('iframe[data-src]');
+            if (!iframe) return;
+            if (!iframe.getAttribute('src')) {
+                iframe.setAttribute('src', iframe.getAttribute('data-src'));
+                iframe.addEventListener('load', function () {
+                    try {
+                        const doc = iframe.contentDocument || iframe.contentWindow.document;
+                        if (doc && doc.body) {
+                            const h = Math.max(doc.body.scrollHeight, doc.documentElement.scrollHeight, 600);
+                            iframe.style.height = (h + 24) + 'px';
+                        }
+                    } catch (e) {}
+                });
+            }
+        }
+        document.querySelectorAll('#settingsHubTabs button[data-bs-toggle="tab"]').forEach(function (btn) {
+            btn.addEventListener('shown.bs.tab', function (ev) {
+                loadTabIframe(ev.target.getAttribute('data-bs-target'));
+            });
+        });
+        const params = new URLSearchParams(window.location.search);
+        const tab = params.get('tab');
+        if (tab) {
+            const btn = document.getElementById('tab-' + tab + '-btn');
+            if (btn && window.bootstrap && bootstrap.Tab) {
+                bootstrap.Tab.getOrCreateInstance(btn).show();
+            }
+        }
+    })();
     function setBackupPath(path) {
         const input = document.getElementById('id_backup_path');
         if (input) {

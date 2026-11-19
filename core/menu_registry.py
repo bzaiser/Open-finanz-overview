@@ -127,53 +127,14 @@ DEFAULT_MENU_ITEMS = [
         "id": "settings",
         "url_name": "profile",
         "match_urls": ["profile"],
-        "default_label": _("Profil"),
-        "icon": "bi-person-circle",
-        "zone": "system",
-        "display": "icon_only",
-        "visible": True,
-        "order": 1,
-        "locked": True,
-        "staff_only": False,
-    },
-    {
-        "id": "design_studio",
-        "url_name": "design_studio:studio",
-        "match_urls": ["studio"],
-        "default_label": _("Design Studio"),
-        "icon": "bi-palette",
-        "zone": "system",
-        "display": "icon_only",
-        "visible": True,
-        "order": 2,
-        "locked": False,
-        "staff_only": True,
-    },
-    {
-        "id": "ops_updates",
-        "url_name": "ops_kit:updates",
-        "match_urls": ["updates"],
-        "default_label": _("Auto-Updates"),
-        "icon": "bi-cloud-download",
-        "zone": "system",
+        "default_label": _("Einstellungen"),
+        "icon": "bi-gear",
+        "zone": "utility",
         "display": "icon_only",
         "visible": True,
         "order": 3,
-        "locked": False,
-        "staff_only": True,
-    },
-    {
-        "id": "admin",
-        "url_name": "admin:index",
-        "match_urls": [],
-        "default_label": _("Administration"),
-        "icon": "bi-shield-lock",
-        "zone": "system",
-        "display": "icon_only",
-        "visible": True,
-        "order": 4,
-        "locked": False,
-        "staff_only": True,
+        "locked": True,
+        "staff_only": False,
     },
     {
         "id": "night_mode",
@@ -215,10 +176,7 @@ def resolve_user_menu(user):
         icon = (ov.get("icon") or "").strip()
         if not icon.startswith("bi-"):
             icon = item["icon"]
-        if item["id"] in ("settings", "design_studio", "ops_updates", "admin"):
-            zone = "main" if ov.get("zone") == "main" else "system"
-        else:
-            zone = ov.get("zone") if ov.get("zone") in ("main", "utility", "system") else item["zone"]
+        zone = ov.get("zone") if ov.get("zone") in ("main", "utility") else item["zone"]
         display = ov.get("display") if ov.get("display") in ("icon_text", "icon_only", "text_only") else item["display"]
         visible = True if item["locked"] else bool(ov.get("visible", item["visible"]))
         try:
