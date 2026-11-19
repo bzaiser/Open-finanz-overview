@@ -129,10 +129,10 @@ DEFAULT_MENU_ITEMS = [
         "match_urls": ["profile"],
         "default_label": _("Settings"),
         "icon": "bi-gear",
-        "zone": "utility",
+        "zone": "system",
         "display": "icon_only",
         "visible": True,
-        "order": 3,
+        "order": 1,
         "locked": True,
         "staff_only": False,
     },
@@ -142,10 +142,10 @@ DEFAULT_MENU_ITEMS = [
         "match_urls": ["updates"],
         "default_label": _("Auto-Updates"),
         "icon": "bi-cloud-download",
-        "zone": "utility",
+        "zone": "system",
         "display": "icon_only",
         "visible": True,
-        "order": 4,
+        "order": 2,
         "locked": False,
         "staff_only": True,
     },
@@ -155,10 +155,10 @@ DEFAULT_MENU_ITEMS = [
         "match_urls": [],
         "default_label": _("Administration"),
         "icon": "bi-shield-lock",
-        "zone": "utility",
+        "zone": "system",
         "display": "icon_only",
         "visible": True,
-        "order": 4,
+        "order": 3,
         "locked": False,
         "staff_only": True,
     },
@@ -202,7 +202,7 @@ def resolve_user_menu(user):
         icon = (ov.get("icon") or "").strip()
         if not icon.startswith("bi-"):
             icon = item["icon"]
-        zone = ov.get("zone") if ov.get("zone") in ("main", "utility") else item["zone"]
+        zone = ov.get("zone") if ov.get("zone") in ("main", "utility", "system") else item["zone"]
         display = ov.get("display") if ov.get("display") in ("icon_text", "icon_only", "text_only") else item["display"]
         visible = True if item["locked"] else bool(ov.get("visible", item["visible"]))
         try:
@@ -230,13 +230,16 @@ def resolve_user_menu(user):
             "locked": item["locked"],
         })
 
-    resolved.sort(key=lambda x: (0 if x["zone"] == "main" else 1, x["order"]))
+    zone_rank = {"main": 0, "utility": 1, "system": 2}
+    resolved.sort(key=lambda x: (zone_rank.get(x["zone"], 1), x["order"]))
     main_items = [x for x in resolved if x["visible"] and x["zone"] == "main"]
     utility_items = [x for x in resolved if x["visible"] and x["zone"] == "utility"]
+    system_items = [x for x in resolved if x["visible"] and x["zone"] == "system"]
 
     return {
         "all_items": resolved,
         "main_items": main_items,
         "utility_items": utility_items,
+        "system_items": system_items,
         "icon_choices": [(ic, str(lbl)) for ic, lbl in MENU_ICON_CHOICES],
     }

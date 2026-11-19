@@ -68,6 +68,8 @@ def card_config_context(request):
     theme_palette = get_profile_theme_palette(profile)
     theme_studio = get_profile_theme_studio_settings(profile)
     user_menu = resolve_user_menu(user)
+    from design_studio.menu import compute_system_hub_state
+    system_items, system_active, system_entry_url = compute_system_hub_state(request, user_menu.get('system_items', []))
 
     return {
         'card_config_user_groups': user_card_groups,
@@ -82,6 +84,9 @@ def card_config_context(request):
         'theme_studio': theme_studio,
         'nav_main_items': user_menu['main_items'],
         'nav_utility_items': user_menu['utility_items'],
+        'nav_system_items': system_items,
+        'nav_system_active': system_active,
+        'nav_system_entry_url': system_entry_url,
         'menu_studio_items': user_menu['all_items'],
         'menu_icon_choices': user_menu['icon_choices'],
         'theme_palette_json': json.dumps({

@@ -2023,6 +2023,17 @@
                             </a>
                         </li>
                         {% endfor %}
+                        {% if nav_system_items %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if nav_system_active %}active{% endif %} app-nav-icon-only"
+                               href="{{ nav_system_entry_url }}"
+                               title="{% trans 'Einstellungen & System' %}"
+                               aria-label="{% trans 'Einstellungen & System' %}">
+                                <i class="bi bi-gear fs-5"></i>
+                                <span class="d-lg-none nav-label">{% trans "Einstellungen" %}</span>
+                            </a>
+                        </li>
+                        {% endif %}
                     <!-- User Account Dropdown -->
                     <li class="nav-item dropdown ps-lg-1">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button"
@@ -2117,6 +2128,19 @@
         {% if messages %}{% for message in messages %}<div
             class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">{{ message }}<button
                 type="button" class="btn-close" data-bs-dismiss="alert"></button></div>{% endfor %}{% endif %}
+        {% if nav_system_active and nav_system_items|length > 1 %}
+        <ul class="nav nav-tabs ds-tabs mb-3" role="tablist" aria-label="{% trans 'Einstellungen & System' %}">
+            {% for item in nav_system_items %}
+            <li class="nav-item" role="presentation">
+                <a class="nav-link {% if item.is_active %}active{% endif %}"
+                   href="{{ item.url }}"
+                   {% if item.is_active %}aria-current="page"{% endif %}>
+                    <i class="bi {{ item.icon }} me-1"></i>{{ item.label }}
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
         {% block content %}{% endblock %}
     </main>
 
