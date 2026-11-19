@@ -13,7 +13,6 @@ services:
     volumes:
       - ./data:/app/data
       - ./:/app
-      - static_volume:/app/staticfiles
       - ${BACKUP_DIR:-./data/backups}:/backups
     env_file:
       - ./.env
@@ -26,6 +25,3 @@ services:
       - "OLLAMA_MODEL=${OLLAMA_MODEL:-llama3}"
       - "LLM_PROVIDER=${LLM_PROVIDER:-hybrid}"
       - "APP_INSTANCE_NAME=${APP_INSTANCE_NAME:-}"
-
-volumes:
-  static_volume:
