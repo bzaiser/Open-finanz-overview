@@ -59,13 +59,6 @@
                     </button>
                 </li>
                 {% endif %}
-                {% if request.user.is_staff %}
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="tab-admin-btn" data-bs-toggle="tab" data-bs-target="#pane-admin" type="button" role="tab" aria-controls="pane-admin" aria-selected="false">
-                        <i class="bi bi-shield-lock me-1"></i>{% trans "Administration" %}
-                    </button>
-                </li>
-                {% endif %}
             </ul>
 
             <div class="tab-content ds-tab-panel p-3 p-md-4" id="settingsHubTabContent">
@@ -377,12 +370,6 @@
                 {% if request.user.is_staff and ops_updates_url %}
                 <div class="tab-pane fade" id="pane-updates" role="tabpanel" aria-labelledby="tab-updates-btn">
                     <iframe id="iframe-updates" class="w-100 border-0 rounded-3" style="min-height: 700px; background: transparent;" data-src="{{ ops_updates_url }}?embed=1" title="{% trans 'Auto-Updates' %}"></iframe>
-                </div>
-                {% endif %}
-
-                {% if request.user.is_staff %}
-                <div class="tab-pane fade" id="pane-admin" role="tabpanel" aria-labelledby="tab-admin-btn">
-                    <iframe id="iframe-admin" class="w-100 border-0 rounded-3" style="min-height: 750px; background: transparent;" data-src="/admin/" title="{% trans 'Administration' %}"></iframe>
                 </div>
                 {% endif %}
             </div><!-- /tab-content -->
