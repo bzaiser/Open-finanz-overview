@@ -125,6 +125,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'core.context_processors.app_instance_info',
                 'finance.context_processors.card_config_context',
+                'design_studio.context_processors.theme_context',
             ],
         },
     },

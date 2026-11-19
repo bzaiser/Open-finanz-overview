@@ -1863,21 +1863,12 @@
         }
     </style>
     <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    {% include "design_studio/includes/head.html" %}
     {% block extra_css %}{% endblock %}
 </head>
 
 <body data-kpi-animate="{% if user.is_authenticated and not user.profile.enable_kpi_animations %}false{% else %}true{% endif %}"
-      data-card-surface="{{ theme_studio.resolved_card_surface|default:'solid' }}"
-      data-bg-svg="{{ theme_studio.resolved_bg_svg|default:'none' }}"
-      data-kpi-sparklines="{{ theme_studio.kpi_sparklines|yesno:'true,false'|default:'true' }}"
-      data-kpi-progress="{{ theme_studio.kpi_progress_bars|yesno:'true,false'|default:'true' }}"
-      data-kpi-watermarks="{{ theme_studio.kpi_watermarks|yesno:'true,false'|default:'true' }}"
-      data-kpi-spotlight="{{ theme_studio.kpi_spotlight|yesno:'true,false'|default:'true' }}"
-      data-kpi-click="{{ theme_studio.kpi_click_navigation|yesno:'true,false'|default:'true' }}"
-      data-menu-layout="{{ theme_studio.menu_layout|default:'top' }}"
-      data-menu-style="{{ theme_studio.resolved_menu_style|default:'gradient' }}"
-      data-font-family="{{ theme_studio.resolved_font_family|default:'sans' }}"
-      data-font-scale="{{ theme_studio.font_scale|default:'normal' }}">
+      {% include "design_studio/includes/body_attrs.html" %}>
     {% if user.is_authenticated and theme_studio.resolved_bg_svg and theme_studio.resolved_bg_svg != 'none' %}
     <div class="app-bg-svg-layer" aria-hidden="true">
         {% if theme_studio.resolved_bg_svg == 'topography' %}
@@ -2856,6 +2847,7 @@
         });
     })();
     </script>
+    {% include "design_studio/includes/scripts.html" %}
     {% block extra_js %}{% endblock %}
 </body>
 
