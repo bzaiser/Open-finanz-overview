@@ -97,6 +97,7 @@ INSTALLED_APPS = [
 
 DESIGN_STUDIO_APP_NAME = "Finanzplan"
 DESIGN_STUDIO_PROFILE_ADAPTER = "core.theme_adapter.FinanzplanThemeAdapter"
+from core.menu_registry import DEFAULT_MENU_ITEMS as DESIGN_STUDIO_MENU_ITEMS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -124,8 +125,8 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'core.context_processors.app_instance_info',
-                'finance.context_processors.card_config_context',
                 'design_studio.context_processors.theme_context',
+                'finance.context_processors.card_config_context',
             ],
         },
     },
