@@ -405,7 +405,7 @@ def profile_view(request):
     ]
 
     ts_settings = get_profile_theme_studio_settings(profile)
-    return render(request, 'core/profile.html', {
+    ctx = {
         'form': form,
         'harmonies': harmonies,
         'available_shares': available_shares,
@@ -418,7 +418,14 @@ def profile_view(request):
         'theme_palette': get_profile_theme_palette(profile),
         'children': user_children,
         'children_json': json.dumps(children_initial),
-    })
+    }
+    if request.user.is_staff:
+        try:
+            from ops_kit.views import get_updates_context
+            ctx.update(get_updates_context())
+        except Exception:
+            pass
+    return render(request, 'core/profile.html', ctx)
 
 import os
 import json

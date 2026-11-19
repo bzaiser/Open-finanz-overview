@@ -35,33 +35,34 @@
             {% csrf_token %}
             {{ form.auto_night_mode.as_hidden }}
             {{ form.dark_mode_config.as_hidden }}
+        </form>
 
-            <ul class="nav folder-tabs-bar mb-0" id="settingsHubTabs" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="tab-profile-btn" data-bs-toggle="tab" data-bs-target="#pane-profile" type="button" role="tab" aria-controls="pane-profile" aria-selected="true">
-                        <i class="bi bi-person-vcard me-1"></i>{% trans "Stammdaten" %}
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="tab-backup-btn" data-bs-toggle="tab" data-bs-target="#pane-backup" type="button" role="tab" aria-controls="pane-backup" aria-selected="false">
-                        <i class="bi bi-shield-check me-1"></i>{% trans "Datensicherung & Backup" %}
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="tab-design-btn" data-bs-toggle="tab" data-bs-target="#pane-design" type="button" role="tab" aria-controls="pane-design" aria-selected="false">
-                        <i class="bi bi-palette me-1"></i>{% trans "Design & Menü" %}
-                    </button>
-                </li>
-                {% if request.user.is_staff and ops_updates_url %}
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="tab-updates-btn" data-bs-toggle="tab" data-bs-target="#pane-updates" type="button" role="tab" aria-controls="pane-updates" aria-selected="false">
-                        <i class="bi bi-cloud-download me-1"></i>{% trans "Auto-Updates" %}
-                    </button>
-                </li>
-                {% endif %}
-            </ul>
+        <ul class="nav folder-tabs-bar mb-0" id="settingsHubTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="tab-profile-btn" data-bs-toggle="tab" data-bs-target="#pane-profile" type="button" role="tab" aria-controls="pane-profile" aria-selected="true">
+                    <i class="bi bi-person-vcard me-1"></i>{% trans "Stammdaten" %}
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="tab-backup-btn" data-bs-toggle="tab" data-bs-target="#pane-backup" type="button" role="tab" aria-controls="pane-backup" aria-selected="false">
+                    <i class="bi bi-shield-check me-1"></i>{% trans "Datensicherung & Backup" %}
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="tab-design-btn" data-bs-toggle="tab" data-bs-target="#pane-design" type="button" role="tab" aria-controls="pane-design" aria-selected="false">
+                    <i class="bi bi-palette me-1"></i>{% trans "Design & Menü" %}
+                </button>
+            </li>
+            {% if request.user.is_staff and ops_updates_url %}
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="tab-updates-btn" data-bs-toggle="tab" data-bs-target="#pane-updates" type="button" role="tab" aria-controls="pane-updates" aria-selected="false">
+                    <i class="bi bi-cloud-download me-1"></i>{% trans "Auto-Updates" %}
+                </button>
+            </li>
+            {% endif %}
+        </ul>
 
-            <div class="tab-content ds-tab-panel p-3 p-md-4" id="settingsHubTabContent">
+        <div class="tab-content ds-tab-panel p-3 p-md-4" id="settingsHubTabContent">
                 <div class="tab-pane fade show active" id="pane-profile" role="tabpanel" aria-labelledby="tab-profile-btn">
                     <div class="row g-3 mb-3">
                         <!-- Stammdaten -->
@@ -364,54 +365,28 @@
                 </div><!-- /pane-backup -->
 
                 <div class="tab-pane fade" id="pane-design" role="tabpanel" aria-labelledby="tab-design-btn">
-                    <iframe id="iframe-design" class="w-100 border-0 rounded-3" style="min-height: 820px; background: transparent;" data-src="{% url 'design_studio:studio' %}?embed=1" title="{% trans 'Design & Menü' %}"></iframe>
+                    {% with ds_studio_next="/profile/?tab=design" %}
+                        {% include "design_studio/partials/studio_content.html" %}
+                    {% endwith %}
                 </div>
 
-                {% if request.user.is_staff and ops_updates_url %}
+                {% if request.user.is_staff and ops_updates_url and cfg %}
                 <div class="tab-pane fade" id="pane-updates" role="tabpanel" aria-labelledby="tab-updates-btn">
-                    <iframe id="iframe-updates" class="w-100 border-0 rounded-3" style="min-height: 700px; background: transparent;" data-src="{{ ops_updates_url }}?embed=1" title="{% trans 'Auto-Updates' %}"></iframe>
+                    {% with ops_updates_next="/profile/?tab=updates" %}
+                        {% include "ops_kit/partials/updates_content.html" %}
+                    {% endwith %}
                 </div>
                 {% endif %}
             </div><!-- /tab-content -->
-        </form>
     </div>
 </div>
 
 <script>
     (function () {
-        function syncIframeHeight(iframe) {
-            try {
-                const doc = iframe.contentDocument || iframe.contentWindow.document;
-                if (doc && doc.body) {
-                    const h = Math.max(doc.body.scrollHeight, doc.documentElement.scrollHeight, 650);
-                    iframe.style.height = (h + 32) + 'px';
-                }
-            } catch (e) {}
-        }
-        function loadTabIframe(targetSelector) {
-            const pane = document.querySelector(targetSelector);
-            if (!pane) return;
-            const iframe = pane.querySelector('iframe[data-src]');
-            if (!iframe) return;
-            if (!iframe.getAttribute('src')) {
-                iframe.setAttribute('src', iframe.getAttribute('data-src'));
-                iframe.addEventListener('load', function () {
-                    syncIframeHeight(iframe);
-                    try {
-                        const doc = iframe.contentDocument || iframe.contentWindow.document;
-                        if (doc && doc.body && typeof ResizeObserver !== 'undefined') {
-                            new ResizeObserver(function () { syncIframeHeight(iframe); }).observe(doc.body);
-                        }
-                    } catch (e) {}
-                });
-            } else {
-                syncIframeHeight(iframe);
+        document.querySelectorAll('#pane-profile input, #pane-profile select, #pane-profile textarea, #pane-profile button[type="submit"], #pane-backup input, #pane-backup select, #pane-backup textarea, #pane-backup button[type="submit"]').forEach(function (el) {
+            if (!el.getAttribute('form')) {
+                el.setAttribute('form', 'profileForm');
             }
-        }
-        document.querySelectorAll('#settingsHubTabs button[data-bs-toggle="tab"]').forEach(function (btn) {
-            btn.addEventListener('shown.bs.tab', function (ev) {
-                loadTabIframe(ev.target.getAttribute('data-bs-target'));
-            });
         });
         const params = new URLSearchParams(window.location.search);
         const tab = params.get('tab');
