@@ -5,6 +5,8 @@ FROM python:3.12-slim
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 ENV RUNNING_IN_DOCKER 1
+ENV PYTHONPATH=/opt/ds-pkg
+ENV PIP_CACHE_DIR=/tmp/pip-cache
 
 # Create a non-root user early to maximize caching
 RUN addgroup --system app && adduser --system --group app
@@ -13,7 +15,7 @@ RUN addgroup --system app && adduser --system --group app
 WORKDIR /app
 
 # Ensure the persistent data and static directories exist
-RUN mkdir -p /app/data /app/staticfiles && chown -R app:app /app
+RUN mkdir -p /app/data /app/staticfiles /opt/ds-pkg && chown -R app:app /app /opt/ds-pkg
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
