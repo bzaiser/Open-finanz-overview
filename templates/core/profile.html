@@ -395,14 +395,28 @@
                 el.setAttribute('form', 'profileForm');
             }
         });
-        const params = new URLSearchParams(window.location.search);
-        const tab = params.get('tab');
-        if (tab) {
-            const btn = document.getElementById('tab-' + tab + '-btn');
-            if (btn && window.bootstrap && bootstrap.Tab) {
-                bootstrap.Tab.getOrCreateInstance(btn).show();
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('#settingsHubTabs button[data-bs-toggle="tab"]').forEach(function (btn) {
+                btn.addEventListener('shown.bs.tab', function (ev) {
+                    const id = ev.target.id || '';
+                    const m = id.match(/^tab-(.+)-btn$/);
+                    if (m && window.history && window.history.replaceState) {
+                        const url = new URL(window.location.href);
+                        if (m[1] === 'profile') url.searchParams.delete('tab');
+                        else url.searchParams.set('tab', m[1]);
+                        window.history.replaceState(null, '', url.toString());
+                    }
+                });
+            });
+            const params = new URLSearchParams(window.location.search);
+            const tab = params.get('tab');
+            if (tab) {
+                const btn = document.getElementById('tab-' + tab + '-btn');
+                if (btn && window.bootstrap && bootstrap.Tab) {
+                    bootstrap.Tab.getOrCreateInstance(btn).show();
+                }
             }
-        }
+        });
     })();
     function setBackupPath(path) {
         const input = document.getElementById('id_backup_path');
