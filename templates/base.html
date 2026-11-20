@@ -1864,9 +1864,7 @@
         .ds-genre-photo-layer { position: fixed; inset: 0; z-index: 0; background-size: cover; background-position: center; background-repeat: no-repeat; opacity: 0.35; pointer-events: none; }
         .ds-genre-svg-layer { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.6; }
         .ds-genre-svg-layer svg { width: 100%; height: 100%; display: block; }
-        body[data-genre]:not([data-genre=""]) main,
-        body[data-genre]:not([data-genre=""]) .app-navbar,
-        body[data-genre]:not([data-genre=""]) #sidebarNav { position: relative; z-index: 1; }
+        body[data-genre]:not([data-genre=""]) main { position: relative; z-index: 1; }
         body[data-genre]:not([data-genre=""]) .app-navbar .nav-link.active,
         body[data-genre]:not([data-genre=""]) #sidebarNav .nav-link.active { box-shadow: inset 0 -2px 0 var(--ds-genre-accent, var(--app-primary)); }
         body[data-genre="poesie"] { --ds-genre-accent: #9D5C63; }
