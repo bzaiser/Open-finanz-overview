@@ -40,6 +40,7 @@ def get_profile_theme_palette(profile):
         bg_mode=s["bg_mode"],
         bg_custom=s["bg_custom"],
         state_overrides=s.get("state_overrides"),
+        table_header_color=s.get("table_header_color", ""),
     )
 
 
@@ -68,6 +69,7 @@ def apply_theme_studio_to_profile(profile, theme_studio_data, manual_precision=F
         bg_mode=norm["bg_mode"],
         bg_custom=norm["bg_custom"],
         state_overrides=norm.get("state_overrides"),
+        table_header_color=norm.get("table_header_color", ""),
     )
 
     profile.auto_night_mode = bool(palette["is_dark"])
