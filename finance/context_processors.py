@@ -68,6 +68,11 @@ def card_config_context(request):
     theme_palette = get_profile_theme_palette(profile)
     theme_studio = get_profile_theme_studio_settings(profile)
     user_menu = resolve_user_menu(user)
+    try:
+        from design_studio.genres import resolve_request_genre
+        active_genre = resolve_request_genre(request, user_menu['all_items'], default_genre=theme_studio.get('default_genre', ''))
+    except Exception:
+        active_genre = None
 
     return {
         'card_config_user_groups': user_card_groups,
@@ -84,6 +89,7 @@ def card_config_context(request):
         'nav_utility_items': user_menu['utility_items'],
         'menu_studio_items': user_menu['all_items'],
         'menu_icon_choices': user_menu['icon_choices'],
+        'active_genre': active_genre,
         'theme_palette_json': json.dumps({
             'mood': theme_palette['mood'],
             'is_dark': theme_palette['is_dark'],

@@ -1861,6 +1861,19 @@
                 gap: 0.4rem;
             }
         }
+        .ds-genre-photo-layer { position: fixed; inset: 0; z-index: -2; background-size: cover; background-position: center; background-repeat: no-repeat; opacity: 0.35; pointer-events: none; }
+        .ds-genre-svg-layer { position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0.6; }
+        .ds-genre-svg-layer svg { width: 100%; height: 100%; display: block; }
+        body[data-genre]:not([data-genre=""]) .app-navbar .nav-link.active,
+        body[data-genre]:not([data-genre=""]) #sidebarNav .nav-link.active { box-shadow: inset 0 -2px 0 var(--ds-genre-accent, var(--app-primary)); }
+        body[data-genre="poesie"] { --ds-genre-accent: #9D5C63; }
+        body[data-genre="poesie"] main .card { border-radius: 6px 18px 18px 6px !important; border-left: 5px solid color-mix(in srgb, #9D5C63 65%, #8C6D46) !important; background-image: repeating-linear-gradient(to bottom, transparent 0px, transparent 27px, rgba(157, 122, 150, 0.12) 28px); }
+        body[data-genre="comic"] { --ds-genre-accent: #E11D48; }
+        body[data-genre="comic"] main .card { border-radius: 12px !important; border: 2.5px solid #1E2022 !important; box-shadow: 5px 5px 0px #1E2022 !important; }
+        body[data-genre="malbuch"] { --ds-genre-accent: #EC4899; }
+        body[data-genre="malbuch"] main .card { border-radius: 18px !important; border: 2px dashed #EC4899 !important; }
+        body[data-genre="scifi"] { --ds-genre-accent: #06B6D4; }
+        body[data-genre="scifi"] main .card { border-radius: 4px 18px 4px 18px !important; border: 1px solid rgba(6, 182, 212, 0.55) !important; box-shadow: 0 0 18px rgba(6, 182, 212, 0.16) !important; }
     </style>
     <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
     {% include "design_studio/includes/head.html" %}
@@ -1869,6 +1882,14 @@
 
 <body data-kpi-animate="{% if user.is_authenticated and not user.profile.enable_kpi_animations %}false{% else %}true{% endif %}"
       {% include "design_studio/includes/body_attrs.html" %}>
+    {% if active_genre %}
+    {% if theme_studio.genre_photos_enabled and active_genre.photo_url %}
+    <div id="ds-genre-photo-layer" class="ds-genre-photo-layer" style="background-image: url('{{ active_genre.photo_url }}');" aria-hidden="true"></div>
+    {% endif %}
+    {% if active_genre.svg %}
+    <div id="ds-genre-svg-layer" class="ds-genre-svg-layer" aria-hidden="true">{{ active_genre.svg|safe }}</div>
+    {% endif %}
+    {% endif %}
     {% if user.is_authenticated and theme_studio.resolved_bg_svg and theme_studio.resolved_bg_svg != 'none' %}
     <div class="app-bg-svg-layer" aria-hidden="true">
         {% if theme_studio.resolved_bg_svg == 'topography' %}

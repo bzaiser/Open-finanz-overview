@@ -192,6 +192,12 @@ def resolve_user_menu(user):
         zone = ov.get("zone") if ov.get("zone") in ("main", "utility") else item["zone"]
         display = ov.get("display") if ov.get("display") in ("icon_text", "icon_only", "text_only") else item["display"]
         visible = True if item["locked"] else bool(ov.get("visible", item["visible"]))
+        raw_genre = ov.get("genre") if isinstance(ov.get("genre"), str) else item.get("genre", "")
+        try:
+            from design_studio.genres import is_valid_genre
+            genre = raw_genre if is_valid_genre(raw_genre) else ""
+        except Exception:
+            genre = ""
         try:
             order = int(ov.get("order", idx + 1))
         except (TypeError, ValueError):
@@ -215,6 +221,7 @@ def resolve_user_menu(user):
             "visible": visible,
             "order": order,
             "locked": item["locked"],
+            "genre": genre,
         })
 
     zone_rank = {"main": 0, "utility": 1, "system": 2}
