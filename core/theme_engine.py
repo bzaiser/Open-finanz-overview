@@ -152,3 +152,23 @@ def get_harmonized_category_maps(profile=None):
         by_id[cat.id] = h_col
 
     return by_name, by_id
+
+
+class FinanzplanDesignStudioAdapter:
+    """Bridges design_studio saves directly into UserProfile.dashboard_config."""
+
+    def get_settings(self, user):
+        profile = getattr(user, "profile", None) if (user and getattr(user, "is_authenticated", False)) else None
+        return get_profile_theme_studio_settings(profile)
+
+    def save_settings(self, user, settings_dict, palette=None, manual_precision=False):
+        profile = getattr(user, "profile", None) if (user and getattr(user, "is_authenticated", False)) else None
+        if not profile:
+            return palette
+        out_palette = apply_theme_studio_to_profile(profile, settings_dict, manual_precision=manual_precision)
+        dc = dict(profile.dashboard_config or {})
+        if "menu_config" in settings_dict:
+            dc["menu_config"] = settings_dict["menu_config"]
+        profile.dashboard_config = dc
+        profile.save()
+        return out_palette

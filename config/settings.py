@@ -99,6 +99,7 @@ INSTALLED_APPS = [
 DESIGN_STUDIO_APP_NAME = "Finanzplan"
 DESIGN_STUDIO_PROFILE_ADAPTER = "core.theme_adapter.FinanzplanThemeAdapter"
 OPS_GITHUB_REPO = "bzaiser/finanzplan"
+DESIGN_STUDIO_STORAGE_ADAPTER = "core.theme_engine.FinanzplanDesignStudioAdapter"
 from core.menu_registry import DEFAULT_MENU_ITEMS as DESIGN_STUDIO_MENU_ITEMS
 
 MIDDLEWARE = [
