@@ -39,23 +39,23 @@
 
         <ul class="nav folder-tabs-bar mb-0" id="settingsHubTabs" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="tab-profile-btn" data-bs-toggle="tab" data-bs-target="#pane-profile" type="button" role="tab" aria-controls="pane-profile" aria-selected="true">
+                <button class="nav-link active" id="tab-profile-btn" data-bs-toggle="tab" data-bs-target="#pane-profile" type="button" role="tab" aria-controls="pane-profile" aria-selected="true" title="{% trans 'Stammdaten' %}" aria-label="{% trans 'Stammdaten' %}">
                     <i class="bi bi-person-vcard me-1"></i>{% trans "Stammdaten" %}
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="tab-backup-btn" data-bs-toggle="tab" data-bs-target="#pane-backup" type="button" role="tab" aria-controls="pane-backup" aria-selected="false">
+                <button class="nav-link" id="tab-backup-btn" data-bs-toggle="tab" data-bs-target="#pane-backup" type="button" role="tab" aria-controls="pane-backup" aria-selected="false" title="{% trans 'Datensicherung & Backup' %}" aria-label="{% trans 'Datensicherung & Backup' %}">
                     <i class="bi bi-shield-check me-1"></i>{% trans "Datensicherung & Backup" %}
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="tab-design-btn" data-bs-toggle="tab" data-bs-target="#pane-design" type="button" role="tab" aria-controls="pane-design" aria-selected="false">
+                <button class="nav-link" id="tab-design-btn" data-bs-toggle="tab" data-bs-target="#pane-design" type="button" role="tab" aria-controls="pane-design" aria-selected="false" title="{% trans 'Design & Menü' %}" aria-label="{% trans 'Design & Menü' %}">
                     <i class="bi bi-palette me-1"></i>{% trans "Design & Menü" %}
                 </button>
             </li>
             {% if request.user.is_staff and ops_updates_url %}
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="tab-updates-btn" data-bs-toggle="tab" data-bs-target="#pane-updates" type="button" role="tab" aria-controls="pane-updates" aria-selected="false">
+                <button class="nav-link" id="tab-updates-btn" data-bs-toggle="tab" data-bs-target="#pane-updates" type="button" role="tab" aria-controls="pane-updates" aria-selected="false" title="{% trans 'Auto-Updates' %}" aria-label="{% trans 'Auto-Updates' %}">
                     <i class="bi bi-cloud-download me-1"></i>{% trans "Auto-Updates" %}
                 </button>
             </li>
