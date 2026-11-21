@@ -48,9 +48,20 @@ chmod -R a+rX . 2>/dev/null || true
 mkdir -p "$ROOT_DIR/data" "$ROOT_DIR/data/backups"
 chmod -R 777 "$ROOT_DIR/data" 2>/dev/null || true
 
+# Helper: portable container status check (works on Synology & all Docker Compose versions)
+get_web_state() {
+    local cid
+    cid=$(docker compose $ENV_ARG ps -q web 2>/dev/null | head -n1 || true)
+    if [ -n "$cid" ]; then
+        docker inspect -f '{{.State.Status}}' "$cid" 2>/dev/null || echo ""
+    else
+        echo ""
+    fi
+}
+
 # 3. Ensure persistent /opt/ds-pkg volume is writable & bootstrapped BEFORE starting web
 # (Prevents restart-loops when attaching a fresh empty ds_pkg volume to an older image!)
-STATE=$(docker compose $ENV_ARG ps --format '{{.State}}' web 2>/dev/null | head -n1 || echo "")
+STATE=$(get_web_state)
 if [ "$NO_KITS" = "0" ]; then
     NEED_BOOT=0
     if [ "$STATE" != "running" ]; then
@@ -61,11 +72,12 @@ if [ "$NO_KITS" = "0" ]; then
     if [ "$NEED_BOOT" = "1" ]; then
         echo "  → Initial-Bootstrap der Baukasten-Kits nach /opt/ds-pkg..."
         docker compose $ENV_ARG run --rm --no-deps -u 0 --entrypoint "" web sh -c '
-            mkdir -p /opt/ds-pkg /app/staticfiles && chmod 777 /opt/ds-pkg
+            mkdir -p /opt/ds-pkg /app/staticfiles
             grep -E "(django-design-studio|-django-kit)" /app/requirements.txt > /tmp/req_kits.txt || true
             if [ -s /tmp/req_kits.txt ]; then
                 pip install -q --upgrade --force-reinstall --no-deps --no-cache-dir --root-user-action=ignore --target /opt/ds-pkg -r /tmp/req_kits.txt
             fi
+            chmod -R a+rwX /opt/ds-pkg /app/staticfiles 2>/dev/null || true
         '
     fi
 fi
@@ -73,14 +85,15 @@ fi
 # 4. Start/update container & wait until running (not restarting)
 docker compose $ENV_ARG up -d
 for i in 1 2 3 4 5 6 7 8 9 10; do
-    STATE=$(docker compose $ENV_ARG ps --format '{{.State}}' web 2>/dev/null | head -n1 || echo "running")
+    STATE=$(get_web_state)
     [ "$STATE" = "running" ] && break
     sleep 2
 done
-STATE=$(docker compose $ENV_ARG ps --format '{{.State}}' web 2>/dev/null | head -n1 || echo "running")
+STATE=$(get_web_state)
 if [ "$STATE" != "running" ]; then
-    echo "❌ Container web startet nicht (Status: $STATE). Letzte Logs:"
-    docker compose $ENV_ARG logs --tail 30 web
+    echo "❌ Container web startet nicht (Status: ${STATE:-unbekannt}). Diagnose:"
+    docker compose $ENV_ARG run --rm --no-deps --entrypoint "" web python manage.py check || true
+    docker compose $ENV_ARG logs --tail 40 web
     exit 1
 fi
 
