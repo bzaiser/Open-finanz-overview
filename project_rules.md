@@ -20,18 +20,19 @@
 
 ## Git Deployment
 - **STRICT Push Targets (Dual-Repo / Single-Branch)**: Alle Änderungen MÜSSEN zwingend in ZWEI Repositories auf dem `main`-Branch gepusht werden:
-  1. `bzaiser/finanzplan.git` (origin) $\rightarrow$ Branch: `main`
-  2. `bzaiser/Open-finanz-overview.git` (overview) $\rightarrow$ Branch: `main`
-- **Vorgehensweise**: Führe nach jedem Commit die Pushes für alle Zielkombinationen aus:
+  1. `bzaiser/finanzplan.git` (`origin`) $\rightarrow$ Branch: `main`
+  2. `bzaiser/Open-finanz-overview.git` (`open-repo`) $\rightarrow$ Branch: `main`
+- **Vorgehensweise**: Führe nach jedem Commit die Pushes für alle Zielkombinationen aus (oder `./scripts/push_all.sh`):
   ```bash
   git push origin main
-  git push overview main
+  git push open-repo main
   ```
 - **Migration Synchronisation (CRITICAL)**: Bevor eine neue Datenbank-Migration erstellt wird, MUSS die KI den Stand in BEIDEN Remotes prüfen:
   - `git ls-tree -r origin/main finance/migrations/`
-  - `git ls-tree -r overview/main finance/migrations/`
+  - `git ls-tree -r open-repo/main finance/migrations/`
 - **Linearitäts-Gebot**: Beide Repositories müssen exakt dieselbe Migrations-Historie teilen.
-- **STRICT Push-First Rule**: Bevor dem Nutzer eine Antwort, Rückmeldung oder Erklärung gesendet wird, MÜSSEN alle Code-Änderungen zwingend auf allen oben genannten Remotes (`origin/main`, `overview/main`) erfolgreich gepusht sein. Erklärungen folgen immer ERST NACH dem erfolgreichen Push.
+- **STRICT Push-First Rule**: Bevor dem Nutzer eine Antwort, Rückmeldung oder Erklärung gesendet wird, MÜSSEN alle Code-Änderungen zwingend auf allen oben genannten Remotes (`origin/main`, `open-repo/main`) erfolgreich gepusht sein. Erklärungen folgen immer ERST NACH dem erfolgreichen Push.
+- **Persistente Baukasten-Kits**: Kits liegen persistent im Named Volume `ds_pkg:/opt/ds-pkg` (`PYTHONPATH=/opt/ds-pkg`, `DESIGN_STUDIO_TARGET=/opt/ds-pkg`), dynamische Kit-Aktivierung/Deaktivierung über `data/installed_kits.json` (`ops_kit.runtime`). Keine nicht-persistenten `docker compose exec ... pip install`-Fixes anbieten — Änderungen immer über Git + `./docker/update-fast.sh`.
 
 ## Standard-Workflow (Interne Agent-Regeln)
 Der Agent folgt bei JEDER Aufgabe strikt diesem Ablauf:

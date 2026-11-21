@@ -82,7 +82,7 @@ Wir bieten zwei Wege an, dein Finanz-Cockpit zu betreiben, je nach deiner Umgebu
 **Ideal für**: Fortgeschrittene Nutzer, NAS-Systeme (Synology/QNAP) oder Linux-Server.
 1. **Klonen**: `git clone https://github.com/bzaiser/Open-finanz-overview.git`.
 2. **Konfiguration**: `cp .env.example .env`.
-3. **Start**: `./update-fast.sh` (oder `docker-compose up -d`).
+3. **Start & Updates**: `./docker/update-fast.sh` (schnelles persistentes Update inkl. Baukasten-Kits in `/opt/ds-pkg`; Optionen: `--no-kits`, `--force-kits`, `--deps`) oder `./docker/update.sh` (vollständiger Image-Rebuild).
 
 ---
 
