@@ -122,7 +122,13 @@ if grep -q "DatabaseCache" config/settings.py 2>/dev/null; then
     docker compose $ENV_ARG exec web python manage.py createcachetable 2>/dev/null || true
 fi
 
-# 8. Translations (if locale/ exists) & static files
+# 8. Translations (if locale/ exists) & static files (fix ownership so WhiteNoise os.utime never hits EPERM)
+WEB_UID=$(docker compose $ENV_ARG exec web id -u 2>/dev/null | tr -d '
+' || echo "0")
+WEB_GID=$(docker compose $ENV_ARG exec web id -g 2>/dev/null | tr -d '
+' || echo "0")
+docker compose $ENV_ARG exec -u 0 web sh -c "mkdir -p /app/staticfiles /opt/ds-pkg && chown -R ${WEB_UID}:${WEB_GID} /app/staticfiles /opt/ds-pkg" 2>/dev/null || true
+
 if [ -d "locale" ]; then
     echo "🌍 Kompiliere Uebersetzungen..."
     docker compose $ENV_ARG exec web python manage.py compilemessages 2>/dev/null || true
