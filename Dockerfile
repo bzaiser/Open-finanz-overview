@@ -6,6 +6,7 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 ENV RUNNING_IN_DOCKER 1
 ENV PYTHONPATH=/opt/ds-pkg
+ENV DESIGN_STUDIO_TARGET=/opt/ds-pkg
 ENV PIP_CACHE_DIR=/tmp/pip-cache
 
 # Create a non-root user early to maximize caching
@@ -15,11 +16,12 @@ RUN addgroup --system app && adduser --system --group app
 WORKDIR /app
 
 # Ensure the persistent data and static directories exist
-RUN mkdir -p /app/data /app/staticfiles /opt/ds-pkg && chown -R app:app /app /opt/ds-pkg
+RUN mkdir -p /app/data /app/staticfiles /opt/ds-pkg && chown -R app:app /app /opt/ds-pkg && chmod 777 /opt/ds-pkg
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     gcc \
+    git \
     sqlite3 \
     gettext \
     && rm -rf /var/lib/apt/lists/*

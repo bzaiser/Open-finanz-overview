@@ -96,6 +96,12 @@ INSTALLED_APPS = [
     'crispy_bootstrap5',
 ]
 
+try:
+    from ops_kit.runtime import apply_runtime_installed_apps
+    apply_runtime_installed_apps(INSTALLED_APPS, BASE_DIR)
+except ImportError:
+    pass
+
 DESIGN_STUDIO_APP_NAME = "Finanzplan"
 DESIGN_STUDIO_PROFILE_ADAPTER = "core.theme_adapter.FinanzplanThemeAdapter"
 OPS_GITHUB_REPO = "bzaiser/finanzplan"

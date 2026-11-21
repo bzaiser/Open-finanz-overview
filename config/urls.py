@@ -26,6 +26,15 @@ urlpatterns = [
     path('design-studio/', include('design_studio.urls')),
     path('ops/', include('ops_kit.urls')),
     path('i18n/', include('django.conf.urls.i18n')),
+]
+
+try:
+    from ops_kit.runtime import get_runtime_urlpatterns
+    urlpatterns += get_runtime_urlpatterns(settings.BASE_DIR, urlpatterns)
+except ImportError:
+    pass
+
+urlpatterns += [
     path('', include('core.urls')),
     path('finance/', include('finance.urls')),
 ]
