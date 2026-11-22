@@ -53,7 +53,15 @@ def apply_theme_studio_to_profile(profile, theme_studio_data, manual_precision=F
     from finance.card_registry import apply_theme_palette_to_cards
 
     dc = dict(profile.dashboard_config or {})
-    raw_ts = dict(theme_studio_data or {})
+    prev_ts = dc.get("theme_studio") if isinstance(dc.get("theme_studio"), dict) else {}
+    preserved_keys = (
+        "brand_title", "brand_icon", "menu_config", "default_genre",
+        "genre_photos_enabled", "table_header_color", "ui_zoom",
+        "glass_alpha", "glass_blur", "bg_strength", "menu_layout",
+        "menu_style", "font_family", "font_scale",
+    )
+    raw_ts = {k: prev_ts[k] for k in preserved_keys if k in prev_ts}
+    raw_ts.update(dict(theme_studio_data or {}))
     if "c1" not in raw_ts and getattr(profile, "gradient_start", None):
         raw_ts["c1"] = profile.gradient_start
     if "c2" not in raw_ts and getattr(profile, "gradient_end", None):

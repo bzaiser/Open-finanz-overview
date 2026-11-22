@@ -1982,22 +1982,26 @@
     {% endif %}
     <nav class="navbar navbar-expand-lg app-navbar mb-4">
         <div class="container-fluid">
-            <div class="d-flex align-items-center justify-content-between w-100 w-lg-auto">
-                <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'finance:dashboard' %}">
-                    <i class="bi bi-speedometer2"></i>
-                    <span class="brand-text">Finanzplan{% if APP_INSTANCE_NAME %} ({{ APP_INSTANCE_NAME }}){% endif %}</span>
+            <div class="app-navbar-header d-flex align-items-center justify-content-between w-100 w-lg-auto">
+                <a class="navbar-brand d-flex align-items-center gap-2 min-w-0" href="{% url 'finance:dashboard' %}">
+                    {% if design_studio_app_icon != "none" %}
+                    <i class="bi {{ design_studio_app_icon|default:'bi-speedometer2' }} flex-shrink-0"></i>
+                    {% endif %}
+                    <span class="brand-text text-truncate">{% if theme_studio.brand_title %}{{ theme_studio.brand_title }}{% else %}{{ design_studio_app_name|default:"Finanzplan" }}{% if APP_INSTANCE_NAME %} ({{ APP_INSTANCE_NAME }}){% endif %}{% endif %}</span>
                 </a>
-                <a href="{% url 'design_studio:toggle_menu_layout' %}" class="menu-layout-toggle-btn"
-                   title="{% if theme_studio.menu_layout == 'sidebar' %}{% trans 'Menü nach oben legen' %}{% else %}{% trans 'Menü als Seitenpanel links andocken' %}{% endif %}"
-                   aria-label="Toggle Menu Layout">
-                    <i class="bi {% if theme_studio.menu_layout == 'sidebar' %}bi-layout-text-window{% else %}bi-layout-sidebar{% endif %}"></i>
-                </a>
-                <button type="button" id="sidebarCollapseBtn" class="sidebar-toggle-btn" title="{% trans 'Seitenpanel ein-/ausklappen' %}" aria-label="Toggle Sidebar">
-                    <i class="bi bi-layout-sidebar-inset"></i>
-                </button>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+                <div class="app-navbar-toggles d-flex align-items-center gap-1 flex-shrink-0">
+                    <a href="{% url 'design_studio:toggle_menu_layout' %}" class="menu-layout-toggle-btn"
+                       title="{% if theme_studio.menu_layout == 'sidebar' %}{% trans 'Menü nach oben legen' %}{% else %}{% trans 'Menü als Seitenpanel links andocken' %}{% endif %}"
+                       aria-label="Toggle Menu Layout">
+                        <i class="bi {% if theme_studio.menu_layout == 'sidebar' %}bi-layout-text-window{% else %}bi-layout-sidebar{% endif %}"></i>
+                    </a>
+                    <button type="button" id="sidebarCollapseBtn" class="sidebar-toggle-btn" title="{% trans 'Seitenpanel ein-/ausklappen' %}" aria-label="Toggle Sidebar">
+                        <i class="bi bi-layout-sidebar-inset"></i>
+                    </button>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                </div>
             </div>
             <div class="collapse navbar-collapse" id="navbarContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-1 nav-pill-track" id="navMainList">
@@ -2005,9 +2009,9 @@
                     {% if user.is_authenticated and nav_main_items %}
                         {% for item in nav_main_items %}
                         <li class="nav-item">
-                            <a class="nav-link {% if request.resolver_match.url_name in item.match_urls %}active{% endif %} {% if item.display == 'icon_only' %}app-nav-icon-only{% endif %}"
+                            <a class="nav-link position-relative {% if request.resolver_match.url_name in item.match_urls %}active{% endif %} {% if item.display == 'icon_only' %}app-nav-icon-only{% endif %}"
                                href="{{ item.url }}"
-                               title="{% if item.id == 'night_mode' %}{% if theme_palette and theme_palette.is_dark %}{% trans 'Tagmodus aktivieren' %}{% else %}{% trans 'Nachtmodus aktivieren' %}{% endif %}{% else %}{{ item.label }}{% endif %}">
+                               title="{% if item.id == 'night_mode' %}{% if theme_palette and theme_palette.is_dark %}{% trans 'Tagmodus aktivieren' %}{% else %}{% trans 'Nachtmodus aktivieren' %}{% endif %}{% elif item.badge_tooltip %}{{ item.badge_tooltip }}{% else %}{{ item.label }}{% endif %}">
                                 {% if item.display != 'text_only' or theme_studio.menu_layout == 'sidebar' %}
                                     {% if item.id == 'night_mode' %}
                                         {% if theme_palette and theme_palette.is_dark %}<i class="bi bi-sun"></i>{% else %}<i class="bi {{ item.icon }}"></i>{% endif %}
@@ -2020,6 +2024,7 @@
                                 {% else %}
                                     <span class="nav-label">{{ item.label }}</span>
                                 {% endif %}
+                                {% if item.badge_count %}<span class="ds-nav-badge" data-level="{{ item.badge_level|default:'danger' }}">{% if item.badge_count > 9 %}9+{% else %}{{ item.badge_count }}{% endif %}</span>{% elif item.badge_dot %}<span class="ds-nav-dot" data-level="{{ item.badge_level|default:'warning' }}" aria-hidden="true"></span>{% endif %}
                             </a>
                         </li>
                         {% endfor %}
@@ -2037,10 +2042,10 @@
                     {% if user.is_authenticated %}
                         {% for item in nav_utility_items %}
                         <li class="nav-item">
-                            <a class="nav-link {% if request.resolver_match.url_name in item.match_urls %}active{% endif %} {% if item.display == 'icon_only' %}app-nav-icon-only{% endif %}"
+                            <a class="nav-link position-relative {% if request.resolver_match.url_name in item.match_urls %}active{% endif %} {% if item.display == 'icon_only' %}app-nav-icon-only{% endif %}"
                                href="{{ item.url }}"
-                               title="{% if item.id == 'night_mode' %}{% if theme_palette and theme_palette.is_dark %}{% trans 'Tagmodus aktivieren' %}{% else %}{% trans 'Nachtmodus aktivieren' %}{% endif %}{% else %}{{ item.label }}{% endif %}"
-                               aria-label="{{ item.label }}">
+                               title="{% if item.id == 'night_mode' %}{% if theme_palette and theme_palette.is_dark %}{% trans 'Tagmodus aktivieren' %}{% else %}{% trans 'Nachtmodus aktivieren' %}{% endif %}{% elif item.badge_tooltip %}{{ item.badge_tooltip }}{% else %}{{ item.label }}{% endif %}"
+                               aria-label="{{ item.badge_tooltip|default:item.label }}">
                                 {% if item.display != 'text_only' or theme_studio.menu_layout == 'sidebar' %}
                                     {% if item.id == 'night_mode' %}
                                         {% if theme_palette and theme_palette.is_dark %}<i class="bi bi-sun fs-5"></i>{% else %}<i class="bi {{ item.icon }} fs-5"></i>{% endif %}
@@ -2053,6 +2058,7 @@
                                 {% else %}
                                     <span class="nav-label">{{ item.label }}</span>
                                 {% endif %}
+                                {% if item.badge_count %}<span class="ds-nav-badge" data-level="{{ item.badge_level|default:'danger' }}">{% if item.badge_count > 9 %}9+{% else %}{{ item.badge_count }}{% endif %}</span>{% elif item.badge_dot %}<span class="ds-nav-dot" data-level="{{ item.badge_level|default:'warning' }}" aria-hidden="true"></span>{% endif %}
                             </a>
                         </li>
                         {% endfor %}
